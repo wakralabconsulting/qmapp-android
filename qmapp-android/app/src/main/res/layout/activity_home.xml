@@ -7,8 +7,15 @@
     android:orientation="vertical"
     tools:context="com.qatarmuseums.qatarmuseumsapp.homeactivity.HomeActivity">
 
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/recycler_view"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_above="@id/bottom_toolbar"
+        android:scrollbars="vertical" />
+
     <android.support.v7.widget.Toolbar
-        android:id="@+id/toolbar"
+        android:id="@+id/bottom_toolbar"
         android:layout_width="match_parent"
         android:layout_height="?attr/actionBarSize"
         android:layout_alignParentBottom="true"
@@ -19,9 +26,10 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_marginEnd="15dp"
-            android:paddingTop="5dp">
+            android:paddingBottom="8dp"
+            android:paddingTop="8dp">
 
-            <LinearLayout
+            <RelativeLayout
                 android:id="@+id/dining_layout"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
@@ -34,17 +42,22 @@
                     android:id="@+id/navigation_dining"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:layout_centerHorizontal="true"
                     android:tint="@android:color/white"
                     app:srcCompat="@drawable/ic_menu_gallery" />
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:layout_alignParentBottom="true"
+                    android:layout_centerHorizontal="true"
+                    android:fontFamily="@font/din_next_lt_pro_regular"
                     android:text="@string/title_dining"
-                    android:textColor="@android:color/white" />
-            </LinearLayout>
+                    android:textColor="@android:color/white"
+                    android:textSize="@dimen/bottom_nav_title" />
+            </RelativeLayout>
 
-            <LinearLayout
+            <RelativeLayout
                 android:id="@+id/gift_shop_layout"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
@@ -57,18 +70,23 @@
                     android:id="@+id/navigation_gift_shop"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:layout_centerHorizontal="true"
                     android:src="@drawable/ic_menu_camera"
                     android:tint="@android:color/white" />
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:layout_alignParentBottom="true"
+                    android:layout_centerHorizontal="true"
+                    android:fontFamily="@font/din_next_lt_pro_regular"
                     android:text="@string/title_gift_shop"
-                    android:textColor="@android:color/white" />
+                    android:textColor="@android:color/white"
+                    android:textSize="@dimen/bottom_nav_title" />
 
-            </LinearLayout>
+            </RelativeLayout>
 
-            <LinearLayout
+            <RelativeLayout
                 android:id="@+id/culture_pass_layout"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
@@ -81,18 +99,23 @@
                     android:id="@+id/navigation_culture_pass"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:layout_centerHorizontal="true"
                     android:src="@drawable/ic_menu_manage"
                     android:tint="@android:color/white" />
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:layout_alignParentBottom="true"
+                    android:layout_centerHorizontal="true"
+                    android:fontFamily="@font/din_next_lt_pro_regular"
                     android:text="@string/title_culture_pass"
-                    android:textColor="@android:color/white" />
+                    android:textColor="@android:color/white"
+                    android:textSize="@dimen/bottom_nav_title" />
 
-            </LinearLayout>
+            </RelativeLayout>
 
-            <LinearLayout
+            <RelativeLayout
                 android:id="@+id/more_layout"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
@@ -105,17 +128,19 @@
                     android:id="@+id/navigation_more"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_alignParentEnd="true"
                     android:src="@drawable/ic_menu_send"
                     android:tint="@android:color/white" />
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:layout_alignParentBottom="true"
+                    android:fontFamily="@font/din_next_lt_pro_regular"
                     android:text="@string/title_more"
-                    android:textColor="@android:color/white" />
+                    android:textColor="@android:color/white"
+                    android:textSize="@dimen/bottom_nav_title" />
 
-            </LinearLayout>
+            </RelativeLayout>
 
 
         </LinearLayout>
