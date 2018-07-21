@@ -2,8 +2,6 @@ package com.qatarmuseums.qatarmuseumsapp.baseactivity;
 
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.view.Gravity;
-import android.view.View;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
@@ -13,6 +11,10 @@ import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
+import android.view.Gravity;
+import android.view.MenuItem;
+import android.view.View;
+import android.widget.FrameLayout;
 import android.widget.ImageView;
 
 import com.qatarmuseums.qatarmuseumsapp.R;
@@ -22,26 +24,43 @@ import butterknife.ButterKnife;
 
 public class BaseActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener, View.OnClickListener {
+    @Nullable
     @BindView(R.id.toolbar)
     Toolbar toolbar;
-    @Nullable @BindView(R.id.topbar_back)
+    @Nullable
+    @BindView(R.id.topbar_back)
     ImageView topbarBack;
+    @Nullable
     @BindView(R.id.topbar_calendar)
     ImageView topbarCalander;
+    @Nullable
     @BindView(R.id.topbar_notification)
     ImageView topbarNotification;
+    @Nullable
     @BindView(R.id.topbar_profile)
     ImageView topbarProfile;
+    @Nullable
     @BindView(R.id.topbar_sidemenu)
     ImageView topbarSidemenu;
+    @Nullable
     @BindView(R.id.drawer_layout)
     DrawerLayout drawer;
+    private FrameLayout fullView;
+    private FrameLayout activityContainer;
 
     Animation fadeInAnimation,fadeOutAnimation;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_base);
+    }
+
+    @Override
+    public void setContentView(int layoutResID) {
+        fullView = (FrameLayout) getLayoutInflater().inflate(R.layout.activity_base, null);
+        activityContainer = (FrameLayout) fullView.findViewById(R.id.activity_content);
+        getLayoutInflater().inflate(layoutResID, activityContainer, true);
+        super.setContentView(fullView);
+
         ButterKnife.bind(this);
         setSupportActionBar(toolbar);
         setOnclickListenerForButtons();
@@ -94,8 +113,9 @@ public class BaseActivity extends AppCompatActivity
     @Override
     public void onBackPressed() {
         if (drawer.isDrawerOpen(GravityCompat.END)) {
-            topbarSidemenu.setImageDrawable(getResources().getDrawable(R.drawable.close));
+            topbarSidemenu.setImageDrawable(getResources().getDrawable(R.drawable.side_menu_icon));
             drawer.startAnimation(fadeOutAnimation);
+
         } else {
             super.onBackPressed();
         }
