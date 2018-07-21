@@ -10,8 +10,9 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.view.Menu;
 import android.view.MenuItem;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.widget.ImageView;
 
 import com.qatarmuseums.qatarmuseumsapp.R;
@@ -36,6 +37,7 @@ public class BaseActivity extends AppCompatActivity
     @BindView(R.id.drawer_layout)
     DrawerLayout drawer;
 
+    Animation fadeInAnimation,fadeOutAnimation;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -43,11 +45,46 @@ public class BaseActivity extends AppCompatActivity
         ButterKnife.bind(this);
         setSupportActionBar(toolbar);
         setOnclickListenerForButtons();
+        fadeInAnimation = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.fade_in_animation);
+        fadeOutAnimation = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.fade_out_animation);
+        fadeOutAnimation.setAnimationListener(new Animation.AnimationListener() {
+            @Override
+            public void onAnimationStart(Animation animation) {
 
-        drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+            }
+
+            @Override
+            public void onAnimationEnd(Animation animation) {
+                drawer.closeDrawer(GravityCompat.END);
+            }
+
+            @Override
+            public void onAnimationRepeat(Animation animation) {
+
+            }
+        });
+
+        fadeInAnimation.setAnimationListener(new Animation.AnimationListener() {
+            @Override
+            public void onAnimationStart(Animation animation) {
+
+            }
+
+            @Override
+            public void onAnimationEnd(Animation animation) {
+                    drawer.openDrawer(Gravity.END);
+            }
+
+            @Override
+            public void onAnimationRepeat(Animation animation) {
+
+            }
+        });
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
                 this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
         toggle.setDrawerIndicatorEnabled(false);
+        toggle.setDrawerSlideAnimationEnabled(false);
+        drawer.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED);
         drawer.addDrawerListener(toggle);
         toggle.syncState();
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
@@ -57,7 +94,8 @@ public class BaseActivity extends AppCompatActivity
     @Override
     public void onBackPressed() {
         if (drawer.isDrawerOpen(GravityCompat.END)) {
-            drawer.closeDrawer(GravityCompat.END);
+            topbarSidemenu.setImageDrawable(getResources().getDrawable(R.drawable.close));
+            drawer.startAnimation(fadeOutAnimation);
         } else {
             super.onBackPressed();
         }
@@ -121,10 +159,12 @@ public class BaseActivity extends AppCompatActivity
     public void handlingDrawer() {
         if (drawer.isDrawerOpen(Gravity.END)) {
             topbarSidemenu.setImageDrawable(getResources().getDrawable(R.drawable.side_menu_icon));
-            drawer.closeDrawer(Gravity.END);
+            drawer.startAnimation(fadeOutAnimation);
+
         } else {
             topbarSidemenu.setImageDrawable(getResources().getDrawable(R.drawable.close));
-            drawer.openDrawer(Gravity.END);
+            drawer.startAnimation(fadeInAnimation);
+
         }
     }
 
