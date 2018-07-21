@@ -5,4 +5,5 @@
     <color name="colorAccent">#FF4081</color>
     <color name="black">#000000</color>
     <color name="darkGray">#555555</color>
+    <color name="semiTransparentForNavDrawer">#CC000000</color>
 </resources>
