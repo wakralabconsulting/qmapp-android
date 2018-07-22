@@ -5,7 +5,26 @@
     <dimen name="nav_header_vertical_spacing">8dp</dimen>
     <dimen name="nav_header_height">176dp</dimen>
     <dimen name="fab_margin">16dp</dimen>
+    <dimen name="pading_15">15dp</dimen>
+    <dimen name="pading_10">10dp</dimen>
+    <dimen name="pading_12">12dp</dimen>
+    <dimen name="pading_20">20dp</dimen>
+    <dimen name="pading_25">25dp</dimen>
+    <dimen name="pading_30">30dp</dimen>
+    <dimen name="pading_1">1dp</dimen>
+    <dimen name="margin_10">10dp</dimen>
+    <dimen name="margin_15">15dp</dimen>
+    <dimen name="pading_3">3dp</dimen>
     <dimen name="toolbar_imageview_pading">18dp</dimen>
+    <dimen name="qatar_museum_imageview_pading">15dp</dimen>
+    <dimen name="settings_imageview_pading">35dp</dimen>
+    <dimen name="qatar_museum_imageview_height">30dp</dimen>
+    <dimen name="sidemenu_items_size">35dp</dimen>
     <dimen name="home_list_item_name">18sp</dimen>
     <dimen name="bottom_nav_title">12sp</dimen>
+    <dimen name="sidemenu_text_size">16sp</dimen>
+    <dimen name="qatar_museum_icon_height">40dp</dimen>
+    <dimen name="qatar_museum_icon_width">230dp</dimen>
+    <dimen name="side_menu_settings_icon_height">30dp</dimen>
+    <dimen name="side_menu_settings_icon_width">40dp</dimen>
 </resources>

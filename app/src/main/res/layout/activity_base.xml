@@ -100,9 +100,10 @@
                 android:layout_height="match_parent"
                 android:layout_gravity="end"
                 android:layout_marginEnd="-65dp"
-                android:fitsSystemWindows="true"
-                app:headerLayout="@layout/nav_header_home"
-                 />
+                android:fitsSystemWindows="true">
+
+                <include layout="@layout/nav_header_home" />
+            </android.support.design.widget.NavigationView>
 
         </android.support.v4.widget.DrawerLayout>
     </LinearLayout>
