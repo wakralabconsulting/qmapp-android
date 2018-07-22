@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+    <ImageView
+        android:id="@+id/common_image_view"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="end"
+        android:padding="10dp">
+
+        <TextView
+            android:id="@+id/open_close_tag"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_toStartOf="@id/favourite"
+            android:background="@drawable/round_corner_yellow"
+            android:fontFamily="@font/din_next_lt_pro_bold"
+            android:paddingEnd="10dp"
+            android:paddingStart="10dp"
+            android:textColor="@color/black"
+            android:textSize="@dimen/status_tag"
+            android:visibility="gone" />
+
+        <ImageView
+            android:id="@+id/favourite"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentEnd="true"
+            android:layout_centerVertical="true"
+            android:layout_marginStart="5dp"
+            android:src="@drawable/heart_fill"
+            android:visibility="gone" />
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:background="@drawable/gradiant"
+        android:gravity="center_vertical"
+        android:padding="10dp">
+
+        <TextView
+            android:id="@+id/name_text"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_toStartOf="@id/headphone_icon"
+            android:fontFamily="@font/din_regular"
+            android:textAllCaps="true"
+            android:textColor="@android:color/white"
+            android:textSize="@dimen/home_list_item_name"
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/name_description_text"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/name_text"
+            android:fontFamily="@font/din_medium_alternate"
+            android:textColor="@android:color/white"
+            android:textSize="@dimen/name_description"
+            android:visibility="gone" />
+    </RelativeLayout>
+</RelativeLayout>
