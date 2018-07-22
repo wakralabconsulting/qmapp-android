@@ -7,4 +7,6 @@
     <color name="darkGray">#555555</color>
     <color name="white">#ffffff</color>
     <color name="semiTransparentForNavDrawer">#00000000</color>
+    <color name="yellow">#f2e926</color>
+    <color name="grey">#aa989898</color>
 </resources>

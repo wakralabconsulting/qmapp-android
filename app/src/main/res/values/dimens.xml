@@ -27,4 +27,7 @@
     <dimen name="qatar_museum_icon_width">230dp</dimen>
     <dimen name="side_menu_settings_icon_height">30dp</dimen>
     <dimen name="side_menu_settings_icon_width">40dp</dimen>
+    <dimen name="toolbar_title">18sp</dimen>
+    <dimen name="status_tag">16sp</dimen>
+    <dimen name="name_description">12sp</dimen>
 </resources>
