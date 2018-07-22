@@ -6,9 +6,7 @@
     <ImageView
         android:id="@+id/image_view"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:scaleType="center"
-        android:src="@drawable/museum_of_islamic_art" />
+        android:layout_height="wrap_content" />
 
     <RelativeLayout
         android:layout_width="match_parent"
@@ -24,7 +22,6 @@
             android:layout_height="wrap_content"
             android:layout_centerVertical="true"
             android:layout_toStartOf="@id/headphone_icon"
-            android:text="Qatar museum "
             android:fontFamily="@font/din_medium_alternate"
             android:textColor="@android:color/white"
             android:textSize="@dimen/home_list_item_name" />

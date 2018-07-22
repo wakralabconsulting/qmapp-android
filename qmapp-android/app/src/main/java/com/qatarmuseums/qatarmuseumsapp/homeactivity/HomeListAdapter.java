@@ -1,6 +1,7 @@
 package com.qatarmuseums.qatarmuseumsapp.homeactivity;
 
 
+import android.content.Context;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -15,6 +16,7 @@ import java.util.List;
 
 public class HomeListAdapter extends RecyclerView.Adapter<HomeListAdapter.MyViewHolder> {
 
+    private final Context mContext;
     private List<HomeList> homeLists;
 
     public class MyViewHolder extends RecyclerView.ViewHolder {
@@ -29,8 +31,9 @@ public class HomeListAdapter extends RecyclerView.Adapter<HomeListAdapter.MyView
         }
     }
 
-    public HomeListAdapter(List<HomeList> homeLists) {
+    public HomeListAdapter(Context context, List<HomeList> homeLists) {
         this.homeLists = homeLists;
+        this.mContext = context;
     }
 
     @NonNull
@@ -49,6 +52,10 @@ public class HomeListAdapter extends RecyclerView.Adapter<HomeListAdapter.MyView
         if (!homeList.getTourguideAvailable())
             holder.headphoneIcon.setVisibility(View.GONE);
 
+        GlideApp.with(mContext)
+                .load(homeList.getImage())
+                .placeholder(R.drawable.placeholdeer)
+                .into(holder.imageView);
     }
 
     @Override
