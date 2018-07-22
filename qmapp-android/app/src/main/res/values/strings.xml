@@ -9,4 +9,7 @@
     <string name="title_gift_shop">Gift Shop</string>
     <string name="title_culture_pass">Culture Pass</string>
     <string name="title_more">More</string>
+    <string name="toolbar_title_key">TOOLBAR_TITLE</string>
+    <string name="new_open">NOW OPEN</string>
+    <string name="closed">CLOSED</string>
 </resources>
