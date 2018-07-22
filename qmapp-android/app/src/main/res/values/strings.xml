@@ -9,4 +9,14 @@
     <string name="title_gift_shop">Gift Shop</string>
     <string name="title_culture_pass">Culture Pass</string>
     <string name="title_more">More</string>
+
+    <string name="sidemenu_exhibition_text">Exhibitions</string>
+    <string name="sidemenu_events_text">Events</string>
+    <string name="sidemenu_education_text">Education</string>
+    <string name="sidemenu_tour_guide_text">Tour Guide</string>
+    <string name="sidemenu_heritage_text">Heritage Sites</string>
+    <string name="sidemenu_public_arts_text">Public Arts</string>
+    <string name="sidemenu_dining_text">Dining</string>
+    <string name="sidemenu_gift_shop_text">Gift Shop</string>
+    <string name="sidemenu_parks_text">Parks</string>
 </resources>

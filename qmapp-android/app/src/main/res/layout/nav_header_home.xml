@@ -2,85 +2,349 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/semiTransparentForNavDrawer"
     android:orientation="vertical"
     android:weightSum="1">
-    <RelativeLayout
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight=".8">
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:weightSum="1"
-            android:layout_alignParentTop="true"
-            android:orientation="horizontal">
-            <LinearLayout
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:orientation="vertical">
-                <ImageView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content" />
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content" />
 
-
-
-            </LinearLayout>
-            <LinearLayout
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:orientation="vertical">
-
-
-            </LinearLayout>
-            <LinearLayout
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:orientation="vertical">
-
-
-            </LinearLayout>
-
-
-        </LinearLayout>
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:weightSum="1"
-            android:layout_centerInParent="true"
-            android:orientation="horizontal">
-
-
-        </LinearLayout>
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:weightSum="1"
-            android:layout_alignParentBottom="true"
-            android:orientation="horizontal">
-
-
-        </LinearLayout>
-
-
-
-    </RelativeLayout>
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_weight=".2"
-        android:orientation="horizontal"
-        android:gravity="center_vertical">
+        android:layout_weight=".7"
+        android:orientation="vertical">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:baselineAligned="false"
+            android:gravity="start"
+            android:orientation="horizontal">
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:gravity="center_horizontal"
+                android:orientation="vertical"
+                android:paddingTop="@dimen/pading_15">
+
+                <ImageView
+                    android:id="@+id/sidemenu_exibition_icon"
+                    android:layout_width="@dimen/sidemenu_items_size"
+                    android:layout_height="@dimen/sidemenu_items_size"
+                    android:src="@drawable/exhibitionwhite" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/pading_10"
+                    android:fontFamily="@font/din_next_lt_pro_regular"
+                    android:text="@string/sidemenu_exhibition_text"
+                    android:textColor="@color/white"
+                    android:textSize="@dimen/sidemenu_text_size" />
+
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:gravity="center_horizontal"
+                android:orientation="vertical"
+                android:paddingTop="@dimen/pading_15">
+
+                <ImageView
+                    android:id="@+id/sidemenu_event_icon"
+                    android:layout_width="@dimen/sidemenu_items_size"
+                    android:layout_height="@dimen/sidemenu_items_size"
+                    android:src="@drawable/events" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/pading_10"
+                    android:fontFamily="@font/din_next_lt_pro_regular"
+                    android:text="@string/sidemenu_events_text"
+                    android:textColor="@color/white"
+                    android:textSize="@dimen/sidemenu_text_size" />
+
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:gravity="center_horizontal"
+                android:orientation="vertical"
+                android:paddingTop="@dimen/pading_15">
+
+                <ImageView
+                    android:id="@+id/sidemenu_education_icon"
+                    android:layout_width="@dimen/sidemenu_items_size"
+                    android:layout_height="@dimen/sidemenu_items_size"
+                    android:src="@drawable/education" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/pading_10"
+                    android:fontFamily="@font/din_next_lt_pro_regular"
+                    android:text="@string/sidemenu_education_text"
+                    android:textColor="@color/white"
+                    android:textSize="@dimen/sidemenu_text_size" />
+
+
+            </LinearLayout>
+
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1">
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:gravity="center"
+                android:orientation="vertical"
+                android:paddingTop="@dimen/pading_15">
+
+                <ImageView
+                    android:id="@+id/sidemenu_tour_guide_icon"
+                    android:layout_width="@dimen/sidemenu_items_size"
+                    android:layout_height="@dimen/sidemenu_items_size"
+                    android:src="@drawable/tour_guide" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/pading_10"
+                    android:fontFamily="@font/din_next_lt_pro_regular"
+                    android:text="@string/sidemenu_tour_guide_text"
+                    android:textColor="@color/white"
+                    android:textSize="@dimen/sidemenu_text_size" />
+
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:gravity="center"
+                android:orientation="vertical"
+                android:paddingTop="@dimen/pading_15">
+
+                <ImageView
+                    android:id="@+id/sidemenu_heritage_icon"
+                    android:layout_width="@dimen/sidemenu_items_size"
+                    android:layout_height="@dimen/sidemenu_items_size"
+                    android:src="@drawable/heritage" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/pading_10"
+                    android:fontFamily="@font/din_next_lt_pro_regular"
+                    android:text="@string/sidemenu_heritage_text"
+                    android:textColor="@color/white"
+                    android:textSize="@dimen/sidemenu_text_size" />
+
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:gravity="center"
+                android:orientation="vertical"
+                android:paddingTop="@dimen/pading_15">
+
+                <ImageView
+                    android:id="@+id/sidemenu_public_arts_icon"
+                    android:layout_width="@dimen/sidemenu_items_size"
+                    android:layout_height="@dimen/sidemenu_items_size"
+                    android:src="@drawable/public_arts" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/pading_10"
+                    android:fontFamily="@font/din_next_lt_pro_regular"
+                    android:text="@string/sidemenu_public_arts_text"
+                    android:textColor="@color/white"
+                    android:textSize="@dimen/sidemenu_text_size" />
+
+
+            </LinearLayout>
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:gravity="bottom">
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:gravity="bottom|center_horizontal"
+                android:orientation="vertical"
+                android:paddingTop="@dimen/pading_15">
+
+                <ImageView
+                    android:id="@+id/sidemenu_dining_icon"
+                    android:layout_width="@dimen/sidemenu_items_size"
+                    android:layout_height="@dimen/sidemenu_items_size"
+                    android:src="@drawable/diningwhite" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/pading_10"
+                    android:fontFamily="@font/din_next_lt_pro_regular"
+                    android:text="@string/sidemenu_dining_text"
+                    android:textColor="@color/white"
+                    android:textSize="@dimen/sidemenu_text_size" />
+
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:gravity="bottom|center_horizontal"
+                android:orientation="vertical"
+                android:paddingTop="@dimen/pading_15">
+
+                <ImageView
+                    android:id="@+id/sidemenu_gift_shop_icon"
+                    android:layout_width="@dimen/sidemenu_items_size"
+                    android:layout_height="@dimen/sidemenu_items_size"
+                    android:src="@drawable/gift_shop" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/pading_10"
+                    android:fontFamily="@font/din_next_lt_pro_regular"
+                    android:text="@string/sidemenu_gift_shop_text"
+                    android:textColor="@color/white"
+                    android:textSize="@dimen/sidemenu_text_size" />
+
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:gravity="bottom|center_horizontal"
+                android:orientation="vertical"
+                android:paddingTop="@dimen/pading_15">
+
+                <ImageView
+                    android:id="@+id/sidemenu_park_icon"
+                    android:layout_width="@dimen/sidemenu_items_size"
+                    android:layout_height="@dimen/sidemenu_items_size"
+                    android:src="@drawable/parkwhite" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/pading_10"
+                    android:fontFamily="@font/din_next_lt_pro_regular"
+                    android:text="@string/sidemenu_parks_text"
+                    android:textColor="@color/white"
+                    android:textSize="@dimen/sidemenu_text_size" />
+
+
+            </LinearLayout>
+        </LinearLayout>
 
 
     </LinearLayout>
 
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight=".3">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentStart="true"
+            android:layout_centerVertical="true"
+            android:paddingEnd="@dimen/pading_20"
+            android:paddingStart="@dimen/pading_20">
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="@color/white" />
+        </LinearLayout>
+
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:layout_marginBottom="@dimen/pading_3"
+            android:orientation="horizontal"
+            android:weightSum="2">
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1.5">
+
+                <ImageView
+                    android:id="@+id/sidemenu_qatar_museum_icon"
+                    android:layout_width="@dimen/qatar_museum_icon_width"
+                    android:layout_height="@dimen/qatar_museum_icon_height"
+                    android:layout_gravity="start"
+                    android:src="@drawable/qatar_museum" />
+
+            </LinearLayout>
+
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="@dimen/pading_10"
+                android:layout_weight=".5"
+                android:gravity="bottom"
+                android:orientation="vertical">
+
+                <ImageView
+                    android:id="@+id/sidemenu_settings_icon"
+                    android:layout_width="@dimen/side_menu_settings_icon_width"
+                    android:layout_height="@dimen/side_menu_settings_icon_height"
+                    android:layout_gravity="center_horizontal"
+                    android:src="@drawable/settings" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_horizontal"
+                    android:fontFamily="@font/din_next_lt_pro_regular"
+                    android:text="@string/action_settings"
+                    android:textColor="@color/white"
+                    android:textSize="@dimen/sidemenu_text_size" />
+
+            </LinearLayout>
+
+        </LinearLayout>
+
+
+    </RelativeLayout>
 
 
 </LinearLayout>
