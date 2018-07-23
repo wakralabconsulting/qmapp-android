@@ -52,13 +52,11 @@
         </android.support.v7.widget.Toolbar>
 
     </android.support.design.widget.AppBarLayout>
-
     <android.support.v7.widget.RecyclerView
         android:id="@+id/common_recycler_view"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_above="@id/bottom_toolbar"
-        android:layout_below="@id/app_bar"
         android:scrollbars="vertical" />
 
 </RelativeLayout>
