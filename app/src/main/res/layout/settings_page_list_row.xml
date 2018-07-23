@@ -19,7 +19,7 @@
             android:textSize="@dimen/settings_page_list_item_text_size"
             android:fontFamily="@font/din_next_lt_pro_light"
             android:textColor="@color/black"
-            android:text="jkfdhjhhg"/>
+           />
     </LinearLayout>
 
     <LinearLayout
