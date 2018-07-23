@@ -1,5 +1,6 @@
 package com.qatarmuseums.qatarmuseumsapp.baseactivity;
 
+import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -15,6 +16,8 @@ import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
+
+import com.qatarmuseums.qatarmuseumsapp.Calendar.CalendarActivity;
 import com.qatarmuseums.qatarmuseumsapp.R;
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -152,6 +155,8 @@ public class BaseActivity extends AppCompatActivity
 
             case R.id.topbar_calendar:
                 // topbar calender action
+                Intent intent= new Intent(getApplicationContext(), CalendarActivity.class);
+                startActivity(intent);
                 break;
 
             case R.id.topbar_notification:

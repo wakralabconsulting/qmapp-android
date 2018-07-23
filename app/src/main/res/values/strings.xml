@@ -3,7 +3,16 @@
 
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>
-
+    <string name="event_text_first">MIA</string>
+    <string name="hiphen"> - </string>
+    <string name="event_text_second">SCHOOL GUIDED VISITS</string>
+    <string name="timings">Timings :</string>
+    <string name="event_timing_text">Timings: 8:30 am
+    11:30 am (last entry 10:50)</string>
+    <string name="event_detail_text">Nestled in the heart of the MIA is Alain
+        Ducasse\'s first restaurant in the Middle East \'Idam\' means \'generosity\'and each dish is a</string>
+    <string name="view_details">View Details</string>
+    <string name="events">Events</string>
     <string name="action_settings">Settings</string>
     <string name="title_dining">Dining</string>
     <string name="title_gift_shop">Gift Shop</string>
