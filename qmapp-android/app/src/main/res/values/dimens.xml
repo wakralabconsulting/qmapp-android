@@ -12,9 +12,11 @@
     <dimen name="pading_25">25dp</dimen>
     <dimen name="pading_30">30dp</dimen>
     <dimen name="pading_1">1dp</dimen>
+    <dimen name="pading_2">2dp</dimen>
     <dimen name="margin_10">10dp</dimen>
     <dimen name="margin_15">15dp</dimen>
     <dimen name="pading_3">3dp</dimen>
+    <dimen name="pading_5">5dp</dimen>
     <dimen name="toolbar_imageview_pading">18dp</dimen>
     <dimen name="qatar_museum_imageview_pading">15dp</dimen>
     <dimen name="settings_imageview_pading">35dp</dimen>
@@ -32,4 +34,8 @@
     <dimen name="name_description">12sp</dimen>
     <dimen name="padding_25">25dp</dimen>
     <dimen name="margin_50">50dp</dimen>
+    <dimen name="select_language_text_size">25sp</dimen>
+    <dimen name="settings_text_size">18sp</dimen>
+    <dimen name="settings_page_list_item_text_size">21sp</dimen>
+
 </resources>

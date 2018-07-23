@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="horizontal"
+    android:paddingStart="@dimen/pading_15"
+    android:paddingEnd="@dimen/pading_15"
+    android:layout_marginTop="@dimen/pading_15">
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/settings_page_item_name"
+        android:textSize="@dimen/settings_page_list_item_text_size"
+        android:fontFamily="@font/din_next_lt_pro_light"
+        android:layout_weight="3"/>
+    <Button
+        android:layout_width="0dp"
+        android:layout_height="30dp"
+        android:layout_weight="1"
+        android:id="@+id/settings_page_item_status_btn"
+        android:background="@drawable/switch_on"/>
+
+</LinearLayout>
