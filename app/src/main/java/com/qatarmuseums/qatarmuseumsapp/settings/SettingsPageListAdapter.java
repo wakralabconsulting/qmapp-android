@@ -26,7 +26,7 @@ public class SettingsPageListAdapter extends RecyclerView.Adapter<SettingsPageLi
     private List<SettingsPageModel> settingsPageModelList;
     @NonNull
     @Override
-    public MyViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+    public SettingsPageListAdapter.MyViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View itemView = LayoutInflater.from(parent.getContext())
                 .inflate(R.layout.settings_page_list_row, parent, false);
 
@@ -34,7 +34,7 @@ public class SettingsPageListAdapter extends RecyclerView.Adapter<SettingsPageLi
     }
 
     @Override
-    public void onBindViewHolder(@NonNull MyViewHolder holder, int position) {
+    public void onBindViewHolder(@NonNull SettingsPageListAdapter.MyViewHolder holder, int position) {
 
         SettingsPageModel settingsPageModel = settingsPageModelList.get(position);
         holder.settingsItemName.setText(settingsPageModel.getNotificationItemName());
@@ -50,16 +50,12 @@ public class SettingsPageListAdapter extends RecyclerView.Adapter<SettingsPageLi
     }
 
     public class MyViewHolder extends RecyclerView.ViewHolder {
-        @Nullable
-        @BindView(R.id.settings_page_item_name)
         TextView settingsItemName;
-        @Nullable
-        @BindView(R.id.settings_page_item_status_btn)
         Button settingsItemStatusBtn;
-
         public MyViewHolder(View view) {
             super(view);
-            ButterKnife.bind(view);
+            settingsItemName = (TextView) view.findViewById(R.id.settings_page_item_name);
+            settingsItemStatusBtn = (Button) view.findViewById(R.id.settings_page_item_status_btn);
         }
     }
 

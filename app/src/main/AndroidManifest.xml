@@ -31,7 +31,8 @@
         <activity
             android:name=".notification.NotificationActivity"
             android:theme="@style/AppTheme.NoActionBar"></activity>
-        <activity android:name=".settings.SettingsActivity"></activity>
+        <activity android:name=".settings.SettingsActivity"
+            android:theme="@style/AppTheme.NoActionBar"></activity>
     </application>
 
 </manifest>
