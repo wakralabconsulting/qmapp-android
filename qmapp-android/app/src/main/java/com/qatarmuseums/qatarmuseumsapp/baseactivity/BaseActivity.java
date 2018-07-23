@@ -1,5 +1,6 @@
 package com.qatarmuseums.qatarmuseumsapp.baseactivity;
 
+import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -15,12 +16,15 @@ import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
+
 import com.qatarmuseums.qatarmuseumsapp.R;
+import com.qatarmuseums.qatarmuseumsapp.notification.NotificationActivity;
+
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
 public class BaseActivity extends AppCompatActivity
-        implements  View.OnClickListener {
+        implements View.OnClickListener {
     @Nullable
     @BindView(R.id.toolbar)
     Toolbar toolbar;
@@ -155,7 +159,8 @@ public class BaseActivity extends AppCompatActivity
                 break;
 
             case R.id.topbar_notification:
-                // topbar notification action
+                Intent intent = new Intent(this, NotificationActivity.class);
+                startActivity(intent);
                 break;
             case R.id.topbar_profile:
                 // topbar profile action
