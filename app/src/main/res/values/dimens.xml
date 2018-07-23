@@ -30,4 +30,6 @@
     <dimen name="toolbar_title">18sp</dimen>
     <dimen name="status_tag">16sp</dimen>
     <dimen name="name_description">12sp</dimen>
+    <dimen name="padding_25">25dp</dimen>
+    <dimen name="margin_50">50dp</dimen>
 </resources>
