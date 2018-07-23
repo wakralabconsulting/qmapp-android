@@ -57,12 +57,13 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_below="@id/app_bar"
-        android:orientation="vertical">
+        android:orientation="vertical"
+        android:weightSum="6">
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="0dp"
-            android:layout_weight="2"
+            android:layout_weight="1.6"
             android:gravity="center"
             android:orientation="vertical">
 
@@ -70,6 +71,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:fontFamily="@font/din_next_lt_pro_bold"
+                android:textColor="@color/black"
                 android:text="Select App Language"
                 android:textSize="@dimen/select_language_text_size" />
 
@@ -86,13 +88,15 @@
                     android:layout_marginEnd="@dimen/pading_10"
                     android:fontFamily="@font/din_next_lt_pro_light"
                     android:text="@string/english"
+                    android:layout_gravity="bottom"
                     android:textAlignment="center"
-                    android:textSize="@dimen/settings_text_size" />
+                    android:textSize="@dimen/settings_text_size"
+                    android:textColor="@color/black"/>
 
                 <Button
                     android:id="@+id/language_change_button"
-                    android:layout_width="60dp"
-                    android:layout_height="30dp"
+                    android:layout_width="50dp"
+                    android:layout_height="20dp"
                     android:background="@drawable/switch_on"
                     android:padding="@dimen/pading_20" />
 
@@ -102,39 +106,40 @@
                     android:layout_marginStart="@dimen/pading_10"
                     android:fontFamily="@font/din_next_lt_pro_light"
                     android:text="@string/arabic"
+                    android:textColor="@color/black"
                     android:textAlignment="center"
                     android:textSize="@dimen/settings_text_size" />
 
 
             </LinearLayout>
 
-            <View
-                android:layout_width="match_parent"
-                android:layout_height="1dp"
-                android:layout_marginTop="@dimen/pading_15"
-                android:background="@drawable/divider_black"
-                android:paddingEnd="@dimen/pading_2"
-                android:paddingStart="@dimen/pading_2">
-
-            </View>
-
-
         </LinearLayout>
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="0dp"
-            android:layout_weight="4"
+            android:layout_weight="3.1"
             android:orientation="vertical">
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="@drawable/divider_black"
+                android:paddingEnd="@dimen/pading_2"
+                android:layout_gravity="bottom"
+                android:paddingStart="@dimen/pading_2">
+
+            </View>
 
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="@dimen/pading_10"
+                android:layout_marginTop="@dimen/pading_15"
+                android:layout_marginBottom="@dimen/pading_15"
                 android:fontFamily="@font/din_next_lt_pro_bold"
                 android:text="@string/notification_settings"
                 android:textAlignment="center"
-                android:textSize="@dimen/settings_text_size" />
+                android:textColor="@color/black"
+                android:textSize="@dimen/settings_page_list_item_text_size" />
 
 
             <android.support.v7.widget.RecyclerView
@@ -150,7 +155,7 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="0dp"
-            android:layout_weight="2"
+            android:layout_weight="1.3"
             android:gravity="center"
             android:orientation="vertical">
 
@@ -185,7 +190,7 @@
                         android:id="@+id/setting_page_reset_to_default_btn"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
-                        android:layout_marginEnd="@dimen/pading_10"
+                        android:layout_marginEnd="@dimen/pading_15"
                         android:background="@drawable/round_corner_pink"
                         android:fontFamily="@font/din_next_lt_pro_bold"
                         android:paddingEnd="@dimen/pading_10"
@@ -206,7 +211,7 @@
                         android:id="@+id/setting_page_apply_btn"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
-                        android:layout_marginStart="@dimen/pading_10"
+                        android:layout_marginStart="@dimen/pading_15"
                         android:background="@drawable/round_corner_skyblue"
                         android:fontFamily="@font/din_next_lt_pro_bold"
                         android:paddingEnd="@dimen/pading_10"

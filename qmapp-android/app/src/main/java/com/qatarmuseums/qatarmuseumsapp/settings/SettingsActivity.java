@@ -20,6 +20,7 @@ import android.view.animation.AnimationUtils;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.qatarmuseums.qatarmuseumsapp.R;
 import com.qatarmuseums.qatarmuseumsapp.commonactivity.RecyclerTouchListener;
@@ -35,25 +36,18 @@ public class SettingsActivity extends AppCompatActivity implements View.OnClickL
     private List<SettingsPageModel> settingsPageModelList = new ArrayList<>();
     private SettingsPageListAdapter settingsPageListAdapter;
     private Animation zoomOutAnimation;
-    @Nullable
     @BindView(R.id.common_toolbar)
     Toolbar toolbar;
-    @Nullable
     @BindView(R.id.toolbar_back)
     ImageView backArrow;
-    @Nullable
     @BindView(R.id.toolbar_title)
     TextView toolbar_title;
-    @Nullable
     @BindView(R.id.settings_page_recycler_view)
     RecyclerView recyclerView;
-    @Nullable
     @BindView(R.id.language_change_button)
     Button languageChangeButton;
-    @Nullable
     @BindView(R.id.setting_page_reset_to_default_btn)
     Button settingPageResetToDefaultBtn;
-    @Nullable
     @BindView(R.id.setting_page_apply_btn)
     Button settingPageApplyButton;
     String language;
@@ -65,6 +59,14 @@ public class SettingsActivity extends AppCompatActivity implements View.OnClickL
         setContentView(R.layout.activity_settings);
         ButterKnife.bind(this);
         setSupportActionBar(toolbar);
+        setClicklistenerforButtons();
+        SharedPreferences qfindPreferences = PreferenceManager.getDefaultSharedPreferences(this);
+        int appLanguage = qfindPreferences.getInt("AppLanguage", 1);
+        if (appLanguage == 1) {
+            languageChangeButton.setBackgroundResource(R.drawable.switch_on);
+        }else {
+            languageChangeButton.setBackgroundResource(R.drawable.switch_off);
+        }
         toolbar_title.setText(getResources().getString(R.string.settings_activity_tittle));
         settingsPageListAdapter = new SettingsPageListAdapter(this, settingsPageModelList);
         RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(getApplicationContext());
@@ -125,8 +127,18 @@ public class SettingsActivity extends AppCompatActivity implements View.OnClickL
 
             case R.id.language_change_button:
                 // language change action
-                language = "ar";
-                setLocale(language);
+                SharedPreferences qfindPreferences = PreferenceManager.getDefaultSharedPreferences(this);
+                int appLanguage = qfindPreferences.getInt("AppLanguage", 1);
+                if (appLanguage == 1) {
+                    language = "ar";
+                    setLocale(language);
+                    languageChangeButton.setBackgroundResource(R.drawable.switch_off);
+                }else {
+                    language = "en";
+                    setLocale(language);
+                    languageChangeButton.setBackgroundResource(R.drawable.switch_off);
+                }
+
                 break;
 
             case R.id.setting_page_reset_to_default_btn:
@@ -143,6 +155,7 @@ public class SettingsActivity extends AppCompatActivity implements View.OnClickL
 
         }
     }
+
     public void setLocale(String lang) {
         int language = 1;
         Configuration configuration = getResources().getConfiguration();
@@ -167,11 +180,20 @@ public class SettingsActivity extends AppCompatActivity implements View.OnClickL
 
     }
 
-    public void refreshActivity(){
+    public void refreshActivity() {
         //code to refresh actvity after changing language
         finish();
-        overridePendingTransition( 0, 0);
+        overridePendingTransition(0, 0);
         startActivity(getIntent());
-        overridePendingTransition( 0, 0);
+        overridePendingTransition(0, 0);
+    }
+
+    public void setClicklistenerforButtons() {
+        toolbar.setOnClickListener(this);
+        backArrow.setOnClickListener(this);
+        toolbar_title.setOnClickListener(this);
+        languageChangeButton.setOnClickListener(this);
+        settingPageResetToDefaultBtn.setOnClickListener(this);
+        settingPageApplyButton.setOnClickListener(this);
     }
 }
