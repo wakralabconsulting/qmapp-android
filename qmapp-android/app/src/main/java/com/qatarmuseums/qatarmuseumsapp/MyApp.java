@@ -20,8 +20,8 @@ public class MyApp extends Application {
     public void onCreate() {
         super.onCreate();
 
-        SharedPreferences qfindPreferences = PreferenceManager.getDefaultSharedPreferences(this);
-        int appLanguage = qfindPreferences.getInt("AppLanguage", 1);
+        SharedPreferences qmPreferences = PreferenceManager.getDefaultSharedPreferences(this);
+        int appLanguage = qmPreferences.getInt("AppLanguage", 1);
         if (appLanguage == 2) {
             Configuration configuration = getResources().getConfiguration();
             configuration.setLayoutDirection(new Locale("ar"));

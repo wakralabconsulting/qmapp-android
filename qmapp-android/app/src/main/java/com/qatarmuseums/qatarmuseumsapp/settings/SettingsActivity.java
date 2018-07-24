@@ -24,6 +24,7 @@ import android.widget.Toast;
 
 import com.qatarmuseums.qatarmuseumsapp.R;
 import com.qatarmuseums.qatarmuseumsapp.commonactivity.RecyclerTouchListener;
+import com.qatarmuseums.qatarmuseumsapp.homeactivity.HomeActivity;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -60,8 +61,8 @@ public class SettingsActivity extends AppCompatActivity implements View.OnClickL
         ButterKnife.bind(this);
         setSupportActionBar(toolbar);
         setClicklistenerforButtons();
-        SharedPreferences qfindPreferences = PreferenceManager.getDefaultSharedPreferences(this);
-        int appLanguage = qfindPreferences.getInt("AppLanguage", 1);
+        SharedPreferences qmPreferences = PreferenceManager.getDefaultSharedPreferences(this);
+        int appLanguage = qmPreferences.getInt("AppLanguage", 1);
         if (appLanguage == 1) {
             languageChangeButton.setBackgroundResource(R.drawable.switch_on);
         }else {
@@ -127,8 +128,8 @@ public class SettingsActivity extends AppCompatActivity implements View.OnClickL
 
             case R.id.language_change_button:
                 // language change action
-                SharedPreferences qfindPreferences = PreferenceManager.getDefaultSharedPreferences(this);
-                int appLanguage = qfindPreferences.getInt("AppLanguage", 1);
+                SharedPreferences qmPreferences = PreferenceManager.getDefaultSharedPreferences(this);
+                int appLanguage = qmPreferences.getInt("AppLanguage", 1);
                 if (appLanguage == 1) {
                     language = "ar";
                     setLocale(language);
@@ -172,8 +173,8 @@ public class SettingsActivity extends AppCompatActivity implements View.OnClickL
         } else if (lang.equalsIgnoreCase("ar")) {
             language = 2;
         }
-        SharedPreferences qfindPreferences = PreferenceManager.getDefaultSharedPreferences(this);
-        SharedPreferences.Editor editor = qfindPreferences.edit();
+        SharedPreferences qmPreferences = PreferenceManager.getDefaultSharedPreferences(this);
+        SharedPreferences.Editor editor = qmPreferences.edit();
         editor.putInt("AppLanguage", language);
         editor.commit();
         refreshActivity();
@@ -181,10 +182,12 @@ public class SettingsActivity extends AppCompatActivity implements View.OnClickL
     }
 
     public void refreshActivity() {
-        //code to refresh actvity after changing language
-        finish();
+        Intent intent = getIntent();
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK
+                | Intent.FLAG_ACTIVITY_NO_ANIMATION);
         overridePendingTransition(0, 0);
-        startActivity(getIntent());
+        finish();
+        startActivity(new Intent(this, HomeActivity.class));
         overridePendingTransition(0, 0);
     }
 
