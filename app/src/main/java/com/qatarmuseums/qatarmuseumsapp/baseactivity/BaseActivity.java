@@ -131,7 +131,7 @@ public class BaseActivity extends AppCompatActivity
         drawer.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED);
         drawer.addDrawerListener(toggle);
         toggle.syncState();
-        navigationView.setBackgroundColor(Color.parseColor("#A6000000"));
+        navigationView.setBackgroundColor(Color.parseColor("#CC000000"));
     }
 
     @Override
@@ -139,6 +139,7 @@ public class BaseActivity extends AppCompatActivity
         if (drawer.isDrawerOpen(GravityCompat.END)) {
 
             navigationView.startAnimation(fadeOutAnimation);
+            toolbar.setBackgroundColor(Color.parseColor("#000000"));
 
         } else {
             super.onBackPressed();
@@ -241,10 +242,12 @@ public class BaseActivity extends AppCompatActivity
     public void handlingDrawer() {
         if (drawer.isDrawerOpen(Gravity.END)) {
             navigationView.startAnimation(fadeOutAnimation);
+            toolbar.setBackgroundColor(Color.parseColor("#000000"));
 
         } else {
             topbarSidemenu.setImageDrawable(getResources().getDrawable(R.drawable.close));
             drawer.openDrawer(Gravity.END, false);
+            toolbar.setBackgroundColor(Color.parseColor("#CC000000"));
             navigationView.startAnimation(fadeInAnimation);
 
         }
