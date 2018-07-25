@@ -4,7 +4,7 @@
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>
 
-    <string name="action_settings">Settings</string>
+    <string name="action_settings">عربى</string>
     <string name="title_dining">Dining</string>
     <string name="title_gift_shop">Gift Shop</string>
     <string name="title_culture_pass">Culture Pass</string>
@@ -22,17 +22,13 @@
     <string name="new_open">NOW OPEN</string>
     <string name="closed">CLOSED</string>
     <string name="notifications">Notifications</string>
-    <string name="location_title">LOCATION</string>
-    <string name="contact_title">CONTACT</string>
-    <string name="timing_text">TIMINGS</string>
-    <string name="settings_activity_tittle">SETTINGS</string>
+    <string name="settings_activity_tittle">عربى</string>
     <string name="select_language_text">Select App Language</string>
     <string name="english">English</string>
     <string name="arabic">عربى</string>
     <string name="notification_settings">Notification Settings</string>
     <string name="reset_to_default">Reset to Default</string>
     <string name="apply">Apply</string>
-    <string name="change_language_dialog_title">Change Language?</string>
-    <string name="change_language_button_text">Continue</string>
-    <string name="change_language_content_text">You will be redirected to home page, after changing the language. Do you want to continue?</string>
+    <string name="change_language_content_text">سيتم تحويلك إلى الصفحة الرئيسية بعد تغيير اللغة، هل تريد المتابعة؟</string>
+
 </resources>
