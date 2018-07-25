@@ -32,4 +32,10 @@
     <dimen name="name_description">12sp</dimen>
     <dimen name="padding_25">25dp</dimen>
     <dimen name="margin_50">50dp</dimen>
+    <dimen name="app_bar_height">180dp</dimen>
+    <dimen name="text_margin">16dp</dimen>
+    <dimen name="padding_5dp">5dp</dimen>
+    <dimen name="font_size_18">18sp</dimen>
+    <dimen name="font_size_16">16sp</dimen>
+    <dimen name="font_size_15">15sp</dimen>
 </resources>

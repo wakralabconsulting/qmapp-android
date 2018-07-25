@@ -58,6 +58,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_above="@id/bottom_toolbar"
+        android:background="@color/recycler_background"
         android:layout_below="@id/app_bar"
         android:scrollbars="vertical" />
 

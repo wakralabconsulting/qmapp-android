@@ -14,6 +14,7 @@ import android.view.animation.AnimationUtils;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.qatarmuseums.qatarmuseumsapp.DetailsActivity.DetailsActivity;
 import com.qatarmuseums.qatarmuseumsapp.R;
 
 import java.util.ArrayList;
@@ -42,11 +43,18 @@ public class CommonActivity extends AppCompatActivity {
         toolbar_title.setText(title);
         recyclerView = (RecyclerView) findViewById(R.id.common_recycler_view);
 
-        mAdapter = new CommonListAdapter(this, models);
+        mAdapter = new CommonListAdapter(this, models, new RecyclerTouchListener.ItemClickListener() {
+            @Override
+            public void onPositionClicked(int position) {
+                // callback performed on click
+            }
+
+        });
         RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(getApplicationContext());
         recyclerView.setLayoutManager(mLayoutManager);
         recyclerView.setItemAnimator(new DefaultItemAnimator());
         recyclerView.setAdapter(mAdapter);
+
         backArrow.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
