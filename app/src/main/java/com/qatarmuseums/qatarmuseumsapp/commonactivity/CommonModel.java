@@ -2,7 +2,7 @@ package com.qatarmuseums.qatarmuseumsapp.commonactivity;
 
 
 public class CommonModel {
-    private String name, nameDescription;
+    private String name, date, location;
     private String id;
     private String image;
     private Boolean isOpen, isfavourite;
@@ -11,11 +11,13 @@ public class CommonModel {
 
     }
 
-    public CommonModel(String id, String name, String nameDescription, String image, Boolean isOpen,
+
+    public CommonModel(String id, String name, String exhibitionDate, String location, String image, Boolean isOpen,
                        Boolean isfavourite) {
         this.id = id;
         this.name = name;
-        this.nameDescription = nameDescription;
+        this.date = exhibitionDate;
+        this.location = location;
         this.image = image;
         this.isOpen = isOpen;
         this.isfavourite = isfavourite;
@@ -37,12 +39,20 @@ public class CommonModel {
         this.id = id;
     }
 
-    public String getNameDescription() {
-        return nameDescription;
+    public String getDate() {
+        return date;
     }
 
-    public void setNameDescription(String nameDescription) {
-        this.nameDescription = nameDescription;
+    public void setDate(String date) {
+        this.date = date;
+    }
+
+    public String getLocation() {
+        return location;
+    }
+
+    public void setLocation(String location) {
+        this.location = location;
     }
 
     public String getImage() {

@@ -36,7 +36,12 @@
         <activity
             android:name=".notification.NotificationActivity"
             android:theme="@style/AppTheme.NoActionBar"></activity>
-        <activity android:name=".settings.SettingsActivity"
+        <activity
+            android:name=".DetailsActivity.DetailsActivity"
+            android:label=""
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity
+            android:name=".settings.SettingsActivity"
             android:theme="@style/AppTheme.NoActionBar"></activity>
     </application>
 
