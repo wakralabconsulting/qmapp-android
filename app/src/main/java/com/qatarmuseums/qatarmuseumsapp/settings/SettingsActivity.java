@@ -68,7 +68,7 @@ public class SettingsActivity extends AppCompatActivity implements View.OnClickL
         int appLanguage = qmPreferences.getInt("AppLanguage", 1);
         if (appLanguage == 1) {
             languageChangeButton.setBackgroundResource(R.drawable.switch_on);
-        }else {
+        } else {
             languageChangeButton.setBackgroundResource(R.drawable.switch_off);
         }
         toolbar_title.setText(getResources().getString(R.string.settings_activity_tittle));
@@ -137,7 +137,7 @@ public class SettingsActivity extends AppCompatActivity implements View.OnClickL
                     language = "ar";
                     showDialog(language);
 
-                }else {
+                } else {
                     language = "en";
                     showDialog(language);
 
@@ -208,7 +208,7 @@ public class SettingsActivity extends AppCompatActivity implements View.OnClickL
 
     protected void showDialog(final String language) {
 
-        final Dialog dialog = new Dialog(this,R.style.DialogTheme);
+        final Dialog dialog = new Dialog(this, R.style.DialogTheme);
         dialog.setCancelable(true);
         dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
 
@@ -239,9 +239,6 @@ public class SettingsActivity extends AppCompatActivity implements View.OnClickL
 
             }
         });
-
-        dialog.getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
-
         dialog.show();
     }
 }
