@@ -35,6 +35,7 @@
     <dimen name="name_description">12sp</dimen>
     <dimen name="padding_25">25dp</dimen>
     <dimen name="margin_50">50dp</dimen>
+    <dimen name="common_popup_close_size">50dp</dimen>
     <dimen name="select_language_text_size">25sp</dimen>
     <dimen name="settings_text_size">18sp</dimen>
     <dimen name="settings_page_list_item_text_size">21sp</dimen>
