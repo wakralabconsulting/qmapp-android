@@ -5,6 +5,7 @@
     <uses-permission android:name="android.permission.INTERNET" />
 
     <application
+        android:name=".MyApp"
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
@@ -34,6 +35,9 @@
             android:name=".DetailsActivity.DetailsActivity"
             android:label=""
             android:theme="@style/AppTheme.NoActionBar" />
+        <activity
+            android:name=".settings.SettingsActivity"
+            android:theme="@style/AppTheme.NoActionBar"></activity>
     </application>
 
 </manifest>

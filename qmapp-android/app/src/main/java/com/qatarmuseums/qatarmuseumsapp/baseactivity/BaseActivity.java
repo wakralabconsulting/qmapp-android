@@ -19,6 +19,7 @@ import android.widget.ImageView;
 
 import com.qatarmuseums.qatarmuseumsapp.R;
 import com.qatarmuseums.qatarmuseumsapp.notification.NotificationActivity;
+import com.qatarmuseums.qatarmuseumsapp.settings.SettingsActivity;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -130,7 +131,7 @@ public class BaseActivity extends AppCompatActivity
         drawer.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED);
         drawer.addDrawerListener(toggle);
         toggle.syncState();
-        navigationView.setBackgroundColor(Color.parseColor("#A6000000"));
+        navigationView.setBackgroundColor(Color.parseColor("#CC000000"));
     }
 
     @Override
@@ -138,6 +139,7 @@ public class BaseActivity extends AppCompatActivity
         if (drawer.isDrawerOpen(GravityCompat.END)) {
 
             navigationView.startAnimation(fadeOutAnimation);
+            toolbar.setBackgroundColor(Color.parseColor("#000000"));
 
         } else {
             super.onBackPressed();
@@ -227,6 +229,8 @@ public class BaseActivity extends AppCompatActivity
                 // navigation drawer settings action
                 topbarSidemenu.setImageDrawable(getResources().getDrawable(R.drawable.side_menu_icon));
                 drawer.closeDrawer(GravityCompat.END, false);
+                Intent settingsIntent = new Intent(this, SettingsActivity.class);
+                startActivity(settingsIntent);
                 break;
 
             default:
@@ -238,10 +242,12 @@ public class BaseActivity extends AppCompatActivity
     public void handlingDrawer() {
         if (drawer.isDrawerOpen(Gravity.END)) {
             navigationView.startAnimation(fadeOutAnimation);
+            toolbar.setBackgroundColor(Color.parseColor("#000000"));
 
         } else {
             topbarSidemenu.setImageDrawable(getResources().getDrawable(R.drawable.close));
             drawer.openDrawer(Gravity.END, false);
+            toolbar.setBackgroundColor(Color.parseColor("#CC000000"));
             navigationView.startAnimation(fadeInAnimation);
 
         }
