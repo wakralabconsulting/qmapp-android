@@ -9,4 +9,5 @@
     <color name="semiTransparentForNavDrawer">#00000000</color>
     <color name="yellow">#f2e926</color>
     <color name="grey">#aa989898</color>
+    <color name="recycler_background">#CCCCCC</color>
 </resources>

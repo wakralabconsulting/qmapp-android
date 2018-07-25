@@ -135,24 +135,28 @@ public class HomeActivity extends BaseActivity {
     }
 
     private void prepareRecyclerViewData() {
-        HomeList movie = new HomeList("Mathaf: Arab Museum of Modern Art", "61",
-                "",
-                2, true);
-        homeLists.add(movie);
-        movie = new HomeList("Museum of Islamic Art (MIA)", "63",
+        HomeList movie = new HomeList("Museum of Islamic Art (MIA)", "63",
                 "http://www.qm.org.qa/sites/default/files/museum_of_islamic_art.png",
                 2, true);
         homeLists.add(movie);
-        movie = new HomeList("National Museum of Qatar", "66",
+        movie = new HomeList("National Museum of Qatar", "68",
                 "http://www.qm.org.qa/sites/default/files/national_museum_of_qatar.png",
-                2, true);
+                2, false);
         homeLists.add(movie);
-        movie = new HomeList("3-2-1 Qatar Olympic and Sports Museum", "68",
-                "http://www.qm.org.qa/sites/default/files/qatar_olypic_sports_museum.png",
-                2, true);
+        movie = new HomeList("Mathaf: Arab Museum of Modern Art", "66",
+                "http://www.qm.org.qa/sites/default/files/mathaf_arab_museum.png",
+                2, false);
         homeLists.add(movie);
-        movie = new HomeList("Garage Gallery, Fire Station", "69",
+        movie = new HomeList("Garage Gallery, Fire Station", "60",
                 "http://www.qm.org.qa/sites/default/files/firestation.png",
+                2, false);
+        homeLists.add(movie);
+        movie = new HomeList("Exhibition", "61",
+                "",
+                2, false);
+        homeLists.add(movie);
+        movie = new HomeList("3-2-1 Qatar Olympic and Sports Museum", "69",
+                "http://www.qm.org.qa/sites/default/files/qatar_olypic_sports_museum.png",
                 2, false);
         homeLists.add(movie);
         mAdapter.notifyDataSetChanged();
