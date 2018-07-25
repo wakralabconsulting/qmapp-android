@@ -97,11 +97,11 @@ public class DetailsActivity extends AppCompatActivity implements IPullZoom {
                 R.anim.zoom_out_more);
 
         initViews();
-        loadData(null, "Ai Weiwei’s Laundromat is a traveling installation that brings the current European migrant crisis into sharp focus. The work is centered around a vast makeshift camp near the village of Idomeni, on the border with the Republic of Macedonia.",
-                "As part of his recently released documentary Human Flow, Ai Weiwei has borne witness to the brutal plight of refugees worldwide. Therefore when the Idomeni camp was shut down in May 2016, and the thousands of refugees were displaced, Ai Weiwei and his team reverently collected, washed and organized the possessions they haphazardly left behind in an effort to preserve their tumultuous experience. Meticulously organized, the thousands of clothing items and accessories together with photographs and video are a moving and tactile testament to this international humanitarian emergency.\\n\\nWorking in a wide range of media from architecture to social media, Ai Weiwei is renowned for elevating art practice into a call for action on major geopolitical issues impacting global communities.",
+        loadData(null, getString(R.string.details_page_short_description),
+                getString(R.string.details_page_long_description),
                 null, null, "EXHIBITION",
-                "15 MARCH 2018 – 1 JUNE 2018 \\nSaturday to Sunday: 9:00AM - 7:00PM \\nFridays: 1:30PM to 7:00PM",
-                "FIRE STATION ARTIST IN RESIDENCE, \\nGARAGE GALLERY \\nClick here to open in Google Maps",
+                getString(R.string.details_page_timing_details),
+                getString(R.string.details_page_location_details),
                 "info@mia.org.qa");
         toolbarClose.setOnTouchListener(new View.OnTouchListener() {
             @Override

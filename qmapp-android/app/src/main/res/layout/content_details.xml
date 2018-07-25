@@ -27,6 +27,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:fontFamily="@font/din_regular"
+                android:textAlignment="center"
                 android:textColor="@color/black"
                 android:textSize="@dimen/font_size_18"
                 android:textStyle="bold" />
@@ -43,6 +44,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="@dimen/text_margin"
                 android:fontFamily="@font/din_regular"
+                android:textAlignment="center"
                 android:textColor="@color/black"
                 android:textSize="@dimen/font_size_16"
                 android:textStyle="bold"
