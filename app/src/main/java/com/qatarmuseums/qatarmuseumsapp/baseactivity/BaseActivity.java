@@ -20,6 +20,7 @@ import android.widget.ImageView;
 import com.qatarmuseums.qatarmuseumsapp.Calendar.CalendarActivity;
 import com.qatarmuseums.qatarmuseumsapp.R;
 import com.qatarmuseums.qatarmuseumsapp.commonactivity.CommonActivity;
+import com.qatarmuseums.qatarmuseumsapp.educationactivity.EducationActivity;
 import com.qatarmuseums.qatarmuseumsapp.notification.NotificationActivity;
 import com.qatarmuseums.qatarmuseumsapp.settings.SettingsActivity;
 
@@ -161,7 +162,7 @@ public class BaseActivity extends AppCompatActivity
 
             case R.id.topbar_calendar:
                 // topbar calender action
-                Intent calIntent= new Intent(getApplicationContext(), CalendarActivity.class);
+                Intent calIntent = new Intent(getApplicationContext(), CalendarActivity.class);
                 startActivity(calIntent);
                 break;
 
@@ -193,7 +194,8 @@ public class BaseActivity extends AppCompatActivity
                 break;
 
             case R.id.sidemenu_education_icon:
-                // navigation drawer education action
+                navigation_intent = new Intent(this, EducationActivity.class);
+                startActivity(navigation_intent);
                 topbarSidemenu.setImageDrawable(getResources().getDrawable(R.drawable.side_menu_icon));
                 drawer.closeDrawer(GravityCompat.END, false);
                 break;
