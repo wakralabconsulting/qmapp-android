@@ -29,4 +29,6 @@
     <string name="notification_settings">Notification Settings</string>
     <string name="reset_to_default">Reset to Default</string>
     <string name="apply">Apply</string>
+    <string name="change_language_content_text">سيتم تحويلك إلى الصفحة الرئيسية بعد تغيير اللغة، هل تريد المتابعة؟</string>
+
 </resources>

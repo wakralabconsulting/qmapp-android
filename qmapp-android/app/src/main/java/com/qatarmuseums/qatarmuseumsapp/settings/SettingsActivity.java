@@ -1,5 +1,6 @@
 package com.qatarmuseums.qatarmuseumsapp.settings;
 
+import android.app.Dialog;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.res.Configuration;
@@ -15,6 +16,8 @@ import android.support.v7.widget.Toolbar;
 import android.util.DisplayMetrics;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.Window;
+import android.view.WindowManager;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.Button;
@@ -65,7 +68,7 @@ public class SettingsActivity extends AppCompatActivity implements View.OnClickL
         int appLanguage = qmPreferences.getInt("AppLanguage", 1);
         if (appLanguage == 1) {
             languageChangeButton.setBackgroundResource(R.drawable.switch_on);
-        }else {
+        } else {
             languageChangeButton.setBackgroundResource(R.drawable.switch_off);
         }
         toolbar_title.setText(getResources().getString(R.string.settings_activity_tittle));
@@ -132,12 +135,12 @@ public class SettingsActivity extends AppCompatActivity implements View.OnClickL
                 int appLanguage = qmPreferences.getInt("AppLanguage", 1);
                 if (appLanguage == 1) {
                     language = "ar";
-                    setLocale(language);
-                    languageChangeButton.setBackgroundResource(R.drawable.switch_off);
-                }else {
+                    showDialog(language);
+
+                } else {
                     language = "en";
-                    setLocale(language);
-                    languageChangeButton.setBackgroundResource(R.drawable.switch_off);
+                    showDialog(language);
+
                 }
 
                 break;
@@ -170,8 +173,11 @@ public class SettingsActivity extends AppCompatActivity implements View.OnClickL
         res.updateConfiguration(conf, dm);
         if (lang.equalsIgnoreCase("en")) {
             language = 1;
+            languageChangeButton.setBackgroundResource(R.drawable.switch_on);
         } else if (lang.equalsIgnoreCase("ar")) {
             language = 2;
+            languageChangeButton.setBackgroundResource(R.drawable.switch_off);
+
         }
         SharedPreferences qmPreferences = PreferenceManager.getDefaultSharedPreferences(this);
         SharedPreferences.Editor editor = qmPreferences.edit();
@@ -198,5 +204,41 @@ public class SettingsActivity extends AppCompatActivity implements View.OnClickL
         languageChangeButton.setOnClickListener(this);
         settingPageResetToDefaultBtn.setOnClickListener(this);
         settingPageApplyButton.setOnClickListener(this);
+    }
+
+    protected void showDialog(final String language) {
+
+        final Dialog dialog = new Dialog(this, R.style.DialogTheme);
+        dialog.setCancelable(true);
+        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+
+        View view = getLayoutInflater().inflate(R.layout.common_popup, null);
+        dialog.setContentView(view);
+        ImageView closeBtn = (ImageView) view.findViewById(R.id.close_dialog);
+        Button changeLanguageBtn = (Button) view.findViewById(R.id.doneBtn);
+        TextView dialogTitle = (TextView) view.findViewById(R.id.dialog_tittle);
+        TextView dialogContent = (TextView) view.findViewById(R.id.dialog_content);
+        dialogTitle.setText(getResources().getString(R.string.change_language_dialog_title));
+        changeLanguageBtn.setText(getResources().getString(R.string.change_language_button_text));
+        dialogContent.setText(getResources().getString(R.string.change_language_content_text));
+
+        changeLanguageBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                //Do something
+                setLocale(language);
+                dialog.dismiss();
+
+            }
+        });
+        closeBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                //Do something
+                dialog.dismiss();
+
+            }
+        });
+        dialog.show();
     }
 }
