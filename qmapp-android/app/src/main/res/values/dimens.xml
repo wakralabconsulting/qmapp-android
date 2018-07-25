@@ -34,6 +34,8 @@
     <dimen name="status_tag">16sp</dimen>
     <dimen name="name_description">12sp</dimen>
     <dimen name="padding_25">25dp</dimen>
+    <dimen name="padding_40">40dp</dimen>
+    <dimen name="padding_35">35dp</dimen>
     <dimen name="margin_50">50dp</dimen>
     <dimen name="common_popup_close_size">50dp</dimen>
     <dimen name="select_language_text_size">25sp</dimen>
