@@ -29,4 +29,7 @@
     <string name="notification_settings">Notification Settings</string>
     <string name="reset_to_default">Reset to Default</string>
     <string name="apply">Apply</string>
+    <string name="change_language_dialog_title">Change Language?</string>
+    <string name="change_language_button_text">Continue</string>
+    <string name="change_language_content_text">You will be redirected to home page, after changing the language. Do you want to continue?</string>
 </resources>
