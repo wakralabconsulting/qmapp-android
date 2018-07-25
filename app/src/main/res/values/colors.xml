@@ -16,5 +16,6 @@
     <color name="settings_switch_on_color">#39B44A</color>
     <color name="settings_switch_off_color">#EC1E24</color>
     <color name="settings_switch_track_color">#81A6D7</color>
+    <color name="event_titile_color">#ec3d89</color>
 
 </resources>

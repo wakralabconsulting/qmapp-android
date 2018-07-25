@@ -17,7 +17,7 @@ import android.view.animation.AnimationUtils;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 
-import com.qatarmuseums.qatarmuseumsapp.DetailsActivity.DetailsActivity;
+import com.qatarmuseums.qatarmuseumsapp.Calendar.CalendarActivity;
 import com.qatarmuseums.qatarmuseumsapp.R;
 import com.qatarmuseums.qatarmuseumsapp.commonactivity.CommonActivity;
 import com.qatarmuseums.qatarmuseumsapp.notification.NotificationActivity;
@@ -161,6 +161,8 @@ public class BaseActivity extends AppCompatActivity
 
             case R.id.topbar_calendar:
                 // topbar calender action
+                Intent calIntent= new Intent(getApplicationContext(), CalendarActivity.class);
+                startActivity(calIntent);
                 break;
 
             case R.id.topbar_notification:
