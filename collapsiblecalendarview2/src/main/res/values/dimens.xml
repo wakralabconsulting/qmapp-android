@@ -8,11 +8,11 @@
     <!-- day -->
     <dimen name="day_circle_width">24dp</dimen>
     <dimen name="day_circle_height">24dp</dimen>
-    <dimen name="day_circle_radius">120dp</dimen>
+    <dimen name="day_circle_radius">190dp</dimen>
     <dimen name="day_circle_stroke_width">1dp</dimen>
 
-    <dimen name="events_title_size">18sp</dimen>
-    <dimen name="events_text_size">14sp</dimen>
+    <dimen name="events_title_size">22sp</dimen>
+    <dimen name="events_text_size">10sp</dimen>
     <dimen name="padding_5">5dp</dimen>
     <dimen name="padding_10">10dp</dimen>
     <dimen name="padding_15">15dp</dimen>

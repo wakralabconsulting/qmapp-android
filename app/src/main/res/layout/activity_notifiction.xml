@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.qatarmuseums.qatarmuseumsapp.commonactivity.CommonActivity">
+    tools:context="com.qatarmuseums.qatarmuseumsapp.notification.NotificationActivity">
 
     <android.support.design.widget.AppBarLayout
         android:id="@+id/app_bar"
@@ -13,7 +13,7 @@
         android:theme="@style/AppTheme.AppBarOverlay">
 
         <android.support.v7.widget.Toolbar
-            android:id="@+id/common_toolbar"
+            android:id="@+id/notification_toolbar"
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
             android:background="@color/black"
@@ -31,19 +31,20 @@
                     android:layout_width="wrap_content"
                     android:layout_height="match_parent"
                     android:layout_centerVertical="true"
-                    android:paddingEnd="20dp"
-                    android:paddingStart="20dp"
+                    android:paddingEnd="@dimen/pading_20"
+                    android:paddingStart="@dimen/pading_20"
                     android:src="@drawable/back_button" />
 
                 <TextView
                     android:id="@+id/toolbar_title"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:layout_marginEnd="50dp"
-                    android:layout_marginStart="50dp"
+                    android:layout_marginEnd="@dimen/margin_50"
+                    android:layout_marginStart="@dimen/margin_50"
                     android:fontFamily="@font/din_regular"
                     android:gravity="center"
                     android:textAllCaps="true"
+                    android:text="@string/notifications"
                     android:textColor="@android:color/white"
                     android:textSize="@dimen/toolbar_title"
                     android:textStyle="bold" />
@@ -52,11 +53,13 @@
         </android.support.v7.widget.Toolbar>
 
     </android.support.design.widget.AppBarLayout>
+
     <android.support.v7.widget.RecyclerView
-        android:id="@+id/common_recycler_view"
+        android:id="@+id/notification_recycler_view"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_above="@id/bottom_toolbar"
+        android:layout_below="@id/app_bar"
         android:scrollbars="vertical" />
 
 </RelativeLayout>

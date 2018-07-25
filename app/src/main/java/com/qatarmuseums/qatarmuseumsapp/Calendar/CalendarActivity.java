@@ -1,12 +1,22 @@
 package com.qatarmuseums.qatarmuseumsapp.Calendar;
 
 import android.graphics.Color;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.Toolbar;
+import android.util.Log;
+import android.view.MotionEvent;
 import android.view.View;
+import android.view.ViewTreeObserver;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
+import android.widget.ImageView;
+import android.widget.TextView;
+import android.widget.Toast;
 
 import com.qatarmuseums.qatarmuseumsapp.R;
 import com.shrikanthravi.collapsiblecalendarview.widget.CollapsibleCalendar;
@@ -15,19 +25,55 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
 
+import butterknife.BindView;
+import butterknife.ButterKnife;
+
 public class CalendarActivity extends AppCompatActivity {
 
     CollapsibleCalendar collapsibleCalendar;
     RecyclerView eventListView;
     CalendarAdapter calendarAdapter;
     ArrayList<CalendarEvents> calendarEventList;
+    private Animation zoomOutAnimation;
+    @BindView(R.id.common_toolbar)
+    Toolbar toolbar;
+    @BindView(R.id.toolbar_back)
+    ImageView backArrow;
+    @BindView(R.id.toolbar_title)
+    TextView toolbar_title;
+    RecyclerView.LayoutManager layoutManager;
+    private static int firstVisibleInListview;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_calendar);
+        ButterKnife.bind(this);
+        setSupportActionBar(toolbar);
+        toolbar_title.setText(getResources().getString(R.string.calendar_activity_tittle));
         collapsibleCalendar = (CollapsibleCalendar) findViewById(R.id.collapsibleCalendarView);
         eventListView = (RecyclerView) findViewById(R.id.event_list);
+
+        zoomOutAnimation = AnimationUtils.loadAnimation(getApplicationContext(),
+                R.anim.zoom_out_more);
+        backArrow.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                switch (event.getAction()) {
+                    case MotionEvent.ACTION_DOWN:
+                        backArrow.startAnimation(zoomOutAnimation);
+                        break;
+                }
+                return false;
+            }
+        });
+
+        backArrow.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                onBackPressed();
+            }
+        });
 
         Calendar today = new GregorianCalendar();
         collapsibleCalendar.addEventTag(today.get(Calendar.YEAR),
@@ -107,11 +153,72 @@ public class CalendarActivity extends AppCompatActivity {
 
         calendarAdapter = new CalendarAdapter(getApplication(), calendarEventList);
 //        calendarAdapter=new CalendarAdapter(getApplicationContext());
-        RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(getApplication());
+        layoutManager = new LinearLayoutManager(getApplication());
         eventListView.setLayoutManager(layoutManager);
         eventListView.setItemAnimator(new DefaultItemAnimator());
         eventListView.setAdapter(calendarAdapter);
 
+//        eventListView.addOnScrollListener(new RecyclerView.OnScrollListener() {
+//            @Override
+//            public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
+//                super.onScrollStateChanged(recyclerView, newState);
+//            }
+//
+//            @Override
+//            public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
+//                super.onScrolled(recyclerView, dx, dy);
+//                Toast.makeText(getApplicationContext(),"scrolled",Toast.LENGTH_LONG).show();
+//
+//
+//            }
+//        });
+
+
+//        eventListView.getViewTreeObserver().addOnScrollChangedListener(new ViewTreeObserver.OnScrollChangedListener() {
+//            @Override
+//            public void onScrollChanged() {
+//                if (eventListView.getChildAt(0).getBottom() <= (eventListView.getHeight() + eventListView.getScrollY()))
+//                {
+//                    //scroll view is at bottom
+//                    Toast.makeText(getApplicationContext(),"End of the page",Toast.LENGTH_LONG).show();
+////                    if(isFooterSelected) {
+////                        horizontalScrollView.setVisibility(View.GONE);
+////                    collapsibleCalendar.expand(400);
+////                    }
+////
+//                } else {
+////                    //scroll view is not at bottom
+//////                    horizontalScrollView.setVisibility(View.VISIBLE);
+//                    Toast.makeText(getApplicationContext(),"top of the page",Toast.LENGTH_LONG).show();
+//
+////                    collapsibleCalendar.collapse(400);
+//                }
+//            }
+//        });
+
+
+       eventListView.addOnScrollListener(new RecyclerView.OnScrollListener() {
+           @Override
+           public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
+               super.onScrollStateChanged(recyclerView, newState);
+           }
+
+           @Override
+           public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
+               super.onScrolled(recyclerView, dx, dy);
+               if (dy > 0) {
+                   // Scrolling up
+//
+                  if(collapsibleCalendar.expanded) {
+                      collapsibleCalendar.collapse(400);
+                  }
+               } else {
+                   // Scrolling down
+                   collapsibleCalendar.expand(400);
+                   collapsibleCalendar.expanded=true;
+               }
+           }
+       });
 
     }
 }

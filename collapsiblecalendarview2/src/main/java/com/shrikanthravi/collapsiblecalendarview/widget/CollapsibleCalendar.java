@@ -7,6 +7,7 @@ package com.shrikanthravi.collapsiblecalendarview.widget;
 
 import android.content.Context;
 import android.graphics.Color;
+import android.graphics.Typeface;
 import android.os.Handler;
 import android.util.AttributeSet;
 import android.view.GestureDetector;
@@ -35,7 +36,7 @@ public class CollapsibleCalendar extends UICalendar {
     private CalendarAdapter mAdapter;
     private CalendarListener mListener;
 
-    private boolean expanded=false;
+    public boolean expanded=false;
 
     private int mInitHeight = 0;
 
@@ -99,20 +100,20 @@ public class CollapsibleCalendar extends UICalendar {
             }
         });
 
-        expandIconView.setState(ExpandIconView.MORE,true);
+//        expandIconView.setState(ExpandIconView.MORE,true);
 
 
-        expandIconView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                if(expanded){
-                    collapse(400);
-                }
-                else{
-                    expand(400);
-                }
-            }
-        });
+//        expandIconView.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View view) {
+//                if(expanded){
+//                    collapse(400);
+//                }
+//                else{
+//                    expand(400);
+//                }
+//            }
+//        });
 
         this.post(new Runnable() {
             @Override
@@ -171,6 +172,7 @@ public class CollapsibleCalendar extends UICalendar {
 //                    todays date
                     txtDay.setBackgroundDrawable(getTodayItemBackgroundDrawable());
 //                    txtDay.setBackground(getTodayItemBackgroundDrawable());
+//                    txtDay.setTextSize(16);
                     txtDay.setTextColor(getTodayItemTextColor());
 //
                 }
@@ -190,9 +192,20 @@ public class CollapsibleCalendar extends UICalendar {
             mAdapter.refresh();
 
             // reset UI
-            SimpleDateFormat dateFormat = new SimpleDateFormat("MMM yyyy");
+            SimpleDateFormat dateFormat = new SimpleDateFormat("MMMM-yyyy");
             dateFormat.setTimeZone(mAdapter.getCalendar().getTimeZone());
             mTxtTitle.setText(dateFormat.format(mAdapter.getCalendar().getTime()));
+//            Typeface face = Typeface.createFromAsset(getAssets(),
+//                    "font/din_next_lt_pro_bold.otf");
+//            mTxtTitle.setTypeface(face);
+            Typeface typeface = null;
+//            if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
+//                typeface = getResources().getFont(R.font.din_next_lt_pro_bold);
+//            }
+//            else{
+////                mTxtTitle.setTypeface(Typeface.defaultFromStyle(R.font.din_next_lt_pro_bold));
+//            }
+//            mTxtTitle.setTypeface(typeface);
             mTableHead.removeAllViews();
             mTableBody.removeAllViews();
 
@@ -215,10 +228,6 @@ public class CollapsibleCalendar extends UICalendar {
             for (int i = 0; i < 7; i++) {
                 View view = mInflater.inflate(R.layout.layout_day_of_week, null);
                 TextView txtDayOfWeek = (TextView) view.findViewById(R.id.txt_day_of_week);
-                if(dayOfWeekIds[(i + getFirstDayOfWeek()) % 7]== R.string.friday){
-
-                   txtDayOfWeek.setTextColor(Color.YELLOW);
-                }
                 txtDayOfWeek.setText(dayOfWeekIds[(i + getFirstDayOfWeek()) % 7]);
                 view.setLayoutParams(new TableRow.LayoutParams(
                         0,
@@ -486,7 +495,7 @@ public class CollapsibleCalendar extends UICalendar {
             startAnimation(anim);
         }
 
-        expandIconView.setState(ExpandIconView.MORE,true);
+//        expandIconView.setState(ExpandIconView.MORE,true);
     }
 
     private void collapseTo(int index) {
@@ -553,7 +562,7 @@ public class CollapsibleCalendar extends UICalendar {
             startAnimation(anim);
         }
 
-        expandIconView.setState(ExpandIconView.LESS,true);
+//        expandIconView.setState(ExpandIconView.LESS,true);
     }
 
     @Override

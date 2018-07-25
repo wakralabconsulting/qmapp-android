@@ -16,14 +16,16 @@ import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
-
 import com.qatarmuseums.qatarmuseumsapp.Calendar.CalendarActivity;
 import com.qatarmuseums.qatarmuseumsapp.R;
+import com.qatarmuseums.qatarmuseumsapp.notification.NotificationActivity;
+import com.qatarmuseums.qatarmuseumsapp.settings.SettingsActivity;
+
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
 public class BaseActivity extends AppCompatActivity
-        implements  View.OnClickListener {
+        implements View.OnClickListener {
     @Nullable
     @BindView(R.id.toolbar)
     Toolbar toolbar;
@@ -155,12 +157,13 @@ public class BaseActivity extends AppCompatActivity
 
             case R.id.topbar_calendar:
                 // topbar calender action
-                Intent intent= new Intent(getApplicationContext(), CalendarActivity.class);
-                startActivity(intent);
+                Intent calIntent= new Intent(getApplicationContext(), CalendarActivity.class);
+                startActivity(calIntent);
                 break;
 
             case R.id.topbar_notification:
-                // topbar notification action
+                Intent intent = new Intent(this, NotificationActivity.class);
+                startActivity(intent);
                 break;
             case R.id.topbar_profile:
                 // topbar profile action
@@ -227,6 +230,8 @@ public class BaseActivity extends AppCompatActivity
                 // navigation drawer settings action
                 topbarSidemenu.setImageDrawable(getResources().getDrawable(R.drawable.side_menu_icon));
                 drawer.closeDrawer(GravityCompat.END, false);
+                Intent settingsIntent = new Intent(this, SettingsActivity.class);
+                startActivity(settingsIntent);
                 break;
 
             default:
