@@ -7,6 +7,7 @@
     <color name="darkGray">#555555</color>
     <color name="white">#ffffff</color>
     <color name="semiTransparentForNavDrawer">#00000000</color>
+    <color name="semi_transparent_for_common_popup">#CC000000</color>
     <color name="yellow">#f2e926</color>
     <color name="grey">#aa989898</color>
     <color name="settings_reset_button_color">#EC3D89</color>
