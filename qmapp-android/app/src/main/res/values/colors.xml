@@ -10,9 +10,9 @@
     <color name="semi_transparent_for_common_popup">#CC000000</color>
     <color name="yellow">#f2e926</color>
     <color name="grey">#aa989898</color>
+    <color name="recycler_background">#CCCCCC</color>
     <color name="settings_reset_button_color">#EC3D89</color>
     <color name="settings_apply_button_color">#81A6D7</color>
-
     <color name="settings_switch_on_color">#39B44A</color>
     <color name="settings_switch_off_color">#EC1E24</color>
     <color name="settings_switch_track_color">#81A6D7</color>

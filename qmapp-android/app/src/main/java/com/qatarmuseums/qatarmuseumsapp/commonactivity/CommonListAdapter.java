@@ -2,8 +2,7 @@ package com.qatarmuseums.qatarmuseumsapp.commonactivity;
 
 
 import android.content.Context;
-import android.graphics.drawable.Drawable;
-import android.os.Build;
+import android.content.Intent;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -15,37 +14,38 @@ import android.view.animation.AnimationUtils;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.qatarmuseums.qatarmuseumsapp.DetailsActivity.DetailsActivity;
 import com.qatarmuseums.qatarmuseumsapp.R;
 import com.qatarmuseums.qatarmuseumsapp.homeactivity.GlideApp;
+import com.qatarmuseums.qatarmuseumsapp.utils.Util;
 
+import java.lang.ref.WeakReference;
 import java.util.List;
 
 public class CommonListAdapter extends RecyclerView.Adapter<CommonListAdapter.MyViewHolder> {
 
     private final Context mContext;
+    private final RecyclerTouchListener.ItemClickListener listener;
     private List<CommonModel> commonModelList;
     private Animation zoomOutAnimation;
+    Util util;
 
-    public class MyViewHolder extends RecyclerView.ViewHolder {
-        public TextView name, nameDescription, statusTag;
+    public class MyViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
+        public TextView name, dateDetails, locationDetails, statusTag;
         public ImageView imageView, favIcon;
+        private WeakReference<RecyclerTouchListener.ItemClickListener> listenerRef;
 
-        public MyViewHolder(View view) {
+        public MyViewHolder(View view, RecyclerTouchListener.ItemClickListener listener) {
             super(view);
+            listenerRef = new WeakReference<>(listener);
             imageView = (ImageView) view.findViewById(R.id.common_image_view);
             name = (TextView) view.findViewById(R.id.name_text);
-            nameDescription = (TextView) view.findViewById(R.id.name_description_text);
+            dateDetails = (TextView) view.findViewById(R.id.date_text);
+            locationDetails = (TextView) view.findViewById(R.id.location_text);
             favIcon = (ImageView) view.findViewById(R.id.favourite);
             statusTag = (TextView) view.findViewById(R.id.open_close_tag);
-            favIcon.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    if (checkImageResource(mContext, favIcon, R.drawable.heart_fill)) {
-                        favIcon.setImageResource(R.drawable.heart_empty);
-                    } else
-                        favIcon.setImageResource(R.drawable.heart_fill);
-                }
-            });
+            view.setOnClickListener(this);
+            favIcon.setOnClickListener(this);
             favIcon.setOnTouchListener(new View.OnTouchListener() {
                 @Override
                 public boolean onTouch(View v, MotionEvent event) {
@@ -60,37 +60,35 @@ public class CommonListAdapter extends RecyclerView.Adapter<CommonListAdapter.My
 
         }
 
-    }
-
-    public static boolean checkImageResource(Context ctx, ImageView imageView,
-                                             int imageResource) {
-        boolean result = false;
-
-        if (ctx != null && imageView != null && imageView.getDrawable() != null) {
-            Drawable.ConstantState constantState;
-
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                constantState = ctx.getResources()
-                        .getDrawable(imageResource, ctx.getTheme())
-                        .getConstantState();
+        @Override
+        public void onClick(View v) {
+            CommonModel model = commonModelList.get(getAdapterPosition());
+            if (v.getId() == favIcon.getId()) {
+                if (util.checkImageResource(mContext, favIcon, R.drawable.heart_fill)) {
+                    favIcon.setImageResource(R.drawable.heart_empty);
+                    model.setIsfavourite(false);
+                } else {
+                    favIcon.setImageResource(R.drawable.heart_fill);
+                    model.setIsfavourite(true);
+                }
             } else {
-                constantState = ctx.getResources().getDrawable(imageResource)
-                        .getConstantState();
+                Intent intent = new Intent(mContext, DetailsActivity.class);
+                intent.putExtra("HEADER_IMAGE", model.getImage());
+                intent.putExtra("MAIN_TITLE", model.getName());
+                intent.putExtra("IS_FAVOURITE", model.getIsfavourite());
+                mContext.startActivity(intent);
             }
-
-            if (imageView.getDrawable().getConstantState() == constantState) {
-                result = true;
-            }
+            listenerRef.get().onPositionClicked(getAdapterPosition());
         }
-
-        return result;
     }
 
-    public CommonListAdapter(Context context, List<CommonModel> commonModelList) {
+    public CommonListAdapter(Context context, List<CommonModel> commonModelList, RecyclerTouchListener.ItemClickListener listener) {
         this.commonModelList = commonModelList;
         this.mContext = context;
+        this.listener = listener;
         zoomOutAnimation = AnimationUtils.loadAnimation(mContext.getApplicationContext(),
                 R.anim.zoom_out_more);
+        util = new Util();
     }
 
     @NonNull
@@ -99,16 +97,19 @@ public class CommonListAdapter extends RecyclerView.Adapter<CommonListAdapter.My
         View itemView = LayoutInflater.from(parent.getContext())
                 .inflate(R.layout.common_list_row, parent, false);
 
-        return new MyViewHolder(itemView);
+        return new MyViewHolder(itemView, listener);
     }
 
     @Override
     public void onBindViewHolder(@NonNull CommonListAdapter.MyViewHolder holder, int position) {
         CommonModel model = commonModelList.get(position);
         holder.name.setText(model.getName());
-        if (model.getNameDescription() != null) {
-            holder.nameDescription.setVisibility(View.VISIBLE);
-            holder.nameDescription.setText(model.getNameDescription());
+        if (model.getDate() != null) {
+            holder.dateDetails.setVisibility(View.VISIBLE);
+            holder.dateDetails.setText(model.getDate());
+        } if (model.getLocation() != null) {
+            holder.locationDetails.setVisibility(View.VISIBLE);
+            holder.locationDetails.setText(model.getLocation());
         }
         if (model.getIsfavourite() != null) {
             holder.favIcon.setVisibility(View.VISIBLE);

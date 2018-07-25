@@ -14,7 +14,8 @@
         android:layout_alignParentBottom="true"
         android:background="@drawable/gradiant"
         android:gravity="center_vertical"
-        android:padding="10dp">
+        android:paddingBottom="@dimen/pading_10"
+        android:padding="@dimen/pading_15">
 
         <TextView
             android:id="@+id/name_text"
@@ -30,6 +31,8 @@
             android:id="@+id/headphone_icon"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginEnd="@dimen/padding_5dp"
+            android:layout_centerVertical="true"
             android:layout_alignParentEnd="true"
             android:src="@drawable/audio_circle" />
     </RelativeLayout>
