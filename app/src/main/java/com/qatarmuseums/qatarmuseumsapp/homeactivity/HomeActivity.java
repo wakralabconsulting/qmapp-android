@@ -76,7 +76,7 @@ public class HomeActivity extends BaseActivity {
                 HomeList homeList = homeLists.get(position);
                 if (homeList.getId().equals("61")) {
                     Intent intent = new Intent(HomeActivity.this, CommonActivity.class);
-                    intent.putExtra(getString(R.string.toolbar_title_key), "Exhibitions");
+                    intent.putExtra(getString(R.string.toolbar_title_key), getString(R.string.sidemenu_exhibition_text));
                     startActivity(intent);
                 }
             }
@@ -135,27 +135,27 @@ public class HomeActivity extends BaseActivity {
     }
 
     private void prepareRecyclerViewData() {
-        HomeList movie = new HomeList("Museum of Islamic Art (MIA)", "63",
+        HomeList movie = new HomeList(getString(R.string.home_page_mia_title), "63",
                 "http://www.qm.org.qa/sites/default/files/museum_of_islamic_art.png",
                 2, true);
         homeLists.add(movie);
-        movie = new HomeList("National Museum of Qatar", "68",
+        movie = new HomeList(getString(R.string.home_page_national_museum_title), "68",
                 "http://www.qm.org.qa/sites/default/files/national_museum_of_qatar.png",
                 2, false);
         homeLists.add(movie);
-        movie = new HomeList("Mathaf: Arab Museum of Modern Art", "66",
+        movie = new HomeList(getString(R.string.home_page_mathaf_title), "66",
                 "http://www.qm.org.qa/sites/default/files/mathaf_arab_museum.png",
                 2, false);
         homeLists.add(movie);
-        movie = new HomeList("Garage Gallery, Fire Station", "60",
+        movie = new HomeList(getString(R.string.home_page_fire_station_title), "60",
                 "http://www.qm.org.qa/sites/default/files/firestation.png",
                 2, false);
         homeLists.add(movie);
-        movie = new HomeList("Exhibition", "61",
+        movie = new HomeList(getString(R.string.home_page_exhibition_title), "61",
                 "",
                 2, false);
         homeLists.add(movie);
-        movie = new HomeList("3-2-1 Qatar Olympic and Sports Museum", "69",
+        movie = new HomeList(getString(R.string.home_page_sports_museum_title), "69",
                 "http://www.qm.org.qa/sites/default/files/qatar_olypic_sports_museum.png",
                 2, false);
         homeLists.add(movie);
