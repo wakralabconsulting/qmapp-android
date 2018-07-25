@@ -54,7 +54,7 @@ public abstract class UICalendar extends LinearLayout {
     protected ImageView mBtnNextMonth;
     protected ImageView mBtnPrevWeek;
     protected ImageView mBtnNextWeek;
-    protected ExpandIconView expandIconView;
+//    protected ExpandIconView expandIconView;
 
     // Attributes
     private boolean mShowWeek = true;
@@ -125,7 +125,7 @@ public abstract class UICalendar extends LinearLayout {
         mBtnNextMonth        = rootView.findViewById(R.id.btn_next_month);
         mBtnPrevWeek         = rootView.findViewById(R.id.btn_prev_week);
         mBtnNextWeek         = rootView.findViewById(R.id.btn_next_week);
-        expandIconView       = rootView.findViewById(R.id.expandIcon);
+//        expandIconView       = rootView.findViewById(R.id.expandIcon);
 
 
 
@@ -183,7 +183,7 @@ public abstract class UICalendar extends LinearLayout {
 
         setButtonLeftDrawableTintColor(attrs.getColor(R.styleable.UICalendar_buttonLeft_drawableTintColor,mButtonLeftDrawableTintColor));
         setButtonRightDrawableTintColor(attrs.getColor(R.styleable.UICalendar_buttonRight_drawableTintColor,mButtonRightDrawableTintColor));
-        setExpandIconColor(attrs.getColor(R.styleable.UICalendar_expandIconColor,mExpandIconColor));
+//        setExpandIconColor(attrs.getColor(R.styleable.UICalendar_expandIconColor,mExpandIconColor));
         Day selectedItem   = null;
     }
 
@@ -204,7 +204,7 @@ public abstract class UICalendar extends LinearLayout {
 
     public void setExpandIconColor(int color){
         this.mExpandIconColor = color;
-        expandIconView.setColor(color);
+//        expandIconView.setColor(color);
     }
 
     public boolean isShowWeek() {
