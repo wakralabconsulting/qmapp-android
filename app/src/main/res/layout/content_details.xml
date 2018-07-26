@@ -28,6 +28,7 @@
                 android:layout_height="wrap_content"
                 android:fontFamily="@font/din_regular"
                 android:textAlignment="center"
+                android:textAllCaps="true"
                 android:textColor="@color/black"
                 android:textSize="@dimen/font_size_18"
                 android:textStyle="bold" />
@@ -171,10 +172,23 @@
                 android:id="@+id/location_info"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_marginEnd="@dimen/text_margin"
+                android:layout_marginStart="@dimen/text_margin"
+                android:fontFamily="@font/din_next_lt_pro_regular"
+                android:textAlignment="center"
+                android:textColor="@color/black"
+                android:textSize="@dimen/font_size_15"
+                android:visibility="gone" />
+
+            <TextView
+                android:id="@+id/map_info"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
                 android:layout_marginBottom="@dimen/text_margin"
                 android:layout_marginEnd="@dimen/text_margin"
                 android:layout_marginStart="@dimen/text_margin"
                 android:fontFamily="@font/din_next_lt_pro_regular"
+                android:text="@string/open_in_google_maps"
                 android:textAlignment="center"
                 android:textColor="@color/black"
                 android:textSize="@dimen/font_size_15" />

@@ -13,8 +13,10 @@ import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.qatarmuseums.qatarmuseumsapp.R;
+import com.qatarmuseums.qatarmuseumsapp.detailsactivity.DetailsActivity;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -47,7 +49,12 @@ public class CommonActivity extends AppCompatActivity {
         mAdapter = new CommonListAdapter(this, models, new RecyclerTouchListener.ItemClickListener() {
             @Override
             public void onPositionClicked(int position) {
-                // callback performed on click
+                Intent intent = new Intent(CommonActivity.this, DetailsActivity.class);
+                intent.putExtra("HEADER_IMAGE", models.get(position).getImage());
+                intent.putExtra("MAIN_TITLE", models.get(position).getName());
+                intent.putExtra("COMING_FROM", toolbarTitle);
+                intent.putExtra("IS_FAVOURITE", models.get(position).getIsfavourite());
+                startActivity(intent);
             }
 
         });
