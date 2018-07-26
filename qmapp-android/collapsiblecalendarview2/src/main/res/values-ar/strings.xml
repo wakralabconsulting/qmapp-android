@@ -1,45 +1,5 @@
 <resources>
-    <string name="app_name">Qatar Museums</string>
 
-    <string name="navigation_drawer_open">Open navigation drawer</string>
-    <string name="navigation_drawer_close">Close navigation drawer</string>
-
-    <string name="action_settings">عربى</string>
-    <string name="title_dining">Dining</string>
-    <string name="title_gift_shop">Gift Shop</string>
-    <string name="title_culture_pass">Culture Pass</string>
-    <string name="title_more">More</string>
-    <string name="sidemenu_exhibition_text">Exhibitions</string>
-    <string name="sidemenu_events_text">Events</string>
-    <string name="sidemenu_education_text">Education</string>
-    <string name="sidemenu_tour_guide_text">Tour Guide</string>
-    <string name="sidemenu_heritage_text">Heritage Sites</string>
-    <string name="sidemenu_public_arts_text">Public Arts</string>
-    <string name="sidemenu_dining_text">Dining</string>
-    <string name="sidemenu_gift_shop_text">Gift Shop</string>
-    <string name="sidemenu_parks_text">Parks</string>
-    <string name="toolbar_title_key">TOOLBAR_TITLE</string>
-    <string name="new_open">NOW OPEN</string>
-    <string name="closed">CLOSED</string>
-    <string name="notifications">Notifications</string>
-    <string name="settings_activity_tittle">عربى</string>
-    <string name="select_language_text">Select App Language</string>
-    <string name="english">English</string>
-    <string name="arabic">عربى</string>
-    <string name="notification_settings">Notification Settings</string>
-    <string name="reset_to_default">Reset to Default</string>
-    <string name="apply">Apply</string>
-    <string name="change_language_content_text">سيتم تحويلك إلى الصفحة الرئيسية بعد تغيير اللغة، هل تريد المتابعة؟</string>
-    <string name="home_page_mia_title">متحف الفن الإ</string>
-    <string name="home_page_national_museum_title">متحف قطر الو</string>
-    <string name="home_page_mathaf_title">متحف: المتحف العربي للف</string>
-    <string name="home_page_fire_station_title">كراج جالري، م</string>
-    <string name="home_page_exhibition_title">Exhibition</string>
-    <string name="home_page_sports_museum_title">3–2–1 متحف قطر الأولمبي وا</string>
-    <string name="details_page_short_description">\"أصداء\" هو امتداد لأبحاث المفتاح حول تجميع الذكريات والقصص التي وثقتها بالصور والكتابة من ذويها ومن لقاءاتها بمحيطها فهي بمثاب</string>
-    <string name="details_page_long_description">&#160;تحاور بثينة المفتاح (المولودة عام 1987)&#160; في أعمالها قصصاً وممارسات من التراث الثقافي القطري حيث تقوم بأرشفة الذكريات الجماعية واللقاءات الشخصية باستخدام أساليب فنية مختلفة بما في ذلك الرسومات ، والطباعة، والتراكيب الفنية.\r\n\r\n\"أصداء\" هو امتداد لأبحاث المفتاح حول تجميع الذكريات والقصص التي وثقتها بالصور والكتابة من ذويها ومن لقاءاتها بمحيطها فهي بمثابة سير ذاتية جماعية ممتدة. تشير الفنانة في هذه التجربة بشكل خاص إلى التغيرات الإجتماعية والثقافية السريعة التي حدثت في محيطها&#160; في فترة قصيرة من الزمن حيث تثير المفتاح الذكريات المحلية المشتركة وتستجوب الممارسات الثقافية المحلية الحالية المتأثرة بشكل ملحوظ بالتكنولوجيا مع التركيز المتزايد على الفردية. ومن أجل تسليط الضوء على هذا الموضوع المليء بالتحدي ، تقوم الفنانة بتأطير اللعبة التقليدية \"طاق طاق طاقية\"، وتفكيك أشكالها لإعادة صياغة السرد الثقافي، ولتقديم تجربة رمزية في هذا الفضاء الذي يتقاطع فيه الماضي مع الحاضر.\r\n\r\nفي هذا المشروع التجريبي، تمنح الفنانة الأولوية للمنهجية والمعالجة الفنية. وما يزيد من التركيز على هذا، استخدام الفنانة لوسائط مختلفة في تنفيذ المشروع، كالمرايا الجدارية والأرضية القماشية، والتي من خلالها تستجوب المفتاح&#160; الإدراك المفاهيمي و القصص الجماعية القديمة في سياق&#160; الزمن المعاصر.\r\n\r\n\"طاق طاق طاقية\" هي الجملة الأولى من أغنية لعبة جماعية تقليدية للفتيان والفتيات في مختلف أرجاء منطقة الخليج ال الزمن المعاصر.\r\n\r\n\"طاق طاق طاقية\" هي الجملة الأولى من أغنية لعبة جماعية تقليدية للفتيان والفتيات في مختلف أرجاء منطقة الخليج ال</string>
-    <string name="details_page_timing_details">يستمر من ! إل</string>
-    <string name="details_page_location_details">متحف: المتحف العربي للف</string>
 
     <string name="monday">الإثْنَين</string>
     <string name="tuesday">الثَلاثاء</string>
