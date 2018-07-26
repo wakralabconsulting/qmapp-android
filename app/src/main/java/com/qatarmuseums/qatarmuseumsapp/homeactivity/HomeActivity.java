@@ -1,6 +1,8 @@
 package com.qatarmuseums.qatarmuseumsapp.homeactivity;
 
 import android.content.Intent;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
@@ -15,6 +17,7 @@ import com.qatarmuseums.qatarmuseumsapp.R;
 import com.qatarmuseums.qatarmuseumsapp.baseactivity.BaseActivity;
 import com.qatarmuseums.qatarmuseumsapp.commonactivity.CommonActivity;
 import com.qatarmuseums.qatarmuseumsapp.commonactivity.RecyclerTouchListener;
+import com.qatarmuseums.qatarmuseumsapp.utils.CustomDialogClass;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -78,6 +81,10 @@ public class HomeActivity extends BaseActivity {
                     Intent intent = new Intent(HomeActivity.this, CommonActivity.class);
                     intent.putExtra(getString(R.string.toolbar_title_key), getString(R.string.sidemenu_exhibition_text));
                     startActivity(intent);
+                } else {
+                    CustomDialogClass cdd = new CustomDialogClass(HomeActivity.this);
+                    cdd.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+                    cdd.show();
                 }
             }
 

@@ -14,7 +14,7 @@ import android.view.animation.AnimationUtils;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.qatarmuseums.qatarmuseumsapp.DetailsActivity.DetailsActivity;
+import com.qatarmuseums.qatarmuseumsapp.detailsactivity.DetailsActivity;
 import com.qatarmuseums.qatarmuseumsapp.R;
 import com.qatarmuseums.qatarmuseumsapp.homeactivity.GlideApp;
 import com.qatarmuseums.qatarmuseumsapp.utils.Util;

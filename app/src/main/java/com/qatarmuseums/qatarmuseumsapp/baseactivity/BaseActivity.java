@@ -17,7 +17,7 @@ import android.view.animation.AnimationUtils;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 
-import com.qatarmuseums.qatarmuseumsapp.Calendar.CalendarActivity;
+import com.qatarmuseums.qatarmuseumsapp.calendaractivity.CalendarActivity;
 import com.qatarmuseums.qatarmuseumsapp.R;
 import com.qatarmuseums.qatarmuseumsapp.commonactivity.CommonActivity;
 import com.qatarmuseums.qatarmuseumsapp.educationactivity.EducationActivity;
@@ -206,7 +206,9 @@ public class BaseActivity extends AppCompatActivity
                 drawer.closeDrawer(GravityCompat.END, false);
                 break;
             case R.id.sidemenu_heritage_icon:
-                // navigation drawer heritage action
+                navigation_intent = new Intent(this, CommonActivity.class);
+                navigation_intent.putExtra(getString(R.string.toolbar_title_key), getString(R.string.sidemenu_heritage_text));
+                startActivity(navigation_intent);
                 topbarSidemenu.setImageDrawable(getResources().getDrawable(R.drawable.side_menu_icon));
                 drawer.closeDrawer(GravityCompat.END, false);
                 break;
