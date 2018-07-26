@@ -31,5 +31,7 @@
     <string name="apply">Apply</string>
     <string name="change_language_dialog_title">Change Language?</string>
     <string name="change_language_button_text">Continue</string>
+    <string name="museum_about_text">About</string>
+    <string name="museum_collection_text">Collections</string>
     <string name="change_language_content_text">You will be redirected to home page, after changing the language. Do you want to continue?</string>
 </resources>

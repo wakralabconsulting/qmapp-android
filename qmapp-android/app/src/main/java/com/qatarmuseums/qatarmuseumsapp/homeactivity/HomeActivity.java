@@ -15,6 +15,7 @@ import com.qatarmuseums.qatarmuseumsapp.R;
 import com.qatarmuseums.qatarmuseumsapp.baseactivity.BaseActivity;
 import com.qatarmuseums.qatarmuseumsapp.commonactivity.CommonActivity;
 import com.qatarmuseums.qatarmuseumsapp.commonactivity.RecyclerTouchListener;
+import com.qatarmuseums.qatarmuseumsapp.museum.MuseumActivity;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -78,6 +79,10 @@ public class HomeActivity extends BaseActivity {
                     Intent intent = new Intent(HomeActivity.this, CommonActivity.class);
                     intent.putExtra(getString(R.string.toolbar_title_key), "Exhibitions");
                     startActivity(intent);
+                }
+                if (homeList.getId().equals("63")) {
+//                    Intent intent = new Intent(HomeActivity.this, MuseumActivity.class);
+//                    startActivity(intent);
                 }
             }
 
