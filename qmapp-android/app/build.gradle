@@ -32,7 +32,7 @@ dependencies {
     implementation 'com.android.support:recyclerview-v7:27.1.1'
     implementation 'com.github.bumptech.glide:glide:4.7.1'
     annotationProcessor 'com.github.bumptech.glide:compiler:4.7.1'
-//    calendar
+    //    calendar
     implementation project(':collapsiblecalendarview2')
-
+    implementation 'com.pierfrancescosoffritti.androidyoutubeplayer:core:8.0.1'
 }
