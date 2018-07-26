@@ -95,21 +95,6 @@ public class CollapsibleCalendar extends UICalendar {
             }
         });
 
-//        expandIconView.setState(ExpandIconView.MORE,true);
-
-
-//        expandIconView.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View view) {
-//                if(expanded){
-//                    collapse(400);
-//                }
-//                else{
-//                    expand(400);
-//                }
-//            }
-//        });
-
         this.post(new Runnable() {
             @Override
             public void run() {
@@ -161,14 +146,10 @@ public class CollapsibleCalendar extends UICalendar {
                 txtDay.setBackgroundColor(Color.TRANSPARENT);
                 txtDay.setTextColor(getTextColor());
 
-                // set today's item
-                if (isToady(day)) {
 //                    todays date
+                if (isToady(day)) {
                     txtDay.setBackgroundDrawable(getTodayItemBackgroundDrawable());
-//                    txtDay.setBackground(getTodayItemBackgroundDrawable());
-//                    txtDay.setTextSize(16);
                     txtDay.setTextColor(getTodayItemTextColor());
-//
                 }
 
                 // set the selected item
@@ -189,8 +170,6 @@ public class CollapsibleCalendar extends UICalendar {
             SimpleDateFormat dateFormat = new SimpleDateFormat("MMMM-yyyy");
             dateFormat.setTimeZone(mAdapter.getCalendar().getTimeZone());
 
-
-//            holder.date.setText(format);
             SharedPreferences qmPreferences = PreferenceManager.getDefaultSharedPreferences(getContext());
             int appLanguage = qmPreferences.getInt("AppLanguage", 1);
             if (appLanguage == 1) {
@@ -220,9 +199,6 @@ public class CollapsibleCalendar extends UICalendar {
                     R.string.saturday
             };
 
-//                Locale locale = new Locale("ar");
-//                SimpleDateFormat sdf = new SimpleDateFormat("EEEE",locale);
-//                String format = sdf.format(R.string.sunday);
 
 
             rowCurrent = new TableRow(mContext);
@@ -501,7 +477,6 @@ public class CollapsibleCalendar extends UICalendar {
             startAnimation(anim);
         }
 
-//        expandIconView.setState(ExpandIconView.MORE,true);
     }
 
     private void collapseTo(int index) {
