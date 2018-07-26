@@ -1,12 +1,14 @@
 package com.shrikanthravi.collapsiblecalendarview.widget;
 
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.content.res.ColorStateList;
 import android.content.res.TypedArray;
 import android.graphics.Color;
 import android.graphics.PorterDuff;
 import android.graphics.Typeface;
 import android.graphics.drawable.Drawable;
+import android.preference.PreferenceManager;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -128,7 +130,19 @@ public abstract class UICalendar extends LinearLayout {
 //        expandIconView       = rootView.findViewById(R.id.expandIcon);
 
 
-
+        SharedPreferences qmPreferences = PreferenceManager.getDefaultSharedPreferences(getContext());
+        int appLanguage = qmPreferences.getInt("AppLanguage", 1);
+        if (appLanguage == 1) {
+            mButtonLeftDrawable =
+                    getResources().getDrawable(R.drawable.left_icon);
+            mButtonRightDrawable =
+                    getResources().getDrawable(R.drawable.right_icon);
+        }else{
+            mButtonLeftDrawable =
+                    getResources().getDrawable(R.drawable.right_icon);
+            mButtonRightDrawable =
+                    getResources().getDrawable(R.drawable.left_icon);
+        }
 
     }
 
@@ -165,21 +179,22 @@ public abstract class UICalendar extends LinearLayout {
             setSelectedItemBackgroundDrawable(mSelectedItemBackgroundDrawable);
         }
 
-        Drawable buttonLeftDrawable =
-                attrs.getDrawable(R.styleable.UICalendar_buttonLeft_drawable);
-        if (buttonLeftDrawable != null) {
-            setButtonLeftDrawable(buttonLeftDrawable);
-        } else {
-            setButtonLeftDrawable(mButtonLeftDrawable);
-        }
 
-        Drawable buttonRightDrawable =
-                attrs.getDrawable(R.styleable.UICalendar_buttonRight_drawable);
-        if (buttonRightDrawable != null) {
-            setButtonRightDrawable(buttonRightDrawable);
-        } else {
-            setButtonRightDrawable(mButtonRightDrawable);
-        }
+            Drawable buttonLeftDrawable =
+                    attrs.getDrawable(R.styleable.UICalendar_buttonLeft_drawable);
+            if (buttonLeftDrawable != null) {
+                setButtonLeftDrawable(buttonLeftDrawable);
+            } else {
+                setButtonLeftDrawable(mButtonLeftDrawable);
+            }
+
+            Drawable buttonRightDrawable =
+                    attrs.getDrawable(R.styleable.UICalendar_buttonRight_drawable);
+            if (buttonRightDrawable != null) {
+                setButtonRightDrawable(buttonRightDrawable);
+            } else {
+                setButtonRightDrawable(mButtonRightDrawable);
+            }
 
         setButtonLeftDrawableTintColor(attrs.getColor(R.styleable.UICalendar_buttonLeft_drawableTintColor,mButtonLeftDrawableTintColor));
         setButtonRightDrawableTintColor(attrs.getColor(R.styleable.UICalendar_buttonRight_drawableTintColor,mButtonRightDrawableTintColor));
@@ -332,6 +347,19 @@ public abstract class UICalendar extends LinearLayout {
         this.mButtonRightDrawable = buttonRightDrawable;
         mBtnNextMonth.setImageDrawable(buttonRightDrawable);
         mBtnNextWeek.setImageDrawable(buttonRightDrawable);
+    }
+
+
+    public void setButtonLeftDrawableArabic(Drawable mButtonRightDrawable){
+        this.mButtonRightDrawable = mButtonRightDrawable;
+        mBtnNextMonth.setImageDrawable(mButtonRightDrawable);
+        mBtnNextWeek.setImageDrawable(mButtonRightDrawable);
+    }
+
+    public void setButtonRightDrawableArabic(Drawable mButtonLeftDrawable){
+        this.mButtonLeftDrawable = mButtonLeftDrawable;
+        mBtnPrevMonth.setImageDrawable(mButtonLeftDrawable);
+        mBtnPrevWeek.setImageDrawable(mButtonLeftDrawable);
     }
 
     public Day getSelectedItem() {
