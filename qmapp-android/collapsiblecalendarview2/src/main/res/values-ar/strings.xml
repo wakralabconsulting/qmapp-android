@@ -1,0 +1,12 @@
+<resources>
+
+
+    <string name="monday">الإثْنَين</string>
+    <string name="tuesday">الثَلاثاء</string>
+    <string name="wednesday">الأربَعاء </string>
+    <string name="thursday">الخَميس </string>
+    <string name="friday">الجُمُعة </string>
+    <string name="saturday">السَبْت </string>
+    <string name="sunday">الأحَد </string>
+
+</resources>

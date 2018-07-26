@@ -34,11 +34,20 @@
     <dimen name="status_tag">16sp</dimen>
     <dimen name="name_description">12sp</dimen>
     <dimen name="padding_25">25dp</dimen>
+    <dimen name="padding_40">40dp</dimen>
+    <dimen name="padding_35">35dp</dimen>
     <dimen name="margin_50">50dp</dimen>
+    <dimen name="app_bar_height">180dp</dimen>
+    <dimen name="text_margin">16dp</dimen>
+    <dimen name="padding_5dp">5dp</dimen>
+    <dimen name="font_size_18">18sp</dimen>
+    <dimen name="font_size_16">16sp</dimen>
+    <dimen name="font_size_15">15sp</dimen>
     <dimen name="common_popup_close_size">50dp</dimen>
     <dimen name="select_language_text_size">25sp</dimen>
     <dimen name="settings_text_size">18sp</dimen>
     <dimen name="settings_page_list_item_text_size">21sp</dimen>
     <dimen name="horizontal_scrollview_back_size">30dp</dimen>
-
+    <dimen name="font_size_14">14sp</dimen>
+    <dimen name="font_size_19">19sp</dimen>
 </resources>

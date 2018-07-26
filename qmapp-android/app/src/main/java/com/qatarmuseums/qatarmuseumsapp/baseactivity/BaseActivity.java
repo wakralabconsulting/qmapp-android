@@ -17,7 +17,10 @@ import android.view.animation.AnimationUtils;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 
+import com.qatarmuseums.qatarmuseumsapp.calendaractivity.CalendarActivity;
 import com.qatarmuseums.qatarmuseumsapp.R;
+import com.qatarmuseums.qatarmuseumsapp.commonactivity.CommonActivity;
+import com.qatarmuseums.qatarmuseumsapp.educationactivity.EducationActivity;
 import com.qatarmuseums.qatarmuseumsapp.notification.NotificationActivity;
 import com.qatarmuseums.qatarmuseumsapp.settings.SettingsActivity;
 
@@ -83,6 +86,7 @@ public class BaseActivity extends AppCompatActivity
     private FrameLayout fullView;
     private FrameLayout activityContainer;
     Animation fadeInAnimation, fadeOutAnimation;
+    private Intent navigation_intent;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -158,11 +162,13 @@ public class BaseActivity extends AppCompatActivity
 
             case R.id.topbar_calendar:
                 // topbar calender action
+                Intent calIntent = new Intent(getApplicationContext(), CalendarActivity.class);
+                startActivity(calIntent);
                 break;
 
             case R.id.topbar_notification:
-                Intent intent = new Intent(this, NotificationActivity.class);
-                startActivity(intent);
+                navigation_intent = new Intent(this, NotificationActivity.class);
+                startActivity(navigation_intent);
                 break;
             case R.id.topbar_profile:
                 // topbar profile action
@@ -174,7 +180,9 @@ public class BaseActivity extends AppCompatActivity
                 break;
 
             case R.id.sidemenu_exibition_icon:
-                // navigation drawer exhibition action
+                navigation_intent = new Intent(this, CommonActivity.class);
+                navigation_intent.putExtra(getString(R.string.toolbar_title_key), getString(R.string.sidemenu_exhibition_text));
+                startActivity(navigation_intent);
                 topbarSidemenu.setImageDrawable(getResources().getDrawable(R.drawable.side_menu_icon));
                 drawer.closeDrawer(GravityCompat.END, false);
                 break;
@@ -186,7 +194,8 @@ public class BaseActivity extends AppCompatActivity
                 break;
 
             case R.id.sidemenu_education_icon:
-                // navigation drawer education action
+                navigation_intent = new Intent(this, EducationActivity.class);
+                startActivity(navigation_intent);
                 topbarSidemenu.setImageDrawable(getResources().getDrawable(R.drawable.side_menu_icon));
                 drawer.closeDrawer(GravityCompat.END, false);
                 break;
@@ -197,7 +206,9 @@ public class BaseActivity extends AppCompatActivity
                 drawer.closeDrawer(GravityCompat.END, false);
                 break;
             case R.id.sidemenu_heritage_icon:
-                // navigation drawer heritage action
+                navigation_intent = new Intent(this, CommonActivity.class);
+                navigation_intent.putExtra(getString(R.string.toolbar_title_key), getString(R.string.sidemenu_heritage_text));
+                startActivity(navigation_intent);
                 topbarSidemenu.setImageDrawable(getResources().getDrawable(R.drawable.side_menu_icon));
                 drawer.closeDrawer(GravityCompat.END, false);
                 break;
