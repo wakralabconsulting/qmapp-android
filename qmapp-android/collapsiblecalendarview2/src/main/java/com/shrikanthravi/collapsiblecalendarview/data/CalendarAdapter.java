@@ -1,8 +1,10 @@
 package com.shrikanthravi.collapsiblecalendarview.data;
 
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.graphics.PorterDuff;
+import android.preference.PreferenceManager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.ImageView;
@@ -10,9 +12,11 @@ import android.widget.TextView;
 
 import com.shrikanthravi.collapsiblecalendarview.R;
 
+import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
+import java.util.Locale;
 
 /**
  * Created by shrikanthravi on 06/03/18.
@@ -22,6 +26,7 @@ public class CalendarAdapter {
     private int mFirstDayOfWeek = 0;
     private Calendar mCal;
     private LayoutInflater mInflater;
+    Context context;
 
     List<Day> mItemList = new ArrayList<>();
     List<View> mViewList = new ArrayList<>();
@@ -30,7 +35,7 @@ public class CalendarAdapter {
     public CalendarAdapter(Context context, Calendar cal) {
         this.mCal = (Calendar) cal.clone();
         this.mCal.set(Calendar.DAY_OF_MONTH, 1);
-
+         this.context=context;
         mInflater = LayoutInflater.from(context);
 
         refresh();
@@ -115,8 +120,19 @@ public class CalendarAdapter {
             View view = mInflater.inflate(R.layout.day_layout, null);
             TextView txtDay = (TextView) view.findViewById(R.id.txt_day);
             ImageView imgEventTag = (ImageView) view.findViewById(R.id.img_event_tag);
+            SharedPreferences qmPreferences = PreferenceManager.getDefaultSharedPreferences(context);
+            int appLanguage = qmPreferences.getInt("AppLanguage", 1);
+            if (appLanguage == 1) {
+//                english
+                txtDay.setText(String.valueOf(day.getDay()));
+            }
+            else {
+//                    ,"EG"
+                NumberFormat nf= NumberFormat.getInstance(new Locale("ar"));
+                nf.format(day.getDay());
+                txtDay.setText(String.valueOf(nf.format(day.getDay())));
+            }
 
-            txtDay.setText(String.valueOf(day.getDay()));
             if (day.getMonth() != mCal.get(Calendar.MONTH)) {
                 txtDay.setAlpha(0.3f);
             }
