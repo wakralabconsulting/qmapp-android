@@ -27,12 +27,15 @@
         </activity>
         <activity
             android:name=".commonactivity.CommonActivity"
-            android:theme="@style/AppTheme.NoActionBar"></activity>
+            android:theme="@style/AppTheme.NoActionBar" />
         <activity
             android:name=".notification.NotificationActivity"
-            android:theme="@style/AppTheme.NoActionBar"></activity>
-        <activity android:name=".settings.SettingsActivity"
-            android:theme="@style/AppTheme.NoActionBar"></activity>
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity
+            android:name=".settings.SettingsActivity"
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity android:name=".museum.MuseumActivity"
+            android:theme="@style/AppTheme.NoTitle"/>
     </application>
 
 </manifest>
