@@ -13,8 +13,10 @@ import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.qatarmuseums.qatarmuseumsapp.R;
+import com.qatarmuseums.qatarmuseumsapp.detailsactivity.DetailsActivity;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -28,6 +30,8 @@ public class CommonActivity extends AppCompatActivity {
     private CommonListAdapter mAdapter;
     private ImageView backArrow;
     private Animation zoomOutAnimation;
+    String toolbarTitle;
+    Intent intent;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -37,16 +41,28 @@ public class CommonActivity extends AppCompatActivity {
         setSupportActionBar(toolbar);
         toolbar_title = (TextView) findViewById(R.id.toolbar_title);
         backArrow = (ImageView) findViewById(R.id.toolbar_back);
-        Intent intent = getIntent();
-        String title = intent.getStringExtra(getString(R.string.toolbar_title_key));
-        toolbar_title.setText(title);
+        intent = getIntent();
+        toolbarTitle = intent.getStringExtra(getString(R.string.toolbar_title_key));
+        toolbar_title.setText(toolbarTitle);
         recyclerView = (RecyclerView) findViewById(R.id.common_recycler_view);
 
-        mAdapter = new CommonListAdapter(this, models);
+        mAdapter = new CommonListAdapter(this, models, new RecyclerTouchListener.ItemClickListener() {
+            @Override
+            public void onPositionClicked(int position) {
+                Intent intent = new Intent(CommonActivity.this, DetailsActivity.class);
+                intent.putExtra("HEADER_IMAGE", models.get(position).getImage());
+                intent.putExtra("MAIN_TITLE", models.get(position).getName());
+                intent.putExtra("COMING_FROM", toolbarTitle);
+                intent.putExtra("IS_FAVOURITE", models.get(position).getIsfavourite());
+                startActivity(intent);
+            }
+
+        });
         RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(getApplicationContext());
         recyclerView.setLayoutManager(mLayoutManager);
         recyclerView.setItemAnimator(new DefaultItemAnimator());
         recyclerView.setAdapter(mAdapter);
+
         backArrow.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -66,37 +82,86 @@ public class CommonActivity extends AppCompatActivity {
                 return false;
             }
         });
-
-        prepareRecyclerViewData();
+        if (toolbarTitle.equals(getString(R.string.sidemenu_exhibition_text)))
+            prepareExhibitionData();
+        else if (toolbarTitle.equals(getString(R.string.sidemenu_heritage_text)))
+            prepareHeritageData();
     }
 
-    private void prepareRecyclerViewData() {
-        CommonModel model = new CommonModel("1", "LAUNDROMAT",
-                "15 MARCH 2018 – 1 JUNE 2018\n" + "FIRE STATION ARTIST IN RESIDENCE, GARAGE GALLERY",
-                "http://www.qm.org.qa/sites/default/files/2012-photo-credit-ai-weiwei-studio-post_0.jpg",
-                true, true);
+    private void prepareExhibitionData() {
+        CommonModel model = new CommonModel("1", "Project Space 12 Bouthayna Al-Muftah: Echoes",
+                "Wednesday, July 11, 2018 - 11:45 - Monday, September 10, 2018 - 11:45",
+                "Mathaf: Arab Museum of Modern Art",
+                "",
+                null, true);
         models.add(model);
-        model = new CommonModel("1", "POWDER AND DAMASK",
-                "27TH AUGUST 2017 UNTIL 12TH MAY 2018\n" + "MUSEUM OF ISLAMIC ART",
-                "http://www.qm.org.qa/sites/default/files/styles/content_image/public/images/body/powder-damask-exhi-03.jpg",
-                true, false);
+        model = new CommonModel("2", "ARTIST IN RESIDENCE 2017-2018: DUAL INSPIRATIONS",
+                "Tuesday, July 17, 2018 - 07:45 - Monday, October 1, 2018 - 07:45",
+                "Fire Station Artist in Residence, Garage Gallery",
+                "http://www.qm.org.qa/sites/default/files/styles/mobile_design/public/air3-homepage_qm_2000x750px-02.jpg?itok=rmFs7UIN",
+                null, false);
         models.add(model);
-        model = new CommonModel("1", "CONTEMPORARY ART QATAR",
-                "9 DECEMBER 2017 – 3 JANUARY 2018\n" + "KRAFTWERK BERLIN",
-                "http://www.qm.org.qa/sites/default/files/contemporary-art-qatar-02.jpg",
-                false, false);
+        model = new CommonModel("3", "PEARLS: TREASURES FROM THE SEAS AND THE RIVERS",
+                "Wednesday, July 11, 2018 - 09:15 - Monday, October 1, 2018 - 09:15",
+                "Revolution Square 2/3, Moscow 109012",
+                "http://www.qm.org.qa/sites/default/files/styles/mobile_design/public/076-and-cover-marie-valerie-tiara.jpg?itok=PxyEnw9O",
+                null, false);
         models.add(model);
-        model = new CommonModel("1", "DRIVEN BY GERMAN DESIGN",
-                "3 OCTOBER 2017- 14 JANUARY 2018\n" + "QATAR MUSEUMS GALLERY, AL RIWAQ",
-                "http://www.qm.org.qa/sites/default/files/styles/exhibition_teaser/public/driven-by-german-design-02.png",
-                false, false);
+        model = new CommonModel("1", "LAUNDROMAT",
+                "Thursday, March 15, 2018 - 12:45 - Friday, June 1, 2018 - 12:45",
+                "Fire Station Artist in Residence, Garage Gallery",
+                "http://www.qm.org.qa/sites/default/files/styles/mobile_design/public/2012-photo-credit-ai-weiwei-studio-post_0.jpg?itok=MVxORAFa",
+                null, false);
         models.add(model);
-        model = new CommonModel("1", "TAMIM AL MAJD",
-                "20 AUGUST 2017 6:00PM\n" + "MUSEUM OF ISLAMIC ART PARK",
-                "http://www.qm.org.qa/sites/default/files/tamim-almajd-hero_0.jpg",
-                false, false);
+        model = new CommonModel("1", "Contemporary Art Qatar",
+                "Saturday, December 9, 2017 - 07:45 - Wednesday, January 3, 2018 - 07:45",
+                "KRAFTWERK BERLIN",
+                "http://www.qm.org.qa/sites/default/files/styles/mobile_design/public/contemporary-art-qatar-01.jpg?itok=F4qKDliY",
+                null, false);
         models.add(model);
 
         mAdapter.notifyDataSetChanged();
     }
+
+    private void prepareHeritageData() {
+        CommonModel model = new CommonModel("1", "Al Zubarah",
+                null,
+                null,
+                "http://www.qm.org.qa/sites/default/files/styles/mobile_design/public/hero_image/project/al-zubarah-page-site-01.jpg?itok=wcS5I03J",
+                null, true);
+        models.add(model);
+        model = new CommonModel("2", "Forts of Qatar",
+                null,
+                null,
+                "http://www.qm.org.qa/sites/default/files/styles/mobile_design/public/hero_image/project/al_zubara_fort_2.jpg?itok=3bUUyTJy",
+                null, false);
+        models.add(model);
+        model = new CommonModel("3", "Towers of Qatar",
+                null,
+                null,
+                "http://www.qm.org.qa/sites/default/files/styles/mobile_design/public/hero_image/project/heritagesites-barzantowersbyfotoarabia-11.jpg?itok=TuqhuEAA",
+                null, false);
+        models.add(model);
+        model = new CommonModel("4", "Wells of Qatar",
+                null,
+                null,
+                "http://www.qm.org.qa/sites/default/files/styles/mobile_design/public/hero_image/project/heritagesites-alkhorwellbyfotoarabia-3.jpg?itok=0Jp0UX93",
+                null, false);
+        models.add(model);
+        model = new CommonModel("4", "New life for old Qatar",
+                null,
+                null,
+                "http://www.qm.org.qa/sites/default/files/styles/mobile_design/public/hero_image/project/heritagesites-abudhaloufmosquebyfotoarabia-1.jpg?itok=FTZrKTPQ",
+                null, false);
+        models.add(model);
+        model = new CommonModel("4", "Cliffs, Carvings and Islands",
+                null,
+                null,
+                "http://www.qm.org.qa/sites/default/files/styles/mobile_design/public/hero_image/project/al_khor_island_12.jpg?itok=s0vYeuk4",
+                null, false);
+        models.add(model);
+
+        mAdapter.notifyDataSetChanged();
+    }
+
 }
