@@ -33,7 +33,6 @@
     <string name="notifications">Notifications</string>
     <string name="location_title">LOCATION</string>
     <string name="contact_title">CONTACT</string>
-    <string name="timing_text">TIMINGS</string>
     <string name="settings_activity_tittle">SETTINGS</string>
     <string name="calendar_activity_tittle">CALENDAR</string>
     <string name="select_language_text">Select App Language</string>
@@ -64,4 +63,7 @@
     <string name="coming_soon_content">We are working hard to bring the details at the tip of your fingers.\n\nStay Tuned.</string>
     <string name="coming_soon_txt">Coming Soon</string>
     <string name="close">Close</string>
+    <string name="opening_timings">OPENING TIMINGS</string>
+    <string name="exhibition_timings">EXHIBITION TIMINGS</string>
+    <string name="open_in_google_maps">Click here to open in Google Maps</string>
 </resources>
