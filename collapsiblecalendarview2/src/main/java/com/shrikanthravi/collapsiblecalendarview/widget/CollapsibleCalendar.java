@@ -210,7 +210,7 @@ public class CollapsibleCalendar extends UICalendar {
             TableRow rowCurrent;
 
             // set day of week
-            int[] dayOfWeekIds = {
+            int[]  dayOfWeekIds = new int[]{
                     R.string.sunday,
                     R.string.monday,
                     R.string.tuesday,
@@ -219,6 +219,12 @@ public class CollapsibleCalendar extends UICalendar {
                     R.string.friday,
                     R.string.saturday
             };
+
+//                Locale locale = new Locale("ar");
+//                SimpleDateFormat sdf = new SimpleDateFormat("EEEE",locale);
+//                String format = sdf.format(R.string.sunday);
+
+
             rowCurrent = new TableRow(mContext);
             rowCurrent.setLayoutParams(new TableLayout.LayoutParams(
                     ViewGroup.LayoutParams.MATCH_PARENT,
@@ -226,6 +232,8 @@ public class CollapsibleCalendar extends UICalendar {
             for (int i = 0; i < 7; i++) {
                 View view = mInflater.inflate(R.layout.layout_day_of_week, null);
                 TextView txtDayOfWeek = (TextView) view.findViewById(R.id.txt_day_of_week);
+
+                String week= String.valueOf(dayOfWeekIds[(i + getFirstDayOfWeek()) % 7]);
                 txtDayOfWeek.setText(dayOfWeekIds[(i + getFirstDayOfWeek()) % 7]);
                 view.setLayoutParams(new TableRow.LayoutParams(
                         0,

@@ -180,12 +180,6 @@ public abstract class UICalendar extends LinearLayout {
         }
 
 
-//        SharedPreferences qmPreferences = PreferenceManager.getDefaultSharedPreferences(getContext());
-//        int appLanguage = qmPreferences.getInt("AppLanguage", 1);
-//        if (appLanguage == 1) {
-////                english
-
-
             Drawable buttonLeftDrawable =
                     attrs.getDrawable(R.styleable.UICalendar_buttonLeft_drawable);
             if (buttonLeftDrawable != null) {
@@ -201,28 +195,6 @@ public abstract class UICalendar extends LinearLayout {
             } else {
                 setButtonRightDrawable(mButtonRightDrawable);
             }
-//
-//        }else{
-//            Drawable buttonLeftDrawable =
-//                    attrs.getDrawable(R.styleable.UICalendar_buttonLeft_drawable);
-//            if (buttonLeftDrawable != null) {
-//                setButtonRightDrawableArabic(buttonLeftDrawable);
-//            }
-//            else {
-//                setButtonLeftDrawable(mButtonRightDrawable);
-//            }
-//
-//            Drawable buttonRightDrawable =
-//                    attrs.getDrawable(R.styleable.UICalendar_buttonRight_drawable);
-//            if (buttonRightDrawable != null) {
-//                setButtonLeftDrawableArabic(buttonRightDrawable);
-//            }
-//            else {
-//                setButtonRightDrawable(mButtonLeftDrawable);
-//            }
-//        }
-
-
 
         setButtonLeftDrawableTintColor(attrs.getColor(R.styleable.UICalendar_buttonLeft_drawableTintColor,mButtonLeftDrawableTintColor));
         setButtonRightDrawableTintColor(attrs.getColor(R.styleable.UICalendar_buttonRight_drawableTintColor,mButtonRightDrawableTintColor));

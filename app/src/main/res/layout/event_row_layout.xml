@@ -1,12 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/layout_holder"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="vertical"
-    android:id="@+id/layout_holder"
-    android:paddingStart="@dimen/padding_5"
     android:paddingEnd="@dimen/padding_5"
-    >
+    android:paddingStart="@dimen/padding_5">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -52,8 +51,8 @@
                     android:id="@+id/event_subtitle"
                     android:layout_width="match_parent"
                     android:layout_height="0dp"
-                    android:layout_weight="7"
                     android:layout_marginBottom="@dimen/padding_3"
+                    android:layout_weight="7"
                     android:text="@string/event_text_second"
                     android:textColor="@color/event_titile_color"
                     android:textSize="@dimen/events_text_size" />
@@ -63,9 +62,9 @@
                     android:layout_width="wrap_content"
                     android:layout_height="0dp"
                     android:layout_weight="9"
-                    android:textSize="7sp"
                     android:text="@string/event_timing_text"
-                    android:textColor="@color/black" />
+                    android:textColor="@color/black"
+                    android:textSize="7sp" />
             </LinearLayout>
 
         </LinearLayout>
@@ -74,9 +73,9 @@
             android:layout_width="1dp"
             android:layout_height="wrap_content"
             android:layout_marginBottom="@dimen/padding_10"
-            android:layout_marginTop="@dimen/padding_10"
             android:layout_marginEnd="@dimen/padding_5"
             android:layout_marginStart="@dimen/padding_5"
+            android:layout_marginTop="@dimen/padding_10"
             android:background="@color/settings_switch_track_color" />
 
         <LinearLayout
@@ -91,8 +90,8 @@
                 android:id="@+id/event_detail_text"
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
-                android:layout_weight="8"
                 android:layout_marginTop="@dimen/padding_10"
+                android:layout_weight="8"
                 android:fontFamily="@font/din_next_lt_pro_light"
                 android:text="@string/event_detail_text"
                 android:textColor="@color/black"
@@ -108,13 +107,13 @@
                 android:gravity="end"
                 android:text="@string/view_details"
                 android:textColor="@color/black" />
-            <View
-                android:layout_width="45dp"
-                android:layout_height="1dp"
-                android:layout_gravity="end"
-                android:layout_marginBottom="@dimen/padding_2"
-                android:background="@color/darkGray"
-                />
+
+            <!--<View-->
+                <!--android:layout_width="45dp"-->
+                <!--android:layout_height="1dp"-->
+                <!--android:layout_gravity="end"-->
+                <!--android:layout_marginBottom="@dimen/padding_2"-->
+                <!--android:background="@color/darkGray" />-->
 
         </LinearLayout>
     </LinearLayout>
