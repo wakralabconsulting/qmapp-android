@@ -13,7 +13,7 @@ import com.qatarmuseums.qatarmuseumsapp.R;
 public class CustomDialogClass extends Dialog implements
         android.view.View.OnClickListener {
 
-    public Activity c;
+    public Activity context;
     public Dialog d;
     public Button closeButton, no;
     TextView dialogTitle, dialogContent;
@@ -21,7 +21,7 @@ public class CustomDialogClass extends Dialog implements
     public CustomDialogClass(Activity a) {
         super(a);
         // TODO Auto-generated constructor stub
-        this.c = a;
+        this.context = a;
     }
 
     @Override
@@ -32,11 +32,10 @@ public class CustomDialogClass extends Dialog implements
         closeButton = (Button) findViewById(R.id.close_btn);
         dialogTitle = (TextView) findViewById(R.id.dialog_tittle);
         dialogContent = (TextView) findViewById(R.id.dialog_content);
-        dialogTitle.setText(c.getResources().getString(R.string.coming_soon_txt));
-        dialogContent.setText(c.getResources().getString(R.string.coming_soon_content));
-        closeButton.setText(c.getResources().getString(R.string.close));
+        dialogTitle.setText(context.getResources().getString(R.string.coming_soon_txt));
+        dialogContent.setText(context.getResources().getString(R.string.coming_soon_content));
+        closeButton.setText(context.getResources().getString(R.string.close));
         closeButton.setOnClickListener(this);
-
     }
 
     @Override
