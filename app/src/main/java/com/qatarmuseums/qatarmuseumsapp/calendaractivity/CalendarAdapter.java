@@ -59,7 +59,7 @@ public class CalendarAdapter extends RecyclerView.Adapter<CalendarAdapter.Calend
         } else {
             holder.layoutHolder.setBackgroundColor(Color.parseColor("#FFf2f2f2"));
         }
-        holder.viewDetails.setOnClickListener(new View.OnClickListener() {
+        holder.layoutHolder.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 showDialog(holder.eventDetails.getText().toString());

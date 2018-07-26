@@ -6,12 +6,11 @@ package com.shrikanthravi.collapsiblecalendarview.widget;
 
 
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.graphics.Color;
-import android.graphics.Typeface;
 import android.os.Handler;
+import android.preference.PreferenceManager;
 import android.util.AttributeSet;
-import android.view.GestureDetector;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.Animation;
@@ -21,22 +20,21 @@ import android.widget.TableLayout;
 import android.widget.TableRow;
 import android.widget.TextView;
 
-
 import com.shrikanthravi.collapsiblecalendarview.R;
 import com.shrikanthravi.collapsiblecalendarview.data.CalendarAdapter;
 import com.shrikanthravi.collapsiblecalendarview.data.Day;
 import com.shrikanthravi.collapsiblecalendarview.data.Event;
-import com.shrikanthravi.collapsiblecalendarview.view.ExpandIconView;
 
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.util.Locale;
 
 public class CollapsibleCalendar extends UICalendar {
 
     private CalendarAdapter mAdapter;
     private CalendarListener mListener;
 
-    public boolean expanded=false;
+    public boolean expanded = false;
 
     private int mInitHeight = 0;
 
@@ -62,12 +60,9 @@ public class CollapsibleCalendar extends UICalendar {
         super.init(context);
 
 
-
-            Calendar cal = Calendar.getInstance();
-            CalendarAdapter adapter = new CalendarAdapter(context, cal);
-            setAdapter(adapter);
-
-
+        Calendar cal = Calendar.getInstance();
+        CalendarAdapter adapter = new CalendarAdapter(context, cal);
+        setAdapter(adapter);
 
 
         // bind events
@@ -100,21 +95,6 @@ public class CollapsibleCalendar extends UICalendar {
             }
         });
 
-//        expandIconView.setState(ExpandIconView.MORE,true);
-
-
-//        expandIconView.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View view) {
-//                if(expanded){
-//                    collapse(400);
-//                }
-//                else{
-//                    expand(400);
-//                }
-//            }
-//        });
-
         this.post(new Runnable() {
             @Override
             public void run() {
@@ -122,7 +102,6 @@ public class CollapsibleCalendar extends UICalendar {
                 expand(400);
             }
         });
-
 
 
     }
@@ -167,14 +146,10 @@ public class CollapsibleCalendar extends UICalendar {
                 txtDay.setBackgroundColor(Color.TRANSPARENT);
                 txtDay.setTextColor(getTextColor());
 
-                // set today's item
-                if (isToady(day)) {
 //                    todays date
+                if (isToady(day)) {
                     txtDay.setBackgroundDrawable(getTodayItemBackgroundDrawable());
-//                    txtDay.setBackground(getTodayItemBackgroundDrawable());
-//                    txtDay.setTextSize(16);
                     txtDay.setTextColor(getTodayItemTextColor());
-//
                 }
 
                 // set the selected item
@@ -194,25 +169,27 @@ public class CollapsibleCalendar extends UICalendar {
             // reset UI
             SimpleDateFormat dateFormat = new SimpleDateFormat("MMMM-yyyy");
             dateFormat.setTimeZone(mAdapter.getCalendar().getTimeZone());
-            mTxtTitle.setText(dateFormat.format(mAdapter.getCalendar().getTime()));
-//            Typeface face = Typeface.createFromAsset(getAssets(),
-//                    "font/din_next_lt_pro_bold.otf");
-//            mTxtTitle.setTypeface(face);
-            Typeface typeface = null;
-//            if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
-//                typeface = getResources().getFont(R.font.din_next_lt_pro_bold);
-//            }
-//            else{
-////                mTxtTitle.setTypeface(Typeface.defaultFromStyle(R.font.din_next_lt_pro_bold));
-//            }
-//            mTxtTitle.setTypeface(typeface);
+
+            SharedPreferences qmPreferences = PreferenceManager.getDefaultSharedPreferences(getContext());
+            int appLanguage = qmPreferences.getInt("AppLanguage", 1);
+            if (appLanguage == 1) {
+//                english
+                mTxtTitle.setText(dateFormat.format(mAdapter.getCalendar().getTime()));
+            } else {
+                Locale locale = new Locale("ar");
+                SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MMMM", locale);
+                String format = sdf.format(mAdapter.getCalendar().getTime());
+                mTxtTitle.setText(format);
+            }
+
+
             mTableHead.removeAllViews();
             mTableBody.removeAllViews();
 
             TableRow rowCurrent;
 
             // set day of week
-            int[] dayOfWeekIds = {
+            int[]  dayOfWeekIds = new int[]{
                     R.string.sunday,
                     R.string.monday,
                     R.string.tuesday,
@@ -221,6 +198,9 @@ public class CollapsibleCalendar extends UICalendar {
                     R.string.friday,
                     R.string.saturday
             };
+
+
+
             rowCurrent = new TableRow(mContext);
             rowCurrent.setLayoutParams(new TableLayout.LayoutParams(
                     ViewGroup.LayoutParams.MATCH_PARENT,
@@ -228,6 +208,8 @@ public class CollapsibleCalendar extends UICalendar {
             for (int i = 0; i < 7; i++) {
                 View view = mInflater.inflate(R.layout.layout_day_of_week, null);
                 TextView txtDayOfWeek = (TextView) view.findViewById(R.id.txt_day_of_week);
+
+                String week= String.valueOf(dayOfWeekIds[(i + getFirstDayOfWeek()) % 7]);
                 txtDayOfWeek.setText(dayOfWeekIds[(i + getFirstDayOfWeek()) % 7]);
                 view.setLayoutParams(new TableRow.LayoutParams(
                         0,
@@ -324,13 +306,13 @@ public class CollapsibleCalendar extends UICalendar {
     }
 
     public void addEventTag(int numYear, int numMonth, int numDay) {
-        mAdapter.addEvent(new Event(numYear, numMonth, numDay,getEventColor()));
+        mAdapter.addEvent(new Event(numYear, numMonth, numDay, getEventColor()));
 
         reload();
     }
 
-    public void addEventTag(int numYear, int numMonth, int numDay,int color) {
-        mAdapter.addEvent(new Event(numYear, numMonth, numDay,color));
+    public void addEventTag(int numYear, int numMonth, int numDay, int color) {
+        mAdapter.addEvent(new Event(numYear, numMonth, numDay, color));
 
         reload();
     }
@@ -390,14 +372,14 @@ public class CollapsibleCalendar extends UICalendar {
     }
 
     public Day getSelectedDay() {
-        if (getSelectedItem()==null){
+        if (getSelectedItem() == null) {
             Calendar cal = Calendar.getInstance();
             int day = cal.get(Calendar.DAY_OF_MONTH);
             int month = cal.get(Calendar.MONTH);
             int year = cal.get(Calendar.YEAR);
             return new Day(
                     year,
-                    month+1,
+                    month + 1,
                     day);
         }
         return new Day(
@@ -495,7 +477,6 @@ public class CollapsibleCalendar extends UICalendar {
             startAnimation(anim);
         }
 
-//        expandIconView.setState(ExpandIconView.MORE,true);
     }
 
     private void collapseTo(int index) {
@@ -568,10 +549,10 @@ public class CollapsibleCalendar extends UICalendar {
     @Override
     public void setState(int state) {
         super.setState(state);
-        if(state == STATE_COLLAPSED) {
+        if (state == STATE_COLLAPSED) {
             expanded = false;
         }
-        if(state == STATE_EXPANDED) {
+        if (state == STATE_EXPANDED) {
             expanded = true;
         }
     }
@@ -617,7 +598,6 @@ public class CollapsibleCalendar extends UICalendar {
         // triggered when the week position are changed.
         void onWeekChange(int position);
     }
-
 
 
 }
