@@ -1,4 +1,4 @@
-package com.qatarmuseums.qatarmuseumsapp.Calendar;
+package com.qatarmuseums.qatarmuseumsapp.calendaractivity;
 
 import android.graphics.Color;
 import android.os.Bundle;

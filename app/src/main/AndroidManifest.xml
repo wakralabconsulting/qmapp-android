@@ -31,13 +31,13 @@
             android:name=".commonactivity.CommonActivity"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
-            android:name=".Calendar.CalendarActivity"
+            android:name=".calendaractivity.CalendarActivity"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
             android:name=".notification.NotificationActivity"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
-            android:name=".DetailsActivity.DetailsActivity"
+            android:name=".detailsactivity.DetailsActivity"
             android:label=""
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
@@ -45,7 +45,7 @@
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
             android:name=".educationactivity.EducationActivity"
-            android:configChanges="orientation|keyboardHidden|smallestScreenSize|screenLayout"
+            android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar" />
     </application>
 

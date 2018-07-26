@@ -1,4 +1,4 @@
-package com.qatarmuseums.qatarmuseumsapp.Calendar;
+package com.qatarmuseums.qatarmuseumsapp.calendaractivity;
 
 /**
  * Created by MoongedePC on 23-Jul-18.
