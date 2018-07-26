@@ -2,6 +2,7 @@ package com.qatarmuseums.qatarmuseumsapp.detailsactivity;
 
 import android.annotation.SuppressLint;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.design.widget.AppBarLayout;
 import android.support.v7.app.AppCompatActivity;
@@ -25,11 +26,11 @@ public class DetailsActivity extends AppCompatActivity implements IPullZoom {
 
     ImageView headerImageView, toolbarClose, favIcon, shareIcon;
     String headerImage;
-    String mainTitle;
+    String mainTitle, comingFrom;
     boolean isFavourite;
     Toolbar toolbar;
     TextView title, subTitle, shortDescription, longDescription, secondTitle, secondTitleDescription,
-            timingTitle, timingDetails, locationDetails, contactDetails;
+            timingTitle, timingDetails, locationDetails, mapDetails, contactDetails;
     private Util util;
     private Animation zoomOutAnimation;
     private PullToZoomCoordinatorLayout coordinatorLayout;
@@ -37,6 +38,7 @@ public class DetailsActivity extends AppCompatActivity implements IPullZoom {
     private AppBarLayout appBarLayout;
     private int headerOffSetSize;
     private LinearLayout secondTitleLayout, timingLayout, contactLayout;
+    private String latitude, longitude;
 
     @SuppressLint("ClickableViewAccessibility")
     @Override
@@ -56,6 +58,7 @@ public class DetailsActivity extends AppCompatActivity implements IPullZoom {
         timingTitle = (TextView) findViewById(R.id.timing_title);
         timingDetails = (TextView) findViewById(R.id.timing_info);
         locationDetails = (TextView) findViewById(R.id.location_info);
+        mapDetails = (TextView) findViewById(R.id.map_info);
         contactDetails = (TextView) findViewById(R.id.contact_info);
         favIcon = (ImageView) findViewById(R.id.favourite);
         shareIcon = (ImageView) findViewById(R.id.share);
@@ -66,6 +69,7 @@ public class DetailsActivity extends AppCompatActivity implements IPullZoom {
         Intent intent = getIntent();
         headerImage = intent.getStringExtra("HEADER_IMAGE");
         mainTitle = intent.getStringExtra("MAIN_TITLE");
+        comingFrom = intent.getStringExtra("COMING_FROM");
         isFavourite = intent.getBooleanExtra("IS_FAVOURITE", false);
         GlideApp.with(this)
                 .load(headerImage)
@@ -73,6 +77,32 @@ public class DetailsActivity extends AppCompatActivity implements IPullZoom {
                 .placeholder(R.drawable.placeholdeer)
                 .into(headerImageView);
         title.setText(mainTitle);
+        if (comingFrom.equals(getString(R.string.sidemenu_exhibition_text))) {
+            timingTitle.setText(R.string.exhibition_timings);
+            loadData(null, getString(R.string.details_page_short_description),
+                    getString(R.string.details_page_long_description),
+                    null, null, getString(R.string.details_page_timing_details),
+                    getString(R.string.details_page_location_details), "info@mia.org.qa");
+        } else if (comingFrom.equals(getString(R.string.sidemenu_heritage_text))) {
+            timingTitle.setText(R.string.opening_timings);
+            loadData("A UNESCO WORLD HERITAGE SITE", getString(R.string.details_page_short_description),
+                    getString(R.string.details_page_long_description),
+                    "A WORLD HERITAGE SITE", "Once a thriving port bustling with fishermen and merchants, the town of Al Zubarah was designated a protected area in 2009. Since then, Qatar Museums has led teams of archaeologists and scientists to investigate the site. Through their research and engagement with local communities, they are documenting and shedding light on the rise and fall of this unique area.\n" +
+                            "\n" +
+                            "In 2013 the World Heritage Committee inscribed Al Zubarah Archaeological Site into the UNESCO World Heritage List. The site includes three major features, the largest of which are the archaeological remains of the town, dating back to the 1760s. Connected to it is the settlement of Qal’at Murair, which was fortified to protect the city’s inland wells. Al Zubarah Fort was built in 1938 and is the youngest, most prominent feature at the site.",
+                    getString(R.string.details_page_timing_details),
+                    null, "info@mia.org.qa");
+        }
+        latitude = "25.3154649";
+        longitude = "51.4779437";
+        mapDetails.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                String geoUri = "http://maps.google.com/maps?q=loc:" + latitude + "," + longitude + " (" + mainTitle + ")";
+                Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(geoUri));
+                startActivity(intent);
+            }
+        });
         if (isFavourite)
             favIcon.setImageResource(R.drawable.heart_fill);
         else
@@ -93,16 +123,11 @@ public class DetailsActivity extends AppCompatActivity implements IPullZoom {
                     favIcon.setImageResource(R.drawable.heart_fill);
             }
         });
+
         zoomOutAnimation = AnimationUtils.loadAnimation(getApplicationContext(),
                 R.anim.zoom_out_more);
 
         initViews();
-        loadData(null, getString(R.string.details_page_short_description),
-                getString(R.string.details_page_long_description),
-                null, null, "EXHIBITION",
-                getString(R.string.details_page_timing_details),
-                getString(R.string.details_page_location_details),
-                "info@mia.org.qa");
         toolbarClose.setOnTouchListener(new View.OnTouchListener() {
             @Override
             public boolean onTouch(View v, MotionEvent event) {
@@ -169,7 +194,7 @@ public class DetailsActivity extends AppCompatActivity implements IPullZoom {
     }
 
     public void loadData(String subTitle, String shortDescription, String longDescription,
-                         String secondTitle, String secondTitleDescription, String timingTitle, String timingInfo,
+                         String secondTitle, String secondTitleDescription, String timingInfo,
                          String locationInfo, String contactInfo) {
         this.title.setText(mainTitle);
         if (subTitle != null) {
@@ -183,12 +208,14 @@ public class DetailsActivity extends AppCompatActivity implements IPullZoom {
             this.secondTitle.setText(secondTitle);
             this.secondTitleDescription.setText(secondTitleDescription);
         }
-        if (timingTitle != null) {
+        if (timingInfo != null) {
             this.timingLayout.setVisibility(View.VISIBLE);
-            this.timingTitle.setText(timingTitle + " " + getString(R.string.timing_text));
             this.timingDetails.setText(timingInfo);
         }
-        this.locationDetails.setText(locationInfo);
+        if (locationInfo != null) {
+            this.locationDetails.setVisibility(View.VISIBLE);
+            this.locationDetails.setText(locationInfo);
+        }
         if (contactInfo != null) {
             this.contactLayout.setVisibility(View.VISIBLE);
             this.contactDetails.setText(contactInfo);
