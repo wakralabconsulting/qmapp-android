@@ -1,4 +1,4 @@
-package com.qatarmuseums.qatarmuseumsapp.DetailsActivity;
+package com.qatarmuseums.qatarmuseumsapp.detailsactivity;
 
 import android.annotation.SuppressLint;
 import android.content.Intent;

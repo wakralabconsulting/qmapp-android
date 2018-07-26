@@ -1,4 +1,4 @@
-package com.qatarmuseums.qatarmuseumsapp.Calendar;
+package com.qatarmuseums.qatarmuseumsapp.calendaractivity;
 
 import android.app.Dialog;
 import android.content.ContentResolver;
@@ -21,7 +21,6 @@ import android.widget.Toast;
 
 import com.qatarmuseums.qatarmuseumsapp.R;
 
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.TimeZone;
