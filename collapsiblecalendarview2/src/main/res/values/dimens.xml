@@ -13,6 +13,8 @@
 
     <dimen name="events_title_size">22sp</dimen>
     <dimen name="events_text_size">10sp</dimen>
+    <dimen name="text_size_11">11sp</dimen>
+    <dimen name="text_size_9">9sp</dimen>
     <dimen name="padding_2">2dp</dimen>
     <dimen name="padding_3">3dp</dimen>
     <dimen name="padding_5">5dp</dimen>

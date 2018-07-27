@@ -13,6 +13,7 @@
         android:layout_marginTop="@dimen/pading_25"
         android:fontFamily="@font/din_next_lt_pro_bold"
         android:textAlignment="center"
+        android:visibility="visible"
         android:textColor="@color/black"
         android:textSize="@dimen/select_language_text_size" />
 
@@ -28,8 +29,8 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="@dimen/pading_25"
-        android:paddingEnd="@dimen/pading_5"
-        android:paddingStart="@dimen/pading_5"
+        android:layout_marginEnd="@dimen/pading_15"
+        android:layout_marginStart="@dimen/pading_15"
         android:textColor="@color/black"
         android:textAlignment="center"
         android:textSize="@dimen/settings_text_size" />
@@ -43,6 +44,18 @@
         android:background="@drawable/round_corner_skyblue"
         android:fontFamily="@font/din_next_lt_pro_bold"
         android:textAllCaps="false"
+        android:visibility="visible"
+        android:textColor="@color/black"
+        android:textSize="@dimen/settings_page_list_item_text_size" />
+    <Button
+        android:id="@+id/calendar_close_btn"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="@dimen/pading_25"
+        android:background="@drawable/round_corner_skyblue"
+        android:fontFamily="@font/din_next_lt_pro_bold"
+        android:textAllCaps="false"
+        android:visibility="gone"
         android:textColor="@color/black"
         android:textSize="@dimen/settings_page_list_item_text_size" />
 
