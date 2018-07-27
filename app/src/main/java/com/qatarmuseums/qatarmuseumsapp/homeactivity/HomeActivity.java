@@ -86,7 +86,9 @@ public class HomeActivity extends BaseActivity {
                     intent.putExtra(getString(R.string.toolbar_title_key), getString(R.string.sidemenu_exhibition_text));
                     startActivity(intent);
                 } else {
-                    CustomDialogClass cdd = new CustomDialogClass(HomeActivity.this);
+                    CustomDialogClass cdd = new CustomDialogClass(HomeActivity.this
+                            ,getResources().getString(R.string.coming_soon_txt)
+                            ,getResources().getString(R.string.coming_soon_content));
                     cdd.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
                     cdd.show();
                 }

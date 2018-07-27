@@ -11,8 +11,8 @@
         android:layout_width="match_parent"
         android:layout_height="90dp"
         android:orientation="horizontal"
-        android:paddingEnd="@dimen/padding_20"
-        android:paddingStart="@dimen/padding_20"
+        android:paddingEnd="@dimen/padding_10"
+        android:paddingStart="@dimen/padding_10"
         android:weightSum="12">
 
         <LinearLayout
@@ -24,49 +24,46 @@
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
+                android:layout_marginTop="@dimen/padding_15"
                 android:orientation="vertical"
                 android:padding="@dimen/padding_5"
-                android:weightSum="20">
+                android:weightSum="9">
 
                 <TextView
                     android:id="@+id/event_title"
                     android:layout_width="wrap_content"
                     android:layout_height="0dp"
                     android:layout_weight="3"
-                    android:text="@string/event_text_first"
                     android:gravity="start"
-                    android:textColor="@color/event_titile_color"
-                    android:textSize="@dimen/events_text_size" />
+                    android:text="@string/event_text_first"
+                    android:textColor="@color/black"
+                    android:textSize="@dimen/text_size_11"
+                    android:textStyle="bold" />
 
                 <TextView
                     android:id="@+id/event_hiphen"
                     android:layout_width="wrap_content"
                     android:layout_height="0dp"
-                    android:layout_weight="1"
+                    android:layout_weight="3"
                     android:gravity="start"
                     android:text="@string/hiphen"
-                    android:textColor="@color/event_titile_color"
-                    android:textSize="@dimen/events_text_size" />
+                    android:textColor="@color/black"
+                    android:textSize="@dimen/text_size_11"
+                    android:textStyle="bold" />
 
                 <TextView
                     android:id="@+id/event_subtitle"
                     android:layout_width="wrap_content"
                     android:layout_height="0dp"
                     android:layout_marginBottom="@dimen/padding_3"
+                    android:layout_weight="3"
                     android:gravity="start"
-                    android:layout_weight="7"
                     android:text="@string/event_text_second"
-                    android:textColor="@color/event_titile_color"
-                    android:textSize="@dimen/events_text_size" />
-
-                <TextView
-                    android:id="@+id/event_timing"
-                    android:layout_width="wrap_content"
-                    android:layout_height="0dp"
-                    android:layout_weight="9"
-                    android:text="@string/event_timing_text"
                     android:textColor="@color/black"
-                    android:textSize="7sp" />
+                    android:textSize="@dimen/text_size_11"
+                    android:textStyle="bold" />
+
+
             </LinearLayout>
 
         </LinearLayout>
@@ -78,7 +75,7 @@
             android:layout_marginEnd="@dimen/padding_5"
             android:layout_marginStart="@dimen/padding_5"
             android:layout_marginTop="@dimen/padding_10"
-            android:background="@color/settings_switch_track_color" />
+            android:background="@color/black" />
 
         <LinearLayout
             android:layout_width="0dp"
@@ -86,19 +83,30 @@
             android:layout_weight="7"
             android:orientation="vertical"
             android:padding="@dimen/padding_5"
-            android:weightSum="10">
+            android:weightSum="9">
 
             <TextView
-                android:id="@+id/event_detail_text"
+                android:id="@+id/event_timing"
                 android:layout_width="wrap_content"
                 android:layout_height="0dp"
                 android:layout_marginTop="@dimen/padding_10"
-                android:layout_weight="8"
-                android:gravity="start"
+                android:layout_weight="3"
                 android:fontFamily="@font/din_next_lt_pro_light"
-                android:text="@string/event_detail_text"
+                android:gravity="start"
+                android:text="@string/event_timing_text"
                 android:textColor="@color/black"
-                android:textSize="8sp" />
+                android:textSize="@dimen/text_size_9" />
+
+            <TextView
+                android:id="@+id/event_max_size"
+                android:layout_width="wrap_content"
+                android:layout_height="0dp"
+                android:layout_weight="4"
+                android:fontFamily="@font/din_next_lt_pro_light"
+                android:gravity="start"
+                android:text="@string/education_event_size"
+                android:textColor="@color/black"
+                android:textSize="@dimen/text_size_9" />
 
             <TextView
                 android:id="@+id/event_view_details"
@@ -106,10 +114,10 @@
                 android:layout_height="0dp"
                 android:layout_gravity="end"
                 android:layout_weight="2"
-                android:textSize="8sp"
                 android:gravity="end"
                 android:text="@string/view_details"
-                android:textColor="@color/black" />
+                android:textColor="@color/black"
+                android:textSize="8sp" />
 
 
         </LinearLayout>
