@@ -47,6 +47,8 @@
             android:name=".educationactivity.EducationActivity"
             android:configChanges="orientation|keyboardHidden|smallestScreenSize|screenLayout"
             android:theme="@style/AppTheme.NoActionBar" />
+        <activity android:name=".educationactivity.EducationCalendarActivity"
+            android:theme="@style/AppTheme.NoActionBar"></activity>
     </application>
 
 </manifest>
