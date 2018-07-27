@@ -7,12 +7,19 @@
     <string name="hiphen"> - </string>
     <string name="event_text_second">SCHOOL GUIDED VISITS</string>
     <string name="timings">Timings :</string>
+    <string name="education_event_size">Max. size group 25</string>
     <string name="event_timing_text">Timings: 8:30 am
     11:30 am (last entry 10:50)</string>
+    <string name="event_max_number">Max. group size 25</string>
     <string name="event_detail_text">Nestled in the heart of the MIA is Alain
         Ducasse\'s first restaurant in the Middle East \'Idam\' means \'generosity\'and each dish is a</string>
+    <string name="education_detail">MIA in association with UCLQ are delighted welcome Prof. Dr. Efim Rezvan,
+        Editor-in-Chief of Manuscripta Orientalia the International Journal for Oriental Manuscripts Research
+        and Deputy Director of Kunstkamera Museum (Saint-Petersburg, Russia)
+        to give a lecture on the life of the MIA manuscript MS 248</string>
     <string name="view_details"><u>View Details</u></string>
-    <string name="events">Events</string>
+    <string name="events">EVENTS</string>
+    <string name="details">DETAILS</string>
     <string name="action_settings">Settings</string>
     <string name="title_dining">Dining</string>
     <string name="title_gift_shop">Gift Shop</string>
@@ -36,6 +43,7 @@
     <string name="timing_text">TIMINGS</string>
     <string name="settings_activity_tittle">SETTINGS</string>
     <string name="calendar_activity_tittle">CALENDAR</string>
+    <string name="education_calendar_activity_tittle">EDUCATION CALENDAR</string>
     <string name="select_language_text">Select App Language</string>
     <string name="english">English</string>
     <string name="arabic">عربى</string>
@@ -43,6 +51,7 @@
     <string name="reset_to_default">Reset to Default</string>
     <string name="apply">Apply</string>
     <string name="add_to_calendar">Add To Calendar</string>
+    <string name="register_now">Register Now</string>
     <string name="calendar_dialog_title">Event Name</string>
     <string name="change_language_dialog_title">Change Language?</string>
     <string name="change_language_button_text">Continue</string>

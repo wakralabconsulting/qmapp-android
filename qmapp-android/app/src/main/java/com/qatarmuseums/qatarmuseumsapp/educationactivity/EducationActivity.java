@@ -1,5 +1,6 @@
 package com.qatarmuseums.qatarmuseumsapp.educationactivity;
 
+import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.content.res.Configuration;
 import android.graphics.drawable.Drawable;
@@ -51,6 +52,8 @@ public class EducationActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 //Discover button action
+                Intent intent=new Intent(EducationActivity.this,EducationCalendarActivity.class);
+                startActivity(intent);
             }
         });
         zoomOutAnimation = AnimationUtils.loadAnimation(getApplicationContext(),
