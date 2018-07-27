@@ -82,7 +82,7 @@ public class DetailsActivity extends AppCompatActivity implements IPullZoom {
             loadData(null, getString(R.string.details_page_short_description),
                     getString(R.string.details_page_long_description),
                     null, null, getString(R.string.details_page_timing_details),
-                    getString(R.string.details_page_location_details), "info@mia.org.qa");
+                    getString(R.string.details_page_location_details), getString(R.string.contact_mail));
         } else if (comingFrom.equals(getString(R.string.sidemenu_heritage_text))) {
             timingTitle.setText(R.string.opening_timings);
             loadData("A UNESCO WORLD HERITAGE SITE", getString(R.string.details_page_short_description),
@@ -91,7 +91,15 @@ public class DetailsActivity extends AppCompatActivity implements IPullZoom {
                             "\n" +
                             "In 2013 the World Heritage Committee inscribed Al Zubarah Archaeological Site into the UNESCO World Heritage List. The site includes three major features, the largest of which are the archaeological remains of the town, dating back to the 1760s. Connected to it is the settlement of Qal’at Murair, which was fortified to protect the city’s inland wells. Al Zubarah Fort was built in 1938 and is the youngest, most prominent feature at the site.",
                     getString(R.string.details_page_timing_details),
-                    null, "info@mia.org.qa");
+                    null, getString(R.string.contact_mail));
+        } else if (comingFrom.equals(getString(R.string.sidemenu_public_arts_text))) {
+            loadData("AN ARRESTING INSTALLATION", getString(R.string.details_page_short_description),
+                    getString(R.string.details_page_long_description),
+                    "A WORLD HERITAGE SITE", "Once a thriving port bustling with fishermen and merchants, the town of Al Zubarah was designated a protected area in 2009. Since then, Qatar Museums has led teams of archaeologists and scientists to investigate the site. Through their research and engagement with local communities, they are documenting and shedding light on the rise and fall of this unique area.\n" +
+                            "\n" +
+                            "In 2013 the World Heritage Committee inscribed Al Zubarah Archaeological Site into the UNESCO World Heritage List. The site includes three major features, the largest of which are the archaeological remains of the town, dating back to the 1760s. Connected to it is the settlement of Qal’at Murair, which was fortified to protect the city’s inland wells. Al Zubarah Fort was built in 1938 and is the youngest, most prominent feature at the site.",
+                    null,
+                    "Katara Cultural Village", null);
         }
         latitude = "25.3154649";
         longitude = "51.4779437";
@@ -123,11 +131,10 @@ public class DetailsActivity extends AppCompatActivity implements IPullZoom {
                     favIcon.setImageResource(R.drawable.heart_fill);
             }
         });
+        initViews();
 
         zoomOutAnimation = AnimationUtils.loadAnimation(getApplicationContext(),
                 R.anim.zoom_out_more);
-
-        initViews();
         toolbarClose.setOnTouchListener(new View.OnTouchListener() {
             @Override
             public boolean onTouch(View v, MotionEvent event) {
@@ -168,8 +175,8 @@ public class DetailsActivity extends AppCompatActivity implements IPullZoom {
         zoomView = findViewById(R.id.header_img);
         appBarLayout = (AppBarLayout) findViewById(R.id.app_bar);
 
-        coordinatorLayout.setPullZoom(zoomView, PixelUtil.dp2px(this, 200),
-                PixelUtil.dp2px(this, 300), this);
+        coordinatorLayout.setPullZoom(zoomView, PixelUtil.dp2px(this, 232),
+                PixelUtil.dp2px(this, 332), this);
         appBarLayout.addOnOffsetChangedListener(new AppBarLayout.OnOffsetChangedListener() {
             @Override
             public void onOffsetChanged(AppBarLayout appBarLayout, int verticalOffset) {
