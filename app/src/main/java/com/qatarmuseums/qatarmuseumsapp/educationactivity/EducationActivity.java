@@ -48,7 +48,7 @@ public class EducationActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 //Discover button action
-                Intent intent=new Intent(EducationActivity.this,EducationCalendarActivity.class);
+                Intent intent = new Intent(EducationActivity.this, EducationCalendarActivity.class);
                 startActivity(intent);
             }
         });

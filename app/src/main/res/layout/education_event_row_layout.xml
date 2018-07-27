@@ -24,9 +24,9 @@
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
+                android:layout_marginTop="@dimen/padding_15"
                 android:orientation="vertical"
                 android:padding="@dimen/padding_5"
-                android:layout_marginTop="@dimen/padding_15"
                 android:weightSum="9">
 
                 <TextView
@@ -34,11 +34,11 @@
                     android:layout_width="wrap_content"
                     android:layout_height="0dp"
                     android:layout_weight="3"
-                    android:text="@string/event_text_first"
                     android:gravity="start"
+                    android:text="@string/event_text_first"
                     android:textColor="@color/black"
-                    android:textStyle="bold"
-                    android:textSize="@dimen/text_size_11" />
+                    android:textSize="@dimen/text_size_11"
+                    android:textStyle="bold" />
 
                 <TextView
                     android:id="@+id/event_hiphen"
@@ -48,8 +48,8 @@
                     android:gravity="start"
                     android:text="@string/hiphen"
                     android:textColor="@color/black"
-                    android:textStyle="bold"
-                    android:textSize="@dimen/text_size_11" />
+                    android:textSize="@dimen/text_size_11"
+                    android:textStyle="bold" />
 
                 <TextView
                     android:id="@+id/event_subtitle"
@@ -60,8 +60,8 @@
                     android:gravity="start"
                     android:text="@string/event_text_second"
                     android:textColor="@color/black"
-                    android:textStyle="bold"
-                    android:textSize="@dimen/text_size_11" />
+                    android:textSize="@dimen/text_size_11"
+                    android:textStyle="bold" />
 
 
             </LinearLayout>
@@ -91,18 +91,19 @@
                 android:layout_height="0dp"
                 android:layout_marginTop="@dimen/padding_10"
                 android:layout_weight="3"
-                android:gravity="start"
                 android:fontFamily="@font/din_next_lt_pro_light"
+                android:gravity="start"
                 android:text="@string/event_timing_text"
                 android:textColor="@color/black"
                 android:textSize="@dimen/text_size_9" />
+
             <TextView
                 android:id="@+id/event_max_size"
                 android:layout_width="wrap_content"
                 android:layout_height="0dp"
                 android:layout_weight="4"
-                android:gravity="start"
                 android:fontFamily="@font/din_next_lt_pro_light"
+                android:gravity="start"
                 android:text="@string/education_event_size"
                 android:textColor="@color/black"
                 android:textSize="@dimen/text_size_9" />
@@ -113,10 +114,10 @@
                 android:layout_height="0dp"
                 android:layout_gravity="end"
                 android:layout_weight="2"
-                android:textSize="8sp"
                 android:gravity="end"
                 android:text="@string/view_details"
-                android:textColor="@color/black" />
+                android:textColor="@color/black"
+                android:textSize="8sp" />
 
 
         </LinearLayout>

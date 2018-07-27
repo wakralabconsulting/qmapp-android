@@ -93,14 +93,14 @@ public class EducationAdapter extends RecyclerView.Adapter<EducationAdapter.Educ
 
         dialog.setContentView(view);
         ImageView closeBtn = (ImageView) view.findViewById(R.id.close_dialog);
-        Button changeLanguageBtn = (Button) view.findViewById(R.id.doneBtn);
+        Button registerNowBtn = (Button) view.findViewById(R.id.doneBtn);
         TextView dialogTitle = (TextView) view.findViewById(R.id.dialog_tittle);
         TextView dialogContent = (TextView) view.findViewById(R.id.dialog_content);
         dialogTitle.setText(context.getResources().getString(R.string.calendar_dialog_title));
-        changeLanguageBtn.setText(context.getResources().getString(R.string.register_now));
+        registerNowBtn.setText(context.getResources().getString(R.string.register_now));
         dialogContent.setText(details);
 
-        changeLanguageBtn.setOnClickListener(new View.OnClickListener() {
+        registerNowBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 //Do something
