@@ -17,9 +17,11 @@
         <activity
             android:name=".baseactivity.BaseActivity"
             android:label="@string/app_name"
+            android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
             android:name=".homeactivity.HomeActivity"
+            android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoTitle">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -29,23 +31,28 @@
         </activity>
         <activity
             android:name=".commonactivity.CommonActivity"
+            android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
-            android:name=".Calendar.CalendarActivity"
+            android:name=".calendaractivity.CalendarActivity"
+            android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
             android:name=".notification.NotificationActivity"
+            android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
-            android:name=".DetailsActivity.DetailsActivity"
+            android:name=".detailsactivity.DetailsActivity"
             android:label=""
+            android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
             android:name=".settings.SettingsActivity"
+            android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
             android:name=".educationactivity.EducationActivity"
-            android:configChanges="orientation|keyboardHidden|smallestScreenSize|screenLayout"
+            android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity android:name=".educationactivity.EducationCalendarActivity"
             android:theme="@style/AppTheme.NoActionBar"></activity>
