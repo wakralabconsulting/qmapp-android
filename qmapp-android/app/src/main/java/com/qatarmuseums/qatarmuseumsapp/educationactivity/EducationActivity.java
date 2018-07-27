@@ -3,19 +3,15 @@ package com.qatarmuseums.qatarmuseumsapp.educationactivity;
 import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.content.res.Configuration;
-import android.graphics.drawable.Drawable;
-import android.support.annotation.NonNull;
-import android.support.v4.content.ContextCompat;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
+import android.support.v7.app.AppCompatActivity;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.Button;
-import android.widget.Toast;
 
-import com.pierfrancescosoffritti.androidyoutubeplayer.player.PlayerConstants;
 import com.pierfrancescosoffritti.androidyoutubeplayer.player.YouTubePlayer;
 import com.pierfrancescosoffritti.androidyoutubeplayer.player.YouTubePlayerView;
 import com.pierfrancescosoffritti.androidyoutubeplayer.player.listeners.AbstractYouTubePlayerListener;
@@ -82,16 +78,9 @@ public class EducationActivity extends AppCompatActivity {
                             @Override
                             public void onReady() {
                                 initializedYouTubePlayer.loadVideo(videoId, 0);
-
-                            }
-
-                            @Override
-                            public void onError(@NonNull PlayerConstants.PlayerError error) {
-                                super.onError(error);
-                                Toast.makeText(EducationActivity.this, "Error : " + error, Toast.LENGTH_SHORT).show();
                             }
                         });
-                        addFullScreenListenerToPlayer(initializedYouTubePlayer);
+//                        addFullScreenListenerToPlayer(initializedYouTubePlayer);
                     }
                 }, true);
     }
@@ -116,31 +105,13 @@ public class EducationActivity extends AppCompatActivity {
             public void onYouTubePlayerEnterFullScreen() {
                 setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
                 fullScreenHelper.enterFullScreen();
-
-                addCustomActionToPlayer(youTubePlayer);
             }
 
             @Override
             public void onYouTubePlayerExitFullScreen() {
                 setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
                 fullScreenHelper.exitFullScreen();
-                removeCustomActionFromPlayer();
             }
         });
-    }
-
-    private void addCustomActionToPlayer(final YouTubePlayer youTubePlayer) {
-        Drawable customActionIcon = ContextCompat.getDrawable(this, R.drawable.ic_pause_36dp);
-
-        youTubePlayerView.getPlayerUIController().setCustomAction1(customActionIcon, new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (youTubePlayer != null) youTubePlayer.pause();
-            }
-        });
-    }
-
-    private void removeCustomActionFromPlayer() {
-        youTubePlayerView.getPlayerUIController().showCustomAction1(false);
     }
 }

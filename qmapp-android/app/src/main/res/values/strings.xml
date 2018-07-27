@@ -40,7 +40,6 @@
     <string name="notifications">Notifications</string>
     <string name="location_title">LOCATION</string>
     <string name="contact_title">CONTACT</string>
-    <string name="timing_text">TIMINGS</string>
     <string name="settings_activity_tittle">SETTINGS</string>
     <string name="calendar_activity_tittle">CALENDAR</string>
     <string name="education_calendar_activity_tittle">EDUCATION CALENDAR</string>
@@ -70,4 +69,10 @@
     <string name="education_short_description">Our numerous programmes are designed for families, university students and adults.\n\nFind out what\'s on offer and register ahead to secure your place.</string>
     <string name="education_long_description">All of our education programmes provide interactive opportunities. We hope that they create lasting memories and lead to the development of creative, compassionate and engaged individuals.\n\nFor school teachers and educators, we bring custom-made workshops, conferences and trainings to suit their needs. We also focus on working with children to encourage them to explore the world around them, engage with it, and express themselves through creative activities.\n\nAll of our activities align with Qatar Supreme Educational Council Professional Standards for Teachers and National Curriculum Standards.</string>
     <string name="discover_txt">Discover</string>
+    <string name="coming_soon_content">We are working hard to bring the details at the tip of your fingers.\n\nStay Tuned.</string>
+    <string name="coming_soon_txt">Coming Soon</string>
+    <string name="close">Close</string>
+    <string name="opening_timings">OPENING TIMINGS</string>
+    <string name="exhibition_timings">EXHIBITION TIMINGS</string>
+    <string name="open_in_google_maps">Click here to open in Google Maps</string>
 </resources>

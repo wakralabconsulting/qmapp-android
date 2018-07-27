@@ -14,7 +14,7 @@ import android.view.animation.AnimationUtils;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.qatarmuseums.qatarmuseumsapp.DetailsActivity.DetailsActivity;
+import com.qatarmuseums.qatarmuseumsapp.detailsactivity.DetailsActivity;
 import com.qatarmuseums.qatarmuseumsapp.R;
 import com.qatarmuseums.qatarmuseumsapp.homeactivity.GlideApp;
 import com.qatarmuseums.qatarmuseumsapp.utils.Util;
@@ -72,13 +72,9 @@ public class CommonListAdapter extends RecyclerView.Adapter<CommonListAdapter.My
                     model.setIsfavourite(true);
                 }
             } else {
-                Intent intent = new Intent(mContext, DetailsActivity.class);
-                intent.putExtra("HEADER_IMAGE", model.getImage());
-                intent.putExtra("MAIN_TITLE", model.getName());
-                intent.putExtra("IS_FAVOURITE", model.getIsfavourite());
-                mContext.startActivity(intent);
+                listenerRef.get().onPositionClicked(getAdapterPosition());
             }
-            listenerRef.get().onPositionClicked(getAdapterPosition());
+
         }
     }
 
@@ -107,7 +103,8 @@ public class CommonListAdapter extends RecyclerView.Adapter<CommonListAdapter.My
         if (model.getDate() != null) {
             holder.dateDetails.setVisibility(View.VISIBLE);
             holder.dateDetails.setText(model.getDate());
-        } if (model.getLocation() != null) {
+        }
+        if (model.getLocation() != null) {
             holder.locationDetails.setVisibility(View.VISIBLE);
             holder.locationDetails.setText(model.getLocation());
         }
