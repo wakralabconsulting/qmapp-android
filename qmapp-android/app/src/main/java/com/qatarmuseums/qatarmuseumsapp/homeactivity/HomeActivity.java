@@ -17,6 +17,7 @@ import com.qatarmuseums.qatarmuseumsapp.R;
 import com.qatarmuseums.qatarmuseumsapp.baseactivity.BaseActivity;
 import com.qatarmuseums.qatarmuseumsapp.commonactivity.CommonActivity;
 import com.qatarmuseums.qatarmuseumsapp.commonactivity.RecyclerTouchListener;
+import com.qatarmuseums.qatarmuseumsapp.museum.MuseumActivity;
 import com.qatarmuseums.qatarmuseumsapp.utils.CustomDialogClass;
 
 import java.util.ArrayList;
@@ -85,6 +86,10 @@ public class HomeActivity extends BaseActivity {
                     CustomDialogClass cdd = new CustomDialogClass(HomeActivity.this);
                     cdd.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
                     cdd.show();
+                }
+                if (homeList.getId().equals("63")) {
+//                    Intent intent = new Intent(HomeActivity.this, MuseumActivity.class);
+//                    startActivity(intent);
                 }
             }
 

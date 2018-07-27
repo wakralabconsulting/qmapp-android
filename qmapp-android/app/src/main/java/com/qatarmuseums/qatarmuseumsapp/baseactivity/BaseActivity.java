@@ -284,4 +284,9 @@ public class BaseActivity extends AppCompatActivity
         sidemenuSettings.setOnClickListener(this);
 
     }
+
+    public void setToolbarForMuseumActivity(){
+        topbarSidemenu.setVisibility(View.INVISIBLE);
+        topbarBack.setVisibility(View.VISIBLE);
+    }
 }
