@@ -86,6 +86,8 @@ public class CommonActivity extends AppCompatActivity {
             prepareExhibitionData();
         else if (toolbarTitle.equals(getString(R.string.sidemenu_heritage_text)))
             prepareHeritageData();
+        else if (toolbarTitle.equals(getString(R.string.sidemenu_public_arts_text)))
+            preparePublicArtsData();
     }
 
     private void prepareExhibitionData() {
@@ -158,6 +160,85 @@ public class CommonActivity extends AppCompatActivity {
                 null,
                 null,
                 "http://www.qm.org.qa/sites/default/files/styles/mobile_design/public/hero_image/project/al_khor_island_12.jpg?itok=s0vYeuk4",
+                null, false);
+        models.add(model);
+
+        mAdapter.notifyDataSetChanged();
+    }
+
+    private void preparePublicArtsData() {
+        CommonModel model = new CommonModel("1", "GANDHI’S THREE MONKEYS\n" +
+                "BY SUBODH GUPTA",
+                null,
+                null,
+                "http://www.qm.org.qa/sites/default/files/styles/promo_image/public/teaser_images/projects/three_monkeys_resize.jpg?itok=IbQeExDN",
+                null, true);
+        models.add(model);
+        model = new CommonModel("2", "7 BY RICHARD SERRA",
+                null,
+                null,
+                "http://www.qm.org.qa/sites/default/files/styles/promo_image/public/teaser_images/projects/publicart-7byfotoarabia-2.jpg?itok=FoETPWXy",
+                null, true);
+        models.add(model);
+        model = new CommonModel("3", "LUSAIL HANDBALL INSTALLATIONS\n",
+                null,
+                null,
+                "http://www.qm.org.qa/sites/default/files/styles/promo_image/public/teaser_images/projects/lusail_multipurpose_hall-sculpture_hands_1.jpg?itok=M-JWK40f",
+                null, false);
+        models.add(model);
+        model = new CommonModel("4", "SMOKE BY TONY SMITH",
+                null,
+                null,
+                "http://www.qm.org.qa/sites/default/files/styles/promo_image/public/teaser_images/projects/smke_4_of_1.jpg?itok=4_xFXy7c",
+                null, false);
+        models.add(model);
+        model = new CommonModel("5", "QATAR UNIVERSITY INSTALLATIONS",
+                null,
+                null,
+                "http://www.qm.org.qa/sites/default/files/styles/promo_image/public/teaser_images/projects/she_0214.jpg.jpg?itok=KmeK2Yll",
+                null, false);
+        models.add(model);
+        model = new CommonModel("6", "AIRPORT INSTALLATIONS ",
+                null,
+                null,
+                "http://www.qm.org.qa/sites/default/files/styles/promo_image/public/teaser_images/projects/c_lsp_qm_hia_artwork-9938_0.jpg?itok=F4Vxmn2W",
+                null, false);
+        models.add(model);
+        model = new CommonModel("6", "EAST-WEST / WEST-EAST BY RICHARD SERRA",
+                null,
+                null,
+                "http://www.qm.org.qa/sites/default/files/styles/promo_image/public/teaser_images/projects/publicart-eastwestwesteastbyfotoarabia-9.jpg?itok=sxjwfULm",
+                null, false);
+        models.add(model);
+        model = new CommonModel("6", "THE MIRACULOUS JOURNEY BY DAMIEN HIRST",
+                null,
+                null,
+                "http://www.qm.org.qa/sites/default/files/styles/promo_image/public/teaser_images/projects/the_miraculous_journey_dh_resize_for_teaser.jpg?itok=JBx4ktsu",
+                null, false);
+        models.add(model);
+        model = new CommonModel("6", "CALLIGRAFFITI BY EL SEED",
+                null,
+                null,
+                "http://www.qm.org.qa/sites/default/files/styles/promo_image/public/teaser_images/projects/day_12_87.jpg?itok=8eA8_yWk",
+                null, false);
+        models.add(model);
+        model = new CommonModel("6", "MAMAN BY LOUISE BOURGEOIS ",
+                null,
+                null,
+                "http://www.qm.org.qa/sites/default/files/styles/promo_image/public/teaser_images/projects/publicart-mamanbyfotoarabia-46.jpg?itok=SMdtKfML",
+                null, false);
+        models.add(model);
+        model = new CommonModel("6", "PERCEVAL BY SARAH LUCAS",
+                null,
+                null,
+                "http://www.qm.org.qa/sites/default/files/styles/promo_image/public/teaser_images/projects/publicart-percevalbyfotoarabia-5.jpg?itok=RyV5XB_R",
+                null, false);
+        models.add(model);
+        model = new CommonModel("6", "HEALTHY LIVING FROM THE START\n" +
+                "BY ANNE GEDDES ",
+                null,
+                null,
+                "http://www.qm.org.qa/sites/default/files/styles/promo_image/public/teaser_images/projects/yassin_ismail_mousa_basketballer_holding_mohammad_1_kg_-_3_weeks_old_0.jpeg?itok=Mt6vu_cH",
                 null, false);
         models.add(model);
 
