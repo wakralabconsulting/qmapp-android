@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    tools:context="com.qatarmuseums.qatarmuseumsapp.museum.MuseumActivity">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight=".8">
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight=".2"
+        android:gravity="center"
+        android:orientation="horizontal">
+
+        <LinearLayout
+
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_gravity="center"
+            android:layout_weight=".07"
+            android:gravity="start|center_vertical"
+            android:orientation="vertical"
+            android:weightSum="10"
+            >
+
+            <ImageView
+                android:id="@+id/horizontal_scrol_previous_icon"
+                android:layout_width="@dimen/horizontal_scrollview_back_size"
+                android:layout_height="@dimen/horizontal_scrollview_back_size"
+                android:layout_weight="9"
+                android:visibility="gone"
+                android:src="@drawable/previous_icon_black" />
+
+            <View
+                android:layout_width="wrap_content"
+                android:layout_height="0dp"
+                android:layout_weight="1" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_gravity="center"
+            android:layout_marginEnd="@dimen/pading_10"
+            android:layout_marginStart="@dimen/pading_10"
+            android:layout_weight=".86"
+            android:gravity="center">
+
+            <android.support.v7.widget.RecyclerView
+                android:id="@+id/settings_page_recycler_view"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:scrollbars="none" />
+
+
+        </LinearLayout>
+
+        <LinearLayout
+
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_gravity="center"
+            android:layout_weight=".07"
+            android:gravity="end|center_vertical"
+            android:orientation="vertical"
+            android:weightSum="10"
+             >
+
+            <ImageView
+                android:id="@+id/horizontal_scrol_next_icon"
+                android:layout_width="@dimen/horizontal_scrollview_back_size"
+                android:layout_height="@dimen/horizontal_scrollview_back_size"
+                android:layout_weight="9"
+                android:src="@drawable/next_icon_black"
+                android:visibility="gone"
+                />
+
+            <View
+                android:layout_width="wrap_content"
+                android:layout_height="0dp"
+                android:layout_weight="1" />
+
+        </LinearLayout>
+
+
+    </LinearLayout>
+
+</LinearLayout>
