@@ -1,12 +1,9 @@
 package com.qatarmuseums.qatarmuseumsapp.educationactivity;
 
 import android.app.Dialog;
-import android.content.ContentResolver;
-import android.content.ContentValues;
 import android.content.Context;
 import android.graphics.Color;
-import android.net.Uri;
-import android.provider.CalendarContract;
+import android.graphics.drawable.ColorDrawable;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -17,14 +14,11 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
-import com.qatarmuseums.qatarmuseumsapp.Calendar.CalendarAdapter;
 import com.qatarmuseums.qatarmuseumsapp.R;
+import com.qatarmuseums.qatarmuseumsapp.utils.CustomDialogClass;
 
 import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.TimeZone;
 
 /**
  * Created by MoongedePC on 26-Jul-18.
@@ -61,8 +55,7 @@ public class EducationAdapter extends RecyclerView.Adapter<EducationAdapter.Educ
             @Override
             public void onClick(View view) {
 
-//                String detail= String.valueOf(R.string.education_detail);
-                showDialog(context.getResources().getString(R.string.education_detail),holder.eventSubTitle.getText().toString());
+                showDialog(context.getResources().getString(R.string.education_detail), holder.eventSubTitle.getText().toString());
             }
         });
     }
@@ -76,6 +69,7 @@ public class EducationAdapter extends RecyclerView.Adapter<EducationAdapter.Educ
 
         public TextView eventTitle, eventSubTitle, eventMaxGroup, eventTiming, viewDetails;
         public LinearLayout layoutHolder;
+
         public EducationAdapterViewHolder(View itemView) {
             super(itemView);
             eventTitle = (TextView) itemView.findViewById(R.id.event_title);
@@ -83,12 +77,12 @@ public class EducationAdapter extends RecyclerView.Adapter<EducationAdapter.Educ
             eventMaxGroup = (TextView) itemView.findViewById(R.id.event_max_size);
             eventTiming = (TextView) itemView.findViewById(R.id.event_timing);
             viewDetails = (TextView) itemView.findViewById(R.id.event_view_details);
-            layoutHolder=(LinearLayout)itemView.findViewById(R.id.layout_holder);
+            layoutHolder = (LinearLayout) itemView.findViewById(R.id.layout_holder);
         }
     }
 
 
-    protected void showDialog(final String details,String title) {
+    protected void showDialog(final String details, String title) {
 
         final Dialog dialog = new Dialog(context, R.style.DialogTheme);
         dialog.setCancelable(true);
@@ -110,7 +104,9 @@ public class EducationAdapter extends RecyclerView.Adapter<EducationAdapter.Educ
             @Override
             public void onClick(View view) {
                 //Do something
-//                addToCalendar(details);
+                CustomDialogClass cdd = new CustomDialogClass(context, context.getResources().getString(R.string.register_now_content));
+                cdd.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+                cdd.show();
                 dialog.dismiss();
 
             }
@@ -126,22 +122,4 @@ public class EducationAdapter extends RecyclerView.Adapter<EducationAdapter.Educ
         dialog.show();
     }
 
-//    private void addToCalendar(String details) {
-//
-//        ContentResolver contentResolver = context.getContentResolver();
-//        ContentValues cv = new ContentValues();
-//        cv.put(CalendarContract.Events.TITLE, "Title of the event");
-//        cv.put(CalendarContract.Events.DESCRIPTION, details);
-//        cv.put(CalendarContract.Events.DTSTART, Calendar.getInstance().getTimeInMillis());
-//        cv.put(CalendarContract.Events.DTEND, Calendar.getInstance().getTimeInMillis() + 60 * 60 * 1000);
-//        // Default calendar
-//        cv.put(CalendarContract.Events.CALENDAR_ID, 1);
-//        TimeZone timeZone = TimeZone.getDefault();
-//        cv.put(CalendarContract.Events.EVENT_TIMEZONE, Calendar.getInstance().getTimeZone().getID());
-//
-//        // Insert event to calendar
-//        Uri uri = contentResolver.insert(CalendarContract.Events.CONTENT_URI, cv);
-//        Toast.makeText(context, "entered", Toast.LENGTH_SHORT).show();
-//
-//    }
 }

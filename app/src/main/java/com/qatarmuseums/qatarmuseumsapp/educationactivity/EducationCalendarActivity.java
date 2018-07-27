@@ -14,8 +14,6 @@ import android.view.animation.AnimationUtils;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.qatarmuseums.qatarmuseumsapp.Calendar.CalendarActivity;
-import com.qatarmuseums.qatarmuseumsapp.Calendar.CalendarAdapter;
 import com.qatarmuseums.qatarmuseumsapp.R;
 import com.shrikanthravi.collapsiblecalendarview.widget.CollapsibleCalendar;
 
@@ -39,6 +37,8 @@ public class EducationCalendarActivity extends AppCompatActivity {
     ImageView backArrow;
     @BindView(R.id.toolbar_title)
     TextView toolbar_title;
+    @BindView(R.id.toolbar_filter)
+    ImageView toolbar_filter;
     RecyclerView.LayoutManager layoutManager;
 
     @Override
