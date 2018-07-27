@@ -11,11 +11,8 @@ import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.ImageView;
-import android.widget.TextView;
 
 import com.qatarmuseums.qatarmuseumsapp.R;
-import com.qatarmuseums.qatarmuseumsapp.commonactivity.CommonListAdapter;
-import com.qatarmuseums.qatarmuseumsapp.commonactivity.CommonModel;
 
 import java.util.ArrayList;
 import java.util.Collections;

@@ -1,4 +1,4 @@
-package com.qatarmuseums.qatarmuseumsapp.educationactivity;
+package com.qatarmuseums.qatarmuseumsapp.calendar;
 
 import android.graphics.Color;
 import android.os.Bundle;
@@ -24,12 +24,12 @@ import java.util.GregorianCalendar;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
-public class EducationCalendarActivity extends AppCompatActivity {
+public class CalendarActivity extends AppCompatActivity {
 
     CollapsibleCalendar collapsibleCalendar;
     RecyclerView eventListView;
-    EducationAdapter educationAdapter;
-    ArrayList<EducationEvents> educationEvents;
+    CalendarAdapter calendarAdapter;
+    ArrayList<CalendarEvents> calendarEventList;
     private Animation zoomOutAnimation;
     @BindView(R.id.common_toolbar)
     Toolbar toolbar;
@@ -37,17 +37,15 @@ public class EducationCalendarActivity extends AppCompatActivity {
     ImageView backArrow;
     @BindView(R.id.toolbar_title)
     TextView toolbar_title;
-    @BindView(R.id.toolbar_filter)
-    ImageView toolbar_filter;
     RecyclerView.LayoutManager layoutManager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_education_calendar);
+        setContentView(R.layout.activity_calendar);
         ButterKnife.bind(this);
         setSupportActionBar(toolbar);
-        toolbar_title.setText(getResources().getString(R.string.education_calendar_activity_tittle));
+        toolbar_title.setText(getResources().getString(R.string.calendar_activity_tittle));
         collapsibleCalendar = (CollapsibleCalendar) findViewById(R.id.collapsibleCalendarView);
         eventListView = (RecyclerView) findViewById(R.id.event_list);
 
@@ -112,43 +110,48 @@ public class EducationCalendarActivity extends AppCompatActivity {
             }
         });
 
-        educationEvents = new ArrayList<EducationEvents>();
-        EducationEvents events = new EducationEvents(getResources().getString(R.string.event_text_first)
-                , getResources().getString(R.string.event_text_second),
-                getResources().getString(R.string.event_timing_text),
-                getResources().getString(R.string.event_max_number));
-        educationEvents.add(events);
-        events = new EducationEvents(getResources().getString(R.string.event_text_first)
-                , getResources().getString(R.string.event_text_second),
-                getResources().getString(R.string.event_timing_text),
-                getResources().getString(R.string.event_max_number));
-        educationEvents.add(events);
-        events = new EducationEvents(getResources().getString(R.string.event_text_first)
-                , getResources().getString(R.string.event_text_second),
-                getResources().getString(R.string.event_timing_text),
-                getResources().getString(R.string.event_max_number));
-        educationEvents.add(events);
-        events = new EducationEvents(getResources().getString(R.string.event_text_first)
-                , getResources().getString(R.string.event_text_second),
-                getResources().getString(R.string.event_timing_text),
-                getResources().getString(R.string.event_max_number));
-        educationEvents.add(events);
-        events = new EducationEvents(getResources().getString(R.string.event_text_first)
-                , getResources().getString(R.string.event_text_second),
-                getResources().getString(R.string.event_timing_text),
-                getResources().getString(R.string.event_max_number));
-        educationEvents.add(events);
-        events = new EducationEvents(getResources().getString(R.string.event_text_first)
-                , getResources().getString(R.string.event_text_second),
-                getResources().getString(R.string.event_timing_text),
-                getResources().getString(R.string.event_max_number));
-        educationEvents.add(events);
 
-        educationAdapter = new EducationAdapter(EducationCalendarActivity.this, educationEvents);
+//        recyclerview
+        calendarEventList = new ArrayList<CalendarEvents>();
+
+        CalendarEvents events = new CalendarEvents(getResources().getString(R.string.event_text_first)
+                , getResources().getString(R.string.event_text_second),
+                getResources().getString(R.string.event_timing_text),
+                getResources().getString(R.string.event_detail_text));
+        calendarEventList.add(events);
+        events = new CalendarEvents(getResources().getString(R.string.event_text_first)
+                , getResources().getString(R.string.event_text_second),
+                getResources().getString(R.string.event_timing_text),
+                getResources().getString(R.string.event_detail_text));
+        calendarEventList.add(events);
+        events = new CalendarEvents(getResources().getString(R.string.event_text_first)
+                , getResources().getString(R.string.event_text_second),
+                getResources().getString(R.string.event_timing_text),
+                getResources().getString(R.string.event_detail_text));
+        calendarEventList.add(events);
+        events = new CalendarEvents(getResources().getString(R.string.event_text_first)
+                , getResources().getString(R.string.event_text_second),
+                getResources().getString(R.string.event_timing_text),
+                getResources().getString(R.string.event_detail_text));
+        calendarEventList.add(events);
+        events = new CalendarEvents(getResources().getString(R.string.event_text_first)
+                , getResources().getString(R.string.event_text_second),
+                getResources().getString(R.string.event_timing_text),
+                getResources().getString(R.string.event_detail_text));
+        calendarEventList.add(events);
+        events = new CalendarEvents(getResources().getString(R.string.event_text_first)
+                , getResources().getString(R.string.event_text_second),
+                getResources().getString(R.string.event_timing_text),
+                getResources().getString(R.string.event_detail_text));
+        calendarEventList.add(events);
+
+
+        calendarAdapter = new CalendarAdapter(CalendarActivity.this, calendarEventList);
         layoutManager = new LinearLayoutManager(getApplication());
         eventListView.setLayoutManager(layoutManager);
         eventListView.setItemAnimator(new DefaultItemAnimator());
-        eventListView.setAdapter(educationAdapter);
+        eventListView.setAdapter(calendarAdapter);
+
 
         eventListView.addOnScrollListener(new RecyclerView.OnScrollListener() {
             @Override

@@ -1,4 +1,4 @@
-package com.qatarmuseums.qatarmuseumsapp.commonactivity;
+package com.qatarmuseums.qatarmuseumsapp.commonpage;
 
 import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
@@ -13,11 +13,10 @@ import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.qatarmuseums.qatarmuseumsapp.R;
-import com.qatarmuseums.qatarmuseumsapp.detailsactivity.DetailsActivity;
-import com.qatarmuseums.qatarmuseumsapp.detailsactivity.DiningActivity;
+import com.qatarmuseums.qatarmuseumsapp.detailspage.DetailsActivity;
+import com.qatarmuseums.qatarmuseumsapp.detailspage.DiningActivity;
 
 import java.util.ArrayList;
 import java.util.List;

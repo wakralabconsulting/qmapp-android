@@ -1,4 +1,4 @@
-package com.qatarmuseums.qatarmuseumsapp.calendaractivity;
+package com.qatarmuseums.qatarmuseumsapp.calendar;
 
 import android.app.Dialog;
 import android.content.ContentResolver;
