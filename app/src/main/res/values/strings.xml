@@ -45,6 +45,8 @@
     <string name="calendar_dialog_title">Event Name</string>
     <string name="change_language_dialog_title">Change Language?</string>
     <string name="change_language_button_text">Continue</string>
+    <string name="museum_about_text">About</string>
+    <string name="museum_collection_text">Collections</string>
     <string name="change_language_content_text">You will be redirected to home page, after changing the language. Do you want to continue?</string>
     <string name="home_page_mia_title">Museum of Islamic Art (MIA)</string>
     <string name="home_page_national_museum_title">National Museum of Qatar</string>
