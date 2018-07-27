@@ -2,18 +2,25 @@ package com.qatarmuseums.qatarmuseumsapp.detailsactivity;
 
 import android.annotation.SuppressLint;
 import android.content.Intent;
+import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.design.widget.AppBarLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.text.SpannableString;
+import android.text.Spanned;
+import android.text.TextPaint;
+import android.text.method.LinkMovementMethod;
+import android.text.style.ClickableSpan;
+import android.text.style.UnderlineSpan;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.qatarmuseums.qatarmuseumsapp.R;
 import com.qatarmuseums.qatarmuseumsapp.homeactivity.GlideApp;
@@ -22,22 +29,20 @@ import com.qatarmuseums.qatarmuseumsapp.utils.PixelUtil;
 import com.qatarmuseums.qatarmuseumsapp.utils.PullToZoomCoordinatorLayout;
 import com.qatarmuseums.qatarmuseumsapp.utils.Util;
 
-public class DetailsActivity extends AppCompatActivity implements IPullZoom {
+public class DiningActivity extends AppCompatActivity implements IPullZoom {
 
     ImageView headerImageView, toolbarClose, favIcon, shareIcon;
     String headerImage;
-    String mainTitle, comingFrom;
+    String mainTitle;
     boolean isFavourite;
     Toolbar toolbar;
-    TextView title, subTitle, shortDescription, longDescription, secondTitle, secondTitleDescription,
-            timingTitle, timingDetails, locationDetails, mapDetails, contactDetails;
+    TextView title, shortDescription, longDescription, timingDetails, locationDetails, mapDetails, forMoreInfo;
     private Util util;
     private Animation zoomOutAnimation;
     private PullToZoomCoordinatorLayout coordinatorLayout;
     private View zoomView;
     private AppBarLayout appBarLayout;
     private int headerOffSetSize;
-    private LinearLayout secondTitleLayout, timingLayout, contactLayout;
     private String latitude, longitude;
     Intent intent;
 
@@ -45,32 +50,24 @@ public class DetailsActivity extends AppCompatActivity implements IPullZoom {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_details);
+        setContentView(R.layout.activity_dining);
         intent = getIntent();
         headerImage = intent.getStringExtra("HEADER_IMAGE");
         mainTitle = intent.getStringExtra("MAIN_TITLE");
-        comingFrom = intent.getStringExtra("COMING_FROM");
         isFavourite = intent.getBooleanExtra("IS_FAVOURITE", false);
         toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         toolbarClose = (ImageView) findViewById(R.id.toolbar_close);
         headerImageView = (ImageView) findViewById(R.id.header_img);
         title = (TextView) findViewById(R.id.main_title);
-        subTitle = (TextView) findViewById(R.id.sub_title);
         shortDescription = (TextView) findViewById(R.id.short_description);
         longDescription = (TextView) findViewById(R.id.long_description);
-        secondTitle = (TextView) findViewById(R.id.second_title);
-        secondTitleDescription = (TextView) findViewById(R.id.second_short_description);
-        timingTitle = (TextView) findViewById(R.id.timing_title);
+        forMoreInfo = (TextView) findViewById(R.id.more_info);
         timingDetails = (TextView) findViewById(R.id.timing_info);
         locationDetails = (TextView) findViewById(R.id.location_info);
         mapDetails = (TextView) findViewById(R.id.map_info);
-        contactDetails = (TextView) findViewById(R.id.contact_info);
         favIcon = (ImageView) findViewById(R.id.favourite);
         shareIcon = (ImageView) findViewById(R.id.share);
-        secondTitleLayout = (LinearLayout) findViewById(R.id.second_title_layout);
-        timingLayout = (LinearLayout) findViewById(R.id.timing_layout);
-        contactLayout = (LinearLayout) findViewById(R.id.contact_layout);
         util = new Util();
         GlideApp.with(this)
                 .load(headerImage)
@@ -78,30 +75,34 @@ public class DetailsActivity extends AppCompatActivity implements IPullZoom {
                 .placeholder(R.drawable.placeholdeer)
                 .into(headerImageView);
         title.setText(mainTitle);
-        if (comingFrom.equals(getString(R.string.sidemenu_exhibition_text))) {
-            timingTitle.setText(R.string.exhibition_timings);
-            loadData(null, getString(R.string.details_page_short_description),
-                    getString(R.string.details_page_long_description),
-                    null, null, getString(R.string.details_page_timing_details),
-                    getString(R.string.details_page_location_details), getString(R.string.contact_mail));
-        } else if (comingFrom.equals(getString(R.string.sidemenu_heritage_text))) {
-            timingTitle.setText(R.string.opening_timings);
-            loadData("A UNESCO WORLD HERITAGE SITE", getString(R.string.details_page_short_description),
-                    getString(R.string.details_page_long_description),
-                    "A WORLD HERITAGE SITE", "Once a thriving port bustling with fishermen and merchants, the town of Al Zubarah was designated a protected area in 2009. Since then, Qatar Museums has led teams of archaeologists and scientists to investigate the site. Through their research and engagement with local communities, they are documenting and shedding light on the rise and fall of this unique area.\n" +
-                            "\n" +
-                            "In 2013 the World Heritage Committee inscribed Al Zubarah Archaeological Site into the UNESCO World Heritage List. The site includes three major features, the largest of which are the archaeological remains of the town, dating back to the 1760s. Connected to it is the settlement of Qal’at Murair, which was fortified to protect the city’s inland wells. Al Zubarah Fort was built in 1938 and is the youngest, most prominent feature at the site.",
-                    getString(R.string.details_page_timing_details),
-                    null, getString(R.string.contact_mail));
-        } else if (comingFrom.equals(getString(R.string.sidemenu_public_arts_text))) {
-            loadData("AN ARRESTING INSTALLATION", getString(R.string.details_page_short_description),
-                    getString(R.string.details_page_long_description),
-                    "A WORLD HERITAGE SITE", "Once a thriving port bustling with fishermen and merchants, the town of Al Zubarah was designated a protected area in 2009. Since then, Qatar Museums has led teams of archaeologists and scientists to investigate the site. Through their research and engagement with local communities, they are documenting and shedding light on the rise and fall of this unique area.\n" +
-                            "\n" +
-                            "In 2013 the World Heritage Committee inscribed Al Zubarah Archaeological Site into the UNESCO World Heritage List. The site includes three major features, the largest of which are the archaeological remains of the town, dating back to the 1760s. Connected to it is the settlement of Qal’at Murair, which was fortified to protect the city’s inland wells. Al Zubarah Fort was built in 1938 and is the youngest, most prominent feature at the site.",
-                    null,
-                    "Katara Cultural Village", null);
-        }
+
+        loadData("Embark on a refined, generous and enchanted culinary journey at IDAM, Alain Ducasse's first restaurant in the Middle East.",
+                "In the heart of the museum, with spectacular views of the Doha skyline, IDAM offers an innovative and flavorsome selection of contemporary French Mediterranean cuisine designed with an Arabic twist. Timeless classics of local and regional cuisine, with most ingredients sourced locally in Qatar.\n" +
+                        "\n" +
+                        "Philippe Starck’s unique and exquisite decor creates a sophisticated atmosphere.",
+                "Everyday From 11am to 11pm", "Museum of Islamic Art");
+
+        SpannableString ss = new SpannableString(getString(R.string.for_more_information_text));
+        ClickableSpan clickableSpan = new ClickableSpan() {
+            @Override
+            public void onClick(View textView) {
+                // http://www.mia.org.qa/en/visiting/idam
+                Toast.makeText(DiningActivity.this, "Navigate to web view", Toast.LENGTH_SHORT).show();
+            }
+
+            @Override
+            public void updateDrawState(TextPaint ds) {
+                super.updateDrawState(ds);
+                ds.setUnderlineText(false);
+            }
+        };
+        int length = ss.length();
+        ss.setSpan(clickableSpan, length - 4, length, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+        ss.setSpan(new UnderlineSpan(), length - 4, length, 0);
+        forMoreInfo.setText(ss);
+        forMoreInfo.setMovementMethod(LinkMovementMethod.getInstance());
+        forMoreInfo.setHighlightColor(Color.TRANSPARENT);
+
         latitude = "25.3154649";
         longitude = "51.4779437";
         mapDetails.setOnClickListener(new View.OnClickListener() {
@@ -126,7 +127,7 @@ public class DetailsActivity extends AppCompatActivity implements IPullZoom {
         favIcon.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (util.checkImageResource(DetailsActivity.this, favIcon, R.drawable.heart_fill)) {
+                if (util.checkImageResource(DiningActivity.this, favIcon, R.drawable.heart_fill)) {
                     favIcon.setImageResource(R.drawable.heart_empty);
                 } else
                     favIcon.setImageResource(R.drawable.heart_fill);
@@ -201,32 +202,13 @@ public class DetailsActivity extends AppCompatActivity implements IPullZoom {
 
     }
 
-    public void loadData(String subTitle, String shortDescription, String longDescription,
-                         String secondTitle, String secondTitleDescription, String timingInfo,
-                         String locationInfo, String contactInfo) {
+    public void loadData(String shortDescription, String longDescription, String timingInfo,
+                         String locationInfo) {
         this.title.setText(mainTitle);
-        if (subTitle != null) {
-            this.subTitle.setVisibility(View.VISIBLE);
-            this.subTitle.setText(subTitle);
-        }
         this.shortDescription.setText(shortDescription);
         this.longDescription.setText(longDescription);
-        if (secondTitle != null) {
-            this.secondTitleLayout.setVisibility(View.VISIBLE);
-            this.secondTitle.setText(secondTitle);
-            this.secondTitleDescription.setText(secondTitleDescription);
-        }
-        if (timingInfo != null) {
-            this.timingLayout.setVisibility(View.VISIBLE);
-            this.timingDetails.setText(timingInfo);
-        }
-        if (locationInfo != null) {
-            this.locationDetails.setVisibility(View.VISIBLE);
-            this.locationDetails.setText(locationInfo);
-        }
-        if (contactInfo != null) {
-            this.contactLayout.setVisibility(View.VISIBLE);
-            this.contactDetails.setText(contactInfo);
-        }
+        this.timingDetails.setText(timingInfo);
+        this.locationDetails.setText(locationInfo);
+
     }
 }

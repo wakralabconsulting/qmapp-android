@@ -17,6 +17,7 @@ import android.widget.Toast;
 
 import com.qatarmuseums.qatarmuseumsapp.R;
 import com.qatarmuseums.qatarmuseumsapp.detailsactivity.DetailsActivity;
+import com.qatarmuseums.qatarmuseumsapp.detailsactivity.DiningActivity;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -31,7 +32,7 @@ public class CommonActivity extends AppCompatActivity {
     private ImageView backArrow;
     private Animation zoomOutAnimation;
     String toolbarTitle;
-    Intent intent;
+    Intent intent, navigationIntent;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -49,12 +50,16 @@ public class CommonActivity extends AppCompatActivity {
         mAdapter = new CommonListAdapter(this, models, new RecyclerTouchListener.ItemClickListener() {
             @Override
             public void onPositionClicked(int position) {
-                Intent intent = new Intent(CommonActivity.this, DetailsActivity.class);
-                intent.putExtra("HEADER_IMAGE", models.get(position).getImage());
-                intent.putExtra("MAIN_TITLE", models.get(position).getName());
-                intent.putExtra("COMING_FROM", toolbarTitle);
-                intent.putExtra("IS_FAVOURITE", models.get(position).getIsfavourite());
-                startActivity(intent);
+                if (toolbarTitle.equals(getString(R.string.sidemenu_dining_text)))
+                    navigationIntent = new Intent(CommonActivity.this, DiningActivity.class);
+                else
+                    navigationIntent = new Intent(CommonActivity.this, DetailsActivity.class);
+                navigationIntent.putExtra("HEADER_IMAGE", models.get(position).getImage());
+                navigationIntent.putExtra("MAIN_TITLE", models.get(position).getName());
+                navigationIntent.putExtra("COMING_FROM", toolbarTitle);
+                navigationIntent.putExtra("IS_FAVOURITE", models.get(position).getIsfavourite());
+                startActivity(navigationIntent);
+
             }
 
         });
@@ -88,6 +93,8 @@ public class CommonActivity extends AppCompatActivity {
             prepareHeritageData();
         else if (toolbarTitle.equals(getString(R.string.sidemenu_public_arts_text)))
             preparePublicArtsData();
+        else if (toolbarTitle.equals(getString(R.string.sidemenu_dining_text)))
+            prepareDiningData();
     }
 
     private void prepareExhibitionData() {
@@ -240,6 +247,53 @@ public class CommonActivity extends AppCompatActivity {
                 null,
                 "http://www.qm.org.qa/sites/default/files/styles/promo_image/public/teaser_images/projects/yassin_ismail_mousa_basketballer_holding_mohammad_1_kg_-_3_weeks_old_0.jpeg?itok=Mt6vu_cH",
                 null, false);
+        models.add(model);
+
+        mAdapter.notifyDataSetChanged();
+    }
+
+    private void prepareDiningData() {
+        CommonModel model = new CommonModel("1", "IDAM",
+                null,
+                null,
+                "http://www.qm.org.qa/sites/default/files/styles/content_image/public/images/body/idam-pierremonetta_mg_6372_1.jpg?itok=bKArHUGQ",
+                null, true);
+        models.add(model);
+        model = new CommonModel("2", "IN-Q CAFÉ",
+                null,
+                null,
+                "http://www.qm.org.qa/sites/default/files/styles/content_image/public/images/body/inq.jpg?itok=C14Qr6xt",
+                null, true);
+        models.add(model);
+        model = new CommonModel("3", "MIA CAFÉ",
+                null,
+                null,
+                "http://www.qm.org.qa/sites/default/files/styles/content_image/public/images/body/dsc_0597_2_0.jpg?itok=TXvRM1HE",
+                null, false);
+        models.add(model);
+        model = new CommonModel("4", "AL RIWAQ CAFÉ",
+                null,
+                null,
+                "http://www.qm.org.qa/sites/default/files/styles/content_image/public/images/body/10_0.jpg?itok=4BYJtRQB",
+                null, false);
+        models.add(model);
+        model = new CommonModel("4", "MIA CATERING",
+                null,
+                null,
+                "http://www.qm.org.qa/sites/default/files/styles/content_image/public/images/body/mia-catering.jpg?itok=Kk7svJPU",
+                null, false);
+        models.add(model);
+        model = new CommonModel("4", "MATHAF MAQHA",
+                null,
+                null,
+                "http://www.qm.org.qa/sites/default/files/styles/content_image/public/images/body/332a0071_0.jpg?itok=--l8qFkn",
+                null, false);
+        models.add(model);
+        model = new CommonModel("4", "CAFÉ #999",
+                null,
+                null,
+                "http://www.qm.org.qa/sites/default/files/styles/content_image/public/images/body/332a4417.jpg?itok=_OpfHaT_",
+                null, true);
         models.add(model);
 
         mAdapter.notifyDataSetChanged();
