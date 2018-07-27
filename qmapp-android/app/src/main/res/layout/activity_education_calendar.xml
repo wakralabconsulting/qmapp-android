@@ -47,14 +47,15 @@
                     android:textColor="@android:color/white"
                     android:textSize="@dimen/toolbar_title"
                     android:textStyle="bold" />
+
                 <ImageView
                     android:id="@+id/toolbar_filter"
                     android:layout_width="wrap_content"
                     android:layout_height="match_parent"
-                    android:layout_centerVertical="true"
                     android:layout_alignParentEnd="true"
-                    android:paddingStart="@dimen/padding_20"
+                    android:layout_centerVertical="true"
                     android:paddingEnd="@dimen/padding_20"
+                    android:paddingStart="@dimen/padding_20"
                     android:src="@drawable/settings" />
             </RelativeLayout>
 
