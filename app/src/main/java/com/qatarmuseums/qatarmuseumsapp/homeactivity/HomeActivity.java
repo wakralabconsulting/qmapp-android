@@ -29,6 +29,7 @@ public class HomeActivity extends BaseActivity {
     private RecyclerView recyclerView;
     private HomeListAdapter mAdapter;
     private List<HomeList> homeLists = new ArrayList<>();
+    private Intent navigation_intent;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -45,7 +46,9 @@ public class HomeActivity extends BaseActivity {
         diningNavigation.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                // Dining click action
+                navigation_intent = new Intent(HomeActivity.this, CommonActivity.class);
+                navigation_intent.putExtra(getString(R.string.toolbar_title_key), getString(R.string.sidemenu_dining_text));
+                startActivity(navigation_intent);
             }
         });
         giftShopNavigation.setOnClickListener(new View.OnClickListener() {

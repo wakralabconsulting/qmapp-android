@@ -222,7 +222,9 @@ public class BaseActivity extends AppCompatActivity
                 break;
 
             case R.id.sidemenu_dining_icon:
-                // navigation drawer dining action
+                navigation_intent = new Intent(this, CommonActivity.class);
+                navigation_intent.putExtra(getString(R.string.toolbar_title_key), getString(R.string.sidemenu_dining_text));
+                startActivity(navigation_intent);
                 topbarSidemenu.setImageDrawable(getResources().getDrawable(R.drawable.side_menu_icon));
                 drawer.closeDrawer(GravityCompat.END, false);
                 break;
@@ -285,7 +287,7 @@ public class BaseActivity extends AppCompatActivity
 
     }
 
-    public void setToolbarForMuseumActivity(){
+    public void setToolbarForMuseumActivity() {
         topbarSidemenu.setVisibility(View.INVISIBLE);
         topbarBack.setVisibility(View.VISIBLE);
     }
