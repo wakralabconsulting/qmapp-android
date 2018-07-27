@@ -1,4 +1,4 @@
-package com.qatarmuseums.qatarmuseumsapp.homeactivity;
+package com.qatarmuseums.qatarmuseumsapp.home;
 
 import com.bumptech.glide.annotation.GlideModule;
 import com.bumptech.glide.module.AppGlideModule;

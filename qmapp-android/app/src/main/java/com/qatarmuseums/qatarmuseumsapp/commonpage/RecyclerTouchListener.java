@@ -1,4 +1,4 @@
-package com.qatarmuseums.qatarmuseumsapp.commonactivity;
+package com.qatarmuseums.qatarmuseumsapp.commonpage;
 
 
 import android.content.Context;
