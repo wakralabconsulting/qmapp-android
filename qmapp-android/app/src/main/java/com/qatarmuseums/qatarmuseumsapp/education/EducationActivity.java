@@ -1,4 +1,4 @@
-package com.qatarmuseums.qatarmuseumsapp.educationactivity;
+package com.qatarmuseums.qatarmuseumsapp.education;
 
 import android.content.Intent;
 import android.content.pm.ActivityInfo;
@@ -77,7 +77,7 @@ public class EducationActivity extends AppCompatActivity {
                         initializedYouTubePlayer.addListener(new AbstractYouTubePlayerListener() {
                             @Override
                             public void onReady() {
-                                initializedYouTubePlayer.loadVideo(videoId, 0);
+                                initializedYouTubePlayer.cueVideo(videoId, 0);
                             }
                         });
 //                        addFullScreenListenerToPlayer(initializedYouTubePlayer);

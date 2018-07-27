@@ -1,4 +1,4 @@
-package com.qatarmuseums.qatarmuseumsapp.educationactivity;
+package com.qatarmuseums.qatarmuseumsapp.education;
 
 /**
  * Created by MoongedePC on 26-Jul-18.

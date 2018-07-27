@@ -1,4 +1,4 @@
-package com.qatarmuseums.qatarmuseumsapp.educationactivity;
+package com.qatarmuseums.qatarmuseumsapp.education;
 
 import android.app.Dialog;
 import android.content.Context;

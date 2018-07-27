@@ -1,8 +1,7 @@
-package com.qatarmuseums.qatarmuseumsapp.commonactivity;
+package com.qatarmuseums.qatarmuseumsapp.commonpage;
 
 
 import android.content.Context;
-import android.content.Intent;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -14,9 +13,8 @@ import android.view.animation.AnimationUtils;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.qatarmuseums.qatarmuseumsapp.detailsactivity.DetailsActivity;
 import com.qatarmuseums.qatarmuseumsapp.R;
-import com.qatarmuseums.qatarmuseumsapp.homeactivity.GlideApp;
+import com.qatarmuseums.qatarmuseumsapp.home.GlideApp;
 import com.qatarmuseums.qatarmuseumsapp.utils.Util;
 
 import java.lang.ref.WeakReference;

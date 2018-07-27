@@ -79,4 +79,5 @@
     <string name="exhibition_timings">EXHIBITION TIMINGS</string>
     <string name="open_in_google_maps">Click here to open in Google Maps</string>
     <string name="contact_mail">info@mia.org.qa</string>
+    <string name="for_more_information_text">For more information and to make a reservation, visit <u>MIA.</u></string>
 </resources>

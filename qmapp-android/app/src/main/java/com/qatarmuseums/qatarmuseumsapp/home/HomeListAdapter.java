@@ -1,4 +1,4 @@
-package com.qatarmuseums.qatarmuseumsapp.homeactivity;
+package com.qatarmuseums.qatarmuseumsapp.home;
 
 
 import android.content.Context;
