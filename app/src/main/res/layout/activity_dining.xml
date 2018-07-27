@@ -51,6 +51,6 @@
         </android.support.design.widget.CollapsingToolbarLayout>
     </android.support.design.widget.AppBarLayout>
 
-    <include layout="@layout/content_details" />
+    <include layout="@layout/dining_details" />
 
 </com.qatarmuseums.qatarmuseumsapp.utils.PullToZoomCoordinatorLayout>

@@ -1,8 +1,6 @@
-package com.qatarmuseums.qatarmuseumsapp.homeactivity;
+package com.qatarmuseums.qatarmuseumsapp.home;
 
 import android.content.Intent;
-import android.graphics.Color;
-import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
@@ -14,11 +12,10 @@ import android.view.animation.AnimationUtils;
 import android.widget.RelativeLayout;
 
 import com.qatarmuseums.qatarmuseumsapp.R;
-import com.qatarmuseums.qatarmuseumsapp.baseactivity.BaseActivity;
-import com.qatarmuseums.qatarmuseumsapp.commonactivity.CommonActivity;
-import com.qatarmuseums.qatarmuseumsapp.commonactivity.RecyclerTouchListener;
-import com.qatarmuseums.qatarmuseumsapp.museum.MuseumActivity;
-import com.qatarmuseums.qatarmuseumsapp.utils.CustomDialogClass;
+import com.qatarmuseums.qatarmuseumsapp.base.BaseActivity;
+import com.qatarmuseums.qatarmuseumsapp.commonpage.CommonActivity;
+import com.qatarmuseums.qatarmuseumsapp.commonpage.RecyclerTouchListener;
+import com.qatarmuseums.qatarmuseumsapp.utils.Util;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -29,6 +26,8 @@ public class HomeActivity extends BaseActivity {
     private RecyclerView recyclerView;
     private HomeListAdapter mAdapter;
     private List<HomeList> homeLists = new ArrayList<>();
+    private Intent navigation_intent;
+    Util util;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -39,25 +38,29 @@ public class HomeActivity extends BaseActivity {
         culturePassNavigation = (RelativeLayout) findViewById(R.id.culture_pass_layout);
         moreNavigation = (RelativeLayout) findViewById(R.id.more_layout);
         recyclerView = (RecyclerView) findViewById(R.id.recycler_view);
-
+        util = new Util();
         zoomOutAnimation = AnimationUtils.loadAnimation(getApplicationContext(),
                 R.anim.zoom_out);
         diningNavigation.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                // Dining click action
+                navigation_intent = new Intent(HomeActivity.this, CommonActivity.class);
+                navigation_intent.putExtra(getString(R.string.toolbar_title_key), getString(R.string.sidemenu_dining_text));
+                startActivity(navigation_intent);
             }
         });
         giftShopNavigation.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 // Gift Shop click action
+                util.showComingSoonDialog(HomeActivity.this);
             }
         });
         culturePassNavigation.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 // Culture Pass click action
+                util.showComingSoonDialog(HomeActivity.this);
             }
         });
         moreNavigation.setOnClickListener(new View.OnClickListener() {
@@ -83,11 +86,7 @@ public class HomeActivity extends BaseActivity {
                     intent.putExtra(getString(R.string.toolbar_title_key), getString(R.string.sidemenu_exhibition_text));
                     startActivity(intent);
                 } else {
-                    CustomDialogClass cdd = new CustomDialogClass(HomeActivity.this
-                            ,getResources().getString(R.string.coming_soon_txt)
-                            ,getResources().getString(R.string.coming_soon_content));
-                    cdd.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
-                    cdd.show();
+                    util.showComingSoonDialog(HomeActivity.this);
                 }
                 if (homeList.getId().equals("63")) {
 //                    Intent intent = new Intent(HomeActivity.this, MuseumActivity.class);

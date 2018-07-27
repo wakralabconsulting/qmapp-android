@@ -1,4 +1,4 @@
-package com.qatarmuseums.qatarmuseumsapp.baseactivity;
+package com.qatarmuseums.qatarmuseumsapp.base;
 
 import android.content.Intent;
 import android.graphics.Color;
@@ -17,12 +17,13 @@ import android.view.animation.AnimationUtils;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 
-import com.qatarmuseums.qatarmuseumsapp.calendaractivity.CalendarActivity;
+import com.qatarmuseums.qatarmuseumsapp.calendar.CalendarActivity;
 import com.qatarmuseums.qatarmuseumsapp.R;
-import com.qatarmuseums.qatarmuseumsapp.commonactivity.CommonActivity;
-import com.qatarmuseums.qatarmuseumsapp.educationactivity.EducationActivity;
+import com.qatarmuseums.qatarmuseumsapp.commonpage.CommonActivity;
+import com.qatarmuseums.qatarmuseumsapp.education.EducationActivity;
 import com.qatarmuseums.qatarmuseumsapp.notification.NotificationActivity;
 import com.qatarmuseums.qatarmuseumsapp.settings.SettingsActivity;
+import com.qatarmuseums.qatarmuseumsapp.utils.Util;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -87,6 +88,7 @@ public class BaseActivity extends AppCompatActivity
     private FrameLayout activityContainer;
     Animation fadeInAnimation, fadeOutAnimation;
     private Intent navigation_intent;
+    Util util;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -102,6 +104,7 @@ public class BaseActivity extends AppCompatActivity
         ButterKnife.bind(this);
         setSupportActionBar(toolbar);
         setOnclickListenerForButtons();
+        util = new Util();
         fadeInAnimation = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.fade_in_animation);
         fadeOutAnimation = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.fade_out_animation);
         fadeOutAnimation.setAnimationListener(new Animation.AnimationListener() {
@@ -141,10 +144,8 @@ public class BaseActivity extends AppCompatActivity
     @Override
     public void onBackPressed() {
         if (drawer.isDrawerOpen(GravityCompat.END)) {
-
             navigationView.startAnimation(fadeOutAnimation);
             toolbar.setBackgroundColor(Color.parseColor("#000000"));
-
         } else {
             super.onBackPressed();
         }
@@ -161,17 +162,21 @@ public class BaseActivity extends AppCompatActivity
                 break;
 
             case R.id.topbar_calendar:
-                // topbar calender action
-                Intent calIntent = new Intent(getApplicationContext(), CalendarActivity.class);
-                startActivity(calIntent);
+                navigation_intent = new Intent(getApplicationContext(), CalendarActivity.class);
+                startActivity(navigation_intent);
+                topbarSidemenu.setImageDrawable(getResources().getDrawable(R.drawable.side_menu_icon));
+                drawer.closeDrawer(GravityCompat.END, false);
                 break;
 
             case R.id.topbar_notification:
                 navigation_intent = new Intent(this, NotificationActivity.class);
                 startActivity(navigation_intent);
+                topbarSidemenu.setImageDrawable(getResources().getDrawable(R.drawable.side_menu_icon));
+                drawer.closeDrawer(GravityCompat.END, false);
                 break;
             case R.id.topbar_profile:
                 // topbar profile action
+                util.showComingSoonDialog(BaseActivity.this);
                 break;
 
             case R.id.topbar_sidemenu:
@@ -188,7 +193,8 @@ public class BaseActivity extends AppCompatActivity
                 break;
 
             case R.id.sidemenu_event_icon:
-                // navigation drawer events action
+                navigation_intent = new Intent(getApplicationContext(), CalendarActivity.class);
+                startActivity(navigation_intent);
                 topbarSidemenu.setImageDrawable(getResources().getDrawable(R.drawable.side_menu_icon));
                 drawer.closeDrawer(GravityCompat.END, false);
                 break;
@@ -202,8 +208,9 @@ public class BaseActivity extends AppCompatActivity
 
             case R.id.sidemenu_tour_guide_icon:
                 // navigation drawer tour guide action
-                topbarSidemenu.setImageDrawable(getResources().getDrawable(R.drawable.side_menu_icon));
-                drawer.closeDrawer(GravityCompat.END, false);
+                util.showComingSoonDialog(BaseActivity.this);
+//                topbarSidemenu.setImageDrawable(getResources().getDrawable(R.drawable.side_menu_icon));
+//                drawer.closeDrawer(GravityCompat.END, false);
                 break;
             case R.id.sidemenu_heritage_icon:
                 navigation_intent = new Intent(this, CommonActivity.class);
@@ -222,20 +229,24 @@ public class BaseActivity extends AppCompatActivity
                 break;
 
             case R.id.sidemenu_dining_icon:
-                // navigation drawer dining action
+                navigation_intent = new Intent(this, CommonActivity.class);
+                navigation_intent.putExtra(getString(R.string.toolbar_title_key), getString(R.string.sidemenu_dining_text));
+                startActivity(navigation_intent);
                 topbarSidemenu.setImageDrawable(getResources().getDrawable(R.drawable.side_menu_icon));
                 drawer.closeDrawer(GravityCompat.END, false);
                 break;
 
             case R.id.sidemenu_gift_shop_icon:
                 // navigation drawer giftshop action
-                topbarSidemenu.setImageDrawable(getResources().getDrawable(R.drawable.side_menu_icon));
-                drawer.closeDrawer(GravityCompat.END, false);
+                util.showComingSoonDialog(BaseActivity.this);
+//                topbarSidemenu.setImageDrawable(getResources().getDrawable(R.drawable.side_menu_icon));
+//                drawer.closeDrawer(GravityCompat.END, false);
                 break;
             case R.id.sidemenu_park_icon:
                 // navigation drawer parks action
-                topbarSidemenu.setImageDrawable(getResources().getDrawable(R.drawable.side_menu_icon));
-                drawer.closeDrawer(GravityCompat.END, false);
+                util.showComingSoonDialog(BaseActivity.this);
+//                topbarSidemenu.setImageDrawable(getResources().getDrawable(R.drawable.side_menu_icon));
+//                drawer.closeDrawer(GravityCompat.END, false);
                 break;
 
             case R.id.sidemenu_settings_icon:
@@ -285,7 +296,7 @@ public class BaseActivity extends AppCompatActivity
 
     }
 
-    public void setToolbarForMuseumActivity(){
+    public void setToolbarForMuseumActivity() {
         topbarSidemenu.setVisibility(View.INVISIBLE);
         topbarBack.setVisibility(View.VISIBLE);
     }
