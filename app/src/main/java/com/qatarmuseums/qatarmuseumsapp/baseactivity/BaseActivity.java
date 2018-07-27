@@ -214,7 +214,9 @@ public class BaseActivity extends AppCompatActivity
                 break;
 
             case R.id.sidemenu_public_arts_icon:
-                // navigation drawer public arts action
+                navigation_intent = new Intent(this, CommonActivity.class);
+                navigation_intent.putExtra(getString(R.string.toolbar_title_key), getString(R.string.sidemenu_public_arts_text));
+                startActivity(navigation_intent);
                 topbarSidemenu.setImageDrawable(getResources().getDrawable(R.drawable.side_menu_icon));
                 drawer.closeDrawer(GravityCompat.END, false);
                 break;
