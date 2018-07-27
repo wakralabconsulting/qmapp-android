@@ -11,8 +11,8 @@
         android:layout_width="match_parent"
         android:layout_height="90dp"
         android:orientation="horizontal"
-        android:paddingEnd="@dimen/padding_20"
-        android:paddingStart="@dimen/padding_20"
+        android:paddingEnd="@dimen/padding_10"
+        android:paddingStart="@dimen/padding_10"
         android:weightSum="12">
 
         <LinearLayout
@@ -26,7 +26,7 @@
                 android:layout_height="match_parent"
                 android:orientation="vertical"
                 android:padding="@dimen/padding_5"
-                android:layout_marginTop="@dimen/padding_20"
+                android:layout_marginTop="@dimen/padding_15"
                 android:weightSum="9">
 
                 <TextView
@@ -38,7 +38,7 @@
                     android:gravity="start"
                     android:textColor="@color/black"
                     android:textStyle="bold"
-                    android:textSize="@dimen/events_text_size" />
+                    android:textSize="@dimen/text_size_11" />
 
                 <TextView
                     android:id="@+id/event_hiphen"
@@ -49,7 +49,7 @@
                     android:text="@string/hiphen"
                     android:textColor="@color/black"
                     android:textStyle="bold"
-                    android:textSize="@dimen/events_text_size" />
+                    android:textSize="@dimen/text_size_11" />
 
                 <TextView
                     android:id="@+id/event_subtitle"
@@ -61,7 +61,7 @@
                     android:text="@string/event_text_second"
                     android:textColor="@color/black"
                     android:textStyle="bold"
-                    android:textSize="@dimen/events_text_size" />
+                    android:textSize="@dimen/text_size_11" />
 
 
             </LinearLayout>
@@ -83,19 +83,19 @@
             android:layout_weight="7"
             android:orientation="vertical"
             android:padding="@dimen/padding_5"
-            android:weightSum="10">
+            android:weightSum="9">
 
             <TextView
                 android:id="@+id/event_timing"
                 android:layout_width="wrap_content"
                 android:layout_height="0dp"
                 android:layout_marginTop="@dimen/padding_10"
-                android:layout_weight="4"
+                android:layout_weight="3"
                 android:gravity="start"
                 android:fontFamily="@font/din_next_lt_pro_light"
                 android:text="@string/event_timing_text"
                 android:textColor="@color/black"
-                android:textSize="8sp" />
+                android:textSize="@dimen/text_size_9" />
             <TextView
                 android:id="@+id/event_max_size"
                 android:layout_width="wrap_content"
@@ -105,7 +105,7 @@
                 android:fontFamily="@font/din_next_lt_pro_light"
                 android:text="@string/education_event_size"
                 android:textColor="@color/black"
-                android:textSize="7sp" />
+                android:textSize="@dimen/text_size_9" />
 
             <TextView
                 android:id="@+id/event_view_details"
