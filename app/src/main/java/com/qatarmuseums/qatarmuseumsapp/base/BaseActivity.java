@@ -24,6 +24,7 @@ import com.qatarmuseums.qatarmuseumsapp.education.EducationActivity;
 import com.qatarmuseums.qatarmuseumsapp.notification.NotificationActivity;
 import com.qatarmuseums.qatarmuseumsapp.settings.SettingsActivity;
 import com.qatarmuseums.qatarmuseumsapp.utils.Util;
+import com.qatarmuseums.qatarmuseumsapp.webview.WebviewActivity;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -237,10 +238,11 @@ public class BaseActivity extends AppCompatActivity
                 break;
 
             case R.id.sidemenu_gift_shop_icon:
-                // navigation drawer giftshop action
-                util.showComingSoonDialog(BaseActivity.this);
-//                topbarSidemenu.setImageDrawable(getResources().getDrawable(R.drawable.side_menu_icon));
-//                drawer.closeDrawer(GravityCompat.END, false);
+                topbarSidemenu.setImageDrawable(getResources().getDrawable(R.drawable.side_menu_icon));
+                drawer.closeDrawer(GravityCompat.END, false);
+                navigation_intent = new Intent(BaseActivity.this, WebviewActivity.class);
+                navigation_intent.putExtra("url", getString(R.string.gift_shop_url));
+                startActivity(navigation_intent);
                 break;
             case R.id.sidemenu_park_icon:
                 // navigation drawer parks action
