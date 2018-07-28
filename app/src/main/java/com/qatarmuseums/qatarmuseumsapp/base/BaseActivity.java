@@ -33,7 +33,7 @@ public class BaseActivity extends AppCompatActivity
         implements View.OnClickListener {
     @Nullable
     @BindView(R.id.toolbar)
-    Toolbar toolbar;
+    public Toolbar toolbar;
     @Nullable
     @BindView(R.id.topbar_back)
     ImageView topbarBack;
@@ -51,10 +51,10 @@ public class BaseActivity extends AppCompatActivity
     ImageView topbarSidemenu;
     @Nullable
     @BindView(R.id.drawer_layout)
-    DrawerLayout drawer;
+    public DrawerLayout drawer;
     @Nullable
     @BindView(R.id.nav_view)
-    NavigationView navigationView;
+    public NavigationView navigationView;
     @Nullable
     @BindView(R.id.sidemenu_exibition_icon)
     ImageView sidemenuExhibition;
@@ -87,7 +87,7 @@ public class BaseActivity extends AppCompatActivity
     ImageView sidemenuSettings;
     private FrameLayout fullView;
     private FrameLayout activityContainer;
-    Animation fadeInAnimation, fadeOutAnimation;
+    public Animation fadeInAnimation, fadeOutAnimation;
     private Intent navigation_intent;
     Util util;
 

@@ -1,8 +1,10 @@
 package com.qatarmuseums.qatarmuseumsapp.home;
 
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Handler;
+import android.support.v4.view.GravityCompat;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -155,18 +157,23 @@ public class HomeActivity extends BaseActivity {
 
     @Override
     public void onBackPressed() {
-        if (doubleBackToExitPressedOnce) {
-            super.onBackPressed();
-            return;
-        }
-        this.doubleBackToExitPressedOnce = true;
-        Toast.makeText(this, getString(R.string.touch_again), Toast.LENGTH_SHORT).show();
-        new Handler().postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                doubleBackToExitPressedOnce = false;
+        if (drawer.isDrawerOpen(GravityCompat.END)) {
+            navigationView.startAnimation(fadeOutAnimation);
+            toolbar.setBackgroundColor(Color.parseColor("#000000"));
+        } else {
+            if (doubleBackToExitPressedOnce) {
+                super.onBackPressed();
+                return;
             }
-        }, 2000);
+            this.doubleBackToExitPressedOnce = true;
+            Toast.makeText(this, getString(R.string.touch_again), Toast.LENGTH_SHORT).show();
+            new Handler().postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    doubleBackToExitPressedOnce = false;
+                }
+            }, 2000);
+        }
     }
 
     private void prepareRecyclerViewData() {
