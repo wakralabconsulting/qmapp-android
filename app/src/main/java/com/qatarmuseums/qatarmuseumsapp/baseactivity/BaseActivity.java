@@ -140,12 +140,15 @@ public class BaseActivity extends AppCompatActivity
 
     @Override
     public void onBackPressed() {
-        if (drawer.isDrawerOpen(GravityCompat.END)) {
+        if (drawer!=null) {
+            if (drawer.isDrawerOpen(GravityCompat.END)) {
+                navigationView.startAnimation(fadeOutAnimation);
+                toolbar.setBackgroundColor(Color.parseColor("#000000"));
 
-            navigationView.startAnimation(fadeOutAnimation);
-            toolbar.setBackgroundColor(Color.parseColor("#000000"));
-
-        } else {
+            } else {
+                super.onBackPressed();
+            }
+        }else {
             super.onBackPressed();
         }
 
@@ -158,6 +161,7 @@ public class BaseActivity extends AppCompatActivity
 
             case R.id.topbar_back:
                 // topbar back action
+                onBackPressed();
                 break;
 
             case R.id.topbar_calendar:

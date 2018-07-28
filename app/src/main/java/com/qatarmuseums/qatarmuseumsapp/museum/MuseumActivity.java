@@ -1,16 +1,13 @@
 package com.qatarmuseums.qatarmuseumsapp.museum;
 
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v4.view.ViewPager;
 import android.support.v7.widget.DefaultItemAnimator;
-import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SnapHelper;
 import android.view.Gravity;
-import android.view.MotionEvent;
 import android.view.View;
-import android.widget.HorizontalScrollView;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 
@@ -23,8 +20,16 @@ import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import cn.lightsky.infiniteindicator.IndicatorConfiguration;
+import cn.lightsky.infiniteindicator.InfiniteIndicator;
+import cn.lightsky.infiniteindicator.OnPageClickListener;
+import cn.lightsky.infiniteindicator.Page;
 
-public class MuseumActivity extends BaseActivity implements View.OnClickListener {
+import static android.view.Gravity.LEFT;
+import static android.view.Gravity.RIGHT;
+
+public class MuseumActivity extends BaseActivity implements
+        ViewPager.OnPageChangeListener, OnPageClickListener {
     private List<MuseumHScrollModel> museumHScrollModelList = new ArrayList<>();
     private MuseumHorizontalScrollViewAdapter museumHorizontalScrollViewAdapter;
     @BindView(R.id.horizontal_scrol_previous_icon)
@@ -34,6 +39,14 @@ public class MuseumActivity extends BaseActivity implements View.OnClickListener
     ImageView scrollBarNextIcon;
     @BindView(R.id.settings_page_recycler_view)
     RecyclerView recyclerView;
+    @BindView(R.id.horizontal_scrol_next_icon_layout)
+    LinearLayout scrollBarNextIconLayout;
+    @BindView(R.id.horizontal_scrol_previous_icon_layout)
+    LinearLayout scrollBarPreviousIconLayout;
+    private IndicatorConfiguration configuration;
+    private InfiniteIndicator animCircleIndicator;
+    private GlideLoader glideLoader;
+    ArrayList<Page> ads;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -41,7 +54,8 @@ public class MuseumActivity extends BaseActivity implements View.OnClickListener
         setContentView(R.layout.activity_museum);
         ButterKnife.bind(this);
         setToolbarForMuseumActivity();
-        setupClickListeners();
+        animCircleIndicator = (InfiniteIndicator) findViewById(R.id.main_indicator_default_circle);
+
         museumHorizontalScrollViewAdapter = new MuseumHorizontalScrollViewAdapter(this, museumHScrollModelList);
         recyclerviewLayoutManager =
                 new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false);
@@ -58,85 +72,74 @@ public class MuseumActivity extends BaseActivity implements View.OnClickListener
             @Override
             public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
                 super.onScrolled(recyclerView, dx, dy);
-                int lastCompletelyVisibleItemPosition = 0;
-                lastCompletelyVisibleItemPosition = ((LinearLayoutManager) recyclerView
+                int lastVisibleItemPosition = 0;
+                int lastCompleteVisibleItemPosition = 0;
+                int firstVisibleItemPosition = 0;
+                lastCompleteVisibleItemPosition = ((LinearLayoutManager) recyclerView
+                        .getLayoutManager()).findLastCompletelyVisibleItemPosition();
+                lastVisibleItemPosition = ((LinearLayoutManager) recyclerView
                         .getLayoutManager()).findLastVisibleItemPosition();
-                if (lastCompletelyVisibleItemPosition == museumHScrollModelList.size() - 1) {
+                firstVisibleItemPosition = ((LinearLayoutManager) recyclerView
+                        .getLayoutManager()).findFirstVisibleItemPosition();
+                 if (firstVisibleItemPosition == 0) {
                     showRightArrow();
-                } else if (lastCompletelyVisibleItemPosition == 1) {
-
+                }else if (lastCompleteVisibleItemPosition ==museumHScrollModelList.size()-1) {
                     showLeftArrow();
-
-                } else {
-//                    showBothArrows();
-                }
+                }else {
+                     showBothArrows();
+                 }
 
             }
         });
-//        SnapHelper snapHelperStart = new GravitySnapHelper(Gravity.START);
-//        snapHelperStart.attachToRecyclerView(recyclerView);
+        SnapHelper snapHelperStart = new GravitySnapHelper(Gravity.START);
+        snapHelperStart.attachToRecyclerView(recyclerView);
         prepareRecyclerViewData();
-    }
-
-    @Override
-    public void onClick(View v) {
-        switch (v.getId()) {
-
-            case R.id.horizontal_scrol_previous_icon:
-                // scroll view previous action
-                recyclerView.getLayoutManager().scrollToPosition(recyclerviewLayoutManager.findFirstVisibleItemPosition() - 1);
-                break;
-
-//            case R.id.horizontal_scrol_about_icon:
-//                // scroll viewm about action
-//                break;
-//
-//            case R.id.horizontal_scrol_tour_guide_icon:
-//                // scroll viewm tour guide action
-//                break;
-//
-//            case R.id.horizontal_scrol_exhibition_icon:
-//                // scroll viewm exhibition action
-//                break;
-//
-//            case R.id.horizontal_collection_icon:
-//                // scroll view collection action
-//                break;
-//
-//            case R.id.horizontal_scrol_parks_icon:
-//                // scroll viewm parks action
-//                break;
-//
-//            case R.id.horizontal_scrol_dining_icon:
-//                // scroll viewm dining action
-//                break;
-
-            case R.id.horizontal_scrol_next_icon:
-                // scroll viewm next action
-                recyclerView.getLayoutManager().scrollToPosition(recyclerviewLayoutManager.findLastVisibleItemPosition() + 1);
-                break;
-
-            default:
-                break;
-
-
-        }
-    }
-
-    public void setupClickListeners() {
-        scrollBarPreviousIcon.setOnClickListener(this);
-        scrollBarNextIcon.setOnClickListener(this);
-
+        getSliderImagesFromList();
+        scrollBarNextIconLayout.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                recyclerView.scrollToPosition(museumHorizontalScrollViewAdapter.getItemCount() - 1);
+            }
+        });
+        scrollBarPreviousIconLayout.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                recyclerView.scrollToPosition(0);
+            }
+        });
 
     }
+
+
+    public void getSliderImagesFromList() {
+        ads = new ArrayList<>();
+
+        ads.add(new Page("", "http://www.qm.org.qa/sites/default/files/museum_of_islamic_art.png",
+                null));
+        ads.add(new Page("", "http://www.qm.org.qa/sites/default/files/national_museum_of_qatar.png",
+                null));
+        ads.add(new Page("", "http://www.qm.org.qa/sites/default/files/mathaf_arab_museum.png",
+                null));
+        ads.add(new Page("", "http://www.qm.org.qa/sites/default/files/firestation.png",
+                null));
+        ads.add(new Page("", "http://www.qm.org.qa/sites/default/files/qatar_olypic_sports_museum.png",
+                null));
+
+        loadAdsToSlider(ads);
+    }
+
 
     public void showBothArrows() {
         scrollBarNextIcon.setVisibility(View.VISIBLE);
         scrollBarPreviousIcon.setVisibility(View.VISIBLE);
+        scrollBarPreviousIconLayout.setVisibility(View.VISIBLE);
+        scrollBarNextIconLayout.setVisibility(View.VISIBLE);
     }
 
     public void showLeftArrow() {
         scrollBarNextIcon.setVisibility(View.GONE);
+        scrollBarNextIconLayout.setVisibility(View.INVISIBLE);
+        scrollBarPreviousIconLayout.setVisibility(View.VISIBLE);
         scrollBarPreviousIcon.setVisibility(View.VISIBLE);
 
     }
@@ -145,6 +148,8 @@ public class MuseumActivity extends BaseActivity implements View.OnClickListener
     public void showRightArrow() {
         scrollBarNextIcon.setVisibility(View.VISIBLE);
         scrollBarPreviousIcon.setVisibility(View.GONE);
+        scrollBarPreviousIconLayout.setVisibility(View.INVISIBLE);
+        scrollBarNextIconLayout.setVisibility(View.VISIBLE);
     }
 
     public void prepareRecyclerViewData() {
@@ -172,6 +177,101 @@ public class MuseumActivity extends BaseActivity implements View.OnClickListener
                 getResources().getString(R.string.sidemenu_dining_text), R.drawable.dining);
         museumHScrollModelList.add(model);
         museumHorizontalScrollViewAdapter.notifyDataSetChanged();
+    }
+
+
+    public void loadAdsToSlider(ArrayList<Page> adsImages) {
+        if (adsImages.size() > 1) {
+            glideLoader = new GlideLoader();
+            if (getResources().getConfiguration().locale.getLanguage().equals("en")) {
+                configuration = new IndicatorConfiguration.Builder()
+                        .imageLoader(glideLoader)
+                        .isStopWhileTouch(true)
+                        .onPageChangeListener(this)
+                        .scrollDurationFactor(6)
+                        .internal(3000)
+                        .isLoop(true)
+                        .isAutoScroll(true)
+                        .onPageClickListener(this)
+                        .direction(RIGHT)
+                        .position(IndicatorConfiguration.IndicatorPosition.Center_Bottom)
+                        .build();
+                animCircleIndicator.init(configuration);
+                animCircleIndicator.notifyDataChange(adsImages);
+            } else {
+                configuration = new IndicatorConfiguration.Builder()
+                        .imageLoader(glideLoader)
+                        .isStopWhileTouch(true)
+                        .onPageChangeListener(this)
+                        .internal(3000)
+                        .scrollDurationFactor(6)
+                        .isLoop(true)
+                        .isAutoScroll(true)
+                        .onPageClickListener(this)
+                        .direction(LEFT)
+                        .position(IndicatorConfiguration.IndicatorPosition.Center_Bottom)
+                        .build();
+                animCircleIndicator.init(configuration);
+                animCircleIndicator.notifyDataChange(adsImages);
+            }
+
+        } else {
+            glideLoader = new GlideLoader();
+            configuration = new IndicatorConfiguration.Builder()
+                    .imageLoader(glideLoader)
+                    .isStopWhileTouch(true)
+                    .onPageChangeListener(null)
+                    .scrollDurationFactor(6)
+                    .internal(3000)
+                    .isLoop(false)
+                    .isAutoScroll(false)
+                    .onPageClickListener(null)
+                    .direction(RIGHT)
+                    .position(IndicatorConfiguration.IndicatorPosition.Center_Bottom)
+                    .build();
+            animCircleIndicator.init(configuration);
+            animCircleIndicator.notifyDataChange(adsImages);
+        }
+    }
+
+
+    @Override
+    public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
+
+    }
+
+    @Override
+    public void onPageSelected(int position) {
+
+    }
+
+    @Override
+    public void onPageScrollStateChanged(int state) {
+
+    }
+
+    @Override
+    public void onPageClick(int position, Page page) {
+
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        if (configuration != null)
+            animCircleIndicator.stop();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        if (configuration != null)
+            animCircleIndicator.start();
+        super.onResume();
+        if (configuration != null)
+            animCircleIndicator.start();
+
+
     }
 
 }

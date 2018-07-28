@@ -88,8 +88,8 @@ public class HomeActivity extends BaseActivity {
                     cdd.show();
                 }
                 if (homeList.getId().equals("63")) {
-//                    Intent intent = new Intent(HomeActivity.this, MuseumActivity.class);
-//                    startActivity(intent);
+                    Intent intent = new Intent(HomeActivity.this, MuseumActivity.class);
+                    startActivity(intent);
                 }
             }
 
