@@ -1,7 +1,10 @@
 package com.qatarmuseums.qatarmuseumsapp.home;
 
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.Bundle;
+import android.os.Handler;
+import android.support.v4.view.GravityCompat;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -10,12 +13,14 @@ import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.RelativeLayout;
+import android.widget.Toast;
 
 import com.qatarmuseums.qatarmuseumsapp.R;
 import com.qatarmuseums.qatarmuseumsapp.base.BaseActivity;
 import com.qatarmuseums.qatarmuseumsapp.commonpage.CommonActivity;
 import com.qatarmuseums.qatarmuseumsapp.commonpage.RecyclerTouchListener;
 import com.qatarmuseums.qatarmuseumsapp.utils.Util;
+import com.qatarmuseums.qatarmuseumsapp.webview.WebviewActivity;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -28,6 +33,7 @@ public class HomeActivity extends BaseActivity {
     private List<HomeList> homeLists = new ArrayList<>();
     private Intent navigation_intent;
     Util util;
+    private boolean doubleBackToExitPressedOnce;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -52,8 +58,10 @@ public class HomeActivity extends BaseActivity {
         giftShopNavigation.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                // Gift Shop click action
-                util.showComingSoonDialog(HomeActivity.this);
+                navigation_intent = new Intent(HomeActivity.this, WebviewActivity.class);
+                navigation_intent.putExtra("url", getString(R.string.gift_shop_url));
+                startActivity(navigation_intent);
+
             }
         });
         culturePassNavigation.setOnClickListener(new View.OnClickListener() {
@@ -145,6 +153,27 @@ public class HomeActivity extends BaseActivity {
                 return false;
             }
         });
+    }
+
+    @Override
+    public void onBackPressed() {
+        if (drawer.isDrawerOpen(GravityCompat.END)) {
+            navigationView.startAnimation(fadeOutAnimation);
+            toolbar.setBackgroundColor(Color.parseColor("#000000"));
+        } else {
+            if (doubleBackToExitPressedOnce) {
+                super.onBackPressed();
+                return;
+            }
+            this.doubleBackToExitPressedOnce = true;
+            Toast.makeText(this, getString(R.string.touch_again), Toast.LENGTH_SHORT).show();
+            new Handler().postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    doubleBackToExitPressedOnce = false;
+                }
+            }, 2000);
+        }
     }
 
     private void prepareRecyclerViewData() {
