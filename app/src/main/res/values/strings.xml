@@ -42,6 +42,7 @@
     <string name="contact_title">CONTACT</string>
     <string name="settings_activity_tittle">SETTINGS</string>
     <string name="calendar_activity_tittle">CALENDAR</string>
+    <string name="filter_activity_tittle">FILTER</string>
     <string name="education_calendar_activity_tittle">EDUCATION CALENDAR</string>
     <string name="select_language_text">Select App Language</string>
     <string name="english">English</string>
@@ -80,4 +81,9 @@
     <string name="open_in_google_maps">Click here to open in Google Maps</string>
     <string name="contact_mail">info@mia.org.qa</string>
     <string name="for_more_information_text">For more information and to make a reservation, visit <u>MIA.</u></string>
+    <string name="institution">Institution -</string>
+    <string name="age_group">Age Group -</string>
+    <string name="programme_type">Programme type -</string>
+    <string name="clear">Clear</string>
+    <string name="filter">Filter</string>
 </resources>
