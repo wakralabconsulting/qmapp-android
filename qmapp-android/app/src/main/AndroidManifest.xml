@@ -54,6 +54,10 @@
             android:name=".educationactivity.EducationActivity"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar" />
+        <activity android:name=".museum.MuseumActivity"
+            android:theme="@style/AppTheme.NoTitle"
+            android:screenOrientation="portrait"
+            />
     </application>
 
 </manifest>
