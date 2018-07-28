@@ -24,6 +24,7 @@ import com.qatarmuseums.qatarmuseumsapp.education.EducationActivity;
 import com.qatarmuseums.qatarmuseumsapp.notification.NotificationActivity;
 import com.qatarmuseums.qatarmuseumsapp.settings.SettingsActivity;
 import com.qatarmuseums.qatarmuseumsapp.utils.Util;
+import com.qatarmuseums.qatarmuseumsapp.webview.WebviewActivity;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -32,7 +33,7 @@ public class BaseActivity extends AppCompatActivity
         implements View.OnClickListener {
     @Nullable
     @BindView(R.id.toolbar)
-    Toolbar toolbar;
+    public Toolbar toolbar;
     @Nullable
     @BindView(R.id.topbar_back)
     ImageView topbarBack;
@@ -50,10 +51,10 @@ public class BaseActivity extends AppCompatActivity
     ImageView topbarSidemenu;
     @Nullable
     @BindView(R.id.drawer_layout)
-    DrawerLayout drawer;
+    public DrawerLayout drawer;
     @Nullable
     @BindView(R.id.nav_view)
-    NavigationView navigationView;
+    public NavigationView navigationView;
     @Nullable
     @BindView(R.id.sidemenu_exibition_icon)
     ImageView sidemenuExhibition;
@@ -86,7 +87,7 @@ public class BaseActivity extends AppCompatActivity
     ImageView sidemenuSettings;
     private FrameLayout fullView;
     private FrameLayout activityContainer;
-    Animation fadeInAnimation, fadeOutAnimation;
+    public Animation fadeInAnimation, fadeOutAnimation;
     private Intent navigation_intent;
     Util util;
 
@@ -237,10 +238,11 @@ public class BaseActivity extends AppCompatActivity
                 break;
 
             case R.id.sidemenu_gift_shop_icon:
-                // navigation drawer giftshop action
-                util.showComingSoonDialog(BaseActivity.this);
-//                topbarSidemenu.setImageDrawable(getResources().getDrawable(R.drawable.side_menu_icon));
-//                drawer.closeDrawer(GravityCompat.END, false);
+                topbarSidemenu.setImageDrawable(getResources().getDrawable(R.drawable.side_menu_icon));
+                drawer.closeDrawer(GravityCompat.END, false);
+                navigation_intent = new Intent(BaseActivity.this, WebviewActivity.class);
+                navigation_intent.putExtra("url", getString(R.string.gift_shop_url));
+                startActivity(navigation_intent);
                 break;
             case R.id.sidemenu_park_icon:
                 // navigation drawer parks action
