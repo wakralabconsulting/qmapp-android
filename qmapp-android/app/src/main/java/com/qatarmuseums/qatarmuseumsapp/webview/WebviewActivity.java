@@ -49,16 +49,13 @@ public class WebviewActivity extends AppCompatActivity {
         ButterKnife.bind(this);
         setSupportActionBar(toolbar);
         url = getIntent().getStringExtra("url");
-        toolbarTittleText = getString(R.string.app_name);
-
         if (TextUtils.isEmpty(url)) {
             finish();
         }
-        setFontTypeForToolbar();
+        toolbarTitle.setText(getString(R.string.app_name));
         setUpWebView();
         webView.loadUrl(url);
         setUpCloseButtonClickListener();
-
 
     }
 
@@ -126,18 +123,5 @@ public class WebviewActivity extends AppCompatActivity {
                 return false;
             }
         });
-    }
-
-    public void setFontTypeForToolbar() {
-//        if (getResources().getConfiguration().locale.getLanguage().equals("en")) {
-//            mTypeFace = Typeface.createFromAsset(getAssets(),
-//                    "fonts/Lato-Bold.ttf");
-//        } else {
-//            mTypeFace = Typeface.createFromAsset(getAssets(),
-//                    "fonts/GE_SS_Unique_Bold.otf");
-//
-//        }
-//        toolbarTitle.setTypeface(mTypeFace);
-        toolbarTitle.setText(toolbarTittleText);
     }
 }
