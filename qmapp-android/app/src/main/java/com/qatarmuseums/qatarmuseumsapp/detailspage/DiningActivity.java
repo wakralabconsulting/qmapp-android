@@ -28,6 +28,7 @@ import com.qatarmuseums.qatarmuseumsapp.utils.IPullZoom;
 import com.qatarmuseums.qatarmuseumsapp.utils.PixelUtil;
 import com.qatarmuseums.qatarmuseumsapp.utils.PullToZoomCoordinatorLayout;
 import com.qatarmuseums.qatarmuseumsapp.utils.Util;
+import com.qatarmuseums.qatarmuseumsapp.webview.WebviewActivity;
 
 public class DiningActivity extends AppCompatActivity implements IPullZoom {
 
@@ -45,6 +46,8 @@ public class DiningActivity extends AppCompatActivity implements IPullZoom {
     private int headerOffSetSize;
     private String latitude, longitude;
     Intent intent;
+    private Intent navigation_intent;
+    private String url;
 
     @SuppressLint("ClickableViewAccessibility")
     @Override
@@ -86,8 +89,10 @@ public class DiningActivity extends AppCompatActivity implements IPullZoom {
         ClickableSpan clickableSpan = new ClickableSpan() {
             @Override
             public void onClick(View textView) {
-                // http://www.mia.org.qa/en/visiting/idam
-                Toast.makeText(DiningActivity.this, "Navigate to web view", Toast.LENGTH_SHORT).show();
+                url = "http://www.mia.org.qa/en/visiting/idam";
+                navigation_intent = new Intent(DiningActivity.this, WebviewActivity.class);
+                navigation_intent.putExtra("url", url);
+                startActivity(navigation_intent);
             }
 
             @Override

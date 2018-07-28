@@ -86,4 +86,6 @@
     <string name="programme_type">Programme type -</string>
     <string name="clear">Clear</string>
     <string name="filter">Filter</string>
+    <string name="gift_shop_url">http://www.qm.org.qa/en/gift-shops</string>
+    <string name="touch_again">Touch again to exit</string>
 </resources>
