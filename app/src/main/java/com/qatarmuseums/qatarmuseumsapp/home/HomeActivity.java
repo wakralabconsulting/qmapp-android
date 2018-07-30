@@ -94,13 +94,12 @@ public class HomeActivity extends BaseActivity {
                     Intent intent = new Intent(HomeActivity.this, CommonActivity.class);
                     intent.putExtra(getString(R.string.toolbar_title_key), getString(R.string.sidemenu_exhibition_text));
                     startActivity(intent);
-                } else {
-                    util.showComingSoonDialog(HomeActivity.this);
-                }
-                if (homeList.getId().equals("63")) {
+                }else if (homeList.getId().equals("63")) {
                     Intent intent = new Intent(HomeActivity.this, MuseumActivity.class);
                     intent.putExtra("MUSEUMTITLE",homeList.getName());
                     startActivity(intent);
+                }else {
+                    util.showComingSoonDialog(HomeActivity.this);
                 }
             }
 
