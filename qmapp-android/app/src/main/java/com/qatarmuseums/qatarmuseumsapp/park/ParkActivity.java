@@ -5,10 +5,16 @@ import android.os.Bundle;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.Toolbar;
+import android.view.MotionEvent;
+import android.view.View;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.widget.ImageView;
 
 import com.qatarmuseums.qatarmuseumsapp.R;
 import com.qatarmuseums.qatarmuseumsapp.home.GlideApp;
+import com.qatarmuseums.qatarmuseumsapp.utils.Util;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -18,14 +24,22 @@ public class ParkActivity extends AppCompatActivity {
     private List<ParkList> parkLists = new ArrayList<>();
     private ParkListAdapter mAdapter;
     private RecyclerView recyclerView;
-    private ImageView headerImageView;
+    private ImageView headerImageView, favIcon, shareIcon, toolbarClose;
+    private Toolbar toolbar;
+    private Util util;
+    private Animation zoomOutAnimation;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_park);
+        toolbar = (Toolbar) findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
+        toolbarClose = (ImageView) findViewById(R.id.toolbar_close);
         headerImageView = (ImageView) findViewById(R.id.header_img);
         recyclerView = (RecyclerView) findViewById(R.id.park_recycler_view);
+        favIcon = (ImageView) findViewById(R.id.favourite);
+        shareIcon = (ImageView) findViewById(R.id.share);
         mAdapter = new ParkListAdapter(this, parkLists);
         RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(getApplicationContext());
         recyclerView.setLayoutManager(mLayoutManager);
@@ -37,6 +51,57 @@ public class ParkActivity extends AppCompatActivity {
                 .centerCrop()
                 .placeholder(R.drawable.placeholdeer)
                 .into(headerImageView);
+        toolbarClose.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                onBackPressed();
+            }
+        });
+        util = new Util();
+        favIcon.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (util.checkImageResource(ParkActivity.this, favIcon, R.drawable.heart_fill)) {
+                    favIcon.setImageResource(R.drawable.heart_empty);
+                } else
+                    favIcon.setImageResource(R.drawable.heart_fill);
+            }
+        });
+        zoomOutAnimation = AnimationUtils.loadAnimation(getApplicationContext(),
+                R.anim.zoom_out_more);
+        toolbarClose.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                switch (event.getAction()) {
+                    case MotionEvent.ACTION_DOWN:
+                        toolbarClose.startAnimation(zoomOutAnimation);
+                        break;
+                }
+                return false;
+            }
+        });
+        favIcon.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                switch (event.getAction()) {
+                    case MotionEvent.ACTION_DOWN:
+                        favIcon.startAnimation(zoomOutAnimation);
+                        break;
+                }
+                return false;
+            }
+        });
+        shareIcon.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                switch (event.getAction()) {
+                    case MotionEvent.ACTION_DOWN:
+                        shareIcon.startAnimation(zoomOutAnimation);
+                        break;
+                }
+                return false;
+            }
+        });
 
     }
 
