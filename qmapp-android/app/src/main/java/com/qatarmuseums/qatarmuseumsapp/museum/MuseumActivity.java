@@ -1,5 +1,6 @@
 package com.qatarmuseums.qatarmuseumsapp.museum;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.view.ViewPager;
 import android.support.v7.widget.DefaultItemAnimator;
@@ -10,6 +11,7 @@ import android.view.Gravity;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.TextView;
 
 import com.github.rubensousa.gravitysnaphelper.GravitySnapHelper;
 import com.qatarmuseums.qatarmuseumsapp.R;
@@ -41,19 +43,23 @@ public class MuseumActivity extends BaseActivity implements
     RecyclerView recyclerView;
     @BindView(R.id.horizontal_scrol_next_icon_layout)
     LinearLayout scrollBarNextIconLayout;
+    @BindView(R.id.slider_image_title)
+    TextView sliderImageTitle;
     @BindView(R.id.horizontal_scrol_previous_icon_layout)
     LinearLayout scrollBarPreviousIconLayout;
     private IndicatorConfiguration configuration;
     private InfiniteIndicator animCircleIndicator;
     private GlideLoader glideLoader;
     ArrayList<Page> ads;
-
+    Intent intent;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_museum);
         ButterKnife.bind(this);
         setToolbarForMuseumActivity();
+        intent = getIntent();
+        sliderImageTitle.setText(intent.getStringExtra("MUSEUMTITLE"));
         animCircleIndicator = (InfiniteIndicator) findViewById(R.id.main_indicator_default_circle);
 
         museumHorizontalScrollViewAdapter = new MuseumHorizontalScrollViewAdapter(this, museumHScrollModelList);
@@ -188,10 +194,10 @@ public class MuseumActivity extends BaseActivity implements
                         .imageLoader(glideLoader)
                         .isStopWhileTouch(true)
                         .onPageChangeListener(this)
-                        .scrollDurationFactor(6)
+                        .scrollDurationFactor(2)
                         .internal(3000)
                         .isLoop(true)
-                        .isAutoScroll(true)
+                        .isAutoScroll(false)
                         .onPageClickListener(this)
                         .direction(RIGHT)
                         .position(IndicatorConfiguration.IndicatorPosition.Center_Bottom)
@@ -204,9 +210,9 @@ public class MuseumActivity extends BaseActivity implements
                         .isStopWhileTouch(true)
                         .onPageChangeListener(this)
                         .internal(3000)
-                        .scrollDurationFactor(6)
+                        .scrollDurationFactor(2)
                         .isLoop(true)
-                        .isAutoScroll(true)
+                        .isAutoScroll(false)
                         .onPageClickListener(this)
                         .direction(LEFT)
                         .position(IndicatorConfiguration.IndicatorPosition.Center_Bottom)
@@ -221,7 +227,7 @@ public class MuseumActivity extends BaseActivity implements
                     .imageLoader(glideLoader)
                     .isStopWhileTouch(true)
                     .onPageChangeListener(null)
-                    .scrollDurationFactor(6)
+                    .scrollDurationFactor(2)
                     .internal(3000)
                     .isLoop(false)
                     .isAutoScroll(false)
