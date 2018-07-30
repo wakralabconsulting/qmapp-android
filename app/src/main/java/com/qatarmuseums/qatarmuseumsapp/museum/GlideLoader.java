@@ -4,6 +4,7 @@ import android.content.Context;
 import android.widget.ImageView;
 
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions;
 import com.qatarmuseums.qatarmuseumsapp.R;
 import com.qatarmuseums.qatarmuseumsapp.homeactivity.GlideApp;
 
@@ -25,7 +26,6 @@ public class GlideLoader implements ImageLoader {
             GlideApp.with(context)
                     .load((String) res)
                     .centerCrop()
-                    .placeholder(R.drawable.placeholdeer)
                     .into(targetView);
         }
     }
