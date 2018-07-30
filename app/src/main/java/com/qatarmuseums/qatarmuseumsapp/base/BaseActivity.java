@@ -186,6 +186,7 @@ public class BaseActivity extends AppCompatActivity
                     break;
 
                 case R.id.topbar_calendar:
+                    topbarCalander.startAnimation(zoomOutAnimation);
                     navigation_intent = new Intent(getApplicationContext(), CalendarActivity.class);
                     startActivity(navigation_intent);
                     topbarSidemenu.setImageDrawable(getResources().getDrawable(R.drawable.side_menu_icon));
@@ -193,6 +194,7 @@ public class BaseActivity extends AppCompatActivity
                     break;
 
                 case R.id.topbar_notification:
+                    topbarNotification.startAnimation(zoomOutAnimation);
                     navigation_intent = new Intent(this, NotificationActivity.class);
                     startActivity(navigation_intent);
                     topbarSidemenu.setImageDrawable(getResources().getDrawable(R.drawable.side_menu_icon));
@@ -200,6 +202,7 @@ public class BaseActivity extends AppCompatActivity
                     break;
                 case R.id.topbar_profile:
                     // topbar profile action
+                    topbarProfile.startAnimation(zoomOutAnimation);
                     util.showComingSoonDialog(BaseActivity.this);
                     break;
 

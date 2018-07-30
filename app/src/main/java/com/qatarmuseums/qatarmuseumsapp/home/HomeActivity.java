@@ -19,6 +19,7 @@ import com.qatarmuseums.qatarmuseumsapp.R;
 import com.qatarmuseums.qatarmuseumsapp.base.BaseActivity;
 import com.qatarmuseums.qatarmuseumsapp.commonpage.CommonActivity;
 import com.qatarmuseums.qatarmuseumsapp.commonpage.RecyclerTouchListener;
+import com.qatarmuseums.qatarmuseumsapp.museum.MuseumActivity;
 import com.qatarmuseums.qatarmuseumsapp.utils.Util;
 import com.qatarmuseums.qatarmuseumsapp.webview.WebviewActivity;
 
@@ -159,7 +160,7 @@ public class HomeActivity extends BaseActivity {
     @Override
     public void onBackPressed() {
         if (drawer.isDrawerOpen(GravityCompat.END)) {
-            navigationView.startAnimation(fadeOutAnimation);
+            navigationView.startAnimation(zoomOutAnimation);
             toolbar.setBackgroundColor(Color.parseColor("#000000"));
         } else {
             if (doubleBackToExitPressedOnce) {

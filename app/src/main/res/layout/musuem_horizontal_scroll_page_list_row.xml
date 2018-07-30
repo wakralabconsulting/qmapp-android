@@ -11,6 +11,7 @@
         android:layout_marginEnd="@dimen/pading_5"
         android:layout_marginStart="@dimen/pading_5"
         android:gravity="center"
+        android:id="@+id/item_layout"
         android:orientation="vertical">
 
         <LinearLayout
