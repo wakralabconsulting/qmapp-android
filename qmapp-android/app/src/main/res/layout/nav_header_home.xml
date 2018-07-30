@@ -328,6 +328,7 @@
             <LinearLayout
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
+                android:id="@+id/sidemenu_settings_layout"
                 android:layout_marginEnd="@dimen/pading_10"
                 android:layout_weight=".5"
                 android:gravity="bottom"

@@ -107,13 +107,22 @@ public class MuseumActivity extends BaseActivity implements
         scrollBarNextIconLayout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                recyclerView.scrollToPosition(museumHorizontalScrollViewAdapter.getItemCount() - 1);
+                if (getResources().getConfiguration().locale.getLanguage().equals("en")) {
+                    recyclerView.scrollToPosition(museumHorizontalScrollViewAdapter.getItemCount() - 1);
+                }else {
+                    recyclerView.scrollToPosition(0);
+                }
             }
         });
         scrollBarPreviousIconLayout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                recyclerView.scrollToPosition(0);
+                if (getResources().getConfiguration().locale.getLanguage().equals("en")) {
+                    recyclerView.scrollToPosition(0);
+                }else {
+                    recyclerView.scrollToPosition(museumHorizontalScrollViewAdapter.getItemCount() - 1);
+
+                }
             }
         });
 

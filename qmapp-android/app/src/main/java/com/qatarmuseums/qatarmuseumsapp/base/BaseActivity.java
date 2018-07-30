@@ -17,6 +17,7 @@ import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 
 import com.qatarmuseums.qatarmuseumsapp.calendar.CalendarActivity;
 import com.qatarmuseums.qatarmuseumsapp.R;
@@ -87,6 +88,37 @@ public class BaseActivity extends AppCompatActivity
     @Nullable
     @BindView(R.id.sidemenu_settings_icon)
     ImageView sidemenuSettings;
+    @Nullable
+    @BindView(R.id.sidemenu_exibition_layout)
+    LinearLayout sidemenuExibitionLayout;
+    @Nullable
+    @BindView(R.id.sidemenu_event_layout)
+    LinearLayout sidemenuEventLayout;
+    @Nullable
+    @BindView(R.id.sidemenu_education_layout)
+    LinearLayout sidemenuEducationLayout;
+    @Nullable
+    @BindView(R.id.sidemenu_tour_guide_layout)
+    LinearLayout sidemenuTourGuideLayout;
+    @Nullable
+    @BindView(R.id.sidemenu_heritage_layout)
+    LinearLayout sidemenuHeritageLayout;
+    @Nullable
+    @BindView(R.id.sidemenu_public_arts_layout)
+    LinearLayout sidemenuPublicArtsLayout;
+    @Nullable
+    @BindView(R.id.sidemenu_dining_layout)
+    LinearLayout sidemenuDiningLayout;
+    @Nullable
+    @BindView(R.id.sidemenu_gift_shop_layout)
+    LinearLayout sidemenuGiftShopLayout;
+    @Nullable
+    @BindView(R.id.sidemenu_park_layout)
+    LinearLayout sidemenuParkLayout;
+    @Nullable
+    @BindView(R.id.sidemenu_settings_layout)
+    LinearLayout sidemenuSettingsLayout;
+
     private FrameLayout fullView;
     private FrameLayout activityContainer;
     Animation fadeInAnimation, fadeOutAnimation, zoomOutAnimation;
@@ -109,6 +141,8 @@ public class BaseActivity extends AppCompatActivity
         setOnclickListenerForButtons();
         zoomOutAnimation = AnimationUtils.loadAnimation(getApplicationContext(),
                 R.anim.zoom_out_more);
+
+
         topbarBack.setOnTouchListener(new View.OnTouchListener() {
             @Override
             public boolean onTouch(View v, MotionEvent event) {
@@ -121,6 +155,7 @@ public class BaseActivity extends AppCompatActivity
             }
         });
 
+
         util = new Util();
         fadeInAnimation = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.fade_in_animation);
         fadeOutAnimation = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.fade_out_animation);
@@ -132,8 +167,7 @@ public class BaseActivity extends AppCompatActivity
 
             @Override
             public void onAnimationEnd(Animation animation) {
-                topbarSidemenu.setImageDrawable(getResources().getDrawable(R.drawable.side_menu_icon));
-                drawer.closeDrawer(GravityCompat.END, false);
+                closeDrawer();
             }
 
             @Override
@@ -141,7 +175,6 @@ public class BaseActivity extends AppCompatActivity
 
             }
         });
-
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
                 this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close) {
             @Override
@@ -170,162 +203,202 @@ public class BaseActivity extends AppCompatActivity
             }
         } else {
 
-              super.onBackPressed();
-            }
-
+            super.onBackPressed();
         }
 
+    }
 
-        @Override
-        public void onClick (View v){
-            switch (v.getId()) {
 
-                case R.id.topbar_back:
-                    // topbar back action
-                    onBackPressed();
-                    break;
+    @Override
+    public void onClick(View v) {
+        switch (v.getId()) {
 
-                case R.id.topbar_calendar:
-                    topbarCalander.startAnimation(zoomOutAnimation);
-                    navigation_intent = new Intent(getApplicationContext(), CalendarActivity.class);
-                    startActivity(navigation_intent);
-                    topbarSidemenu.setImageDrawable(getResources().getDrawable(R.drawable.side_menu_icon));
-                    drawer.closeDrawer(GravityCompat.END, false);
-                    break;
+            case R.id.topbar_back:
+                // topbar back action
+                onBackPressed();
+                break;
 
-                case R.id.topbar_notification:
-                    topbarNotification.startAnimation(zoomOutAnimation);
-                    navigation_intent = new Intent(this, NotificationActivity.class);
-                    startActivity(navigation_intent);
-                    topbarSidemenu.setImageDrawable(getResources().getDrawable(R.drawable.side_menu_icon));
-                    drawer.closeDrawer(GravityCompat.END, false);
-                    break;
-                case R.id.topbar_profile:
-                    // topbar profile action
-                    topbarProfile.startAnimation(zoomOutAnimation);
-                    util.showComingSoonDialog(BaseActivity.this);
-                    break;
+            case R.id.topbar_calendar:
+                topbarCalander.startAnimation(zoomOutAnimation);
+                navigation_intent = new Intent(getApplicationContext(), CalendarActivity.class);
+                startActivity(navigation_intent);
+                closeDrawer();
+                break;
 
-                case R.id.topbar_sidemenu:
-                    // topbar sidemenu action
-                    handlingDrawer();
-                    break;
+            case R.id.topbar_notification:
+                topbarNotification.startAnimation(zoomOutAnimation);
+                navigation_intent = new Intent(this, NotificationActivity.class);
+                startActivity(navigation_intent);
+                closeDrawer();
+                break;
+            case R.id.topbar_profile:
+                // topbar profile action
+                topbarProfile.startAnimation(zoomOutAnimation);
+                util.showComingSoonDialog(BaseActivity.this);
+                break;
 
-                case R.id.sidemenu_exibition_icon:
-                    topbarSidemenu.setImageDrawable(getResources().getDrawable(R.drawable.side_menu_icon));
-                    drawer.closeDrawer(GravityCompat.END, false);
-                    navigation_intent = new Intent(this, CommonActivity.class);
-                    navigation_intent.putExtra(getString(R.string.toolbar_title_key), getString(R.string.sidemenu_exhibition_text));
-                    startActivity(navigation_intent);
-                    break;
+            case R.id.topbar_sidemenu:
+                // topbar sidemenu action
+                handlingDrawer();
+                break;
 
-                case R.id.sidemenu_event_icon:
-                    navigation_intent = new Intent(getApplicationContext(), CalendarActivity.class);
-                    startActivity(navigation_intent);
-                    topbarSidemenu.setImageDrawable(getResources().getDrawable(R.drawable.side_menu_icon));
-                    drawer.closeDrawer(GravityCompat.END, false);
-                    break;
+            case R.id.sidemenu_exibition_layout:
+                touchListnerForLayout(sidemenuExibitionLayout);
+                navigation_intent = new Intent(this, CommonActivity.class);
+                navigation_intent.putExtra(getString(R.string.toolbar_title_key), getString(R.string.sidemenu_exhibition_text));
+                startActivity(navigation_intent);
+                closeDrawer();
+                break;
 
-                case R.id.sidemenu_education_icon:
-                    drawer.startAnimation(fadeOutAnimation);
-                    navigation_intent = new Intent(this, EducationActivity.class);
-                    startActivity(navigation_intent);
+            case R.id.sidemenu_event_layout:
+                touchListnerForLayout(sidemenuEventLayout);
+                navigation_intent = new Intent(getApplicationContext(), CalendarActivity.class);
+                startActivity(navigation_intent);
+                closeDrawer();
+                break;
 
-                    break;
+            case R.id.sidemenu_education_layout:
+                touchListnerForLayout(sidemenuEducationLayout);
+                sidemenuEducationLayout.startAnimation(zoomOutAnimation);
+                navigation_intent = new Intent(this, EducationActivity.class);
+                startActivity(navigation_intent);
+                closeDrawer();
+                break;
 
-                case R.id.sidemenu_tour_guide_icon:
-                    // navigation drawer tour guide action
-                    util.showComingSoonDialog(BaseActivity.this);
-//                topbarSidemenu.setImageDrawable(getResources().getDrawable(R.drawable.side_menu_icon));
-//                drawer.closeDrawer(GravityCompat.END, false);
-                    break;
-                case R.id.sidemenu_heritage_icon:
-                    topbarSidemenu.setImageDrawable(getResources().getDrawable(R.drawable.side_menu_icon));
-                    drawer.closeDrawer(GravityCompat.END, false);
-                    navigation_intent = new Intent(this, CommonActivity.class);
-                    navigation_intent.putExtra(getString(R.string.toolbar_title_key), getString(R.string.sidemenu_heritage_text));
-                    startActivity(navigation_intent);
-                    break;
+            case R.id.sidemenu_tour_guide_layout:
+                // navigation drawer tour guide action
+                touchListnerForLayout(sidemenuTourGuideLayout);
+                util.showComingSoonDialog(BaseActivity.this);
+                closeDrawer();
+                break;
+            case R.id.sidemenu_heritage_layout:
+                touchListnerForLayout(sidemenuHeritageLayout);
+                navigation_intent = new Intent(this, CommonActivity.class);
+                navigation_intent.putExtra(getString(R.string.toolbar_title_key), getString(R.string.sidemenu_heritage_text));
+                startActivity(navigation_intent);
+                closeDrawer();
+                break;
 
-                case R.id.sidemenu_public_arts_icon:
-                    navigation_intent = new Intent(this, CommonActivity.class);
-                    navigation_intent.putExtra(getString(R.string.toolbar_title_key), getString(R.string.sidemenu_public_arts_text));
-                    startActivity(navigation_intent);
-                    topbarSidemenu.setImageDrawable(getResources().getDrawable(R.drawable.side_menu_icon));
-                    drawer.closeDrawer(GravityCompat.END, false);
-                    break;
+            case R.id.sidemenu_public_arts_layout:
+                touchListnerForLayout(sidemenuPublicArtsLayout);
+                navigation_intent = new Intent(this, CommonActivity.class);
+                navigation_intent.putExtra(getString(R.string.toolbar_title_key), getString(R.string.sidemenu_public_arts_text));
+                startActivity(navigation_intent);
+                closeDrawer();
+                break;
 
-                case R.id.sidemenu_dining_icon:
-                    navigation_intent = new Intent(this, CommonActivity.class);
-                    navigation_intent.putExtra(getString(R.string.toolbar_title_key), getString(R.string.sidemenu_dining_text));
-                    startActivity(navigation_intent);
-                    topbarSidemenu.setImageDrawable(getResources().getDrawable(R.drawable.side_menu_icon));
-                    drawer.closeDrawer(GravityCompat.END, false);
-                    break;
+            case R.id.sidemenu_dining_layout:
+                touchListnerForLayout(sidemenuDiningLayout);
+                navigation_intent = new Intent(this, CommonActivity.class);
+                navigation_intent.putExtra(getString(R.string.toolbar_title_key), getString(R.string.sidemenu_dining_text));
+                startActivity(navigation_intent);
+                closeDrawer();
+                break;
 
-                case R.id.sidemenu_gift_shop_icon:
-                    topbarSidemenu.setImageDrawable(getResources().getDrawable(R.drawable.side_menu_icon));
-                    drawer.closeDrawer(GravityCompat.END, false);
-                    navigation_intent = new Intent(BaseActivity.this, WebviewActivity.class);
-                    navigation_intent.putExtra("url", getString(R.string.gift_shop_url));
-                    startActivity(navigation_intent);
-                    break;
-                case R.id.sidemenu_park_icon:
-                    topbarSidemenu.setImageDrawable(getResources().getDrawable(R.drawable.side_menu_icon));
-                    drawer.closeDrawer(GravityCompat.END, false);
-                    navigation_intent = new Intent(BaseActivity.this, ParkActivity.class);
-                    startActivity(navigation_intent);
-                    break;
+            case R.id.sidemenu_gift_shop_layout:
+                touchListnerForLayout(sidemenuGiftShopLayout);
+                sidemenuGiftShopLayout.startAnimation(zoomOutAnimation);
+                navigation_intent = new Intent(BaseActivity.this, WebviewActivity.class);
+                navigation_intent.putExtra("url", getString(R.string.gift_shop_url));
+                startActivity(navigation_intent);
+                closeDrawer();
+                break;
+            case R.id.sidemenu_park_layout:
+                touchListnerForLayout(sidemenuParkLayout);
+                navigation_intent = new Intent(BaseActivity.this, ParkActivity.class);
+                startActivity(navigation_intent);
+                closeDrawer();
+                break;
 
-                case R.id.sidemenu_settings_icon:
-                    // navigation drawer settings action
-                    topbarSidemenu.setImageDrawable(getResources().getDrawable(R.drawable.side_menu_icon));
-                    drawer.closeDrawer(GravityCompat.END, false);
-                    Intent settingsIntent = new Intent(this, SettingsActivity.class);
-                    startActivity(settingsIntent);
-                    break;
+            case R.id.sidemenu_settings_layout:
+                // navigation drawer settings action
+                touchListnerForLayout(sidemenuSettingsLayout);
+                Intent settingsIntent = new Intent(this, SettingsActivity.class);
+                startActivity(settingsIntent);
+                closeDrawer();
+                break;
 
-                default:
-                    break;
-            }
-
+            default:
+                break;
         }
 
-        public void handlingDrawer () {
-            if (drawer.isDrawerOpen(Gravity.END)) {
-                navigationView.startAnimation(fadeOutAnimation);
-                toolbar.setBackgroundColor(Color.parseColor("#000000"));
+    }
 
-            } else {
-                topbarSidemenu.setImageDrawable(getResources().getDrawable(R.drawable.close));
-                drawer.openDrawer(Gravity.END, false);
-                toolbar.setBackgroundColor(Color.parseColor("#CC000000"));
-                navigationView.startAnimation(fadeInAnimation);
+    public void handlingDrawer() {
+        if (drawer.isDrawerOpen(Gravity.END)) {
+            navigationView.startAnimation(fadeOutAnimation);
+            toolbar.setBackgroundColor(Color.parseColor("#000000"));
 
-            }
-        }
+        } else {
+            topbarSidemenu.setImageDrawable(getResources().getDrawable(R.drawable.close));
+            drawer.openDrawer(Gravity.END, false);
+            toolbar.setBackgroundColor(Color.parseColor("#CC000000"));
+            navigationView.startAnimation(fadeInAnimation);
 
-        public void setOnclickListenerForButtons () {
-            topbarBack.setOnClickListener(this);
-            topbarCalander.setOnClickListener(this);
-            topbarNotification.setOnClickListener(this);
-            topbarProfile.setOnClickListener(this);
-            topbarSidemenu.setOnClickListener(this);
-            sidemenuExhibition.setOnClickListener(this);
-            sidemenuEvents.setOnClickListener(this);
-            sidemenuEducation.setOnClickListener(this);
-            sidemenuTourGuide.setOnClickListener(this);
-            sidemenuHeritage.setOnClickListener(this);
-            sidemenuPublicArts.setOnClickListener(this);
-            sidemenuDining.setOnClickListener(this);
-            sidemenuGiftShop.setOnClickListener(this);
-            sidemenuPark.setOnClickListener(this);
-            sidemenuSettings.setOnClickListener(this);
-
-        }
-
-        public void setToolbarForMuseumActivity () {
-            topbarSidemenu.setVisibility(View.INVISIBLE);
-            topbarBack.setVisibility(View.VISIBLE);
         }
     }
+
+    public void setOnclickListenerForButtons() {
+        topbarBack.setOnClickListener(this);
+        topbarCalander.setOnClickListener(this);
+        topbarNotification.setOnClickListener(this);
+        topbarProfile.setOnClickListener(this);
+        topbarSidemenu.setOnClickListener(this);
+        sidemenuExibitionLayout.setOnClickListener(this);
+        sidemenuExhibition.setOnClickListener(this);
+        sidemenuEvents.setOnClickListener(this);
+        sidemenuEventLayout.setOnClickListener(this);
+        sidemenuEducation.setOnClickListener(this);
+        sidemenuEducationLayout.setOnClickListener(this);
+        sidemenuTourGuide.setOnClickListener(this);
+        sidemenuTourGuideLayout.setOnClickListener(this);
+        sidemenuHeritage.setOnClickListener(this);
+        sidemenuHeritageLayout.setOnClickListener(this);
+        sidemenuPublicArts.setOnClickListener(this);
+        sidemenuPublicArtsLayout.setOnClickListener(this);
+        sidemenuDining.setOnClickListener(this);
+        sidemenuDiningLayout.setOnClickListener(this);
+        sidemenuGiftShop.setOnClickListener(this);
+        sidemenuGiftShopLayout.setOnClickListener(this);
+        sidemenuPark.setOnClickListener(this);
+        sidemenuParkLayout.setOnClickListener(this);
+        sidemenuSettings.setOnClickListener(this);
+        sidemenuSettingsLayout.setOnClickListener(this);
+
+    }
+
+    public void setToolbarForMuseumActivity() {
+        topbarSidemenu.setVisibility(View.INVISIBLE);
+        topbarBack.setVisibility(View.VISIBLE);
+    }
+
+    public void closeDrawer() {
+        topbarSidemenu.setImageDrawable(getResources().getDrawable(R.drawable.side_menu_icon));
+        drawer.closeDrawer(GravityCompat.END, false);
+        sidemenuExibitionLayout.clearAnimation();
+        sidemenuEventLayout.clearAnimation();
+        sidemenuEducationLayout.clearAnimation();
+        sidemenuTourGuideLayout.clearAnimation();
+        sidemenuHeritageLayout.clearAnimation();
+        sidemenuPublicArtsLayout.clearAnimation();
+        sidemenuDiningLayout.clearAnimation();
+        sidemenuGiftShopLayout.clearAnimation();
+        sidemenuParkLayout.clearAnimation();
+        sidemenuSettingsLayout.clearAnimation();
+
+    }
+
+    public void touchListnerForLayout(final LinearLayout linearLayout) {
+        linearLayout.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View view, MotionEvent motionEvent) {
+                switch (motionEvent.getAction()) {
+                    case MotionEvent.ACTION_DOWN:
+                        linearLayout.startAnimation(zoomOutAnimation);
+                        break;
+                }
+                return false;
+            }
+        });
+    }
+}
