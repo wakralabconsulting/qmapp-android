@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     app:layout_behavior="@string/appbar_scrolling_view_behavior"
-    tools:context="com.qatarmuseums.qatarmuseumsapp.detailsactivity.DetailsActivity"
+    tools:context="com.qatarmuseums.qatarmuseumsapp.detailspage.DetailsActivity"
     tools:showIn="@layout/activity_details">
 
     <LinearLayout
@@ -119,23 +119,25 @@
                 android:id="@+id/timing_layout"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_marginBottom="@dimen/text_margin"
+                android:layout_marginTop="@dimen/text_margin"
                 android:gravity="center"
-                android:orientation="vertical">
+                android:orientation="vertical"
+                android:visibility="gone">
 
                 <TextView
                     android:id="@+id/timing_title"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="@dimen/text_margin"
                     android:fontFamily="@font/din_next_lt_pro_bold"
                     android:textColor="@color/black"
                     android:textSize="@dimen/font_size_18" />
 
                 <LinearLayout
                     android:layout_width="25dp"
-                    android:layout_height="2dp"
-                    android:layout_marginBottom="@dimen/padding_5dp"
-                    android:layout_marginTop="@dimen/padding_5dp"
+                    android:layout_height="3dp"
+                    android:layout_marginBottom="@dimen/padding_10"
+                    android:layout_marginTop="@dimen/padding_10"
                     android:background="@color/black" />
 
                 <TextView
@@ -155,7 +157,6 @@
                 android:id="@+id/location_title"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/text_margin"
                 android:fontFamily="@font/din_next_lt_pro_bold"
                 android:text="@string/location_title"
                 android:textColor="@color/black"
@@ -163,9 +164,9 @@
 
             <LinearLayout
                 android:layout_width="25dp"
-                android:layout_height="2dp"
-                android:layout_marginBottom="@dimen/padding_5dp"
-                android:layout_marginTop="@dimen/padding_5dp"
+                android:layout_height="3dp"
+                android:layout_marginBottom="@dimen/padding_10"
+                android:layout_marginTop="@dimen/pading_10"
                 android:background="@color/black" />
 
             <TextView
@@ -198,7 +199,8 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:gravity="center"
-                android:orientation="vertical">
+                android:orientation="vertical"
+                android:visibility="gone">
 
                 <TextView
                     android:id="@+id/contact_title"
@@ -212,9 +214,9 @@
 
                 <LinearLayout
                     android:layout_width="25dp"
-                    android:layout_height="2dp"
-                    android:layout_marginBottom="@dimen/padding_5dp"
-                    android:layout_marginTop="@dimen/padding_5dp"
+                    android:layout_height="3dp"
+                    android:layout_marginBottom="@dimen/padding_10"
+                    android:layout_marginTop="@dimen/padding_10"
                     android:background="@color/black" />
 
                 <TextView
