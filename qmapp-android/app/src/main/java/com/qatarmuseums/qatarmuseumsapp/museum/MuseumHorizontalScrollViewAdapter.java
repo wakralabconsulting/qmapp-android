@@ -4,8 +4,11 @@ import android.content.Context;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -18,8 +21,9 @@ import java.util.List;
  * Created by Exalture on 26-07-2018.
  */
 
-public class MuseumHorizontalScrollViewAdapter extends RecyclerView.Adapter<MuseumHorizontalScrollViewAdapter.MyViewHolder>  {
+public class MuseumHorizontalScrollViewAdapter extends RecyclerView.Adapter<MuseumHorizontalScrollViewAdapter.MyViewHolder> {
     private Context mContext;
+    private Animation zoomOutAnimation;
     private List<MuseumHScrollModel> museumHScrollModelList;
 
     @NonNull
@@ -48,17 +52,34 @@ public class MuseumHorizontalScrollViewAdapter extends RecyclerView.Adapter<Muse
 
     public class MyViewHolder extends RecyclerView.ViewHolder {
         TextView museumHscrollItemText;
+        LinearLayout itemLayout;
         ImageView museumHscrollItemImage;
+
         public MyViewHolder(View view) {
             super(view);
             museumHscrollItemText = (TextView) view.findViewById(R.id.horizontal_scrol_text);
             museumHscrollItemImage = (ImageView) view.findViewById(R.id.horizontal_scrol_image_icon);
+            itemLayout = (LinearLayout) view.findViewById(R.id.item_layout);
+            itemLayout.setOnTouchListener(new View.OnTouchListener() {
+                @Override
+                public boolean onTouch(View v, MotionEvent event) {
+                    switch (event.getAction()) {
+                        case MotionEvent.ACTION_DOWN:
+                            itemLayout.startAnimation(zoomOutAnimation);
+                            break;
+                    }
+                    return false;
+                }
+            });
+
         }
     }
 
 
-    public MuseumHorizontalScrollViewAdapter(Context context, List<MuseumHScrollModel> museumHScrollModelList){
+    public MuseumHorizontalScrollViewAdapter(Context context, List<MuseumHScrollModel> museumHScrollModelList) {
         this.mContext = context;
         this.museumHScrollModelList = museumHScrollModelList;
+        zoomOutAnimation = AnimationUtils.loadAnimation(mContext.getApplicationContext(),
+                R.anim.zoom_out_more);
     }
 }

@@ -6,7 +6,8 @@ import android.widget.ImageView;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions;
 import com.qatarmuseums.qatarmuseumsapp.R;
-import com.qatarmuseums.qatarmuseumsapp.homeactivity.GlideApp;
+import com.qatarmuseums.qatarmuseumsapp.home.GlideApp;
+
 
 import cn.lightsky.infiniteindicator.ImageLoader;
 
