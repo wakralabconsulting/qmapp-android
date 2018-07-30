@@ -22,6 +22,7 @@ import com.qatarmuseums.qatarmuseumsapp.R;
 import com.qatarmuseums.qatarmuseumsapp.commonpage.CommonActivity;
 import com.qatarmuseums.qatarmuseumsapp.education.EducationActivity;
 import com.qatarmuseums.qatarmuseumsapp.notification.NotificationActivity;
+import com.qatarmuseums.qatarmuseumsapp.park.ParkActivity;
 import com.qatarmuseums.qatarmuseumsapp.settings.SettingsActivity;
 import com.qatarmuseums.qatarmuseumsapp.utils.Util;
 import com.qatarmuseums.qatarmuseumsapp.webview.WebviewActivity;
@@ -245,10 +246,10 @@ public class BaseActivity extends AppCompatActivity
                 startActivity(navigation_intent);
                 break;
             case R.id.sidemenu_park_icon:
-                // navigation drawer parks action
-                util.showComingSoonDialog(BaseActivity.this);
-//                topbarSidemenu.setImageDrawable(getResources().getDrawable(R.drawable.side_menu_icon));
-//                drawer.closeDrawer(GravityCompat.END, false);
+                topbarSidemenu.setImageDrawable(getResources().getDrawable(R.drawable.side_menu_icon));
+                drawer.closeDrawer(GravityCompat.END, false);
+                navigation_intent = new Intent(BaseActivity.this, ParkActivity.class);
+                startActivity(navigation_intent);
                 break;
 
             case R.id.sidemenu_settings_icon:
