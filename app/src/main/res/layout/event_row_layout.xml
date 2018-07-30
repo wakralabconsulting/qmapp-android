@@ -30,16 +30,17 @@
 
                 <TextView
                     android:id="@+id/event_title"
-                    android:layout_width="match_parent"
+                    android:layout_width="wrap_content"
                     android:layout_height="0dp"
                     android:layout_weight="3"
                     android:text="@string/event_text_first"
+                    android:gravity="start"
                     android:textColor="@color/event_titile_color"
                     android:textSize="@dimen/events_text_size" />
 
                 <TextView
                     android:id="@+id/event_hiphen"
-                    android:layout_width="match_parent"
+                    android:layout_width="wrap_content"
                     android:layout_height="0dp"
                     android:layout_weight="1"
                     android:gravity="start"
@@ -49,9 +50,10 @@
 
                 <TextView
                     android:id="@+id/event_subtitle"
-                    android:layout_width="match_parent"
+                    android:layout_width="wrap_content"
                     android:layout_height="0dp"
                     android:layout_marginBottom="@dimen/padding_3"
+                    android:gravity="start"
                     android:layout_weight="7"
                     android:text="@string/event_text_second"
                     android:textColor="@color/event_titile_color"
@@ -88,10 +90,11 @@
 
             <TextView
                 android:id="@+id/event_detail_text"
-                android:layout_width="match_parent"
+                android:layout_width="wrap_content"
                 android:layout_height="0dp"
                 android:layout_marginTop="@dimen/padding_10"
                 android:layout_weight="8"
+                android:gravity="start"
                 android:fontFamily="@font/din_next_lt_pro_light"
                 android:text="@string/event_detail_text"
                 android:textColor="@color/black"

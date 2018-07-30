@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.qatarmuseums.qatarmuseumsapp.commonactivity.CommonActivity">
+    tools:context="com.qatarmuseums.qatarmuseumsapp.commonpage.CommonActivity">
 
     <android.support.design.widget.AppBarLayout
         android:id="@+id/app_bar"
@@ -41,7 +41,7 @@
                     android:layout_height="match_parent"
                     android:layout_marginEnd="50dp"
                     android:layout_marginStart="50dp"
-                    android:fontFamily="@font/din_regular"
+                    android:fontFamily="@font/din_next_lt_pro_regular"
                     android:gravity="center"
                     android:textAllCaps="true"
                     android:textColor="@android:color/white"
