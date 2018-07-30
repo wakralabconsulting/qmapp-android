@@ -82,4 +82,5 @@
     <string name="for_more_information_text">For more information and to make a reservation, visit <u>MIA.</u></string>
     <string name="gift_shop_url">http://www.qm.org.qa/en/gift-shops</string>
     <string name="touch_again">Touch again to exit</string>
+    <string name="map_navigation_api">http://maps.google.com/maps?q=loc:</string>
 </resources>
