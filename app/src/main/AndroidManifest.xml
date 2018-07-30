@@ -74,6 +74,7 @@
         <activity
             android:name=".park.ParkActivity"
             android:screenOrientation="portrait"
+            android:label=""
             android:theme="@style/AppTheme.NoActionBar" />
     </application>
 
