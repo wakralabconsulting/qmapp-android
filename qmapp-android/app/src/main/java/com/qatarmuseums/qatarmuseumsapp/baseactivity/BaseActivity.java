@@ -11,6 +11,7 @@ import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Gravity;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
@@ -85,7 +86,7 @@ public class BaseActivity extends AppCompatActivity
     ImageView sidemenuSettings;
     private FrameLayout fullView;
     private FrameLayout activityContainer;
-    Animation fadeInAnimation, fadeOutAnimation;
+    Animation fadeInAnimation, fadeOutAnimation,zoomOutAnimation;
     private Intent navigation_intent;
 
     @Override
@@ -102,6 +103,19 @@ public class BaseActivity extends AppCompatActivity
         ButterKnife.bind(this);
         setSupportActionBar(toolbar);
         setOnclickListenerForButtons();
+        zoomOutAnimation = AnimationUtils.loadAnimation(getApplicationContext(),
+                R.anim.zoom_out_more);
+        topbarBack.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                switch (event.getAction()) {
+                    case MotionEvent.ACTION_DOWN:
+                        topbarBack.startAnimation(zoomOutAnimation);
+                        break;
+                }
+                return false;
+            }
+        });
         fadeInAnimation = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.fade_in_animation);
         fadeOutAnimation = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.fade_out_animation);
         fadeOutAnimation.setAnimationListener(new Animation.AnimationListener() {
@@ -184,11 +198,11 @@ public class BaseActivity extends AppCompatActivity
                 break;
 
             case R.id.sidemenu_exibition_icon:
+                topbarSidemenu.setImageDrawable(getResources().getDrawable(R.drawable.side_menu_icon));
+                drawer.closeDrawer(GravityCompat.END, false);
                 navigation_intent = new Intent(this, CommonActivity.class);
                 navigation_intent.putExtra(getString(R.string.toolbar_title_key), getString(R.string.sidemenu_exhibition_text));
                 startActivity(navigation_intent);
-                topbarSidemenu.setImageDrawable(getResources().getDrawable(R.drawable.side_menu_icon));
-                drawer.closeDrawer(GravityCompat.END, false);
                 break;
 
             case R.id.sidemenu_event_icon:
@@ -198,10 +212,10 @@ public class BaseActivity extends AppCompatActivity
                 break;
 
             case R.id.sidemenu_education_icon:
-                navigation_intent = new Intent(this, EducationActivity.class);
+               drawer.startAnimation(fadeOutAnimation);
+               navigation_intent = new Intent(this, EducationActivity.class);
                 startActivity(navigation_intent);
-                topbarSidemenu.setImageDrawable(getResources().getDrawable(R.drawable.side_menu_icon));
-                drawer.closeDrawer(GravityCompat.END, false);
+
                 break;
 
             case R.id.sidemenu_tour_guide_icon:
@@ -210,11 +224,11 @@ public class BaseActivity extends AppCompatActivity
                 drawer.closeDrawer(GravityCompat.END, false);
                 break;
             case R.id.sidemenu_heritage_icon:
+                topbarSidemenu.setImageDrawable(getResources().getDrawable(R.drawable.side_menu_icon));
+                drawer.closeDrawer(GravityCompat.END, false);
                 navigation_intent = new Intent(this, CommonActivity.class);
                 navigation_intent.putExtra(getString(R.string.toolbar_title_key), getString(R.string.sidemenu_heritage_text));
                 startActivity(navigation_intent);
-                topbarSidemenu.setImageDrawable(getResources().getDrawable(R.drawable.side_menu_icon));
-                drawer.closeDrawer(GravityCompat.END, false);
                 break;
 
             case R.id.sidemenu_public_arts_icon:
