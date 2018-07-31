@@ -55,6 +55,7 @@ public class MuseumActivity extends BaseActivity implements
     private GlideLoader glideLoader;
     ArrayList<Page> ads;
     Intent intent;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -65,7 +66,8 @@ public class MuseumActivity extends BaseActivity implements
         sliderImageTitle.setText(intent.getStringExtra("MUSEUMTITLE"));
         animCircleIndicator = (InfiniteIndicator) findViewById(R.id.main_indicator_default_circle);
 
-        museumHorizontalScrollViewAdapter = new MuseumHorizontalScrollViewAdapter(this, museumHScrollModelList);
+        museumHorizontalScrollViewAdapter = new MuseumHorizontalScrollViewAdapter(this,
+                museumHScrollModelList, sliderImageTitle.getText().toString());
         recyclerviewLayoutManager =
                 new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false);
         recyclerView.setLayoutManager(recyclerviewLayoutManager);
@@ -90,13 +92,13 @@ public class MuseumActivity extends BaseActivity implements
                         .getLayoutManager()).findLastVisibleItemPosition();
                 firstVisibleItemPosition = ((LinearLayoutManager) recyclerView
                         .getLayoutManager()).findFirstVisibleItemPosition();
-                 if (firstVisibleItemPosition == 0) {
+                if (firstVisibleItemPosition == 0) {
                     showRightArrow();
-                }else if (lastCompleteVisibleItemPosition ==museumHScrollModelList.size()-1) {
+                } else if (lastCompleteVisibleItemPosition == museumHScrollModelList.size() - 1) {
                     showLeftArrow();
-                }else {
-                     showBothArrows();
-                 }
+                } else {
+                    showBothArrows();
+                }
 
             }
         });
@@ -109,7 +111,7 @@ public class MuseumActivity extends BaseActivity implements
             public void onClick(View view) {
                 if (getResources().getConfiguration().locale.getLanguage().equals("en")) {
                     recyclerView.scrollToPosition(museumHorizontalScrollViewAdapter.getItemCount() - 1);
-                }else {
+                } else {
                     recyclerView.scrollToPosition(0);
                 }
             }
@@ -119,7 +121,7 @@ public class MuseumActivity extends BaseActivity implements
             public void onClick(View view) {
                 if (getResources().getConfiguration().locale.getLanguage().equals("en")) {
                     recyclerView.scrollToPosition(0);
-                }else {
+                } else {
                     recyclerView.scrollToPosition(museumHorizontalScrollViewAdapter.getItemCount() - 1);
 
                 }
