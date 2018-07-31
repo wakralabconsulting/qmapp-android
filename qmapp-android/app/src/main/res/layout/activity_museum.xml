@@ -3,6 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical"
     tools:context="com.qatarmuseums.qatarmuseumsapp.museum.MuseumActivity">
 
@@ -10,6 +11,42 @@
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight=".8">
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:id="@+id/slider_layout"
+            android:background="@color/white">
+
+            <ImageView
+                android:id="@+id/ads_place_holder"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:scaleType="fitXY"
+                />
+
+            <cn.lightsky.infiniteindicator.InfiniteIndicator
+                android:id="@+id/main_indicator_default_circle"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                app:indicator_type="indicator_anim_circle"
+                />
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/slider_image_title"
+                android:padding="@dimen/padding_20"
+                android:textAlignment="center"
+                android:textColor="@color/white"
+                android:textSize="@dimen/museum_page_slider_text_size"
+                android:textStyle="bold"
+                android:fontFamily="@font/din_next_lt_pro_bold"
+                android:layout_alignParentBottom="true"
+                android:layout_centerHorizontal="true"
+                android:layout_marginBottom="@dimen/museum_page_text_margin"/>
+
+
+        </RelativeLayout>
+
 
     </LinearLayout>
 
@@ -18,10 +55,10 @@
         android:layout_height="0dp"
         android:layout_weight=".2"
         android:gravity="center"
+        android:background="@color/white"
         android:orientation="horizontal">
 
         <LinearLayout
-
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_gravity="center"
@@ -29,7 +66,7 @@
             android:gravity="start|center_vertical"
             android:orientation="vertical"
             android:weightSum="10"
-            >
+            android:id="@+id/horizontal_scrol_previous_icon_layout">
 
             <ImageView
                 android:id="@+id/horizontal_scrol_previous_icon"
@@ -65,7 +102,7 @@
         </LinearLayout>
 
         <LinearLayout
-
+            android:id="@+id/horizontal_scrol_next_icon_layout"
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_gravity="center"
