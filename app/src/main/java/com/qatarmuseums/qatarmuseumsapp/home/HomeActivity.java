@@ -19,6 +19,7 @@ import com.qatarmuseums.qatarmuseumsapp.R;
 import com.qatarmuseums.qatarmuseumsapp.base.BaseActivity;
 import com.qatarmuseums.qatarmuseumsapp.commonpage.CommonActivity;
 import com.qatarmuseums.qatarmuseumsapp.commonpage.RecyclerTouchListener;
+import com.qatarmuseums.qatarmuseumsapp.museum.MuseumActivity;
 import com.qatarmuseums.qatarmuseumsapp.utils.Util;
 import com.qatarmuseums.qatarmuseumsapp.webview.WebviewActivity;
 
@@ -93,12 +94,12 @@ public class HomeActivity extends BaseActivity {
                     Intent intent = new Intent(HomeActivity.this, CommonActivity.class);
                     intent.putExtra(getString(R.string.toolbar_title_key), getString(R.string.sidemenu_exhibition_text));
                     startActivity(intent);
-                } else {
+                }else if (homeList.getId().equals("63")) {
+                    Intent intent = new Intent(HomeActivity.this, MuseumActivity.class);
+                    intent.putExtra("MUSEUMTITLE",homeList.getName());
+                    startActivity(intent);
+                }else {
                     util.showComingSoonDialog(HomeActivity.this);
-                }
-                if (homeList.getId().equals("63")) {
-//                    Intent intent = new Intent(HomeActivity.this, MuseumActivity.class);
-//                    startActivity(intent);
                 }
             }
 
@@ -158,7 +159,7 @@ public class HomeActivity extends BaseActivity {
     @Override
     public void onBackPressed() {
         if (drawer.isDrawerOpen(GravityCompat.END)) {
-            navigationView.startAnimation(fadeOutAnimation);
+            navigationView.startAnimation(zoomOutAnimation);
             toolbar.setBackgroundColor(Color.parseColor("#000000"));
         } else {
             if (doubleBackToExitPressedOnce) {

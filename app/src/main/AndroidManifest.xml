@@ -76,6 +76,10 @@
             android:screenOrientation="portrait"
             android:label=""
             android:theme="@style/AppTheme.NoActionBar" />
+        <activity android:name=".museum.MuseumActivity"
+            android:theme="@style/AppTheme.NoTitle"
+            android:screenOrientation="portrait"
+            />
     </application>
 
 </manifest>

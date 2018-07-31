@@ -185,11 +185,8 @@ public class SettingsActivity extends AppCompatActivity implements View.OnClickL
     }
 
     public void refreshActivity() {
-        Intent intent = getIntent();
-        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK
-                | Intent.FLAG_ACTIVITY_NO_ANIMATION);
+        finishAffinity();
         overridePendingTransition(0, 0);
-        finish();
         startActivity(new Intent(this, HomeActivity.class));
         overridePendingTransition(0, 0);
     }
