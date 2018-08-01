@@ -2,7 +2,7 @@
 <resources>
     <color name="colorPrimary">#000000</color>
     <color name="colorPrimaryDark">#000000</color>
-    <color name="colorAccent">#000000</color>
+    <color name="colorAccent">#FF4081</color>
     <color name="black">#000000</color>
     <color name="darkGray">#555555</color>
     <color name="white">#ffffff</color>
@@ -17,5 +17,6 @@
     <color name="settings_switch_off_color">#EC1E24</color>
     <color name="settings_switch_track_color">#81A6D7</color>
     <color name="event_titile_color">#ec3d89</color>
+    <color name="background_color">#e6e6e5</color>
 
 </resources>
