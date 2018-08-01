@@ -54,4 +54,8 @@
     <dimen name="museum_page_slider_text_size">35sp</dimen>
     <dimen name="collection_divider_width">70dp</dimen>
     <dimen name="collection_divider_height">10dp</dimen>
+    <dimen name="font_size_20">20sp</dimen>
+    <dimen name="font_size_21">21sp</dimen>
+    <dimen name="font_size_22">22sp</dimen>
+    <dimen name="collection_detail_underline">50dp</dimen>
 </resources>

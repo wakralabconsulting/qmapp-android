@@ -42,21 +42,32 @@
     </android.support.design.widget.AppBarLayout>
     <ScrollView
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:background="@color/collection_detail_page_background">
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical">
+            android:orientation="vertical"
+            android:padding="@dimen/padding_15">
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:focusable="true"
                 android:id="@+id/collection_title"
                 android:fontFamily="@font/din_next_lt_pro_bold"
                 android:textColor="@color/black"
-                android:textSize="@dimen/font_size_18"
+                android:textSize="@dimen/font_size_21"
                 android:gravity="center"
                 android:layout_gravity="center"
              />
+            <LinearLayout
+                android:layout_width="@dimen/collection_detail_underline"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_marginTop="@dimen/padding_5"
+                android:background="@drawable/divider_black_thick">
+
+            </LinearLayout>
             <TextView
                 android:id="@+id/long_description"
                 android:layout_width="wrap_content"
@@ -67,13 +78,14 @@
                 android:layout_marginStart="@dimen/text_margin"
                 android:layout_marginTop="@dimen/text_margin"
                 android:fontFamily="@font/din_next_lt_pro_regular"
-                android:paddingEnd="@dimen/padding_25"
-                android:paddingStart="@dimen/padding_25"
                 android:text="@string/collection_details_main_text"
                 android:textAlignment="center"
+                android:paddingStart="@dimen/padding_2"
+                android:paddingEnd="@dimen/padding_2"
                 android:textColor="@color/black"
-                android:textSize="@dimen/font_size_15"
-                android:visibility="visible" />
+                android:textSize="@dimen/font_size_18"
+                android:visibility="visible"
+                android:layout_marginBottom="@dimen/padding_15"/>
 
         <android.support.v7.widget.RecyclerView
             android:layout_width="match_parent"

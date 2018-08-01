@@ -12,12 +12,9 @@ import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.ImageView;
 import android.widget.TextView;
-
 import com.qatarmuseums.qatarmuseumsapp.R;
-
 import java.util.ArrayList;
 import java.util.List;
-
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
@@ -33,7 +30,6 @@ public class CollectionDetailsActivity extends AppCompatActivity {
     TextView longDescription;
     @BindView(R.id.details_recycler_view)
     RecyclerView recyclerView;
-
     @BindView(R.id.collection_share)
     ImageView shareIcon;
     Intent intent;
@@ -59,6 +55,7 @@ public class CollectionDetailsActivity extends AppCompatActivity {
         recyclerView.setLayoutManager(layoutManager);
         recyclerView.setNestedScrollingEnabled(false);
         recyclerView.setAdapter(mAdapter);
+        recyclerView.setFocusable(false);
         prepareCollectionDetailData();
         toolbarClose.setOnClickListener(new View.OnClickListener() {
             @Override
