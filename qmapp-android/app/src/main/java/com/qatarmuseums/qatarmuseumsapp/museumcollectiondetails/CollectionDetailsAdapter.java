@@ -43,8 +43,6 @@ public class CollectionDetailsAdapter extends  RecyclerView.Adapter<CollectionDe
                 .placeholder(R.drawable.placeholdeer)
                 .into(holder.image2);
 
-
-
     }
 
     @Override
