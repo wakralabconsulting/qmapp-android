@@ -17,6 +17,7 @@ import android.widget.TextView;
 import com.qatarmuseums.qatarmuseumsapp.R;
 import com.qatarmuseums.qatarmuseumsapp.detailspage.DetailsActivity;
 import com.qatarmuseums.qatarmuseumsapp.detailspage.DiningActivity;
+import com.qatarmuseums.qatarmuseumsapp.museumcollectiondetails.CollectionDetailsActivity;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -51,6 +52,9 @@ public class CommonActivity extends AppCompatActivity {
             public void onPositionClicked(int position) {
                 if (toolbarTitle.equals(getString(R.string.sidemenu_dining_text)))
                     navigationIntent = new Intent(CommonActivity.this, DiningActivity.class);
+                else  if (toolbarTitle.equals(getString(R.string.museum_collection_text)))
+                    navigationIntent = new Intent(CommonActivity.this,
+                            CollectionDetailsActivity.class);
                 else
                     navigationIntent = new Intent(CommonActivity.this, DetailsActivity.class);
                 navigationIntent.putExtra("HEADER_IMAGE", models.get(position).getImage());
