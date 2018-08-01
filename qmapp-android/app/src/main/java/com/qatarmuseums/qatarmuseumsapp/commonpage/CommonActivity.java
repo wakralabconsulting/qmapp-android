@@ -94,6 +94,8 @@ public class CommonActivity extends AppCompatActivity {
             preparePublicArtsData();
         else if (toolbarTitle.equals(getString(R.string.sidemenu_dining_text)))
             prepareDiningData();
+        else if (toolbarTitle.equals(getString(R.string.museum_collection_text)))
+            prepareCollectionData();
     }
 
     private void prepareExhibitionData() {
@@ -295,6 +297,40 @@ public class CommonActivity extends AppCompatActivity {
                 null, true);
         models.add(model);
 
+        mAdapter.notifyDataSetChanged();
+    }
+
+    private void prepareCollectionData() {
+        CommonModel model = new CommonModel("1", "CERAMICS COLLECTION",
+                null,
+                null,
+                "http://www.qm.org.qa/sites/default/files/styles/content_image/public/images/body/idam-pierremonetta_mg_6372_1.jpg?itok=bKArHUGQ",
+                null, null);
+        models.add(model);
+        model = new CommonModel("2", "GLASS COLLECTION",
+                null,
+                null,
+                "http://www.qm.org.qa/sites/default/files/styles/content_image/public/images/body/inq.jpg?itok=C14Qr6xt",
+                null, null);
+        models.add(model);
+        model = new CommonModel("3", "THE CAVOUR VASE",
+                null,
+                null,
+                "http://www.qm.org.qa/sites/default/files/styles/content_image/public/images/body/dsc_0597_2_0.jpg?itok=TXvRM1HE",
+                null, null);
+        models.add(model);
+        model = new CommonModel("4", "GOLD AND GLASS",
+                null,
+                null,
+                "http://www.qm.org.qa/sites/default/files/styles/content_image/public/images/body/10_0.jpg?itok=4BYJtRQB",
+                null, null);
+        models.add(model);
+        model = new CommonModel("4", "MOSQUE LAMP",
+                null,
+                null,
+                "http://www.qm.org.qa/sites/default/files/styles/content_image/public/images/body/mia-catering.jpg?itok=Kk7svJPU",
+                null, null);
+        models.add(model);
         mAdapter.notifyDataSetChanged();
     }
 
