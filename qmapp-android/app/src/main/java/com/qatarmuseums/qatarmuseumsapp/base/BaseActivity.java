@@ -197,7 +197,6 @@ public class BaseActivity extends AppCompatActivity
             if (drawer.isDrawerOpen(GravityCompat.END)) {
                 navigationView.startAnimation(fadeOutAnimation);
                 toolbar.setBackgroundColor(Color.parseColor("#000000"));
-
             } else {
                 super.onBackPressed();
             }
