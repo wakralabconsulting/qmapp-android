@@ -80,7 +80,8 @@
             android:name=".museum.MuseumActivity"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoTitle" />
-        <activity android:name=".museumcollectiondetails.MuseumCollectionDetailActivity"
+
+        <activity android:name=".museumcollectiondetails.CollectionDetailsActivity"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar"/>
     </application>
