@@ -62,6 +62,7 @@ public class MuseumActivity extends BaseActivity implements
     int appLanguage;
     private final int english = 1;
 
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -73,7 +74,8 @@ public class MuseumActivity extends BaseActivity implements
         intent = getIntent();
         sliderImageTitle.setText(intent.getStringExtra("MUSEUMTITLE"));
         animCircleIndicator = (InfiniteIndicator) findViewById(R.id.main_indicator_default_circle);
-        museumHorizontalScrollViewAdapter = new MuseumHorizontalScrollViewAdapter(this, museumHScrollModelList);
+
+        museumHorizontalScrollViewAdapter = new MuseumHorizontalScrollViewAdapter(this, museumHScrollModelList,intent.getStringExtra("MUSEUMTITLE"));
 
         if (appLanguage == english) {
             recyclerviewLayoutManager =
@@ -85,6 +87,7 @@ public class MuseumActivity extends BaseActivity implements
             recyclerviewLayoutManager.setStackFromEnd(true);
             recyclerviewLayoutManager.scrollToPosition(0);
         }
+
 
         recyclerView.setLayoutManager(recyclerviewLayoutManager);
         recyclerView.setItemAnimator(new DefaultItemAnimator());
@@ -106,6 +109,7 @@ public class MuseumActivity extends BaseActivity implements
                         .getLayoutManager()).findLastCompletelyVisibleItemPosition();
                 firstVisibleItemPosition = ((LinearLayoutManager) recyclerView
                         .getLayoutManager()).findFirstVisibleItemPosition();
+
                 if (appLanguage == english) {
                     if (firstVisibleItemPosition == 0) {
                         showRightArrow();
@@ -123,15 +127,16 @@ public class MuseumActivity extends BaseActivity implements
                     } else {
                         showBothArrows();
                     }
+
                 }
 
             }
         });
 
-        if (appLanguage==english) {
+        if (appLanguage == english) {
             SnapHelper snapHelperStart = new GravitySnapHelper(Gravity.START);
             snapHelperStart.attachToRecyclerView(recyclerView);
-        }else {
+        } else {
             SnapHelper snapHelperStart = new GravitySnapHelper(Gravity.END);
             snapHelperStart.attachToRecyclerView(recyclerView);
         }
@@ -143,12 +148,14 @@ public class MuseumActivity extends BaseActivity implements
             @Override
             public void onClick(View view) {
                 recyclerviewLayoutManager.scrollToPosition(5);
+
             }
         });
         scrollBarPreviousIconLayout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 recyclerviewLayoutManager.scrollToPosition(0);
+
             }
         });
 

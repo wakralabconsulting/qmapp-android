@@ -1,6 +1,7 @@
 package com.qatarmuseums.qatarmuseumsapp.museum;
 
 import android.content.Context;
+import android.content.Intent;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -12,8 +13,10 @@ import android.view.animation.AnimationUtils;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.qatarmuseums.qatarmuseumsapp.R;
+import com.qatarmuseums.qatarmuseumsapp.detailspage.DetailsActivity;
 
 import java.util.List;
 
@@ -25,6 +28,8 @@ public class MuseumHorizontalScrollViewAdapter extends RecyclerView.Adapter<Muse
     private Context mContext;
     private Animation zoomOutAnimation;
     private List<MuseumHScrollModel> museumHScrollModelList;
+    private Intent navigationIntent;
+    String title;
 
     @NonNull
     @Override
@@ -36,12 +41,22 @@ public class MuseumHorizontalScrollViewAdapter extends RecyclerView.Adapter<Muse
     }
 
     @Override
-    public void onBindViewHolder(@NonNull MyViewHolder holder, int position) {
+    public void onBindViewHolder(@NonNull MyViewHolder holder, final int position) {
 
         MuseumHScrollModel museumHScrollModel = museumHScrollModelList.get(position);
         holder.museumHscrollItemText.setText(museumHScrollModel.getTextName());
         holder.museumHscrollItemImage.setImageResource(museumHScrollModel.getResId());
-
+        holder.itemLayout.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (position == 0) {
+                    navigationIntent = new Intent(mContext, DetailsActivity.class);
+                    navigationIntent.putExtra("MAIN_TITLE", title);
+                    navigationIntent.putExtra("COMING_FROM", mContext.getString(R.string.museum_about));
+                    mContext.startActivity(navigationIntent);
+                }
+            }
+        });
 
     }
 
@@ -76,10 +91,11 @@ public class MuseumHorizontalScrollViewAdapter extends RecyclerView.Adapter<Muse
     }
 
 
-    public MuseumHorizontalScrollViewAdapter(Context context, List<MuseumHScrollModel> museumHScrollModelList) {
+    public MuseumHorizontalScrollViewAdapter(Context context, List<MuseumHScrollModel> museumHScrollModelList, String title) {
         this.mContext = context;
         this.museumHScrollModelList = museumHScrollModelList;
         zoomOutAnimation = AnimationUtils.loadAnimation(mContext.getApplicationContext(),
                 R.anim.zoom_out_more);
+        this.title = title;
     }
 }
