@@ -28,7 +28,7 @@ import java.util.List;
 
 public class HomeActivity extends BaseActivity {
     RelativeLayout diningNavigation, giftShopNavigation, culturePassNavigation, moreNavigation;
-    Animation zoomOutAnimation;
+    Animation zoomOutAnimation,fadeOutAnimation;
     private RecyclerView recyclerView;
     private HomeListAdapter mAdapter;
     private List<HomeList> homeLists = new ArrayList<>();
@@ -48,6 +48,23 @@ public class HomeActivity extends BaseActivity {
         util = new Util();
         zoomOutAnimation = AnimationUtils.loadAnimation(getApplicationContext(),
                 R.anim.zoom_out);
+        fadeOutAnimation = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.fade_out_animation);
+        fadeOutAnimation.setAnimationListener(new Animation.AnimationListener() {
+            @Override
+            public void onAnimationStart(Animation animation) {
+
+            }
+
+            @Override
+            public void onAnimationEnd(Animation animation) {
+                closeDrawer();
+            }
+
+            @Override
+            public void onAnimationRepeat(Animation animation) {
+
+            }
+        });
         diningNavigation.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -159,7 +176,7 @@ public class HomeActivity extends BaseActivity {
     @Override
     public void onBackPressed() {
         if (drawer.isDrawerOpen(GravityCompat.END)) {
-            navigationView.startAnimation(zoomOutAnimation);
+            navigationView.startAnimation(fadeOutAnimation);
             toolbar.setBackgroundColor(Color.parseColor("#000000"));
         } else {
             if (doubleBackToExitPressedOnce) {
