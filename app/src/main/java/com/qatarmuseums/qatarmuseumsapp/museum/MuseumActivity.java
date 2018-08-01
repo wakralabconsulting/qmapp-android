@@ -3,7 +3,9 @@ package com.qatarmuseums.qatarmuseumsapp.museum;
 
 import android.content.Intent;
 
+import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.v4.view.ViewPager;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
@@ -22,6 +24,7 @@ import com.qatarmuseums.qatarmuseumsapp.base.BaseActivity;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -55,22 +58,38 @@ public class MuseumActivity extends BaseActivity implements
     private GlideLoader glideLoader;
     ArrayList<Page> ads;
     Intent intent;
+    SharedPreferences qmPreferences;
+    int appLanguage;
+    private final int english = 1;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_museum);
         ButterKnife.bind(this);
         setToolbarForMuseumActivity();
+        qmPreferences = PreferenceManager.getDefaultSharedPreferences(this);
+        appLanguage = qmPreferences.getInt("AppLanguage", 1);
         intent = getIntent();
         sliderImageTitle.setText(intent.getStringExtra("MUSEUMTITLE"));
         animCircleIndicator = (InfiniteIndicator) findViewById(R.id.main_indicator_default_circle);
-
         museumHorizontalScrollViewAdapter = new MuseumHorizontalScrollViewAdapter(this, museumHScrollModelList);
-        recyclerviewLayoutManager =
-                new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false);
+
+        if (appLanguage == english) {
+            recyclerviewLayoutManager =
+                    new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false);
+            recyclerviewLayoutManager.setStackFromEnd(false);
+        } else {
+            recyclerviewLayoutManager =
+                    new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false);
+            recyclerviewLayoutManager.setStackFromEnd(true);
+            recyclerviewLayoutManager.scrollToPosition(0);
+        }
+
         recyclerView.setLayoutManager(recyclerviewLayoutManager);
         recyclerView.setItemAnimator(new DefaultItemAnimator());
         recyclerView.setAdapter(museumHorizontalScrollViewAdapter);
+
 
         recyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
             @Override
@@ -81,48 +100,55 @@ public class MuseumActivity extends BaseActivity implements
             @Override
             public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
                 super.onScrolled(recyclerView, dx, dy);
-                int lastVisibleItemPosition = 0;
                 int lastCompleteVisibleItemPosition = 0;
                 int firstVisibleItemPosition = 0;
                 lastCompleteVisibleItemPosition = ((LinearLayoutManager) recyclerView
                         .getLayoutManager()).findLastCompletelyVisibleItemPosition();
-                lastVisibleItemPosition = ((LinearLayoutManager) recyclerView
-                        .getLayoutManager()).findLastVisibleItemPosition();
                 firstVisibleItemPosition = ((LinearLayoutManager) recyclerView
                         .getLayoutManager()).findFirstVisibleItemPosition();
-                 if (firstVisibleItemPosition == 0) {
-                    showRightArrow();
-                }else if (lastCompleteVisibleItemPosition ==museumHScrollModelList.size()-1) {
-                    showLeftArrow();
-                }else {
-                     showBothArrows();
-                 }
+                if (appLanguage == english) {
+                    if (firstVisibleItemPosition == 0) {
+                        showRightArrow();
+                    } else if (lastCompleteVisibleItemPosition == museumHScrollModelList.size() - 1) {
+                        showLeftArrow();
+                    } else {
+                        showBothArrows();
+                    }
+                } else {
+                    if (firstVisibleItemPosition == 0) {
+                        showRightArrow();
+                    } else if (lastCompleteVisibleItemPosition == museumHScrollModelList.size() - 1) {
+
+                        showLeftArrow();
+                    } else {
+                        showBothArrows();
+                    }
+                }
 
             }
         });
-        SnapHelper snapHelperStart = new GravitySnapHelper(Gravity.START);
-        snapHelperStart.attachToRecyclerView(recyclerView);
+
+        if (appLanguage==english) {
+            SnapHelper snapHelperStart = new GravitySnapHelper(Gravity.START);
+            snapHelperStart.attachToRecyclerView(recyclerView);
+        }else {
+            SnapHelper snapHelperStart = new GravitySnapHelper(Gravity.END);
+            snapHelperStart.attachToRecyclerView(recyclerView);
+        }
+
         prepareRecyclerViewData();
         getSliderImagesFromList();
+
         scrollBarNextIconLayout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if (getResources().getConfiguration().locale.getLanguage().equals("en")) {
-                    recyclerView.scrollToPosition(museumHorizontalScrollViewAdapter.getItemCount() - 1);
-                }else {
-                    recyclerView.scrollToPosition(0);
-                }
+                recyclerviewLayoutManager.scrollToPosition(5);
             }
         });
         scrollBarPreviousIconLayout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if (getResources().getConfiguration().locale.getLanguage().equals("en")) {
-                    recyclerView.scrollToPosition(0);
-                }else {
-                    recyclerView.scrollToPosition(museumHorizontalScrollViewAdapter.getItemCount() - 1);
-
-                }
+                recyclerviewLayoutManager.scrollToPosition(0);
             }
         });
 
@@ -199,9 +225,10 @@ public class MuseumActivity extends BaseActivity implements
 
 
     public void loadAdsToSlider(ArrayList<Page> adsImages) {
+        int appLanguage = qmPreferences.getInt("AppLanguage", 1);
         if (adsImages.size() > 1) {
             glideLoader = new GlideLoader();
-            if (getResources().getConfiguration().locale.getLanguage().equals("en")) {
+            if (appLanguage == english) {
                 configuration = new IndicatorConfiguration.Builder()
                         .imageLoader(glideLoader)
                         .isStopWhileTouch(true)
