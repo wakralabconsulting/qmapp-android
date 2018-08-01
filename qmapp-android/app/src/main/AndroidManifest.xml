@@ -22,7 +22,7 @@
         <activity
             android:name=".home.HomeActivity"
             android:screenOrientation="portrait"
-            android:theme="@style/AppTheme.NoTitle"></activity>
+            android:theme="@style/AppTheme.NoTitle" />
         <activity
             android:name=".commonpage.CommonActivity"
             android:screenOrientation="portrait"
@@ -80,6 +80,9 @@
             android:name=".museum.MuseumActivity"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoTitle" />
+        <activity android:name=".museumcollectiondetails.MuseumCollectionDetailActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/AppTheme.NoActionBar"/>
     </application>
 
 </manifest>
