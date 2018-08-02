@@ -84,7 +84,7 @@ public class EducationAdapter extends RecyclerView.Adapter<EducationAdapter.Educ
 
     protected void showDialog(final String details, String title) {
 
-        final Dialog dialog = new Dialog(context, R.style.DialogTheme);
+        final Dialog dialog = new Dialog(context, R.style.DialogNoAnimation);
         dialog.setCancelable(true);
         dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
 
