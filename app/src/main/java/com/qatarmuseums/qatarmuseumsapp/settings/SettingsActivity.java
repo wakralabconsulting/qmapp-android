@@ -202,7 +202,7 @@ public class SettingsActivity extends AppCompatActivity implements View.OnClickL
 
     protected void showDialog(final String language) {
 
-        final Dialog dialog = new Dialog(this, R.style.DialogTheme);
+        final Dialog dialog = new Dialog(this, R.style.DialogNoAnimation);
         dialog.setCancelable(true);
         dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
 
