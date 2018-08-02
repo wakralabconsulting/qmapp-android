@@ -12,10 +12,13 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
+import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.Toast;
 
 import com.qatarmuseums.qatarmuseumsapp.R;
+import com.qatarmuseums.qatarmuseumsapp.apicall.APIClient;
+import com.qatarmuseums.qatarmuseumsapp.apicall.APIInterface;
 import com.qatarmuseums.qatarmuseumsapp.base.BaseActivity;
 import com.qatarmuseums.qatarmuseumsapp.commonpage.CommonActivity;
 import com.qatarmuseums.qatarmuseumsapp.commonpage.RecyclerTouchListener;
@@ -26,20 +29,27 @@ import com.qatarmuseums.qatarmuseumsapp.webview.WebviewActivity;
 import java.util.ArrayList;
 import java.util.List;
 
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
+
 public class HomeActivity extends BaseActivity {
     RelativeLayout diningNavigation, giftShopNavigation, culturePassNavigation, moreNavigation;
-    Animation zoomOutAnimation,fadeOutAnimation;
+    Animation zoomOutAnimation, fadeOutAnimation;
     private RecyclerView recyclerView;
     private HomeListAdapter mAdapter;
-    private List<HomeList> homeLists = new ArrayList<>();
+    private ArrayList<HomeList> homeLists = new ArrayList<>();
     private Intent navigation_intent;
     Util util;
     private boolean doubleBackToExitPressedOnce;
+    ProgressBar progressBar;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home);
+        progressBar = (ProgressBar)findViewById(R.id.progressBarLoading);
+        progressBar.setVisibility(View.VISIBLE);
         diningNavigation = (RelativeLayout) findViewById(R.id.dining_layout);
         giftShopNavigation = (RelativeLayout) findViewById(R.id.gift_shop_layout);
         culturePassNavigation = (RelativeLayout) findViewById(R.id.culture_pass_layout);
@@ -111,11 +121,11 @@ public class HomeActivity extends BaseActivity {
                     Intent intent = new Intent(HomeActivity.this, CommonActivity.class);
                     intent.putExtra(getString(R.string.toolbar_title_key), getString(R.string.sidemenu_exhibition_text));
                     startActivity(intent);
-                }else if (homeList.getId().equals("63")) {
+                } else if (homeList.getId().equals("63")) {
                     Intent intent = new Intent(HomeActivity.this, MuseumActivity.class);
-                    intent.putExtra("MUSEUMTITLE",homeList.getName());
+                    intent.putExtra("MUSEUMTITLE", homeList.getName());
                     startActivity(intent);
-                }else {
+                } else {
                     util.showComingSoonDialog(HomeActivity.this);
                 }
             }
@@ -125,7 +135,8 @@ public class HomeActivity extends BaseActivity {
             }
         }));
 
-        prepareRecyclerViewData();
+//        prepareRecyclerViewData();
+        getHomePageAPIData();
 
         diningNavigation.setOnTouchListener(new View.OnTouchListener() {
             @Override
@@ -220,5 +231,31 @@ public class HomeActivity extends BaseActivity {
                 2, false);
         homeLists.add(movie);
         mAdapter.notifyDataSetChanged();
+    }
+
+    public void getHomePageAPIData() {
+        APIInterface apiService =
+                APIClient.getClient().create(APIInterface.class);
+        Call<ArrayList<HomeList>> call = apiService.getHomepageDetails("en");
+        call.enqueue(new Callback<ArrayList<HomeList>>() {
+            @Override
+            public void onResponse(Call<ArrayList<HomeList>> call, Response<ArrayList<HomeList>> response) {
+                if (response.isSuccessful()) {
+                    if (response.body() != null) {
+                        homeLists.addAll(response.body());
+                        mAdapter.notifyDataSetChanged();
+                        Toast.makeText(HomeActivity.this, "success", Toast.LENGTH_SHORT).show();
+                    }
+                    }
+                    progressBar.setVisibility(View.GONE);
+            }
+
+            @Override
+            public void onFailure(Call<ArrayList<HomeList>> call, Throwable t) {
+                progressBar.setVisibility(View.GONE);
+                util.showToast(getResources().getString(R.string.check_network), getApplicationContext());
+
+            }
+        });
     }
 }

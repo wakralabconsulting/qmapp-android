@@ -1,11 +1,18 @@
 package com.qatarmuseums.qatarmuseumsapp.home;
 
 
+import com.google.gson.annotations.SerializedName;
+
 public class HomeList {
+    @SerializedName("name")
     private String name;
+    @SerializedName("id")
     private String id;
+    @SerializedName("image")
     private String image;
+    @SerializedName("SORTID")
     private Integer sortCoefficient;
+    @SerializedName("tourguideavailable")
     private Boolean tourguideAvailable;
 
     public HomeList() {
