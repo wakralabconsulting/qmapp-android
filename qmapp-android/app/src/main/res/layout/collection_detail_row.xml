@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@drawable/round_corner_white_details_page"
+    android:orientation="vertical"
+    android:paddingBottom="@dimen/padding_10"
+    android:paddingTop="@dimen/padding_15"
+    android:layout_marginBottom="@dimen/padding_15">
+
+    <TextView
+        android:id="@+id/main_title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:fontFamily="@font/din_regular"
+        android:gravity="center"
+        android:padding="@dimen/padding_10"
+        android:textAlignment="center"
+        android:textAllCaps="true"
+        android:textColor="@color/black"
+        android:textSize="@dimen/font_size_19"
+        android:textStyle="bold" />
+
+    <TextView
+        android:id="@+id/sub_title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:paddingStart="@dimen/pading_12"
+        android:paddingEnd="@dimen/pading_12"
+        android:layout_marginTop="@dimen/padding_5"
+        android:fontFamily="@font/din_regular"
+        android:gravity="center"
+        android:textAlignment="center"
+        android:textColor="@color/black"
+        android:textSize="@dimen/font_size_18"
+        android:textStyle="bold" />
+
+    <TextView
+        android:id="@+id/first_description"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:fontFamily="@font/din_next_lt_pro_regular"
+        android:gravity="center"
+        android:textAlignment="center"
+        android:textColor="@color/black"
+        android:paddingStart="@dimen/padding_15"
+        android:paddingEnd="@dimen/padding_15"
+        android:layout_marginTop="@dimen/padding_10"
+        android:layout_marginBottom="@dimen/padding_10"
+        android:textSize="@dimen/font_size_16" />
+
+    <ImageView
+        android:id="@+id/collection_image1"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:scaleType="centerCrop" />
+
+    <TextView
+        android:id="@+id/second_description"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:fontFamily="@font/din_next_lt_pro_regular"
+        android:gravity="center"
+        android:textAlignment="center"
+        android:textColor="@color/black"
+        android:paddingStart="@dimen/padding_15"
+        android:paddingEnd="@dimen/padding_15"
+        android:layout_marginTop="@dimen/padding_10"
+        android:layout_marginBottom="@dimen/padding_10"
+        android:textSize="@dimen/font_size_16"  />
+
+    <ImageView
+        android:id="@+id/collection_image2"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:scaleType="centerCrop" />
+
+    <TextView
+        android:id="@+id/third_description"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:fontFamily="@font/din_next_lt_pro_regular"
+        android:gravity="center"
+        android:textAlignment="center"
+        android:textColor="@color/black"
+        android:paddingStart="@dimen/padding_15"
+        android:paddingEnd="@dimen/padding_15"
+        android:layout_marginTop="@dimen/padding_10"
+        android:layout_marginBottom="@dimen/padding_10"
+        android:textSize="@dimen/font_size_16"  />
+</LinearLayout>

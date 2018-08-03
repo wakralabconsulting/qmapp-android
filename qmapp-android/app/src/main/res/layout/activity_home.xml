@@ -7,18 +7,46 @@
     android:orientation="vertical"
     tools:context="com.qatarmuseums.qatarmuseumsapp.home.HomeActivity">
 
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:visibility="gone"
+        android:layout_above="@id/bottom_toolbar"
+        android:id="@+id/no_result_layout">
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:textAlignment="center"
+            android:fontFamily="@font/din_next_lt_pro_regular"
+            android:text="@string/no_results_text"
+            android:textColor="@android:color/white"
+            android:textSize="@dimen/font_size_21" />
+    </RelativeLayout>
+
     <android.support.v7.widget.RecyclerView
         android:id="@+id/recycler_view"
         android:layout_width="match_parent"
-        android:background="@color/recycler_background"
         android:layout_height="match_parent"
         android:layout_above="@id/bottom_toolbar"
+        android:visibility="visible"
+        android:background="@color/recycler_background"
         android:scrollbars="vertical" />
+
+    <ProgressBar
+        android:id="@+id/progressBarLoading"
+        style="?android:attr/progressBarStyle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true"
+        android:layout_marginTop="40dp"
+        android:visibility="gone" />
 
     <android.support.v7.widget.Toolbar
         android:id="@+id/bottom_toolbar"
         android:layout_width="match_parent"
-        android:layout_height="?attr/actionBarSize"
+        android:layout_height="?android:attr/actionBarSize"
         android:layout_alignParentBottom="true"
         android:background="@color/darkGray"
         app:popupTheme="@style/AppTheme.PopupOverlay">
@@ -35,7 +63,7 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:background="?attr/selectableItemBackgroundBorderless"
+                android:background="?android:attr/selectableItemBackgroundBorderless"
                 android:gravity="center"
                 android:orientation="vertical">
 
@@ -63,7 +91,7 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:background="?attr/selectableItemBackgroundBorderless"
+                android:background="?android:attr/selectableItemBackgroundBorderless"
                 android:gravity="center"
                 android:orientation="vertical">
 
@@ -92,7 +120,7 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:background="?attr/selectableItemBackgroundBorderless"
+                android:background="?android:attr/selectableItemBackgroundBorderless"
                 android:gravity="center"
                 android:orientation="vertical">
 
@@ -121,7 +149,7 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:background="?attr/selectableItemBackgroundBorderless"
+                android:background="?android:attr/selectableItemBackgroundBorderless"
                 android:gravity="center"
                 android:orientation="vertical">
 

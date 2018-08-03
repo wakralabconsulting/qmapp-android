@@ -93,7 +93,7 @@ public class CalendarAdapter extends RecyclerView.Adapter<CalendarAdapter.Calend
 
     protected void showDialog(final String details) {
 
-        final Dialog dialog = new Dialog(context, R.style.DialogTheme);
+        final Dialog dialog = new Dialog(context, R.style.DialogNoAnimation);
         dialog.setCancelable(true);
         dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
 

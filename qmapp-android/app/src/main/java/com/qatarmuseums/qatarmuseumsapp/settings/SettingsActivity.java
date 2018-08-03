@@ -185,11 +185,8 @@ public class SettingsActivity extends AppCompatActivity implements View.OnClickL
     }
 
     public void refreshActivity() {
-        Intent intent = getIntent();
-        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK
-                | Intent.FLAG_ACTIVITY_NO_ANIMATION);
+        finishAffinity();
         overridePendingTransition(0, 0);
-        finish();
         startActivity(new Intent(this, HomeActivity.class));
         overridePendingTransition(0, 0);
     }
@@ -205,7 +202,7 @@ public class SettingsActivity extends AppCompatActivity implements View.OnClickL
 
     protected void showDialog(final String language) {
 
-        final Dialog dialog = new Dialog(this, R.style.DialogTheme);
+        final Dialog dialog = new Dialog(this, R.style.DialogNoAnimation);
         dialog.setCancelable(true);
         dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
 

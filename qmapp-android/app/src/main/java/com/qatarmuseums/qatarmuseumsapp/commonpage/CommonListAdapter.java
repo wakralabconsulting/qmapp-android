@@ -98,9 +98,9 @@ public class CommonListAdapter extends RecyclerView.Adapter<CommonListAdapter.My
     public void onBindViewHolder(@NonNull CommonListAdapter.MyViewHolder holder, int position) {
         CommonModel model = commonModelList.get(position);
         holder.name.setText(model.getName());
-        if (model.getDate() != null) {
+        if (model.getStartDate() != null) {
             holder.dateDetails.setVisibility(View.VISIBLE);
-            holder.dateDetails.setText(model.getDate());
+            holder.dateDetails.setText(model.getStartDate());
         }
         if (model.getLocation() != null) {
             holder.locationDetails.setVisibility(View.VISIBLE);

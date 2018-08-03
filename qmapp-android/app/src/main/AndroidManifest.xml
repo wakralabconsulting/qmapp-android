@@ -22,7 +22,8 @@
         <activity
             android:name=".home.HomeActivity"
             android:screenOrientation="portrait"
-            android:theme="@style/AppTheme.NoTitle"></activity>
+            android:theme="@style/AppTheme.NoTitle" />
+
         <activity
             android:name=".commonpage.CommonActivity"
             android:screenOrientation="portrait"
@@ -76,6 +77,19 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <activity
+            android:name=".park.ParkActivity"
+            android:label=""
+            android:screenOrientation="portrait"
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity
+            android:name=".museum.MuseumActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/AppTheme.NoTitle" />
+
+        <activity android:name=".museumcollectiondetails.CollectionDetailsActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/AppTheme.NoActionBar"/>
     </application>
 
 </manifest>
