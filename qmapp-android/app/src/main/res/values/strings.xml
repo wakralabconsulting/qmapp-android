@@ -42,7 +42,6 @@
     <string name="contact_title">CONTACT</string>
     <string name="settings_activity_tittle">SETTINGS</string>
     <string name="calendar_activity_tittle">CALENDAR</string>
-    <string name="filter_activity_tittle">FILTER</string>
     <string name="education_calendar_activity_tittle">EDUCATION CALENDAR</string>
     <string name="select_language_text">Select App Language</string>
     <string name="english">English</string>
