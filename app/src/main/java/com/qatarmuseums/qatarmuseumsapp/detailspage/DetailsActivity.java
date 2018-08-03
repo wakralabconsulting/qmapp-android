@@ -72,11 +72,6 @@ public class DetailsActivity extends AppCompatActivity implements IPullZoom {
         timingLayout = (LinearLayout) findViewById(R.id.timing_layout);
         contactLayout = (LinearLayout) findViewById(R.id.contact_layout);
         util = new Util();
-        GlideApp.with(this)
-                .load(headerImage)
-                .centerCrop()
-                .placeholder(R.drawable.placeholdeer)
-                .into(headerImageView);
         title.setText(mainTitle);
         if (comingFrom.equals(getString(R.string.sidemenu_exhibition_text))) {
             timingTitle.setText(R.string.exhibition_timings);
@@ -101,13 +96,30 @@ public class DetailsActivity extends AppCompatActivity implements IPullZoom {
                             "In 2013 the World Heritage Committee inscribed Al Zubarah Archaeological Site into the UNESCO World Heritage List. The site includes three major features, the largest of which are the archaeological remains of the town, dating back to the 1760s. Connected to it is the settlement of Qal’at Murair, which was fortified to protect the city’s inland wells. Al Zubarah Fort was built in 1938 and is the youngest, most prominent feature at the site.",
                     null,
                     "Katara Cultural Village", null);
+        } else if (comingFrom.equals(getString(R.string.museum_about))) {
+            timingTitle.setText(R.string.museum_timings);
+            headerImage = "http://www.qm.org.qa/sites/default/files/styles/gallery_small/public/images/gallery/mia_architecture_071215_4844.jpg";
+            loadData(null, getString(R.string.details_page_short_description),
+                    getString(R.string.details_page_long_description),
+                    "TRADITIONAL INSPIRATION", "Once a thriving port bustling with fishermen and merchants, the town of Al Zubarah was designated a protected area in 2009. Since then, Qatar Museums has led teams of archaeologists and scientists to investigate the site. Through their research and engagement with local communities, they are documenting and shedding light on the rise and fall of this unique area.\n" +
+                            "\n" +
+                            "In 2013 the World Heritage Committee inscribed Al Zubarah Archaeological Site into the UNESCO World Heritage List. The site includes three major features, the largest of which are the archaeological remains of the town, dating back to the 1760s. Connected to it is the settlement of Qal’at Murair, which was fortified to protect the city’s inland wells. Al Zubarah Fort was built in 1938 and is the youngest, most prominent feature at the site.",
+                    "Saturday to Sunday: 9:00AM - 7:00PM\n" +
+                            "Fridays: 1:30PM to 7:00PM",
+                    "Katara Cultural Village", "info@mia.org.qa");
         }
+        GlideApp.with(this)
+                .load(headerImage)
+                .centerCrop()
+                .placeholder(R.drawable.placeholdeer)
+                .into(headerImageView);
+
         latitude = "25.3154649";
         longitude = "51.4779437";
         mapDetails.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                String geoUri = "http://maps.google.com/maps?q=loc:" + latitude + "," + longitude + " (" + mainTitle + ")";
+                String geoUri = getString(R.string.map_navigation_api) + latitude + "," + longitude + " (" + mainTitle + ")";
                 Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(geoUri));
                 startActivity(intent);
             }

@@ -88,4 +88,14 @@
     <string name="filter">Filter</string>
     <string name="gift_shop_url">http://www.qm.org.qa/en/gift-shops</string>
     <string name="touch_again">Touch again to exit</string>
+    <string name="map_navigation_api">http://maps.google.com/maps?q=loc:</string>
+    <string name="museum_about">Museum About</string>
+    <string name="museum_timings">MUSEUM TIMINGS</string>
+    <string name="no_results_text">No Results Found</string>
+    <string name="check_network">Check your internet connections</string>
+    <string name="collection_details_main_text">As well as being objects of great age and beauty, the ceramics in the museum were also meant to be used.\n\n
+
+From humble kitchen wares to elaborate tile panels, ceramics were a vital part of everyday life in the Islamic world.\n\n
+
+They exemplify the external influences and internal creativity that inspired this flourishing of ceramic design over 12 centuries.</string>
 </resources>
