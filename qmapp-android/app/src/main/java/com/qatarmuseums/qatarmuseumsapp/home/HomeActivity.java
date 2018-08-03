@@ -1,9 +1,11 @@
 package com.qatarmuseums.qatarmuseumsapp.home;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Handler;
+import android.preference.PreferenceManager;
 import android.support.v4.view.GravityCompat;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
@@ -26,6 +28,7 @@ import com.qatarmuseums.qatarmuseumsapp.museum.MuseumActivity;
 import com.qatarmuseums.qatarmuseumsapp.utils.Util;
 import com.qatarmuseums.qatarmuseumsapp.webview.WebviewActivity;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -41,16 +44,20 @@ public class HomeActivity extends BaseActivity {
     private ArrayList<HomeList> homeLists = new ArrayList<>();
     private Intent navigation_intent;
     Util util;
+    RelativeLayout noResultFoundLayout;
     private boolean doubleBackToExitPressedOnce;
     ProgressBar progressBar;
+    SharedPreferences qmPreferences;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home);
-        progressBar = (ProgressBar)findViewById(R.id.progressBarLoading);
-        progressBar.setVisibility(View.VISIBLE);
+        progressBar = (ProgressBar) findViewById(R.id.progressBarLoading);
+//        progressBar.setVisibility(View.VISIBLE);
+        qmPreferences = PreferenceManager.getDefaultSharedPreferences(this);
         diningNavigation = (RelativeLayout) findViewById(R.id.dining_layout);
+        noResultFoundLayout = (RelativeLayout) findViewById(R.id.no_result_layout);
         giftShopNavigation = (RelativeLayout) findViewById(R.id.gift_shop_layout);
         culturePassNavigation = (RelativeLayout) findViewById(R.id.culture_pass_layout);
         moreNavigation = (RelativeLayout) findViewById(R.id.more_layout);
@@ -135,8 +142,8 @@ public class HomeActivity extends BaseActivity {
             }
         }));
 
-//        prepareRecyclerViewData();
-        getHomePageAPIData();
+        prepareRecyclerViewData();
+//        getHomePageAPIData();
 
         diningNavigation.setOnTouchListener(new View.OnTouchListener() {
             @Override
@@ -234,26 +241,46 @@ public class HomeActivity extends BaseActivity {
     }
 
     public void getHomePageAPIData() {
+        int appLanguage = qmPreferences.getInt("AppLanguage", 1);
+        String language;
+        if (appLanguage == 1) {
+            language = "en";
+        } else {
+            language = "ar";
+        }
         APIInterface apiService =
                 APIClient.getClient().create(APIInterface.class);
-        Call<ArrayList<HomeList>> call = apiService.getHomepageDetails("en");
+        Call<ArrayList<HomeList>> call = apiService.getHomepageDetails(language);
         call.enqueue(new Callback<ArrayList<HomeList>>() {
             @Override
             public void onResponse(Call<ArrayList<HomeList>> call, Response<ArrayList<HomeList>> response) {
                 if (response.isSuccessful()) {
                     if (response.body() != null) {
+                        recyclerView.setVisibility(View.VISIBLE);
                         homeLists.addAll(response.body());
                         mAdapter.notifyDataSetChanged();
                         Toast.makeText(HomeActivity.this, "success", Toast.LENGTH_SHORT).show();
+                    } else {
+                        recyclerView.setVisibility(View.GONE);
+                        noResultFoundLayout.setVisibility(View.VISIBLE);
                     }
-                    }
-                    progressBar.setVisibility(View.GONE);
+                } else {
+                    recyclerView.setVisibility(View.GONE);
+                    noResultFoundLayout.setVisibility(View.VISIBLE);
+                }
+                progressBar.setVisibility(View.GONE);
             }
 
             @Override
             public void onFailure(Call<ArrayList<HomeList>> call, Throwable t) {
+                if (t instanceof IOException) {
+                    util.showToast(getResources().getString(R.string.check_network), getApplicationContext());
+                } else {
+                    // due to mapping issues
+                }
+                recyclerView.setVisibility(View.GONE);
                 progressBar.setVisibility(View.GONE);
-                util.showToast(getResources().getString(R.string.check_network), getApplicationContext());
+                noResultFoundLayout.setVisibility(View.VISIBLE);
 
             }
         });
