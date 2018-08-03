@@ -18,6 +18,9 @@
         <item name="windowNoTitle">true</item>
 
     </style>
+    <style name="CustomSpinnerTheme" parent="android:Widget.Spinner">
+        <item name="android:background">@drawable/filter_down</item>
+    </style>
 
     <style name="AppTheme.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar" />
 

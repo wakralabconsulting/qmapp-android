@@ -1,5 +1,6 @@
 package com.qatarmuseums.qatarmuseumsapp.education;
 
+import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
@@ -69,6 +70,14 @@ public class EducationCalendarActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 onBackPressed();
+            }
+        });
+
+        toolbar_filter.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent= new Intent(EducationCalendarActivity.this,EducationFilterActivity.class);
+                startActivity(intent);
             }
         });
 
