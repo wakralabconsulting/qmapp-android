@@ -7,6 +7,7 @@ import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
 import android.os.Build;
 import android.widget.ImageView;
+import android.widget.Toast;
 
 import com.qatarmuseums.qatarmuseumsapp.R;
 
@@ -44,6 +45,9 @@ public class Util {
         customDialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
         customDialog.show();
 
+    }
+    public void showToast(String message, Context context) {
+        Toast.makeText(context, message, Toast.LENGTH_SHORT).show();
     }
 
 }

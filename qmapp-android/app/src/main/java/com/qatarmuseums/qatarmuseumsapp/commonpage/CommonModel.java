@@ -1,10 +1,21 @@
 package com.qatarmuseums.qatarmuseumsapp.commonpage;
 
 
+import com.google.gson.annotations.SerializedName;
+
 public class CommonModel {
-    private String name, date, location;
+    @SerializedName("name")
+    private String name;
+    @SerializedName("ID")
     private String id;
+    @SerializedName("Location")
+    private String location;
+    @SerializedName("LATEST_IMAGE")
     private String image;
+    @SerializedName("start_Date")
+    private String  startDate;
+    @SerializedName("end_Date")
+    private String  endDate;
     private Boolean isOpen, isfavourite;
 
     public CommonModel() {
@@ -12,11 +23,13 @@ public class CommonModel {
     }
 
 
-    public CommonModel(String id, String name, String exhibitionDate, String location, String image, Boolean isOpen,
+    public CommonModel(String id, String name, String startDate,
+                       String endDate, String location, String image, Boolean isOpen,
                        Boolean isfavourite) {
         this.id = id;
         this.name = name;
-        this.date = exhibitionDate;
+        this.startDate = startDate;
+        this.endDate = endDate;
         this.location = location;
         this.image = image;
         this.isOpen = isOpen;
@@ -39,12 +52,16 @@ public class CommonModel {
         this.id = id;
     }
 
-    public String getDate() {
-        return date;
+    public String getEndDate(){return endDate;}
+
+    public void setStartDate(){this.endDate=endDate;}
+
+    public String getStartDate() {
+        return startDate;
     }
 
-    public void setDate(String date) {
-        this.date = date;
+    public void setStartDate(String date) {
+        this.startDate = date;
     }
 
     public String getLocation() {
