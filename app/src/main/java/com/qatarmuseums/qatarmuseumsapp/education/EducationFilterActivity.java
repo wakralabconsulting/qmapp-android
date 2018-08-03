@@ -69,7 +69,7 @@ public class EducationFilterActivity extends AppCompatActivity {
 
         ButterKnife.bind(this);
         setSupportActionBar(toolbar);
-        toolbar_title.setText(getResources().getString(R.string.filter_activity_tittle));
+        toolbar_title.setText(getResources().getString(R.string.filter));
 
 
         zoomOutAnimation = AnimationUtils.loadAnimation(getApplicationContext(),
@@ -153,7 +153,6 @@ public class EducationFilterActivity extends AppCompatActivity {
             @Override
             public boolean onTouch(View view, MotionEvent motionEvent) {
                 if (isFillAge == 0) {
-//                    instituteLayout.setBackground();
                     ageGroupLayout.setBackground(getResources().getDrawable(R.drawable.rectangular_plain_background_layout));
                     isFillAge = 1;
                 } else {
