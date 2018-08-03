@@ -17,7 +17,6 @@ import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.qatarmuseums.qatarmuseumsapp.R;
 import com.qatarmuseums.qatarmuseumsapp.apicall.APIClient;
@@ -29,7 +28,6 @@ import com.qatarmuseums.qatarmuseumsapp.utils.Util;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.List;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -50,6 +48,7 @@ public class CommonActivity extends AppCompatActivity {
     SharedPreferences qmPreferences;
     Util util;
     RelativeLayout noResultFoundLayout;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -60,7 +59,7 @@ public class CommonActivity extends AppCompatActivity {
         backArrow = (ImageView) findViewById(R.id.toolbar_back);
         intent = getIntent();
         util = new Util();
-        progressBar = (ProgressBar)findViewById(R.id.progressBarLoading);
+        progressBar = (ProgressBar) findViewById(R.id.progressBarLoading);
 //        progressBar.setVisibility(View.VISIBLE);
         noResultFoundLayout = (RelativeLayout) findViewById(R.id.no_result_layout);
         qmPreferences = PreferenceManager.getDefaultSharedPreferences(this);
@@ -113,10 +112,11 @@ public class CommonActivity extends AppCompatActivity {
         });
         if (toolbarTitle.equals(getString(R.string.sidemenu_exhibition_text))) {
             prepareExhibitionData();
-//            getExhibitionAPIData();
-        } else if (toolbarTitle.equals(getString(R.string.sidemenu_heritage_text)))
+//            getCommonListAPIData("Exhibition_List_Page.json");
+        } else if (toolbarTitle.equals(getString(R.string.sidemenu_heritage_text))) {
             prepareHeritageData();
-        else if (toolbarTitle.equals(getString(R.string.sidemenu_public_arts_text)))
+//            getCommonListAPIData("Heritage_List_Page.json");
+        } else if (toolbarTitle.equals(getString(R.string.sidemenu_public_arts_text)))
             preparePublicArtsData();
         else if (toolbarTitle.equals(getString(R.string.sidemenu_dining_text)))
             prepareDiningData();
@@ -126,8 +126,8 @@ public class CommonActivity extends AppCompatActivity {
 
     private void prepareExhibitionData() {
 
-        CommonModel model = new CommonModel("1","Project Space 12 Bouthayna Al-Muftah: Echoes",
-                "Wednesday, July 11, 2018 - 11:45 - Monday, September 10, 2018 - 11:45","",
+        CommonModel model = new CommonModel("1", "Project Space 12 Bouthayna Al-Muftah: Echoes",
+                "Wednesday, July 11, 2018 - 11:45 - Monday, September 10, 2018 - 11:45", "",
                 "Mathaf: Arab Museum of Modern Art",
                 "",
                 null, true);
@@ -148,7 +148,7 @@ public class CommonActivity extends AppCompatActivity {
         models.add(model);
         model = new CommonModel("1", "LAUNDROMAT",
                 "Thursday, March 15, 2018 - 12:45 - Friday, June 1, 2018 - 12:45",
-                "Fire Station Artist in Residence, Garage Gallery","",
+                "Fire Station Artist in Residence, Garage Gallery", "",
                 "http://www.qm.org.qa/sites/default/files/styles/mobile_design/public/2012-photo-credit-ai-weiwei-studio-post_0.jpg?itok=MVxORAFa",
                 null, false);
         models.add(model);
@@ -163,17 +163,18 @@ public class CommonActivity extends AppCompatActivity {
         mAdapter.notifyDataSetChanged();
     }
 
-    private void getExhibitionAPIData(){
+    private void getCommonListAPIData(String name) {
         int appLanguage = qmPreferences.getInt("AppLanguage", 1);
         String language;
-        if (appLanguage == 1){
-            language="en";
-        }else {
-            language="ar";
+        String pageName = name;
+        if (appLanguage == 1) {
+            language = "en";
+        } else {
+            language = "ar";
         }
         APIInterface apiService =
                 APIClient.getClient().create(APIInterface.class);
-        Call<ArrayList<CommonModel>> call = apiService.getExhibitionpageList(language);
+        Call<ArrayList<CommonModel>> call = apiService.getCommonpageList(language,pageName);
         call.enqueue(new Callback<ArrayList<CommonModel>>() {
             @Override
             public void onResponse(Call<ArrayList<CommonModel>> call, Response<ArrayList<CommonModel>> response) {
@@ -182,11 +183,11 @@ public class CommonActivity extends AppCompatActivity {
                         recyclerView.setVisibility(View.VISIBLE);
                         models.addAll(response.body());
                         mAdapter.notifyDataSetChanged();
-                            }else {
+                    } else {
                         recyclerView.setVisibility(View.GONE);
                         noResultFoundLayout.setVisibility(View.VISIBLE);
                     }
-                }else {
+                } else {
                     recyclerView.setVisibility(View.GONE);
                     noResultFoundLayout.setVisibility(View.VISIBLE);
                 }
@@ -198,8 +199,7 @@ public class CommonActivity extends AppCompatActivity {
                 if (t instanceof IOException) {
                     util.showToast(getResources().getString(R.string.check_network), getApplicationContext());
 
-                }
-                else {
+                } else {
                     // error due to mapping issues
                 }
                 recyclerView.setVisibility(View.GONE);
@@ -209,40 +209,42 @@ public class CommonActivity extends AppCompatActivity {
 
     }
 
+
+
     private void prepareHeritageData() {
         CommonModel model = new CommonModel("1", "Al Zubarah",
                 null,
-                null,null,
+                null, null,
                 "http://www.qm.org.qa/sites/default/files/styles/mobile_design/public/hero_image/project/al-zubarah-page-site-01.jpg?itok=wcS5I03J",
                 null, true);
         models.add(model);
         model = new CommonModel("2", "Forts of Qatar",
                 null,
-                null,null,
+                null, null,
                 "http://www.qm.org.qa/sites/default/files/styles/mobile_design/public/hero_image/project/al_zubara_fort_2.jpg?itok=3bUUyTJy",
                 null, false);
         models.add(model);
         model = new CommonModel("3", "Towers of Qatar",
-                null,null,
+                null, null,
                 null,
                 "http://www.qm.org.qa/sites/default/files/styles/mobile_design/public/hero_image/project/heritagesites-barzantowersbyfotoarabia-11.jpg?itok=TuqhuEAA",
                 null, false);
         models.add(model);
         model = new CommonModel("4", "Wells of Qatar",
                 null,
-                null,null,
+                null, null,
                 "http://www.qm.org.qa/sites/default/files/styles/mobile_design/public/hero_image/project/heritagesites-alkhorwellbyfotoarabia-3.jpg?itok=0Jp0UX93",
                 null, false);
         models.add(model);
         model = new CommonModel("4", "New life for old Qatar",
                 null,
-                null,null,
+                null, null,
                 "http://www.qm.org.qa/sites/default/files/styles/mobile_design/public/hero_image/project/heritagesites-abudhaloufmosquebyfotoarabia-1.jpg?itok=FTZrKTPQ",
                 null, false);
         models.add(model);
         model = new CommonModel("4", "Cliffs, Carvings and Islands",
                 null,
-                null,null,
+                null, null,
                 "http://www.qm.org.qa/sites/default/files/styles/mobile_design/public/hero_image/project/al_khor_island_12.jpg?itok=s0vYeuk4",
                 null, false);
         models.add(model);
@@ -254,73 +256,73 @@ public class CommonActivity extends AppCompatActivity {
         CommonModel model = new CommonModel("1", "GANDHI’S THREE MONKEYS\n" +
                 "BY SUBODH GUPTA",
                 null,
-                null,null,
+                null, null,
                 "http://www.qm.org.qa/sites/default/files/styles/promo_image/public/teaser_images/projects/three_monkeys_resize.jpg?itok=IbQeExDN",
                 null, true);
         models.add(model);
         model = new CommonModel("2", "7 BY RICHARD SERRA",
-                null,null,
+                null, null,
                 null,
                 "http://www.qm.org.qa/sites/default/files/styles/promo_image/public/teaser_images/projects/publicart-7byfotoarabia-2.jpg?itok=FoETPWXy",
                 null, true);
         models.add(model);
         model = new CommonModel("3", "LUSAIL HANDBALL INSTALLATIONS\n",
-                null,null,
+                null, null,
                 null,
                 "http://www.qm.org.qa/sites/default/files/styles/promo_image/public/teaser_images/projects/lusail_multipurpose_hall-sculpture_hands_1.jpg?itok=M-JWK40f",
                 null, false);
         models.add(model);
         model = new CommonModel("4", "SMOKE BY TONY SMITH",
                 null,
-                null,null,
+                null, null,
                 "http://www.qm.org.qa/sites/default/files/styles/promo_image/public/teaser_images/projects/smke_4_of_1.jpg?itok=4_xFXy7c",
                 null, false);
         models.add(model);
         model = new CommonModel("5", "QATAR UNIVERSITY INSTALLATIONS",
-                null,null,
+                null, null,
                 null,
                 "http://www.qm.org.qa/sites/default/files/styles/promo_image/public/teaser_images/projects/she_0214.jpg.jpg?itok=KmeK2Yll",
                 null, false);
         models.add(model);
         model = new CommonModel("6", "AIRPORT INSTALLATIONS ",
-                null,null,
+                null, null,
                 null,
                 "http://www.qm.org.qa/sites/default/files/styles/promo_image/public/teaser_images/projects/c_lsp_qm_hia_artwork-9938_0.jpg?itok=F4Vxmn2W",
                 null, false);
         models.add(model);
         model = new CommonModel("6", "EAST-WEST / WEST-EAST BY RICHARD SERRA",
                 null,
-                null,null,
+                null, null,
                 "http://www.qm.org.qa/sites/default/files/styles/promo_image/public/teaser_images/projects/publicart-eastwestwesteastbyfotoarabia-9.jpg?itok=sxjwfULm",
                 null, false);
         models.add(model);
         model = new CommonModel("6", "THE MIRACULOUS JOURNEY BY DAMIEN HIRST",
                 null,
-                null,null,
+                null, null,
                 "http://www.qm.org.qa/sites/default/files/styles/promo_image/public/teaser_images/projects/the_miraculous_journey_dh_resize_for_teaser.jpg?itok=JBx4ktsu",
                 null, false);
         models.add(model);
         model = new CommonModel("6", "CALLIGRAFFITI BY EL SEED",
-                null,null,
+                null, null,
                 null,
                 "http://www.qm.org.qa/sites/default/files/styles/promo_image/public/teaser_images/projects/day_12_87.jpg?itok=8eA8_yWk",
                 null, false);
         models.add(model);
         model = new CommonModel("6", "MAMAN BY LOUISE BOURGEOIS ",
-                null,null,
+                null, null,
                 null,
                 "http://www.qm.org.qa/sites/default/files/styles/promo_image/public/teaser_images/projects/publicart-mamanbyfotoarabia-46.jpg?itok=SMdtKfML",
                 null, false);
         models.add(model);
         model = new CommonModel("6", "PERCEVAL BY SARAH LUCAS",
-                null,null,
+                null, null,
                 null,
                 "http://www.qm.org.qa/sites/default/files/styles/promo_image/public/teaser_images/projects/publicart-percevalbyfotoarabia-5.jpg?itok=RyV5XB_R",
                 null, false);
         models.add(model);
         model = new CommonModel("6", "HEALTHY LIVING FROM THE START\n" +
                 "BY ANNE GEDDES ",
-                null,null,
+                null, null,
                 null,
                 "http://www.qm.org.qa/sites/default/files/styles/promo_image/public/teaser_images/projects/yassin_ismail_mousa_basketballer_holding_mohammad_1_kg_-_3_weeks_old_0.jpeg?itok=Mt6vu_cH",
                 null, false);
@@ -332,43 +334,43 @@ public class CommonActivity extends AppCompatActivity {
     private void prepareDiningData() {
         CommonModel model = new CommonModel("1", "IDAM",
                 null,
-                null,null,
+                null, null,
                 "http://www.qm.org.qa/sites/default/files/styles/content_image/public/images/body/idam-pierremonetta_mg_6372_1.jpg?itok=bKArHUGQ",
                 null, true);
         models.add(model);
         model = new CommonModel("2", "IN-Q CAFÉ",
                 null,
-                null,null,
+                null, null,
                 "http://www.qm.org.qa/sites/default/files/styles/content_image/public/images/body/inq.jpg?itok=C14Qr6xt",
                 null, true);
         models.add(model);
         model = new CommonModel("3", "MIA CAFÉ",
                 null,
-                null,null,
+                null, null,
                 "http://www.qm.org.qa/sites/default/files/styles/content_image/public/images/body/dsc_0597_2_0.jpg?itok=TXvRM1HE",
                 null, false);
         models.add(model);
         model = new CommonModel("4", "AL RIWAQ CAFÉ",
-                null,null,
+                null, null,
                 null,
                 "http://www.qm.org.qa/sites/default/files/styles/content_image/public/images/body/10_0.jpg?itok=4BYJtRQB",
                 null, false);
         models.add(model);
         model = new CommonModel("4", "MIA CATERING",
-                null,null,
+                null, null,
                 null,
                 "http://www.qm.org.qa/sites/default/files/styles/content_image/public/images/body/mia-catering.jpg?itok=Kk7svJPU",
                 null, false);
         models.add(model);
         model = new CommonModel("4", "MATHAF MAQHA",
-                null,null,
+                null, null,
                 null,
                 "http://www.qm.org.qa/sites/default/files/styles/content_image/public/images/body/332a0071_0.jpg?itok=--l8qFkn",
                 null, false);
         models.add(model);
         model = new CommonModel("4", "CAFÉ #999",
                 null,
-                null,null,
+                null, null,
                 "http://www.qm.org.qa/sites/default/files/styles/content_image/public/images/body/332a4417.jpg?itok=_OpfHaT_",
                 null, true);
         models.add(model);
@@ -379,30 +381,30 @@ public class CommonActivity extends AppCompatActivity {
     private void prepareCollectionData() {
         CommonModel model = new CommonModel("1", "CERAMICS COLLECTION",
                 null,
-                null,null,
+                null, null,
                 "http://www.qm.org.qa/sites/default/files/styles/content_image/public/images/body/idam-pierremonetta_mg_6372_1.jpg?itok=bKArHUGQ",
                 null, null);
         models.add(model);
         model = new CommonModel("2", "GLASS COLLECTION",
-                null,null,
+                null, null,
                 null,
                 "http://www.qm.org.qa/sites/default/files/styles/content_image/public/images/body/inq.jpg?itok=C14Qr6xt",
                 null, null);
         models.add(model);
         model = new CommonModel("3", "THE CAVOUR VASE",
-                null,null,
+                null, null,
                 null,
                 "http://www.qm.org.qa/sites/default/files/styles/content_image/public/images/body/dsc_0597_2_0.jpg?itok=TXvRM1HE",
                 null, null);
         models.add(model);
         model = new CommonModel("4", "GOLD AND GLASS",
-                null,null,
+                null, null,
                 null,
                 "http://www.qm.org.qa/sites/default/files/styles/content_image/public/images/body/10_0.jpg?itok=4BYJtRQB",
                 null, null);
         models.add(model);
         model = new CommonModel("4", "MOSQUE LAMP",
-                null,null,
+                null, null,
                 null,
                 "http://www.qm.org.qa/sites/default/files/styles/content_image/public/images/body/mia-catering.jpg?itok=Kk7svJPU",
                 null, null);

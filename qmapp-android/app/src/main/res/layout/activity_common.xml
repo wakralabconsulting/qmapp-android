@@ -80,5 +80,14 @@
         android:background="@color/recycler_background"
         android:layout_below="@id/app_bar"
         android:scrollbars="vertical" />
+    <ProgressBar
+        android:id="@+id/progressBarLoading"
+        style="?android:attr/progressBarStyle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true"
+        android:layout_marginTop="40dp"
+        android:visibility="gone" />
+
 
 </RelativeLayout>

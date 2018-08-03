@@ -53,7 +53,7 @@ public class HomeActivity extends BaseActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home);
-        progressBar = (ProgressBar) findViewById(R.id.progressBarLoading);
+//        progressBar = (ProgressBar) findViewById(R.id.progressBarLoading);
 //        progressBar.setVisibility(View.VISIBLE);
         qmPreferences = PreferenceManager.getDefaultSharedPreferences(this);
         diningNavigation = (RelativeLayout) findViewById(R.id.dining_layout);
@@ -259,7 +259,6 @@ public class HomeActivity extends BaseActivity {
                         recyclerView.setVisibility(View.VISIBLE);
                         homeLists.addAll(response.body());
                         mAdapter.notifyDataSetChanged();
-                        Toast.makeText(HomeActivity.this, "success", Toast.LENGTH_SHORT).show();
                     } else {
                         recyclerView.setVisibility(View.GONE);
                         noResultFoundLayout.setVisibility(View.VISIBLE);
