@@ -23,6 +23,7 @@
             android:name=".home.HomeActivity"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoTitle" />
+
         <activity
             android:name=".commonpage.CommonActivity"
             android:screenOrientation="portrait"
@@ -57,6 +58,11 @@
             android:name=".education.EducationCalendarActivity"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar" />
+        <activity
+            android:name=".education.EducationFilterActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/AppTheme.NoActionBar" />
+
         <activity
             android:name=".webview.WebviewActivity"
             android:screenOrientation="portrait"
