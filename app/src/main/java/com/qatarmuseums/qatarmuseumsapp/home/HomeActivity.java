@@ -17,7 +17,6 @@ import android.view.animation.AnimationUtils;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.Toast;
-
 import com.qatarmuseums.qatarmuseumsapp.R;
 import com.qatarmuseums.qatarmuseumsapp.apicall.APIClient;
 import com.qatarmuseums.qatarmuseumsapp.apicall.APIInterface;
@@ -27,11 +26,8 @@ import com.qatarmuseums.qatarmuseumsapp.commonpage.RecyclerTouchListener;
 import com.qatarmuseums.qatarmuseumsapp.museum.MuseumActivity;
 import com.qatarmuseums.qatarmuseumsapp.utils.Util;
 import com.qatarmuseums.qatarmuseumsapp.webview.WebviewActivity;
-
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.List;
-
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -53,8 +49,8 @@ public class HomeActivity extends BaseActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home);
-//        progressBar = (ProgressBar) findViewById(R.id.progressBarLoading);
-//        progressBar.setVisibility(View.VISIBLE);
+        progressBar = (ProgressBar) findViewById(R.id.progressBarLoading);
+        progressBar.setVisibility(View.VISIBLE);
         qmPreferences = PreferenceManager.getDefaultSharedPreferences(this);
         diningNavigation = (RelativeLayout) findViewById(R.id.dining_layout);
         noResultFoundLayout = (RelativeLayout) findViewById(R.id.no_result_layout);
@@ -142,8 +138,7 @@ public class HomeActivity extends BaseActivity {
             }
         }));
 
-        prepareRecyclerViewData();
-//        getHomePageAPIData();
+        getHomePageAPIData();
 
         diningNavigation.setOnTouchListener(new View.OnTouchListener() {
             @Override
@@ -210,34 +205,6 @@ public class HomeActivity extends BaseActivity {
                 }
             }, 2000);
         }
-    }
-
-    private void prepareRecyclerViewData() {
-        HomeList movie = new HomeList(getString(R.string.home_page_mia_title), "63",
-                "http://www.qm.org.qa/sites/default/files/museum_of_islamic_art.png",
-                2, true);
-        homeLists.add(movie);
-        movie = new HomeList(getString(R.string.home_page_national_museum_title), "68",
-                "http://www.qm.org.qa/sites/default/files/national_museum_of_qatar.png",
-                2, false);
-        homeLists.add(movie);
-        movie = new HomeList(getString(R.string.home_page_mathaf_title), "66",
-                "http://www.qm.org.qa/sites/default/files/mathaf_arab_museum.png",
-                2, false);
-        homeLists.add(movie);
-        movie = new HomeList(getString(R.string.home_page_fire_station_title), "60",
-                "http://www.qm.org.qa/sites/default/files/firestation.png",
-                2, false);
-        homeLists.add(movie);
-        movie = new HomeList(getString(R.string.home_page_exhibition_title), "61",
-                "",
-                2, false);
-        homeLists.add(movie);
-        movie = new HomeList(getString(R.string.home_page_sports_museum_title), "69",
-                "http://www.qm.org.qa/sites/default/files/qatar_olypic_sports_museum.png",
-                2, false);
-        homeLists.add(movie);
-        mAdapter.notifyDataSetChanged();
     }
 
     public void getHomePageAPIData() {
