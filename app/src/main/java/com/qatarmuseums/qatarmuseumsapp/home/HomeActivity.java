@@ -17,6 +17,7 @@ import android.view.animation.AnimationUtils;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.Toast;
+
 import com.qatarmuseums.qatarmuseumsapp.R;
 import com.qatarmuseums.qatarmuseumsapp.apicall.APIClient;
 import com.qatarmuseums.qatarmuseumsapp.apicall.APIInterface;
@@ -26,8 +27,10 @@ import com.qatarmuseums.qatarmuseumsapp.commonpage.RecyclerTouchListener;
 import com.qatarmuseums.qatarmuseumsapp.museum.MuseumActivity;
 import com.qatarmuseums.qatarmuseumsapp.utils.Util;
 import com.qatarmuseums.qatarmuseumsapp.webview.WebviewActivity;
+
 import java.io.IOException;
 import java.util.ArrayList;
+
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -225,6 +228,10 @@ public class HomeActivity extends BaseActivity {
                     if (response.body() != null) {
                         recyclerView.setVisibility(View.VISIBLE);
                         homeLists.addAll(response.body());
+                        HomeList exhibitonObject = new HomeList("Exhibitions","63",
+                                "",false);
+                        int secondLastIndex = homeLists.size() - 1;
+                        homeLists.add(secondLastIndex,exhibitonObject);
                         mAdapter.notifyDataSetChanged();
                     } else {
                         recyclerView.setVisibility(View.GONE);
