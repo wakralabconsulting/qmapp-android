@@ -80,6 +80,11 @@
     <string name="open_in_google_maps">Click here to open in Google Maps</string>
     <string name="contact_mail">info@mia.org.qa</string>
     <string name="for_more_information_text">For more information and to make a reservation, visit <u>MIA.</u></string>
+    <string name="institution">Institution -</string>
+    <string name="age_group">Age Group -</string>
+    <string name="programme_type">Programme Type -</string>
+    <string name="clear">Clear</string>
+    <string name="filter">Filter</string>
     <string name="gift_shop_url">http://www.qm.org.qa/en/gift-shops</string>
     <string name="touch_again">Touch again to exit</string>
     <string name="map_navigation_api">http://maps.google.com/maps?q=loc:</string>

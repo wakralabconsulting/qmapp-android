@@ -50,4 +50,7 @@
     <string name="register_now_content">Thank you for Registering.Further\nDetails will be sent to you on your\nemail</string>
     <string name="opening_timings">OPENING TIMINGS</string>
     <string name="exhibition_timings">EXHIBITION TIMINGS</string>
+    <string name="institution">Institution -</string>
+    <string name="age_group">Age Group -</string>
+    <string name="programme_type">Programme Type -</string>
 </resources>

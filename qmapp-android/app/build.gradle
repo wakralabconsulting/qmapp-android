@@ -38,7 +38,9 @@ dependencies {
     annotationProcessor 'com.github.bumptech.glide:compiler:4.7.1'
     //    calendar
     implementation project(':collapsiblecalendarview2')
+
     implementation project(':library')
+
     implementation 'com.pierfrancescosoffritti.androidyoutubeplayer:core:8.0.1'
     //retrofit
 
