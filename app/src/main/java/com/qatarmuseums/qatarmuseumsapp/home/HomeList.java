@@ -10,20 +10,17 @@ public class HomeList {
     private String id;
     @SerializedName("image")
     private String image;
-    @SerializedName("SORTID")
-    private Integer sortCoefficient;
-    @SerializedName("tourguideavailable")
+    @SerializedName("tourguide_available")
     private Boolean tourguideAvailable;
 
     public HomeList() {
 
     }
 
-    public HomeList(String name, String id, String image, Integer sortCoefficient, Boolean tourguideAvailable) {
+    public HomeList(String name, String id, String image, Boolean tourguideAvailable) {
         this.name = name;
         this.id = id;
         this.image = image;
-        this.sortCoefficient = sortCoefficient;
         this.tourguideAvailable = tourguideAvailable;
     }
 
@@ -49,14 +46,6 @@ public class HomeList {
 
     public void setImage(String image) {
         this.image = image;
-    }
-
-    public Integer getSortCoefficient() {
-        return sortCoefficient;
-    }
-
-    public void setSortCoefficient(Integer sortCoefficient) {
-        this.sortCoefficient = sortCoefficient;
     }
 
     public Boolean getTourguideAvailable() {
