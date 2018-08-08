@@ -2,7 +2,6 @@ package com.qatarmuseums.qatarmuseumsapp.calendar;
 
 import android.Manifest;
 import android.app.Dialog;
-import android.content.ComponentName;
 import android.content.ContentResolver;
 import android.content.ContentValues;
 import android.content.Context;
@@ -155,25 +154,9 @@ public class CalendarAdapter extends RecyclerView.Adapter<CalendarAdapter.Calend
                 && ActivityCompat.checkSelfPermission(context, Manifest.permission.WRITE_CALENDAR) != PackageManager.PERMISSION_GRANTED) {
         }
         Uri uri = contentResolver.insert(CalendarContract.Events.CONTENT_URI, cv);
-        Toast.makeText(context, "entered" , Toast.LENGTH_SHORT).show();
-//        Intent LaunchIntent = context.getPackageManager().getLaunchIntentForPackage(" com.google.android.calendar");
-//        startActivity(context,LaunchIntent,null);
+        Toast.makeText(context, "Entered", Toast.LENGTH_SHORT).show();
 
-//        Intent intent = new Intent(context, NesneTani.class);
-//        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-//        context.startActivity(intent);
-//
-//        ComponentName cn;
-//        Intent i = new Intent();
-//
-////Froyo or greater (mind you I just tested this on CM7 and the less than froyo one worked so it depends on the phone...)
-//        cn = new ComponentName("com.google.android.calendar", "com.qatarmuseums.qatarmuseumsapp.calendar.CalendarActivity");
-//
-////less than Froyo
-////        cn = new ComponentName("com.android.calendar", "com.qatarmuseums.qatarmuseumsapp.calendar.CalendarActivity");
-//
-//        i.setComponent(cn);
-//        startActivity(context,i,null);
+
 
     }
 }

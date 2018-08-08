@@ -16,6 +16,12 @@ public class CommonModel {
     private String  startDate;
     @SerializedName("end_Date")
     private String  endDate;
+    @SerializedName("sort_coefficient")
+    private String sortCoefficient;
+    @SerializedName("Longitude")
+    private String longitude;
+    @SerializedName("Latitude")
+    private String latitude;
     private Boolean isOpen, isfavourite;
 
     public CommonModel() {
@@ -35,6 +41,23 @@ public class CommonModel {
         this.isOpen = isOpen;
         this.isfavourite = isfavourite;
     }
+
+
+//    public CommonModel(String name, String id, String location, String image, String startDate,
+//                       String endDate, String sortCoefficient, String longitude,
+//                       String latitude, Boolean isOpen, Boolean isfavourite) {
+//        this.name = name;
+//        this.id = id;
+//        this.location = location;
+//        this.image = image;
+//        this.startDate = startDate;
+//        this.endDate = endDate;
+//        this.sortCoefficient = sortCoefficient;
+//        this.longitude = longitude;
+//        this.latitude = latitude;
+//        this.isOpen = isOpen;
+//        this.isfavourite = isfavourite;
+//    }
 
     public String getName() {
         return name;
@@ -94,5 +117,41 @@ public class CommonModel {
 
     public void setIsfavourite(Boolean isfavourite) {
         this.isfavourite = isfavourite;
+    }
+
+    public void setEndDate(String endDate) {
+        this.endDate = endDate;
+    }
+
+    public String getSortCoefficient() {
+        return sortCoefficient;
+    }
+
+    public void setSortCoefficient(String sortCoefficient) {
+        this.sortCoefficient = sortCoefficient;
+    }
+
+    public String getLongitude() {
+        return longitude;
+    }
+
+    public void setLongitude(String longitude) {
+        this.longitude = longitude;
+    }
+
+    public String getLatitude() {
+        return latitude;
+    }
+
+    public void setLatitude(String latitude) {
+        this.latitude = latitude;
+    }
+
+    public Boolean getOpen() {
+        return isOpen;
+    }
+
+    public void setOpen(Boolean open) {
+        isOpen = open;
     }
 }
