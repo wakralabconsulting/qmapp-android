@@ -49,7 +49,7 @@ public class HomeListAdapter extends RecyclerView.Adapter<HomeListAdapter.MyView
     public void onBindViewHolder(@NonNull HomeListAdapter.MyViewHolder holder, int position) {
         HomeList homeList = homeLists.get(position);
         holder.name.setText(homeList.getName());
-        if (!homeList.getTourguideAvailable())
+        if (homeList.getTourguideAvailable().equalsIgnoreCase("false"))
             holder.headphoneIcon.setVisibility(View.GONE);
 
         GlideApp.with(mContext)
