@@ -7,8 +7,17 @@ import android.support.annotation.NonNull;
 @Entity(tableName = "homepagetable")
 public class HomePageTable {
     @NonNull
+    public long getQatarmuseum_id() {
+        return qatarmuseum_id;
+    }
+
+    public void setQatarmuseum_id(@NonNull long qatarmuseum_id) {
+        this.qatarmuseum_id = qatarmuseum_id;
+    }
+
+    @NonNull
     @PrimaryKey(autoGenerate = false)
-    private long qMuseumId;
+    private long qatarmuseum_id;
     @ColumnInfo()
     private String name;
     @ColumnInfo()
@@ -28,8 +37,8 @@ public class HomePageTable {
 
 
 
-    public HomePageTable(long qMuseumId, String name, String tourguide_available, String image) {
-        this.qMuseumId = qMuseumId;
+    public HomePageTable(long qatarmuseum_id, String name, String tourguide_available, String image) {
+        this.qatarmuseum_id = qatarmuseum_id;
         this.name = name;
         this.tourguide_available = tourguide_available;
         this.image = image;
@@ -42,14 +51,6 @@ public class HomePageTable {
 
     public void setName(String name) {
         this.name = name;
-    }
-
-    public long getqMuseumId() {
-        return qMuseumId;
-    }
-
-    public void setqMuseumId(long qMuseumId) {
-        this.qMuseumId = qMuseumId;
     }
 
     public String getTourguide_available() {
@@ -69,6 +70,7 @@ public class HomePageTable {
     }
 
 
+
     @Override
     public boolean equals(Object obj) {
         if (this == obj) return true;
@@ -76,7 +78,7 @@ public class HomePageTable {
 
         HomePageTable homePageTable = (HomePageTable) obj;
 
-        if (qMuseumId != homePageTable.qMuseumId) return false;
+        if (qatarmuseum_id != homePageTable.qatarmuseum_id) return false;
         return name != null ? homePageTable.equals(homePageTable.name) : homePageTable.name == null;
 
     }
@@ -87,7 +89,7 @@ public class HomePageTable {
     public String toString() {
         return "HomePageTable{" +
                 "name=" + name +
-                ", qMuseumId='" + qMuseumId + '\'' +
+                ", qatarmuseum_id='" + qatarmuseum_id + '\'' +
                 ", tourguide_available='" + tourguide_available + '\'' +
                 ",image='"+image+'\''+
                 '}';

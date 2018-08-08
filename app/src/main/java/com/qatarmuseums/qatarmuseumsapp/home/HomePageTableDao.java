@@ -13,19 +13,19 @@ public interface HomePageTableDao {
     @Query("SELECT * FROM homepagetable")
     List<HomePageTable> getAll();
 
-    @Query("SELECT COUNT(qMuseumId) FROM homepagetable")
+    @Query("SELECT COUNT(qatarmuseum_id) FROM homepagetable")
     int getNumberOfRows();
 
-    @Query("SELECT COUNT(qMuseumId) FROM homepagetable WHERE qMuseumId = :idFromAPI")
+    @Query("SELECT COUNT(qatarmuseum_id) FROM homepagetable WHERE qatarmuseum_id = :idFromAPI")
     int checkIdExist(int idFromAPI);
 
     @Query("UPDATE homepagetable SET name = :nameFromApi," +
-            "tourguide_available = :tourGideFromApi,image = :imageFromApi WHERE qMuseumId=:id")
+            "tourguide_available = :tourGideFromApi,image = :imageFromApi WHERE qatarmuseum_id=:id")
     void updateHomePageEnglish(String nameFromApi, String tourGideFromApi,
                                String imageFromApi,String id);
 
     @Query("UPDATE homepagetable SET arabic_name=:arabicNameFromApi," +
-            "tourguide_available = :tourGideFromApi,image = :imageFromApi WHERE qMuseumId=:id")
+            "tourguide_available = :tourGideFromApi,image = :imageFromApi WHERE qatarmuseum_id=:id")
     void updateHomePageArabic(String arabicNameFromApi, String tourGideFromApi,
                               String imageFromApi,String id);
 
