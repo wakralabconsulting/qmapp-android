@@ -1,13 +1,17 @@
 package com.qatarmuseums.qatarmuseumsapp.calendar;
 
+import android.Manifest;
 import android.app.Dialog;
 import android.content.ContentResolver;
 import android.content.ContentValues;
 import android.content.Context;
+import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.net.Uri;
 import android.provider.CalendarContract;
 import android.support.annotation.NonNull;
+import android.support.v4.app.ActivityCompat;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -24,6 +28,8 @@ import com.qatarmuseums.qatarmuseumsapp.R;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.TimeZone;
+
+import static android.support.v4.content.ContextCompat.startActivity;
 
 /**
  * Created by MoongedePC on 23-Jul-18.
@@ -85,7 +91,7 @@ public class CalendarAdapter extends RecyclerView.Adapter<CalendarAdapter.Calend
             eventDetails = (TextView) itemView.findViewById(R.id.event_detail_text);
             eventTiming = (TextView) itemView.findViewById(R.id.event_timing);
             viewDetails = (TextView) itemView.findViewById(R.id.event_view_details);
-            layoutHolder=(LinearLayout)itemView.findViewById(R.id.layout_holder);
+            layoutHolder = (LinearLayout) itemView.findViewById(R.id.layout_holder);
 
         }
     }
@@ -102,14 +108,14 @@ public class CalendarAdapter extends RecyclerView.Adapter<CalendarAdapter.Calend
 
         dialog.setContentView(view);
         ImageView closeBtn = (ImageView) view.findViewById(R.id.close_dialog);
-        Button changeLanguageBtn = (Button) view.findViewById(R.id.doneBtn);
+        Button addToCalendarBtn = (Button) view.findViewById(R.id.doneBtn);
         TextView dialogTitle = (TextView) view.findViewById(R.id.dialog_tittle);
         TextView dialogContent = (TextView) view.findViewById(R.id.dialog_content);
         dialogTitle.setText(context.getResources().getString(R.string.calendar_dialog_title));
-        changeLanguageBtn.setText(context.getResources().getString(R.string.add_to_calendar));
+        addToCalendarBtn.setText(context.getResources().getString(R.string.add_to_calendar));
         dialogContent.setText(details);
 
-        changeLanguageBtn.setOnClickListener(new View.OnClickListener() {
+        addToCalendarBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 //Do something
@@ -143,8 +149,14 @@ public class CalendarAdapter extends RecyclerView.Adapter<CalendarAdapter.Calend
         cv.put(CalendarContract.Events.EVENT_TIMEZONE, Calendar.getInstance().getTimeZone().getID());
 
         // Insert event to calendar
+
+        if (ActivityCompat.checkSelfPermission(context, Manifest.permission.READ_CALENDAR) != PackageManager.PERMISSION_GRANTED
+                && ActivityCompat.checkSelfPermission(context, Manifest.permission.WRITE_CALENDAR) != PackageManager.PERMISSION_GRANTED) {
+        }
         Uri uri = contentResolver.insert(CalendarContract.Events.CONTENT_URI, cv);
-        Toast.makeText(context, "entered", Toast.LENGTH_SHORT).show();
+        Toast.makeText(context, "Entered", Toast.LENGTH_SHORT).show();
+
+
 
     }
 }
