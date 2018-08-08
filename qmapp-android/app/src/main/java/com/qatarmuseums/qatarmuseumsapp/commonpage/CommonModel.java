@@ -42,23 +42,7 @@ public class CommonModel {
         this.isfavourite = isfavourite;
     }
 
-
-//    public CommonModel(String name, String id, String location, String image, String startDate,
-//                       String endDate, String sortCoefficient, String longitude,
-//                       String latitude, Boolean isOpen, Boolean isfavourite) {
-//        this.name = name;
-//        this.id = id;
-//        this.location = location;
-//        this.image = image;
-//        this.startDate = startDate;
-//        this.endDate = endDate;
-//        this.sortCoefficient = sortCoefficient;
-//        this.longitude = longitude;
-//        this.latitude = latitude;
-//        this.isOpen = isOpen;
-//        this.isfavourite = isfavourite;
-//    }
-
+    
     public String getName() {
         return name;
     }
