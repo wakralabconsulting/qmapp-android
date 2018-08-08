@@ -16,6 +16,12 @@ public class CommonModel {
     private String  startDate;
     @SerializedName("end_Date")
     private String  endDate;
+    @SerializedName("sort_coefficient")
+    private String sortCoefficient;
+    @SerializedName("Longitude")
+    private String longitude;
+    @SerializedName("Latitude")
+    private String latitude;
     private Boolean isOpen, isfavourite;
 
     public CommonModel() {
@@ -36,6 +42,7 @@ public class CommonModel {
         this.isfavourite = isfavourite;
     }
 
+    
     public String getName() {
         return name;
     }
@@ -94,5 +101,41 @@ public class CommonModel {
 
     public void setIsfavourite(Boolean isfavourite) {
         this.isfavourite = isfavourite;
+    }
+
+    public void setEndDate(String endDate) {
+        this.endDate = endDate;
+    }
+
+    public String getSortCoefficient() {
+        return sortCoefficient;
+    }
+
+    public void setSortCoefficient(String sortCoefficient) {
+        this.sortCoefficient = sortCoefficient;
+    }
+
+    public String getLongitude() {
+        return longitude;
+    }
+
+    public void setLongitude(String longitude) {
+        this.longitude = longitude;
+    }
+
+    public String getLatitude() {
+        return latitude;
+    }
+
+    public void setLatitude(String latitude) {
+        this.latitude = latitude;
+    }
+
+    public Boolean getOpen() {
+        return isOpen;
+    }
+
+    public void setOpen(Boolean open) {
+        isOpen = open;
     }
 }
