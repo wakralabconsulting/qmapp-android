@@ -27,13 +27,13 @@ import com.qatarmuseums.qatarmuseumsapp.apicall.APIInterface;
 import com.qatarmuseums.qatarmuseumsapp.commonpagedatabase.HeritageListTable;
 import com.qatarmuseums.qatarmuseumsapp.detailspage.DetailsActivity;
 import com.qatarmuseums.qatarmuseumsapp.detailspage.DiningActivity;
-import com.qatarmuseums.qatarmuseumsapp.home.HomeActivity;
 import com.qatarmuseums.qatarmuseumsapp.museumcollectiondetails.CollectionDetailsActivity;
 import com.qatarmuseums.qatarmuseumsapp.utils.Util;
 
 import java.io.IOException;
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
+import java.util.List;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -131,7 +131,7 @@ public class CommonActivity extends AppCompatActivity {
             if (util.isNetworkAvailable(CommonActivity.this))
                 getCommonListAPIDataFromAPI("Heritage_List_Page.json");
             else
-                getCommonListDataFromServer("Heritage_List_Page.json");
+                getCommonListDataFromDatabase("Heritage_List_Page.json");
         } else if (toolbarTitle.equals(getString(R.string.sidemenu_public_arts_text))) {
             getCommonListAPIDataFromAPI("Public_Arts_List_Page.json");
         } else if (toolbarTitle.equals(getString(R.string.sidemenu_dining_text)))
@@ -178,10 +178,15 @@ public class CommonActivity extends AppCompatActivity {
 
         mAdapter.notifyDataSetChanged();
     }
-    public void getCommonListDataFromServer(String apiParts){
 
+    public void getCommonListDataFromDatabase(String apiParts) {
+
+        if (apiParts.equals("Heritage_List_Page.json"))
+        new RetriveData(CommonActivity.this, appLanguage).execute();
     }
+
     private void getCommonListAPIDataFromAPI(String name) {
+        progressBar.setVisibility(View.VISIBLE);
         String language;
         final String pageName = name;
         if (appLanguage == 1) {
@@ -224,6 +229,7 @@ public class CommonActivity extends AppCompatActivity {
                 }
                 recyclerView.setVisibility(View.GONE);
                 noResultFoundLayout.setVisibility(View.VISIBLE);
+                progressBar.setVisibility(View.GONE);
             }
         });
 
@@ -449,6 +455,54 @@ public class CommonActivity extends AppCompatActivity {
         }
 
 
+    }
+
+    public class RetriveData extends AsyncTask<Void, Void, List<HeritageListTable>> {
+        private WeakReference<CommonActivity> activityReference;
+        int language;
+
+        RetriveData(CommonActivity context, int appLanguage) {
+            activityReference = new WeakReference<>(context);
+            language = appLanguage;
+        }
+
+        @Override
+        protected void onPreExecute() {
+           progressBar.setVisibility(View.VISIBLE);
+        }
+
+        @Override
+        protected List<HeritageListTable> doInBackground(Void... voids) {
+            return activityReference.get().qmDatabase.getHeritageListTableDao().getAll();
+        }
+
+        @Override
+        protected void onPostExecute(List<HeritageListTable> heritageListTables) {
+            models.clear();
+            if (language == 1) {
+                for (int i = 0; i < heritageListTables.size(); i++) {
+                    CommonModel commonModel = new CommonModel(String.valueOf(heritageListTables.get(i).getHeritage_id()),
+                            heritageListTables.get(i).getHeritage_name(),
+                            "", "", "", heritageListTables.get(i).getHeritage_image(),
+                            false, false);
+                    models.add(i, commonModel);
+
+                }
+
+            } else {
+                for (int i = 0; i < heritageListTables.size(); i++) {
+                    CommonModel commonModel = new CommonModel(String.valueOf(heritageListTables.get(i).getHeritage_id()),
+                            heritageListTables.get(i).getHeritage_name_arabic(),
+                            "", "", "", heritageListTables.get(i).getHeritage_image(),
+                            false, false);
+                    models.add(i, commonModel);
+
+                }
+
+            }
+            mAdapter.notifyDataSetChanged();
+            progressBar.setVisibility(View.GONE);
+        }
     }
 
 }
