@@ -3,6 +3,7 @@ package com.qatarmuseums.qatarmuseumsapp.home;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Color;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
 import android.preference.PreferenceManager;
@@ -18,6 +19,7 @@ import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.Toast;
 
+import com.qatarmuseums.qatarmuseumsapp.QMDatabase;
 import com.qatarmuseums.qatarmuseumsapp.R;
 import com.qatarmuseums.qatarmuseumsapp.apicall.APIClient;
 import com.qatarmuseums.qatarmuseumsapp.apicall.APIInterface;
@@ -29,6 +31,7 @@ import com.qatarmuseums.qatarmuseumsapp.utils.Util;
 import com.qatarmuseums.qatarmuseumsapp.webview.WebviewActivity;
 
 import java.io.IOException;
+import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 
 import retrofit2.Call;
@@ -47,6 +50,9 @@ public class HomeActivity extends BaseActivity {
     private boolean doubleBackToExitPressedOnce;
     ProgressBar progressBar;
     SharedPreferences qmPreferences;
+    QMDatabase qmDatabase;
+    HomePageTable homePageTable;
+    int homePageTableRowCount;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -62,6 +68,7 @@ public class HomeActivity extends BaseActivity {
         moreNavigation = (RelativeLayout) findViewById(R.id.more_layout);
         recyclerView = (RecyclerView) findViewById(R.id.recycler_view);
         util = new Util();
+        qmDatabase = QMDatabase.getInstance(HomeActivity.this);
         zoomOutAnimation = AnimationUtils.loadAnimation(getApplicationContext(),
                 R.anim.zoom_out);
         fadeOutAnimation = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.fade_out_animation);
@@ -212,7 +219,7 @@ public class HomeActivity extends BaseActivity {
 
     public void getHomePageAPIData() {
         int appLanguage = qmPreferences.getInt("AppLanguage", 1);
-        String language;
+        final String language;
         if (appLanguage == 1) {
             language = "en";
         } else {
@@ -233,6 +240,8 @@ public class HomeActivity extends BaseActivity {
                         int secondLastIndex = homeLists.size() - 1;
                         homeLists.add(secondLastIndex,exhibitonObject);
                         mAdapter.notifyDataSetChanged();
+                        new RowCount(HomeActivity.this, language).execute();
+
                     } else {
                         recyclerView.setVisibility(View.GONE);
                         noResultFoundLayout.setVisibility(View.VISIBLE);
@@ -258,4 +267,145 @@ public class HomeActivity extends BaseActivity {
             }
         });
     }
+
+
+    public class RowCount extends AsyncTask<Void, Void, Integer> {
+        private WeakReference<HomeActivity> activityReference;
+        String language;
+
+        RowCount(HomeActivity context, String apiLanguage) {
+            activityReference = new WeakReference<>(context);
+            language = apiLanguage;
+        }
+
+        @Override
+        protected Integer doInBackground(Void... voids) {
+            return activityReference.get().qmDatabase.getHomePageTableDao().getNumberOfRows();
+
+        }
+
+        @Override
+        protected void onPostExecute(Integer integer) {
+            homePageTableRowCount = integer;
+            if (homePageTableRowCount > 0) {
+                //update or add row to database
+                new CheckDBRowExist(HomeActivity.this,language).execute();
+
+            } else {
+                //create databse
+                new InsertDatabaseTask(HomeActivity.this, homePageTable).execute();
+
+            }
+
+        }
+    }
+
+
+    public class CheckDBRowExist extends AsyncTask<Void,Void,Void>{
+        private WeakReference<HomeActivity> activityReference;
+        private HomePageTable homePageTable;
+        String language;
+
+        CheckDBRowExist(HomeActivity context,String apiLanguage){
+            activityReference = new WeakReference<>(context);
+            language = apiLanguage;
+        }
+        @Override
+        protected Void doInBackground(Void... voids) {
+            if (homeLists.size()>0) {
+                for (int i=0;i<homeLists.size();i++) {
+                    int n= activityReference.get().qmDatabase.getHomePageTableDao().checkIdExist(
+                            Integer.parseInt(homeLists.get(i).getId()));
+                    if (n>0){
+                        //update same id
+                        new UpdateHomePageTable(HomeActivity.this,language,i).execute();
+
+                    }else {
+                        //create row with corresponding id
+                        homePageTable = new HomePageTable(Long.parseLong(homeLists.get(i).getId()),
+                                homeLists.get(i).getName(),
+                                homeLists.get(i).getTourguideAvailable().toString(),
+                                homeLists.get(i).getImage());
+                        activityReference.get().qmDatabase.getHomePageTableDao().insert(homePageTable);
+
+                    }
+                }
+            }
+            return null;
+
+        }
+
+
+    }
+
+    public class InsertDatabaseTask extends AsyncTask<Void, Void, Boolean> {
+        private WeakReference<HomeActivity> activityReference;
+        private HomePageTable homePageTable;
+
+        InsertDatabaseTask(HomeActivity context, HomePageTable homePageTable) {
+            activityReference = new WeakReference<>(context);
+            this.homePageTable = homePageTable;
+        }
+
+        @Override
+        protected Boolean doInBackground(Void... voids) {
+            if (homeLists != null) {
+                for (int i = 0; i < homeLists.size(); i++) {
+                    homePageTable = new HomePageTable(Long.parseLong(homeLists.get(i).getId()),
+                            homeLists.get(i).getName(),
+                            homeLists.get(i).getTourguideAvailable().toString(),
+                            homeLists.get(i).getImage());
+                    activityReference.get().qmDatabase.getHomePageTableDao().insert(homePageTable);
+                }
+            }
+            return true;
+        }
+
+        @Override
+        protected void onPostExecute(Boolean aBoolean) {
+            if (aBoolean) {
+                activityReference.get().setResult(homePageTable, 1);
+            }
+        }
+    }
+
+    private void setResult(HomePageTable note, int flag) {
+        Toast.makeText(this, "Database Success", Toast.LENGTH_LONG).show();
+    }
+
+    public class UpdateHomePageTable extends AsyncTask<Void,Void,Void>{
+        private WeakReference<HomeActivity> activityReference;
+        String language;
+        int position;
+        UpdateHomePageTable(HomeActivity context,String apiLanguage,int p){
+            activityReference = new WeakReference<>(context);
+            language = apiLanguage;
+            position = p;
+        }
+        @Override
+        protected Void doInBackground(Void... voids) {
+            if (language.equals("en")){
+                // update table with english name
+                activityReference.get().qmDatabase.getHomePageTableDao().updateHomePageEnglish(
+                        homeLists.get(position).getName(),homeLists.get(position).getTourguideAvailable().toString(),
+                        homeLists.get(position).getImage(), homeLists.get(position).getId()
+                );
+
+            }else {
+                // update table with arabic name
+                activityReference.get().qmDatabase.getHomePageTableDao().updateHomePageArabic(
+                        homeLists.get(position).getName(),homeLists.get(position).getTourguideAvailable().toString(),
+                        homeLists.get(position).getImage(),homeLists.get(position).getId()
+                );
+            }
+
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(Void aVoid) {
+            Toast.makeText(HomeActivity.this, "Update success", Toast.LENGTH_SHORT).show();
+        }
+    }
+
 }
