@@ -116,8 +116,7 @@ public class CommonActivity extends AppCompatActivity {
             prepareExhibitionData();
 //            getCommonListAPIData("Exhibition_List_Page.json");
         } else if (toolbarTitle.equals(getString(R.string.sidemenu_heritage_text))) {
-            prepareHeritageData();
-//            getCommonListAPIData("Heritage_List_Page.json");
+            getCommonListAPIData("Heritage_List_Page.json");
         } else if (toolbarTitle.equals(getString(R.string.sidemenu_public_arts_text))) {
             getCommonListAPIData("Public_Arts_List_Page.json");
         } else if (toolbarTitle.equals(getString(R.string.sidemenu_dining_text)))
@@ -209,48 +208,6 @@ public class CommonActivity extends AppCompatActivity {
             }
         });
 
-    }
-
-
-    private void prepareHeritageData() {
-        CommonModel model = new CommonModel("1", "Al Zubarah",
-                null,
-                null, null,
-                "http://www.qm.org.qa/sites/default/files/styles/mobile_design/public/hero_image/project/al-zubarah-page-site-01.jpg?itok=wcS5I03J",
-                null, true);
-        models.add(model);
-        model = new CommonModel("2", "Forts of Qatar",
-                null,
-                null, null,
-                "http://www.qm.org.qa/sites/default/files/styles/mobile_design/public/hero_image/project/al_zubara_fort_2.jpg?itok=3bUUyTJy",
-                null, false);
-        models.add(model);
-        model = new CommonModel("3", "Towers of Qatar",
-                null, null,
-                null,
-                "http://www.qm.org.qa/sites/default/files/styles/mobile_design/public/hero_image/project/heritagesites-barzantowersbyfotoarabia-11.jpg?itok=TuqhuEAA",
-                null, false);
-        models.add(model);
-        model = new CommonModel("4", "Wells of Qatar",
-                null,
-                null, null,
-                "http://www.qm.org.qa/sites/default/files/styles/mobile_design/public/hero_image/project/heritagesites-alkhorwellbyfotoarabia-3.jpg?itok=0Jp0UX93",
-                null, false);
-        models.add(model);
-        model = new CommonModel("4", "New life for old Qatar",
-                null,
-                null, null,
-                "http://www.qm.org.qa/sites/default/files/styles/mobile_design/public/hero_image/project/heritagesites-abudhaloufmosquebyfotoarabia-1.jpg?itok=FTZrKTPQ",
-                null, false);
-        models.add(model);
-        model = new CommonModel("4", "Cliffs, Carvings and Islands",
-                null,
-                null, null,
-                "http://www.qm.org.qa/sites/default/files/styles/mobile_design/public/hero_image/project/al_khor_island_12.jpg?itok=s0vYeuk4",
-                null, false);
-        models.add(model);
-
-        mAdapter.notifyDataSetChanged();
     }
 
 

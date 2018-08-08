@@ -13,15 +13,17 @@ public class CommonModel {
     @SerializedName("LATEST_IMAGE")
     private String image;
     @SerializedName("start_Date")
-    private String  startDate;
+    private String startDate;
     @SerializedName("end_Date")
-    private String  endDate;
+    private String endDate;
     @SerializedName("sort_coefficient")
     private String sortCoefficient;
     @SerializedName("Longitude")
     private String longitude;
     @SerializedName("Latitude")
     private String latitude;
+    @SerializedName("SORT_ID")
+    private String sortId;
     private Boolean isOpen, isfavourite;
 
     public CommonModel() {
@@ -42,7 +44,7 @@ public class CommonModel {
         this.isfavourite = isfavourite;
     }
 
-    
+
     public String getName() {
         return name;
     }
@@ -59,9 +61,21 @@ public class CommonModel {
         this.id = id;
     }
 
-    public String getEndDate(){return endDate;}
+    public String getEndDate() {
+        return endDate;
+    }
 
-    public void setStartDate(){this.endDate=endDate;}
+    public String getSortId() {
+        return sortId;
+    }
+
+    public void setSortId(String sortId) {
+        this.sortId = sortId;
+    }
+
+    public void setStartDate() {
+        this.endDate = endDate;
+    }
 
     public String getStartDate() {
         return startDate;
