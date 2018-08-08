@@ -11,13 +11,13 @@ public class HomeList {
     @SerializedName("image")
     private String image;
     @SerializedName("tourguide_available")
-    private Boolean tourguideAvailable;
+    private String tourguideAvailable;
 
     public HomeList() {
 
     }
 
-    public HomeList(String name, String id, String image, Boolean tourguideAvailable) {
+    public HomeList(String name, String id, String image, String tourguideAvailable) {
         this.name = name;
         this.id = id;
         this.image = image;
@@ -48,11 +48,11 @@ public class HomeList {
         this.image = image;
     }
 
-    public Boolean getTourguideAvailable() {
+    public String getTourguideAvailable() {
         return tourguideAvailable;
     }
 
-    public void setTourguideAvailable(Boolean tourguideAvailable) {
+    public void setTourguideAvailable(String tourguideAvailable) {
         this.tourguideAvailable = tourguideAvailable;
     }
 
