@@ -381,7 +381,7 @@ public class CommonActivity extends AppCompatActivity {
     }
 
     private void setResult(HeritageListTable heritageListTable, int flag) {
-        Toast.makeText(this, "Database Success", Toast.LENGTH_LONG).show();
+       // Toast.makeText(this, "Database Success", Toast.LENGTH_LONG).show();
     }
 
     public class CheckDBRowExist extends AsyncTask<Void, Void, Void> {
@@ -451,7 +451,7 @@ public class CommonActivity extends AppCompatActivity {
 
         @Override
         protected void onPostExecute(Void aVoid) {
-            Toast.makeText(CommonActivity.this, "Databse updated", Toast.LENGTH_SHORT).show();
+            //Toast.makeText(CommonActivity.this, "Databse updated", Toast.LENGTH_SHORT).show();
         }
 
 
