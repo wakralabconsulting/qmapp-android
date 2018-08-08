@@ -9,13 +9,16 @@ import android.arch.persistence.room.RoomDatabase;
 import android.content.Context;
 import android.support.annotation.NonNull;
 
+import com.qatarmuseums.qatarmuseumsapp.commonpagedatabase.HeritageListTable;
+import com.qatarmuseums.qatarmuseumsapp.commonpagedatabase.HeritageListTableDao;
 import com.qatarmuseums.qatarmuseumsapp.home.HomePageTable;
 import com.qatarmuseums.qatarmuseumsapp.home.HomePageTableDao;
 
-@Database(entities = { HomePageTable.class },version = 1,exportSchema = false)
+@Database(entities = { HomePageTable.class, HeritageListTable.class},version = 1,exportSchema = false)
 public abstract class QMDatabase extends RoomDatabase {
 
     public abstract HomePageTableDao getHomePageTableDao();
+    public abstract HeritageListTableDao getHeritageListTableDao();
 
     private static QMDatabase qmDatabase;
 
