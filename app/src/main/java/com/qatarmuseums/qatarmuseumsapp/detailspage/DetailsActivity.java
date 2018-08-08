@@ -116,8 +116,13 @@ public class DetailsActivity extends AppCompatActivity implements IPullZoom {
                 .placeholder(R.drawable.placeholdeer)
                 .into(headerImageView);
 
-        convertDegreetolatitude(latitude);
-        convertDegresstoLongitude(longitude);
+        if (latitude != null) {
+            latitude = convertDegreetoDecimalMeasure(latitude);
+            longitude = convertDegreetoDecimalMeasure(longitude);
+        } else {
+            latitude = "25.29818300";
+            longitude = "51.53972222";
+        }
         mapDetails.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -185,31 +190,19 @@ public class DetailsActivity extends AppCompatActivity implements IPullZoom {
         });
     }
 
-    private void convertDegreetolatitude(String lat) {
-        String value=lat.trim();
+    private String convertDegreetoDecimalMeasure(String degreeValue) {
+        String value = degreeValue.trim();
         String[] latParts = value.split("°");
-        float degree= Float.parseFloat(latParts[0]);
-        value=latParts[1].trim();
-        latParts=value.split("'");
-        float min= Float.parseFloat(latParts[0]);
-        value=latParts[1].trim();
-        latParts=value.split("\"");
-        float sec= Float.parseFloat(latParts[0]);
-        latitude= String.valueOf(degree+(min/60)+(sec/3600));
-
-    }
-
-    private void convertDegresstoLongitude(String lon) {
-        String value=lon.trim();
-        String[] lonParts = value.split("°");
-        float degree= Float.parseFloat(lonParts[0]);
-        value=lonParts[1].trim();
-        lonParts=value.split("'");
-        float min= Float.parseFloat(lonParts[0]);
-        value=lonParts[1].trim();
-        lonParts=value.split("\"");
-        float sec= Float.parseFloat(lonParts[0]);
-        longitude= String.valueOf(degree+(min/60)+(sec/3600));
+        float degree = Float.parseFloat(latParts[0]);
+        value = latParts[1].trim();
+        latParts = value.split("'");
+        float min = Float.parseFloat(latParts[0]);
+        value = latParts[1].trim();
+        latParts = value.split("\"");
+        float sec = Float.parseFloat(latParts[0]);
+        String result;
+        result = String.valueOf(degree + (min / 60) + (sec / 3600));
+        return result;
     }
 
     private void initViews() {
