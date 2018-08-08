@@ -29,11 +29,12 @@ dependencies {
     //butterknief
     implementation 'com.jakewharton:butterknife:8.8.1'
     //slider
-//
+
     //recycler view gravity start
     implementation 'com.github.rubensousa:gravitysnaphelper:1.5'
     annotationProcessor 'com.jakewharton:butterknife-compiler:8.8.1'
     implementation 'com.android.support:recyclerview-v7:27.1.1'
+    //glide
     implementation 'com.github.bumptech.glide:glide:4.7.1'
     annotationProcessor 'com.github.bumptech.glide:compiler:4.7.1'
     //    calendar
@@ -42,6 +43,12 @@ dependencies {
     implementation project(':library')
 
     implementation 'com.pierfrancescosoffritti.androidyoutubeplayer:core:8.0.1'
+    // database showing
+    debugImplementation 'com.amitshekhar.android:debug-db:1.0.4'
+    // Room dependencies
+    implementation 'android.arch.persistence.room:runtime:1.0.0'
+    annotationProcessor 'android.arch.persistence.room:compiler:1.0.0'
+
     //retrofit
 
     implementation 'com.squareup.retrofit2:retrofit:2.1.0'
