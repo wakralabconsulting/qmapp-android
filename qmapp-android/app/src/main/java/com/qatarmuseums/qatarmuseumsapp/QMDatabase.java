@@ -12,7 +12,7 @@ import android.support.annotation.NonNull;
 import com.qatarmuseums.qatarmuseumsapp.home.HomePageTable;
 import com.qatarmuseums.qatarmuseumsapp.home.HomePageTableDao;
 
-@Database(entities = { HomePageTable.class },version = 1)
+@Database(entities = { HomePageTable.class },version = 1,exportSchema = false)
 public abstract class QMDatabase extends RoomDatabase {
 
     public abstract HomePageTableDao getHomePageTableDao();
@@ -51,4 +51,8 @@ public abstract class QMDatabase extends RoomDatabase {
         return null;
     }
 
+    @Override
+    public void clearAllTables() {
+
+    }
 }

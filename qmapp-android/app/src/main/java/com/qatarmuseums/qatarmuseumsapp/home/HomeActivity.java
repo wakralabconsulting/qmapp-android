@@ -235,7 +235,7 @@ public class HomeActivity extends BaseActivity {
                     if (response.body() != null) {
                         recyclerView.setVisibility(View.VISIBLE);
                         homeLists.addAll(response.body());
-                        HomeList exhibitonObject = new HomeList("Exhibitions","61",
+                        HomeList exhibitonObject = new HomeList("Exhibitions","1",
                                 "",false);
                         int secondLastIndex = homeLists.size() - 1;
                         homeLists.add(secondLastIndex,exhibitonObject);
