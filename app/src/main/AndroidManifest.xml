@@ -22,12 +22,14 @@
         <activity
             android:name=".home.HomeActivity"
             android:screenOrientation="portrait"
-            android:theme="@style/AppTheme.NoTitle" />
+            android:theme="@style/AppTheme.NoTitle"
+            android:launchMode="singleTask"/>
 
         <activity
             android:name=".commonpage.CommonActivity"
             android:screenOrientation="portrait"
-            android:theme="@style/AppTheme.NoActionBar" />
+            android:theme="@style/AppTheme.NoActionBar"
+            android:launchMode="singleTask"/>
         <activity
             android:name=".calendar.CalendarActivity"
             android:screenOrientation="portrait"
