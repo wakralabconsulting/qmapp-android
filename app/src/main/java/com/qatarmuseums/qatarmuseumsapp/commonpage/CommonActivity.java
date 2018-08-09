@@ -2,6 +2,7 @@ package com.qatarmuseums.qatarmuseumsapp.commonpage;
 
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.v7.app.AppCompatActivity;
@@ -18,15 +19,19 @@ import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.qatarmuseums.qatarmuseumsapp.QMDatabase;
 import com.qatarmuseums.qatarmuseumsapp.R;
 import com.qatarmuseums.qatarmuseumsapp.apicall.APIClient;
 import com.qatarmuseums.qatarmuseumsapp.apicall.APIInterface;
+import com.qatarmuseums.qatarmuseumsapp.commonpagedatabase.PublicArtsTable;
 import com.qatarmuseums.qatarmuseumsapp.detailspage.DetailsActivity;
 import com.qatarmuseums.qatarmuseumsapp.detailspage.DiningActivity;
+import com.qatarmuseums.qatarmuseumsapp.home.HomeActivity;
 import com.qatarmuseums.qatarmuseumsapp.museumcollectiondetails.CollectionDetailsActivity;
 import com.qatarmuseums.qatarmuseumsapp.utils.Util;
 
 import java.io.IOException;
+import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 
 import retrofit2.Call;
@@ -48,6 +53,9 @@ public class CommonActivity extends AppCompatActivity {
     SharedPreferences qmPreferences;
     Util util;
     RelativeLayout noResultFoundLayout;
+    QMDatabase qmDatabase;
+    int publicArtsTableRowCount;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -59,6 +67,7 @@ public class CommonActivity extends AppCompatActivity {
         backArrow = (ImageView) findViewById(R.id.toolbar_back);
         intent = getIntent();
         util = new Util();
+        qmDatabase = QMDatabase.getInstance(CommonActivity.this);
         progressBar = (ProgressBar) findViewById(R.id.progressBarLoading);
 //        progressBar.setVisibility(View.VISIBLE);
         noResultFoundLayout = (RelativeLayout) findViewById(R.id.no_result_layout);
@@ -165,7 +174,7 @@ public class CommonActivity extends AppCompatActivity {
     }
 
     private void getCommonListAPIData(String name) {
-        int appLanguage = qmPreferences.getInt("AppLanguage", 1);
+        final int appLanguage = qmPreferences.getInt("AppLanguage", 1);
         String language;
         String pageName = name;
         if (appLanguage == 1) {
@@ -184,6 +193,7 @@ public class CommonActivity extends AppCompatActivity {
                         recyclerView.setVisibility(View.VISIBLE);
                         models.addAll(response.body());
                         mAdapter.notifyDataSetChanged();
+//                        new RowCount(CommonActivity.this, appLanguage).execute();
                     } else {
                         recyclerView.setVisibility(View.GONE);
                         noResultFoundLayout.setVisibility(View.VISIBLE);
@@ -291,5 +301,65 @@ public class CommonActivity extends AppCompatActivity {
         models.add(model);
         mAdapter.notifyDataSetChanged();
     }
+
+//    public class RowCount extends AsyncTask<Void, Void, Integer>{
+//
+//        private WeakReference<CommonActivity> activityReference;
+//        int language;
+//
+//        RowCount(CommonActivity context, int apiLanguage) {
+//            activityReference = new WeakReference<>(context);
+//            language = apiLanguage;
+//        }
+//
+//        @Override
+//        protected void onPreExecute() {
+//            super.onPreExecute();
+//        }
+//
+//        @Override
+//        protected void onPostExecute(Integer integer) {
+//            publicArtsTableRowCount = integer;
+//            if (publicArtsTableRowCount > 0) {
+//                //update or add row to database
+////                new CheckDBRowExist(CommonActivity.this, appLanguage).execute();
+//            } else {
+//                //create databse
+////                new InsertDataToDataBase(CommonActivity.this, heritageListTable).execute();
+//            }
+//        }
+//
+//        @Override
+//        protected Integer doInBackground(Void... voids) {
+//            return activityReference.get().qmDatabase.getPublicArtsTableDao().getNumberOfRows();
+//        }
+//    }
+//
+//    public class CheckDBRowExist extends AsyncTask<Void, Void, Void> {
+//        private WeakReference<CommonActivity> activityReference;
+//        private PublicArtsTable publicArtsTable;
+//        int language;
+//
+//        CheckDBRowExist(CommonActivity context, int apiLanguage) {
+//            activityReference = new WeakReference<>(context);
+//            language = apiLanguage;
+//        }
+//
+//        @Override
+//        protected void onPreExecute() {
+//            super.onPreExecute();
+//        }
+//
+//        @Override
+//        protected void onPostExecute(Void aVoid) {
+//            super.onPostExecute(aVoid);
+//        }
+//
+//        @Override
+//        protected Void doInBackground(Void... voids) {
+//            return null;
+//        }
+//    }
+
 
 }
