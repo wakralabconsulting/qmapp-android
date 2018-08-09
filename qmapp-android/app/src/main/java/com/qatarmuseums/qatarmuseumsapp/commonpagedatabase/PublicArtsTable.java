@@ -28,12 +28,7 @@ public class PublicArtsTable {
     private String longitude;
     @ColumnInfo()
     private String latitude;
-    @ColumnInfo()
-    private String teaser_image;
-    @ColumnInfo()
-    private String description;
-    @ColumnInfo()
-    private String short_description;
+
 
     public PublicArtsTable() {
     }
@@ -95,29 +90,6 @@ public class PublicArtsTable {
         this.latitude = latitude;
     }
 
-    public String getTeaser_image() {
-        return teaser_image;
-    }
-
-    public void setTeaser_image(String teaser_image) {
-        this.teaser_image = teaser_image;
-    }
-
-    public String getDescription() {
-        return description;
-    }
-
-    public void setDescription(String description) {
-        this.description = description;
-    }
-
-    public String getShort_description() {
-        return short_description;
-    }
-
-    public void setShort_description(String short_description) {
-        this.short_description = short_description;
-    }
 
     @Override
     public String toString() {
