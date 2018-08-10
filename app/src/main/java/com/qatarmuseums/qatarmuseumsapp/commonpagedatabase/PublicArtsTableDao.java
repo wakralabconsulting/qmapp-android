@@ -18,8 +18,19 @@ public interface PublicArtsTableDao {
     @Query("SELECT * FROM publicartstable")
     List<PublicArtsTable> getAll();
 
-    @Query("SELECT COUNT(qatarmuseum_id) FROM publicartstable")
+    @Query("SELECT COUNT(public_arts_id) FROM publicartstable")
     int getNumberOfRows();
+
+    @Query("SELECT COUNT(public_arts_id) FROM publicartstable WHERE public_arts_id = :idFromAPI")
+    int checkIdExist(int idFromAPI);
+
+    @Query("UPDATE publicartstable SET public_arts_name = :nameFromApi," + "public_arts_image = :imageFromApi," +
+            "latitude=:latitudeFromApi," + "longitude=:longitudeFromApi WHERE public_arts_id=:id")
+    void updatePublicArtsEnglish(String nameFromApi, String imageFromApi, String latitudeFromApi, String longitudeFromApi, String id);
+
+    @Query("UPDATE publicartstable SET public_arts_name = :nameFromApi," + "public_arts_image = :imageFromApi," +
+            "latitude=:latitudeFromApi," + "longitude=:longitudeFromApi WHERE public_arts_id=:id")
+    void updatePublicArtsArabic(String nameFromApi, String imageFromApi, String latitudeFromApi, String longitudeFromApi, String id);
 
     /*
  * Insert the object in database

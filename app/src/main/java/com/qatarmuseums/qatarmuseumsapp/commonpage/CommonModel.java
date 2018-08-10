@@ -44,6 +44,15 @@ public class CommonModel {
         this.isfavourite = isfavourite;
     }
 
+    public CommonModel(String id, String name, String image, String latitude,
+                       String longitude) {
+        this.id = id;
+        this.name = name;
+        this.image = image;
+        this.latitude = latitude;
+        this.longitude = longitude;
+    }
+
 
     public String getName() {
         return name;

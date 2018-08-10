@@ -23,16 +23,17 @@ import com.qatarmuseums.qatarmuseumsapp.QMDatabase;
 import com.qatarmuseums.qatarmuseumsapp.R;
 import com.qatarmuseums.qatarmuseumsapp.apicall.APIClient;
 import com.qatarmuseums.qatarmuseumsapp.apicall.APIInterface;
+import com.qatarmuseums.qatarmuseumsapp.commonpagedatabase.HeritageListTable;
 import com.qatarmuseums.qatarmuseumsapp.commonpagedatabase.PublicArtsTable;
 import com.qatarmuseums.qatarmuseumsapp.detailspage.DetailsActivity;
 import com.qatarmuseums.qatarmuseumsapp.detailspage.DiningActivity;
-import com.qatarmuseums.qatarmuseumsapp.home.HomeActivity;
 import com.qatarmuseums.qatarmuseumsapp.museumcollectiondetails.CollectionDetailsActivity;
 import com.qatarmuseums.qatarmuseumsapp.utils.Util;
 
 import java.io.IOException;
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
+import java.util.List;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -52,10 +53,14 @@ public class CommonActivity extends AppCompatActivity {
     ProgressBar progressBar;
     SharedPreferences qmPreferences;
     Util util;
-    RelativeLayout noResultFoundLayout;
     QMDatabase qmDatabase;
+    HeritageListTable heritageListTable;
+    PublicArtsTable publicArtsTable;
+    RelativeLayout noResultFoundLayout;
     int publicArtsTableRowCount;
-
+    int heritageTableRowCount;
+    int appLanguage;
+    String pageName = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -72,6 +77,7 @@ public class CommonActivity extends AppCompatActivity {
 //        progressBar.setVisibility(View.VISIBLE);
         noResultFoundLayout = (RelativeLayout) findViewById(R.id.no_result_layout);
         qmPreferences = PreferenceManager.getDefaultSharedPreferences(this);
+        appLanguage = qmPreferences.getInt("AppLanguage", 1);
         toolbarTitle = intent.getStringExtra(getString(R.string.toolbar_title_key));
         toolbar_title.setText(toolbarTitle);
         recyclerView = (RecyclerView) findViewById(R.id.common_recycler_view);
@@ -125,9 +131,18 @@ public class CommonActivity extends AppCompatActivity {
             prepareExhibitionData();
 //            getCommonListAPIData("Exhibition_List_Page.json");
         } else if (toolbarTitle.equals(getString(R.string.sidemenu_heritage_text))) {
-            getCommonListAPIData("Heritage_List_Page.json");
+            if (util.isNetworkAvailable(CommonActivity.this))
+                getCommonListAPIDataFromAPI("Heritage_List_Page.json");
+            else
+                getCommonListDataFromDatabase("Heritage_List_Page.json");
         } else if (toolbarTitle.equals(getString(R.string.sidemenu_public_arts_text))) {
-            getCommonListAPIData("Public_Arts_List_Page.json");
+
+            if (util.isNetworkAvailable(CommonActivity.this))
+                getCommonListAPIDataFromAPI("Public_Arts_List_Page.json");
+            else
+                getCommonListDataFromDatabase("Public_Arts_List_Page.json");
+
+
         } else if (toolbarTitle.equals(getString(R.string.sidemenu_dining_text)))
             prepareDiningData();
         else if (toolbarTitle.equals(getString(R.string.museum_collection_text)))
@@ -173,10 +188,21 @@ public class CommonActivity extends AppCompatActivity {
         mAdapter.notifyDataSetChanged();
     }
 
-    private void getCommonListAPIData(String name) {
-        final int appLanguage = qmPreferences.getInt("AppLanguage", 1);
+    public void getCommonListDataFromDatabase(String apiParts) {
+
+        if (apiParts.equals("Heritage_List_Page.json")) {
+            new RetriveData(CommonActivity.this, appLanguage).execute();
+        } else if (apiParts.equals("Public_Arts_List_Page.json")) {
+            new RetrivePublicArtsData(CommonActivity.this, appLanguage).execute();
+        }
+
+
+    }
+
+    private void getCommonListAPIDataFromAPI(String name) {
+        progressBar.setVisibility(View.VISIBLE);
         String language;
-        String pageName = name;
+        pageName = name;
         if (appLanguage == 1) {
             language = "en";
         } else {
@@ -193,7 +219,11 @@ public class CommonActivity extends AppCompatActivity {
                         recyclerView.setVisibility(View.VISIBLE);
                         models.addAll(response.body());
                         mAdapter.notifyDataSetChanged();
-//                        new RowCount(CommonActivity.this, appLanguage).execute();
+                        if (pageName.equals("Heritage_List_Page.json")) {
+                            new RowCount(CommonActivity.this, appLanguage).execute();
+                        } else if (pageName.equals("Public_Arts_List_Page.json")) {
+                            new PublicArtsRowCount(CommonActivity.this, appLanguage).execute();
+                        }
                     } else {
                         recyclerView.setVisibility(View.GONE);
                         noResultFoundLayout.setVisibility(View.VISIBLE);
@@ -215,6 +245,7 @@ public class CommonActivity extends AppCompatActivity {
                 }
                 recyclerView.setVisibility(View.GONE);
                 noResultFoundLayout.setVisibility(View.VISIBLE);
+                progressBar.setVisibility(View.GONE);
             }
         });
 
@@ -302,64 +333,391 @@ public class CommonActivity extends AppCompatActivity {
         mAdapter.notifyDataSetChanged();
     }
 
-//    public class RowCount extends AsyncTask<Void, Void, Integer>{
-//
-//        private WeakReference<CommonActivity> activityReference;
-//        int language;
-//
-//        RowCount(CommonActivity context, int apiLanguage) {
-//            activityReference = new WeakReference<>(context);
-//            language = apiLanguage;
-//        }
-//
-//        @Override
-//        protected void onPreExecute() {
-//            super.onPreExecute();
-//        }
-//
-//        @Override
-//        protected void onPostExecute(Integer integer) {
-//            publicArtsTableRowCount = integer;
-//            if (publicArtsTableRowCount > 0) {
-//                //update or add row to database
-////                new CheckDBRowExist(CommonActivity.this, appLanguage).execute();
-//            } else {
-//                //create databse
-////                new InsertDataToDataBase(CommonActivity.this, heritageListTable).execute();
-//            }
-//        }
-//
-//        @Override
-//        protected Integer doInBackground(Void... voids) {
-//            return activityReference.get().qmDatabase.getPublicArtsTableDao().getNumberOfRows();
-//        }
-//    }
-//
-//    public class CheckDBRowExist extends AsyncTask<Void, Void, Void> {
-//        private WeakReference<CommonActivity> activityReference;
-//        private PublicArtsTable publicArtsTable;
-//        int language;
-//
-//        CheckDBRowExist(CommonActivity context, int apiLanguage) {
-//            activityReference = new WeakReference<>(context);
-//            language = apiLanguage;
-//        }
-//
-//        @Override
-//        protected void onPreExecute() {
-//            super.onPreExecute();
-//        }
-//
-//        @Override
-//        protected void onPostExecute(Void aVoid) {
-//            super.onPostExecute(aVoid);
-//        }
-//
-//        @Override
-//        protected Void doInBackground(Void... voids) {
-//            return null;
-//        }
-//    }
+    public class PublicArtsRowCount extends AsyncTask<Void, Void, Integer> {
+
+        private WeakReference<CommonActivity> activityReference;
+        int language;
+
+        PublicArtsRowCount(CommonActivity context, int apiLanguage) {
+            activityReference = new WeakReference<>(context);
+            language = apiLanguage;
+        }
+
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+        }
+
+        @Override
+        protected void onPostExecute(Integer integer) {
+            publicArtsTableRowCount = integer;
+            if (publicArtsTableRowCount > 0) {
+                //update or add row to database
+                new CheckPublicArtsDBRowExist(CommonActivity.this, appLanguage).execute();
+            } else {
+                //create databse
+                new InsertPublicArtsDataToDataBase(CommonActivity.this, publicArtsTable).execute();
+            }
+        }
+
+        @Override
+        protected Integer doInBackground(Void... voids) {
+            return activityReference.get().qmDatabase.getPublicArtsTableDao().getNumberOfRows();
+        }
+    }
+
+    public class CheckPublicArtsDBRowExist extends AsyncTask<Void, Void, Void> {
+        private WeakReference<CommonActivity> activityReference;
+        private PublicArtsTable publicArtsTable;
+        int language;
+
+        CheckPublicArtsDBRowExist(CommonActivity context, int apiLanguage) {
+            activityReference = new WeakReference<>(context);
+            language = apiLanguage;
+        }
+
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+        }
+
+        @Override
+        protected void onPostExecute(Void aVoid) {
+            super.onPostExecute(aVoid);
+        }
+
+        @Override
+        protected Void doInBackground(Void... voids) {
+
+            if (models.size() > 0) {
+                for (int i = 0; i < models.size(); i++) {
+                    int n = activityReference.get().qmDatabase.getPublicArtsTableDao().checkIdExist(
+                            Integer.parseInt(models.get(i).getId()));
+                    if (n > 0) {
+                        //update same id
+                        new UpdatePublicArtsTable(CommonActivity.this, appLanguage, i).execute();
+
+                    } else {
+                        //create row with corresponding id
+                        publicArtsTable = new PublicArtsTable(Long.parseLong(models.get(i).getId()),
+                                models.get(i).getName(),
+                                models.get(i).getImage(),
+                                models.get(i).getLongitude(),
+                                models.get(i).getLatitude());
+                        activityReference.get().qmDatabase.getPublicArtsTableDao().insert(publicArtsTable);
+
+                    }
+                }
+            }
+            return null;
+        }
+    }
+
+    public class UpdatePublicArtsTable extends AsyncTask<Void, Void, Void> {
+        private WeakReference<CommonActivity> activityReference;
+        int language;
+        int position;
+
+        UpdatePublicArtsTable(CommonActivity context, int apiLanguage, int p) {
+            activityReference = new WeakReference<>(context);
+            language = apiLanguage;
+            position = p;
+        }
+
+        @Override
+        protected Void doInBackground(Void... voids) {
+            if (language == 1) {
+                // update table with english name
+                activityReference.get().qmDatabase.getPublicArtsTableDao().updatePublicArtsEnglish(
+                        models.get(position).getName(), models.get(position).getImage(),
+                        models.get(position).getLatitude(), models.get(position).getLongitude()
+                        , models.get(position).getId()
+                );
+
+            } else {
+                // update table with arabic name
+                activityReference.get().qmDatabase.getPublicArtsTableDao().updatePublicArtsArabic(
+                        models.get(position).getName(), models.get(position).getImage(),
+                        models.get(position).getLatitude(), models.get(position).getLongitude()
+                        , models.get(position).getId()
+                );
+            }
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(Void aVoid) {
+            //Toast.makeText(CommonActivity.this, "Databse updated", Toast.LENGTH_SHORT).show();
+        }
+
+
+    }
+
+    public class InsertPublicArtsDataToDataBase extends AsyncTask<Void, Void, Boolean> {
+        private WeakReference<CommonActivity> activityReference;
+        private PublicArtsTable publicArtsTable;
+
+        InsertPublicArtsDataToDataBase(CommonActivity context, PublicArtsTable publicArtsTable) {
+            activityReference = new WeakReference<>(context);
+            this.publicArtsTable = publicArtsTable;
+        }
+
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+        }
+
+        @Override
+        protected void onPostExecute(Boolean aBoolean) {
+            super.onPostExecute(aBoolean);
+        }
+
+        @Override
+        protected Boolean doInBackground(Void... voids) {
+            if (models != null) {
+                for (int i = 0; i < models.size(); i++) {
+                    publicArtsTable = new PublicArtsTable(Long.parseLong(models.get(i).getId()),
+                            models.get(i).getName(),
+                            models.get(i).getImage(),
+                            models.get(i).getLongitude(),
+                            models.get(i).getLatitude());
+                    activityReference.get().qmDatabase.getPublicArtsTableDao().insert(publicArtsTable);
+                }
+            }
+            return true;
+        }
+    }
+
+
+    public class RetrivePublicArtsData extends AsyncTask<Void, Void, List<PublicArtsTable>> {
+        private WeakReference<CommonActivity> activityReference;
+        int language;
+
+        RetrivePublicArtsData(CommonActivity context, int appLanguage) {
+            activityReference = new WeakReference<>(context);
+            language = appLanguage;
+        }
+
+        @Override
+        protected void onPreExecute() {
+            progressBar.setVisibility(View.VISIBLE);
+        }
+
+        @Override
+        protected void onPostExecute(List<PublicArtsTable> publicArtsTables) {
+            models.clear();
+            if (language == 1) {
+                for (int i = 0; i < publicArtsTables.size(); i++) {
+                    CommonModel commonModel = new CommonModel(String.valueOf(publicArtsTables.get(i).getPublic_arts_id()),
+                            publicArtsTables.get(i).getPublic_arts_name(), publicArtsTables.get(i).getPublic_arts_image(),
+                            publicArtsTables.get(i).getLatitude(), publicArtsTables.get(i).getLongitude());
+                    models.add(i, commonModel);
+
+                }
+
+            } else {
+                for (int i = 0; i < publicArtsTables.size(); i++) {
+                    CommonModel commonModel = new CommonModel(String.valueOf(publicArtsTables.get(i).getPublic_arts_id()),
+                            publicArtsTables.get(i).getPublic_arts_arabic_name(), publicArtsTables.get(i).getPublic_arts_image(),
+                            publicArtsTables.get(i).getLatitude(), publicArtsTables.get(i).getLongitude());
+                    models.add(i, commonModel);
+                }
+            }
+            mAdapter.notifyDataSetChanged();
+            progressBar.setVisibility(View.GONE);
+        }
+
+        @Override
+        protected List<PublicArtsTable> doInBackground(Void... voids) {
+            return activityReference.get().qmDatabase.getPublicArtsTableDao().getAll();
+        }
+    }
+
+    public class RowCount extends AsyncTask<Void, Void, Integer> {
+        private WeakReference<CommonActivity> activityReference;
+        int language;
+
+        RowCount(CommonActivity context, int apiLanguage) {
+            activityReference = new WeakReference<>(context);
+            language = apiLanguage;
+        }
+
+        @Override
+        protected Integer doInBackground(Void... voids) {
+            return activityReference.get().qmDatabase.getHeritageListTableDao().getNumberOfRows();
+        }
+
+        @Override
+        protected void onPostExecute(Integer integer) {
+            heritageTableRowCount = integer;
+            if (heritageTableRowCount > 0) {
+                //update or add row to database
+                new CheckDBRowExist(CommonActivity.this, appLanguage).execute();
+
+            } else {
+                //create databse
+                new InsertDataToDataBase(CommonActivity.this, heritageListTable).execute();
+
+            }
+        }
+    }
+
+
+    public class InsertDataToDataBase extends AsyncTask<Void, Void, Boolean> {
+        private WeakReference<CommonActivity> activityReference;
+        private HeritageListTable heritageListTable;
+
+        InsertDataToDataBase(CommonActivity context, HeritageListTable heritageListTable) {
+            activityReference = new WeakReference<>(context);
+            this.heritageListTable = heritageListTable;
+        }
+
+        @Override
+        protected Boolean doInBackground(Void... voids) {
+            if (models != null) {
+                for (int i = 0; i < models.size(); i++) {
+                    heritageListTable = new HeritageListTable(Long.parseLong(models.get(i).getId()),
+                            models.get(i).getName(),
+                            models.get(i).getImage(),
+                            models.get(i).getSortId());
+                    activityReference.get().qmDatabase.getHeritageListTableDao().insert(heritageListTable);
+                }
+            }
+            return true;
+        }
+
+        @Override
+        protected void onPostExecute(Boolean aBoolean) {
+            if (aBoolean) {
+                activityReference.get().setResult(heritageListTable, 1);
+            }
+        }
+    }
+
+    private void setResult(HeritageListTable heritageListTable, int flag) {
+        // Toast.makeText(this, "Database Success", Toast.LENGTH_LONG).show();
+    }
+
+    public class CheckDBRowExist extends AsyncTask<Void, Void, Void> {
+        private WeakReference<CommonActivity> activityReference;
+        private HeritageListTable heritageListTable;
+        int language;
+
+        CheckDBRowExist(CommonActivity context, int apiLanguage) {
+            activityReference = new WeakReference<>(context);
+            language = apiLanguage;
+        }
+
+        @Override
+        protected Void doInBackground(Void... voids) {
+            if (models.size() > 0) {
+                for (int i = 0; i < models.size(); i++) {
+                    int n = activityReference.get().qmDatabase.getHeritageListTableDao().checkIdExist(
+                            Integer.parseInt(models.get(i).getId()));
+                    if (n > 0) {
+                        //update same id
+                        new UpdateHeritagePageTable(CommonActivity.this, appLanguage, i).execute();
+
+                    } else {
+                        //create row with corresponding id
+                        heritageListTable = new HeritageListTable(Long.parseLong(models.get(i).getId()),
+                                models.get(i).getName(),
+                                models.get(i).getImage(),
+                                models.get(i).getSortId());
+                        activityReference.get().qmDatabase.getHeritageListTableDao().insert(heritageListTable);
+
+                    }
+                }
+            }
+            return null;
+        }
+    }
+
+    public class UpdateHeritagePageTable extends AsyncTask<Void, Void, Void> {
+        private WeakReference<CommonActivity> activityReference;
+        int language;
+        int position;
+
+        UpdateHeritagePageTable(CommonActivity context, int apiLanguage, int p) {
+            activityReference = new WeakReference<>(context);
+            language = apiLanguage;
+            position = p;
+        }
+
+        @Override
+        protected Void doInBackground(Void... voids) {
+            if (language == 1) {
+                // update table with english name
+                activityReference.get().qmDatabase.getHeritageListTableDao().updateHeritageListEnglish(
+                        models.get(position).getName(), models.get(position).getSortId(),
+                        models.get(position).getImage(), models.get(position).getId()
+                );
+
+            } else {
+                // update table with arabic name
+                activityReference.get().qmDatabase.getHeritageListTableDao().updateHeritageListArabic(
+                        models.get(position).getName(), models.get(position).getSortId(),
+                        models.get(position).getImage(), models.get(position).getId()
+                );
+            }
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(Void aVoid) {
+            //Toast.makeText(CommonActivity.this, "Databse updated", Toast.LENGTH_SHORT).show();
+        }
+
+
+    }
+
+    public class RetriveData extends AsyncTask<Void, Void, List<HeritageListTable>> {
+        private WeakReference<CommonActivity> activityReference;
+        int language;
+
+        RetriveData(CommonActivity context, int appLanguage) {
+            activityReference = new WeakReference<>(context);
+            language = appLanguage;
+        }
+
+        @Override
+        protected void onPreExecute() {
+            progressBar.setVisibility(View.VISIBLE);
+        }
+
+        @Override
+        protected List<HeritageListTable> doInBackground(Void... voids) {
+            return activityReference.get().qmDatabase.getHeritageListTableDao().getAll();
+        }
+
+        @Override
+        protected void onPostExecute(List<HeritageListTable> heritageListTables) {
+            models.clear();
+            if (language == 1) {
+                for (int i = 0; i < heritageListTables.size(); i++) {
+                    CommonModel commonModel = new CommonModel(String.valueOf(heritageListTables.get(i).getHeritage_id()),
+                            heritageListTables.get(i).getHeritage_name(),
+                            "", "", "", heritageListTables.get(i).getHeritage_image(),
+                            false, false);
+                    models.add(i, commonModel);
+
+                }
+
+            } else {
+                for (int i = 0; i < heritageListTables.size(); i++) {
+                    CommonModel commonModel = new CommonModel(String.valueOf(heritageListTables.get(i).getHeritage_id()),
+                            heritageListTables.get(i).getHeritage_name_arabic(),
+                            "", "", "", heritageListTables.get(i).getHeritage_image(),
+                            false, false);
+                    models.add(i, commonModel);
+
+                }
+
+            }
+            mAdapter.notifyDataSetChanged();
+            progressBar.setVisibility(View.GONE);
+        }
+    }
 
 
 }

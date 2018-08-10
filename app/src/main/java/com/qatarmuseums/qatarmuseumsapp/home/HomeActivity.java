@@ -445,7 +445,6 @@ public class HomeActivity extends BaseActivity {
                             homePageTables.get(i).getImage(),
                             homePageTables.get(i).getTourguide_available());
                     homeLists.add(i, exhibitonObject);
-                    mAdapter.notifyDataSetChanged();
                 }
 
             } else {
@@ -455,9 +454,9 @@ public class HomeActivity extends BaseActivity {
                             homePageTables.get(i).getImage(),
                             homePageTables.get(i).getTourguide_available());
                     homeLists.add(i, exhibitonObject);
-                    mAdapter.notifyDataSetChanged();
                 }
             }
+            mAdapter.notifyDataSetChanged();
             progressBar.setVisibility(View.GONE);
 
 
