@@ -8,9 +8,6 @@ import android.arch.persistence.room.Update;
 
 import java.util.List;
 
-/**
- * Created by MoongedePC on 08-Aug-18.
- */
 
 @Dao
 public interface PublicArtsTableDao {
