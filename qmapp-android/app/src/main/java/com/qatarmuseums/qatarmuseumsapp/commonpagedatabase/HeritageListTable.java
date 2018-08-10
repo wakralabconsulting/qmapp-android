@@ -86,7 +86,7 @@ public class HeritageListTable {
                 "heritage_name=" + heritage_name +
                 ", heritage_id='" + heritage_id + '\'' +
                 ", heritage_image='" + heritage_image + '\'' +
-                ",heritage_sortid='"+heritage_sortid+'\''+
+                ",heritage_sortid='" + heritage_sortid + '\'' +
                 '}';
     }
 }

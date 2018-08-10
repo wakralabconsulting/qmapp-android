@@ -7,6 +7,7 @@ import android.arch.persistence.room.Query;
 import android.arch.persistence.room.Update;
 
 import java.util.List;
+
 @Dao
 public interface HeritageListTableDao {
     @Query("SELECT * FROM heritagelist")
@@ -21,12 +22,12 @@ public interface HeritageListTableDao {
     @Query("UPDATE heritagelist SET heritage_name = :nameFromApi," +
             "heritage_sortid = :sortidFromApi,heritage_image = :imageFromApi WHERE heritage_id=:id")
     void updateHeritageListEnglish(String nameFromApi, String sortidFromApi,
-                               String imageFromApi, String id);
+                                   String imageFromApi, String id);
 
     @Query("UPDATE heritagelist SET heritage_name_arabic = :nameFromApi," +
             "heritage_sortid = :sortidFromApi,heritage_image = :imageFromApi WHERE heritage_id=:id")
     void updateHeritageListArabic(String nameFromApi, String sortidFromApi,
-                              String imageFromApi, String id);
+                                  String imageFromApi, String id);
 
 
     @Insert
