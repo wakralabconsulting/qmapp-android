@@ -2,8 +2,10 @@ package com.qatarmuseums.qatarmuseumsapp.detailspage;
 
 import android.annotation.SuppressLint;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.design.widget.AppBarLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
@@ -13,14 +15,22 @@ import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.qatarmuseums.qatarmuseumsapp.R;
+import com.qatarmuseums.qatarmuseumsapp.apicall.APIClient;
+import com.qatarmuseums.qatarmuseumsapp.apicall.APIInterface;
+import com.qatarmuseums.qatarmuseumsapp.commonpage.CommonModel;
 import com.qatarmuseums.qatarmuseumsapp.home.GlideApp;
 import com.qatarmuseums.qatarmuseumsapp.utils.IPullZoom;
 import com.qatarmuseums.qatarmuseumsapp.utils.PixelUtil;
 import com.qatarmuseums.qatarmuseumsapp.utils.PullToZoomCoordinatorLayout;
 import com.qatarmuseums.qatarmuseumsapp.utils.Util;
+
+import java.util.ArrayList;
+
+import retrofit2.Call;
 
 public class DetailsActivity extends AppCompatActivity implements IPullZoom {
 
@@ -36,10 +46,12 @@ public class DetailsActivity extends AppCompatActivity implements IPullZoom {
     private PullToZoomCoordinatorLayout coordinatorLayout;
     private View zoomView;
     private AppBarLayout appBarLayout;
-    private int headerOffSetSize;
+    private int headerOffSetSize,appLanguage;
     private LinearLayout secondTitleLayout, timingLayout, contactLayout;
-    private String latitude, longitude;
+    private String latitude, longitude, publicArtsId;
     Intent intent;
+    SharedPreferences qmPreferences;
+    ProgressBar progressBar;
 
     @SuppressLint("ClickableViewAccessibility")
     @Override
@@ -53,6 +65,7 @@ public class DetailsActivity extends AppCompatActivity implements IPullZoom {
         isFavourite = intent.getBooleanExtra("IS_FAVOURITE", false);
         latitude = intent.getStringExtra("LATITUDE");
         longitude = intent.getStringExtra("LONGITUDE");
+        publicArtsId = intent.getStringExtra("PUBLIC_ARTS_ID");
         toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         toolbarClose = (ImageView) findViewById(R.id.toolbar_close);
@@ -73,8 +86,11 @@ public class DetailsActivity extends AppCompatActivity implements IPullZoom {
         secondTitleLayout = (LinearLayout) findViewById(R.id.second_title_layout);
         timingLayout = (LinearLayout) findViewById(R.id.timing_layout);
         contactLayout = (LinearLayout) findViewById(R.id.contact_layout);
+        qmPreferences = PreferenceManager.getDefaultSharedPreferences(this);
+        appLanguage = qmPreferences.getInt("AppLanguage", 1);
         util = new Util();
         title.setText(mainTitle);
+        getCommonListAPIDataFromAPI(Integer.parseInt(publicArtsId));
         if (comingFrom.equals(getString(R.string.sidemenu_exhibition_text))) {
             timingTitle.setText(R.string.exhibition_timings);
             loadData(null, getString(R.string.details_page_short_description),
@@ -262,5 +278,18 @@ public class DetailsActivity extends AppCompatActivity implements IPullZoom {
             this.contactLayout.setVisibility(View.VISIBLE);
             this.contactDetails.setText(contactInfo);
         }
+    }
+
+    private void getCommonListAPIDataFromAPI(int id) {
+        progressBar.setVisibility(View.VISIBLE);
+        String language;
+        if (appLanguage == 1) {
+            language = "en";
+        } else {
+            language = "ar";
+        }
+        APIInterface apiService =
+                APIClient.getClient().create(APIInterface.class);
+        Call<ArrayList<CommonModel>> call = apiService.getPublicArtsDetails(language, id);
     }
 }

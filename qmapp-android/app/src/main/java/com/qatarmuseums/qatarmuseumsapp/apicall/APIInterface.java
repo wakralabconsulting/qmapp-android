@@ -16,5 +16,8 @@ public interface APIInterface {
     @GET("{language}/mobile_api/{pageName}")
     Call<ArrayList<CommonModel>> getCommonpageList(@Path("language") String language,
                                                    @Path("pageName") String pageName);
-
+    @GET("{language}/mobile_api/getpublicartdetail.json?nid={id}")
+    Call<ArrayList<CommonModel>> getPublicArtsDetails(@Path("language") String language,
+                                                      @Path("id") int id);
+//en/mobile_api/getpublicartdetail.json?nid=208
 }
