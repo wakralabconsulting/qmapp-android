@@ -5,8 +5,6 @@ import android.arch.persistence.room.Entity;
 import android.arch.persistence.room.PrimaryKey;
 import android.support.annotation.NonNull;
 
-import com.qatarmuseums.qatarmuseumsapp.home.HomePageTable;
-
 /**
  * Created by MoongedePC on 08-Aug-18.
  */
@@ -18,8 +16,8 @@ public class PublicArtsTable {
     private long public_arts_id;
     @ColumnInfo()
     private String public_arts_name;
-    @ColumnInfo()
-    private String tourguide_available;
+    //    @ColumnInfo()
+//    private String tourguide_available;
     @ColumnInfo()
     private String public_arts_image;
     @ColumnInfo()
@@ -29,8 +27,13 @@ public class PublicArtsTable {
     @ColumnInfo()
     private String latitude;
 
-
-    public PublicArtsTable() {
+    public PublicArtsTable(@NonNull long public_arts_id, String public_arts_name,
+                           String public_arts_image, String longitude, String latitude) {
+        this.public_arts_id = public_arts_id;
+        this.public_arts_name = public_arts_name;
+        this.public_arts_image = public_arts_image;
+        this.longitude = longitude;
+        this.latitude = latitude;
     }
 
     @NonNull
@@ -50,13 +53,13 @@ public class PublicArtsTable {
         this.public_arts_name = public_arts_name;
     }
 
-    public String getTourguide_available() {
-        return tourguide_available;
-    }
-
-    public void setTourguide_available(String tourguide_available) {
-        this.tourguide_available = tourguide_available;
-    }
+//    public String getTourguide_available() {
+//        return tourguide_available;
+//    }
+//
+//    public void setTourguide_available(String tourguide_available) {
+//        this.tourguide_available = tourguide_available;
+//    }
 
     public String getPublic_arts_image() {
         return public_arts_image;
@@ -96,7 +99,7 @@ public class PublicArtsTable {
         return "PublicArtsTable{" +
                 "name=" + public_arts_name +
                 ", qatarmuseum_id='" + public_arts_id
-                + '\'' + ",image='"+public_arts_image+'\''+
+                + '\'' + ",image='" + public_arts_image + '\'' +
                 '}';
     }
 
