@@ -2,8 +2,10 @@ package com.qatarmuseums.qatarmuseumsapp.detailspage;
 
 import android.annotation.SuppressLint;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.design.widget.AppBarLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
@@ -13,14 +15,26 @@ import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.ProgressBar;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.qatarmuseums.qatarmuseumsapp.R;
+import com.qatarmuseums.qatarmuseumsapp.apicall.APIClient;
+import com.qatarmuseums.qatarmuseumsapp.apicall.APIInterface;
+import com.qatarmuseums.qatarmuseumsapp.heritage.HeritageDetailModel;
 import com.qatarmuseums.qatarmuseumsapp.home.GlideApp;
 import com.qatarmuseums.qatarmuseumsapp.utils.IPullZoom;
 import com.qatarmuseums.qatarmuseumsapp.utils.PixelUtil;
 import com.qatarmuseums.qatarmuseumsapp.utils.PullToZoomCoordinatorLayout;
 import com.qatarmuseums.qatarmuseumsapp.utils.Util;
+
+import java.io.IOException;
+import java.util.ArrayList;
+
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 public class DetailsActivity extends AppCompatActivity implements IPullZoom {
 
@@ -38,21 +52,28 @@ public class DetailsActivity extends AppCompatActivity implements IPullZoom {
     private AppBarLayout appBarLayout;
     private int headerOffSetSize;
     private LinearLayout secondTitleLayout, timingLayout, contactLayout;
-    private String latitude, longitude;
+    private String latitude, longitude, id;
     Intent intent;
+    int language;
+    SharedPreferences qmPreferences;
+    ProgressBar progressBar;
+    LinearLayout commonContentLayout;
+    TextView noResultFoundTxt;
 
     @SuppressLint("ClickableViewAccessibility")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_details);
+        qmPreferences = PreferenceManager.getDefaultSharedPreferences(this);
+        language = qmPreferences.getInt("AppLanguage", 1);
+        progressBar = (ProgressBar) findViewById(R.id.progressBarLoading);
         intent = getIntent();
         headerImage = intent.getStringExtra("HEADER_IMAGE");
         mainTitle = intent.getStringExtra("MAIN_TITLE");
         comingFrom = intent.getStringExtra("COMING_FROM");
+        id = intent.getStringExtra("ID");
         isFavourite = intent.getBooleanExtra("IS_FAVOURITE", false);
-        latitude = intent.getStringExtra("LATITUDE");
-        longitude = intent.getStringExtra("LONGITUDE");
         toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         toolbarClose = (ImageView) findViewById(R.id.toolbar_close);
@@ -73,6 +94,8 @@ public class DetailsActivity extends AppCompatActivity implements IPullZoom {
         secondTitleLayout = (LinearLayout) findViewById(R.id.second_title_layout);
         timingLayout = (LinearLayout) findViewById(R.id.timing_layout);
         contactLayout = (LinearLayout) findViewById(R.id.contact_layout);
+        commonContentLayout = (LinearLayout) findViewById(R.id.common_content_layout);
+        noResultFoundTxt = (TextView) findViewById(R.id.noResultFoundTxt);
         util = new Util();
         title.setText(mainTitle);
         if (comingFrom.equals(getString(R.string.sidemenu_exhibition_text))) {
@@ -80,16 +103,10 @@ public class DetailsActivity extends AppCompatActivity implements IPullZoom {
             loadData(null, getString(R.string.details_page_short_description),
                     getString(R.string.details_page_long_description),
                     null, null, getString(R.string.details_page_timing_details),
-                    getString(R.string.details_page_location_details), getString(R.string.contact_mail));
+                    getString(R.string.details_page_location_details), getString(R.string.contact_mail), "", "");
         } else if (comingFrom.equals(getString(R.string.sidemenu_heritage_text))) {
-            timingTitle.setText(R.string.opening_timings);
-            loadData("A UNESCO WORLD HERITAGE SITE", getString(R.string.details_page_short_description),
-                    getString(R.string.details_page_long_description),
-                    "A WORLD HERITAGE SITE", "Once a thriving port bustling with fishermen and merchants, the town of Al Zubarah was designated a protected area in 2009. Since then, Qatar Museums has led teams of archaeologists and scientists to investigate the site. Through their research and engagement with local communities, they are documenting and shedding light on the rise and fall of this unique area.\n" +
-                            "\n" +
-                            "In 2013 the World Heritage Committee inscribed Al Zubarah Archaeological Site into the UNESCO World Heritage List. The site includes three major features, the largest of which are the archaeological remains of the town, dating back to the 1760s. Connected to it is the settlement of Qal’at Murair, which was fortified to protect the city’s inland wells. Al Zubarah Fort was built in 1938 and is the youngest, most prominent feature at the site.",
-                    getString(R.string.details_page_timing_details),
-                    null, getString(R.string.contact_mail));
+            getHeritageDetailsFromAPI(id, language);
+
         } else if (comingFrom.equals(getString(R.string.sidemenu_public_arts_text))) {
             loadData("AN ARRESTING INSTALLATION", getString(R.string.details_page_short_description),
                     getString(R.string.details_page_long_description),
@@ -97,7 +114,7 @@ public class DetailsActivity extends AppCompatActivity implements IPullZoom {
                             "\n" +
                             "In 2013 the World Heritage Committee inscribed Al Zubarah Archaeological Site into the UNESCO World Heritage List. The site includes three major features, the largest of which are the archaeological remains of the town, dating back to the 1760s. Connected to it is the settlement of Qal’at Murair, which was fortified to protect the city’s inland wells. Al Zubarah Fort was built in 1938 and is the youngest, most prominent feature at the site.",
                     null,
-                    "Katara Cultural Village", null);
+                    "Katara Cultural Village", null, "", "");
         } else if (comingFrom.equals(getString(R.string.museum_about))) {
             timingTitle.setText(R.string.museum_timings);
             headerImage = "http://www.qm.org.qa/sites/default/files/styles/gallery_small/public/images/gallery/mia_architecture_071215_4844.jpg";
@@ -108,7 +125,7 @@ public class DetailsActivity extends AppCompatActivity implements IPullZoom {
                             "In 2013 the World Heritage Committee inscribed Al Zubarah Archaeological Site into the UNESCO World Heritage List. The site includes three major features, the largest of which are the archaeological remains of the town, dating back to the 1760s. Connected to it is the settlement of Qal’at Murair, which was fortified to protect the city’s inland wells. Al Zubarah Fort was built in 1938 and is the youngest, most prominent feature at the site.",
                     "Saturday to Sunday: 9:00AM - 7:00PM\n" +
                             "Fridays: 1:30PM to 7:00PM",
-                    "Katara Cultural Village", "info@mia.org.qa");
+                    "Katara Cultural Village", "info@mia.org.qa", "", "");
         }
         GlideApp.with(this)
                 .load(headerImage)
@@ -116,13 +133,7 @@ public class DetailsActivity extends AppCompatActivity implements IPullZoom {
                 .placeholder(R.drawable.placeholdeer)
                 .into(headerImageView);
 
-        if (latitude != null) {
-            latitude = convertDegreetoDecimalMeasure(latitude);
-            longitude = convertDegreetoDecimalMeasure(longitude);
-        } else {
-            latitude = "25.29818300";
-            longitude = "51.53972222";
-        }
+
         mapDetails.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -237,8 +248,11 @@ public class DetailsActivity extends AppCompatActivity implements IPullZoom {
 
     public void loadData(String subTitle, String shortDescription, String longDescription,
                          String secondTitle, String secondTitleDescription, String timingInfo,
-                         String locationInfo, String contactInfo) {
+                         String locationInfo, String contactInfo, String latitudefromApi,
+                         String longitudefromApi) {
         this.title.setText(mainTitle);
+        latitude = latitudefromApi;
+        longitude = longitudefromApi;
         if (subTitle != null) {
             this.subTitle.setVisibility(View.VISIBLE);
             this.subTitle.setText(subTitle);
@@ -262,5 +276,69 @@ public class DetailsActivity extends AppCompatActivity implements IPullZoom {
             this.contactLayout.setVisibility(View.VISIBLE);
             this.contactDetails.setText(contactInfo);
         }
+        if (latitude != null) {
+            latitude = convertDegreetoDecimalMeasure(latitude);
+            longitude = convertDegreetoDecimalMeasure(longitude);
+        } else {
+            latitude = "25.29818300";
+            longitude = "51.53972222";
+        }
+    }
+
+    public void getHeritageDetailsFromAPI(String id, int language) {
+        progressBar.setVisibility(View.VISIBLE);
+        String appLanguage;
+        if (language == 1) {
+            appLanguage = "en";
+        } else {
+            appLanguage = "ar";
+        }
+
+        APIInterface apiService =
+                APIClient.getClient().create(APIInterface.class);
+        Call<ArrayList<HeritageDetailModel>> call = apiService.getHeritageDetails(appLanguage,id);
+        call.enqueue(new Callback<ArrayList<HeritageDetailModel>>() {
+            @Override
+            public void onResponse(Call<ArrayList<HeritageDetailModel>> call, Response<ArrayList<HeritageDetailModel>> response) {
+                if (response.isSuccessful()) {
+                    if (response.body() != null) {
+                        commonContentLayout.setVisibility(View.VISIBLE);
+                   ArrayList<HeritageDetailModel> heritageDetailModel = response.body();
+                        timingTitle.setText(R.string.opening_timings);
+                        loadData("", heritageDetailModel.get(0).getShortDescription(),
+                                heritageDetailModel.get(0).getLongDescription(),
+                                "", "",
+                                null,
+                                heritageDetailModel.get(0).getLocation(),
+                                null, heritageDetailModel.get(0).getLatitude(),
+                                heritageDetailModel.get(0).getLongitude());
+
+                    } else {
+                        commonContentLayout.setVisibility(View.GONE);
+                        noResultFoundTxt.setVisibility(View.VISIBLE);
+                    }
+                } else {
+                    commonContentLayout.setVisibility(View.GONE);
+                    noResultFoundTxt.setVisibility(View.VISIBLE);
+                }
+                progressBar.setVisibility(View.GONE);
+
+            }
+
+            @Override
+            public void onFailure(Call<ArrayList<HeritageDetailModel>> call, Throwable t) {
+
+
+                if (t instanceof IOException) {
+                    util.showToast(getResources().getString(R.string.check_network), getApplicationContext());
+
+                } else {
+                    // error due to mapping issues
+                }
+                commonContentLayout.setVisibility(View.GONE);
+                noResultFoundTxt.setVisibility(View.VISIBLE);
+                progressBar.setVisibility(View.GONE);
+            }
+        });
     }
 }
