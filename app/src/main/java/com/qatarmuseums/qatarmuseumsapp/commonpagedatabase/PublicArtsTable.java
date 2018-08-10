@@ -5,9 +5,7 @@ import android.arch.persistence.room.Entity;
 import android.arch.persistence.room.PrimaryKey;
 import android.support.annotation.NonNull;
 
-/**
- * Created by MoongedePC on 08-Aug-18.
- */
+
 
 @Entity(tableName = "publicartstable")
 public class PublicArtsTable {
@@ -16,8 +14,6 @@ public class PublicArtsTable {
     private long public_arts_id;
     @ColumnInfo()
     private String public_arts_name;
-    //    @ColumnInfo()
-//    private String tourguide_available;
     @ColumnInfo()
     private String public_arts_image;
     @ColumnInfo()
@@ -52,14 +48,6 @@ public class PublicArtsTable {
     public void setPublic_arts_name(String public_arts_name) {
         this.public_arts_name = public_arts_name;
     }
-
-//    public String getTourguide_available() {
-//        return tourguide_available;
-//    }
-//
-//    public void setTourguide_available(String tourguide_available) {
-//        this.tourguide_available = tourguide_available;
-//    }
 
     public String getPublic_arts_image() {
         return public_arts_image;
