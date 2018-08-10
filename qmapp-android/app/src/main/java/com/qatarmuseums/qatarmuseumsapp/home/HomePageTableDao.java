@@ -10,21 +10,32 @@ import java.util.List;
 
 @Dao
 public interface HomePageTableDao {
-    @Query("SELECT * FROM homepagetable")
-    List<HomePageTable> getAll();
+    @Query("SELECT * FROM homepagetableEnglish")
+    List<HomePageTableEnglish> getAllDataFromHomePageEnglishTable();
 
-    @Query("SELECT COUNT(qatarmuseum_id) FROM homepagetable")
-    int getNumberOfRows();
+    @Query("SELECT * FROM homepagetableArabic")
+    List<HomePageTableArabic> getAllDataFromHomePageArabicTable();
 
-    @Query("SELECT COUNT(qatarmuseum_id) FROM homepagetable WHERE qatarmuseum_id = :idFromAPI")
-    int checkIdExist(int idFromAPI);
 
-    @Query("UPDATE homepagetable SET name = :nameFromApi," +
-            "tourguide_available = :tourGideFromApi,image = :imageFromApi WHERE qatarmuseum_id=:id")
+    @Query("SELECT COUNT(qatarmuseum_id) FROM homepagetableEnglish")
+    int getNumberOfRowsEnglish();
+
+    @Query("SELECT COUNT(qatarmuseum_id) FROM homepagetableArabic")
+    int getNumberOfRowsArabic();
+
+    @Query("SELECT COUNT(qatarmuseum_id) FROM homepagetableEnglish WHERE qatarmuseum_id = :idFromAPI")
+    int checkIdExistEnglish(int idFromAPI);
+
+    @Query("SELECT COUNT(qatarmuseum_id) FROM homepagetableArabic WHERE qatarmuseum_id = :idFromAPI")
+    int checkIdExistArabic(int idFromAPI);
+
+    @Query("UPDATE homepagetableEnglish SET name = :nameFromApi," +
+            "tourguide_available = :tourGideFromApi,image = :imageFromApi " +
+            "WHERE qatarmuseum_id=:id")
     void updateHomePageEnglish(String nameFromApi, String tourGideFromApi,
                                String imageFromApi,String id);
 
-    @Query("UPDATE homepagetable SET arabic_name=:arabicNameFromApi," +
+    @Query("UPDATE homepagetableArabic SET name=:arabicNameFromApi," +
             "tourguide_available = :tourGideFromApi,image = :imageFromApi WHERE qatarmuseum_id=:id")
     void updateHomePageArabic(String arabicNameFromApi, String tourGideFromApi,
                               String imageFromApi,String id);
@@ -35,28 +46,38 @@ public interface HomePageTableDao {
      * @param note, object to be inserted
      */
     @Insert
-    void insert(HomePageTable homePageTable);
+    void insertEnglishTable(HomePageTableEnglish homePageTableEnglish);
+    @Insert
+    void insertArabicTable(HomePageTableArabic homePageTableArabic);
 
     /*
-     * update the object in database
+     * updateEnglishTable the object in database
      * @param note, object to be updated
      */
     @Update
-    void update(HomePageTable homePageTable);
+    void updateEnglishTable(HomePageTableEnglish homePageTableEnglish);
+    @Update
+    void updateArabicTable(HomePageTableArabic homePageTableArabic);
 
     /*
-     * delete the object from database
+     * deleteEnglishTable the object from database
      * @param note, object to be deleted
      */
     @Delete
-    void delete(HomePageTable homePageTable);
+    void deleteEnglishTable(HomePageTableEnglish homePageTableEnglish);
+
+    @Delete
+    void deleteArabicTable(HomePageTableArabic homePageTableArabic);
 
     /*
-     * delete list of objects from database
+     * deleteEnglishTable list of objects from database
      * @param note, array of objects to be deleted
      */
     @Delete
-    void delete(HomePageTable... homePageTables);      // Note... is varargs, here note is an array
+    void deleteEnglishTable(HomePageTableEnglish... homePageTableEnglishes);      // Note... is varargs, here note is an array
+
+    @Delete
+    void deleteArabicTable(HomePageTableEnglish... homePageTableEnglishes);      // Note... is varargs, here note is an array
 
 
 }

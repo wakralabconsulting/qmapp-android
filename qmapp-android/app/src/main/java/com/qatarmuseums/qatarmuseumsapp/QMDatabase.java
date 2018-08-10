@@ -13,10 +13,12 @@ import com.qatarmuseums.qatarmuseumsapp.commonpagedatabase.HeritageListTable;
 import com.qatarmuseums.qatarmuseumsapp.commonpagedatabase.HeritageListTableDao;
 import com.qatarmuseums.qatarmuseumsapp.commonpagedatabase.PublicArtsTable;
 import com.qatarmuseums.qatarmuseumsapp.commonpagedatabase.PublicArtsTableDao;
-import com.qatarmuseums.qatarmuseumsapp.home.HomePageTable;
+import com.qatarmuseums.qatarmuseumsapp.home.HomePageTableArabic;
+import com.qatarmuseums.qatarmuseumsapp.home.HomePageTableEnglish;
 import com.qatarmuseums.qatarmuseumsapp.home.HomePageTableDao;
 
-@Database(entities = {HomePageTable.class, HeritageListTable.class, PublicArtsTable.class}, version = 1, exportSchema = false)
+@Database(entities = {HomePageTableEnglish.class, HeritageListTable.class,
+        HomePageTableArabic.class,PublicArtsTable.class}, version = 1, exportSchema = false)
 public abstract class QMDatabase extends RoomDatabase {
 
     public abstract HomePageTableDao getHomePageTableDao();
