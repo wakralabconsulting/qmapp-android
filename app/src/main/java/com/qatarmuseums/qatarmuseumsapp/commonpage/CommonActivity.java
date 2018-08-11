@@ -99,6 +99,7 @@ public class CommonActivity extends AppCompatActivity {
                 navigationIntent.putExtra("IS_FAVOURITE", models.get(position).getIsfavourite());
                 navigationIntent.putExtra("LONGITUDE", models.get(position).getLongitude());
                 navigationIntent.putExtra("LATITUDE", models.get(position).getLatitude());
+                navigationIntent.putExtra("PUBLIC_ARTS_ID", models.get(position).getId());
                 startActivity(navigationIntent);
 
             }
