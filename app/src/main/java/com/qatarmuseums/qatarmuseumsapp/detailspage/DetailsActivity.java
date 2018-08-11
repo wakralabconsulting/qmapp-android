@@ -74,8 +74,6 @@ public class DetailsActivity extends AppCompatActivity implements IPullZoom {
         comingFrom = intent.getStringExtra("COMING_FROM");
         id = intent.getStringExtra("ID");
         isFavourite = intent.getBooleanExtra("IS_FAVOURITE", false);
-
-//        publicArtsId = intent.getStringExtra("PUBLIC_ARTS_ID");
         toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         toolbarClose = (ImageView) findViewById(R.id.toolbar_close);
@@ -103,7 +101,6 @@ public class DetailsActivity extends AppCompatActivity implements IPullZoom {
 
         util = new Util();
         title.setText(mainTitle);
-//        getCommonListAPIDataFromAPI(Integer.parseInt(publicArtsId));
         if (comingFrom.equals(getString(R.string.sidemenu_exhibition_text))) {
             timingTitle.setText(R.string.exhibition_timings);
             loadData(null, getString(R.string.details_page_short_description),
