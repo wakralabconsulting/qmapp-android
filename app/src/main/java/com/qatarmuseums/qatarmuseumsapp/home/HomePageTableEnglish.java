@@ -4,8 +4,8 @@ import android.arch.persistence.room.ColumnInfo;
 import android.arch.persistence.room.Entity;
 import android.arch.persistence.room.PrimaryKey;
 import android.support.annotation.NonNull;
-@Entity(tableName = "homepagetable")
-public class HomePageTable {
+@Entity(tableName = "homepagetableEnglish")
+public class HomePageTableEnglish {
     @NonNull
     public long getQatarmuseum_id() {
         return qatarmuseum_id;
@@ -24,20 +24,9 @@ public class HomePageTable {
     private String tourguide_available;
     @ColumnInfo()
     private String image;
-    @ColumnInfo()
-    private String arabic_name;
-
-    public String getArabic_name() {
-        return arabic_name;
-    }
-
-    public void setArabic_name(String arabic_name) {
-        this.arabic_name = arabic_name;
-    }
 
 
-
-    public HomePageTable(long qatarmuseum_id, String name, String tourguide_available, String image) {
+    public HomePageTableEnglish(long qatarmuseum_id, String name, String tourguide_available, String image) {
         this.qatarmuseum_id = qatarmuseum_id;
         this.name = name;
         this.tourguide_available = tourguide_available;
@@ -74,12 +63,12 @@ public class HomePageTable {
     @Override
     public boolean equals(Object obj) {
         if (this == obj) return true;
-        if (!(obj instanceof HomePageTable)) return false;
+        if (!(obj instanceof HomePageTableEnglish)) return false;
 
-        HomePageTable homePageTable = (HomePageTable) obj;
+        HomePageTableEnglish homePageTableEnglish = (HomePageTableEnglish) obj;
 
-        if (qatarmuseum_id != homePageTable.qatarmuseum_id) return false;
-        return name != null ? homePageTable.equals(homePageTable.name) : homePageTable.name == null;
+        if (qatarmuseum_id != homePageTableEnglish.qatarmuseum_id) return false;
+        return name != null ? homePageTableEnglish.equals(homePageTableEnglish.name) : homePageTableEnglish.name == null;
 
     }
 
@@ -87,7 +76,7 @@ public class HomePageTable {
 
     @Override
     public String toString() {
-        return "HomePageTable{" +
+        return "homepagetableEnglish{" +
                 "name=" + name +
                 ", qatarmuseum_id='" + qatarmuseum_id + '\'' +
                 ", tourguide_available='" + tourguide_available + '\'' +

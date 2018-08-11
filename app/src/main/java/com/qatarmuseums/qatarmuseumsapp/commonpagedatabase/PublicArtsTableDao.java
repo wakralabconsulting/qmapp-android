@@ -37,21 +37,21 @@ public interface PublicArtsTableDao {
     void insert(PublicArtsTable publicArtsTable);
 
     /*
-     * update the object in database
+     * updateEnglishTable the object in database
      * @param note, object to be updated
      */
     @Update
     void update(PublicArtsTable publicArtsTable);
 
     /*
-     * delete the object from database
+     * deleteEnglishTable the object from database
      * @param note, object to be deleted
      */
     @Delete
     void delete(PublicArtsTable publicArtsTable);
 
     /*
-     * delete list of objects from database
+     * deleteEnglishTable list of objects from database
      * @param note, array of objects to be deleted
      */
     @Delete
