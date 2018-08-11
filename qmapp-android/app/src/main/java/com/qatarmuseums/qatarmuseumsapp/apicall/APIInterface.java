@@ -1,7 +1,6 @@
 package com.qatarmuseums.qatarmuseumsapp.apicall;
 
 
-
 import com.qatarmuseums.qatarmuseumsapp.commonpage.CommonModel;
 import com.qatarmuseums.qatarmuseumsapp.heritage.HeritageDetailModel;
 import com.qatarmuseums.qatarmuseumsapp.home.HomeList;
@@ -21,10 +20,6 @@ public interface APIInterface {
     @GET("{language}/mobile_api/{pageName}")
     Call<ArrayList<CommonModel>> getCommonpageList(@Path("language") String language,
                                                    @Path("pageName") String pageName);
-
-//    @GET("{language}/mobile_api/getpublicartdetail.json?nid={id}")
-//    Call<ArrayList<CommonModel>> getPublicArtsDetails(@Path("language") String language,
-//                                                      @Path("id") int id);
 
     @GET("{language}/mobile_api/getpublicartdetail.json")
     Call<ArrayList<PublicArtModel>> getPublicArtsDetails(@Path("language") String language,
