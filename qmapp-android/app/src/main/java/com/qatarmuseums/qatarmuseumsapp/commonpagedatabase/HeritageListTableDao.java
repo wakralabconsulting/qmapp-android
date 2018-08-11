@@ -34,21 +34,21 @@ public interface HeritageListTableDao {
     void insert(HeritageListTable heritageListTable);
 
     /*
-     * update the object in database
+     * updateEnglishTable the object in database
      * @param note, object to be updated
      */
     @Update
     void update(HeritageListTable heritageListTable);
 
     /*
-     * delete the object from database
+     * deleteEnglishTable the object from database
      * @param note, object to be deleted
      */
     @Delete
     void delete(HeritageListTable heritageListTable);
 
     /*
-     * delete list of objects from database
+     * deleteEnglishTable list of objects from database
      * @param note, array of objects to be deleted
      */
     @Delete

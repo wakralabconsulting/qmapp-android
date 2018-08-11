@@ -354,7 +354,7 @@ public class CommonActivity extends AppCompatActivity {
         protected void onPostExecute(Integer integer) {
             publicArtsTableRowCount = integer;
             if (publicArtsTableRowCount > 0) {
-                //update or add row to database
+                //updateEnglishTable or add row to database
                 new CheckPublicArtsDBRowExist(CommonActivity.this, appLanguage).execute();
             } else {
                 //create databse
@@ -396,7 +396,7 @@ public class CommonActivity extends AppCompatActivity {
                     int n = activityReference.get().qmDatabase.getPublicArtsTableDao().checkIdExist(
                             Integer.parseInt(models.get(i).getId()));
                     if (n > 0) {
-                        //update same id
+                        //updateEnglishTable same id
                         new UpdatePublicArtsTable(CommonActivity.this, appLanguage, i).execute();
 
                     } else {
@@ -429,7 +429,7 @@ public class CommonActivity extends AppCompatActivity {
         @Override
         protected Void doInBackground(Void... voids) {
             if (language == 1) {
-                // update table with english name
+                // updateEnglishTable table with english name
                 activityReference.get().qmDatabase.getPublicArtsTableDao().updatePublicArtsEnglish(
                         models.get(position).getName(), models.get(position).getImage(),
                         models.get(position).getLatitude(), models.get(position).getLongitude()
@@ -437,7 +437,7 @@ public class CommonActivity extends AppCompatActivity {
                 );
 
             } else {
-                // update table with arabic name
+                // updateEnglishTable table with arabic name
                 activityReference.get().qmDatabase.getPublicArtsTableDao().updatePublicArtsArabic(
                         models.get(position).getName(), models.get(position).getImage(),
                         models.get(position).getLatitude(), models.get(position).getLongitude()
@@ -553,7 +553,7 @@ public class CommonActivity extends AppCompatActivity {
         protected void onPostExecute(Integer integer) {
             heritageTableRowCount = integer;
             if (heritageTableRowCount > 0) {
-                //update or add row to database
+                //updateEnglishTable or add row to database
                 new CheckDBRowExist(CommonActivity.this, appLanguage).execute();
 
             } else {
@@ -617,7 +617,7 @@ public class CommonActivity extends AppCompatActivity {
                     int n = activityReference.get().qmDatabase.getHeritageListTableDao().checkIdExist(
                             Integer.parseInt(models.get(i).getId()));
                     if (n > 0) {
-                        //update same id
+                        //updateEnglishTable same id
                         new UpdateHeritagePageTable(CommonActivity.this, appLanguage, i).execute();
 
                     } else {
@@ -649,14 +649,14 @@ public class CommonActivity extends AppCompatActivity {
         @Override
         protected Void doInBackground(Void... voids) {
             if (language == 1) {
-                // update table with english name
+                // updateEnglishTable table with english name
                 activityReference.get().qmDatabase.getHeritageListTableDao().updateHeritageListEnglish(
                         models.get(position).getName(), models.get(position).getSortId(),
                         models.get(position).getImage(), models.get(position).getId()
                 );
 
             } else {
-                // update table with arabic name
+                // updateEnglishTable table with arabic name
                 activityReference.get().qmDatabase.getHeritageListTableDao().updateHeritageListArabic(
                         models.get(position).getName(), models.get(position).getSortId(),
                         models.get(position).getImage(), models.get(position).getId()
