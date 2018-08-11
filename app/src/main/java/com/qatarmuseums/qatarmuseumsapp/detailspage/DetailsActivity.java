@@ -114,13 +114,6 @@ public class DetailsActivity extends AppCompatActivity implements IPullZoom {
             getHeritageDetailsFromAPI(id, language);
 
         } else if (comingFrom.equals(getString(R.string.sidemenu_public_arts_text))) {
-//            loadData("AN ARRESTING INSTALLATION", getString(R.string.details_page_short_description),
-//                    getString(R.string.details_page_long_description),
-//                    "A WORLD HERITAGE SITE", "Once a thriving port bustling with fishermen and merchants, the town of Al Zubarah was designated a protected area in 2009. Since then, Qatar Museums has led teams of archaeologists and scientists to investigate the site. Through their research and engagement with local communities, they are documenting and shedding light on the rise and fall of this unique area.\n" +
-//                            "\n" +
-//                            "In 2013 the World Heritage Committee inscribed Al Zubarah Archaeological Site into the UNESCO World Heritage List. The site includes three major features, the largest of which are the archaeological remains of the town, dating back to the 1760s. Connected to it is the settlement of Qal’at Murair, which was fortified to protect the city’s inland wells. Al Zubarah Fort was built in 1938 and is the youngest, most prominent feature at the site.",
-//                    null,
-//                    "Katara Cultural Village", null, "", "");
             getCommonListAPIDataFromAPI(id,language);
         } else if (comingFrom.equals(getString(R.string.museum_about))) {
             timingTitle.setText(R.string.museum_timings);
@@ -370,7 +363,7 @@ public class DetailsActivity extends AppCompatActivity implements IPullZoom {
                         ArrayList<PublicArtModel> publicArtModel = response.body();
 
 
-                        loadData("AN ARRESTING INSTALLATION",
+                        loadData(null,
                                 publicArtModel.get(0).getShortDescription(),
                                 publicArtModel.get(0).getLongDescription(),
                                 null, null, null,
