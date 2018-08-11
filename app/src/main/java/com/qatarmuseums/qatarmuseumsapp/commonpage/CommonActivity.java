@@ -146,8 +146,11 @@ public class CommonActivity extends AppCompatActivity {
 
 
         } else if (toolbarTitle.equals(getString(R.string.sidemenu_dining_text))) {
-            //prepareDiningData();
-            getCommonListAPIDataFromAPI("Heritage_List_Page.json");
+            if (util.isNetworkAvailable(CommonActivity.this))
+                getCommonListAPIDataFromAPI("getDiningList.json");
+            else
+                getCommonListDataFromDatabase("getDiningList.json");
+
         } else if (toolbarTitle.equals(getString(R.string.museum_collection_text)))
             prepareCollectionData();
     }
@@ -254,84 +257,37 @@ public class CommonActivity extends AppCompatActivity {
 
     }
 
-
-    private void prepareDiningData() {
-        CommonModel model = new CommonModel("1", "IDAM",
-                null,
-                null, null,
-                "http://www.qm.org.qa/sites/default/files/styles/content_image/public/images/body/idam-pierremonetta_mg_6372_1.jpg?itok=bKArHUGQ",
-                null, true);
-        models.add(model);
-        model = new CommonModel("2", "IN-Q CAFÉ",
-                null,
-                null, null,
-                "http://www.qm.org.qa/sites/default/files/styles/content_image/public/images/body/inq.jpg?itok=C14Qr6xt",
-                null, true);
-        models.add(model);
-        model = new CommonModel("3", "MIA CAFÉ",
-                null,
-                null, null,
-                "http://www.qm.org.qa/sites/default/files/styles/content_image/public/images/body/dsc_0597_2_0.jpg?itok=TXvRM1HE",
-                null, false);
-        models.add(model);
-        model = new CommonModel("4", "AL RIWAQ CAFÉ",
-                null, null,
-                null,
-                "http://www.qm.org.qa/sites/default/files/styles/content_image/public/images/body/10_0.jpg?itok=4BYJtRQB",
-                null, false);
-        models.add(model);
-        model = new CommonModel("4", "MIA CATERING",
-                null, null,
-                null,
-                "http://www.qm.org.qa/sites/default/files/styles/content_image/public/images/body/mia-catering.jpg?itok=Kk7svJPU",
-                null, false);
-        models.add(model);
-        model = new CommonModel("4", "MATHAF MAQHA",
-                null, null,
-                null,
-                "http://www.qm.org.qa/sites/default/files/styles/content_image/public/images/body/332a0071_0.jpg?itok=--l8qFkn",
-                null, false);
-        models.add(model);
-        model = new CommonModel("4", "CAFÉ #999",
-                null,
-                null, null,
-                "http://www.qm.org.qa/sites/default/files/styles/content_image/public/images/body/332a4417.jpg?itok=_OpfHaT_",
-                null, true);
-        models.add(model);
-
-        mAdapter.notifyDataSetChanged();
-    }
-
     private void prepareCollectionData() {
+
         CommonModel model = new CommonModel("1", "CERAMICS COLLECTION",
                 null,
                 null, null,
                 "http://www.qm.org.qa/sites/default/files/styles/content_image/public/images/body/idam-pierremonetta_mg_6372_1.jpg?itok=bKArHUGQ",
-                null, null);
+                false,false);
         models.add(model);
         model = new CommonModel("2", "GLASS COLLECTION",
                 null, null,
                 null,
                 "http://www.qm.org.qa/sites/default/files/styles/content_image/public/images/body/inq.jpg?itok=C14Qr6xt",
-                null, null);
+                false, false);
         models.add(model);
         model = new CommonModel("3", "THE CAVOUR VASE",
                 null, null,
                 null,
                 "http://www.qm.org.qa/sites/default/files/styles/content_image/public/images/body/dsc_0597_2_0.jpg?itok=TXvRM1HE",
-                null, null);
+                false, false);
         models.add(model);
         model = new CommonModel("4", "GOLD AND GLASS",
                 null, null,
                 null,
                 "http://www.qm.org.qa/sites/default/files/styles/content_image/public/images/body/10_0.jpg?itok=4BYJtRQB",
-                null, null);
+                false, false);
         models.add(model);
         model = new CommonModel("4", "MOSQUE LAMP",
                 null, null,
                 null,
                 "http://www.qm.org.qa/sites/default/files/styles/content_image/public/images/body/mia-catering.jpg?itok=Kk7svJPU",
-                null, null);
+                false, false);
         models.add(model);
         mAdapter.notifyDataSetChanged();
     }
