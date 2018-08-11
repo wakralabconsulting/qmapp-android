@@ -111,7 +111,7 @@ public class DetailsActivity extends AppCompatActivity implements IPullZoom {
             getHeritageDetailsFromAPI(id, language);
 
         } else if (comingFrom.equals(getString(R.string.sidemenu_public_arts_text))) {
-            getCommonListAPIDataFromAPI(id,language);
+            getCommonListAPIDataFromAPI(id, language);
         } else if (comingFrom.equals(getString(R.string.museum_about))) {
             timingTitle.setText(R.string.museum_timings);
             headerImage = "http://www.qm.org.qa/sites/default/files/styles/gallery_small/public/images/gallery/mia_architecture_071215_4844.jpg";
@@ -248,8 +248,6 @@ public class DetailsActivity extends AppCompatActivity implements IPullZoom {
                          String locationInfo, String contactInfo, String latitudefromApi,
                          String longitudefromApi) {
         this.title.setText(mainTitle);
-//        latitude = latitudefromApi;
-//        longitude = longitudefromApi;
         latitude = intent.getStringExtra("LATITUDE");
         longitude = intent.getStringExtra("LONGITUDE");
         if (subTitle != null) {
@@ -339,7 +337,7 @@ public class DetailsActivity extends AppCompatActivity implements IPullZoom {
         });
     }
 
-    private void getCommonListAPIDataFromAPI(String id,int appLanguage) {
+    private void getCommonListAPIDataFromAPI(String id, int appLanguage) {
         progressBar.setVisibility(View.VISIBLE);
         String language;
         if (appLanguage == 1) {
