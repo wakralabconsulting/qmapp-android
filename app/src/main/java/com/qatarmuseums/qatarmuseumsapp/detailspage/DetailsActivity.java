@@ -16,7 +16,6 @@ import android.view.animation.AnimationUtils;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.qatarmuseums.qatarmuseumsapp.R;
@@ -24,6 +23,7 @@ import com.qatarmuseums.qatarmuseumsapp.apicall.APIClient;
 import com.qatarmuseums.qatarmuseumsapp.apicall.APIInterface;
 import com.qatarmuseums.qatarmuseumsapp.heritage.HeritageDetailModel;
 import com.qatarmuseums.qatarmuseumsapp.home.GlideApp;
+import com.qatarmuseums.qatarmuseumsapp.publicart.PublicArtModel;
 import com.qatarmuseums.qatarmuseumsapp.utils.IPullZoom;
 import com.qatarmuseums.qatarmuseumsapp.utils.PixelUtil;
 import com.qatarmuseums.qatarmuseumsapp.utils.PullToZoomCoordinatorLayout;
@@ -50,7 +50,7 @@ public class DetailsActivity extends AppCompatActivity implements IPullZoom {
     private PullToZoomCoordinatorLayout coordinatorLayout;
     private View zoomView;
     private AppBarLayout appBarLayout;
-    private int headerOffSetSize;
+    private int headerOffSetSize, appLanguage;
     private LinearLayout secondTitleLayout, timingLayout, contactLayout;
     private String latitude, longitude, id;
     Intent intent;
@@ -94,8 +94,11 @@ public class DetailsActivity extends AppCompatActivity implements IPullZoom {
         secondTitleLayout = (LinearLayout) findViewById(R.id.second_title_layout);
         timingLayout = (LinearLayout) findViewById(R.id.timing_layout);
         contactLayout = (LinearLayout) findViewById(R.id.contact_layout);
+        qmPreferences = PreferenceManager.getDefaultSharedPreferences(this);
+        appLanguage = qmPreferences.getInt("AppLanguage", 1);
         commonContentLayout = (LinearLayout) findViewById(R.id.common_content_layout);
         noResultFoundTxt = (TextView) findViewById(R.id.noResultFoundTxt);
+
         util = new Util();
         title.setText(mainTitle);
         if (comingFrom.equals(getString(R.string.sidemenu_exhibition_text))) {
@@ -108,13 +111,7 @@ public class DetailsActivity extends AppCompatActivity implements IPullZoom {
             getHeritageDetailsFromAPI(id, language);
 
         } else if (comingFrom.equals(getString(R.string.sidemenu_public_arts_text))) {
-            loadData("AN ARRESTING INSTALLATION", getString(R.string.details_page_short_description),
-                    getString(R.string.details_page_long_description),
-                    "A WORLD HERITAGE SITE", "Once a thriving port bustling with fishermen and merchants, the town of Al Zubarah was designated a protected area in 2009. Since then, Qatar Museums has led teams of archaeologists and scientists to investigate the site. Through their research and engagement with local communities, they are documenting and shedding light on the rise and fall of this unique area.\n" +
-                            "\n" +
-                            "In 2013 the World Heritage Committee inscribed Al Zubarah Archaeological Site into the UNESCO World Heritage List. The site includes three major features, the largest of which are the archaeological remains of the town, dating back to the 1760s. Connected to it is the settlement of Qal’at Murair, which was fortified to protect the city’s inland wells. Al Zubarah Fort was built in 1938 and is the youngest, most prominent feature at the site.",
-                    null,
-                    "Katara Cultural Village", null, "", "");
+            getCommonListAPIDataFromAPI(id, language);
         } else if (comingFrom.equals(getString(R.string.museum_about))) {
             timingTitle.setText(R.string.museum_timings);
             headerImage = "http://www.qm.org.qa/sites/default/files/styles/gallery_small/public/images/gallery/mia_architecture_071215_4844.jpg";
@@ -251,8 +248,8 @@ public class DetailsActivity extends AppCompatActivity implements IPullZoom {
                          String locationInfo, String contactInfo, String latitudefromApi,
                          String longitudefromApi) {
         this.title.setText(mainTitle);
-        latitude = latitudefromApi;
-        longitude = longitudefromApi;
+        latitude = intent.getStringExtra("LATITUDE");
+        longitude = intent.getStringExtra("LONGITUDE");
         if (subTitle != null) {
             this.subTitle.setVisibility(View.VISIBLE);
             this.subTitle.setText(subTitle);
@@ -296,14 +293,14 @@ public class DetailsActivity extends AppCompatActivity implements IPullZoom {
 
         APIInterface apiService =
                 APIClient.getClient().create(APIInterface.class);
-        Call<ArrayList<HeritageDetailModel>> call = apiService.getHeritageDetails(appLanguage,id);
+        Call<ArrayList<HeritageDetailModel>> call = apiService.getHeritageDetails(appLanguage, id);
         call.enqueue(new Callback<ArrayList<HeritageDetailModel>>() {
             @Override
             public void onResponse(Call<ArrayList<HeritageDetailModel>> call, Response<ArrayList<HeritageDetailModel>> response) {
                 if (response.isSuccessful()) {
                     if (response.body() != null) {
                         commonContentLayout.setVisibility(View.VISIBLE);
-                   ArrayList<HeritageDetailModel> heritageDetailModel = response.body();
+                        ArrayList<HeritageDetailModel> heritageDetailModel = response.body();
                         timingTitle.setText(R.string.opening_timings);
                         loadData("", heritageDetailModel.get(0).getShortDescription(),
                                 heritageDetailModel.get(0).getLongDescription(),
@@ -327,8 +324,58 @@ public class DetailsActivity extends AppCompatActivity implements IPullZoom {
 
             @Override
             public void onFailure(Call<ArrayList<HeritageDetailModel>> call, Throwable t) {
+                if (t instanceof IOException) {
+                    util.showToast(getResources().getString(R.string.check_network), getApplicationContext());
+
+                } else {
+                    // error due to mapping issues
+                }
+                commonContentLayout.setVisibility(View.GONE);
+                noResultFoundTxt.setVisibility(View.VISIBLE);
+                progressBar.setVisibility(View.GONE);
+            }
+        });
+    }
+
+    private void getCommonListAPIDataFromAPI(String id, int appLanguage) {
+        progressBar.setVisibility(View.VISIBLE);
+        String language;
+        if (appLanguage == 1) {
+            language = "en";
+        } else {
+            language = "ar";
+        }
+        APIInterface apiService =
+                APIClient.getClient().create(APIInterface.class);
+        Call<ArrayList<PublicArtModel>> call = apiService.getPublicArtsDetails(language, id);
+        call.enqueue(new Callback<ArrayList<PublicArtModel>>() {
+
+            @Override
+            public void onResponse(Call<ArrayList<PublicArtModel>> call, Response<ArrayList<PublicArtModel>> response) {
+                if (response.isSuccessful()) {
+                    if (response.body() != null) {
+                        commonContentLayout.setVisibility(View.VISIBLE);
+                        ArrayList<PublicArtModel> publicArtModel = response.body();
 
 
+                        loadData(null,
+                                publicArtModel.get(0).getShortDescription(),
+                                publicArtModel.get(0).getLongDescription(),
+                                null, null, null,
+                                "Katara Cultural Village", null, latitude, longitude);
+                    } else {
+                        commonContentLayout.setVisibility(View.GONE);
+                        noResultFoundTxt.setVisibility(View.VISIBLE);
+                    }
+                } else {
+                    commonContentLayout.setVisibility(View.GONE);
+                    noResultFoundTxt.setVisibility(View.VISIBLE);
+                }
+                progressBar.setVisibility(View.GONE);
+            }
+
+            @Override
+            public void onFailure(Call<ArrayList<PublicArtModel>> call, Throwable t) {
                 if (t instanceof IOException) {
                     util.showToast(getResources().getString(R.string.check_network), getApplicationContext());
 
