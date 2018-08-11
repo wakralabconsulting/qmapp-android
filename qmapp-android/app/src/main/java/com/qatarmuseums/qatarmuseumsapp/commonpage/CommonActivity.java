@@ -144,9 +144,10 @@ public class CommonActivity extends AppCompatActivity {
                 getCommonListDataFromDatabase("Public_Arts_List_Page.json");
 
 
-        } else if (toolbarTitle.equals(getString(R.string.sidemenu_dining_text)))
-            prepareDiningData();
-        else if (toolbarTitle.equals(getString(R.string.museum_collection_text)))
+        } else if (toolbarTitle.equals(getString(R.string.sidemenu_dining_text))) {
+            //prepareDiningData();
+            getCommonListAPIDataFromAPI("Heritage_List_Page.json");
+        } else if (toolbarTitle.equals(getString(R.string.museum_collection_text)))
             prepareCollectionData();
     }
 
