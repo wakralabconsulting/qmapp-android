@@ -8,86 +8,128 @@
     tools:context="com.qatarmuseums.qatarmuseumsapp.detailspage.DetailsActivity"
     tools:showIn="@layout/activity_details">
 
-    <LinearLayout
+    <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:background="@color/background_color"
-        android:orientation="vertical">
+        android:layout_height="wrap_content">
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_margin="@dimen/text_margin"
-            android:background="@drawable/round_corner_white_details_page"
-            android:gravity="center_horizontal"
+            android:background="@color/background_color"
             android:orientation="vertical"
-            android:padding="@dimen/padding_25">
-
-            <TextView
-                android:id="@+id/main_title"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:fontFamily="@font/din_regular"
-                android:textAlignment="center"
-                android:textAllCaps="true"
-                android:textColor="@color/black"
-                android:textSize="@dimen/font_size_18"
-                android:textStyle="bold" />
+            android:id="@+id/dining_content">
 
             <LinearLayout
-                android:layout_width="25dp"
-                android:layout_height="2dp"
-                android:layout_marginTop="@dimen/pading_10"
-                android:background="@color/black" />
-
-            <TextView
-                android:id="@+id/short_description"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_margin="@dimen/text_margin"
-                android:fontFamily="@font/din_next_lt_pro_regular"
-                android:textAlignment="center"
-                android:textColor="@color/black"
-                android:textSize="@dimen/font_size_15" />
-
-            <TextView
-                android:id="@+id/long_description"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_margin="@dimen/text_margin"
-                android:fontFamily="@font/din_next_lt_pro_regular"
-                android:textAlignment="center"
-                android:textColor="@color/black"
-                android:textSize="@dimen/font_size_15" />
-
-            <TextView
-                android:id="@+id/more_info"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginEnd="@dimen/text_margin"
-                android:layout_marginStart="@dimen/text_margin"
-                android:layout_marginBottom="@dimen/text_margin"
-                android:fontFamily="@font/din_next_lt_pro_regular"
-                android:text="@string/for_more_information_text"
-                android:textAlignment="center"
-                android:textColor="@color/black"
-                android:textSize="@dimen/font_size_15" />
-
-            <LinearLayout
-                android:id="@+id/timing_layout"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="@dimen/text_margin"
-                android:layout_marginTop="@dimen/text_margin"
-                android:gravity="center"
-                android:orientation="vertical">
+                android:layout_margin="@dimen/text_margin"
+                android:background="@drawable/round_corner_white_details_page"
+                android:gravity="center_horizontal"
+                android:orientation="vertical"
+                android:padding="@dimen/padding_25">
 
                 <TextView
-                    android:id="@+id/timing_title"
+                    android:id="@+id/main_title"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:fontFamily="@font/din_regular"
+                    android:textAlignment="center"
+                    android:textAllCaps="true"
+                    android:textColor="@color/black"
+                    android:textSize="@dimen/font_size_18"
+                    android:textStyle="bold" />
+
+                <LinearLayout
+                    android:layout_width="25dp"
+                    android:layout_height="2dp"
+                    android:layout_marginTop="@dimen/pading_10"
+                    android:background="@color/black" />
+
+                <TextView
+                    android:id="@+id/short_description"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="@dimen/text_margin"
+                    android:fontFamily="@font/din_next_lt_pro_regular"
+                    android:textAlignment="center"
+                    android:textColor="@color/black"
+                    android:textSize="@dimen/font_size_15" />
+
+                <TextView
+                    android:id="@+id/long_description"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="@dimen/text_margin"
+                    android:fontFamily="@font/din_next_lt_pro_regular"
+                    android:textAlignment="center"
+                    android:textColor="@color/black"
+                    android:textSize="@dimen/font_size_15"
+                    android:visibility="gone"/>
+
+                <TextView
+                    android:id="@+id/more_info"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="@dimen/text_margin"
+                    android:layout_marginEnd="@dimen/text_margin"
+                    android:layout_marginStart="@dimen/text_margin"
+                    android:fontFamily="@font/din_next_lt_pro_regular"
+                    android:text="@string/for_more_information_text"
+                    android:textAlignment="center"
+                    android:textColor="@color/black"
+                    android:textSize="@dimen/font_size_15" />
+
+                <LinearLayout
+                    android:id="@+id/timing_layout"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="@dimen/text_margin"
+                    android:layout_marginTop="@dimen/text_margin"
+                    android:gravity="center"
+                    android:orientation="vertical"
+                    android:visibility="gone">
+
+                    <TextView
+                        android:id="@+id/timing_title"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:fontFamily="@font/din_next_lt_pro_bold"
+                        android:text="@string/opening_timings"
+                        android:textColor="@color/black"
+                        android:textSize="@dimen/font_size_18" />
+
+                    <LinearLayout
+                        android:layout_width="25dp"
+                        android:layout_height="3dp"
+                        android:layout_marginBottom="@dimen/padding_10"
+                        android:layout_marginTop="@dimen/padding_10"
+                        android:background="@color/black" />
+
+                    <TextView
+                        android:id="@+id/timing_info"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginBottom="@dimen/text_margin"
+                        android:layout_marginEnd="@dimen/text_margin"
+                        android:layout_marginStart="@dimen/text_margin"
+                        android:fontFamily="@font/din_next_lt_pro_regular"
+                        android:textAlignment="center"
+                        android:textColor="@color/black"
+                        android:textSize="@dimen/font_size_15" />
+                </LinearLayout>
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/location_layout"
+                    android:orientation="vertical"
+                    android:gravity="center"
+                    android:layout_gravity="center">
+                <TextView
+                    android:id="@+id/location_title"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:fontFamily="@font/din_next_lt_pro_bold"
-                    android:text="@string/opening_timings"
+                    android:text="@string/location_title"
                     android:textColor="@color/black"
                     android:textSize="@dimen/font_size_18" />
 
@@ -95,101 +137,96 @@
                     android:layout_width="25dp"
                     android:layout_height="3dp"
                     android:layout_marginBottom="@dimen/padding_10"
-                    android:layout_marginTop="@dimen/padding_10"
+                    android:layout_marginTop="@dimen/pading_10"
                     android:background="@color/black" />
 
                 <TextView
-                    android:id="@+id/timing_info"
+                    android:id="@+id/location_info"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginBottom="@dimen/text_margin"
                     android:layout_marginEnd="@dimen/text_margin"
                     android:layout_marginStart="@dimen/text_margin"
                     android:fontFamily="@font/din_next_lt_pro_regular"
                     android:textAlignment="center"
                     android:textColor="@color/black"
                     android:textSize="@dimen/font_size_15" />
+
+                <TextView
+                    android:id="@+id/map_info"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="@dimen/text_margin"
+                    android:layout_marginEnd="@dimen/text_margin"
+                    android:layout_marginStart="@dimen/text_margin"
+                    android:fontFamily="@font/din_next_lt_pro_regular"
+                    android:text="@string/open_in_google_maps"
+                    android:textAlignment="center"
+                    android:textColor="@color/black"
+                    android:textSize="@dimen/font_size_15" />
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:padding="@dimen/margin_50">
+
+                    <View
+                        android:layout_width="0dp"
+                        android:layout_height="match_parent"
+                        android:layout_weight="1" />
+
+                    <ImageView
+                        android:id="@+id/favourite"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="2"
+                        android:src="@drawable/heart_fill" />
+
+                    <View
+                        android:layout_width="0dp"
+                        android:layout_height="match_parent"
+                        android:layout_weight="1" />
+
+                    <ImageView
+                        android:id="@+id/share"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="2"
+                        android:src="@drawable/share" />
+
+                    <View
+                        android:layout_width="0dp"
+                        android:layout_height="match_parent"
+                        android:layout_weight="1" />
+
+                </LinearLayout>
+
             </LinearLayout>
 
-            <TextView
-                android:id="@+id/location_title"
+            <ProgressBar
+                android:id="@+id/progressBarLoading"
+                style="?android:attr/progressBarStyle"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:fontFamily="@font/din_next_lt_pro_bold"
-                android:text="@string/location_title"
-                android:textColor="@color/black"
-                android:textSize="@dimen/font_size_18" />
+                android:layout_centerInParent="true"
+                android:layout_marginTop="50dp"
+                android:visibility="gone" />
 
-            <LinearLayout
-                android:layout_width="25dp"
-                android:layout_height="3dp"
-                android:layout_marginBottom="@dimen/padding_10"
-                android:layout_marginTop="@dimen/pading_10"
-                android:background="@color/black" />
 
             <TextView
-                android:id="@+id/location_info"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginEnd="@dimen/text_margin"
-                android:layout_marginStart="@dimen/text_margin"
-                android:fontFamily="@font/din_next_lt_pro_regular"
-                android:textAlignment="center"
-                android:textColor="@color/black"
-                android:textSize="@dimen/font_size_15" />
-
-            <TextView
-                android:id="@+id/map_info"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="@dimen/text_margin"
-                android:layout_marginEnd="@dimen/text_margin"
-                android:layout_marginStart="@dimen/text_margin"
-                android:fontFamily="@font/din_next_lt_pro_regular"
-                android:text="@string/open_in_google_maps"
-                android:textAlignment="center"
-                android:textColor="@color/black"
-                android:textSize="@dimen/font_size_15" />
-
-
-            <LinearLayout
+                android:id="@+id/noResultFoundTxt"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:padding="@dimen/margin_50">
-
-                <View
-                    android:layout_width="0dp"
-                    android:layout_height="match_parent"
-                    android:layout_weight="1" />
-
-                <ImageView
-                    android:id="@+id/favourite"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="2"
-                    android:src="@drawable/heart_fill" />
-
-                <View
-                    android:layout_width="0dp"
-                    android:layout_height="match_parent"
-                    android:layout_weight="1" />
-
-                <ImageView
-                    android:id="@+id/share"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="2"
-                    android:src="@drawable/share" />
-
-                <View
-                    android:layout_width="0dp"
-                    android:layout_height="match_parent"
-                    android:layout_weight="1" />
-
-            </LinearLayout>
+                android:layout_height="match_parent"
+                android:layout_marginTop="50dp"
+                android:fontFamily="@font/din_next_lt_pro_regular"
+                android:text="@string/no_results_text"
+                android:textAlignment="center"
+                android:textColor="@android:color/black"
+                android:textSize="@dimen/font_size_21"
+                android:visibility="gone" />
 
         </LinearLayout>
-
-    </LinearLayout>
+    </RelativeLayout>
 </android.support.v4.widget.NestedScrollView>
