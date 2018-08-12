@@ -21,6 +21,8 @@
     <string name="events">EVENTS</string>
     <string name="details">DETAILS</string>
     <string name="action_settings">Settings</string>
+    <string name="everyday_from">Everyday From</string>
+    <string name="to">to</string>
     <string name="title_dining">Dining</string>
     <string name="title_gift_shop">Gift Shop</string>
     <string name="title_culture_pass">Culture Pass</string>
