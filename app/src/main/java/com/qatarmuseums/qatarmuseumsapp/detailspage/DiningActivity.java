@@ -2,9 +2,11 @@ package com.qatarmuseums.qatarmuseumsapp.detailspage;
 
 import android.annotation.SuppressLint;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.design.widget.AppBarLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
@@ -19,16 +21,28 @@ import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.qatarmuseums.qatarmuseumsapp.R;
+import com.qatarmuseums.qatarmuseumsapp.apicall.APIClient;
+import com.qatarmuseums.qatarmuseumsapp.apicall.APIInterface;
+import com.qatarmuseums.qatarmuseumsapp.dining.DiningDetailModel;
 import com.qatarmuseums.qatarmuseumsapp.home.GlideApp;
 import com.qatarmuseums.qatarmuseumsapp.utils.IPullZoom;
 import com.qatarmuseums.qatarmuseumsapp.utils.PixelUtil;
 import com.qatarmuseums.qatarmuseumsapp.utils.PullToZoomCoordinatorLayout;
 import com.qatarmuseums.qatarmuseumsapp.utils.Util;
 import com.qatarmuseums.qatarmuseumsapp.webview.WebviewActivity;
+
+import java.io.IOException;
+import java.util.ArrayList;
+
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 public class DiningActivity extends AppCompatActivity implements IPullZoom {
 
@@ -37,7 +51,8 @@ public class DiningActivity extends AppCompatActivity implements IPullZoom {
     String mainTitle;
     boolean isFavourite;
     Toolbar toolbar;
-    TextView title, shortDescription, longDescription, timingDetails, locationDetails, mapDetails, forMoreInfo;
+    TextView title, shortDescription, longDescription, timingDetails,
+            locationDetails, mapDetails, forMoreInfo;
     private Util util;
     private Animation zoomOutAnimation;
     private PullToZoomCoordinatorLayout coordinatorLayout;
@@ -46,8 +61,13 @@ public class DiningActivity extends AppCompatActivity implements IPullZoom {
     private int headerOffSetSize;
     private String latitude, longitude;
     Intent intent;
+    int language;
     private Intent navigation_intent;
-    private String url;
+    private String url, id;
+    ProgressBar progressBar;
+    TextView noResultFoundTxt;
+    SharedPreferences qmPreferences;
+    LinearLayout timingLayout,locationLayout,diningContent;
 
     @SuppressLint("ClickableViewAccessibility")
     @Override
@@ -57,8 +77,16 @@ public class DiningActivity extends AppCompatActivity implements IPullZoom {
         intent = getIntent();
         headerImage = intent.getStringExtra("HEADER_IMAGE");
         mainTitle = intent.getStringExtra("MAIN_TITLE");
+        id = intent.getStringExtra("ID");
         isFavourite = intent.getBooleanExtra("IS_FAVOURITE", false);
         toolbar = (Toolbar) findViewById(R.id.toolbar);
+        timingLayout = (LinearLayout) findViewById(R.id.timing_layout);
+        locationLayout = (LinearLayout) findViewById(R.id.location_layout);
+        diningContent = (LinearLayout) findViewById(R.id.dining_content);
+        progressBar = (ProgressBar) findViewById(R.id.progressBarLoading);
+        noResultFoundTxt = (TextView) findViewById(R.id.noResultFoundTxt);
+        qmPreferences = PreferenceManager.getDefaultSharedPreferences(this);
+        language = qmPreferences.getInt("AppLanguage", 1);
         setSupportActionBar(toolbar);
         toolbarClose = (ImageView) findViewById(R.id.toolbar_close);
         headerImageView = (ImageView) findViewById(R.id.header_img);
@@ -78,13 +106,7 @@ public class DiningActivity extends AppCompatActivity implements IPullZoom {
                 .placeholder(R.drawable.placeholdeer)
                 .into(headerImageView);
         title.setText(mainTitle);
-
-        loadData("Embark on a refined, generous and enchanted culinary journey at IDAM, Alain Ducasse's first restaurant in the Middle East.",
-                "In the heart of the museum, with spectacular views of the Doha skyline, IDAM offers an innovative and flavorsome selection of contemporary French Mediterranean cuisine designed with an Arabic twist. Timeless classics of local and regional cuisine, with most ingredients sourced locally in Qatar.\n" +
-                        "\n" +
-                        "Philippe Starck’s unique and exquisite decor creates a sophisticated atmosphere.",
-                "Everyday From 11am to 11pm", "Museum of Islamic Art");
-
+        getDiningDetailsFromAPI(id, language);
         SpannableString ss = new SpannableString(getString(R.string.for_more_information_text));
         ClickableSpan clickableSpan = new ClickableSpan() {
             @Override
@@ -107,9 +129,6 @@ public class DiningActivity extends AppCompatActivity implements IPullZoom {
         forMoreInfo.setText(ss);
         forMoreInfo.setMovementMethod(LinkMovementMethod.getInstance());
         forMoreInfo.setHighlightColor(Color.TRANSPARENT);
-
-        latitude = "25.3154649";
-        longitude = "51.4779437";
         mapDetails.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -207,13 +226,99 @@ public class DiningActivity extends AppCompatActivity implements IPullZoom {
 
     }
 
-    public void loadData(String shortDescription, String longDescription, String timingInfo,
-                         String locationInfo) {
-        this.title.setText(mainTitle);
-        this.shortDescription.setText(shortDescription);
-        this.longDescription.setText(longDescription);
-        this.timingDetails.setText(timingInfo);
-        this.locationDetails.setText(locationInfo);
 
+    public void getDiningDetailsFromAPI(String id, int language) {
+        progressBar.setVisibility(View.VISIBLE);
+        String appLanguage;
+        if (language == 1) {
+            appLanguage = "en";
+        } else {
+            appLanguage = "ar";
+        }
+
+        APIInterface apiService =
+                APIClient.getClient().create(APIInterface.class);
+        Call<ArrayList<DiningDetailModel>> call = apiService.getDiningDetails(appLanguage, id);
+        call.enqueue(new Callback<ArrayList<DiningDetailModel>>() {
+            @Override
+            public void onResponse(Call<ArrayList<DiningDetailModel>> call, Response<ArrayList<DiningDetailModel>> response) {
+                if (response.isSuccessful()) {
+                    if (response.body() != null) {
+                        ArrayList<DiningDetailModel> diningDetailModels = response.body();
+                        loadData( diningDetailModels.get(0).getDescription(),
+                                diningDetailModels.get(0).getOpeningTime(),
+                                diningDetailModels.get(0).getClosingTime(),
+                                diningDetailModels.get(0).getLocation(),
+                                diningDetailModels.get(0).getLatitude(),
+                                diningDetailModels.get(0).getLatitude());
+
+                    } else {
+                        diningContent.setVisibility(View.GONE);
+                        noResultFoundTxt.setVisibility(View.VISIBLE);
+                    }
+                } else {
+                    diningContent.setVisibility(View.GONE);
+                    noResultFoundTxt.setVisibility(View.VISIBLE);
+                }
+                progressBar.setVisibility(View.GONE);
+            }
+
+            @Override
+            public void onFailure(Call<ArrayList<DiningDetailModel>> call, Throwable t) {
+                if (t instanceof IOException) {
+                    util.showToast(getResources().getString(R.string.check_network), getApplicationContext());
+
+                } else {
+                    // error due to mapping issues
+                }
+                diningContent.setVisibility(View.GONE);
+                noResultFoundTxt.setVisibility(View.VISIBLE);
+                progressBar.setVisibility(View.GONE);
+            }
+        });
     }
+
+    public void loadData(String longDescription, String openingTime,
+                         String closingTime,String locationInfo,String latitudefromApi,
+                         String longitudefromApi) {
+        this.shortDescription.setText(longDescription);
+        latitude = latitudefromApi;
+        longitude = longitudefromApi;
+        if (openingTime != null) {
+            this.timingLayout.setVisibility(View.VISIBLE);
+            String time = getResources().getString(R.string.everyday_from)+" "+
+                    openingTime+" "+getResources().getString(R.string.to)+" "+
+                    closingTime;
+            this.timingDetails.setText(time);
+        }
+        if (locationInfo != null) {
+            this.locationLayout.setVisibility(View.VISIBLE);
+            this.locationDetails.setText(locationInfo);
+        }
+
+        if (latitude != null) {
+            latitude = convertDegreetoDecimalMeasure(latitude);
+            longitude = convertDegreetoDecimalMeasure(longitude);
+        } else {
+            latitude = "25.29818300";
+            longitude = "51.53972222";
+        }
+    }
+
+    private String convertDegreetoDecimalMeasure(String degreeValue) {
+        String value = degreeValue.trim();
+        String[] latParts = value.split("°");
+        float degree = Float.parseFloat(latParts[0]);
+        value = latParts[1].trim();
+        latParts = value.split("'");
+        float min = Float.parseFloat(latParts[0]);
+        value = latParts[1].trim();
+        latParts = value.split("\"");
+        float sec = Float.parseFloat(latParts[0]);
+        String result;
+        result = String.valueOf(degree + (min / 60) + (sec / 3600));
+        return result;
+    }
+
+
 }

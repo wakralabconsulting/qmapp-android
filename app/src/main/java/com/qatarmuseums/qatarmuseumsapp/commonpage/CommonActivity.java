@@ -146,11 +146,7 @@ public class CommonActivity extends AppCompatActivity {
 
 
         } else if (toolbarTitle.equals(getString(R.string.sidemenu_dining_text))) {
-            if (util.isNetworkAvailable(CommonActivity.this))
                 getCommonListAPIDataFromAPI("getDiningList.json");
-            else
-                getCommonListDataFromDatabase("getDiningList.json");
-
         } else if (toolbarTitle.equals(getString(R.string.museum_collection_text)))
             prepareCollectionData();
     }
