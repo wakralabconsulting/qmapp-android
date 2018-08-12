@@ -25,20 +25,7 @@ public class DiningDetailModel {
     private String longitude;
     public DiningDetailModel() {
     }
-
-    public DiningDetailModel(String name, String id, String location,
-                             String image, String openingTime, String closingTime,
-                             String description, String sortId) {
-        this.name = name;
-        this.id = id;
-        this.location = location;
-        this.image = image;
-        this.openingTime = openingTime;
-        this.closingTime = closingTime;
-        this.description = description;
-        this.sortId = sortId;
-    }
-
+    
     public DiningDetailModel(String name, String id, String location, String image,
                              String openingTime, String closingTime,
                              String description, String sortId,
