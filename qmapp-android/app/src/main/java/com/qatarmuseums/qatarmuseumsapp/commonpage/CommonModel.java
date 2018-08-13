@@ -10,7 +10,7 @@ public class CommonModel {
     private String id;
     @SerializedName("Location")
     private String location;
-    @SerializedName(value="LATEST_IMAGE", alternate={"image", "image_path"})
+    @SerializedName(value="LATEST_IMAGE", alternate={"image","latest_image","image_path"})
     private String image;
     @SerializedName("start_Date")
     private String startDate;

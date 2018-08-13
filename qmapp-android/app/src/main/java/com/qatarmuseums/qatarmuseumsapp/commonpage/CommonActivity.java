@@ -130,8 +130,7 @@ public class CommonActivity extends AppCompatActivity {
             }
         });
         if (toolbarTitle.equals(getString(R.string.sidemenu_exhibition_text))) {
-            prepareExhibitionData();
-//            getCommonListAPIData("Exhibition_List_Page.json");
+            getCommonListAPIDataFromAPI("Exhibition_List_Page.json");
         } else if (toolbarTitle.equals(getString(R.string.sidemenu_heritage_text))) {
             if (util.isNetworkAvailable(CommonActivity.this))
                 getCommonListAPIDataFromAPI("Heritage_List_Page.json");
