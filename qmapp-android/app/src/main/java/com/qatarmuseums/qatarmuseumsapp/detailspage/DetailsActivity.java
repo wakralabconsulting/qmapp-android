@@ -21,8 +21,7 @@ import android.widget.TextView;
 import com.qatarmuseums.qatarmuseumsapp.R;
 import com.qatarmuseums.qatarmuseumsapp.apicall.APIClient;
 import com.qatarmuseums.qatarmuseumsapp.apicall.APIInterface;
-import com.qatarmuseums.qatarmuseumsapp.dining.DiningDetailModel;
-import com.qatarmuseums.qatarmuseumsapp.heritage.HeritageDetailModel;
+import com.qatarmuseums.qatarmuseumsapp.heritage.HeritageOrExhibitionDetailModel;
 import com.qatarmuseums.qatarmuseumsapp.home.GlideApp;
 import com.qatarmuseums.qatarmuseumsapp.publicart.PublicArtModel;
 import com.qatarmuseums.qatarmuseumsapp.utils.IPullZoom;
@@ -103,13 +102,9 @@ public class DetailsActivity extends AppCompatActivity implements IPullZoom {
         util = new Util();
         title.setText(mainTitle);
         if (comingFrom.equals(getString(R.string.sidemenu_exhibition_text))) {
-            timingTitle.setText(R.string.exhibition_timings);
-            loadData(null, getString(R.string.details_page_short_description),
-                    getString(R.string.details_page_long_description),
-                    null, null, null, getString(R.string.details_page_timing_details),
-                    getString(R.string.details_page_location_details), getString(R.string.contact_mail), "", "");
+            getHeritageOrExhibitionDetailsFromAPI(id, language, "Exhibition_detail_Page.json");
         } else if (comingFrom.equals(getString(R.string.sidemenu_heritage_text))) {
-            getHeritageDetailsFromAPI(id, language);
+            getHeritageOrExhibitionDetailsFromAPI(id, language, "heritage_detail_Page.json");
         } else if (comingFrom.equals(getString(R.string.sidemenu_public_arts_text))) {
             getPublicArtDetailsFromAPI(id, language);
         } else if (comingFrom.equals(getString(R.string.museum_about))) {
@@ -285,10 +280,10 @@ public class DetailsActivity extends AppCompatActivity implements IPullZoom {
         }
     }
 
-    public void loadDataForHeritageDetails(String subTitle, String shortDescription, String longDescription,
-                                           String secondTitle, String secondTitleDescription, String timingInfo,
-                                           String locationInfo, String contactInfo, String latitudefromApi,
-                                           String longitudefromApi) {
+    public void loadDataForHeritageOrExhibitionDetails(String subTitle, String shortDescription, String longDescription,
+                                                       String secondTitle, String secondTitleDescription, String timingInfo,
+                                                       String locationInfo, String contactInfo, String latitudefromApi,
+                                                       String longitudefromApi) {
         this.title.setText(mainTitle);
         latitude = latitudefromApi;
         longitude = longitudefromApi;
@@ -304,6 +299,7 @@ public class DetailsActivity extends AppCompatActivity implements IPullZoom {
             this.secondTitleDescription.setText(secondTitleDescription);
         }
         if (timingInfo != null) {
+            timingTitle.setText(R.string.exhibition_timings);
             this.timingLayout.setVisibility(View.VISIBLE);
             this.timingDetails.setText(timingInfo);
         }
@@ -324,7 +320,7 @@ public class DetailsActivity extends AppCompatActivity implements IPullZoom {
         }
     }
 
-    public void getHeritageDetailsFromAPI(String id, int language) {
+    public void getHeritageOrExhibitionDetailsFromAPI(String id, int language, String pageName) {
         progressBar.setVisibility(View.VISIBLE);
         String appLanguage;
         if (language == 1) {
@@ -335,22 +331,22 @@ public class DetailsActivity extends AppCompatActivity implements IPullZoom {
 
         APIInterface apiService =
                 APIClient.getClient().create(APIInterface.class);
-        Call<ArrayList<HeritageDetailModel>> call = apiService.getHeritageDetails(appLanguage, id);
-        call.enqueue(new Callback<ArrayList<HeritageDetailModel>>() {
+        Call<ArrayList<HeritageOrExhibitionDetailModel>> call = apiService.getHeritageOrExhebitionDetails(appLanguage,
+                pageName, id);
+        call.enqueue(new Callback<ArrayList<HeritageOrExhibitionDetailModel>>() {
             @Override
-            public void onResponse(Call<ArrayList<HeritageDetailModel>> call, Response<ArrayList<HeritageDetailModel>> response) {
+            public void onResponse(Call<ArrayList<HeritageOrExhibitionDetailModel>> call, Response<ArrayList<HeritageOrExhibitionDetailModel>> response) {
                 if (response.isSuccessful()) {
                     if (response.body() != null) {
                         commonContentLayout.setVisibility(View.VISIBLE);
-                        ArrayList<HeritageDetailModel> heritageDetailModel = response.body();
-                        timingTitle.setText(R.string.opening_timings);
-                        loadDataForHeritageDetails("", heritageDetailModel.get(0).getShortDescription(),
-                                heritageDetailModel.get(0).getLongDescription(),
+                        ArrayList<HeritageOrExhibitionDetailModel> heritageOrExhibitionDetailModel = response.body();
+                        loadDataForHeritageOrExhibitionDetails("", heritageOrExhibitionDetailModel.get(0).getShortDescription(),
+                                heritageOrExhibitionDetailModel.get(0).getLongDescription(),
                                 "", "",
                                 null,
-                                heritageDetailModel.get(0).getLocation(),
-                                null, heritageDetailModel.get(0).getLatitude(),
-                                heritageDetailModel.get(0).getLongitude());
+                                heritageOrExhibitionDetailModel.get(0).getLocation(),
+                                null, heritageOrExhibitionDetailModel.get(0).getLatitude(),
+                                heritageOrExhibitionDetailModel.get(0).getLongitude());
 
                     } else {
                         commonContentLayout.setVisibility(View.GONE);
@@ -365,7 +361,7 @@ public class DetailsActivity extends AppCompatActivity implements IPullZoom {
             }
 
             @Override
-            public void onFailure(Call<ArrayList<HeritageDetailModel>> call, Throwable t) {
+            public void onFailure(Call<ArrayList<HeritageOrExhibitionDetailModel>> call, Throwable t) {
                 if (t instanceof IOException) {
                     util.showToast(getResources().getString(R.string.check_network), getApplicationContext());
 
