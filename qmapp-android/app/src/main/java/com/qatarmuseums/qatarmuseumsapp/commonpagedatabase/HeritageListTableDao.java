@@ -10,48 +10,60 @@ import java.util.List;
 
 @Dao
 public interface HeritageListTableDao {
-    @Query("SELECT * FROM heritagelist")
-    List<HeritageListTable> getAll();
+    @Query("SELECT * FROM heritagelistenglish")
+    List<HeritageListTableEnglish> getAllEnglish();
 
-    @Query("SELECT COUNT(heritage_id) FROM heritagelist")
-    int getNumberOfRows();
+    @Query("SELECT * FROM heritagelistarabic")
+    List<HeritageListTableArabic> getAllArabic();
 
-    @Query("SELECT COUNT(heritage_id) FROM heritagelist WHERE heritage_id = :idFromAPI")
-    int checkIdExist(int idFromAPI);
+    @Query("SELECT COUNT(heritage_id) FROM heritagelistenglish")
+    int getNumberOfRowsEnglish();
 
-    @Query("UPDATE heritagelist SET heritage_name = :nameFromApi," +
+    @Query("SELECT COUNT(heritage_id) FROM heritagelistarabic")
+    int getNumberOfRowsArabic();
+
+    @Query("SELECT COUNT(heritage_id) FROM heritagelistenglish WHERE heritage_id = :idFromAPI")
+    int checkEnglishIdExist(int idFromAPI);
+
+    @Query("SELECT COUNT(heritage_id) FROM heritagelistarabic WHERE heritage_id = :idFromAPI")
+    int checkArabicIdExist(int idFromAPI);
+
+    @Query("UPDATE heritagelistenglish SET heritage_name = :nameFromApi," +
             "heritage_sortid = :sortidFromApi,heritage_image = :imageFromApi WHERE heritage_id=:id")
     void updateHeritageListEnglish(String nameFromApi, String sortidFromApi,
                                    String imageFromApi, String id);
 
-    @Query("UPDATE heritagelist SET heritage_name_arabic = :nameFromApi," +
+    @Query("UPDATE heritagelistarabic SET heritage_name = :nameFromApi," +
             "heritage_sortid = :sortidFromApi,heritage_image = :imageFromApi WHERE heritage_id=:id")
     void updateHeritageListArabic(String nameFromApi, String sortidFromApi,
                                   String imageFromApi, String id);
 
 
     @Insert
-    void insert(HeritageListTable heritageListTable);
+    void insert(HeritageListTableEnglish heritageListTableEnglish);
+
+    @Insert
+    void insert(HeritageListTableArabic heritageListTableArabic);
 
     /*
      * updateEnglishTable the object in database
      * @param note, object to be updated
      */
     @Update
-    void update(HeritageListTable heritageListTable);
+    void update(HeritageListTableEnglish heritageListTableEnglish);
 
     /*
      * deleteEnglishTable the object from database
      * @param note, object to be deleted
      */
     @Delete
-    void delete(HeritageListTable heritageListTable);
+    void delete(HeritageListTableEnglish heritageListTableEnglish);
 
     /*
      * deleteEnglishTable list of objects from database
      * @param note, array of objects to be deleted
      */
     @Delete
-    void delete(HeritageListTable... heritageListTables);      // Note... is varargs, here note is an array
+    void delete(HeritageListTableEnglish... heritageListTableEnglishes);      // Note... is varargs, here note is an array
 
 }
