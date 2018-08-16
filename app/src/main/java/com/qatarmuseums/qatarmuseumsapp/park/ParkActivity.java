@@ -66,7 +66,13 @@ public class ParkActivity extends AppCompatActivity {
         recyclerView.setAdapter(mAdapter);
         recyclerView.setNestedScrollingEnabled(false);
         int appLanguage = qmPreferences.getInt("AppLanguage", 1);
-        getParkDetailsFromAPI(appLanguage);
+        if (util.isNetworkAvailable(this)) {
+            // fetch data from api
+            getParkDetailsFromAPI(appLanguage);
+        } else {
+            // fetch data from database
+            getParkDetailsFromDataBase(appLanguage);
+        }
         toolbarClose.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -169,5 +175,9 @@ public class ParkActivity extends AppCompatActivity {
                 noResultFoundLayout.setVisibility(View.VISIBLE);
             }
         });
+    }
+
+    public void getParkDetailsFromDataBase(int lan){
+
     }
 }
