@@ -2,7 +2,8 @@ package com.qatarmuseums.qatarmuseumsapp.apicall;
 
 
 import com.qatarmuseums.qatarmuseumsapp.commonpage.CommonModel;
-import com.qatarmuseums.qatarmuseumsapp.heritage.HeritageDetailModel;
+import com.qatarmuseums.qatarmuseumsapp.dining.DiningDetailModel;
+import com.qatarmuseums.qatarmuseumsapp.heritage.HeritageOrExhibitionDetailModel;
 import com.qatarmuseums.qatarmuseumsapp.home.HomeList;
 import com.qatarmuseums.qatarmuseumsapp.publicart.PublicArtModel;
 
@@ -25,8 +26,12 @@ public interface APIInterface {
     Call<ArrayList<PublicArtModel>> getPublicArtsDetails(@Path("language") String language,
                                                          @Query("nid") String nid);
 
-    @GET("{language}/mobile_api/heritage_detail_Page.json")
-    Call<ArrayList<HeritageDetailModel>> getHeritageDetails(@Path("language") String language,
-                                                            @Query("nid") String nid);
+    @GET("{language}/mobile_api/{pageName}")
+    Call<ArrayList<HeritageOrExhibitionDetailModel>> getHeritageOrExhebitionDetails(@Path("language") String language,
+                                                                                    @Path("pageName") String pageName,
+                                                                                    @Query("nid") String nid);
+    @GET("{language}/mobile_api/getDiningdetail.json")
+    Call<ArrayList<DiningDetailModel>> getDiningDetails(@Path("language") String language,
+                                                          @Query("nid") String nid);
 
 }

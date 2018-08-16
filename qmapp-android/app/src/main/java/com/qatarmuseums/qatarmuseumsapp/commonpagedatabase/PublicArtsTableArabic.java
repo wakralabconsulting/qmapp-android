@@ -18,6 +18,8 @@ public class PublicArtsTableArabic {
     @ColumnInfo()
     private String public_arts_name;
     @ColumnInfo()
+    private String public_arts_image;
+    @ColumnInfo()
     private String longitude;
     @ColumnInfo()
     private String latitude;
@@ -28,9 +30,11 @@ public class PublicArtsTableArabic {
     private String short_description;
 
     public PublicArtsTableArabic(@NonNull long public_arts_id, String public_arts_name,
-                                 String longitude, String latitude) {
+                                  String public_arts_image,
+                                  String longitude, String latitude) {
         this.public_arts_id = public_arts_id;
         this.public_arts_name = public_arts_name;
+        this.public_arts_image=public_arts_image;
         this.longitude = longitude;
         this.latitude = latitude;
     }
@@ -51,6 +55,14 @@ public class PublicArtsTableArabic {
 
     public void setPublic_arts_name(String public_arts_name) {
         this.public_arts_name = public_arts_name;
+    }
+
+    public String getPublic_arts_image() {
+        return public_arts_image;
+    }
+
+    public void setPublic_arts_image(String public_arts_image) {
+        this.public_arts_image = public_arts_image;
     }
 
     public String getLongitude() {

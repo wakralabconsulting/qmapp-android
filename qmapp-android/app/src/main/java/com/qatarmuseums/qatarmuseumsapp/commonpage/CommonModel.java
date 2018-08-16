@@ -10,7 +10,7 @@ public class CommonModel {
     private String id;
     @SerializedName("Location")
     private String location;
-    @SerializedName("LATEST_IMAGE")
+    @SerializedName(value="LATEST_IMAGE", alternate={"image","latest_image","image_path"})
     private String image;
     @SerializedName("start_Date")
     private String startDate;
@@ -22,10 +22,15 @@ public class CommonModel {
     private String longitude;
     @SerializedName("Latitude")
     private String latitude;
-    @SerializedName("SORT_ID")
+    @SerializedName(value="SORT_ID", alternate={"sort_id", "Sort_Id"})
     private String sortId;
     private Boolean isOpen, isfavourite;
-
+    @SerializedName("opening_time")
+    private String openingTime;
+    @SerializedName("close_time")
+    private String closingTime;
+    @SerializedName("Description")
+    private String description;
     public CommonModel() {
 
     }
@@ -53,6 +58,18 @@ public class CommonModel {
         this.longitude = longitude;
     }
 
+    public CommonModel(String name, String id, String location, String image,
+                       String sortId, String openingTime, String closingTime,
+                       String description) {
+        this.name = name;
+        this.id = id;
+        this.location = location;
+        this.image = image;
+        this.sortId = sortId;
+        this.openingTime = openingTime;
+        this.closingTime = closingTime;
+        this.description = description;
+    }
 
     public String getName() {
         return name;
@@ -160,5 +177,29 @@ public class CommonModel {
 
     public void setOpen(Boolean open) {
         isOpen = open;
+    }
+
+    public String getOpeningTime() {
+        return openingTime;
+    }
+
+    public void setOpeningTime(String openingTime) {
+        this.openingTime = openingTime;
+    }
+
+    public String getClosingTime() {
+        return closingTime;
+    }
+
+    public void setClosingTime(String closingTime) {
+        this.closingTime = closingTime;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
     }
 }

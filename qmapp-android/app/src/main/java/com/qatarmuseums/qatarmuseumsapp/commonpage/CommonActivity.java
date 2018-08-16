@@ -132,8 +132,7 @@ public class CommonActivity extends AppCompatActivity {
             }
         });
         if (toolbarTitle.equals(getString(R.string.sidemenu_exhibition_text))) {
-            prepareExhibitionData();
-//            getCommonListAPIData("Exhibition_List_Page.json");
+            getCommonListAPIDataFromAPI("Exhibition_List_Page.json");
         } else if (toolbarTitle.equals(getString(R.string.sidemenu_heritage_text))) {
             if (util.isNetworkAvailable(CommonActivity.this))
                 getCommonListAPIDataFromAPI("Heritage_List_Page.json");
@@ -147,9 +146,9 @@ public class CommonActivity extends AppCompatActivity {
                 getCommonListDataFromDatabase("Public_Arts_List_Page.json");
 
 
-        } else if (toolbarTitle.equals(getString(R.string.sidemenu_dining_text)))
-            prepareDiningData();
-        else if (toolbarTitle.equals(getString(R.string.museum_collection_text)))
+        } else if (toolbarTitle.equals(getString(R.string.sidemenu_dining_text))) {
+                getCommonListAPIDataFromAPI("getDiningList.json");
+        } else if (toolbarTitle.equals(getString(R.string.museum_collection_text)))
             prepareCollectionData();
     }
 
@@ -260,84 +259,37 @@ public class CommonActivity extends AppCompatActivity {
 
     }
 
-
-    private void prepareDiningData() {
-        CommonModel model = new CommonModel("1", "IDAM",
-                null,
-                null, null,
-                "http://www.qm.org.qa/sites/default/files/styles/content_image/public/images/body/idam-pierremonetta_mg_6372_1.jpg?itok=bKArHUGQ",
-                null, true);
-        models.add(model);
-        model = new CommonModel("2", "IN-Q CAFÉ",
-                null,
-                null, null,
-                "http://www.qm.org.qa/sites/default/files/styles/content_image/public/images/body/inq.jpg?itok=C14Qr6xt",
-                null, true);
-        models.add(model);
-        model = new CommonModel("3", "MIA CAFÉ",
-                null,
-                null, null,
-                "http://www.qm.org.qa/sites/default/files/styles/content_image/public/images/body/dsc_0597_2_0.jpg?itok=TXvRM1HE",
-                null, false);
-        models.add(model);
-        model = new CommonModel("4", "AL RIWAQ CAFÉ",
-                null, null,
-                null,
-                "http://www.qm.org.qa/sites/default/files/styles/content_image/public/images/body/10_0.jpg?itok=4BYJtRQB",
-                null, false);
-        models.add(model);
-        model = new CommonModel("4", "MIA CATERING",
-                null, null,
-                null,
-                "http://www.qm.org.qa/sites/default/files/styles/content_image/public/images/body/mia-catering.jpg?itok=Kk7svJPU",
-                null, false);
-        models.add(model);
-        model = new CommonModel("4", "MATHAF MAQHA",
-                null, null,
-                null,
-                "http://www.qm.org.qa/sites/default/files/styles/content_image/public/images/body/332a0071_0.jpg?itok=--l8qFkn",
-                null, false);
-        models.add(model);
-        model = new CommonModel("4", "CAFÉ #999",
-                null,
-                null, null,
-                "http://www.qm.org.qa/sites/default/files/styles/content_image/public/images/body/332a4417.jpg?itok=_OpfHaT_",
-                null, true);
-        models.add(model);
-
-        mAdapter.notifyDataSetChanged();
-    }
-
     private void prepareCollectionData() {
+
         CommonModel model = new CommonModel("1", "CERAMICS COLLECTION",
                 null,
                 null, null,
                 "http://www.qm.org.qa/sites/default/files/styles/content_image/public/images/body/idam-pierremonetta_mg_6372_1.jpg?itok=bKArHUGQ",
-                null, null);
+                false,false);
         models.add(model);
         model = new CommonModel("2", "GLASS COLLECTION",
                 null, null,
                 null,
                 "http://www.qm.org.qa/sites/default/files/styles/content_image/public/images/body/inq.jpg?itok=C14Qr6xt",
-                null, null);
+                false, false);
         models.add(model);
         model = new CommonModel("3", "THE CAVOUR VASE",
                 null, null,
                 null,
                 "http://www.qm.org.qa/sites/default/files/styles/content_image/public/images/body/dsc_0597_2_0.jpg?itok=TXvRM1HE",
-                null, null);
+                false, false);
         models.add(model);
         model = new CommonModel("4", "GOLD AND GLASS",
                 null, null,
                 null,
                 "http://www.qm.org.qa/sites/default/files/styles/content_image/public/images/body/10_0.jpg?itok=4BYJtRQB",
-                null, null);
+                false, false);
         models.add(model);
         model = new CommonModel("4", "MOSQUE LAMP",
                 null, null,
                 null,
                 "http://www.qm.org.qa/sites/default/files/styles/content_image/public/images/body/mia-catering.jpg?itok=Kk7svJPU",
-                null, null);
+                false, false);
         models.add(model);
         mAdapter.notifyDataSetChanged();
     }
@@ -416,6 +368,7 @@ public class CommonActivity extends AppCompatActivity {
                             //create row with corresponding id
                             publicArtsTableEnglish = new PublicArtsTableEnglish(Long.parseLong(models.get(i).getId()),
                                     models.get(i).getName(),
+                                    models.get(i).getImage(),
                                     models.get(i).getLongitude(),
                                     models.get(i).getLatitude());
                             activityReference.get().qmDatabase.getPublicArtsTableDao().insert(publicArtsTableEnglish);
@@ -434,6 +387,7 @@ public class CommonActivity extends AppCompatActivity {
                             //create row with corresponding id
                             publicArtsTableArabic = new PublicArtsTableArabic(Long.parseLong(models.get(i).getId()),
                                     models.get(i).getName(),
+                                    models.get(i).getImage(),
                                     models.get(i).getLongitude(),
                                     models.get(i).getLatitude());
                             activityReference.get().qmDatabase.getPublicArtsTableDao().insert(publicArtsTableArabic);
@@ -518,6 +472,7 @@ public class CommonActivity extends AppCompatActivity {
                     for (int i = 0; i < models.size(); i++) {
                         publicArtsTableEnglish = new PublicArtsTableEnglish(Long.parseLong(models.get(i).getId()),
                                 models.get(i).getName(),
+                                models.get(i).getImage(),
                                 models.get(i).getLongitude(),
                                 models.get(i).getLatitude());
                         activityReference.get().qmDatabase.getPublicArtsTableDao().insert(publicArtsTableEnglish);
@@ -526,6 +481,7 @@ public class CommonActivity extends AppCompatActivity {
                     for (int i = 0; i < models.size(); i++) {
                         publicArtsTableArabic = new PublicArtsTableArabic(Long.parseLong(models.get(i).getId()),
                                 models.get(i).getName(),
+                                models.get(i).getImage(),
                                 models.get(i).getLongitude(),
                                 models.get(i).getLatitude());
                         activityReference.get().qmDatabase.getPublicArtsTableDao().insert(publicArtsTableArabic);

@@ -25,7 +25,7 @@ import com.qatarmuseums.qatarmuseumsapp.apicall.APIClient;
 import com.qatarmuseums.qatarmuseumsapp.apicall.APIInterface;
 import com.qatarmuseums.qatarmuseumsapp.commonpagedatabase.PublicArtsTableArabic;
 import com.qatarmuseums.qatarmuseumsapp.commonpagedatabase.PublicArtsTableEnglish;
-import com.qatarmuseums.qatarmuseumsapp.heritage.HeritageDetailModel;
+import com.qatarmuseums.qatarmuseumsapp.heritage.HeritageOrExhibitionDetailModel;
 import com.qatarmuseums.qatarmuseumsapp.home.GlideApp;
 import com.qatarmuseums.qatarmuseumsapp.publicart.PublicArtModel;
 import com.qatarmuseums.qatarmuseumsapp.utils.IPullZoom;
@@ -113,19 +113,15 @@ public class DetailsActivity extends AppCompatActivity implements IPullZoom {
         util = new Util();
         title.setText(mainTitle);
         if (comingFrom.equals(getString(R.string.sidemenu_exhibition_text))) {
-            timingTitle.setText(R.string.exhibition_timings);
-            loadData(null, getString(R.string.details_page_short_description),
-                    getString(R.string.details_page_long_description),
-                    null, null, getString(R.string.details_page_timing_details),
-                    getString(R.string.details_page_location_details), getString(R.string.contact_mail), "", "");
+            getHeritageOrExhibitionDetailsFromAPI(id, language, "Exhibition_detail_Page.json");
         } else if (comingFrom.equals(getString(R.string.sidemenu_heritage_text))) {
-            getHeritageDetailsFromAPI(id, language);
-
+            getHeritageOrExhibitionDetailsFromAPI(id, language, "heritage_detail_Page.json");
         } else if (comingFrom.equals(getString(R.string.sidemenu_public_arts_text))) {
             if (util.isNetworkAvailable(DetailsActivity.this))
-                getCommonListAPIDataFromAPI(id, language);
+                getPublicArtDetailsFromAPI(id, language);
             else
                 getCommonListAPIDataFromDatabase(id, language);
+
         } else if (comingFrom.equals(getString(R.string.museum_about))) {
             timingTitle.setText(R.string.museum_timings);
             headerImage = "http://www.qm.org.qa/sites/default/files/styles/gallery_small/public/images/gallery/mia_architecture_071215_4844.jpg";
@@ -135,7 +131,7 @@ public class DetailsActivity extends AppCompatActivity implements IPullZoom {
                             "\n" +
                             "In 2013 the World Heritage Committee inscribed Al Zubarah Archaeological Site into the UNESCO World Heritage List. The site includes three major features, the largest of which are the archaeological remains of the town, dating back to the 1760s. Connected to it is the settlement of Qal’at Murair, which was fortified to protect the city’s inland wells. Al Zubarah Fort was built in 1938 and is the youngest, most prominent feature at the site.",
                     "Saturday to Sunday: 9:00AM - 7:00PM\n" +
-                            "Fridays: 1:30PM to 7:00PM",
+                            "Fridays: 1:30PM to 7:00PM", null,
                     "Katara Cultural Village", "info@mia.org.qa", "", "");
         }
         GlideApp.with(this)
@@ -266,8 +262,8 @@ public class DetailsActivity extends AppCompatActivity implements IPullZoom {
     }
 
     public void loadData(String subTitle, String shortDescription, String longDescription,
-                         String secondTitle, String secondTitleDescription, String timingInfo,
-                         String locationInfo, String contactInfo, String latitudefromApi,
+                         String secondTitle, String secondTitleDescription, String openingTime,
+                         String closingTime, String locationInfo, String contactInfo, String latitudefromApi,
                          String longitudefromApi) {
         this.title.setText(mainTitle);
         latitude = intent.getStringExtra("LATITUDE");
@@ -283,7 +279,50 @@ public class DetailsActivity extends AppCompatActivity implements IPullZoom {
             this.secondTitle.setText(secondTitle);
             this.secondTitleDescription.setText(secondTitleDescription);
         }
+        if (openingTime != null) {
+            this.timingLayout.setVisibility(View.VISIBLE);
+            String time = getResources().getString(R.string.everyday_from) +
+                    " " + openingTime + " " + getResources().getString(R.string.to) + " " +
+                    closingTime;
+            this.timingDetails.setText(time);
+        }
+        if (locationInfo != null) {
+            this.locationDetails.setVisibility(View.VISIBLE);
+            this.locationDetails.setText(locationInfo);
+        }
+        if (contactInfo != null) {
+            this.contactLayout.setVisibility(View.VISIBLE);
+            this.contactDetails.setText(contactInfo);
+        }
+        if (latitude != null) {
+            latitude = convertDegreetoDecimalMeasure(latitude);
+            longitude = convertDegreetoDecimalMeasure(longitude);
+        } else {
+            latitude = "25.29818300";
+            longitude = "51.53972222";
+        }
+    }
+
+    public void loadDataForHeritageOrExhibitionDetails(String subTitle, String shortDescription, String longDescription,
+                                                       String secondTitle, String secondTitleDescription, String timingInfo,
+                                                       String locationInfo, String contactInfo, String latitudefromApi,
+                                                       String longitudefromApi) {
+        this.title.setText(mainTitle);
+        latitude = latitudefromApi;
+        longitude = longitudefromApi;
+        if (subTitle != null) {
+            this.subTitle.setVisibility(View.VISIBLE);
+            this.subTitle.setText(subTitle);
+        }
+        this.shortDescription.setText(shortDescription);
+        this.longDescription.setText(longDescription);
+        if (secondTitle != null) {
+            this.secondTitleLayout.setVisibility(View.VISIBLE);
+            this.secondTitle.setText(secondTitle);
+            this.secondTitleDescription.setText(secondTitleDescription);
+        }
         if (timingInfo != null) {
+            timingTitle.setText(R.string.exhibition_timings);
             this.timingLayout.setVisibility(View.VISIBLE);
             this.timingDetails.setText(timingInfo);
         }
@@ -304,7 +343,7 @@ public class DetailsActivity extends AppCompatActivity implements IPullZoom {
         }
     }
 
-    public void getHeritageDetailsFromAPI(String id, int language) {
+    public void getHeritageOrExhibitionDetailsFromAPI(String id, int language, String pageName) {
         progressBar.setVisibility(View.VISIBLE);
         String appLanguage;
         if (language == 1) {
@@ -315,22 +354,22 @@ public class DetailsActivity extends AppCompatActivity implements IPullZoom {
 
         APIInterface apiService =
                 APIClient.getClient().create(APIInterface.class);
-        Call<ArrayList<HeritageDetailModel>> call = apiService.getHeritageDetails(appLanguage, id);
-        call.enqueue(new Callback<ArrayList<HeritageDetailModel>>() {
+        Call<ArrayList<HeritageOrExhibitionDetailModel>> call = apiService.getHeritageOrExhebitionDetails(appLanguage,
+                pageName, id);
+        call.enqueue(new Callback<ArrayList<HeritageOrExhibitionDetailModel>>() {
             @Override
-            public void onResponse(Call<ArrayList<HeritageDetailModel>> call, Response<ArrayList<HeritageDetailModel>> response) {
+            public void onResponse(Call<ArrayList<HeritageOrExhibitionDetailModel>> call, Response<ArrayList<HeritageOrExhibitionDetailModel>> response) {
                 if (response.isSuccessful()) {
                     if (response.body() != null) {
                         commonContentLayout.setVisibility(View.VISIBLE);
-                        ArrayList<HeritageDetailModel> heritageDetailModel = response.body();
-                        timingTitle.setText(R.string.opening_timings);
-                        loadData("", heritageDetailModel.get(0).getShortDescription(),
-                                heritageDetailModel.get(0).getLongDescription(),
+                        ArrayList<HeritageOrExhibitionDetailModel> heritageOrExhibitionDetailModel = response.body();
+                        loadDataForHeritageOrExhibitionDetails("", heritageOrExhibitionDetailModel.get(0).getShortDescription(),
+                                heritageOrExhibitionDetailModel.get(0).getLongDescription(),
                                 "", "",
                                 null,
-                                heritageDetailModel.get(0).getLocation(),
-                                null, heritageDetailModel.get(0).getLatitude(),
-                                heritageDetailModel.get(0).getLongitude());
+                                heritageOrExhibitionDetailModel.get(0).getLocation(),
+                                null, heritageOrExhibitionDetailModel.get(0).getLatitude(),
+                                heritageOrExhibitionDetailModel.get(0).getLongitude());
 
                     } else {
                         commonContentLayout.setVisibility(View.GONE);
@@ -345,7 +384,7 @@ public class DetailsActivity extends AppCompatActivity implements IPullZoom {
             }
 
             @Override
-            public void onFailure(Call<ArrayList<HeritageDetailModel>> call, Throwable t) {
+            public void onFailure(Call<ArrayList<HeritageOrExhibitionDetailModel>> call, Throwable t) {
                 if (t instanceof IOException) {
                     util.showToast(getResources().getString(R.string.check_network), getApplicationContext());
 
@@ -359,7 +398,7 @@ public class DetailsActivity extends AppCompatActivity implements IPullZoom {
         });
     }
 
-    private void getCommonListAPIDataFromAPI(String id, int appLanguage) {
+    private void getPublicArtDetailsFromAPI(String id, int appLanguage) {
         progressBar.setVisibility(View.VISIBLE);
         final String language;
         if (appLanguage == 1) {
@@ -381,8 +420,8 @@ public class DetailsActivity extends AppCompatActivity implements IPullZoom {
                         loadData(null,
                                 publicArtModel.get(0).getShortDescription(),
                                 publicArtModel.get(0).getLongDescription(),
-                                null, null, null,
-                                "Katara Cultural Village", null, latitude, longitude);
+                                null, null, null, null,
+                                "", null, latitude, longitude);
                         new PublicArtsRowCount(DetailsActivity.this, language).execute();
                     } else {
                         commonContentLayout.setVisibility(View.GONE);
@@ -568,7 +607,7 @@ public class DetailsActivity extends AppCompatActivity implements IPullZoom {
                         publicArtsTableEnglish.get(i).getShort_description(),
                         publicArtsTableEnglish.get(i).getDescription(),
                         null, null, null,
-                        "Katara Cultural Village", null,
+                        null, "","",
                         publicArtsTableEnglish.get(i).getLatitude(),
                         publicArtsTableEnglish.get(i).getLongitude());
             }
@@ -604,7 +643,7 @@ public class DetailsActivity extends AppCompatActivity implements IPullZoom {
                         publicArtsTableArabic.get(i).getShort_description(),
                         publicArtsTableArabic.get(i).getDescription(),
                         null, null, null,
-                        "Katara Cultural Village", null,
+                        null, "",null,
                         publicArtsTableArabic.get(i).getLatitude(),
                         publicArtsTableArabic.get(i).getLongitude());
             }
