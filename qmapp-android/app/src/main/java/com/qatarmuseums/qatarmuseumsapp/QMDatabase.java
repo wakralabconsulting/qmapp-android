@@ -11,14 +11,16 @@ import android.support.annotation.NonNull;
 
 import com.qatarmuseums.qatarmuseumsapp.commonpagedatabase.HeritageListTable;
 import com.qatarmuseums.qatarmuseumsapp.commonpagedatabase.HeritageListTableDao;
-import com.qatarmuseums.qatarmuseumsapp.commonpagedatabase.PublicArtsTable;
+import com.qatarmuseums.qatarmuseumsapp.commonpagedatabase.PublicArtsTableArabic;
 import com.qatarmuseums.qatarmuseumsapp.commonpagedatabase.PublicArtsTableDao;
+import com.qatarmuseums.qatarmuseumsapp.commonpagedatabase.PublicArtsTableEnglish;
 import com.qatarmuseums.qatarmuseumsapp.home.HomePageTableArabic;
-import com.qatarmuseums.qatarmuseumsapp.home.HomePageTableEnglish;
 import com.qatarmuseums.qatarmuseumsapp.home.HomePageTableDao;
+import com.qatarmuseums.qatarmuseumsapp.home.HomePageTableEnglish;
 
 @Database(entities = {HomePageTableEnglish.class, HeritageListTable.class,
-        HomePageTableArabic.class,PublicArtsTable.class}, version = 1, exportSchema = false)
+        HomePageTableArabic.class,
+        PublicArtsTableEnglish.class, PublicArtsTableArabic.class}, version = 1, exportSchema = false)
 public abstract class QMDatabase extends RoomDatabase {
 
     public abstract HomePageTableDao getHomePageTableDao();
