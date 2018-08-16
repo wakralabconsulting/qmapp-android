@@ -68,12 +68,14 @@
                 android:fontFamily="@font/din_next_lt_pro_regular"
                 android:paddingEnd="@dimen/padding_25"
                 android:paddingStart="@dimen/padding_25"
+                android:visibility="gone"
                 android:textAlignment="center"
                 android:textColor="@color/black"
                 android:textSize="@dimen/font_size_15" />
 
             <ImageView
                 android:id="@+id/image_view"
+                android:layout_marginTop="@dimen/padding_15"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content" />
 

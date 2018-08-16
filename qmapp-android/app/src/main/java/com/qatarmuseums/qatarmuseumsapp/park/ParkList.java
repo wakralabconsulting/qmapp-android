@@ -1,28 +1,34 @@
 package com.qatarmuseums.qatarmuseumsapp.park;
 
 
+import com.google.gson.annotations.SerializedName;
+
 public class ParkList {
+
+    @SerializedName("Title")
     private String mainTitle;
-    private String title;
-    private String image;
+    @SerializedName("Description")
     private String shortDescription;
-    private String longDescription;
+    @SerializedName("image")
+    private String image;
+    @SerializedName("sort_id")
+    private String sortId;
+    @SerializedName("latitude")
     private String latitude;
+    @SerializedName("longitude")
     private String longitude;
+    @SerializedName("timingInfo")
     private String timingInfo;
 
 
     public ParkList() {
+        }
 
-    }
-
-    public ParkList(String mainTitle, String title, String shortDescription, String image,
-                    String longDescription, String latitude, String longitude, String timingInfo) {
+    public ParkList(String mainTitle, String shortDescription, String image,
+                    String latitude, String longitude, String timingInfo) {
         this.mainTitle = mainTitle;
-        this.title = title;
         this.shortDescription = shortDescription;
         this.image = image;
-        this.longDescription = longDescription;
         this.latitude = latitude;
         this.longitude = longitude;
         this.timingInfo = timingInfo;
@@ -34,14 +40,6 @@ public class ParkList {
 
     public void setMainTitle(String mainTitle) {
         this.mainTitle = mainTitle;
-    }
-
-    public String getTitle() {
-        return title;
-    }
-
-    public void setTitle(String title) {
-        this.title = title;
     }
 
     public String getImage() {
@@ -60,9 +58,6 @@ public class ParkList {
         this.shortDescription = shortDescription;
     }
 
-    public String getLongDescription() {
-        return longDescription;
-    }
 
     public void setLongDescription(String longDescription) {
         longDescription = longDescription;
