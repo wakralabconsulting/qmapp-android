@@ -4,7 +4,7 @@ package com.qatarmuseums.qatarmuseumsapp.commonpage;
 import com.google.gson.annotations.SerializedName;
 
 public class CommonModel {
-    @SerializedName("name")
+    @SerializedName(value="name", alternate={"Name"})
     private String name;
     @SerializedName("ID")
     private String id;
