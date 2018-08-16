@@ -22,6 +22,7 @@ import android.widget.LinearLayout;
 import com.qatarmuseums.qatarmuseumsapp.calendar.CalendarActivity;
 import com.qatarmuseums.qatarmuseumsapp.R;
 import com.qatarmuseums.qatarmuseumsapp.commonpage.CommonActivity;
+import com.qatarmuseums.qatarmuseumsapp.culturepass.CulturePassActivity;
 import com.qatarmuseums.qatarmuseumsapp.education.EducationActivity;
 import com.qatarmuseums.qatarmuseumsapp.notification.NotificationActivity;
 import com.qatarmuseums.qatarmuseumsapp.park.ParkActivity;
@@ -231,9 +232,10 @@ public class BaseActivity extends AppCompatActivity
                 closeDrawer();
                 break;
             case R.id.topbar_profile:
-                // topbar profile action
                 topbarProfile.startAnimation(zoomOutAnimation);
-                util.showComingSoonDialog(BaseActivity.this);
+                navigation_intent = new Intent(this, CulturePassActivity.class);
+                startActivity(navigation_intent);
+                closeDrawer();
                 break;
 
             case R.id.topbar_sidemenu:

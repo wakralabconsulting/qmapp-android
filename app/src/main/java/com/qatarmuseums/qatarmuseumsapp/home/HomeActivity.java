@@ -26,6 +26,7 @@ import com.qatarmuseums.qatarmuseumsapp.apicall.APIInterface;
 import com.qatarmuseums.qatarmuseumsapp.base.BaseActivity;
 import com.qatarmuseums.qatarmuseumsapp.commonpage.CommonActivity;
 import com.qatarmuseums.qatarmuseumsapp.commonpage.RecyclerTouchListener;
+import com.qatarmuseums.qatarmuseumsapp.culturepass.CulturePassActivity;
 import com.qatarmuseums.qatarmuseumsapp.museum.MuseumActivity;
 import com.qatarmuseums.qatarmuseumsapp.utils.Util;
 import com.qatarmuseums.qatarmuseumsapp.webview.WebviewActivity;
@@ -111,8 +112,8 @@ public class HomeActivity extends BaseActivity {
         culturePassNavigation.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                // Culture Pass click action
-                util.showComingSoonDialog(HomeActivity.this);
+                navigation_intent = new Intent(HomeActivity.this, CulturePassActivity.class);
+                startActivity(navigation_intent);
             }
         });
         moreNavigation.setOnClickListener(new View.OnClickListener() {
