@@ -121,6 +121,7 @@ public class DetailsActivity extends AppCompatActivity implements IPullZoom {
                 getPublicArtDetailsFromAPI(id, language);
             else
                 getCommonListAPIDataFromDatabase(id, language);
+            getPublicArtDetailsFromAPI(id, language);
 
         } else if (comingFrom.equals(getString(R.string.museum_about))) {
             timingTitle.setText(R.string.museum_timings);
@@ -607,7 +608,7 @@ public class DetailsActivity extends AppCompatActivity implements IPullZoom {
                         publicArtsTableEnglish.get(i).getShort_description(),
                         publicArtsTableEnglish.get(i).getDescription(),
                         null, null, null,
-                        null, "","",
+                        null, "", "",
                         publicArtsTableEnglish.get(i).getLatitude(),
                         publicArtsTableEnglish.get(i).getLongitude());
             }
@@ -643,7 +644,7 @@ public class DetailsActivity extends AppCompatActivity implements IPullZoom {
                         publicArtsTableArabic.get(i).getShort_description(),
                         publicArtsTableArabic.get(i).getDescription(),
                         null, null, null,
-                        null, "",null,
+                        null, "", null,
                         publicArtsTableArabic.get(i).getLatitude(),
                         publicArtsTableArabic.get(i).getLongitude());
             }

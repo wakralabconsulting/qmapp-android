@@ -22,7 +22,7 @@ public class ParkListAdapter extends RecyclerView.Adapter<ParkListAdapter.MyView
 
     private final Context mContext;
     private List<ParkList> parkLists;
-
+    private String latitude,longitude;
     public class MyViewHolder extends RecyclerView.ViewHolder {
         public TextView mainTitle, title, shortDescription, longDescription, timingInfo, mapDetails;
         public ImageView imageView;
@@ -59,7 +59,16 @@ public class ParkListAdapter extends RecyclerView.Adapter<ParkListAdapter.MyView
     @Override
     public void onBindViewHolder(@NonNull ParkListAdapter.MyViewHolder holder, int position) {
         final ParkList parkList = parkLists.get(position);
+        holder.title.setText(parkList.getMainTitle());
         if (position == 0) {
+            if (parkList.getLatitude() != null) {
+                latitude = convertDegreetoDecimalMeasure(latitude);
+                longitude = convertDegreetoDecimalMeasure(longitude);
+            } else {
+                latitude = "25.29818300";
+                longitude = "51.53972222";
+            }
+            holder.title.setVisibility(View.GONE);
             holder.mainTitleLayout.setVisibility(View.VISIBLE);
             holder.imageView.setVisibility(View.GONE);
             holder.locationLayout.setVisibility(View.VISIBLE);
@@ -67,18 +76,17 @@ public class ParkListAdapter extends RecyclerView.Adapter<ParkListAdapter.MyView
             holder.mapDetails.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    String geoUri = mContext.getString(R.string.map_navigation_api) + parkList.getLatitude() +
-                            "," + parkList.getLongitude() + " (" + parkList.getTitle() + ")";
+                    String geoUri = mContext.getString(R.string.map_navigation_api) + latitude +
+                            "," + longitude + " (" + parkList.getMainTitle() + ")";
                     Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(geoUri));
                     mContext.startActivity(intent);
                 }
             });
         }
-        holder.title.setText(parkList.getTitle());
-        holder.shortDescription.setText(parkList.getShortDescription());
-        if (parkList.getLongDescription() != null) {
+
+        if (parkList.getShortDescription() != null) {
             holder.longDescription.setVisibility(View.VISIBLE);
-            holder.longDescription.setText(parkList.getLongDescription());
+            holder.longDescription.setText(parkList.getShortDescription());
         }
         holder.timingInfo.setText(parkList.getTimingInfo());
         GlideApp.with(mContext)
@@ -91,4 +99,19 @@ public class ParkListAdapter extends RecyclerView.Adapter<ParkListAdapter.MyView
     public int getItemCount() {
         return parkLists.size();
     }
+    private String convertDegreetoDecimalMeasure(String degreeValue) {
+        String value = degreeValue.trim();
+        String[] latParts = value.split("°");
+        float degree = Float.parseFloat(latParts[0]);
+        value = latParts[1].trim();
+        latParts = value.split("'");
+        float min = Float.parseFloat(latParts[0]);
+        value = latParts[1].trim();
+        latParts = value.split("\"");
+        float sec = Float.parseFloat(latParts[0]);
+        String result;
+        result = String.valueOf(degree + (min / 60) + (sec / 3600));
+        return result;
+    }
+
 }

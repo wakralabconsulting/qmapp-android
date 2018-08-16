@@ -5,6 +5,7 @@ import com.qatarmuseums.qatarmuseumsapp.commonpage.CommonModel;
 import com.qatarmuseums.qatarmuseumsapp.dining.DiningDetailModel;
 import com.qatarmuseums.qatarmuseumsapp.heritage.HeritageOrExhibitionDetailModel;
 import com.qatarmuseums.qatarmuseumsapp.home.HomeList;
+import com.qatarmuseums.qatarmuseumsapp.park.ParkList;
 import com.qatarmuseums.qatarmuseumsapp.publicart.PublicArtModel;
 
 import java.util.ArrayList;
@@ -30,8 +31,12 @@ public interface APIInterface {
     Call<ArrayList<HeritageOrExhibitionDetailModel>> getHeritageOrExhebitionDetails(@Path("language") String language,
                                                                                     @Path("pageName") String pageName,
                                                                                     @Query("nid") String nid);
+
     @GET("{language}/mobile_api/getDiningdetail.json")
     Call<ArrayList<DiningDetailModel>> getDiningDetails(@Path("language") String language,
-                                                          @Query("nid") String nid);
+                                                        @Query("nid") String nid);
+
+    @GET("{language}/mobile_api/park_service_combined.json")
+    Call<ArrayList<ParkList>> getParkDetails(@Path("language") String language);
 
 }

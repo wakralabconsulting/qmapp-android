@@ -1,5 +1,7 @@
 package com.qatarmuseums.qatarmuseumsapp.park;
 
+import android.content.SharedPreferences;
+import android.preference.PreferenceManager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.DefaultItemAnimator;
@@ -11,13 +13,23 @@ import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.ProgressBar;
+import android.widget.RelativeLayout;
 
 import com.qatarmuseums.qatarmuseumsapp.R;
+import com.qatarmuseums.qatarmuseumsapp.apicall.APIClient;
+import com.qatarmuseums.qatarmuseumsapp.apicall.APIInterface;
 import com.qatarmuseums.qatarmuseumsapp.home.GlideApp;
 import com.qatarmuseums.qatarmuseumsapp.utils.Util;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 public class ParkActivity extends AppCompatActivity {
 
@@ -28,13 +40,20 @@ public class ParkActivity extends AppCompatActivity {
     private Toolbar toolbar;
     private Util util;
     private Animation zoomOutAnimation;
-
+    SharedPreferences qmPreferences;
+    ProgressBar progressBar;
+    RelativeLayout noResultFoundLayout;
+    LinearLayout mainLayout;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_park);
         toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+        qmPreferences = PreferenceManager.getDefaultSharedPreferences(this);
+        progressBar = (ProgressBar) findViewById(R.id.progressBarLoading);
+        noResultFoundLayout = (RelativeLayout) findViewById(R.id.no_result_layout);
+        mainLayout = (LinearLayout) findViewById(R.id.main_layout);
         toolbarClose = (ImageView) findViewById(R.id.toolbar_close);
         headerImageView = (ImageView) findViewById(R.id.header_img);
         recyclerView = (RecyclerView) findViewById(R.id.park_recycler_view);
@@ -45,12 +64,9 @@ public class ParkActivity extends AppCompatActivity {
         recyclerView.setLayoutManager(mLayoutManager);
         recyclerView.setItemAnimator(new DefaultItemAnimator());
         recyclerView.setAdapter(mAdapter);
-        prepareParkData();
-        GlideApp.with(this)
-                .load(parkLists.get(0).getImage())
-                .centerCrop()
-                .placeholder(R.drawable.placeholdeer)
-                .into(headerImageView);
+        recyclerView.setNestedScrollingEnabled(false);
+        int appLanguage = qmPreferences.getInt("AppLanguage", 1);
+        getParkDetailsFromAPI(appLanguage);
         toolbarClose.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -105,33 +121,53 @@ public class ParkActivity extends AppCompatActivity {
 
     }
 
-    private void prepareParkData() {
-        ParkList parkList = new ParkList("MIA PARK", "A WONDERFUL GREEN,\n" +
-                "OPEN SPACE IN THE CITY", "Adjacent to the museum is MIA Park where you can stroll, participate in activities or just gaze at the Doha skyline from the best vantage point in the city.\n" +
-                "\n" +
-                "MIA Park is the perfect place to take a stroll or for your children to run around in complete safety.\n" +
-                "\n" +
-                "Take part in our activities or enjoy something to eat or drink.",
-                "http://www.qm.org.qa/sites/default/files/styles/content_image/public/images/body/inq.jpg?itok=C14Qr6xt",
-                "MIA Park is the perfect place to take a stroll or for your children to run around in complete safety.\n" +
-                        "\n" +
-                        "Take part in our activities or enjoy something to eat or drink.",
-                "25.3154649", "51.4779437",
-                "The Park is open 24 hours every day");
-        parkLists.add(parkList);
-        parkList = new ParkList(null, "Park Café", "Lounge in front of the spectacular panorama of Doha’s West Bay as you indulge items from our picnic basket selections. Complement your outdoor experience with a selection of juices and other soft beverages.",
-                "http://www.qm.org.qa/sites/default/files/styles/content_image/public/images/body/10_0.jpg?itok=4BYJtRQB",
-                "Relax on the shady terrace while enjoying freshly made sandwiches, salads, and pastries with a spectacular panorama of West Bay.",
-                "25.3154649", "51.4779437",
-                "Everyday From 11am to 11pm");
-        parkLists.add(parkList);
-        parkList = new ParkList(null, "Family Play", "The Playground has doubled in size and now offers 3 spaces for children of different ages, with exciting new play equipment that has been designed for fun, safety and physical development. There is now a play area for 2-5 year olds, a larger playground for 5-12 year olds and a playground for young people 12-16 years.",
-                "http://www.qm.org.qa/sites/default/files/styles/content_image/public/images/body/332a0071_0.jpg?itok=--l8qFkn",
-                null,
-                "25.3154649", "51.4779437",
-                "The playground is open during\n" +
-                        "normal park opening times.");
-        parkLists.add(parkList);
-        mAdapter.notifyDataSetChanged();
+
+
+    public void getParkDetailsFromAPI(int lan){
+       String language;
+        if (lan == 1) {
+            language = "en";
+        } else {
+            language = "ar";
+        }
+        APIInterface apiService =
+                APIClient.getClient().create(APIInterface.class);
+        Call<ArrayList<ParkList>> call = apiService.getParkDetails(language);
+        call.enqueue(new Callback<ArrayList<ParkList>>() {
+            @Override
+            public void onResponse(Call<ArrayList<ParkList>> call, Response<ArrayList<ParkList>> response) {
+                if (response.isSuccessful()) {
+                    if (response.body() != null) {
+                        recyclerView.setVisibility(View.VISIBLE);
+                        parkLists.addAll(response.body());
+                        GlideApp.with(ParkActivity.this)
+                                .load(parkLists.get(0).getImage())
+                                .centerCrop()
+                                .placeholder(R.drawable.placeholdeer)
+                                .into(headerImageView);
+                        mAdapter.notifyDataSetChanged();
+                    } else {
+                        mainLayout.setVisibility(View.GONE);
+                        noResultFoundLayout.setVisibility(View.VISIBLE);
+                    }
+                } else {
+                    mainLayout.setVisibility(View.GONE);
+                    noResultFoundLayout.setVisibility(View.VISIBLE);
+                }
+                progressBar.setVisibility(View.GONE);
+            }
+
+            @Override
+            public void onFailure(Call<ArrayList<ParkList>> call, Throwable t) {
+                if (t instanceof IOException) {
+                    util.showToast(getResources().getString(R.string.check_network), getApplicationContext());
+                } else {
+                    // due to mapping issues
+                }
+                mainLayout.setVisibility(View.GONE);
+                progressBar.setVisibility(View.GONE);
+                noResultFoundLayout.setVisibility(View.VISIBLE);
+            }
+        });
     }
 }

@@ -55,7 +55,7 @@
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:visibility="visible"
+        android:visibility="gone"
         android:layout_below="@id/app_bar"
         android:layout_above="@id/bottom_toolbar"
         android:id="@+id/no_result_layout">
