@@ -5,8 +5,8 @@ import android.arch.persistence.room.Entity;
 import android.arch.persistence.room.PrimaryKey;
 import android.support.annotation.NonNull;
 
-@Entity(tableName = "heritagelist")
-public class HeritageListTable {
+@Entity(tableName = "heritagelistenglish")
+public class HeritageListTableEnglish {
     @NonNull
     @PrimaryKey(autoGenerate = false)
     private long heritage_id;
@@ -17,18 +17,7 @@ public class HeritageListTable {
     @ColumnInfo()
     private String heritage_sortid;
 
-    public String getHeritage_name_arabic() {
-        return heritage_name_arabic;
-    }
-
-    public void setHeritage_name_arabic(String heritage_name_arabic) {
-        this.heritage_name_arabic = heritage_name_arabic;
-    }
-
-    @ColumnInfo()
-    private String heritage_name_arabic;
-
-    public HeritageListTable(@NonNull long heritage_id, String heritage_name, String heritage_image, String heritage_sortid) {
+    public HeritageListTableEnglish(@NonNull long heritage_id, String heritage_name, String heritage_image, String heritage_sortid) {
         this.heritage_id = heritage_id;
         this.heritage_name = heritage_name;
         this.heritage_image = heritage_image;
@@ -71,12 +60,12 @@ public class HeritageListTable {
     @Override
     public boolean equals(Object obj) {
         if (this == obj) return true;
-        if (!(obj instanceof HeritageListTable)) return false;
+        if (!(obj instanceof HeritageListTableEnglish)) return false;
 
-        HeritageListTable heritageListTable = (HeritageListTable) obj;
+        HeritageListTableEnglish heritageListTableEnglish = (HeritageListTableEnglish) obj;
 
-        if (heritage_id != heritageListTable.heritage_id) return false;
-        return heritage_name != null ? heritageListTable.equals(heritageListTable.heritage_name) : heritageListTable.heritage_name == null;
+        if (heritage_id != heritageListTableEnglish.heritage_id) return false;
+        return heritage_name != null ? heritageListTableEnglish.equals(heritageListTableEnglish.heritage_name) : heritageListTableEnglish.heritage_name == null;
 
     }
 
