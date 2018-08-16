@@ -5,10 +5,6 @@ import android.arch.persistence.room.Entity;
 import android.arch.persistence.room.PrimaryKey;
 import android.support.annotation.NonNull;
 
-/**
- * Created by MoongedePC on 16-Aug-18.
- */
-
 @Entity(tableName = "heritagelistarabic")
 public class HeritageListTableArabic {
     @NonNull
