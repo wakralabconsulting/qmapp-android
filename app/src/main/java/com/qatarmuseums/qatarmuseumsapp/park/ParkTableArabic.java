@@ -15,7 +15,7 @@ public class ParkTableArabic {
     private String image;
     @NonNull
     @PrimaryKey(autoGenerate = false)
-    private String sortId;
+    private long sortId;
     @ColumnInfo()
     private String latitude;
     @ColumnInfo()
@@ -24,7 +24,7 @@ public class ParkTableArabic {
     private String timingInfo;
 
     public ParkTableArabic(String mainTitle, String shortDescription,
-                            String image, @NonNull String sortId,
+                            String image, @NonNull long sortId,
                             String latitude, String longitude, String timingInfo) {
         this.mainTitle = mainTitle;
         this.shortDescription = shortDescription;
@@ -61,11 +61,11 @@ public class ParkTableArabic {
     }
 
     @NonNull
-    public String getSortId() {
+    public long getSortId() {
         return sortId;
     }
 
-    public void setSortId(@NonNull String sortId) {
+    public void setSortId(@NonNull long sortId) {
         this.sortId = sortId;
     }
 

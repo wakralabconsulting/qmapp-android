@@ -36,7 +36,7 @@ public interface ParkTableDao {
     void updateParkEnglish(String mainTitleFromApi, String shortDescriptionFrmAPI,
                                String imageFromApi,String latitudeFromAPI,
                                String longitudeFromApi, String timingInfoFromAPI,
-                               String id);
+                               long id);
 
     @Query("UPDATE parktableArabic SET mainTitle = :mainTitleFromApi," +
             "shortDescription = :shortDescriptionFrmAPI,image = :imageFromApi," +
@@ -45,7 +45,7 @@ public interface ParkTableDao {
     void updateParkArabic(String mainTitleFromApi, String shortDescriptionFrmAPI,
                            String imageFromApi,String latitudeFromAPI,
                            String longitudeFromApi, String timingInfoFromAPI,
-                           String id);
+                           long id);
     /*
      * Insert the object in database
      * @param note, object to be inserted
@@ -53,7 +53,7 @@ public interface ParkTableDao {
     @Insert
     void insertEnglishTable(ParkTableEnglish parkTableEnglish);
     @Insert
-    void insertArabicTable(ParkTableEnglish parkTableEnglish);
+    void insertArabicTable(ParkTableArabic parkTableArabic);
 
     /*
      * updateEnglishTable the object in database
