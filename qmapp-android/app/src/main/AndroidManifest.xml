@@ -21,15 +21,14 @@
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
             android:name=".home.HomeActivity"
+            android:launchMode="singleTask"
             android:screenOrientation="portrait"
-            android:theme="@style/AppTheme.NoTitle"
-            android:launchMode="singleTask"/>
-
+            android:theme="@style/AppTheme.NoTitle" />
         <activity
             android:name=".commonpage.CommonActivity"
+            android:launchMode="singleTask"
             android:screenOrientation="portrait"
-            android:theme="@style/AppTheme.NoActionBar"
-            android:launchMode="singleTask"/>
+            android:theme="@style/AppTheme.NoActionBar" />
         <activity
             android:name=".calendar.CalendarActivity"
             android:screenOrientation="portrait"
@@ -64,7 +63,6 @@
             android:name=".education.EducationFilterActivity"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar" />
-
         <activity
             android:name=".webview.WebviewActivity"
             android:screenOrientation="portrait"
@@ -88,10 +86,14 @@
             android:name=".museum.MuseumActivity"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoTitle" />
-
-        <activity android:name=".museumcollectiondetails.CollectionDetailsActivity"
+        <activity
+            android:name=".museumcollectiondetails.CollectionDetailsActivity"
             android:screenOrientation="portrait"
-            android:theme="@style/AppTheme.NoActionBar"/>
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity
+            android:name=".culturepass.CulturePassActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/AppTheme.NoActionBar" />
     </application>
 
 </manifest>

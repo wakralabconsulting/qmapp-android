@@ -99,4 +99,11 @@
 From humble kitchen wares to elaborate tile panels, ceramics were a vital part of everyday life in the Islamic world.\n\n
 
 They exemplify the external influences and internal creativity that inspired this flourishing of ceramic design over 12 centuries.</string>
+    <string name="culture_pass_description">Qatar Museums Culture Pass gives you discounts, free access and exclusive opportunities across many cultural venues in Qatar and discounts at a wide range of ever expanding list of partners. Best of all, as a member you’re invited to join us in a wide range of exciting creative activities. \n\nGet access by activating your membership today.</string>
+    <string name="benefits">benefits</string>
+    <string name="culture_pass_benefits"><![CDATA[- 15% DISCOUNT AT QM CAFÉ’S ACROSS ALL VENUES  \n\n- 10% DISCOUNT ON ITEMS IN ALL QM GIFT SHOPS (without minimum purchase)  \n\n- 10% DISCOUNT AT IDAM RESTAURANT AT LUNCH TIME  \n\n- RECEIVE OUR MONTHLY NEWSLETTER TO STAY UP TO DATE ON QM AND PARTNER OFFERINGS  \n\n- GET PREMIER ACCESS TO MEMBERS ONLY TALKS &WORKSHOPS  \n\n- GET EXCLUSIVE INVITATIONS TO QM OPEN HOUSE ACCESS TO OUR WORLD CLASS CALL CENTER 8AM TO 8PM DAILY]]></string>
+    <string name="not_a_member_yet"><u>Not A Member Yet?</u></string>
+    <string name="become_a_member">BECOME A MEMBER</string>
+    <string name="already_a_member"><u>Already A Member?</u></string>
+    <string name="log_in">LOG IN</string>
 </resources>
