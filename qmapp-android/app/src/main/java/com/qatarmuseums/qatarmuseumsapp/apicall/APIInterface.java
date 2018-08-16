@@ -37,4 +37,8 @@ public interface APIInterface {
     @GET("{language}/mobile_api/park_service_combined.json")
     Call<ArrayList<ParkList>> getParkDetails(@Path("language") String language);
 
+    @GET("{language}/mobile_api/museum_collection_category.json")
+    Call<ArrayList<CommonModel>> getCollectionList(@Path("language") String language,
+                                                        @Query("museum_id") String museumId);
+
 }

@@ -18,6 +18,8 @@ import android.widget.Toast;
 import com.qatarmuseums.qatarmuseumsapp.R;
 import com.qatarmuseums.qatarmuseumsapp.commonpage.CommonActivity;
 import com.qatarmuseums.qatarmuseumsapp.detailspage.DetailsActivity;
+import com.qatarmuseums.qatarmuseumsapp.park.ParkActivity;
+import com.qatarmuseums.qatarmuseumsapp.utils.Util;
 
 import java.util.List;
 
@@ -31,6 +33,7 @@ public class MuseumHorizontalScrollViewAdapter extends RecyclerView.Adapter<Muse
     private List<MuseumHScrollModel> museumHScrollModelList;
     private Intent navigationIntent;
     String title;
+    Util util;
 
     @NonNull
     @Override
@@ -55,9 +58,25 @@ public class MuseumHorizontalScrollViewAdapter extends RecyclerView.Adapter<Muse
                     navigationIntent.putExtra("MAIN_TITLE", title);
                     navigationIntent.putExtra("COMING_FROM", mContext.getString(R.string.museum_about));
                     mContext.startActivity(navigationIntent);
+                }else if (position == 1) {
+                    util.showComingSoonDialog((MuseumActivity)mContext);
+                }else if (position == 2) {
+                    navigationIntent = new Intent(mContext, CommonActivity.class);
+                    navigationIntent.putExtra(mContext.getString(R.string.toolbar_title_key),
+                            mContext.getString(R.string.sidemenu_exhibition_text));
+                    mContext.startActivity(navigationIntent);
                 }else if (position == 3) {
                     navigationIntent = new Intent(mContext, CommonActivity.class);
                     navigationIntent.putExtra(mContext.getString(R.string.toolbar_title_key), mContext.getString(R.string.museum_collection_text));
+                    navigationIntent.putExtra("ID","63");
+                    mContext.startActivity(navigationIntent);
+                }else if (position == 4) {
+                    navigationIntent = new Intent(mContext, ParkActivity.class);
+                    mContext.startActivity(navigationIntent);
+                }else if (position == 5) {
+                    navigationIntent = new Intent(mContext, CommonActivity.class);
+                    navigationIntent.putExtra(mContext.getString(R.string.toolbar_title_key),
+                            mContext.getString(R.string.sidemenu_dining_text));
                     mContext.startActivity(navigationIntent);
                 }
             }
@@ -98,6 +117,7 @@ public class MuseumHorizontalScrollViewAdapter extends RecyclerView.Adapter<Muse
 
     public MuseumHorizontalScrollViewAdapter(Context context, List<MuseumHScrollModel> museumHScrollModelList, String title) {
         this.mContext = context;
+        util = new Util();
         this.museumHScrollModelList = museumHScrollModelList;
         zoomOutAnimation = AnimationUtils.loadAnimation(mContext.getApplicationContext(),
                 R.anim.zoom_out_more);

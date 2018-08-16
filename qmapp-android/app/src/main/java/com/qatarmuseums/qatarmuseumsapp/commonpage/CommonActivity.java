@@ -61,6 +61,7 @@ public class CommonActivity extends AppCompatActivity {
     int heritageTableRowCount;
     int appLanguage;
     String pageName = null;
+    String id;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -79,6 +80,7 @@ public class CommonActivity extends AppCompatActivity {
         qmPreferences = PreferenceManager.getDefaultSharedPreferences(this);
         appLanguage = qmPreferences.getInt("AppLanguage", 1);
         toolbarTitle = intent.getStringExtra(getString(R.string.toolbar_title_key));
+        id = intent.getStringExtra("ID");
         toolbar_title.setText(toolbarTitle);
         recyclerView = (RecyclerView) findViewById(R.id.common_recycler_view);
 
@@ -145,9 +147,9 @@ public class CommonActivity extends AppCompatActivity {
 
 
         } else if (toolbarTitle.equals(getString(R.string.sidemenu_dining_text))) {
-                getCommonListAPIDataFromAPI("getDiningList.json");
+            getCommonListAPIDataFromAPI("getDiningList.json");
         } else if (toolbarTitle.equals(getString(R.string.museum_collection_text)))
-            prepareCollectionData();
+            getMuseumCollectionListFromAPI();
     }
 
     private void prepareExhibitionData() {
@@ -198,6 +200,52 @@ public class CommonActivity extends AppCompatActivity {
         }
 
 
+    }
+
+
+    private void getMuseumCollectionListFromAPI() {
+        progressBar.setVisibility(View.VISIBLE);
+        String language;
+        if (appLanguage == 1) {
+            language = "en";
+        } else {
+            language = "ar";
+        }
+        APIInterface apiService =
+                APIClient.getClient().create(APIInterface.class);
+        Call<ArrayList<CommonModel>> call = apiService.getCollectionList(language, id);
+        call.enqueue(new Callback<ArrayList<CommonModel>>() {
+            @Override
+            public void onResponse(Call<ArrayList<CommonModel>> call, Response<ArrayList<CommonModel>> response) {
+                if (response.isSuccessful()) {
+                    if (response.body() != null) {
+                        recyclerView.setVisibility(View.VISIBLE);
+                        models.addAll(response.body());
+                        mAdapter.notifyDataSetChanged();
+                    } else {
+                        recyclerView.setVisibility(View.GONE);
+                        noResultFoundLayout.setVisibility(View.VISIBLE);
+                    }
+                } else {
+                    recyclerView.setVisibility(View.GONE);
+                    noResultFoundLayout.setVisibility(View.VISIBLE);
+                }
+                progressBar.setVisibility(View.GONE);
+            }
+
+            @Override
+            public void onFailure(Call<ArrayList<CommonModel>> call, Throwable t) {
+                if (t instanceof IOException) {
+                    util.showToast(getResources().getString(R.string.check_network), getApplicationContext());
+
+                } else {
+                    // error due to mapping issues
+                }
+                recyclerView.setVisibility(View.GONE);
+                noResultFoundLayout.setVisibility(View.VISIBLE);
+                progressBar.setVisibility(View.GONE);
+            }
+        });
     }
 
     private void getCommonListAPIDataFromAPI(String name) {
@@ -258,7 +306,7 @@ public class CommonActivity extends AppCompatActivity {
                 null,
                 null, null,
                 "http://www.qm.org.qa/sites/default/files/styles/content_image/public/images/body/idam-pierremonetta_mg_6372_1.jpg?itok=bKArHUGQ",
-                false,false);
+                false, false);
         models.add(model);
         model = new CommonModel("2", "GLASS COLLECTION",
                 null, null,
