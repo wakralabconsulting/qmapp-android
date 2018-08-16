@@ -115,13 +115,16 @@ public class DetailsActivity extends AppCompatActivity implements IPullZoom {
         if (comingFrom.equals(getString(R.string.sidemenu_exhibition_text))) {
             getHeritageOrExhibitionDetailsFromAPI(id, language, "Exhibition_detail_Page.json");
         } else if (comingFrom.equals(getString(R.string.sidemenu_heritage_text))) {
-            getHeritageOrExhibitionDetailsFromAPI(id, language, "heritage_detail_Page.json");
+            if (util.isNetworkAvailable(DetailsActivity.this)){
+                getHeritageOrExhibitionDetailsFromAPI(id, language, "heritage_detail_Page.json");
+            }else{
+            }
+
         } else if (comingFrom.equals(getString(R.string.sidemenu_public_arts_text))) {
             if (util.isNetworkAvailable(DetailsActivity.this))
                 getPublicArtDetailsFromAPI(id, language);
             else
                 getCommonListAPIDataFromDatabase(id, language);
-            getPublicArtDetailsFromAPI(id, language);
 
         } else if (comingFrom.equals(getString(R.string.museum_about))) {
             timingTitle.setText(R.string.museum_timings);

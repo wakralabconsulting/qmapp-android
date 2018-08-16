@@ -23,7 +23,8 @@ import com.qatarmuseums.qatarmuseumsapp.QMDatabase;
 import com.qatarmuseums.qatarmuseumsapp.R;
 import com.qatarmuseums.qatarmuseumsapp.apicall.APIClient;
 import com.qatarmuseums.qatarmuseumsapp.apicall.APIInterface;
-import com.qatarmuseums.qatarmuseumsapp.commonpagedatabase.HeritageListTable;
+import com.qatarmuseums.qatarmuseumsapp.commonpagedatabase.HeritageListTableArabic;
+import com.qatarmuseums.qatarmuseumsapp.commonpagedatabase.HeritageListTableEnglish;
 import com.qatarmuseums.qatarmuseumsapp.commonpagedatabase.PublicArtsTableArabic;
 import com.qatarmuseums.qatarmuseumsapp.commonpagedatabase.PublicArtsTableEnglish;
 import com.qatarmuseums.qatarmuseumsapp.detailspage.DetailsActivity;
@@ -55,7 +56,8 @@ public class CommonActivity extends AppCompatActivity {
     SharedPreferences qmPreferences;
     Util util;
     QMDatabase qmDatabase;
-    HeritageListTable heritageListTable;
+    HeritageListTableEnglish heritageListTableEnglish;
+    HeritageListTableArabic heritageListTableArabic;
     PublicArtsTableEnglish publicArtsTableEnglish;
     PublicArtsTableArabic publicArtsTableArabic;
     RelativeLayout noResultFoundLayout;
@@ -76,7 +78,6 @@ public class CommonActivity extends AppCompatActivity {
         util = new Util();
         qmDatabase = QMDatabase.getInstance(CommonActivity.this);
         progressBar = (ProgressBar) findViewById(R.id.progressBarLoading);
-//        progressBar.setVisibility(View.VISIBLE);
         noResultFoundLayout = (RelativeLayout) findViewById(R.id.no_result_layout);
         qmPreferences = PreferenceManager.getDefaultSharedPreferences(this);
         appLanguage = qmPreferences.getInt("AppLanguage", 1);
@@ -147,7 +148,7 @@ public class CommonActivity extends AppCompatActivity {
 
 
         } else if (toolbarTitle.equals(getString(R.string.sidemenu_dining_text))) {
-                getCommonListAPIDataFromAPI("getDiningList.json");
+            getCommonListAPIDataFromAPI("getDiningList.json");
         } else if (toolbarTitle.equals(getString(R.string.museum_collection_text)))
             prepareCollectionData();
     }
@@ -194,7 +195,12 @@ public class CommonActivity extends AppCompatActivity {
     public void getCommonListDataFromDatabase(String apiParts) {
 
         if (apiParts.equals("Heritage_List_Page.json")) {
-            new RetriveData(CommonActivity.this, appLanguage).execute();
+            if (appLanguage == 1) {
+                new RetriveDataEnglish(CommonActivity.this, appLanguage).execute();
+            } else {
+                new RetriveDataArabic(CommonActivity.this, appLanguage).execute();
+            }
+
         } else if (apiParts.equals("Public_Arts_List_Page.json")) {
             if (appLanguage == 1) {
                 new RetriveEnglishPublicArtsData(CommonActivity.this, appLanguage).execute();
@@ -228,7 +234,7 @@ public class CommonActivity extends AppCompatActivity {
                         models.addAll(response.body());
                         mAdapter.notifyDataSetChanged();
                         if (pageName.equals("Heritage_List_Page.json")) {
-                            new RowCount(CommonActivity.this, appLanguage).execute();
+                            new RowCount(CommonActivity.this, language).execute();
                         } else if (pageName.equals("Public_Arts_List_Page.json")) {
                             new PublicArtsRowCount(CommonActivity.this, language).execute();
                         }
@@ -265,7 +271,7 @@ public class CommonActivity extends AppCompatActivity {
                 null,
                 null, null,
                 "http://www.qm.org.qa/sites/default/files/styles/content_image/public/images/body/idam-pierremonetta_mg_6372_1.jpg?itok=bKArHUGQ",
-                false,false);
+                false, false);
         models.add(model);
         model = new CommonModel("2", "GLASS COLLECTION",
                 null, null,
@@ -435,10 +441,7 @@ public class CommonActivity extends AppCompatActivity {
 
         @Override
         protected void onPostExecute(Void aVoid) {
-            //Toast.makeText(CommonActivity.this, "Databse updated", Toast.LENGTH_SHORT).show();
         }
-
-
     }
 
     public class InsertPublicArtsDataToDataBase extends AsyncTask<Void, Void, Boolean> {
@@ -566,16 +569,21 @@ public class CommonActivity extends AppCompatActivity {
 
     public class RowCount extends AsyncTask<Void, Void, Integer> {
         private WeakReference<CommonActivity> activityReference;
-        int language;
+        String language;
 
-        RowCount(CommonActivity context, int apiLanguage) {
+        RowCount(CommonActivity context, String apiLanguage) {
             activityReference = new WeakReference<>(context);
             language = apiLanguage;
         }
 
         @Override
         protected Integer doInBackground(Void... voids) {
-            return activityReference.get().qmDatabase.getHeritageListTableDao().getNumberOfRows();
+
+            if (language.equals("en"))
+                return activityReference.get().qmDatabase.getHeritageListTableDao().getNumberOfRowsEnglish();
+            else
+                return activityReference.get().qmDatabase.getHeritageListTableDao().getNumberOfRowsArabic();
+
         }
 
         @Override
@@ -583,11 +591,11 @@ public class CommonActivity extends AppCompatActivity {
             heritageTableRowCount = integer;
             if (heritageTableRowCount > 0) {
                 //updateEnglishTable or add row to database
-                new CheckDBRowExist(CommonActivity.this, appLanguage).execute();
+                new CheckDBRowExist(CommonActivity.this, language).execute();
 
             } else {
                 //create databse
-                new InsertDataToDataBase(CommonActivity.this, heritageListTable).execute();
+                new InsertDataToDataBase(CommonActivity.this, heritageListTableEnglish, heritageListTableArabic, language).execute();
 
             }
         }
@@ -596,22 +604,37 @@ public class CommonActivity extends AppCompatActivity {
 
     public class InsertDataToDataBase extends AsyncTask<Void, Void, Boolean> {
         private WeakReference<CommonActivity> activityReference;
-        private HeritageListTable heritageListTable;
+        private HeritageListTableEnglish heritageListTableEnglish;
+        private HeritageListTableArabic heritageListTableArabic;
+        String language;
 
-        InsertDataToDataBase(CommonActivity context, HeritageListTable heritageListTable) {
+        InsertDataToDataBase(CommonActivity context, HeritageListTableEnglish heritageListTableEnglish,
+                             HeritageListTableArabic heritageListTableArabic, String appLanguage) {
             activityReference = new WeakReference<>(context);
-            this.heritageListTable = heritageListTable;
+            this.heritageListTableEnglish = heritageListTableEnglish;
+            this.heritageListTableArabic = heritageListTableArabic;
+            this.language = appLanguage;
         }
 
         @Override
         protected Boolean doInBackground(Void... voids) {
             if (models != null) {
-                for (int i = 0; i < models.size(); i++) {
-                    heritageListTable = new HeritageListTable(Long.parseLong(models.get(i).getId()),
-                            models.get(i).getName(),
-                            models.get(i).getImage(),
-                            models.get(i).getSortId());
-                    activityReference.get().qmDatabase.getHeritageListTableDao().insert(heritageListTable);
+                if (language.equals("en")) {
+                    for (int i = 0; i < models.size(); i++) {
+                        heritageListTableEnglish = new HeritageListTableEnglish(Long.parseLong(models.get(i).getId()),
+                                models.get(i).getName(),
+                                models.get(i).getImage(),
+                                models.get(i).getSortId());
+                        activityReference.get().qmDatabase.getHeritageListTableDao().insert(heritageListTableEnglish);
+                    }
+                } else {
+                    for (int i = 0; i < models.size(); i++) {
+                        heritageListTableArabic = new HeritageListTableArabic(Long.parseLong(models.get(i).getId()),
+                                models.get(i).getName(),
+                                models.get(i).getImage(),
+                                models.get(i).getSortId());
+                        activityReference.get().qmDatabase.getHeritageListTableDao().insert(heritageListTableArabic);
+                    }
                 }
             }
             return true;
@@ -626,10 +649,10 @@ public class CommonActivity extends AppCompatActivity {
 
     public class CheckDBRowExist extends AsyncTask<Void, Void, Void> {
         private WeakReference<CommonActivity> activityReference;
-        private HeritageListTable heritageListTable;
-        int language;
+        private HeritageListTableEnglish heritageListTableEnglish;
+        String language;
 
-        CheckDBRowExist(CommonActivity context, int apiLanguage) {
+        CheckDBRowExist(CommonActivity context, String apiLanguage) {
             activityReference = new WeakReference<>(context);
             language = apiLanguage;
         }
@@ -637,21 +660,41 @@ public class CommonActivity extends AppCompatActivity {
         @Override
         protected Void doInBackground(Void... voids) {
             if (models.size() > 0) {
-                for (int i = 0; i < models.size(); i++) {
-                    int n = activityReference.get().qmDatabase.getHeritageListTableDao().checkIdExist(
-                            Integer.parseInt(models.get(i).getId()));
-                    if (n > 0) {
-                        //updateEnglishTable same id
-                        new UpdateHeritagePageTable(CommonActivity.this, appLanguage, i).execute();
+                if (language.equals("en")) {
+                    for (int i = 0; i < models.size(); i++) {
+                        int n = activityReference.get().qmDatabase.getHeritageListTableDao().checkEnglishIdExist(
+                                Integer.parseInt(models.get(i).getId()));
+                        if (n > 0) {
+                            //updateEnglishTable same id
+                            new UpdateHeritagePageTable(CommonActivity.this, appLanguage, i).execute();
 
-                    } else {
-                        //create row with corresponding id
-                        heritageListTable = new HeritageListTable(Long.parseLong(models.get(i).getId()),
-                                models.get(i).getName(),
-                                models.get(i).getImage(),
-                                models.get(i).getSortId());
-                        activityReference.get().qmDatabase.getHeritageListTableDao().insert(heritageListTable);
+                        } else {
+                            //create row with corresponding id
+                            heritageListTableEnglish = new HeritageListTableEnglish(Long.parseLong(models.get(i).getId()),
+                                    models.get(i).getName(),
+                                    models.get(i).getImage(),
+                                    models.get(i).getSortId());
+                            activityReference.get().qmDatabase.getHeritageListTableDao().insert(heritageListTableEnglish);
 
+                        }
+                    }
+                } else {
+                    for (int i = 0; i < models.size(); i++) {
+                        int n = activityReference.get().qmDatabase.getHeritageListTableDao().checkArabicIdExist(
+                                Integer.parseInt(models.get(i).getId()));
+                        if (n > 0) {
+                            //updateEnglishTable same id
+                            new UpdateHeritagePageTable(CommonActivity.this, appLanguage, i).execute();
+
+                        } else {
+                            //create row with corresponding id
+                            heritageListTableArabic = new HeritageListTableArabic(Long.parseLong(models.get(i).getId()),
+                                    models.get(i).getName(),
+                                    models.get(i).getImage(),
+                                    models.get(i).getSortId());
+                            activityReference.get().qmDatabase.getHeritageListTableDao().insert(heritageListTableArabic);
+
+                        }
                     }
                 }
             }
@@ -691,17 +734,16 @@ public class CommonActivity extends AppCompatActivity {
 
         @Override
         protected void onPostExecute(Void aVoid) {
-            //Toast.makeText(CommonActivity.this, "Databse updated", Toast.LENGTH_SHORT).show();
         }
 
 
     }
 
-    public class RetriveData extends AsyncTask<Void, Void, List<HeritageListTable>> {
+    public class RetriveDataEnglish extends AsyncTask<Void, Void, List<HeritageListTableEnglish>> {
         private WeakReference<CommonActivity> activityReference;
         int language;
 
-        RetriveData(CommonActivity context, int appLanguage) {
+        RetriveDataEnglish(CommonActivity context, int appLanguage) {
             activityReference = new WeakReference<>(context);
             language = appLanguage;
         }
@@ -712,36 +754,59 @@ public class CommonActivity extends AppCompatActivity {
         }
 
         @Override
-        protected List<HeritageListTable> doInBackground(Void... voids) {
-            return activityReference.get().qmDatabase.getHeritageListTableDao().getAll();
+        protected List<HeritageListTableEnglish> doInBackground(Void... voids) {
+            return activityReference.get().qmDatabase.getHeritageListTableDao().getAllEnglish();
         }
 
         @Override
-        protected void onPostExecute(List<HeritageListTable> heritageListTables) {
+        protected void onPostExecute(List<HeritageListTableEnglish> heritageListTableEnglishes) {
             models.clear();
-            if (language == 1) {
-                for (int i = 0; i < heritageListTables.size(); i++) {
-                    CommonModel commonModel = new CommonModel(String.valueOf(heritageListTables.get(i).getHeritage_id()),
-                            heritageListTables.get(i).getHeritage_name(),
-                            "", "", "", heritageListTables.get(i).getHeritage_image(),
-                            false, false);
-                    models.add(i, commonModel);
-
-                }
-
-            } else {
-                for (int i = 0; i < heritageListTables.size(); i++) {
-                    CommonModel commonModel = new CommonModel(String.valueOf(heritageListTables.get(i).getHeritage_id()),
-                            heritageListTables.get(i).getHeritage_name_arabic(),
-                            "", "", "", heritageListTables.get(i).getHeritage_image(),
-                            false, false);
-                    models.add(i, commonModel);
-
-                }
+            for (int i = 0; i < heritageListTableEnglishes.size(); i++) {
+                CommonModel commonModel = new CommonModel(String.valueOf(heritageListTableEnglishes.get(i).getHeritage_id()),
+                        heritageListTableEnglishes.get(i).getHeritage_name(),
+                        "", "", "", heritageListTableEnglishes.get(i).getHeritage_image(),
+                        false, false);
+                models.add(i, commonModel);
 
             }
             mAdapter.notifyDataSetChanged();
             progressBar.setVisibility(View.GONE);
+        }
+    }
+
+    public class RetriveDataArabic extends AsyncTask<Void, Void, List<HeritageListTableArabic>> {
+
+        private WeakReference<CommonActivity> activityReference;
+        int language;
+
+        RetriveDataArabic(CommonActivity context, int appLanguage) {
+            activityReference = new WeakReference<>(context);
+            language = appLanguage;
+        }
+
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+        }
+
+        @Override
+        protected void onPostExecute(List<HeritageListTableArabic> heritageListTableArabics) {
+            models.clear();
+            for (int i = 0; i < heritageListTableArabics.size(); i++) {
+                CommonModel commonModel = new CommonModel(String.valueOf(heritageListTableArabics.get(i).getHeritage_id()),
+                        heritageListTableArabics.get(i).getHeritage_name(),
+                        "", "", "", heritageListTableArabics.get(i).getHeritage_image(),
+                        false, false);
+                models.add(i, commonModel);
+
+            }
+            mAdapter.notifyDataSetChanged();
+            progressBar.setVisibility(View.GONE);
+        }
+
+        @Override
+        protected List<HeritageListTableArabic> doInBackground(Void... voids) {
+            return activityReference.get().qmDatabase.getHeritageListTableDao().getAllArabic();
         }
     }
 
