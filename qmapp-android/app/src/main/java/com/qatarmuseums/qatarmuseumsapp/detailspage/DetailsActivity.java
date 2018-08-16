@@ -4,6 +4,7 @@ import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.design.widget.AppBarLayout;
@@ -18,9 +19,12 @@ import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
+import com.qatarmuseums.qatarmuseumsapp.QMDatabase;
 import com.qatarmuseums.qatarmuseumsapp.R;
 import com.qatarmuseums.qatarmuseumsapp.apicall.APIClient;
 import com.qatarmuseums.qatarmuseumsapp.apicall.APIInterface;
+import com.qatarmuseums.qatarmuseumsapp.commonpagedatabase.PublicArtsTableArabic;
+import com.qatarmuseums.qatarmuseumsapp.commonpagedatabase.PublicArtsTableEnglish;
 import com.qatarmuseums.qatarmuseumsapp.heritage.HeritageDetailModel;
 import com.qatarmuseums.qatarmuseumsapp.home.GlideApp;
 import com.qatarmuseums.qatarmuseumsapp.publicart.PublicArtModel;
@@ -30,7 +34,9 @@ import com.qatarmuseums.qatarmuseumsapp.utils.PullToZoomCoordinatorLayout;
 import com.qatarmuseums.qatarmuseumsapp.utils.Util;
 
 import java.io.IOException;
+import java.lang.ref.WeakReference;
 import java.util.ArrayList;
+import java.util.List;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -55,10 +61,16 @@ public class DetailsActivity extends AppCompatActivity implements IPullZoom {
     private String latitude, longitude, id;
     Intent intent;
     int language;
+    QMDatabase qmDatabase;
+    PublicArtsTableEnglish publicArtsTableEnglish;
+    PublicArtsTableArabic publicArtsTableArabic;
+    int publicArtsTableRowCount;
     SharedPreferences qmPreferences;
     ProgressBar progressBar;
     LinearLayout commonContentLayout;
     TextView noResultFoundTxt;
+    private ArrayList<PublicArtModel> models = new ArrayList<>();
+    ArrayList<PublicArtModel> publicArtModel = new ArrayList<>();
 
     @SuppressLint("ClickableViewAccessibility")
     @Override
@@ -74,6 +86,7 @@ public class DetailsActivity extends AppCompatActivity implements IPullZoom {
         comingFrom = intent.getStringExtra("COMING_FROM");
         id = intent.getStringExtra("ID");
         isFavourite = intent.getBooleanExtra("IS_FAVOURITE", false);
+        qmDatabase = QMDatabase.getInstance(DetailsActivity.this);
         toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         toolbarClose = (ImageView) findViewById(R.id.toolbar_close);
@@ -94,8 +107,6 @@ public class DetailsActivity extends AppCompatActivity implements IPullZoom {
         secondTitleLayout = (LinearLayout) findViewById(R.id.second_title_layout);
         timingLayout = (LinearLayout) findViewById(R.id.timing_layout);
         contactLayout = (LinearLayout) findViewById(R.id.contact_layout);
-        qmPreferences = PreferenceManager.getDefaultSharedPreferences(this);
-        appLanguage = qmPreferences.getInt("AppLanguage", 1);
         commonContentLayout = (LinearLayout) findViewById(R.id.common_content_layout);
         noResultFoundTxt = (TextView) findViewById(R.id.noResultFoundTxt);
 
@@ -111,7 +122,10 @@ public class DetailsActivity extends AppCompatActivity implements IPullZoom {
             getHeritageDetailsFromAPI(id, language);
 
         } else if (comingFrom.equals(getString(R.string.sidemenu_public_arts_text))) {
-            getCommonListAPIDataFromAPI(id, language);
+            if (util.isNetworkAvailable(DetailsActivity.this))
+                getCommonListAPIDataFromAPI(id, language);
+            else
+                getCommonListAPIDataFromDatabase(id, language);
         } else if (comingFrom.equals(getString(R.string.museum_about))) {
             timingTitle.setText(R.string.museum_timings);
             headerImage = "http://www.qm.org.qa/sites/default/files/styles/gallery_small/public/images/gallery/mia_architecture_071215_4844.jpg";
@@ -196,6 +210,14 @@ public class DetailsActivity extends AppCompatActivity implements IPullZoom {
                 return false;
             }
         });
+    }
+
+    private void getCommonListAPIDataFromDatabase(String id, int appLanguage) {
+        if (appLanguage == 1) {
+            new RetriveEnglishPublicArtsData(DetailsActivity.this, appLanguage).execute();
+        } else {
+            new RetriveArabicPublicArtsData(DetailsActivity.this, appLanguage).execute();
+        }
     }
 
     private String convertDegreetoDecimalMeasure(String degreeValue) {
@@ -339,7 +361,7 @@ public class DetailsActivity extends AppCompatActivity implements IPullZoom {
 
     private void getCommonListAPIDataFromAPI(String id, int appLanguage) {
         progressBar.setVisibility(View.VISIBLE);
-        String language;
+        final String language;
         if (appLanguage == 1) {
             language = "en";
         } else {
@@ -355,14 +377,13 @@ public class DetailsActivity extends AppCompatActivity implements IPullZoom {
                 if (response.isSuccessful()) {
                     if (response.body() != null) {
                         commonContentLayout.setVisibility(View.VISIBLE);
-                        ArrayList<PublicArtModel> publicArtModel = response.body();
-
-
+                        publicArtModel = response.body();
                         loadData(null,
                                 publicArtModel.get(0).getShortDescription(),
                                 publicArtModel.get(0).getLongDescription(),
                                 null, null, null,
                                 "Katara Cultural Village", null, latitude, longitude);
+                        new PublicArtsRowCount(DetailsActivity.this, language).execute();
                     } else {
                         commonContentLayout.setVisibility(View.GONE);
                         noResultFoundTxt.setVisibility(View.VISIBLE);
@@ -387,5 +408,212 @@ public class DetailsActivity extends AppCompatActivity implements IPullZoom {
                 progressBar.setVisibility(View.GONE);
             }
         });
+    }
+
+    public class PublicArtsRowCount extends AsyncTask<Void, Void, Integer> {
+
+        private WeakReference<DetailsActivity> activityReference;
+        String language;
+
+
+        PublicArtsRowCount(DetailsActivity context, String apiLanguage) {
+            activityReference = new WeakReference<>(context);
+            language = apiLanguage;
+        }
+
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+        }
+
+        @Override
+        protected void onPostExecute(Integer integer) {
+            publicArtsTableRowCount = integer;
+            if (publicArtsTableRowCount > 0) {
+                //updateEnglishTable or add row to database
+                new CheckPublicArtsDetailDBRowExist(DetailsActivity.this, language).execute();
+            }
+        }
+
+        @Override
+        protected Integer doInBackground(Void... voids) {
+            if (language.equals("en")) {
+                return activityReference.get().qmDatabase.getPublicArtsTableDao().getNumberOfRowsEnglish();
+            } else {
+                return activityReference.get().qmDatabase.getPublicArtsTableDao().getNumberOfRowsArabic();
+            }
+
+
+        }
+    }
+
+    public class CheckPublicArtsDetailDBRowExist extends AsyncTask<Void, Void, Void> {
+
+        private WeakReference<DetailsActivity> activityReference;
+        private PublicArtsTableEnglish publicArtsTableEnglish;
+        private PublicArtsTableArabic publicArtsTableArabic;
+        String language;
+
+        CheckPublicArtsDetailDBRowExist(DetailsActivity context, String apiLanguage) {
+            activityReference = new WeakReference<>(context);
+            language = apiLanguage;
+        }
+
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+        }
+
+        @Override
+        protected void onPostExecute(Void aVoid) {
+            super.onPostExecute(aVoid);
+        }
+
+        @Override
+        protected Void doInBackground(Void... voids) {
+            if (publicArtModel.size() > 0) {
+                if (language.equals("en")) {
+                    for (int i = 0; i < publicArtModel.size(); i++) {
+                        int n = activityReference.get().qmDatabase.getPublicArtsTableDao().checkEnglishIdExist(
+                                Integer.parseInt(publicArtModel.get(i).getId()));
+                        if (n > 0) {
+                            //updateEnglishTable same id
+                            new UpdatePublicArtsDetailTable(DetailsActivity.this, language, i).execute();
+
+                        }
+                    }
+                } else {
+                    for (int i = 0; i < publicArtModel.size(); i++) {
+                        int n = activityReference.get().qmDatabase.getPublicArtsTableDao().checkArabicIdExist(
+                                Integer.parseInt(publicArtModel.get(i).getId()));
+                        if (n > 0) {
+                            //updateEnglishTable same id
+                            new UpdatePublicArtsDetailTable(DetailsActivity.this, language, i).execute();
+
+                        }
+                    }
+                }
+
+            }
+
+            return null;
+        }
+    }
+
+    public class UpdatePublicArtsDetailTable extends AsyncTask<Void, Void, Void> {
+
+        private WeakReference<DetailsActivity> activityReference;
+        String language;
+        int position;
+
+        UpdatePublicArtsDetailTable(DetailsActivity context, String apiLanguage, int p) {
+            activityReference = new WeakReference<>(context);
+            language = apiLanguage;
+            position = p;
+        }
+
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+        }
+
+        @Override
+        protected void onPostExecute(Void aVoid) {
+            super.onPostExecute(aVoid);
+        }
+
+        @Override
+        protected Void doInBackground(Void... voids) {
+            if (language.equals("en")) {
+                // updateEnglishTable table with english name
+                activityReference.get().qmDatabase.getPublicArtsTableDao().updatePublicArtsDetailEnglish(
+                        publicArtModel.get(position).getName(),
+                        latitude, longitude, publicArtModel.get(position).getShortDescription()
+                        , publicArtModel.get(position).getLongDescription(), publicArtModel.get(position).getId()
+                );
+
+            } else {
+                // updateArabicTable table with arabic name
+                activityReference.get().qmDatabase.getPublicArtsTableDao().updatePublicArtsDetailArabic(
+                        publicArtModel.get(position).getName(),
+                        latitude, longitude, publicArtModel.get(position).getShortDescription()
+                        , publicArtModel.get(position).getLongDescription(), publicArtModel.get(position).getId()
+                );
+            }
+            return null;
+        }
+    }
+
+
+    public class RetriveEnglishPublicArtsData extends AsyncTask<Void, Void, List<PublicArtsTableEnglish>> {
+
+        private WeakReference<DetailsActivity> activityReference;
+        int language;
+
+        RetriveEnglishPublicArtsData(DetailsActivity context, int appLanguage) {
+            activityReference = new WeakReference<>(context);
+            language = appLanguage;
+        }
+
+        @Override
+        protected void onPreExecute() {
+            progressBar.setVisibility(View.VISIBLE);
+        }
+
+        @Override
+        protected void onPostExecute(List<PublicArtsTableEnglish> publicArtsTableEnglish) {
+            for (int i = 0; i < publicArtsTableEnglish.size(); i++) {
+
+                loadData(null,
+                        publicArtsTableEnglish.get(i).getShort_description(),
+                        publicArtsTableEnglish.get(i).getDescription(),
+                        null, null, null,
+                        "Katara Cultural Village", null,
+                        publicArtsTableEnglish.get(i).getLatitude(),
+                        publicArtsTableEnglish.get(i).getLongitude());
+            }
+            progressBar.setVisibility(View.GONE);
+        }
+
+        @Override
+        protected List<PublicArtsTableEnglish> doInBackground(Void... voids) {
+            return activityReference.get().qmDatabase.getPublicArtsTableDao().getAllEnglish();
+
+        }
+    }
+
+    public class RetriveArabicPublicArtsData extends AsyncTask<Void, Void, List<PublicArtsTableArabic>> {
+
+        private WeakReference<DetailsActivity> activityReference;
+        int language;
+
+        RetriveArabicPublicArtsData(DetailsActivity context, int appLanguage) {
+            activityReference = new WeakReference<>(context);
+            language = appLanguage;
+        }
+
+        @Override
+        protected void onPreExecute() {
+            progressBar.setVisibility(View.VISIBLE);
+        }
+
+        @Override
+        protected void onPostExecute(List<PublicArtsTableArabic> publicArtsTableArabic) {
+            for (int i = 0; i < publicArtsTableArabic.size(); i++) {
+                loadData(null,
+                        publicArtsTableArabic.get(i).getShort_description(),
+                        publicArtsTableArabic.get(i).getDescription(),
+                        null, null, null,
+                        "Katara Cultural Village", null,
+                        publicArtsTableArabic.get(i).getLatitude(),
+                        publicArtsTableArabic.get(i).getLongitude());
+            }
+            progressBar.setVisibility(View.GONE);
+        }
+
+        @Override
+        protected List<PublicArtsTableArabic> doInBackground(Void... voids) {
+            return activityReference.get().qmDatabase.getPublicArtsTableDao().getAllArabic();
+        }
     }
 }
