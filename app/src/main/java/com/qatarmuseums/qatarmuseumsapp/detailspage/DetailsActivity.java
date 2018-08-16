@@ -269,6 +269,7 @@ public class DetailsActivity extends AppCompatActivity implements IPullZoom {
                          String secondTitle, String secondTitleDescription, String openingTime,
                          String closingTime, String locationInfo, String contactInfo, String latitudefromApi,
                          String longitudefromApi) {
+        commonContentLayout.setVisibility(View.VISIBLE);
         this.title.setText(mainTitle);
         latitude = intent.getStringExtra("LATITUDE");
         longitude = intent.getStringExtra("LONGITUDE");
