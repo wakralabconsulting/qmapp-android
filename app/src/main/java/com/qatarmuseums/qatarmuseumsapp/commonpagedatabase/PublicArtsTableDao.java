@@ -12,49 +12,79 @@ import java.util.List;
 @Dao
 public interface PublicArtsTableDao {
 
-    @Query("SELECT * FROM publicartstable")
-    List<PublicArtsTable> getAll();
+    @Query("SELECT * FROM publicartstableEnglish")
+    List<PublicArtsTableEnglish> getAllEnglish();
 
-    @Query("SELECT COUNT(public_arts_id) FROM publicartstable")
-    int getNumberOfRows();
+    @Query("SELECT * FROM publicartstableArabic")
+    List<PublicArtsTableArabic> getAllArabic();
 
-    @Query("SELECT COUNT(public_arts_id) FROM publicartstable WHERE public_arts_id = :idFromAPI")
-    int checkIdExist(int idFromAPI);
+    @Query("SELECT COUNT(public_arts_id) FROM publicartstableEnglish")
+    int getNumberOfRowsEnglish();
 
-    @Query("UPDATE publicartstable SET public_arts_name = :nameFromApi," + "public_arts_image = :imageFromApi," +
+    @Query("SELECT COUNT(public_arts_id) FROM publicartstableArabic")
+    int getNumberOfRowsArabic();
+
+    @Query("SELECT COUNT(public_arts_id) FROM publicartstableEnglish WHERE public_arts_id = :idFromAPI")
+    int checkEnglishIdExist(int idFromAPI);
+
+    @Query("SELECT COUNT(public_arts_id) FROM publicartstableArabic WHERE public_arts_id = :idFromAPI")
+    int checkArabicIdExist(int idFromAPI);
+
+    @Query("UPDATE publicartstableEnglish SET public_arts_name = :nameFromApi," +
             "latitude=:latitudeFromApi," + "longitude=:longitudeFromApi WHERE public_arts_id=:id")
-    void updatePublicArtsEnglish(String nameFromApi, String imageFromApi, String latitudeFromApi, String longitudeFromApi, String id);
+    void updatePublicArtsEnglish(String nameFromApi, String latitudeFromApi, String longitudeFromApi, String id);
 
-    @Query("UPDATE publicartstable SET public_arts_name = :nameFromApi," + "public_arts_image = :imageFromApi," +
+    @Query("UPDATE publicartstableEnglish SET public_arts_name = :nameFromApi," +
+            "latitude=:latitudeFromApi," + "longitude=:longitudeFromApi," + "description=:descriptionFromApi," +
+            "short_description=:shortDescriptionFromApi  WHERE public_arts_id=:id")
+    void updatePublicArtsDetailEnglish(String nameFromApi, String latitudeFromApi,
+                                       String longitudeFromApi, String descriptionFromApi, String shortDescriptionFromApi,
+                                       String id);
+
+
+    @Query("UPDATE publicartstableArabic SET public_arts_name = :nameFromApi," +
             "latitude=:latitudeFromApi," + "longitude=:longitudeFromApi WHERE public_arts_id=:id")
-    void updatePublicArtsArabic(String nameFromApi, String imageFromApi, String latitudeFromApi, String longitudeFromApi, String id);
+    void updatePublicArtsArabic(String nameFromApi, String latitudeFromApi, String longitudeFromApi, String id);
+
+    @Query("UPDATE publicartstableArabic SET public_arts_name = :nameFromApi," +
+            "latitude=:latitudeFromApi," + "longitude=:longitudeFromApi," + "description=:descriptionFromApi," +
+            "short_description=:shortDescriptionFromApi  WHERE public_arts_id=:id")
+    void updatePublicArtsDetailArabic(String nameFromApi, String latitudeFromApi,
+                                      String longitudeFromApi, String descriptionFromApi, String shortDescriptionFromApi,
+                                      String id);
 
     /*
  * Insert the object in database
  * @param note, object to be inserted
  */
     @Insert
-    void insert(PublicArtsTable publicArtsTable);
+    void insert(PublicArtsTableEnglish publicArtsTableEnglish);
+
+    @Insert
+    void insert(PublicArtsTableArabic publicArtsTableArabic);
 
     /*
      * updateEnglishTable the object in database
      * @param note, object to be updated
      */
     @Update
-    void update(PublicArtsTable publicArtsTable);
+    void update(PublicArtsTableEnglish publicArtsTableEnglish);
+
 
     /*
      * deleteEnglishTable the object from database
      * @param note, object to be deleted
      */
     @Delete
-    void delete(PublicArtsTable publicArtsTable);
+    void delete(PublicArtsTableEnglish publicArtsTableEnglish);
+
 
     /*
      * deleteEnglishTable list of objects from database
      * @param note, array of objects to be deleted
      */
     @Delete
-    void delete(PublicArtsTable... publicArtsTable);      // Note... is varargs, here note is an array
+    void delete(PublicArtsTableEnglish... publicArtsTableEnglish);      // Note... is varargs, here note is an array
+
 
 }
