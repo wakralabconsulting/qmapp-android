@@ -12,6 +12,8 @@ public class PublicArtsTableEnglish {
     @PrimaryKey(autoGenerate = false)
     private long public_arts_id;
     @ColumnInfo()
+    private String public_arts_image;
+    @ColumnInfo()
     private String public_arts_name;
     @ColumnInfo()
     private String longitude;
@@ -25,9 +27,11 @@ public class PublicArtsTableEnglish {
 
 
     public PublicArtsTableEnglish(@NonNull long public_arts_id, String public_arts_name,
+                                  String public_arts_image,
                                   String longitude, String latitude) {
         this.public_arts_id = public_arts_id;
         this.public_arts_name = public_arts_name;
+        this.public_arts_image=public_arts_image;
         this.longitude = longitude;
         this.latitude = latitude;
     }
@@ -39,6 +43,14 @@ public class PublicArtsTableEnglish {
 
     public void setPublic_arts_id(@NonNull long public_arts_id) {
         this.public_arts_id = public_arts_id;
+    }
+
+    public String getPublic_arts_image() {
+        return public_arts_image;
+    }
+
+    public void setPublic_arts_image(String public_arts_image) {
+        this.public_arts_image = public_arts_image;
     }
 
     public String getPublic_arts_name() {

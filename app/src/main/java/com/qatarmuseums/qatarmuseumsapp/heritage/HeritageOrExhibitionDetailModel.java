@@ -2,7 +2,7 @@ package com.qatarmuseums.qatarmuseumsapp.heritage;
 
 import com.google.gson.annotations.SerializedName;
 
-public class HeritageDetailModel {
+public class HeritageOrExhibitionDetailModel {
     @SerializedName("name")
     private String name;
     @SerializedName("ID")
@@ -15,17 +15,23 @@ public class HeritageDetailModel {
     private String longitude;
     @SerializedName("Latitude")
     private String latitude;
-    @SerializedName("short_description")
+    @SerializedName(value="short_description", alternate={"Short_description"})
     private String shortDescription;
-    @SerializedName("long_description")
+    @SerializedName(value="long_description", alternate={"Long_description"})
     private String longDescription;
+    @SerializedName("start_Date")
+    private String startDate;
+    @SerializedName("end_Date")
+    private String endDate;
 
-    public HeritageDetailModel() {
+    public HeritageOrExhibitionDetailModel() {
     }
 
-    public HeritageDetailModel(String name, String id, String location,
-                               String image, String longitude, String latitude,
-                               String shortDescription, String longDescription) {
+    public HeritageOrExhibitionDetailModel(String name, String id,
+                                           String location, String image,
+                                           String longitude, String latitude,
+                                           String shortDescription, String longDescription,
+                                           String startDate, String endDate) {
         this.name = name;
         this.id = id;
         this.location = location;
@@ -34,6 +40,8 @@ public class HeritageDetailModel {
         this.latitude = latitude;
         this.shortDescription = shortDescription;
         this.longDescription = longDescription;
+        this.startDate = startDate;
+        this.endDate = endDate;
     }
 
     public String getName() {
@@ -98,5 +106,21 @@ public class HeritageDetailModel {
 
     public void setLongDescription(String longDescription) {
         this.longDescription = longDescription;
+    }
+
+    public String getStartDate() {
+        return startDate;
+    }
+
+    public void setStartDate(String startDate) {
+        this.startDate = startDate;
+    }
+
+    public String getEndDate() {
+        return endDate;
+    }
+
+    public void setEndDate(String endDate) {
+        this.endDate = endDate;
     }
 }
