@@ -5,8 +5,12 @@ import android.arch.persistence.room.Entity;
 import android.arch.persistence.room.PrimaryKey;
 import android.support.annotation.NonNull;
 
-@Entity(tableName = "heritagelist")
-public class HeritageListTable {
+/**
+ * Created by MoongedePC on 16-Aug-18.
+ */
+
+@Entity(tableName = "heritagelistarabic")
+public class HeritageListTableArabic {
     @NonNull
     @PrimaryKey(autoGenerate = false)
     private long heritage_id;
@@ -17,18 +21,8 @@ public class HeritageListTable {
     @ColumnInfo()
     private String heritage_sortid;
 
-    public String getHeritage_name_arabic() {
-        return heritage_name_arabic;
-    }
-
-    public void setHeritage_name_arabic(String heritage_name_arabic) {
-        this.heritage_name_arabic = heritage_name_arabic;
-    }
-
-    @ColumnInfo()
-    private String heritage_name_arabic;
-
-    public HeritageListTable(@NonNull long heritage_id, String heritage_name, String heritage_image, String heritage_sortid) {
+    public HeritageListTableArabic(@NonNull long heritage_id, String heritage_name,
+                                   String heritage_image, String heritage_sortid) {
         this.heritage_id = heritage_id;
         this.heritage_name = heritage_name;
         this.heritage_image = heritage_image;
@@ -66,27 +60,5 @@ public class HeritageListTable {
 
     public void setHeritage_sortid(String heritage_sortid) {
         this.heritage_sortid = heritage_sortid;
-    }
-
-    @Override
-    public boolean equals(Object obj) {
-        if (this == obj) return true;
-        if (!(obj instanceof HeritageListTable)) return false;
-
-        HeritageListTable heritageListTable = (HeritageListTable) obj;
-
-        if (heritage_id != heritageListTable.heritage_id) return false;
-        return heritage_name != null ? heritageListTable.equals(heritageListTable.heritage_name) : heritageListTable.heritage_name == null;
-
-    }
-
-    @Override
-    public String toString() {
-        return "heritagelist{" +
-                "heritage_name=" + heritage_name +
-                ", heritage_id='" + heritage_id + '\'' +
-                ", heritage_image='" + heritage_image + '\'' +
-                ",heritage_sortid='" + heritage_sortid + '\'' +
-                '}';
     }
 }
