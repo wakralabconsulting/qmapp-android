@@ -9,8 +9,9 @@ import android.arch.persistence.room.RoomDatabase;
 import android.content.Context;
 import android.support.annotation.NonNull;
 
-import com.qatarmuseums.qatarmuseumsapp.commonpagedatabase.HeritageListTable;
+import com.qatarmuseums.qatarmuseumsapp.commonpagedatabase.HeritageListTableArabic;
 import com.qatarmuseums.qatarmuseumsapp.commonpagedatabase.HeritageListTableDao;
+import com.qatarmuseums.qatarmuseumsapp.commonpagedatabase.HeritageListTableEnglish;
 import com.qatarmuseums.qatarmuseumsapp.commonpagedatabase.PublicArtsTableArabic;
 import com.qatarmuseums.qatarmuseumsapp.commonpagedatabase.PublicArtsTableDao;
 import com.qatarmuseums.qatarmuseumsapp.commonpagedatabase.PublicArtsTableEnglish;
@@ -18,8 +19,8 @@ import com.qatarmuseums.qatarmuseumsapp.home.HomePageTableArabic;
 import com.qatarmuseums.qatarmuseumsapp.home.HomePageTableDao;
 import com.qatarmuseums.qatarmuseumsapp.home.HomePageTableEnglish;
 
-@Database(entities = {HomePageTableEnglish.class, HeritageListTable.class,
-        HomePageTableArabic.class,
+@Database(entities = {HomePageTableEnglish.class, HomePageTableArabic.class,
+        HeritageListTableEnglish.class, HeritageListTableArabic.class,
         PublicArtsTableEnglish.class, PublicArtsTableArabic.class}, version = 1, exportSchema = false)
 public abstract class QMDatabase extends RoomDatabase {
 
