@@ -28,15 +28,37 @@ public interface HeritageListTableDao {
     @Query("SELECT COUNT(heritage_id) FROM heritagelistarabic WHERE heritage_id = :idFromAPI")
     int checkArabicIdExist(int idFromAPI);
 
+    @Query("SELECT * FROM heritagelistenglish WHERE heritage_id = :idFromAPI")
+    List<HeritageListTableEnglish> getHeritageDetailsEnglish(int idFromAPI);
+
+    @Query("SELECT * FROM heritagelistarabic WHERE heritage_id = :idFromAPI")
+    List<HeritageListTableArabic> getHeritageDetailsArabic(int idFromAPI);
+
     @Query("UPDATE heritagelistenglish SET heritage_name = :nameFromApi," +
             "heritage_sortid = :sortidFromApi,heritage_image = :imageFromApi WHERE heritage_id=:id")
     void updateHeritageListEnglish(String nameFromApi, String sortidFromApi,
                                    String imageFromApi, String id);
 
-    @Query("UPDATE heritagelistarabic SET heritage_name = :nameFromApi," +
-            "heritage_sortid = :sortidFromApi,heritage_image = :imageFromApi WHERE heritage_id=:id")
+
+    @Query("UPDATE heritagelistenglish SET location = :locationFromApi," +
+            "latitude = :latitudeFromApi,longitude = :longitudeFromApi," +
+            "heritage_long_description=:descriptionFromApi," + "heritage_short_description=:shortDescriptionFromApi WHERE heritage_id=:id")
+    void updateHeritageDetailEnglish(String locationFromApi, String latitudeFromApi,
+                                     String longitudeFromApi, String descriptionFromApi,
+                                     String shortDescriptionFromApi, String id);
+
+    @Query("UPDATE heritagelistarabic SET heritage_name = :nameFromApi," + "heritage_sortid = :sortidFromApi," +
+            "heritage_image = :imageFromApi WHERE heritage_id=:id")
     void updateHeritageListArabic(String nameFromApi, String sortidFromApi,
                                   String imageFromApi, String id);
+
+    @Query("UPDATE heritagelistarabic SET location = :locationFromApi," +
+            "latitude = :latitudeFromApi,longitude = :longitudeFromApi," +
+            "heritage_long_description=:descriptionFromApi," +
+            "heritage_short_description=:shortDescriptionFromApi WHERE heritage_id=:id")
+    void updateHeritageDetailArabic(String locationFromApi, String latitudeFromApi,
+                                    String longitudeFromApi, String descriptionFromApi,
+                                    String shortDescriptionFromApi, String id);
 
 
     @Insert
