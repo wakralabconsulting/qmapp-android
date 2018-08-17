@@ -23,6 +23,8 @@ import com.qatarmuseums.qatarmuseumsapp.QMDatabase;
 import com.qatarmuseums.qatarmuseumsapp.R;
 import com.qatarmuseums.qatarmuseumsapp.apicall.APIClient;
 import com.qatarmuseums.qatarmuseumsapp.apicall.APIInterface;
+import com.qatarmuseums.qatarmuseumsapp.commonpagedatabase.DiningTableArabic;
+import com.qatarmuseums.qatarmuseumsapp.commonpagedatabase.DiningTableEnglish;
 import com.qatarmuseums.qatarmuseumsapp.commonpagedatabase.HeritageListTableArabic;
 import com.qatarmuseums.qatarmuseumsapp.commonpagedatabase.HeritageListTableEnglish;
 import com.qatarmuseums.qatarmuseumsapp.commonpagedatabase.PublicArtsTableArabic;
@@ -60,9 +62,12 @@ public class CommonActivity extends AppCompatActivity {
     HeritageListTableArabic heritageListTableArabic;
     PublicArtsTableEnglish publicArtsTableEnglish;
     PublicArtsTableArabic publicArtsTableArabic;
+    DiningTableEnglish diningTableEnglish;
+    DiningTableArabic diningTableArabic;
     RelativeLayout noResultFoundLayout;
     int publicArtsTableRowCount;
     int heritageTableRowCount;
+    int diningTableRowCount;
     int appLanguage;
     String pageName = null;
     String id;
@@ -150,7 +155,10 @@ public class CommonActivity extends AppCompatActivity {
 
 
         } else if (toolbarTitle.equals(getString(R.string.sidemenu_dining_text))) {
-            getCommonListAPIDataFromAPI("getDiningList.json");
+            if (util.isNetworkAvailable(CommonActivity.this))
+                getCommonListAPIDataFromAPI("getDiningList.json");
+            else
+                getCommonListDataFromDatabase("getDiningList.json");
         } else if (toolbarTitle.equals(getString(R.string.museum_collection_text)))
             getMuseumCollectionListFromAPI();
     }
@@ -210,6 +218,13 @@ public class CommonActivity extends AppCompatActivity {
                 new RetriveArabicPublicArtsData(CommonActivity.this, appLanguage).execute();
             }
 
+        } else if (apiParts.equals("getDiningList.json")) {
+            String language;
+            if (appLanguage == 1)
+                language = "en";
+            else
+                language = "ar";
+            new DiningRowCount(CommonActivity.this, language).execute();
         }
 
 
@@ -285,6 +300,8 @@ public class CommonActivity extends AppCompatActivity {
                             new RowCount(CommonActivity.this, language).execute();
                         } else if (pageName.equals("Public_Arts_List_Page.json")) {
                             new PublicArtsRowCount(CommonActivity.this, language).execute();
+                        } else if (pageName.equals("getDiningList.json")) {
+                            new DiningRowCount(CommonActivity.this, language).execute();
                         }
                     } else {
                         recyclerView.setVisibility(View.GONE);
@@ -346,6 +363,279 @@ public class CommonActivity extends AppCompatActivity {
                 false, false);
         models.add(model);
         mAdapter.notifyDataSetChanged();
+    }
+
+    public class DiningRowCount extends AsyncTask<Void, Void, Integer> {
+
+        private WeakReference<CommonActivity> activityReference;
+        String language;
+
+        DiningRowCount(CommonActivity context, String apiLanguage) {
+            activityReference = new WeakReference<>(context);
+            language = apiLanguage;
+        }
+
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+        }
+
+        @Override
+        protected void onPostExecute(Integer integer) {
+            diningTableRowCount = integer;
+            if (diningTableRowCount > 0) {
+                if (models.size() > 0)
+                    //updateEnglishTable or add row to database
+                    new CheckDiningDBRowExist(CommonActivity.this, language).execute();
+                else {
+                    if (language.equals("en")) {
+                        new RetriveEnglishDiningData(CommonActivity.this, appLanguage).execute();
+                    } else {
+                        new RetriveArabicDiningData(CommonActivity.this, appLanguage).execute();
+                    }
+                }
+            } else if (models.size() > 0) {
+                //create databse
+                new InsertDiningDataToDataBase(CommonActivity.this, diningTableEnglish, diningTableArabic, language).execute();
+            } else {
+                recyclerView.setVisibility(View.GONE);
+                noResultFoundLayout.setVisibility(View.VISIBLE);
+            }
+        }
+
+        @Override
+        protected Integer doInBackground(Void... voids) {
+            if (language.equals("en"))
+                return activityReference.get().qmDatabase.getDiningTableDao().getNumberOfRowsEnglish();
+            else
+                return activityReference.get().qmDatabase.getDiningTableDao().getNumberOfRowsArabic();
+
+        }
+    }
+
+    public class CheckDiningDBRowExist extends AsyncTask<Void, Void, Void> {
+        private WeakReference<CommonActivity> activityReference;
+        private DiningTableEnglish diningTableEnglish;
+        private DiningTableArabic diningTableArabic;
+        String language;
+
+        CheckDiningDBRowExist(CommonActivity context, String apiLanguage) {
+            activityReference = new WeakReference<>(context);
+            language = apiLanguage;
+        }
+
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+        }
+
+        @Override
+        protected void onPostExecute(Void aVoid) {
+            super.onPostExecute(aVoid);
+        }
+
+        @Override
+        protected Void doInBackground(Void... voids) {
+
+            if (models.size() > 0) {
+                if (language.equals("en")) {
+                    for (int i = 0; i < models.size(); i++) {
+                        int n = activityReference.get().qmDatabase.getDiningTableDao().checkEnglishIdExist(
+                                Integer.parseInt(models.get(i).getId()));
+                        if (n > 0) {
+                            //updateEnglishTable same id
+                            new UpdateDiningTable(CommonActivity.this, language, i).execute();
+
+                        } else {
+                            //create row with corresponding id
+                            diningTableEnglish = new DiningTableEnglish(Long.parseLong(models.get(i).getId()),
+                                    models.get(i).getName(),
+                                    models.get(i).getImage(),
+                                    models.get(i).getSortId());
+                            activityReference.get().qmDatabase.getDiningTableDao().insert(diningTableEnglish);
+
+                        }
+                    }
+                } else {
+                    for (int i = 0; i < models.size(); i++) {
+                        int n = activityReference.get().qmDatabase.getDiningTableDao().checkArabicIdExist(
+                                Integer.parseInt(models.get(i).getId()));
+                        if (n > 0) {
+                            //updateEnglishTable same id
+                            new UpdateDiningTable(CommonActivity.this, language, i).execute();
+
+                        } else {
+                            //create row with corresponding id
+                            diningTableArabic = new DiningTableArabic(Long.parseLong(models.get(i).getId()),
+                                    models.get(i).getName(),
+                                    models.get(i).getImage(),
+                                    models.get(i).getSortId());
+                            activityReference.get().qmDatabase.getDiningTableDao().insert(diningTableArabic);
+
+                        }
+                    }
+                }
+
+            }
+            return null;
+        }
+    }
+
+    public class UpdateDiningTable extends AsyncTask<Void, Void, Void> {
+        private WeakReference<CommonActivity> activityReference;
+        String language;
+        int position;
+
+        UpdateDiningTable(CommonActivity context, String apiLanguage, int p) {
+            activityReference = new WeakReference<>(context);
+            language = apiLanguage;
+            position = p;
+        }
+
+        @Override
+        protected Void doInBackground(Void... voids) {
+            if (language.equals("en")) {
+                // updateEnglishTable table with english name
+                activityReference.get().qmDatabase.getDiningTableDao().updateDiningEnglish(
+                        models.get(position).getName(),
+                        models.get(position).getImage(),
+                        models.get(position).getId(),
+                        models.get(position).getSortId()
+                );
+
+            } else {
+                // updateArabicTable table with arabic name
+                activityReference.get().qmDatabase.getDiningTableDao().updateDiningArabic(
+                        models.get(position).getName(),
+                        models.get(position).getImage(),
+                        models.get(position).getId(),
+                        models.get(position).getSortId()
+                );
+            }
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(Void aVoid) {
+        }
+    }
+
+    public class InsertDiningDataToDataBase extends AsyncTask<Void, Void, Boolean> {
+        private WeakReference<CommonActivity> activityReference;
+        private DiningTableEnglish diningTableEnglish;
+        private DiningTableArabic diningTableArabic;
+        String language;
+
+        InsertDiningDataToDataBase(CommonActivity context, DiningTableEnglish diningTableEnglish,
+                                   DiningTableArabic diningTableArabic, String apiLanguage) {
+            activityReference = new WeakReference<>(context);
+            this.diningTableEnglish = diningTableEnglish;
+            this.diningTableArabic = diningTableArabic;
+            this.language = apiLanguage;
+        }
+
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+        }
+
+        @Override
+        protected void onPostExecute(Boolean aBoolean) {
+            super.onPostExecute(aBoolean);
+        }
+
+        @Override
+        protected Boolean doInBackground(Void... voids) {
+            if (models != null) {
+                if (language.equals("en")) {
+                    for (int i = 0; i < models.size(); i++) {
+                        diningTableEnglish = new DiningTableEnglish(Long.parseLong(models.get(i).getId()),
+                                models.get(i).getName(),
+                                models.get(i).getImage(),
+                                models.get(i).getSortId());
+                        activityReference.get().qmDatabase.getDiningTableDao().insert(diningTableEnglish);
+                    }
+                } else {
+                    for (int i = 0; i < models.size(); i++) {
+                        diningTableArabic = new DiningTableArabic(Long.parseLong(models.get(i).getId()),
+                                models.get(i).getName(),
+                                models.get(i).getImage(),
+                                models.get(i).getSortId());
+                        activityReference.get().qmDatabase.getDiningTableDao().insert(diningTableArabic);
+                    }
+                }
+
+            }
+            return true;
+        }
+    }
+
+    public class RetriveEnglishDiningData extends AsyncTask<Void, Void, List<DiningTableEnglish>> {
+        private WeakReference<CommonActivity> activityReference;
+        int language;
+
+        RetriveEnglishDiningData(CommonActivity context, int appLanguage) {
+            activityReference = new WeakReference<>(context);
+            language = appLanguage;
+        }
+
+        @Override
+        protected void onPreExecute() {
+            progressBar.setVisibility(View.VISIBLE);
+        }
+
+        @Override
+        protected void onPostExecute(List<DiningTableEnglish> diningTableEnglishList) {
+            models.clear();
+            for (int i = 0; i < diningTableEnglishList.size(); i++) {
+                CommonModel commonModel = new CommonModel(String.valueOf(diningTableEnglishList.get(i).getDining_id()),
+                        diningTableEnglishList.get(i).getDining_name(),
+                        diningTableEnglishList.get(i).getDining_image(), "", "");
+                models.add(i, commonModel);
+
+            }
+            mAdapter.notifyDataSetChanged();
+            progressBar.setVisibility(View.GONE);
+        }
+
+        @Override
+        protected List<DiningTableEnglish> doInBackground(Void... voids) {
+            return activityReference.get().qmDatabase.getDiningTableDao().getAllEnglish();
+        }
+    }
+
+    public class RetriveArabicDiningData extends AsyncTask<Void, Void, List<DiningTableArabic>> {
+        private WeakReference<CommonActivity> activityReference;
+        int language;
+
+        RetriveArabicDiningData(CommonActivity context, int appLanguage) {
+            activityReference = new WeakReference<>(context);
+            language = appLanguage;
+        }
+
+        @Override
+        protected void onPreExecute() {
+            progressBar.setVisibility(View.VISIBLE);
+        }
+
+        @Override
+        protected void onPostExecute(List<DiningTableArabic> diningTableArabicList) {
+            models.clear();
+            for (int i = 0; i < diningTableArabicList.size(); i++) {
+                CommonModel commonModel = new CommonModel(String.valueOf(diningTableArabicList.get(i).getDining_id()),
+                        diningTableArabicList.get(i).getDining_name(),
+                        diningTableArabicList.get(i).getDining_image(), "", "");
+                models.add(i, commonModel);
+
+            }
+            mAdapter.notifyDataSetChanged();
+            progressBar.setVisibility(View.GONE);
+        }
+
+        @Override
+        protected List<DiningTableArabic> doInBackground(Void... voids) {
+            return activityReference.get().qmDatabase.getDiningTableDao().getAllArabic();
+        }
     }
 
     public class PublicArtsRowCount extends AsyncTask<Void, Void, Integer> {
