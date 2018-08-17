@@ -25,21 +25,6 @@ public class HeritageListTableArabic {
     @ColumnInfo()
     private String heritage_long_description;
 
-//
-//    public HeritageListTableEnglish(@NonNull long heritage_id, String heritage_name, String heritage_image,
-//                                    String location, String latitude, String longitude,
-//                                    String heritage_short_description, String heritage_long_description,
-//                                    String heritage_sortid) {
-//        this.heritage_id = heritage_id;
-//        this.heritage_name = heritage_name;
-//        this.heritage_image = heritage_image;
-//        this.location = location;
-//        this.latitude = latitude;
-//        this.longitude = longitude;
-//        this.heritage_short_description = heritage_short_description;
-//        this.heritage_long_description = heritage_long_description;
-//        this.heritage_sortid = heritage_sortid;
-//    }
 
     @ColumnInfo()
     private String heritage_sortid;
