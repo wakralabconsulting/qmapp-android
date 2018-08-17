@@ -25,13 +25,15 @@ public class ParkList {
         }
 
     public ParkList(String mainTitle, String shortDescription, String image,
-                    String latitude, String longitude, String timingInfo) {
+                    String latitude, String longitude, String timingInfo,
+                    String sortId) {
         this.mainTitle = mainTitle;
         this.shortDescription = shortDescription;
         this.image = image;
         this.latitude = latitude;
         this.longitude = longitude;
         this.timingInfo = timingInfo;
+        this.sortId =sortId;
     }
 
     public String getMainTitle() {
@@ -85,5 +87,13 @@ public class ParkList {
 
     public void setTimingInfo(String timingInfo) {
         this.timingInfo = timingInfo;
+    }
+
+    public String getSortId() {
+        return sortId;
+    }
+
+    public void setSortId(String sortId) {
+        this.sortId = sortId;
     }
 }
