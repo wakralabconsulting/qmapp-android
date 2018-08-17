@@ -17,6 +17,18 @@ public class DiningTableEnglish {
     private String dining_name;
     @ColumnInfo()
     private String dining_sort_id;
+    @ColumnInfo()
+    private String location;
+    @ColumnInfo()
+    private String latitude;
+    @ColumnInfo()
+    private String longitude;
+    @ColumnInfo()
+    private String description;
+    @ColumnInfo()
+    private String opening_time;
+    @ColumnInfo()
+    private String closing_time;
 
 
     public DiningTableEnglish(@NonNull long dining_id, String dining_name,
@@ -58,5 +70,53 @@ public class DiningTableEnglish {
 
     public void setDining_sort_id(String dining_sort_id) {
         this.dining_sort_id = dining_sort_id;
+    }
+
+    public String getLocation() {
+        return location;
+    }
+
+    public void setLocation(String location) {
+        this.location = location;
+    }
+
+    public String getLatitude() {
+        return latitude;
+    }
+
+    public void setLatitude(String latitude) {
+        this.latitude = latitude;
+    }
+
+    public String getLongitude() {
+        return longitude;
+    }
+
+    public void setLongitude(String longitude) {
+        this.longitude = longitude;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
+    public String getOpening_time() {
+        return opening_time;
+    }
+
+    public void setOpening_time(String opening_time) {
+        this.opening_time = opening_time;
+    }
+
+    public String getClosing_time() {
+        return closing_time;
+    }
+
+    public void setClosing_time(String closing_time) {
+        this.closing_time = closing_time;
     }
 }
