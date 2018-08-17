@@ -18,10 +18,14 @@ import com.qatarmuseums.qatarmuseumsapp.commonpagedatabase.PublicArtsTableEnglis
 import com.qatarmuseums.qatarmuseumsapp.home.HomePageTableArabic;
 import com.qatarmuseums.qatarmuseumsapp.home.HomePageTableDao;
 import com.qatarmuseums.qatarmuseumsapp.home.HomePageTableEnglish;
+import com.qatarmuseums.qatarmuseumsapp.park.ParkTableArabic;
+import com.qatarmuseums.qatarmuseumsapp.park.ParkTableDao;
+import com.qatarmuseums.qatarmuseumsapp.park.ParkTableEnglish;
 
 @Database(entities = {HomePageTableEnglish.class, HomePageTableArabic.class,
         HeritageListTableEnglish.class, HeritageListTableArabic.class,
-        PublicArtsTableEnglish.class, PublicArtsTableArabic.class}, version = 1, exportSchema = false)
+        PublicArtsTableEnglish.class, PublicArtsTableArabic.class,
+        ParkTableEnglish.class, ParkTableArabic.class}, version = 1, exportSchema = false)
 public abstract class QMDatabase extends RoomDatabase {
 
     public abstract HomePageTableDao getHomePageTableDao();
@@ -29,6 +33,8 @@ public abstract class QMDatabase extends RoomDatabase {
     public abstract HeritageListTableDao getHeritageListTableDao();
 
     public abstract PublicArtsTableDao getPublicArtsTableDao();
+
+    public abstract ParkTableDao getParkTableDao();
 
     private static QMDatabase qmDatabase;
 
