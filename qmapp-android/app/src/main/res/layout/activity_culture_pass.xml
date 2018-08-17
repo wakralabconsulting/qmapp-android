@@ -115,7 +115,9 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="@string/not_a_member_yet" />
+                    android:fontFamily="@font/din_next_lt_pro_light"
+                    android:text="@string/not_a_member_yet"
+                    android:textColor="@color/black" />
 
                 <Button
                     android:id="@+id/become_a_member_btn"
@@ -133,17 +135,19 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="@dimen/pading_20"
-                    android:text="@string/already_a_member" />
+                    android:fontFamily="@font/din_next_lt_pro_light"
+                    android:text="@string/already_a_member"
+                    android:textColor="@color/black" />
 
                 <Button
                     android:id="@+id/login_btn"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginBottom="@dimen/padding_15"
-                    android:layout_marginTop="@dimen/pading_10"
-                    android:background="@drawable/round_corner_skyblue"
                     android:layout_marginEnd="@dimen/pading_10"
                     android:layout_marginStart="@dimen/pading_10"
+                    android:layout_marginTop="@dimen/pading_10"
+                    android:background="@drawable/round_corner_skyblue"
                     android:fontFamily="@font/din_next_lt_pro_bold"
                     android:text="@string/log_in"
                     android:textColor="@color/white" />
