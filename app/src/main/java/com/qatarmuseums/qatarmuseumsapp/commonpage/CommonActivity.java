@@ -389,9 +389,9 @@ public class CommonActivity extends AppCompatActivity {
                     new CheckDiningDBRowExist(CommonActivity.this, language).execute();
                 else {
                     if (language.equals("en")) {
-                        new RetriveEnglishDiningData(CommonActivity.this, appLanguage).execute();
+                        new RetriveEnglishDiningData(CommonActivity.this, 1).execute();
                     } else {
-                        new RetriveArabicDiningData(CommonActivity.this, appLanguage).execute();
+                        new RetriveArabicDiningData(CommonActivity.this, 2).execute();
                     }
                 }
             } else if (models.size() > 0) {
