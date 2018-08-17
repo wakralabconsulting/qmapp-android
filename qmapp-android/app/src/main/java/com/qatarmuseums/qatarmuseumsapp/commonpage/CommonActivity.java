@@ -672,7 +672,8 @@ public class CommonActivity extends AppCompatActivity {
                         heritageListTableEnglish = new HeritageListTableEnglish(Long.parseLong(models.get(i).getId()),
                                 models.get(i).getName(),
                                 models.get(i).getImage(),
-                                models.get(i).getSortId());
+                                "", "", "", "",
+                                "", models.get(i).getSortId());
                         activityReference.get().qmDatabase.getHeritageListTableDao().insert(heritageListTableEnglish);
                     }
                 } else {
@@ -680,7 +681,8 @@ public class CommonActivity extends AppCompatActivity {
                         heritageListTableArabic = new HeritageListTableArabic(Long.parseLong(models.get(i).getId()),
                                 models.get(i).getName(),
                                 models.get(i).getImage(),
-                                models.get(i).getSortId());
+                                "", "", "", "",
+                                "", models.get(i).getSortId());
                         activityReference.get().qmDatabase.getHeritageListTableDao().insert(heritageListTableArabic);
                     }
                 }
@@ -721,7 +723,8 @@ public class CommonActivity extends AppCompatActivity {
                             heritageListTableEnglish = new HeritageListTableEnglish(Long.parseLong(models.get(i).getId()),
                                     models.get(i).getName(),
                                     models.get(i).getImage(),
-                                    models.get(i).getSortId());
+                                    models.get(i).getSortId(), "", "",
+                                    "", "", "");
                             activityReference.get().qmDatabase.getHeritageListTableDao().insert(heritageListTableEnglish);
 
                         }
@@ -739,7 +742,8 @@ public class CommonActivity extends AppCompatActivity {
                             heritageListTableArabic = new HeritageListTableArabic(Long.parseLong(models.get(i).getId()),
                                     models.get(i).getName(),
                                     models.get(i).getImage(),
-                                    models.get(i).getSortId());
+                                    models.get(i).getSortId(), "", "", "",
+                                    "", "");
                             activityReference.get().qmDatabase.getHeritageListTableDao().insert(heritageListTableArabic);
 
                         }

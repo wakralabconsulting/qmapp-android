@@ -23,6 +23,8 @@ import com.qatarmuseums.qatarmuseumsapp.QMDatabase;
 import com.qatarmuseums.qatarmuseumsapp.R;
 import com.qatarmuseums.qatarmuseumsapp.apicall.APIClient;
 import com.qatarmuseums.qatarmuseumsapp.apicall.APIInterface;
+import com.qatarmuseums.qatarmuseumsapp.commonpagedatabase.HeritageListTableArabic;
+import com.qatarmuseums.qatarmuseumsapp.commonpagedatabase.HeritageListTableEnglish;
 import com.qatarmuseums.qatarmuseumsapp.commonpagedatabase.PublicArtsTableArabic;
 import com.qatarmuseums.qatarmuseumsapp.commonpagedatabase.PublicArtsTableEnglish;
 import com.qatarmuseums.qatarmuseumsapp.heritage.HeritageOrExhibitionDetailModel;
@@ -64,13 +66,13 @@ public class DetailsActivity extends AppCompatActivity implements IPullZoom {
     QMDatabase qmDatabase;
     PublicArtsTableEnglish publicArtsTableEnglish;
     PublicArtsTableArabic publicArtsTableArabic;
-    int publicArtsTableRowCount;
+    int publicArtsTableRowCount, heritageTableRowCount;
     SharedPreferences qmPreferences;
     ProgressBar progressBar;
     LinearLayout commonContentLayout;
     TextView noResultFoundTxt;
-    private ArrayList<PublicArtModel> models = new ArrayList<>();
     ArrayList<PublicArtModel> publicArtModel = new ArrayList<>();
+    ArrayList<HeritageOrExhibitionDetailModel> heritageOrExhibitionDetailModel = new ArrayList<>();
 
     @SuppressLint("ClickableViewAccessibility")
     @Override
@@ -115,9 +117,10 @@ public class DetailsActivity extends AppCompatActivity implements IPullZoom {
         if (comingFrom.equals(getString(R.string.sidemenu_exhibition_text))) {
             getHeritageOrExhibitionDetailsFromAPI(id, language, "Exhibition_detail_Page.json");
         } else if (comingFrom.equals(getString(R.string.sidemenu_heritage_text))) {
-            if (util.isNetworkAvailable(DetailsActivity.this)){
+            if (util.isNetworkAvailable(DetailsActivity.this)) {
                 getHeritageOrExhibitionDetailsFromAPI(id, language, "heritage_detail_Page.json");
-            }else{
+            } else {
+                getHeritageAPIDataFromDatabase(id, language);
             }
 
         } else if (comingFrom.equals(getString(R.string.sidemenu_public_arts_text))) {
@@ -220,7 +223,16 @@ public class DetailsActivity extends AppCompatActivity implements IPullZoom {
         }
     }
 
+    private void getHeritageAPIDataFromDatabase(String id, int appLanguage) {
+        if (appLanguage == 1) {
+            new RetriveEnglishHeritageData(DetailsActivity.this, appLanguage, id).execute();
+        } else {
+            new RetriveArabicHeritageData(DetailsActivity.this, appLanguage, id).execute();
+        }
+    }
+
     private String convertDegreetoDecimalMeasure(String degreeValue) {
+
         String value = degreeValue.trim();
         String[] latParts = value.split("°");
         float degree = Float.parseFloat(latParts[0]);
@@ -233,6 +245,8 @@ public class DetailsActivity extends AppCompatActivity implements IPullZoom {
         String result;
         result = String.valueOf(degree + (min / 60) + (sec / 3600));
         return result;
+
+
     }
 
     private void initViews() {
@@ -270,6 +284,7 @@ public class DetailsActivity extends AppCompatActivity implements IPullZoom {
                          String closingTime, String locationInfo, String contactInfo, String latitudefromApi,
                          String longitudefromApi) {
         commonContentLayout.setVisibility(View.VISIBLE);
+        progressBar.setVisibility(View.GONE);
         this.title.setText(mainTitle);
         latitude = intent.getStringExtra("LATITUDE");
         longitude = intent.getStringExtra("LONGITUDE");
@@ -300,8 +315,10 @@ public class DetailsActivity extends AppCompatActivity implements IPullZoom {
             this.contactDetails.setText(contactInfo);
         }
         if (latitude != null) {
-            latitude = convertDegreetoDecimalMeasure(latitude);
-            longitude = convertDegreetoDecimalMeasure(longitude);
+            if (latitude.contains("°")) {
+                latitude = convertDegreetoDecimalMeasure(latitude);
+                longitude = convertDegreetoDecimalMeasure(longitude);
+            }
         } else {
             latitude = "25.29818300";
             longitude = "51.53972222";
@@ -312,6 +329,8 @@ public class DetailsActivity extends AppCompatActivity implements IPullZoom {
                                                        String secondTitle, String secondTitleDescription, String timingInfo,
                                                        String locationInfo, String contactInfo, String latitudefromApi,
                                                        String longitudefromApi) {
+        commonContentLayout.setVisibility(View.VISIBLE);
+        progressBar.setVisibility(View.GONE);
         this.title.setText(mainTitle);
         latitude = latitudefromApi;
         longitude = longitudefromApi;
@@ -340,8 +359,10 @@ public class DetailsActivity extends AppCompatActivity implements IPullZoom {
             this.contactDetails.setText(contactInfo);
         }
         if (latitude != null) {
-            latitude = convertDegreetoDecimalMeasure(latitude);
-            longitude = convertDegreetoDecimalMeasure(longitude);
+            if (latitude.contains("°")) {
+                latitude = convertDegreetoDecimalMeasure(latitude);
+                longitude = convertDegreetoDecimalMeasure(longitude);
+            }
         } else {
             latitude = "25.29818300";
             longitude = "51.53972222";
@@ -350,7 +371,7 @@ public class DetailsActivity extends AppCompatActivity implements IPullZoom {
 
     public void getHeritageOrExhibitionDetailsFromAPI(String id, int language, String pageName) {
         progressBar.setVisibility(View.VISIBLE);
-        String appLanguage;
+        final String appLanguage;
         if (language == 1) {
             appLanguage = "en";
         } else {
@@ -367,14 +388,15 @@ public class DetailsActivity extends AppCompatActivity implements IPullZoom {
                 if (response.isSuccessful()) {
                     if (response.body() != null) {
                         commonContentLayout.setVisibility(View.VISIBLE);
-                        ArrayList<HeritageOrExhibitionDetailModel> heritageOrExhibitionDetailModel = response.body();
-                        loadDataForHeritageOrExhibitionDetails("", heritageOrExhibitionDetailModel.get(0).getShortDescription(),
+                        heritageOrExhibitionDetailModel = response.body();
+                        loadDataForHeritageOrExhibitionDetails(null, heritageOrExhibitionDetailModel.get(0).getShortDescription(),
                                 heritageOrExhibitionDetailModel.get(0).getLongDescription(),
-                                "", "",
+                                null, null,
                                 null,
                                 heritageOrExhibitionDetailModel.get(0).getLocation(),
                                 null, heritageOrExhibitionDetailModel.get(0).getLatitude(),
                                 heritageOrExhibitionDetailModel.get(0).getLongitude());
+                        new HeritageRowCount(DetailsActivity.this, appLanguage).execute();
 
                     } else {
                         commonContentLayout.setVisibility(View.GONE);
@@ -403,6 +425,208 @@ public class DetailsActivity extends AppCompatActivity implements IPullZoom {
         });
     }
 
+    public class HeritageRowCount extends AsyncTask<Void, Void, Integer> {
+
+        private WeakReference<DetailsActivity> activityReference;
+        String language;
+
+
+        HeritageRowCount(DetailsActivity context, String apiLanguage) {
+            activityReference = new WeakReference<>(context);
+            language = apiLanguage;
+        }
+
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+        }
+
+        @Override
+        protected void onPostExecute(Integer integer) {
+            heritageTableRowCount = integer;
+            if (heritageTableRowCount > 0) {
+                //updateEnglishTable or add row to database
+                new CheckHeritageDetailDBRowExist(DetailsActivity.this, language).execute();
+            }
+        }
+
+        @Override
+        protected Integer doInBackground(Void... voids) {
+            if (language.equals("en")) {
+                return activityReference.get().qmDatabase.getHeritageListTableDao().getNumberOfRowsEnglish();
+            } else {
+                return activityReference.get().qmDatabase.getHeritageListTableDao().getNumberOfRowsArabic();
+            }
+        }
+    }
+
+    public class CheckHeritageDetailDBRowExist extends AsyncTask<Void, Void, Void> {
+
+        private WeakReference<DetailsActivity> activityReference;
+        String language;
+
+        CheckHeritageDetailDBRowExist(DetailsActivity context, String apiLanguage) {
+            activityReference = new WeakReference<>(context);
+            language = apiLanguage;
+        }
+
+
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+        }
+
+        @Override
+        protected void onPostExecute(Void aVoid) {
+            super.onPostExecute(aVoid);
+        }
+
+        @Override
+        protected Void doInBackground(Void... voids) {
+            if (heritageOrExhibitionDetailModel.size() > 0) {
+                if (language.equals("en")) {
+                    for (int i = 0; i < heritageOrExhibitionDetailModel.size(); i++) {
+                        int n = activityReference.get().qmDatabase.getHeritageListTableDao().checkEnglishIdExist(
+                                Integer.parseInt(heritageOrExhibitionDetailModel.get(i).getId()));
+                        if (n > 0) {
+                            //updateEnglishTable same id
+                            new UpdateHeritageDetailTable(DetailsActivity.this, language, i).execute();
+
+                        }
+                    }
+                } else {
+                    for (int i = 0; i < heritageOrExhibitionDetailModel.size(); i++) {
+                        int n = activityReference.get().qmDatabase.getHeritageListTableDao().checkArabicIdExist(
+                                Integer.parseInt(heritageOrExhibitionDetailModel.get(i).getId()));
+                        if (n > 0) {
+                            //updateArabicTable same id
+                            new UpdateHeritageDetailTable(DetailsActivity.this, language, i).execute();
+
+                        }
+                    }
+                }
+            }
+            return null;
+        }
+    }
+
+    public class UpdateHeritageDetailTable extends AsyncTask<Void, Void, Void> {
+
+        private WeakReference<DetailsActivity> activityReference;
+        String language;
+        int position;
+
+        UpdateHeritageDetailTable(DetailsActivity context, String apiLanguage, int p) {
+            activityReference = new WeakReference<>(context);
+            language = apiLanguage;
+            position = p;
+        }
+
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+        }
+
+        @Override
+        protected void onPostExecute(Void aVoid) {
+            super.onPostExecute(aVoid);
+        }
+
+        @Override
+        protected Void doInBackground(Void... voids) {
+            if (language.equals("en")) {
+                // updateEnglishTable table with english name
+                activityReference.get().qmDatabase.getHeritageListTableDao().updateHeritageDetailEnglish(
+                        heritageOrExhibitionDetailModel.get(position).getLocation(),
+                        latitude, longitude, heritageOrExhibitionDetailModel.get(position).getLongDescription()
+                        , heritageOrExhibitionDetailModel.get(position).getShortDescription(),
+                        heritageOrExhibitionDetailModel.get(position).getId()
+                );
+
+            } else {
+                // updateArabicTable table with arabic name
+                activityReference.get().qmDatabase.getHeritageListTableDao().updateHeritageDetailArabic(
+                        heritageOrExhibitionDetailModel.get(position).getLocation(),
+                        latitude, longitude, heritageOrExhibitionDetailModel.get(position).getLongDescription()
+                        , heritageOrExhibitionDetailModel.get(position).getShortDescription(),
+                        heritageOrExhibitionDetailModel.get(position).getId()
+                );
+            }
+            return null;
+        }
+    }
+
+    public class RetriveEnglishHeritageData extends AsyncTask<Void, Void, List<HeritageListTableEnglish>> {
+
+        private WeakReference<DetailsActivity> activityReference;
+        int language;
+        String heritageId;
+
+        RetriveEnglishHeritageData(DetailsActivity context, int appLanguage, String id) {
+            activityReference = new WeakReference<>(context);
+            language = appLanguage;
+            heritageId = id;
+        }
+
+        @Override
+        protected void onPreExecute() {
+            progressBar.setVisibility(View.VISIBLE);
+        }
+
+        @Override
+        protected void onPostExecute(List<HeritageListTableEnglish> heritageListTableEnglish) {
+
+            loadDataForHeritageOrExhibitionDetails(null, heritageListTableEnglish.get(0).getHeritage_short_description(),
+                    heritageListTableEnglish.get(0).getHeritage_long_description(),
+                    null, null,
+                    null,
+                    heritageListTableEnglish.get(0).getLocation(),
+                    null, heritageListTableEnglish.get(0).getLatitude(),
+                    heritageListTableEnglish.get(0).getLongitude());
+        }
+
+        @Override
+        protected List<HeritageListTableEnglish> doInBackground(Void... voids) {
+            return activityReference.get().qmDatabase.getHeritageListTableDao().getHeritageDetailsEnglish(Integer.parseInt(heritageId));
+        }
+    }
+
+    public class RetriveArabicHeritageData extends AsyncTask<Void, Void, List<HeritageListTableArabic>> {
+
+        private WeakReference<DetailsActivity> activityReference;
+        int language;
+        String heritageId;
+
+        RetriveArabicHeritageData(DetailsActivity context, int appLanguage, String id) {
+            activityReference = new WeakReference<>(context);
+            language = appLanguage;
+            heritageId = id;
+        }
+
+        @Override
+        protected void onPreExecute() {
+            progressBar.setVisibility(View.VISIBLE);
+        }
+
+        @Override
+        protected void onPostExecute(List<HeritageListTableArabic> heritageListTableArabic) {
+
+            loadDataForHeritageOrExhibitionDetails(null, heritageListTableArabic.get(0).getHeritage_short_description(),
+                    heritageListTableArabic.get(0).getHeritage_long_description(),
+                    null, null,
+                    null,
+                    heritageListTableArabic.get(0).getLocation(),
+                    null, heritageListTableArabic.get(0).getLatitude(),
+                    heritageListTableArabic.get(0).getLongitude());
+
+        }
+
+        @Override
+        protected List<HeritageListTableArabic> doInBackground(Void... voids) {
+            return activityReference.get().qmDatabase.getHeritageListTableDao().getHeritageDetailsArabic(Integer.parseInt(heritageId));
+        }
+    }
+
     private void getPublicArtDetailsFromAPI(String id, int appLanguage) {
         progressBar.setVisibility(View.VISIBLE);
         final String language;
@@ -426,7 +650,7 @@ public class DetailsActivity extends AppCompatActivity implements IPullZoom {
                                 publicArtModel.get(0).getShortDescription(),
                                 publicArtModel.get(0).getLongDescription(),
                                 null, null, null, null,
-                                "", null, latitude, longitude);
+                                null, null, latitude, longitude);
                         new PublicArtsRowCount(DetailsActivity.this, language).execute();
                     } else {
                         commonContentLayout.setVisibility(View.GONE);
@@ -537,7 +761,6 @@ public class DetailsActivity extends AppCompatActivity implements IPullZoom {
                         }
                     }
                 }
-
             }
 
             return null;
@@ -612,7 +835,7 @@ public class DetailsActivity extends AppCompatActivity implements IPullZoom {
                         publicArtsTableEnglish.get(i).getShort_description(),
                         publicArtsTableEnglish.get(i).getDescription(),
                         null, null, null,
-                        null, "", "",
+                        null, null, null,
                         publicArtsTableEnglish.get(i).getLatitude(),
                         publicArtsTableEnglish.get(i).getLongitude());
             }
@@ -648,7 +871,7 @@ public class DetailsActivity extends AppCompatActivity implements IPullZoom {
                         publicArtsTableArabic.get(i).getShort_description(),
                         publicArtsTableArabic.get(i).getDescription(),
                         null, null, null,
-                        null, "", null,
+                        null, null, null,
                         publicArtsTableArabic.get(i).getLatitude(),
                         publicArtsTableArabic.get(i).getLongitude());
             }
