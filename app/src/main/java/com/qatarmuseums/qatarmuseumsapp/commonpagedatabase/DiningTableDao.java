@@ -30,14 +30,34 @@ public interface DiningTableDao {
     @Query("SELECT COUNT(dining_id) FROM diningtableArabic WHERE dining_id = :idFromAPI")
     int checkArabicIdExist(int idFromAPI);
 
+    @Query("SELECT * FROM diningtableEnglish WHERE dining_id = :idFromAPI")
+    List<DiningTableEnglish> getDiningDetailsEnglish(int idFromAPI);
+
+    @Query("SELECT * FROM diningtableArabic WHERE dining_id = :idFromAPI")
+    List<DiningTableArabic> getDiningDetailsArabic(int idFromAPI);
+
     @Query("UPDATE diningtableEnglish SET dining_name = :nameFromApi, dining_image = :imageFromApi," +
             " dining_sort_id = :sortIdFromApi WHERE dining_id = :id")
     void updateDiningEnglish(String nameFromApi, String imageFromApi, String id, String sortIdFromApi);
+
+    @Query("UPDATE diningtableEnglish SET dining_name = :nameFromApi, dining_image = :imageFromApi," +
+            "description = :descriptionFromApi, opening_time = :openingTimeFromApi, closing_time = :closingTimeFromApi," +
+            "latitude = :latitudeFromApi, longitude = :longitudeFromApi, dining_sort_id = :sortIdFromApi WHERE dining_id = :id")
+    void updateDiningDetailsEnglish(String nameFromApi, String imageFromApi, String descriptionFromApi,
+                                    String openingTimeFromApi, String closingTimeFromApi, String latitudeFromApi,
+                                    String longitudeFromApi, String id, String sortIdFromApi);
 
 
     @Query("UPDATE diningtableArabic SET dining_name = :nameFromApi, dining_image = :imageFromApi," +
             " dining_sort_id = :sortIdFromApi WHERE dining_id = :id")
     void updateDiningArabic(String nameFromApi, String imageFromApi, String id, String sortIdFromApi);
+
+    @Query("UPDATE diningtableArabic SET dining_name = :nameFromApi, dining_image = :imageFromApi," +
+            "description = :descriptionFromApi, opening_time = :openingTimeFromApi, closing_time = :closingTimeFromApi," +
+            "latitude = :latitudeFromApi, longitude = :longitudeFromApi, dining_sort_id = :sortIdFromApi WHERE dining_id = :id")
+    void updateDiningDetailsArabic(String nameFromApi, String imageFromApi, String descriptionFromApi,
+                                   String openingTimeFromApi, String closingTimeFromApi, String latitudeFromApi,
+                                   String longitudeFromApi, String id, String sortIdFromApi);
 
 
     /*
