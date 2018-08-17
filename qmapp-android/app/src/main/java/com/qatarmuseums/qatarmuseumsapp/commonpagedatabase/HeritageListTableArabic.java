@@ -15,13 +15,32 @@ public class HeritageListTableArabic {
     @ColumnInfo()
     private String heritage_image;
     @ColumnInfo()
+    private String location;
+    @ColumnInfo()
+    private String latitude;
+    @ColumnInfo()
+    private String longitude;
+    @ColumnInfo()
+    private String heritage_short_description;
+    @ColumnInfo()
+    private String heritage_long_description;
+
+
+    @ColumnInfo()
     private String heritage_sortid;
 
     public HeritageListTableArabic(@NonNull long heritage_id, String heritage_name,
-                                   String heritage_image, String heritage_sortid) {
+                                   String heritage_image, String location, String latitude, String longitude,
+                                   String heritage_short_description, String heritage_long_description,
+                                   String heritage_sortid) {
         this.heritage_id = heritage_id;
         this.heritage_name = heritage_name;
         this.heritage_image = heritage_image;
+        this.location = location;
+        this.latitude = latitude;
+        this.longitude = longitude;
+        this.heritage_short_description = heritage_short_description;
+        this.heritage_long_description = heritage_long_description;
         this.heritage_sortid = heritage_sortid;
     }
 
@@ -56,5 +75,45 @@ public class HeritageListTableArabic {
 
     public void setHeritage_sortid(String heritage_sortid) {
         this.heritage_sortid = heritage_sortid;
+    }
+
+    public String getLocation() {
+        return location;
+    }
+
+    public void setLocation(String location) {
+        this.location = location;
+    }
+
+    public String getLatitude() {
+        return latitude;
+    }
+
+    public void setLatitude(String latitude) {
+        this.latitude = latitude;
+    }
+
+    public String getLongitude() {
+        return longitude;
+    }
+
+    public void setLongitude(String longitude) {
+        this.longitude = longitude;
+    }
+
+    public String getHeritage_short_description() {
+        return heritage_short_description;
+    }
+
+    public void setHeritage_short_description(String heritage_short_description) {
+        this.heritage_short_description = heritage_short_description;
+    }
+
+    public String getHeritage_long_description() {
+        return heritage_long_description;
+    }
+
+    public void setHeritage_long_description(String heritage_long_description) {
+        this.heritage_long_description = heritage_long_description;
     }
 }
