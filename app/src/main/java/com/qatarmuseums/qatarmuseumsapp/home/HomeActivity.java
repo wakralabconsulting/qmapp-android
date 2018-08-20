@@ -133,7 +133,7 @@ public class HomeActivity extends BaseActivity {
             @Override
             public void onClick(View view, int position) {
                 HomeList homeList = homeLists.get(position);
-                if (homeList.getId().equals("61")) {
+                if (homeList.getId().equals("1")) {
                     Intent intent = new Intent(HomeActivity.this, CommonActivity.class);
                     intent.putExtra(getString(R.string.toolbar_title_key), getString(R.string.sidemenu_exhibition_text));
                     startActivity(intent);
