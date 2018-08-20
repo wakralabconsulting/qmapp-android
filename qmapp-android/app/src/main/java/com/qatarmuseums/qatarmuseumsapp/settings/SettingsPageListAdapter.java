@@ -38,10 +38,6 @@ public class SettingsPageListAdapter extends RecyclerView.Adapter<SettingsPageLi
 
         SettingsPageModel settingsPageModel = settingsPageModelList.get(position);
         holder.settingsItemName.setText(settingsPageModel.getNotificationItemName());
-        if (position==2){
-            holder.settingsItemStatusBtn.setBackgroundResource(R.drawable.switch_off);
-        }
-
     }
 
     @Override

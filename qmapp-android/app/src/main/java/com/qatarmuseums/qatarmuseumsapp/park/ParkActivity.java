@@ -3,6 +3,7 @@ package com.qatarmuseums.qatarmuseumsapp.park;
 import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.preference.PreferenceManager;
+import android.support.design.widget.AppBarLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.DefaultItemAnimator;
@@ -23,6 +24,9 @@ import com.qatarmuseums.qatarmuseumsapp.R;
 import com.qatarmuseums.qatarmuseumsapp.apicall.APIClient;
 import com.qatarmuseums.qatarmuseumsapp.apicall.APIInterface;
 import com.qatarmuseums.qatarmuseumsapp.home.GlideApp;
+import com.qatarmuseums.qatarmuseumsapp.utils.IPullZoom;
+import com.qatarmuseums.qatarmuseumsapp.utils.PixelUtil;
+import com.qatarmuseums.qatarmuseumsapp.utils.PullToZoomCoordinatorLayout;
 import com.qatarmuseums.qatarmuseumsapp.utils.Util;
 
 import java.io.IOException;
@@ -34,7 +38,7 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
-public class ParkActivity extends AppCompatActivity {
+public class ParkActivity extends AppCompatActivity implements IPullZoom {
 
     private List<ParkList> parkLists = new ArrayList<>();
     private ParkListAdapter mAdapter;
@@ -51,6 +55,10 @@ public class ParkActivity extends AppCompatActivity {
     ParkTableArabic parkTableArabic;
     int parkTableRowCount;
     Util utilObject;
+    private PullToZoomCoordinatorLayout coordinatorLayout;
+    private View zoomView;
+    private AppBarLayout appBarLayout;
+    private int headerOffSetSize;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -134,9 +142,23 @@ public class ParkActivity extends AppCompatActivity {
                 return false;
             }
         });
-
+        initViews();
     }
 
+    private void initViews() {
+        coordinatorLayout = (PullToZoomCoordinatorLayout) findViewById(R.id.main_content);
+        zoomView = findViewById(R.id.header_img);
+        appBarLayout = (AppBarLayout) findViewById(R.id.app_bar);
+
+        coordinatorLayout.setPullZoom(zoomView, PixelUtil.dp2px(this, 232),
+                PixelUtil.dp2px(this, 332), this);
+        appBarLayout.addOnOffsetChangedListener(new AppBarLayout.OnOffsetChangedListener() {
+            @Override
+            public void onOffsetChanged(AppBarLayout appBarLayout, int verticalOffset) {
+                headerOffSetSize = verticalOffset;
+            }
+        });
+    }
 
     public void getParkDetailsFromAPI(int lan) {
         final String language;
@@ -193,6 +215,21 @@ public class ParkActivity extends AppCompatActivity {
             new RetriveEnglishTableData(ParkActivity.this, language).execute();
         else
             new RetriveArabicTableData(ParkActivity.this, language).execute();
+
+    }
+
+    @Override
+    public boolean isReadyForPullStart() {
+        return headerOffSetSize == 0;
+    }
+
+    @Override
+    public void onPullZooming(int newScrollValue) {
+
+    }
+
+    @Override
+    public void onPullZoomEnd() {
 
     }
 
@@ -354,7 +391,7 @@ public class ParkActivity extends AppCompatActivity {
                         parkLists.get(position).getMainTitle(), parkLists.get(position).getShortDescription(),
                         parkLists.get(position).getImage(),
                         parkLists.get(position).getLatitude(), parkLists.get(position).getLongitude(),
-                        parkLists.get(position).getTimingInfo(),Long.parseLong(parkLists.get(position).getSortId())
+                        parkLists.get(position).getTimingInfo(), Long.parseLong(parkLists.get(position).getSortId())
                 );
 
             } else {
@@ -363,7 +400,7 @@ public class ParkActivity extends AppCompatActivity {
                         parkLists.get(position).getMainTitle(), parkLists.get(position).getShortDescription(),
                         parkLists.get(position).getImage(),
                         parkLists.get(position).getLatitude(), parkLists.get(position).getLongitude(),
-                        parkLists.get(position).getTimingInfo(),Long.parseLong(parkLists.get(position).getSortId())
+                        parkLists.get(position).getTimingInfo(), Long.parseLong(parkLists.get(position).getSortId())
                 );
             }
 
@@ -397,7 +434,7 @@ public class ParkActivity extends AppCompatActivity {
             parkLists.clear();
 
             for (int i = 0; i < parkTableEnglishes.size(); i++) {
-                ParkList parkObject = new ParkList( parkTableEnglishes.get(i).getMainTitle(),
+                ParkList parkObject = new ParkList(parkTableEnglishes.get(i).getMainTitle(),
                         parkTableEnglishes.get(i).getShortDescription(),
                         parkTableEnglishes.get(i).getImage(),
                         parkTableEnglishes.get(i).getLatitude(), parkTableEnglishes.get(i).getLongitude(),
@@ -435,7 +472,7 @@ public class ParkActivity extends AppCompatActivity {
             parkLists.clear();
 
             for (int i = 0; i < parkTableArabics.size(); i++) {
-                ParkList parkObject = new ParkList( parkTableArabics.get(i).getMainTitle(),
+                ParkList parkObject = new ParkList(parkTableArabics.get(i).getMainTitle(),
                         parkTableArabics.get(i).getShortDescription(),
                         parkTableArabics.get(i).getImage(),
                         parkTableArabics.get(i).getLatitude(), parkTableArabics.get(i).getLongitude(),
