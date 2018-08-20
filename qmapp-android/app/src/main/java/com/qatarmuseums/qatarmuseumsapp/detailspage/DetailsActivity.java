@@ -23,6 +23,8 @@ import com.qatarmuseums.qatarmuseumsapp.QMDatabase;
 import com.qatarmuseums.qatarmuseumsapp.R;
 import com.qatarmuseums.qatarmuseumsapp.apicall.APIClient;
 import com.qatarmuseums.qatarmuseumsapp.apicall.APIInterface;
+import com.qatarmuseums.qatarmuseumsapp.commonpagedatabase.ExhibitionListTableArabic;
+import com.qatarmuseums.qatarmuseumsapp.commonpagedatabase.ExhibitionListTableEnglish;
 import com.qatarmuseums.qatarmuseumsapp.commonpagedatabase.HeritageListTableArabic;
 import com.qatarmuseums.qatarmuseumsapp.commonpagedatabase.HeritageListTableEnglish;
 import com.qatarmuseums.qatarmuseumsapp.commonpagedatabase.PublicArtsTableArabic;
@@ -66,13 +68,14 @@ public class DetailsActivity extends AppCompatActivity implements IPullZoom {
     QMDatabase qmDatabase;
     PublicArtsTableEnglish publicArtsTableEnglish;
     PublicArtsTableArabic publicArtsTableArabic;
-    int publicArtsTableRowCount, heritageTableRowCount;
+    int publicArtsTableRowCount, heritageTableRowCount, exhibitionRowCount;
     SharedPreferences qmPreferences;
     ProgressBar progressBar;
     LinearLayout commonContentLayout;
     TextView noResultFoundTxt;
     ArrayList<PublicArtModel> publicArtModel = new ArrayList<>();
     ArrayList<HeritageOrExhibitionDetailModel> heritageOrExhibitionDetailModel = new ArrayList<>();
+//    ArrayList<HeritageOrExhibitionDetailModel> heritageOrExhibitionDetailModel = new ArrayList<>();
 
     @SuppressLint("ClickableViewAccessibility")
     @Override
@@ -115,7 +118,11 @@ public class DetailsActivity extends AppCompatActivity implements IPullZoom {
         util = new Util();
         title.setText(mainTitle);
         if (comingFrom.equals(getString(R.string.sidemenu_exhibition_text))) {
-            getHeritageOrExhibitionDetailsFromAPI(id, language, "Exhibition_detail_Page.json");
+            if (util.isNetworkAvailable(DetailsActivity.this)) {
+                getHeritageOrExhibitionDetailsFromAPI(id, language, "Exhibition_detail_Page.json");
+            } else {
+                getExhibitionAPIDataFromDatabase(id, language);
+            }
         } else if (comingFrom.equals(getString(R.string.sidemenu_heritage_text))) {
             if (util.isNetworkAvailable(DetailsActivity.this)) {
                 getHeritageOrExhibitionDetailsFromAPI(id, language, "heritage_detail_Page.json");
@@ -231,6 +238,14 @@ public class DetailsActivity extends AppCompatActivity implements IPullZoom {
         }
     }
 
+    private void getExhibitionAPIDataFromDatabase(String id, int appLanguage) {
+        if (appLanguage == 1) {
+            new RetriveEnglishExhibitionData(DetailsActivity.this, appLanguage, id).execute();
+        } else {
+            new RetriveArabicExhibitionData(DetailsActivity.this, appLanguage, id).execute();
+        }
+    }
+
     private String convertDegreetoDecimalMeasure(String degreeValue) {
 
         String value = degreeValue.trim();
@@ -328,7 +343,7 @@ public class DetailsActivity extends AppCompatActivity implements IPullZoom {
     public void loadDataForHeritageOrExhibitionDetails(String subTitle, String shortDescription, String longDescription,
                                                        String secondTitle, String secondTitleDescription, String timingInfo,
                                                        String locationInfo, String contactInfo, String latitudefromApi,
-                                                       String longitudefromApi) {
+                                                       String longitudefromApi, String openingTime, String closingtime) {
         commonContentLayout.setVisibility(View.VISIBLE);
         progressBar.setVisibility(View.GONE);
         this.title.setText(mainTitle);
@@ -350,6 +365,14 @@ public class DetailsActivity extends AppCompatActivity implements IPullZoom {
             this.timingLayout.setVisibility(View.VISIBLE);
             this.timingDetails.setText(timingInfo);
         }
+        if (openingTime != null) {
+            timingTitle.setText(R.string.exhibition_timings);
+            this.timingLayout.setVisibility(View.VISIBLE);
+            String time = getResources().getString(R.string.everyday_from) + " " +
+                    openingTime + " " + getResources().getString(R.string.to) + " " +
+                    closingtime;
+            this.timingDetails.setText(time);
+        }
         if (locationInfo != null) {
             this.locationDetails.setVisibility(View.VISIBLE);
             this.locationDetails.setText(locationInfo);
@@ -369,7 +392,7 @@ public class DetailsActivity extends AppCompatActivity implements IPullZoom {
         }
     }
 
-    public void getHeritageOrExhibitionDetailsFromAPI(String id, int language, String pageName) {
+    public void getHeritageOrExhibitionDetailsFromAPI(String id, int language, final String pageName) {
         progressBar.setVisibility(View.VISIBLE);
         final String appLanguage;
         if (language == 1) {
@@ -389,14 +412,29 @@ public class DetailsActivity extends AppCompatActivity implements IPullZoom {
                     if (response.body() != null) {
                         commonContentLayout.setVisibility(View.VISIBLE);
                         heritageOrExhibitionDetailModel = response.body();
-                        loadDataForHeritageOrExhibitionDetails(null, heritageOrExhibitionDetailModel.get(0).getShortDescription(),
-                                heritageOrExhibitionDetailModel.get(0).getLongDescription(),
-                                null, null,
-                                null,
-                                heritageOrExhibitionDetailModel.get(0).getLocation(),
-                                null, heritageOrExhibitionDetailModel.get(0).getLatitude(),
-                                heritageOrExhibitionDetailModel.get(0).getLongitude());
-                        new HeritageRowCount(DetailsActivity.this, appLanguage).execute();
+                        if (pageName.equals("heritage_detail_Page.json")) {
+                            loadDataForHeritageOrExhibitionDetails(null, heritageOrExhibitionDetailModel.get(0).getShortDescription(),
+                                    heritageOrExhibitionDetailModel.get(0).getLongDescription(),
+                                    null, null,
+                                    null,
+                                    heritageOrExhibitionDetailModel.get(0).getLocation(),
+                                    null, heritageOrExhibitionDetailModel.get(0).getLatitude(),
+                                    heritageOrExhibitionDetailModel.get(0).getLongitude(),
+                                    null, null);
+                            new HeritageRowCount(DetailsActivity.this, appLanguage).execute();
+                        } else {
+                            loadDataForHeritageOrExhibitionDetails(null,
+                                    heritageOrExhibitionDetailModel.get(0).getShortDescription(),
+                                    heritageOrExhibitionDetailModel.get(0).getLongDescription(),
+                                    null, null,
+                                    null,
+                                    heritageOrExhibitionDetailModel.get(0).getLocation(),
+                                    null, heritageOrExhibitionDetailModel.get(0).getLatitude(),
+                                    heritageOrExhibitionDetailModel.get(0).getLongitude(),
+                                    heritageOrExhibitionDetailModel.get(0).getStartDate(),
+                                    heritageOrExhibitionDetailModel.get(0).getEndDate());
+                            new ExhibitionDetailRowCount(DetailsActivity.this, appLanguage).execute();
+                        }
 
                     } else {
                         commonContentLayout.setVisibility(View.GONE);
@@ -424,6 +462,202 @@ public class DetailsActivity extends AppCompatActivity implements IPullZoom {
             }
         });
     }
+
+    public class ExhibitionDetailRowCount extends AsyncTask<Void, Void, Integer> {
+
+        private WeakReference<DetailsActivity> activityReference;
+        String language;
+
+
+        ExhibitionDetailRowCount(DetailsActivity context, String apiLanguage) {
+            activityReference = new WeakReference<>(context);
+            language = apiLanguage;
+        }
+
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+        }
+
+        @Override
+        protected void onPostExecute(Integer integer) {
+            exhibitionRowCount = integer;
+            if (exhibitionRowCount > 0) {
+                //updateEnglishTable or add row to database
+                new CheckExhibitionDetailDBRowExist(DetailsActivity.this, language).execute();
+            }
+        }
+
+        @Override
+        protected Integer doInBackground(Void... voids) {
+            if (language.equals("en")) {
+                return activityReference.get().qmDatabase.getExhibitionTableDao().getNumberOfRowsEnglish();
+            } else {
+                return activityReference.get().qmDatabase.getExhibitionTableDao().getNumberOfRowsArabic();
+            }
+        }
+    }
+
+    public class CheckExhibitionDetailDBRowExist extends AsyncTask<Void, Void, Void> {
+
+        private WeakReference<DetailsActivity> activityReference;
+        String language;
+
+        CheckExhibitionDetailDBRowExist(DetailsActivity context, String apiLanguage) {
+            activityReference = new WeakReference<>(context);
+            language = apiLanguage;
+        }
+
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+        }
+
+        @Override
+        protected void onPostExecute(Void aVoid) {
+            super.onPostExecute(aVoid);
+        }
+
+        @Override
+        protected Void doInBackground(Void... voids) {
+            if (heritageOrExhibitionDetailModel.size() > 0) {
+                if (language.equals("en")) {
+                    for (int i = 0; i < heritageOrExhibitionDetailModel.size(); i++) {
+                        int n = activityReference.get().qmDatabase.getExhibitionTableDao().checkEnglishIdExist(
+                                Integer.parseInt(heritageOrExhibitionDetailModel.get(i).getId()));
+                        if (n > 0) {
+                            //updateEnglishTable same id
+                            new UpdateExhibitionDetailTable(DetailsActivity.this, language, i).execute();
+
+                        }
+                    }
+                } else {
+                    for (int i = 0; i < heritageOrExhibitionDetailModel.size(); i++) {
+                        int n = activityReference.get().qmDatabase.getExhibitionTableDao().checkArabicIdExist(
+                                Integer.parseInt(heritageOrExhibitionDetailModel.get(i).getId()));
+                        if (n > 0) {
+                            //updateArabicTable same id
+                            new UpdateExhibitionDetailTable(DetailsActivity.this, language, i).execute();
+
+                        }
+                    }
+                }
+            }
+            return null;
+        }
+    }
+
+    public class UpdateExhibitionDetailTable extends AsyncTask<Void, Void, Void> {
+
+        private WeakReference<DetailsActivity> activityReference;
+        String language;
+        int position;
+
+        UpdateExhibitionDetailTable(DetailsActivity context, String apiLanguage, int p) {
+            activityReference = new WeakReference<>(context);
+            language = apiLanguage;
+            position = p;
+        }
+
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+        }
+
+        @Override
+        protected void onPostExecute(Void aVoid) {
+            super.onPostExecute(aVoid);
+        }
+
+        @Override
+        protected Void doInBackground(Void... voids) {
+            if (language.equals("en")) {
+                // updateEnglishTable table with english name
+
+                activityReference.get().qmDatabase.getExhibitionTableDao().updateExhibitionDetailEnglish(
+                        heritageOrExhibitionDetailModel.get(position).getStartDate(),
+                        heritageOrExhibitionDetailModel.get(position).getEndDate(),
+                        heritageOrExhibitionDetailModel.get(position).getLocation(),
+                        heritageOrExhibitionDetailModel.get(position).getImage(),
+                        heritageOrExhibitionDetailModel.get(position).getLongDescription(),
+                        heritageOrExhibitionDetailModel.get(position).getShortDescription(),
+                        heritageOrExhibitionDetailModel.get(position).getId()
+                );
+
+
+            } else {
+                // updateArabicTable table with arabic name
+                activityReference.get().qmDatabase.getExhibitionTableDao().updateExhibitionDetailArabic(
+                        heritageOrExhibitionDetailModel.get(position).getStartDate(),
+                        heritageOrExhibitionDetailModel.get(position).getEndDate(),
+                        heritageOrExhibitionDetailModel.get(position).getLocation(),
+                        heritageOrExhibitionDetailModel.get(position).getImage(),
+                        heritageOrExhibitionDetailModel.get(position).getLongDescription(),
+                        heritageOrExhibitionDetailModel.get(position).getShortDescription(),
+                        heritageOrExhibitionDetailModel.get(position).getId()
+                );
+            }
+            return null;
+        }
+    }
+
+    public class RetriveEnglishExhibitionData extends AsyncTask<Void, Void, List<ExhibitionListTableEnglish>> {
+
+        private WeakReference<DetailsActivity> activityReference;
+        int language;
+        String heritageId;
+
+        RetriveEnglishExhibitionData(DetailsActivity context, int appLanguage, String id) {
+            activityReference = new WeakReference<>(context);
+            language = appLanguage;
+            heritageId = id;
+        }
+
+        @Override
+        protected void onPreExecute() {
+            progressBar.setVisibility(View.VISIBLE);
+        }
+
+        @Override
+        protected void onPostExecute(List<ExhibitionListTableEnglish> exhibitionListTableEnglishes) {
+            super.onPostExecute(exhibitionListTableEnglishes);
+        }
+
+        @Override
+        protected List<ExhibitionListTableEnglish> doInBackground(Void... voids) {
+            return activityReference.get().qmDatabase.getExhibitionTableDao().getExhibitionDetailsEnglish(Integer.parseInt(heritageId));
+
+        }
+    }
+
+    public class RetriveArabicExhibitionData extends AsyncTask<Void, Void, List<ExhibitionListTableArabic>> {
+
+        private WeakReference<DetailsActivity> activityReference;
+        int language;
+        String heritageId;
+
+        RetriveArabicExhibitionData(DetailsActivity context, int appLanguage, String id) {
+            activityReference = new WeakReference<>(context);
+            language = appLanguage;
+            heritageId = id;
+        }
+
+        @Override
+        protected void onPreExecute() {
+            progressBar.setVisibility(View.VISIBLE);
+        }
+
+        @Override
+        protected void onPostExecute(List<ExhibitionListTableArabic> exhibitionListTableArabics) {
+            super.onPostExecute(exhibitionListTableArabics);
+        }
+
+        @Override
+        protected List<ExhibitionListTableArabic> doInBackground(Void... voids) {
+            return activityReference.get().qmDatabase.getExhibitionTableDao().getExhibitionDetailsArabic(Integer.parseInt(heritageId));
+        }
+    }
+
 
     public class HeritageRowCount extends AsyncTask<Void, Void, Integer> {
 
@@ -582,7 +816,7 @@ public class DetailsActivity extends AppCompatActivity implements IPullZoom {
                     null,
                     heritageListTableEnglish.get(0).getLocation(),
                     null, heritageListTableEnglish.get(0).getLatitude(),
-                    heritageListTableEnglish.get(0).getLongitude());
+                    heritageListTableEnglish.get(0).getLongitude(), null, null);
         }
 
         @Override
@@ -617,7 +851,7 @@ public class DetailsActivity extends AppCompatActivity implements IPullZoom {
                     null,
                     heritageListTableArabic.get(0).getLocation(),
                     null, heritageListTableArabic.get(0).getLatitude(),
-                    heritageListTableArabic.get(0).getLongitude());
+                    heritageListTableArabic.get(0).getLongitude(), null, null);
 
         }
 
