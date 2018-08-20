@@ -178,46 +178,7 @@ public class CommonActivity extends AppCompatActivity {
                 getMuseumCollectionListFromDatabase();
         }
     }
-
-    private void prepareExhibitionData() {
-
-        CommonModel model = new CommonModel("1", "Project Space 12 Bouthayna Al-Muftah: Echoes",
-                "Wednesday, July 11, 2018 - 11:45 - Monday, September 10, 2018 - 11:45", "",
-                "Mathaf: Arab Museum of Modern Art",
-                "",
-                null, true);
-        models.add(model);
-        model = new CommonModel("2", "ARTIST IN RESIDENCE 2017-2018: DUAL INSPIRATIONS",
-                "Tuesday, July 17, 2018 - 07:45 - Monday, October 1, 2018 - 07:45",
-                "",
-                "Fire Station Artist in Residence, Garage Gallery",
-                "http://www.qm.org.qa/sites/default/files/styles/mobile_design/public/air3-homepage_qm_2000x750px-02.jpg?itok=rmFs7UIN",
-                null, false);
-        models.add(model);
-        model = new CommonModel("3", "PEARLS: TREASURES FROM THE SEAS AND THE RIVERS",
-                "Wednesday, July 11, 2018 - 09:15 - Monday, October 1, 2018 - 09:15",
-                "",
-                "Revolution Square 2/3, Moscow 109012",
-                "http://www.qm.org.qa/sites/default/files/styles/mobile_design/public/076-and-cover-marie-valerie-tiara.jpg?itok=PxyEnw9O",
-                null, false);
-        models.add(model);
-        model = new CommonModel("1", "LAUNDROMAT",
-                "Thursday, March 15, 2018 - 12:45 - Friday, June 1, 2018 - 12:45",
-                "Fire Station Artist in Residence, Garage Gallery", "",
-                "http://www.qm.org.qa/sites/default/files/styles/mobile_design/public/2012-photo-credit-ai-weiwei-studio-post_0.jpg?itok=MVxORAFa",
-                null, false);
-        models.add(model);
-        model = new CommonModel("1", "Contemporary Art Qatar",
-                "Saturday, December 9, 2017 - 07:45 - Wednesday, January 3, 2018 - 07:45",
-                "",
-                "KRAFTWERK BERLIN",
-                "http://www.qm.org.qa/sites/default/files/styles/mobile_design/public/contemporary-art-qatar-01.jpg?itok=F4qKDliY",
-                null, false);
-        models.add(model);
-
-        mAdapter.notifyDataSetChanged();
-    }
-
+    
     public void getCommonListDataFromDatabase(String apiParts) {
 
         if (apiParts.equals("Heritage_List_Page.json")) {
@@ -355,40 +316,6 @@ public class CommonActivity extends AppCompatActivity {
 
     }
 
-    private void prepareCollectionData() {
-
-        CommonModel model = new CommonModel("1", "CERAMICS COLLECTION",
-                null,
-                null, null,
-                "http://www.qm.org.qa/sites/default/files/styles/content_image/public/images/body/idam-pierremonetta_mg_6372_1.jpg?itok=bKArHUGQ",
-                false, false);
-        models.add(model);
-        model = new CommonModel("2", "GLASS COLLECTION",
-                null, null,
-                null,
-                "http://www.qm.org.qa/sites/default/files/styles/content_image/public/images/body/inq.jpg?itok=C14Qr6xt",
-                false, false);
-        models.add(model);
-        model = new CommonModel("3", "THE CAVOUR VASE",
-                null, null,
-                null,
-                "http://www.qm.org.qa/sites/default/files/styles/content_image/public/images/body/dsc_0597_2_0.jpg?itok=TXvRM1HE",
-                false, false);
-        models.add(model);
-        model = new CommonModel("4", "GOLD AND GLASS",
-                null, null,
-                null,
-                "http://www.qm.org.qa/sites/default/files/styles/content_image/public/images/body/10_0.jpg?itok=4BYJtRQB",
-                false, false);
-        models.add(model);
-        model = new CommonModel("4", "MOSQUE LAMP",
-                null, null,
-                null,
-                "http://www.qm.org.qa/sites/default/files/styles/content_image/public/images/body/mia-catering.jpg?itok=Kk7svJPU",
-                false, false);
-        models.add(model);
-        mAdapter.notifyDataSetChanged();
-    }
 
     public class DiningRowCount extends AsyncTask<Void, Void, Integer> {
 
