@@ -23,6 +23,8 @@ import com.qatarmuseums.qatarmuseumsapp.QMDatabase;
 import com.qatarmuseums.qatarmuseumsapp.R;
 import com.qatarmuseums.qatarmuseumsapp.apicall.APIClient;
 import com.qatarmuseums.qatarmuseumsapp.apicall.APIInterface;
+import com.qatarmuseums.qatarmuseumsapp.commonpagedatabase.ExhibitionListTableArabic;
+import com.qatarmuseums.qatarmuseumsapp.commonpagedatabase.ExhibitionListTableEnglish;
 import com.qatarmuseums.qatarmuseumsapp.commonpagedatabase.HeritageListTableArabic;
 import com.qatarmuseums.qatarmuseumsapp.commonpagedatabase.HeritageListTableEnglish;
 import com.qatarmuseums.qatarmuseumsapp.commonpagedatabase.PublicArtsTableArabic;
@@ -60,9 +62,12 @@ public class CommonActivity extends AppCompatActivity {
     HeritageListTableArabic heritageListTableArabic;
     PublicArtsTableEnglish publicArtsTableEnglish;
     PublicArtsTableArabic publicArtsTableArabic;
+    ExhibitionListTableEnglish exhibitionListTableEnglish;
+    ExhibitionListTableArabic exhibitionListTableArabic;
     RelativeLayout noResultFoundLayout;
     int publicArtsTableRowCount;
     int heritageTableRowCount;
+    int exhibitionTableRowCount;
     int appLanguage;
     String pageName = null;
     String id;
@@ -135,7 +140,10 @@ public class CommonActivity extends AppCompatActivity {
             }
         });
         if (toolbarTitle.equals(getString(R.string.sidemenu_exhibition_text))) {
-            getCommonListAPIDataFromAPI("Exhibition_List_Page.json");
+            if (util.isNetworkAvailable(CommonActivity.this))
+                getCommonListAPIDataFromAPI("Exhibition_List_Page.json");
+            else
+                getCommonListDataFromDatabase("Exhibition_List_Page.json");
         } else if (toolbarTitle.equals(getString(R.string.sidemenu_heritage_text))) {
             if (util.isNetworkAvailable(CommonActivity.this))
                 getCommonListAPIDataFromAPI("Heritage_List_Page.json");
@@ -210,6 +218,12 @@ public class CommonActivity extends AppCompatActivity {
                 new RetriveArabicPublicArtsData(CommonActivity.this, appLanguage).execute();
             }
 
+        } else if (apiParts.equals("Exhibition_List_Page.json")) {
+            if (appLanguage == 1) {
+                new RetriveExhibitionDataEnglish(CommonActivity.this, appLanguage).execute();
+            } else {
+                new RetriveExhibitionDataArabic(CommonActivity.this, appLanguage).execute();
+            }
         }
 
 
@@ -285,6 +299,8 @@ public class CommonActivity extends AppCompatActivity {
                             new RowCount(CommonActivity.this, language).execute();
                         } else if (pageName.equals("Public_Arts_List_Page.json")) {
                             new PublicArtsRowCount(CommonActivity.this, language).execute();
+                        } else if (pageName.equals("Exhibition_List_Page.json")) {
+                            new ExhibitionRowCount(CommonActivity.this, language).execute();
                         }
                     } else {
                         recyclerView.setVisibility(View.GONE);
@@ -862,5 +878,286 @@ public class CommonActivity extends AppCompatActivity {
         }
     }
 
+
+    public class ExhibitionRowCount extends AsyncTask<Void, Void, Integer> {
+
+        private WeakReference<CommonActivity> activityReference;
+        String language;
+
+        ExhibitionRowCount(CommonActivity context, String apiLanguage) {
+            activityReference = new WeakReference<>(context);
+            language = apiLanguage;
+        }
+
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+        }
+
+        @Override
+        protected void onPostExecute(Integer integer) {
+            exhibitionTableRowCount = integer;
+            if (exhibitionTableRowCount > 0) {
+                //updateEnglishTable or add row to database
+                new CheckExhibitionDBRowExist(CommonActivity.this, language).execute();
+
+            } else {
+                //create databse
+                new InsertExhibitionDataToDataBase(CommonActivity.this, exhibitionListTableEnglish, exhibitionListTableArabic, language).execute();
+
+            }
+        }
+
+        @Override
+        protected Integer doInBackground(Void... voids) {
+
+            if (language.equals("en"))
+                return activityReference.get().qmDatabase.getExhibitionTableDao().getNumberOfRowsEnglish();
+            else
+                return activityReference.get().qmDatabase.getExhibitionTableDao().getNumberOfRowsArabic();
+        }
+
+    }
+
+    public class CheckExhibitionDBRowExist extends AsyncTask<Void, Void, Void> {
+
+        private WeakReference<CommonActivity> activityReference;
+        private ExhibitionListTableEnglish exhibitionListTableEnglish;
+        String language;
+
+        CheckExhibitionDBRowExist(CommonActivity context, String apiLanguage) {
+            activityReference = new WeakReference<>(context);
+            language = apiLanguage;
+        }
+
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+        }
+
+        @Override
+        protected void onPostExecute(Void aVoid) {
+            super.onPostExecute(aVoid);
+        }
+
+        @Override
+        protected Void doInBackground(Void... voids) {
+            if (models.size() > 0) {
+                if (language.equals("en")) {
+                    for (int i = 0; i < models.size(); i++) {
+                        int n = activityReference.get().qmDatabase.getExhibitionTableDao().checkEnglishIdExist(
+                                Integer.parseInt(models.get(i).getId()));
+                        if (n > 0) {
+                            //updateEnglishTable same id
+                            new UpdateExhibitionTable(CommonActivity.this, appLanguage, i).execute();
+
+                        } else {
+                            //create row with corresponding id
+                            exhibitionListTableEnglish = new ExhibitionListTableEnglish(Long.parseLong(models.get(i).getId()),
+                                    models.get(i).getName(), models.get(i).getImage(),
+                                    models.get(i).getStartDate(), models.get(i).getEndDate(),
+                                    models.get(i).getLocation(), "", "");
+                            activityReference.get().qmDatabase.getExhibitionTableDao().insert(exhibitionListTableEnglish);
+
+                        }
+                    }
+                } else {
+                    for (int i = 0; i < models.size(); i++) {
+                        int n = activityReference.get().qmDatabase.getExhibitionTableDao().checkArabicIdExist(
+                                Integer.parseInt(models.get(i).getId()));
+                        if (n > 0) {
+                            //updateEnglishTable same id
+                            new UpdateExhibitionTable(CommonActivity.this, appLanguage, i).execute();
+
+                        } else {
+                            //create row with corresponding id
+                            exhibitionListTableArabic = new ExhibitionListTableArabic(Long.parseLong(models.get(i).getId()),
+                                    models.get(i).getName(),
+                                    models.get(i).getImage(),
+                                    models.get(i).getStartDate(), models.get(i).getEndDate(),
+                                    models.get(i).getLocation(), null, null);
+                            activityReference.get().qmDatabase.getExhibitionTableDao().insert(exhibitionListTableArabic);
+
+                        }
+                    }
+                }
+            }
+            return null;
+        }
+
+    }
+
+    public class InsertExhibitionDataToDataBase extends AsyncTask<Void, Void, Boolean> {
+        private WeakReference<CommonActivity> activityReference;
+        private ExhibitionListTableEnglish exhibitionListTableEnglish;
+        private ExhibitionListTableArabic exhibitionListTableArabic;
+        String language;
+
+        InsertExhibitionDataToDataBase(CommonActivity context, ExhibitionListTableEnglish exhibitionListTableEnglish,
+                                       ExhibitionListTableArabic exhibitionListTableArabic, String appLanguage) {
+            activityReference = new WeakReference<>(context);
+            this.exhibitionListTableEnglish = exhibitionListTableEnglish;
+            this.exhibitionListTableArabic = exhibitionListTableArabic;
+            this.language = appLanguage;
+        }
+
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+        }
+
+        @Override
+        protected void onPostExecute(Boolean aBoolean) {
+            super.onPostExecute(aBoolean);
+        }
+
+        @Override
+        protected Boolean doInBackground(Void... voids) {
+            if (models != null) {
+                if (language.equals("en")) {
+                    for (int i = 0; i < models.size(); i++) {
+                        exhibitionListTableEnglish = new ExhibitionListTableEnglish(Long.parseLong(models.get(i).getId()),
+                                models.get(i).getName(),
+                                models.get(i).getImage(),
+                                models.get(i).getStartDate(),
+                                models.get(i).getEndDate(),
+                                models.get(i).getLocation(), "", "");
+                        activityReference.get().qmDatabase.getExhibitionTableDao().insert(exhibitionListTableEnglish);
+                    }
+                } else {
+                    for (int i = 0; i < models.size(); i++) {
+                        exhibitionListTableArabic = new ExhibitionListTableArabic(Long.parseLong(models.get(i).getId()),
+                                models.get(i).getName(),
+                                models.get(i).getImage(),
+                                models.get(i).getStartDate(),
+                                models.get(i).getEndDate(),
+                                models.get(i).getLocation(), null, null);
+                        activityReference.get().qmDatabase.getExhibitionTableDao().insert(exhibitionListTableArabic);
+                    }
+                }
+            }
+            return true;
+        }
+    }
+
+    public class UpdateExhibitionTable extends AsyncTask<Void, Void, Void> {
+        private WeakReference<CommonActivity> activityReference;
+        int language;
+        int position;
+
+        UpdateExhibitionTable(CommonActivity context, int apiLanguage, int p) {
+            activityReference = new WeakReference<>(context);
+            language = apiLanguage;
+            position = p;
+        }
+
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+        }
+
+        @Override
+        protected void onPostExecute(Void aVoid) {
+            super.onPostExecute(aVoid);
+        }
+
+        @Override
+        protected Void doInBackground(Void... voids) {
+            if (language == 1) {
+                // updateEnglishTable table with english name
+                activityReference.get().qmDatabase.getExhibitionTableDao().updateExhibitionListEnglish(
+                        models.get(position).getStartDate(), models.get(position).getEndDate(),
+                        models.get(position).getLocation(), models.get(position).getId()
+                );
+
+            } else {
+                // updateEnglishTable table with arabic name
+                activityReference.get().qmDatabase.getExhibitionTableDao().updateExhibitionListArabic(
+                        models.get(position).getStartDate(), models.get(position).getEndDate(),
+                        models.get(position).getLocation(), models.get(position).getId()
+                );
+            }
+            return null;
+        }
+    }
+
+    public class RetriveExhibitionDataEnglish extends AsyncTask<Void, Void, List<ExhibitionListTableEnglish>> {
+        private WeakReference<CommonActivity> activityReference;
+        int language;
+
+        RetriveExhibitionDataEnglish(CommonActivity context, int appLanguage) {
+            activityReference = new WeakReference<>(context);
+            language = appLanguage;
+        }
+
+        @Override
+        protected void onPreExecute() {
+            progressBar.setVisibility(View.VISIBLE);
+        }
+
+        @Override
+        protected void onPostExecute(List<ExhibitionListTableEnglish> exhibitionListTableEnglish) {
+            models.clear();
+            for (int i = 0; i < exhibitionListTableEnglish.size(); i++) {
+                CommonModel commonModel = new CommonModel(String.valueOf(exhibitionListTableEnglish.get(i).getExhibition_id()),
+                        exhibitionListTableEnglish.get(i).getExhibition_name(),
+                        exhibitionListTableEnglish.get(i).getExhibition_start_date(),
+                        exhibitionListTableEnglish.get(i).getExhibition_end_date(),
+                        exhibitionListTableEnglish.get(i).getExhibition_location(),
+                        exhibitionListTableEnglish.get(i).getExhibition_latest_image(),
+                        null, false);
+
+                models.add(i, commonModel);
+
+            }
+            mAdapter.notifyDataSetChanged();
+            progressBar.setVisibility(View.GONE);
+        }
+
+        @Override
+        protected List<ExhibitionListTableEnglish> doInBackground(Void... voids) {
+            return activityReference.get().qmDatabase.getExhibitionTableDao().getAllEnglish();
+        }
+    }
+
+    public class RetriveExhibitionDataArabic extends AsyncTask<Void, Void, List<ExhibitionListTableArabic>> {
+        private WeakReference<CommonActivity> activityReference;
+        int language;
+
+        RetriveExhibitionDataArabic(CommonActivity context, int appLanguage) {
+            activityReference = new WeakReference<>(context);
+            language = appLanguage;
+        }
+
+        @Override
+        protected void onPreExecute() {
+            progressBar.setVisibility(View.VISIBLE);
+        }
+
+        @Override
+        protected void onPostExecute(List<ExhibitionListTableArabic> exhibitionListTableArabic) {
+            models.clear();
+            for (int i = 0; i < exhibitionListTableArabic.size(); i++) {
+                CommonModel commonModel = new CommonModel(String.valueOf(exhibitionListTableArabic.get(i).getExhibition_id()),
+                        exhibitionListTableArabic.get(i).getExhibition_name(),
+                        exhibitionListTableArabic.get(i).getExhibition_start_date(),
+                        exhibitionListTableArabic.get(i).getExhibition_end_date(),
+                        exhibitionListTableArabic.get(i).getExhibition_location(),
+                        exhibitionListTableArabic.get(i).getExhibition_latest_image(),
+                        null, false);
+
+                models.add(i, commonModel);
+
+            }
+            mAdapter.notifyDataSetChanged();
+            progressBar.setVisibility(View.GONE);
+        }
+
+        @Override
+        protected List<ExhibitionListTableArabic> doInBackground(Void... voids) {
+            return activityReference.get().qmDatabase.getExhibitionTableDao().getAllArabic();
+
+        }
+    }
 
 }
