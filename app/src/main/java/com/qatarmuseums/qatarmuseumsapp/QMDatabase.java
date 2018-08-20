@@ -12,6 +12,9 @@ import android.support.annotation.NonNull;
 import com.qatarmuseums.qatarmuseumsapp.commonpagedatabase.DiningTableArabic;
 import com.qatarmuseums.qatarmuseumsapp.commonpagedatabase.DiningTableDao;
 import com.qatarmuseums.qatarmuseumsapp.commonpagedatabase.DiningTableEnglish;
+import com.qatarmuseums.qatarmuseumsapp.commonpagedatabase.ExhibitionListTableArabic;
+import com.qatarmuseums.qatarmuseumsapp.commonpagedatabase.ExhibitionListTableEnglish;
+import com.qatarmuseums.qatarmuseumsapp.commonpagedatabase.ExhibitionTableDao;
 import com.qatarmuseums.qatarmuseumsapp.commonpagedatabase.HeritageListTableArabic;
 import com.qatarmuseums.qatarmuseumsapp.commonpagedatabase.HeritageListTableDao;
 import com.qatarmuseums.qatarmuseumsapp.commonpagedatabase.HeritageListTableEnglish;
@@ -28,8 +31,10 @@ import com.qatarmuseums.qatarmuseumsapp.park.ParkTableEnglish;
 @Database(entities = {HomePageTableEnglish.class, HomePageTableArabic.class,
         HeritageListTableEnglish.class, HeritageListTableArabic.class,
         PublicArtsTableEnglish.class, PublicArtsTableArabic.class,
-        ParkTableEnglish.class, ParkTableArabic.class, DiningTableEnglish.class, DiningTableArabic.class},
+        ParkTableEnglish.class, ParkTableArabic.class, DiningTableEnglish.class, DiningTableArabic.class,
+        ExhibitionListTableEnglish.class, ExhibitionListTableArabic.class},
         version = 1, exportSchema = false)
+
 public abstract class QMDatabase extends RoomDatabase {
 
     public abstract HomePageTableDao getHomePageTableDao();
@@ -39,6 +44,8 @@ public abstract class QMDatabase extends RoomDatabase {
     public abstract PublicArtsTableDao getPublicArtsTableDao();
 
     public abstract ParkTableDao getParkTableDao();
+
+    public abstract ExhibitionTableDao getExhibitionTableDao();
 
     public abstract DiningTableDao getDiningTableDao();
 
