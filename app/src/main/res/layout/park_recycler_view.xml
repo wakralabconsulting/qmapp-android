@@ -4,6 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/background_color"
     app:layout_behavior="@string/appbar_scrolling_view_behavior"
     tools:context="com.qatarmuseums.qatarmuseumsapp.park.ParkActivity"
     tools:showIn="@layout/activity_park">
@@ -14,10 +15,10 @@
         android:orientation="vertical">
 
         <LinearLayout
+            android:id="@+id/main_layout"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:orientation="vertical"
-            android:id="@+id/main_layout"
             android:visibility="visible">
 
             <RelativeLayout
@@ -83,21 +84,21 @@
         </LinearLayout>
 
         <RelativeLayout
+            android:id="@+id/no_result_layout"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:visibility="gone"
-            android:layout_below="@id/app_bar"
             android:layout_above="@id/bottom_toolbar"
-            android:id="@+id/no_result_layout"
-            android:layout_marginTop="@dimen/padding_50">
+            android:layout_below="@id/app_bar"
+            android:layout_marginTop="@dimen/padding_50"
+            android:visibility="gone">
 
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_centerInParent="true"
-                android:textAlignment="center"
                 android:fontFamily="@font/din_next_lt_pro_regular"
                 android:text="@string/no_results_text"
+                android:textAlignment="center"
                 android:textColor="@android:color/black"
                 android:textSize="@dimen/font_size_21" />
         </RelativeLayout>
