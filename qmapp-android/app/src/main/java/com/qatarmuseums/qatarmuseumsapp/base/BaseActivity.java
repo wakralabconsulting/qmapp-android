@@ -325,13 +325,27 @@ public class BaseActivity extends AppCompatActivity
 
     }
 
+    public void showToolBarOptions() {
+        topbarCalander.setVisibility(View.VISIBLE);
+        topbarNotification.setVisibility(View.VISIBLE);
+        topbarProfile.setVisibility(View.VISIBLE);
+    }
+
+    public void hideToolBarOptions() {
+        topbarCalander.setVisibility(View.INVISIBLE);
+        topbarNotification.setVisibility(View.INVISIBLE);
+        topbarProfile.setVisibility(View.INVISIBLE);
+    }
+
     public void handlingDrawer() {
         if (drawer.isDrawerOpen(Gravity.END)) {
             navigationView.startAnimation(fadeOutAnimation);
+            showToolBarOptions();
             toolbar.setBackgroundColor(Color.parseColor("#000000"));
 
         } else {
             topbarSidemenu.setImageDrawable(getResources().getDrawable(R.drawable.close));
+            hideToolBarOptions();
             drawer.openDrawer(Gravity.END, false);
             toolbar.setBackgroundColor(Color.parseColor("#CC000000"));
             navigationView.startAnimation(fadeInAnimation);
@@ -386,7 +400,7 @@ public class BaseActivity extends AppCompatActivity
         sidemenuGiftShopLayout.clearAnimation();
         sidemenuParkLayout.clearAnimation();
         sidemenuSettingsLayout.clearAnimation();
-
+        showToolBarOptions();
     }
 
     public void touchListnerForLayout(final LinearLayout linearLayout) {
