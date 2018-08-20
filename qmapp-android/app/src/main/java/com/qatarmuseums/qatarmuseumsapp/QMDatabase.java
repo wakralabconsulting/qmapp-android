@@ -36,7 +36,8 @@ import com.qatarmuseums.qatarmuseumsapp.park.ParkTableEnglish;
         PublicArtsTableEnglish.class, PublicArtsTableArabic.class,
         ParkTableEnglish.class, ParkTableArabic.class, DiningTableEnglish.class,
         DiningTableArabic.class, MuseumCollectionListTableEnglish.class,
-        MuseumCollectionListTableArabic.class},
+        MuseumCollectionListTableArabic.class, ExhibitionListTableEnglish.class,
+        ExhibitionListTableArabic.class},
         version = 1, exportSchema = false)
 
 public abstract class QMDatabase extends RoomDatabase {
@@ -52,6 +53,7 @@ public abstract class QMDatabase extends RoomDatabase {
     public abstract ExhibitionTableDao getExhibitionTableDao();
 
     public abstract DiningTableDao getDiningTableDao();
+
     public abstract MuseumCollectionListTableDao getMuseumCollectionListDao();
 
     private static QMDatabase qmDatabase;
