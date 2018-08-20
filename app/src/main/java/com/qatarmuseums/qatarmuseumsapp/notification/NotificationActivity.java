@@ -1,7 +1,7 @@
 package com.qatarmuseums.qatarmuseumsapp.notification;
 
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -10,7 +10,7 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
-import android.widget.ImageView;
+import android.widget.TextView;
 
 import com.qatarmuseums.qatarmuseumsapp.R;
 
@@ -24,8 +24,9 @@ public class NotificationActivity extends AppCompatActivity {
     private RecyclerView recyclerView;
     private List<NotificationModel> models = new ArrayList<>();
     private NotificationListAdapter mAdapter;
-    private ImageView backArrow;
+    private View backArrow;
     private Animation zoomOutAnimation;
+    private TextView emptyText;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -33,9 +34,9 @@ public class NotificationActivity extends AppCompatActivity {
         setContentView(R.layout.activity_notifiction);
         toolbar = (Toolbar) findViewById(R.id.notification_toolbar);
         setSupportActionBar(toolbar);
-        backArrow = (ImageView) findViewById(R.id.toolbar_back);
+        backArrow = findViewById(R.id.toolbar_back);
         recyclerView = (RecyclerView) findViewById(R.id.notification_recycler_view);
-
+        emptyText = (TextView) findViewById(R.id.no_new_notification_txt);
         mAdapter = new NotificationListAdapter(this, models);
         RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(getApplicationContext());
         recyclerView.setLayoutManager(mLayoutManager);
@@ -60,7 +61,9 @@ public class NotificationActivity extends AppCompatActivity {
                 return false;
             }
         });
-        prepareNotificationData();
+
+        emptyText.setVisibility(View.VISIBLE);
+//        prepareNotificationData();
     }
 
     private void prepareNotificationData() {
