@@ -314,8 +314,8 @@ public class DetailsActivity extends AppCompatActivity implements IPullZoom {
         if (openingTime != null) {
             this.timingLayout.setVisibility(View.VISIBLE);
             String time = getResources().getString(R.string.everyday_from) +
-                    " " + openingTime + " " + getResources().getString(R.string.to) + " " +
-                    closingTime;
+                    " " + openingTime /*+ " " + getResources().getString(R.string.to) + " " +
+                    closingTime*/;
             this.timingDetails.setText(time);
         }
         if (locationInfo != null) {
