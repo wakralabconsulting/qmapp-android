@@ -12,17 +12,33 @@ import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.qatarmuseums.qatarmuseumsapp.R;
+import com.qatarmuseums.qatarmuseumsapp.apicall.APIClient;
+import com.qatarmuseums.qatarmuseumsapp.apicall.APIInterface;
+import com.qatarmuseums.qatarmuseumsapp.utils.Util;
 import com.shrikanthravi.collapsiblecalendarview.widget.CollapsibleCalendar;
 
+import java.io.IOException;
+import java.text.DecimalFormat;
+import java.text.NumberFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.Date;
 import java.util.GregorianCalendar;
+import java.util.Locale;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 public class CalendarActivity extends AppCompatActivity {
 
@@ -37,7 +53,17 @@ public class CalendarActivity extends AppCompatActivity {
     ImageView backArrow;
     @BindView(R.id.toolbar_title)
     TextView toolbar_title;
+    @BindView(R.id.no_events_txt)
+    TextView noEventsTxt;
+    @BindView(R.id.progressBarLoading)
+    ProgressBar progressBar;
     RecyclerView.LayoutManager layoutManager;
+    APIInterface apiService;
+    Date selectedDateTimeStamp;
+    NumberFormat numberFormat;
+    String selectedDate;
+    private SimpleDateFormat simpleDateFormat;
+    Calendar calendarInstance;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -48,6 +74,8 @@ public class CalendarActivity extends AppCompatActivity {
         toolbar_title.setText(getResources().getString(R.string.calendar_activity_tittle));
         collapsibleCalendar = (CollapsibleCalendar) findViewById(R.id.collapsibleCalendarView);
         eventListView = (RecyclerView) findViewById(R.id.event_list);
+        numberFormat = new DecimalFormat("00");
+        simpleDateFormat = new SimpleDateFormat("dd-MM-yyyy", Locale.US);
 
         zoomOutAnimation = AnimationUtils.loadAnimation(getApplicationContext(),
                 R.anim.zoom_out_more);
@@ -77,16 +105,19 @@ public class CalendarActivity extends AppCompatActivity {
         collapsibleCalendar.addEventTag(today.get(Calendar.YEAR),
                 today.get(Calendar.MONTH), today.get(Calendar.DAY_OF_MONTH), Color.BLUE);
 
-        System.out.println("Testing date "
-                + collapsibleCalendar.getSelectedDay().getDay() + "/"
-                + collapsibleCalendar.getSelectedDay().getMonth()
-                + "/" + collapsibleCalendar.getSelectedDay().getYear());
-
-
         collapsibleCalendar.setCalendarListener(new CollapsibleCalendar.CalendarListener() {
             @Override
             public void onDaySelect() {
+                selectedDate = collapsibleCalendar.getSelectedItem().getDay() + "-" +
+                        numberFormat.format(collapsibleCalendar.getSelectedItem().getMonth()) + "-" +
+                        collapsibleCalendar.getSelectedItem().getYear();
+                try {
+                    selectedDateTimeStamp = (Date) simpleDateFormat.parse(selectedDate);
+                } catch (ParseException e) {
+                    e.printStackTrace();
+                }
 
+                getCalendarEventsFromAPI(selectedDateTimeStamp.getTime());
             }
 
             @Override
@@ -110,48 +141,12 @@ public class CalendarActivity extends AppCompatActivity {
             }
         });
 
-
-//        recyclerview
         calendarEventList = new ArrayList<CalendarEvents>();
-
-        CalendarEvents events = new CalendarEvents(getResources().getString(R.string.event_text_first)
-                , getResources().getString(R.string.event_text_second),
-                getResources().getString(R.string.event_timing_text),
-                getResources().getString(R.string.event_detail_text));
-        calendarEventList.add(events);
-        events = new CalendarEvents(getResources().getString(R.string.event_text_first)
-                , getResources().getString(R.string.event_text_second),
-                getResources().getString(R.string.event_timing_text),
-                getResources().getString(R.string.event_detail_text));
-        calendarEventList.add(events);
-        events = new CalendarEvents(getResources().getString(R.string.event_text_first)
-                , getResources().getString(R.string.event_text_second),
-                getResources().getString(R.string.event_timing_text),
-                getResources().getString(R.string.event_detail_text));
-        calendarEventList.add(events);
-        events = new CalendarEvents(getResources().getString(R.string.event_text_first)
-                , getResources().getString(R.string.event_text_second),
-                getResources().getString(R.string.event_timing_text),
-                getResources().getString(R.string.event_detail_text));
-        calendarEventList.add(events);
-        events = new CalendarEvents(getResources().getString(R.string.event_text_first)
-                , getResources().getString(R.string.event_text_second),
-                getResources().getString(R.string.event_timing_text),
-                getResources().getString(R.string.event_detail_text));
-        calendarEventList.add(events);
-        events = new CalendarEvents(getResources().getString(R.string.event_text_first)
-                , getResources().getString(R.string.event_text_second),
-                getResources().getString(R.string.event_timing_text),
-                getResources().getString(R.string.event_detail_text));
-        calendarEventList.add(events);
-
-
         calendarAdapter = new CalendarAdapter(CalendarActivity.this, calendarEventList);
         layoutManager = new LinearLayoutManager(getApplication());
         eventListView.setLayoutManager(layoutManager);
         eventListView.setItemAnimator(new DefaultItemAnimator());
         eventListView.setAdapter(calendarAdapter);
-
 
         eventListView.addOnScrollListener(new RecyclerView.OnScrollListener() {
             @Override
@@ -175,5 +170,93 @@ public class CalendarActivity extends AppCompatActivity {
             }
         });
 
+        getCalendarEventsFromAPI(today.getTimeInMillis());
     }
+
+    public Boolean checkWednesdayOrSunday() {
+
+        if (collapsibleCalendar.getSelectedItem() == null)
+            calendarInstance = new GregorianCalendar();
+        else {
+            calendarInstance = Calendar.getInstance();
+            calendarInstance.set(collapsibleCalendar.getSelectedItem().getYear(),
+                    collapsibleCalendar.getSelectedItem().getMonth(),
+                    collapsibleCalendar.getSelectedItem().getDay());
+        }
+        if (calendarInstance.get(Calendar.DAY_OF_WEEK) == Calendar.SUNDAY ||
+                calendarInstance.get(Calendar.DAY_OF_WEEK) == Calendar.WEDNESDAY) {
+            return true;
+        } else
+            return false;
+    }
+
+    public CalendarEvents getLocalEvent() {
+        CalendarEvents localEvent = new CalendarEvents("MIA",
+                "Walk In Gallery Tours",
+                "Join our Museum Guides for a tour of the Museum of Islamic Art's oustanding collection of objects, spread over 1,400 years and across three continents. No booking is required to be a part of the tour.",
+                "Monday - Science Tour" +
+                        "\n\n" +
+                        "Tuesday - Techniques Tour (from 1 July onwards)" +
+                        "\n\n" +
+                        "Thursday - MIA Architecture Tour" +
+                        "\n\n" +
+                        "Friday - Permanent Gallery Tour" +
+                        "\n\n" +
+                        "Saturday - Permanent Gallery Tour",
+                "14:00",
+                "16:00",
+                false);
+        return localEvent;
+    }
+
+    public void sortEventsWithStartTime() {
+        Collections.sort(calendarEventList, new Comparator<CalendarEvents>() {
+            @Override
+            public int compare(CalendarEvents o1, CalendarEvents o2) {
+                return o1.getStartTime().compareTo(o2.getStartTime());
+            }
+        });
+    }
+
+    public void getCalendarEventsFromAPI(Long timestamp) {
+        progressBar.setVisibility(View.VISIBLE);
+        calendarAdapter.clear();
+        apiService = APIClient.getTempClient().create(APIInterface.class);
+        Call<ArrayList<CalendarEvents>> call = apiService.getCalendarDetails(timestamp / 1000,
+                "any", "any", "any");
+        call.enqueue(new Callback<ArrayList<CalendarEvents>>() {
+            @Override
+            public void onResponse(Call<ArrayList<CalendarEvents>> call, Response<ArrayList<CalendarEvents>> response) {
+                if (response.isSuccessful()) {
+                    if (response.body().size() > 0) {
+                        noEventsTxt.setVisibility(View.GONE);
+                        calendarEventList.addAll(response.body());
+                        if (!checkWednesdayOrSunday())
+                            calendarEventList.add(getLocalEvent());
+                        sortEventsWithStartTime();
+                        calendarAdapter.notifyDataSetChanged();
+                        eventListView.setVisibility(View.VISIBLE);
+                    } else {
+                        noEventsTxt.setVisibility(View.VISIBLE);
+                    }
+                } else {
+                    noEventsTxt.setVisibility(View.VISIBLE);
+                }
+                progressBar.setVisibility(View.GONE);
+            }
+
+            @Override
+            public void onFailure(Call<ArrayList<CalendarEvents>> call, Throwable t) {
+                if (t instanceof IOException) {
+                    new Util().showToast(getResources().getString(R.string.check_network), getApplicationContext());
+                } else {
+                    // error due to mapping issues
+                }
+                noEventsTxt.setVisibility(View.VISIBLE);
+                progressBar.setVisibility(View.GONE);
+            }
+        });
+
+    }
+
 }

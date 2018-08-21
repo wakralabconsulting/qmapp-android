@@ -7,22 +7,32 @@ import retrofit2.converter.gson.GsonConverterFactory;
 
 public class APIClient {
     private static Retrofit retrofit = null;
+    private static String apiBaseUrl = "http://www.qm.org.qa/";
+    private static OkHttpClient client;
 
     public static Retrofit getClient() {
 
         HttpLoggingInterceptor interceptor = new HttpLoggingInterceptor();
         interceptor.setLevel(HttpLoggingInterceptor.Level.BODY);
-        OkHttpClient client = new OkHttpClient.Builder().addInterceptor(interceptor).build();
+        client = new OkHttpClient.Builder().addInterceptor(interceptor).build();
 
 
         retrofit = new Retrofit.Builder()
-                .baseUrl("http://www.qm.org.qa/")
+                .baseUrl(apiBaseUrl)
                 .addConverterFactory(GsonConverterFactory.create())
                 .client(client)
                 .build();
 
 
+        return retrofit;
+    }
 
+    public static Retrofit getTempClient() {
+
+        retrofit = new Retrofit.Builder()
+                .baseUrl("http://moushtarayatapp.com/xmltojson/")
+                .addConverterFactory(GsonConverterFactory.create())
+                .build();
         return retrofit;
     }
 }

@@ -108,4 +108,5 @@ They exemplify the external influences and internal creativity that inspired thi
     <string name="log_in">LOG IN</string>
     <string name="unable_to_fetch_details">Unable to fetch details</string>
     <string name="no_new_notification_yet">No notifications yet.</string>
+    <string name="no_events">No Events</string>
 </resources>
