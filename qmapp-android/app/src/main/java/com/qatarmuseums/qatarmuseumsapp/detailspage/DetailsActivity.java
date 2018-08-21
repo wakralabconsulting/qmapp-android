@@ -17,6 +17,7 @@ import android.view.animation.AnimationUtils;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.qatarmuseums.qatarmuseumsapp.QMDatabase;
@@ -1496,6 +1497,8 @@ public class DetailsActivity extends AppCompatActivity implements IPullZoom {
         @Override
         protected void onPostExecute(MuseumAboutTableEnglish museumAboutTableEnglish) {
             if (museumAboutTableEnglish != null) {
+                commonContentLayout.setVisibility(View.VISIBLE);
+                noResultFoundTxt.setVisibility(View.GONE);
                 headerImage = museumAboutTableEnglish.getMuseum_image();
                 GlideApp.with(DetailsActivity.this)
                         .load(headerImage)
@@ -1509,6 +1512,9 @@ public class DetailsActivity extends AppCompatActivity implements IPullZoom {
                         null, museumAboutTableEnglish.getMuseum_contact(),
                         museumAboutTableEnglish.getMuseum_lattitude(), museumAboutTableEnglish.getMuseum_longitude());
 
+            }else {
+                commonContentLayout.setVisibility(View.GONE);
+                noResultFoundTxt.setVisibility(View.VISIBLE);
             }
             progressBar.setVisibility(View.GONE);
         }
@@ -1531,6 +1537,8 @@ public class DetailsActivity extends AppCompatActivity implements IPullZoom {
         @Override
         protected void onPostExecute(MuseumAboutTableArabic museumAboutTableArabic) {
             if (museumAboutTableArabic != null) {
+                commonContentLayout.setVisibility(View.VISIBLE);
+                noResultFoundTxt.setVisibility(View.GONE);
                 headerImage = museumAboutTableEnglish.getMuseum_image();
                 GlideApp.with(DetailsActivity.this)
                         .load(headerImage)
@@ -1544,6 +1552,9 @@ public class DetailsActivity extends AppCompatActivity implements IPullZoom {
                         null, museumAboutTableArabic.getMuseum_contact(),
                         museumAboutTableArabic.getMuseum_lattitude(), museumAboutTableArabic.getMuseum_longitude());
 
+            }else {
+                commonContentLayout.setVisibility(View.GONE);
+                noResultFoundTxt.setVisibility(View.VISIBLE);
             }
             progressBar.setVisibility(View.GONE);
         }
