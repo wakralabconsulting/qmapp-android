@@ -7,13 +7,11 @@ public class MuseumAboutModel {
     private String title;
     @SerializedName("mid")
     private String museumId;
-    @SerializedName("location")
-    private String location;
     @SerializedName("image")
     private String image;
-    @SerializedName("Longitude")
+    @SerializedName("longitude")
     private String longitude;
-    @SerializedName("Latitude")
+    @SerializedName("latitude")
     private String latitude;
     @SerializedName("short_desc")
     private String shortDescription;
@@ -31,13 +29,12 @@ public class MuseumAboutModel {
     public MuseumAboutModel() {
     }
 
-    public MuseumAboutModel(String title, String museumId, String location,
-                            String image, String longitude, String latitude,
-                            String shortDescription, String longDescription,
-                            String subTitle, String filter, String contact, String timingInfo) {
+    public MuseumAboutModel(String title, String museumId, String image,
+                            String longitude, String latitude, String shortDescription,
+                            String longDescription, String subTitle, String filter,
+                            String contact, String timingInfo) {
         this.title = title;
         this.museumId = museumId;
-        this.location = location;
         this.image = image;
         this.longitude = longitude;
         this.latitude = latitude;
@@ -63,14 +60,6 @@ public class MuseumAboutModel {
 
     public void setMuseumId(String museumId) {
         this.museumId = museumId;
-    }
-
-    public String getLocation() {
-        return location;
-    }
-
-    public void setLocation(String location) {
-        this.location = location;
     }
 
     public String getImage() {
