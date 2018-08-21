@@ -22,18 +22,21 @@ public class MuseumAboutTableEnglish {
     @ColumnInfo()
     private String museum_opening_time;
     @ColumnInfo()
-    private String exhibition_location;
-    @ColumnInfo()
     private String museum_contact;
     @ColumnInfo()
     private String museum_filter;
+    @ColumnInfo()
+    private String museum_lattitude;
+    @ColumnInfo()
+    private String museum_longitude;
 
     public MuseumAboutTableEnglish(@NonNull long museum_id, String museum_title,
                                    String museum_subtitle, String museum_image,
                                    String museum_short_description,
-                                   String museum_long_description, String museum_opening_time,
-                                   String exhibition_location, String museum_contact,
-                                   String museum_filter) {
+                                   String museum_long_description,
+                                   String museum_opening_time, String museum_contact,
+                                   String museum_filter, String museum_lattitude,
+                                   String museum_longitude) {
         this.museum_id = museum_id;
         this.museum_title = museum_title;
         this.museum_subtitle = museum_subtitle;
@@ -41,9 +44,10 @@ public class MuseumAboutTableEnglish {
         this.museum_short_description = museum_short_description;
         this.museum_long_description = museum_long_description;
         this.museum_opening_time = museum_opening_time;
-        this.exhibition_location = exhibition_location;
         this.museum_contact = museum_contact;
         this.museum_filter = museum_filter;
+        this.museum_lattitude = museum_lattitude;
+        this.museum_longitude = museum_longitude;
     }
 
     @NonNull
@@ -103,14 +107,6 @@ public class MuseumAboutTableEnglish {
         this.museum_opening_time = museum_opening_time;
     }
 
-    public String getExhibition_location() {
-        return exhibition_location;
-    }
-
-    public void setExhibition_location(String exhibition_location) {
-        this.exhibition_location = exhibition_location;
-    }
-
     public String getMuseum_contact() {
         return museum_contact;
     }
@@ -125,5 +121,21 @@ public class MuseumAboutTableEnglish {
 
     public void setMuseum_filter(String museum_filter) {
         this.museum_filter = museum_filter;
+    }
+
+    public String getMuseum_lattitude() {
+        return museum_lattitude;
+    }
+
+    public void setMuseum_lattitude(String museum_lattitude) {
+        this.museum_lattitude = museum_lattitude;
+    }
+
+    public String getMuseum_longitude() {
+        return museum_longitude;
+    }
+
+    public void setMuseum_longitude(String museum_longitude) {
+        this.museum_longitude = museum_longitude;
     }
 }
