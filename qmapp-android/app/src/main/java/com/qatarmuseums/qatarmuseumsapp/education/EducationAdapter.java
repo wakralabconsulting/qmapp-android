@@ -45,6 +45,14 @@ public class EducationAdapter extends RecyclerView.Adapter<EducationAdapter.Educ
     @Override
     public void onBindViewHolder(@NonNull final EducationAdapter.EducationAdapterViewHolder holder, int position) {
 
+        if(educationEvents.size()>0){
+            for(int i=0;i<educationEvents.size();i++){
+                holder.eventTitle.setText(educationEvents.get(i).getCategory());
+                holder.eventSubTitle.setText(educationEvents.get(i).getTitle());
+                holder.eventTiming.setText(educationEvents.get(i).getShort_desc());
+                holder.eventMaxGroup.setText("Max Groups : "+educationEvents.get(i).getMax_group_size());
+            }
+        }
 
         if (position % 2 == 1) {
             holder.layoutHolder.setBackgroundColor(Color.parseColor("#FFFFFF"));
@@ -55,7 +63,8 @@ public class EducationAdapter extends RecyclerView.Adapter<EducationAdapter.Educ
             @Override
             public void onClick(View view) {
 
-                showDialog(context.getResources().getString(R.string.education_detail), holder.eventSubTitle.getText().toString());
+                showDialog(context.getResources().getString(R.string.education_detail),
+                        holder.eventSubTitle.getText().toString());
             }
         });
     }

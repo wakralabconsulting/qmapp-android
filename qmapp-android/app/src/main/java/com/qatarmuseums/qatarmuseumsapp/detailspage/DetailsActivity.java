@@ -76,9 +76,7 @@ public class DetailsActivity extends AppCompatActivity implements IPullZoom {
     TextView noResultFoundTxt;
     ArrayList<PublicArtModel> publicArtModel = new ArrayList<>();
     ArrayList<MuseumAboutModel> museumAboutModels = new ArrayList<>();
-
     ArrayList<HeritageOrExhibitionDetailModel> heritageOrExhibitionDetailModel = new ArrayList<>();
-//    ArrayList<HeritageOrExhibitionDetailModel> heritageOrExhibitionDetailModel = new ArrayList<>();
 
     @SuppressLint("ClickableViewAccessibility")
     @Override

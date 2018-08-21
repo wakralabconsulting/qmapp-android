@@ -1071,8 +1071,9 @@ public class CommonActivity extends AppCompatActivity {
                 for (int i = 0; i < heritageListTableEnglishes.size(); i++) {
                     CommonModel commonModel = new CommonModel(String.valueOf(heritageListTableEnglishes.get(i).getHeritage_id()),
                             heritageListTableEnglishes.get(i).getHeritage_name(),
-                            "", "", "", heritageListTableEnglishes.get(i).getHeritage_image(),
-                            false, false);
+                            null, null, null,
+                            heritageListTableEnglishes.get(i).getHeritage_image(),
+                            null, null);
                     models.add(i, commonModel);
 
                 }
@@ -1108,8 +1109,8 @@ public class CommonActivity extends AppCompatActivity {
                 for (int i = 0; i < heritageListTableArabics.size(); i++) {
                     CommonModel commonModel = new CommonModel(String.valueOf(heritageListTableArabics.get(i).getHeritage_id()),
                             heritageListTableArabics.get(i).getHeritage_name(),
-                            "", "", "", heritageListTableArabics.get(i).getHeritage_image(),
-                            false, false);
+                            null, null, null, heritageListTableArabics.get(i).getHeritage_image(),
+                            null, null);
                     models.add(i, commonModel);
 
                 }
@@ -1360,7 +1361,7 @@ public class CommonActivity extends AppCompatActivity {
                             exhibitionListTableEnglish.get(i).getExhibition_end_date(),
                             exhibitionListTableEnglish.get(i).getExhibition_location(),
                             exhibitionListTableEnglish.get(i).getExhibition_latest_image(),
-                            null, false);
+                            null);
 
                     models.add(i, commonModel);
 
@@ -1405,7 +1406,7 @@ public class CommonActivity extends AppCompatActivity {
                             exhibitionListTableArabic.get(i).getExhibition_end_date(),
                             exhibitionListTableArabic.get(i).getExhibition_location(),
                             exhibitionListTableArabic.get(i).getExhibition_latest_image(),
-                            null, false);
+                            null);
 
                     models.add(i, commonModel);
                 }
