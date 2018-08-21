@@ -24,6 +24,9 @@ import com.qatarmuseums.qatarmuseumsapp.commonpagedatabase.PublicArtsTableEnglis
 import com.qatarmuseums.qatarmuseumsapp.home.HomePageTableArabic;
 import com.qatarmuseums.qatarmuseumsapp.home.HomePageTableDao;
 import com.qatarmuseums.qatarmuseumsapp.home.HomePageTableEnglish;
+import com.qatarmuseums.qatarmuseumsapp.museum.MuseumCollectionListTableArabic;
+import com.qatarmuseums.qatarmuseumsapp.museum.MuseumCollectionListTableDao;
+import com.qatarmuseums.qatarmuseumsapp.museum.MuseumCollectionListTableEnglish;
 import com.qatarmuseums.qatarmuseumsapp.park.ParkTableArabic;
 import com.qatarmuseums.qatarmuseumsapp.park.ParkTableDao;
 import com.qatarmuseums.qatarmuseumsapp.park.ParkTableEnglish;
@@ -31,8 +34,10 @@ import com.qatarmuseums.qatarmuseumsapp.park.ParkTableEnglish;
 @Database(entities = {HomePageTableEnglish.class, HomePageTableArabic.class,
         HeritageListTableEnglish.class, HeritageListTableArabic.class,
         PublicArtsTableEnglish.class, PublicArtsTableArabic.class,
-        ParkTableEnglish.class, ParkTableArabic.class, DiningTableEnglish.class, DiningTableArabic.class,
-        ExhibitionListTableEnglish.class, ExhibitionListTableArabic.class},
+        ParkTableEnglish.class, ParkTableArabic.class, DiningTableEnglish.class,
+        DiningTableArabic.class, MuseumCollectionListTableEnglish.class,
+        MuseumCollectionListTableArabic.class, ExhibitionListTableEnglish.class,
+        ExhibitionListTableArabic.class},
         version = 1, exportSchema = false)
 
 public abstract class QMDatabase extends RoomDatabase {
@@ -48,6 +53,8 @@ public abstract class QMDatabase extends RoomDatabase {
     public abstract ExhibitionTableDao getExhibitionTableDao();
 
     public abstract DiningTableDao getDiningTableDao();
+
+    public abstract MuseumCollectionListTableDao getMuseumCollectionListDao();
 
     private static QMDatabase qmDatabase;
 
