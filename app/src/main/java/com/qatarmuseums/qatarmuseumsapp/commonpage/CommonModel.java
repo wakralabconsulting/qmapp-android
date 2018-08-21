@@ -31,6 +31,9 @@ public class CommonModel {
     private String closingTime;
     @SerializedName("Description")
     private String description;
+    @SerializedName("Museums_reference")
+    private String museumReferance;
+
     public CommonModel() {
 
     }
@@ -47,6 +50,12 @@ public class CommonModel {
         this.image = image;
         this.isOpen = isOpen;
         this.isfavourite = isfavourite;
+    }
+
+    public CommonModel(String name, String image, String museumReferance) {
+        this.name = name;
+        this.image = image;
+        this.museumReferance = museumReferance;
     }
 
     public CommonModel(String id, String name, String image, String latitude,
@@ -201,5 +210,13 @@ public class CommonModel {
 
     public void setDescription(String description) {
         this.description = description;
+    }
+
+    public String getMuseumReferance() {
+        return museumReferance;
+    }
+
+    public void setMuseumReferance(String museumReferance) {
+        this.museumReferance = museumReferance;
     }
 }

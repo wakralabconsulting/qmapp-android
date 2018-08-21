@@ -33,6 +33,8 @@ import com.qatarmuseums.qatarmuseumsapp.commonpagedatabase.PublicArtsTableArabic
 import com.qatarmuseums.qatarmuseumsapp.commonpagedatabase.PublicArtsTableEnglish;
 import com.qatarmuseums.qatarmuseumsapp.detailspage.DetailsActivity;
 import com.qatarmuseums.qatarmuseumsapp.detailspage.DiningActivity;
+import com.qatarmuseums.qatarmuseumsapp.museum.MuseumCollectionListTableArabic;
+import com.qatarmuseums.qatarmuseumsapp.museum.MuseumCollectionListTableEnglish;
 import com.qatarmuseums.qatarmuseumsapp.museumcollectiondetails.CollectionDetailsActivity;
 import com.qatarmuseums.qatarmuseumsapp.utils.Util;
 
@@ -66,12 +68,14 @@ public class CommonActivity extends AppCompatActivity {
     PublicArtsTableArabic publicArtsTableArabic;
     ExhibitionListTableEnglish exhibitionListTableEnglish;
     ExhibitionListTableArabic exhibitionListTableArabic;
+    MuseumCollectionListTableEnglish museumCollectionListTableEnglish;
+    MuseumCollectionListTableArabic museumCollectionListTableArabic;
     int exhibitionTableRowCount;
     DiningTableEnglish diningTableEnglish;
     DiningTableArabic diningTableArabic;
     RelativeLayout noResultFoundLayout;
     int publicArtsTableRowCount;
-    int heritageTableRowCount;
+    int heritageTableRowCount, museumCollectionListRowCount;
     int diningTableRowCount;
     int appLanguage;
     String pageName = null;
@@ -167,49 +171,14 @@ public class CommonActivity extends AppCompatActivity {
                 getCommonListAPIDataFromAPI("getDiningList.json");
             else
                 getCommonListDataFromDatabase("getDiningList.json");
-        } else if (toolbarTitle.equals(getString(R.string.museum_collection_text)))
-            getMuseumCollectionListFromAPI();
+        } else if (toolbarTitle.equals(getString(R.string.museum_collection_text))) {
+            if (util.isNetworkAvailable(CommonActivity.this))
+                getMuseumCollectionListFromAPI();
+            else
+                getMuseumCollectionListFromDatabase();
+        }
     }
-
-    private void prepareExhibitionData() {
-
-        CommonModel model = new CommonModel("1", "Project Space 12 Bouthayna Al-Muftah: Echoes",
-                "Wednesday, July 11, 2018 - 11:45 - Monday, September 10, 2018 - 11:45", "",
-                "Mathaf: Arab Museum of Modern Art",
-                "",
-                null, true);
-        models.add(model);
-        model = new CommonModel("2", "ARTIST IN RESIDENCE 2017-2018: DUAL INSPIRATIONS",
-                "Tuesday, July 17, 2018 - 07:45 - Monday, October 1, 2018 - 07:45",
-                "",
-                "Fire Station Artist in Residence, Garage Gallery",
-                "http://www.qm.org.qa/sites/default/files/styles/mobile_design/public/air3-homepage_qm_2000x750px-02.jpg?itok=rmFs7UIN",
-                null, false);
-        models.add(model);
-        model = new CommonModel("3", "PEARLS: TREASURES FROM THE SEAS AND THE RIVERS",
-                "Wednesday, July 11, 2018 - 09:15 - Monday, October 1, 2018 - 09:15",
-                "",
-                "Revolution Square 2/3, Moscow 109012",
-                "http://www.qm.org.qa/sites/default/files/styles/mobile_design/public/076-and-cover-marie-valerie-tiara.jpg?itok=PxyEnw9O",
-                null, false);
-        models.add(model);
-        model = new CommonModel("1", "LAUNDROMAT",
-                "Thursday, March 15, 2018 - 12:45 - Friday, June 1, 2018 - 12:45",
-                "Fire Station Artist in Residence, Garage Gallery", "",
-                "http://www.qm.org.qa/sites/default/files/styles/mobile_design/public/2012-photo-credit-ai-weiwei-studio-post_0.jpg?itok=MVxORAFa",
-                null, false);
-        models.add(model);
-        model = new CommonModel("1", "Contemporary Art Qatar",
-                "Saturday, December 9, 2017 - 07:45 - Wednesday, January 3, 2018 - 07:45",
-                "",
-                "KRAFTWERK BERLIN",
-                "http://www.qm.org.qa/sites/default/files/styles/mobile_design/public/contemporary-art-qatar-01.jpg?itok=F4qKDliY",
-                null, false);
-        models.add(model);
-
-        mAdapter.notifyDataSetChanged();
-    }
-
+    
     public void getCommonListDataFromDatabase(String apiParts) {
 
         if (apiParts.equals("Heritage_List_Page.json")) {
@@ -247,7 +216,7 @@ public class CommonActivity extends AppCompatActivity {
 
     private void getMuseumCollectionListFromAPI() {
         progressBar.setVisibility(View.VISIBLE);
-        String language;
+        final String language;
         if (appLanguage == 1) {
             language = "en";
         } else {
@@ -264,6 +233,7 @@ public class CommonActivity extends AppCompatActivity {
                         recyclerView.setVisibility(View.VISIBLE);
                         models.addAll(response.body());
                         mAdapter.notifyDataSetChanged();
+                        new MuseumCollectionRowCount(CommonActivity.this, language).execute();
                     } else {
                         recyclerView.setVisibility(View.GONE);
                         noResultFoundLayout.setVisibility(View.VISIBLE);
@@ -346,40 +316,6 @@ public class CommonActivity extends AppCompatActivity {
 
     }
 
-    private void prepareCollectionData() {
-
-        CommonModel model = new CommonModel("1", "CERAMICS COLLECTION",
-                null,
-                null, null,
-                "http://www.qm.org.qa/sites/default/files/styles/content_image/public/images/body/idam-pierremonetta_mg_6372_1.jpg?itok=bKArHUGQ",
-                false, false);
-        models.add(model);
-        model = new CommonModel("2", "GLASS COLLECTION",
-                null, null,
-                null,
-                "http://www.qm.org.qa/sites/default/files/styles/content_image/public/images/body/inq.jpg?itok=C14Qr6xt",
-                false, false);
-        models.add(model);
-        model = new CommonModel("3", "THE CAVOUR VASE",
-                null, null,
-                null,
-                "http://www.qm.org.qa/sites/default/files/styles/content_image/public/images/body/dsc_0597_2_0.jpg?itok=TXvRM1HE",
-                false, false);
-        models.add(model);
-        model = new CommonModel("4", "GOLD AND GLASS",
-                null, null,
-                null,
-                "http://www.qm.org.qa/sites/default/files/styles/content_image/public/images/body/10_0.jpg?itok=4BYJtRQB",
-                false, false);
-        models.add(model);
-        model = new CommonModel("4", "MOSQUE LAMP",
-                null, null,
-                null,
-                "http://www.qm.org.qa/sites/default/files/styles/content_image/public/images/body/mia-catering.jpg?itok=Kk7svJPU",
-                false, false);
-        models.add(model);
-        mAdapter.notifyDataSetChanged();
-    }
 
     public class DiningRowCount extends AsyncTask<Void, Void, Integer> {
 
@@ -1453,5 +1389,246 @@ public class CommonActivity extends AppCompatActivity {
 
         }
     }
+
+    public void getMuseumCollectionListFromDatabase() {
+        if (appLanguage == 1) {
+            new RetriveMuseumCollectionDataEnglish(CommonActivity.this, appLanguage).execute();
+        } else {
+            new RetriveMuseumCollectionDataArabic(CommonActivity.this, appLanguage).execute();
+        }
+    }
+
+    public class MuseumCollectionRowCount extends AsyncTask<Void, Void, Integer> {
+        private WeakReference<CommonActivity> activityReference;
+        String language;
+
+        MuseumCollectionRowCount(CommonActivity context, String apiLanguage) {
+            activityReference = new WeakReference<>(context);
+            language = apiLanguage;
+        }
+
+        @Override
+        protected Integer doInBackground(Void... voids) {
+
+            if (language.equals("en"))
+                return activityReference.get().qmDatabase.getMuseumCollectionListDao().getNumberOfRowsEnglish();
+            else
+                return activityReference.get().qmDatabase.getMuseumCollectionListDao().getNumberOfRowsArabic();
+
+        }
+
+        @Override
+        protected void onPostExecute(Integer integer) {
+            museumCollectionListRowCount = integer;
+            if (museumCollectionListRowCount > 0) {
+                //updateEnglishTable or add row to database
+                new CheckMuseumCollectionDBRowExist(CommonActivity.this, language).execute();
+
+            } else {
+                //create databse
+                new InsertMuseumCollectionListDataToDataBase(CommonActivity.this, museumCollectionListTableEnglish,
+                        museumCollectionListTableArabic, language).execute();
+
+            }
+        }
+    }
+
+
+    public class CheckMuseumCollectionDBRowExist extends AsyncTask<Void, Void, Void> {
+        private WeakReference<CommonActivity> activityReference;
+        private MuseumCollectionListTableEnglish museumCollectionListTableEnglish;
+        private MuseumCollectionListTableArabic museumCollectionListTableArabic;
+        String language;
+
+        CheckMuseumCollectionDBRowExist(CommonActivity context, String apiLanguage) {
+            activityReference = new WeakReference<>(context);
+            language = apiLanguage;
+        }
+
+        @Override
+        protected Void doInBackground(Void... voids) {
+            if (models.size() > 0) {
+                if (language.equals("en")) {
+                    for (int i = 0; i < models.size(); i++) {
+                        int n = activityReference.get().qmDatabase.getMuseumCollectionListDao().checkNameExistEnglish(
+                                models.get(i).getName());
+                        if (n > 0) {
+                            //updateEnglishTable same id
+                            new UpdateMuseumCollectionListTable(CommonActivity.this, appLanguage, i).execute();
+
+                        } else {
+                            //create row with corresponding id
+                            museumCollectionListTableEnglish = new MuseumCollectionListTableEnglish(models.get(i).getName(),
+                                    models.get(i).getImage(), "");
+                            activityReference.get().qmDatabase.getMuseumCollectionListDao().insertEnglishTable(museumCollectionListTableEnglish);
+
+                        }
+                    }
+                } else {
+                    for (int i = 0; i < models.size(); i++) {
+                        int n = activityReference.get().qmDatabase.getMuseumCollectionListDao().checkNameExistArabic(
+                                models.get(i).getName());
+                        if (n > 0) {
+                            //updateEnglishTable same id
+                            new UpdateMuseumCollectionListTable(CommonActivity.this, appLanguage, i).execute();
+
+                        } else {
+                            //create row with corresponding id
+                            museumCollectionListTableArabic = new MuseumCollectionListTableArabic(models.get(i).getName(),
+                                    models.get(i).getImage(), "");
+                            activityReference.get().qmDatabase.getMuseumCollectionListDao().insertArabicTable(museumCollectionListTableArabic);
+
+                        }
+                    }
+                }
+            }
+            return null;
+        }
+    }
+
+
+    public class InsertMuseumCollectionListDataToDataBase extends AsyncTask<Void, Void, Boolean> {
+        private WeakReference<CommonActivity> activityReference;
+        private MuseumCollectionListTableEnglish museumCollectionListTableEnglish;
+        private MuseumCollectionListTableArabic museumCollectionListTableArabic;
+        String language;
+
+        InsertMuseumCollectionListDataToDataBase(CommonActivity context,
+                                                 MuseumCollectionListTableEnglish museumCollectionListTableEnglish,
+                                                 MuseumCollectionListTableArabic museumCollectionListTableArabic, String appLanguage) {
+            activityReference = new WeakReference<>(context);
+            this.museumCollectionListTableEnglish = museumCollectionListTableEnglish;
+            this.museumCollectionListTableArabic = museumCollectionListTableArabic;
+            this.language = appLanguage;
+        }
+
+        @Override
+        protected Boolean doInBackground(Void... voids) {
+            if (models != null) {
+                if (language.equals("en")) {
+                    for (int i = 0; i < models.size(); i++) {
+                        museumCollectionListTableEnglish = new MuseumCollectionListTableEnglish(models.get(i).getName(),
+                                models.get(i).getImage(), models.get(i).getMuseumReferance());
+                        activityReference.get().qmDatabase.getMuseumCollectionListDao().insertEnglishTable(museumCollectionListTableEnglish);
+                    }
+                } else {
+                    for (int i = 0; i < models.size(); i++) {
+                        museumCollectionListTableArabic = new MuseumCollectionListTableArabic(models.get(i).getName(),
+                                models.get(i).getImage(), models.get(i).getMuseumReferance());
+                        activityReference.get().qmDatabase.getMuseumCollectionListDao().insertArabicTable(museumCollectionListTableArabic);
+                    }
+                }
+            }
+            return true;
+        }
+
+        @Override
+        protected void onPostExecute(Boolean aBoolean) {
+
+        }
+    }
+
+    public class UpdateMuseumCollectionListTable extends AsyncTask<Void, Void, Void> {
+        private WeakReference<CommonActivity> activityReference;
+        int language;
+        int position;
+
+        UpdateMuseumCollectionListTable(CommonActivity context, int apiLanguage, int p) {
+            activityReference = new WeakReference<>(context);
+            language = apiLanguage;
+            position = p;
+        }
+
+        @Override
+        protected Void doInBackground(Void... voids) {
+            if (language == 1) {
+                // updateEnglishTable table with english name
+                activityReference.get().qmDatabase.getMuseumCollectionListDao().updateMuseumTableEnglish(
+                        models.get(position).getImage(), models.get(position).getMuseumReferance(),
+                        models.get(position).getName());
+
+            } else {
+                // updateEnglishTable table with arabic name
+                activityReference.get().qmDatabase.getMuseumCollectionListDao().updateMuseumTableArabic(
+                        models.get(position).getImage(), models.get(position).getMuseumReferance(),
+                        models.get(position).getName());
+            }
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(Void aVoid) {
+        }
+
+
+    }
+
+
+    public class RetriveMuseumCollectionDataEnglish extends AsyncTask<Void, Void, List<MuseumCollectionListTableEnglish>> {
+        private WeakReference<CommonActivity> activityReference;
+        int language;
+
+        RetriveMuseumCollectionDataEnglish(CommonActivity context, int appLanguage) {
+            activityReference = new WeakReference<>(context);
+            language = appLanguage;
+        }
+
+        @Override
+        protected void onPreExecute() {
+            progressBar.setVisibility(View.VISIBLE);
+        }
+
+        @Override
+        protected List<MuseumCollectionListTableEnglish> doInBackground(Void... voids) {
+            return activityReference.get().qmDatabase.getMuseumCollectionListDao().getAllDataFromMuseumListEnglishTable();
+        }
+
+        @Override
+        protected void onPostExecute(List<MuseumCollectionListTableEnglish> museumCollectionListTableEnglishes) {
+            models.clear();
+            for (int i = 0; i < museumCollectionListTableEnglishes.size(); i++) {
+                CommonModel commonModel = new CommonModel(museumCollectionListTableEnglishes.get(i).getName(),
+                        museumCollectionListTableEnglishes.get(i).getImage(), museumCollectionListTableEnglishes.get(i).getMuseum_referance());
+                models.add(i, commonModel);
+
+            }
+            mAdapter.notifyDataSetChanged();
+            progressBar.setVisibility(View.GONE);
+        }
+    }
+
+    public class RetriveMuseumCollectionDataArabic extends AsyncTask<Void, Void, List<MuseumCollectionListTableArabic>> {
+
+        private WeakReference<CommonActivity> activityReference;
+        int language;
+
+        RetriveMuseumCollectionDataArabic(CommonActivity context, int appLanguage) {
+            activityReference = new WeakReference<>(context);
+            language = appLanguage;
+        }
+
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+        }
+
+        @Override
+        protected void onPostExecute(List<MuseumCollectionListTableArabic> museumCollectionListTableArabics) {
+            models.clear();
+            for (int i = 0; i < museumCollectionListTableArabics.size(); i++) {
+                CommonModel commonModel = new CommonModel(museumCollectionListTableArabics.get(i).getName(),
+                        museumCollectionListTableArabics.get(i).getImage(), museumCollectionListTableArabics.get(i).getMuseum_referance());
+                models.add(i, commonModel);
+            }
+            mAdapter.notifyDataSetChanged();
+            progressBar.setVisibility(View.GONE);
+        }
+
+        @Override
+        protected List<MuseumCollectionListTableArabic> doInBackground(Void... voids) {
+            return activityReference.get().qmDatabase.getMuseumCollectionListDao().getAllDataFromMuseumListArabicTable();
+        }
+    }
+
 
 }
