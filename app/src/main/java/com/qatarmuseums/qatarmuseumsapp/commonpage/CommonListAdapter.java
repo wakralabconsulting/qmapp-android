@@ -107,7 +107,7 @@ public class CommonListAdapter extends RecyclerView.Adapter<CommonListAdapter.My
             holder.locationDetails.setText(model.getLocation());
         }
         if (model.getIsfavourite() != null) {
-            holder.favIcon.setVisibility(View.VISIBLE);
+            holder.favIcon.setVisibility(View.GONE);
             if (model.getIsfavourite())
                 holder.favIcon.setImageResource(R.drawable.heart_fill);
             else
