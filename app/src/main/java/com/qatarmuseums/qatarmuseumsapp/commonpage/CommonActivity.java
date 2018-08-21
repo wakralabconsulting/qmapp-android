@@ -1246,7 +1246,8 @@ public class CommonActivity extends AppCompatActivity {
                             exhibitionListTableEnglish = new ExhibitionListTableEnglish(Long.parseLong(models.get(i).getId()),
                                     models.get(i).getName(), models.get(i).getImage(),
                                     models.get(i).getStartDate(), models.get(i).getEndDate(),
-                                    models.get(i).getLocation(), "", "");
+                                    models.get(i).getLocation(), "", "",
+                                    null,null);
                             activityReference.get().qmDatabase.getExhibitionTableDao().insert(exhibitionListTableEnglish);
 
                         }
@@ -1265,7 +1266,8 @@ public class CommonActivity extends AppCompatActivity {
                                     models.get(i).getName(),
                                     models.get(i).getImage(),
                                     models.get(i).getStartDate(), models.get(i).getEndDate(),
-                                    models.get(i).getLocation(), null, null);
+                                    models.get(i).getLocation(), null, null,
+                                    null,null);
                             activityReference.get().qmDatabase.getExhibitionTableDao().insert(exhibitionListTableArabic);
 
                         }
@@ -1311,7 +1313,8 @@ public class CommonActivity extends AppCompatActivity {
                                 models.get(i).getImage(),
                                 models.get(i).getStartDate(),
                                 models.get(i).getEndDate(),
-                                models.get(i).getLocation(), "", "");
+                                models.get(i).getLocation(), "", "",
+                                null,null);
                         activityReference.get().qmDatabase.getExhibitionTableDao().insert(exhibitionListTableEnglish);
                     }
                 } else {
@@ -1321,7 +1324,8 @@ public class CommonActivity extends AppCompatActivity {
                                 models.get(i).getImage(),
                                 models.get(i).getStartDate(),
                                 models.get(i).getEndDate(),
-                                models.get(i).getLocation(), null, null);
+                                models.get(i).getLocation(), null, null,
+                                null,null);
                         activityReference.get().qmDatabase.getExhibitionTableDao().insert(exhibitionListTableArabic);
                     }
                 }

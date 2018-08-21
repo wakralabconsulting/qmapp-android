@@ -18,8 +18,13 @@ import android.widget.TextView;
 import com.qatarmuseums.qatarmuseumsapp.R;
 import com.shrikanthravi.collapsiblecalendarview.widget.CollapsibleCalendar;
 
+import java.sql.Timestamp;
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.GregorianCalendar;
 
 import butterknife.BindView;
@@ -76,7 +81,7 @@ public class EducationCalendarActivity extends AppCompatActivity {
         toolbar_filter.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent= new Intent(EducationCalendarActivity.this,EducationFilterActivity.class);
+                Intent intent = new Intent(EducationCalendarActivity.this, EducationFilterActivity.class);
                 startActivity(intent);
             }
         });
@@ -93,7 +98,20 @@ public class EducationCalendarActivity extends AppCompatActivity {
                 + collapsibleCalendar.getSelectedDay().getMonth()
                 + "/" + collapsibleCalendar.getSelectedDay().getYear());
 
+        String mDate = collapsibleCalendar.getSelectedDay().getDay() + "/"
+                + collapsibleCalendar.getSelectedDay().getMonth()
+                + "/" + collapsibleCalendar.getSelectedDay().getYear();
+        System.out.println("Testing date " + mDate);
+        DateFormat dateFormat=new SimpleDateFormat("dd/MM/yyyy");
+        Date date = null;
+        try {
+           date=(Date)dateFormat.parse(mDate);
 
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+        System.out.println("Testing date "+date.getTime());
+        
         collapsibleCalendar.setCalendarListener(new CollapsibleCalendar.CalendarListener() {
             @Override
             public void onDaySelect() {
