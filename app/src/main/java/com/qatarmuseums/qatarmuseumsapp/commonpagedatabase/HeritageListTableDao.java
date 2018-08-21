@@ -40,10 +40,9 @@ public interface HeritageListTableDao {
                                    String imageFromApi, String id);
 
 
-    @Query("UPDATE heritagelistenglish SET location = :locationFromApi," +
-            "latitude = :latitudeFromApi,longitude = :longitudeFromApi," +
+    @Query("UPDATE heritagelistenglish SET latitude = :latitudeFromApi,longitude = :longitudeFromApi," +
             "heritage_long_description=:descriptionFromApi," + "heritage_short_description=:shortDescriptionFromApi WHERE heritage_id=:id")
-    void updateHeritageDetailEnglish(String locationFromApi, String latitudeFromApi,
+    void updateHeritageDetailEnglish(String latitudeFromApi,
                                      String longitudeFromApi, String descriptionFromApi,
                                      String shortDescriptionFromApi, String id);
 
@@ -52,11 +51,10 @@ public interface HeritageListTableDao {
     void updateHeritageListArabic(String nameFromApi, String sortidFromApi,
                                   String imageFromApi, String id);
 
-    @Query("UPDATE heritagelistarabic SET location = :locationFromApi," +
-            "latitude = :latitudeFromApi,longitude = :longitudeFromApi," +
+    @Query("UPDATE heritagelistarabic SET latitude = :latitudeFromApi,longitude = :longitudeFromApi," +
             "heritage_long_description=:descriptionFromApi," +
             "heritage_short_description=:shortDescriptionFromApi WHERE heritage_id=:id")
-    void updateHeritageDetailArabic(String locationFromApi, String latitudeFromApi,
+    void updateHeritageDetailArabic( String latitudeFromApi,
                                     String longitudeFromApi, String descriptionFromApi,
                                     String shortDescriptionFromApi, String id);
 
