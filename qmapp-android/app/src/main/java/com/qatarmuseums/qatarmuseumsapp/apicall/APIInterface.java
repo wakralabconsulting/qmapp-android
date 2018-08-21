@@ -5,6 +5,7 @@ import com.qatarmuseums.qatarmuseumsapp.commonpage.CommonModel;
 import com.qatarmuseums.qatarmuseumsapp.dining.DiningDetailModel;
 import com.qatarmuseums.qatarmuseumsapp.heritage.HeritageOrExhibitionDetailModel;
 import com.qatarmuseums.qatarmuseumsapp.home.HomeList;
+import com.qatarmuseums.qatarmuseumsapp.museumabout.MuseumAboutModel;
 import com.qatarmuseums.qatarmuseumsapp.park.ParkList;
 import com.qatarmuseums.qatarmuseumsapp.publicart.PublicArtModel;
 
@@ -42,5 +43,8 @@ public interface APIInterface {
     @GET("{language}/mobile_api/museum_collection_category.json")
     Call<ArrayList<CommonModel>> getCollectionList(@Path("language") String language,
                                                         @Query("museum_id") String museumId);
+    @GET("about.php")
+    Call<ArrayList<MuseumAboutModel>> getMuseumAboutDetails(@Query("mid") String mid);
+
 
 }
