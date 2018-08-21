@@ -194,7 +194,6 @@ public class EducationCalendarActivity extends AppCompatActivity {
             public void onResponse(Call<ArrayList<EducationEvents>> call, Response<ArrayList<EducationEvents>> response) {
                 if (response.isSuccessful()) {
                     if (response.body() != null) {
-//                        educationEvents = response.body();
                         progressBar.setVisibility(View.GONE);
                         educationEvents.addAll(response.body());
                         educationAdapter.notifyDataSetChanged();
