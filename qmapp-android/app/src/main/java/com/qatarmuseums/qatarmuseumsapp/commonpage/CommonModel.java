@@ -40,8 +40,8 @@ public class CommonModel {
 
 
     public CommonModel(String id, String name, String startDate,
-                       String endDate, String location, String image, Boolean isOpen,
-                       Boolean isfavourite) {
+                       String endDate, String location, String image, Boolean isOpen
+                       ) {
         this.id = id;
         this.name = name;
         this.startDate = startDate;
@@ -49,7 +49,7 @@ public class CommonModel {
         this.location = location;
         this.image = image;
         this.isOpen = isOpen;
-        this.isfavourite = isfavourite;
+
     }
 
     public CommonModel(String name, String image, String museumReferance) {
