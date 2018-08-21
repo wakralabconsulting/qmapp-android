@@ -368,7 +368,7 @@ public class DetailsActivity extends AppCompatActivity implements IPullZoom {
         if (openingTime != null) {
             timingTitle.setText(R.string.exhibition_timings);
             this.timingLayout.setVisibility(View.VISIBLE);
-            String time = getResources().getString(R.string.everyday_from) + " " +
+            String time = " " +
                     openingTime + " " + getResources().getString(R.string.to) + " " +
                     closingtime;
             this.timingDetails.setText(time);
@@ -581,6 +581,8 @@ public class DetailsActivity extends AppCompatActivity implements IPullZoom {
                         heritageOrExhibitionDetailModel.get(position).getImage(),
                         heritageOrExhibitionDetailModel.get(position).getLongDescription(),
                         heritageOrExhibitionDetailModel.get(position).getShortDescription(),
+                        heritageOrExhibitionDetailModel.get(position).getLatitude(),
+                        heritageOrExhibitionDetailModel.get(position).getLongitude(),
                         heritageOrExhibitionDetailModel.get(position).getId()
                 );
 
@@ -594,6 +596,8 @@ public class DetailsActivity extends AppCompatActivity implements IPullZoom {
                         heritageOrExhibitionDetailModel.get(position).getImage(),
                         heritageOrExhibitionDetailModel.get(position).getLongDescription(),
                         heritageOrExhibitionDetailModel.get(position).getShortDescription(),
+                        heritageOrExhibitionDetailModel.get(position).getLatitude(),
+                        heritageOrExhibitionDetailModel.get(position).getLongitude(),
                         heritageOrExhibitionDetailModel.get(position).getId()
                 );
             }
@@ -605,12 +609,12 @@ public class DetailsActivity extends AppCompatActivity implements IPullZoom {
 
         private WeakReference<DetailsActivity> activityReference;
         int language;
-        String heritageId;
+        String exhibitionId;
 
         RetriveEnglishExhibitionData(DetailsActivity context, int appLanguage, String id) {
             activityReference = new WeakReference<>(context);
             language = appLanguage;
-            heritageId = id;
+            exhibitionId = id;
         }
 
         @Override
@@ -619,13 +623,22 @@ public class DetailsActivity extends AppCompatActivity implements IPullZoom {
         }
 
         @Override
-        protected void onPostExecute(List<ExhibitionListTableEnglish> exhibitionListTableEnglishes) {
-            super.onPostExecute(exhibitionListTableEnglishes);
+        protected void onPostExecute(List<ExhibitionListTableEnglish> exhibitionListTableEnglish) {
+            loadDataForHeritageOrExhibitionDetails(null,
+                    exhibitionListTableEnglish.get(0).getExhibition_short_description(),
+                    exhibitionListTableEnglish.get(0).getExhibition_long_description(),
+                    null, null,
+                    null,
+                    exhibitionListTableEnglish.get(0).getExhibition_location(),
+                    null, exhibitionListTableEnglish.get(0).getExhibition_latitude(),
+                    exhibitionListTableEnglish.get(0).getExhibition_longitude(),
+                    exhibitionListTableEnglish.get(0).getExhibition_start_date(),
+                    exhibitionListTableEnglish.get(0).getExhibition_end_date());
         }
 
         @Override
         protected List<ExhibitionListTableEnglish> doInBackground(Void... voids) {
-            return activityReference.get().qmDatabase.getExhibitionTableDao().getExhibitionDetailsEnglish(Integer.parseInt(heritageId));
+            return activityReference.get().qmDatabase.getExhibitionTableDao().getExhibitionDetailsEnglish(Integer.parseInt(exhibitionId));
 
         }
     }
@@ -649,7 +662,16 @@ public class DetailsActivity extends AppCompatActivity implements IPullZoom {
 
         @Override
         protected void onPostExecute(List<ExhibitionListTableArabic> exhibitionListTableArabics) {
-            super.onPostExecute(exhibitionListTableArabics);
+            loadDataForHeritageOrExhibitionDetails(null,
+                    exhibitionListTableArabics.get(0).getExhibition_short_description(),
+                    exhibitionListTableArabics.get(0).getExhibition_long_description(),
+                    null, null,
+                    null,
+                    exhibitionListTableArabics.get(0).getExhibition_location(),
+                    null, exhibitionListTableArabics.get(0).getExhibition_latitude(),
+                    exhibitionListTableArabics.get(0).getExhibition_longitude(),
+                    exhibitionListTableArabics.get(0).getExhibition_start_date(),
+                    exhibitionListTableArabics.get(0).getExhibition_end_date());
         }
 
         @Override
