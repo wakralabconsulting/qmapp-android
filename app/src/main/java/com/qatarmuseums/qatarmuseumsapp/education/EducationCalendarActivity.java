@@ -151,39 +151,6 @@ public class EducationCalendarActivity extends AppCompatActivity {
             }
         });
 
-
-//        educationEvents = new ArrayList<EducationEvents>();
-//        EducationEvents events = new EducationEvents(getResources().getString(R.string.event_text_first)
-//                , getResources().getString(R.string.event_text_second),
-//                getResources().getString(R.string.event_timing_text),
-//                getResources().getString(R.string.event_max_number));
-//        educationEvents.add(events);
-//        events = new EducationEvents(getResources().getString(R.string.event_text_first)
-//                , getResources().getString(R.string.event_text_second),
-//                getResources().getString(R.string.event_timing_text),
-//                getResources().getString(R.string.event_max_number));
-//        educationEvents.add(events);
-//        events = new EducationEvents(getResources().getString(R.string.event_text_first)
-//                , getResources().getString(R.string.event_text_second),
-//                getResources().getString(R.string.event_timing_text),
-//                getResources().getString(R.string.event_max_number));
-//        educationEvents.add(events);
-//        events = new EducationEvents(getResources().getString(R.string.event_text_first)
-//                , getResources().getString(R.string.event_text_second),
-//                getResources().getString(R.string.event_timing_text),
-//                getResources().getString(R.string.event_max_number));
-//        educationEvents.add(events);
-//        events = new EducationEvents(getResources().getString(R.string.event_text_first)
-//                , getResources().getString(R.string.event_text_second),
-//                getResources().getString(R.string.event_timing_text),
-//                getResources().getString(R.string.event_max_number));
-//        educationEvents.add(events);
-//        events = new EducationEvents(getResources().getString(R.string.event_text_first)
-//                , getResources().getString(R.string.event_text_second),
-//                getResources().getString(R.string.event_timing_text),
-//                getResources().getString(R.string.event_max_number));
-//        educationEvents.add(events);
-
         educationAdapter = new EducationAdapter(EducationCalendarActivity.this, educationEvents);
         layoutManager = new LinearLayoutManager(getApplication());
         eventListView.setLayoutManager(layoutManager);
