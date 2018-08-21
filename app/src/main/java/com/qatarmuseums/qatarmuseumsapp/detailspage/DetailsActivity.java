@@ -31,6 +31,7 @@ import com.qatarmuseums.qatarmuseumsapp.commonpagedatabase.PublicArtsTableArabic
 import com.qatarmuseums.qatarmuseumsapp.commonpagedatabase.PublicArtsTableEnglish;
 import com.qatarmuseums.qatarmuseumsapp.heritage.HeritageOrExhibitionDetailModel;
 import com.qatarmuseums.qatarmuseumsapp.home.GlideApp;
+import com.qatarmuseums.qatarmuseumsapp.museumabout.MuseumAboutModel;
 import com.qatarmuseums.qatarmuseumsapp.publicart.PublicArtModel;
 import com.qatarmuseums.qatarmuseumsapp.utils.IPullZoom;
 import com.qatarmuseums.qatarmuseumsapp.utils.PixelUtil;
@@ -74,6 +75,8 @@ public class DetailsActivity extends AppCompatActivity implements IPullZoom {
     LinearLayout commonContentLayout;
     TextView noResultFoundTxt;
     ArrayList<PublicArtModel> publicArtModel = new ArrayList<>();
+    ArrayList<MuseumAboutModel> museumAboutModels = new ArrayList<>();
+
     ArrayList<HeritageOrExhibitionDetailModel> heritageOrExhibitionDetailModel = new ArrayList<>();
 //    ArrayList<HeritageOrExhibitionDetailModel> heritageOrExhibitionDetailModel = new ArrayList<>();
 
@@ -137,16 +140,10 @@ public class DetailsActivity extends AppCompatActivity implements IPullZoom {
                 getCommonListAPIDataFromDatabase(id, language);
 
         } else if (comingFrom.equals(getString(R.string.museum_about))) {
-            timingTitle.setText(R.string.museum_timings);
-            headerImage = "http://www.qm.org.qa/sites/default/files/styles/gallery_small/public/images/gallery/mia_architecture_071215_4844.jpg";
-            loadData(null, getString(R.string.details_page_short_description),
-                    getString(R.string.details_page_long_description),
-                    "TRADITIONAL INSPIRATION", "Once a thriving port bustling with fishermen and merchants, the town of Al Zubarah was designated a protected area in 2009. Since then, Qatar Museums has led teams of archaeologists and scientists to investigate the site. Through their research and engagement with local communities, they are documenting and shedding light on the rise and fall of this unique area.\n" +
-                            "\n" +
-                            "In 2013 the World Heritage Committee inscribed Al Zubarah Archaeological Site into the UNESCO World Heritage List. The site includes three major features, the largest of which are the archaeological remains of the town, dating back to the 1760s. Connected to it is the settlement of Qal’at Murair, which was fortified to protect the city’s inland wells. Al Zubarah Fort was built in 1938 and is the youngest, most prominent feature at the site.",
-                    "Saturday to Sunday: 9:00AM - 7:00PM\n" +
-                            "Fridays: 1:30PM to 7:00PM", null,
-                    "Katara Cultural Village", "info@mia.org.qa", "", "");
+            if (util.isNetworkAvailable(DetailsActivity.this))
+                getMuseumAboutDetailsFromAPI(id, language);
+            else
+                getMuseumAboutDetailsFromDatabase(id, language);
         }
         GlideApp.with(this)
                 .load(headerImage)
@@ -1116,5 +1113,65 @@ public class DetailsActivity extends AppCompatActivity implements IPullZoom {
         protected List<PublicArtsTableArabic> doInBackground(Void... voids) {
             return activityReference.get().qmDatabase.getPublicArtsTableDao().getAllArabic();
         }
+    }
+
+    public void getMuseumAboutDetailsFromAPI(String id, int appLanguage) {
+        progressBar.setVisibility(View.VISIBLE);
+        final String language;
+        if (appLanguage == 1) {
+            language = "en";
+        } else {
+            language = "ar";
+        }
+        APIInterface apiService =
+                APIClient.getTempClient().create(APIInterface.class);
+        Call<ArrayList<MuseumAboutModel>> call = apiService.getMuseumAboutDetails("63");
+        call.enqueue(new Callback<ArrayList<MuseumAboutModel>>() {
+            @Override
+            public void onResponse(Call<ArrayList<MuseumAboutModel>> call, Response<ArrayList<MuseumAboutModel>> response) {
+                if (response.isSuccessful()) {
+                    if (response.body() != null) {
+                        commonContentLayout.setVisibility(View.VISIBLE);
+                        museumAboutModels = response.body();
+                        timingTitle.setText(R.string.museum_timings);
+                        headerImage = museumAboutModels.get(0).getImage();
+                        GlideApp.with(DetailsActivity.this)
+                                .load(headerImage)
+                                .centerCrop()
+                                .placeholder(R.drawable.placeholdeer)
+                                .into(headerImageView);
+                        loadData(null, museumAboutModels.get(0).getShortDescription(),
+                                null,
+                                museumAboutModels.get(0).getSubTitle(), museumAboutModels.get(0).getLongDescription(), museumAboutModels.get(0).getTimingInfo(), "",
+                                museumAboutModels.get(0).getLocation(), museumAboutModels.get(0).getContact(), "", "");
+                    } else {
+                        commonContentLayout.setVisibility(View.GONE);
+                        noResultFoundTxt.setVisibility(View.VISIBLE);
+                    }
+                } else {
+                    commonContentLayout.setVisibility(View.GONE);
+                    noResultFoundTxt.setVisibility(View.VISIBLE);
+                }
+                progressBar.setVisibility(View.GONE);
+            }
+
+            @Override
+            public void onFailure(Call<ArrayList<MuseumAboutModel>> call, Throwable t) {
+                if (t instanceof IOException) {
+                    util.showToast(getResources().getString(R.string.check_network), getApplicationContext());
+
+                } else {
+                    // error due to mapping issues
+                }
+                commonContentLayout.setVisibility(View.GONE);
+                noResultFoundTxt.setVisibility(View.VISIBLE);
+                progressBar.setVisibility(View.GONE);
+            }
+        });
+
+    }
+
+    public void getMuseumAboutDetailsFromDatabase(String id, int language) {
+
     }
 }
