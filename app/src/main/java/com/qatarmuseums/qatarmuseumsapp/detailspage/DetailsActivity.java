@@ -1179,10 +1179,11 @@ public class DetailsActivity extends AppCompatActivity implements IPullZoom {
     }
 
     public void getMuseumAboutDetailsFromDatabase(String id, int language) {
-        if (appLanguage == 1) {
-            new RetriveEnglishMuseumAboutDataEnglish(DetailsActivity.this, appLanguage).execute();
+        if (language == 1) {
+            progressBar.setVisibility(View.VISIBLE);
+            new RetriveMuseumAboutDataEnglish(DetailsActivity.this, language).execute();
         } else {
-            new RetriveEnglishMuseumAboutDataArabic(DetailsActivity.this, appLanguage).execute();
+            new RetriveMuseumAboutDataArabic(DetailsActivity.this, language).execute();
         }
     }
 
@@ -1407,11 +1408,11 @@ public class DetailsActivity extends AppCompatActivity implements IPullZoom {
         }
     }
 
-    public class RetriveEnglishMuseumAboutDataEnglish extends AsyncTask<Void, Void, MuseumAboutTableEnglish> {
+    public class RetriveMuseumAboutDataEnglish extends AsyncTask<Void, Void, MuseumAboutTableEnglish> {
         private WeakReference<DetailsActivity> activityReference;
         int language;
 
-        RetriveEnglishMuseumAboutDataEnglish(DetailsActivity context, int appLanguage) {
+        RetriveMuseumAboutDataEnglish(DetailsActivity context, int appLanguage) {
             activityReference = new WeakReference<>(context);
             language = appLanguage;
         }
@@ -1424,6 +1425,12 @@ public class DetailsActivity extends AppCompatActivity implements IPullZoom {
         @Override
         protected void onPostExecute(MuseumAboutTableEnglish museumAboutTableEnglish) {
             if (museumAboutTableEnglish != null) {
+                headerImage = museumAboutTableEnglish.getMuseum_image();
+                GlideApp.with(DetailsActivity.this)
+                        .load(headerImage)
+                        .centerCrop()
+                        .placeholder(R.drawable.placeholdeer)
+                        .into(headerImageView);
                 loadData(null, museumAboutTableEnglish.getMuseum_short_description(),
                         null,
                         museumAboutTableEnglish.getMuseum_subtitle(), museumAboutTableEnglish.getMuseum_long_description(),
@@ -1436,11 +1443,11 @@ public class DetailsActivity extends AppCompatActivity implements IPullZoom {
         }
     }
 
-    public class RetriveEnglishMuseumAboutDataArabic extends AsyncTask<Void, Void, MuseumAboutTableArabic> {
+    public class RetriveMuseumAboutDataArabic extends AsyncTask<Void, Void, MuseumAboutTableArabic> {
         private WeakReference<DetailsActivity> activityReference;
         int language;
 
-        RetriveEnglishMuseumAboutDataArabic(DetailsActivity context, int appLanguage) {
+        RetriveMuseumAboutDataArabic(DetailsActivity context, int appLanguage) {
             activityReference = new WeakReference<>(context);
             language = appLanguage;
         }
@@ -1453,6 +1460,12 @@ public class DetailsActivity extends AppCompatActivity implements IPullZoom {
         @Override
         protected void onPostExecute(MuseumAboutTableArabic museumAboutTableArabic) {
             if (museumAboutTableArabic != null) {
+                headerImage = museumAboutTableEnglish.getMuseum_image();
+                GlideApp.with(DetailsActivity.this)
+                        .load(headerImage)
+                        .centerCrop()
+                        .placeholder(R.drawable.placeholdeer)
+                        .into(headerImageView);
                 loadData(null, museumAboutTableArabic.getMuseum_short_description(),
                         null,
                         museumAboutTableArabic.getMuseum_subtitle(), museumAboutTableArabic.getMuseum_long_description(),

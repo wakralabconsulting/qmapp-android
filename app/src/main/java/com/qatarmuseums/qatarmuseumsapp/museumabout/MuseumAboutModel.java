@@ -9,9 +9,9 @@ public class MuseumAboutModel {
     private String museumId;
     @SerializedName("image")
     private String image;
-    @SerializedName("Longitude")
+    @SerializedName("longitude")
     private String longitude;
-    @SerializedName("Latitude")
+    @SerializedName("latitude")
     private String latitude;
     @SerializedName("short_desc")
     private String shortDescription;
