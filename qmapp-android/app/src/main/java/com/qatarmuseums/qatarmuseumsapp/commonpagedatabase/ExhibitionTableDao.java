@@ -45,13 +45,13 @@ public interface ExhibitionTableDao {
                                      String locationFromApi, String id);
 
     @Query("UPDATE exhibitionlistenglish SET exhibition_start_date = :startDateFromApi," +
-            "exhibition_end_date = :endDateFromApi,exhibition_location = :locationFromApi," +
+            "exhibition_end_date = :endDateFromApi," +
             "exhibition_latest_image = :imageFromApi," +
             "exhibition_long_description=:descriptionFromApi," +
             "exhibition_latitude=:latitudeFromApi," +
             "exhibition_longitude=:longitudeFromApi," +
             "exhibition_short_description=:shortDescriptionFromApi WHERE exhibition_id=:id")
-    void updateExhibitionDetailEnglish(String startDateFromApi, String endDateFromApi, String locationFromApi,
+    void updateExhibitionDetailEnglish(String startDateFromApi, String endDateFromApi,
                                        String imageFromApi, String descriptionFromApi,
                                        String shortDescriptionFromApi, String latitudeFromApi, String longitudeFromApi,
                                        String id);
@@ -62,13 +62,13 @@ public interface ExhibitionTableDao {
                                     String locationFromApi, String id);
 
     @Query("UPDATE exhibitionlistarabic SET exhibition_start_date = :startDateFromApi," +
-            "exhibition_end_date = :endDateFromApi,exhibition_location = :locationFromApi," +
+            "exhibition_end_date = :endDateFromApi," +
             "exhibition_latest_image = :imageFromApi," +
             "exhibition_long_description=:descriptionFromApi," +
             "exhibition_latitude=:latitudeFromApi," +
             "exhibition_longitude=:longitudeFromApi," +
             "exhibition_short_description=:shortDescriptionFromApi WHERE exhibition_id=:id")
-    void updateExhibitionDetailArabic(String startDateFromApi, String endDateFromApi, String locationFromApi,
+    void updateExhibitionDetailArabic(String startDateFromApi, String endDateFromApi,
                                       String imageFromApi, String descriptionFromApi,
                                       String shortDescriptionFromApi, String latitudeFromApi, String longitudeFromApi,
                                       String id);
