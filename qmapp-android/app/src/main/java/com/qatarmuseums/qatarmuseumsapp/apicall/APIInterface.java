@@ -1,6 +1,7 @@
 package com.qatarmuseums.qatarmuseumsapp.apicall;
 
 
+import com.qatarmuseums.qatarmuseumsapp.calendar.CalendarEvents;
 import com.qatarmuseums.qatarmuseumsapp.commonpage.CommonModel;
 import com.qatarmuseums.qatarmuseumsapp.dining.DiningDetailModel;
 import com.qatarmuseums.qatarmuseumsapp.heritage.HeritageOrExhibitionDetailModel;
@@ -12,6 +13,8 @@ import java.util.ArrayList;
 
 import retrofit2.Call;
 import retrofit2.http.GET;
+import retrofit2.http.HEAD;
+import retrofit2.http.Header;
 import retrofit2.http.Path;
 import retrofit2.http.Query;
 
@@ -41,6 +44,12 @@ public interface APIInterface {
 
     @GET("{language}/mobile_api/museum_collection_category.json")
     Call<ArrayList<CommonModel>> getCollectionList(@Path("language") String language,
-                                                        @Query("museum_id") String museumId);
+                                                   @Query("museum_id") String museumId);
+
+    @GET("geturl.php")
+    Call<ArrayList<CalendarEvents>> getCalendarDetails(@Header("date") Long currentTimestamp,
+                                                       @Header("inst") String institution,
+                                                       @Header("age") String ageGroup,
+                                                       @Header("ptype") String programType);
 
 }
