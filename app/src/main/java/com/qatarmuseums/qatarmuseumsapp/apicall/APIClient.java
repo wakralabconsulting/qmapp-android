@@ -9,6 +9,7 @@ public class APIClient {
     private static Retrofit retrofit = null;
     private static String apiBaseUrl = "http://www.qm.org.qa/";
     private static OkHttpClient client;
+    private static String tempApiBaseUrl = "http://moushtarayatapp.com/xmltojson/";
 
     public static Retrofit getClient() {
 
@@ -16,23 +17,27 @@ public class APIClient {
         interceptor.setLevel(HttpLoggingInterceptor.Level.BODY);
         client = new OkHttpClient.Builder().addInterceptor(interceptor).build();
 
-
         retrofit = new Retrofit.Builder()
                 .baseUrl(apiBaseUrl)
                 .addConverterFactory(GsonConverterFactory.create())
                 .client(client)
                 .build();
 
-
         return retrofit;
     }
 
     public static Retrofit getTempClient() {
 
+        HttpLoggingInterceptor interceptor = new HttpLoggingInterceptor();
+        interceptor.setLevel(HttpLoggingInterceptor.Level.BODY);
+        client = new OkHttpClient.Builder().addInterceptor(interceptor).build();
+
         retrofit = new Retrofit.Builder()
-                .baseUrl("http://moushtarayatapp.com/xmltojson/")
+                .baseUrl(tempApiBaseUrl)
                 .addConverterFactory(GsonConverterFactory.create())
+                .client(client)
                 .build();
+
         return retrofit;
     }
 }

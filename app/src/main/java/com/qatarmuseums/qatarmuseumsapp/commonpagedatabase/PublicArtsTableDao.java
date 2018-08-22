@@ -18,6 +18,12 @@ public interface PublicArtsTableDao {
     @Query("SELECT * FROM publicartstableArabic")
     List<PublicArtsTableArabic> getAllArabic();
 
+    @Query("SELECT * FROM publicartstableEnglish WHERE public_arts_id = :idFromAPI")
+    List<PublicArtsTableEnglish> getAllDataEnglish(String idFromAPI);
+
+    @Query("SELECT * FROM publicartstableArabic WHERE public_arts_id = :idFromAPI")
+    List<PublicArtsTableArabic> getAllDataArabic(String idFromAPI);
+
     @Query("SELECT COUNT(public_arts_id) FROM publicartstableEnglish")
     int getNumberOfRowsEnglish();
 

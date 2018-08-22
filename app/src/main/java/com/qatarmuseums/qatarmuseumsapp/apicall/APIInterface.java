@@ -4,8 +4,10 @@ package com.qatarmuseums.qatarmuseumsapp.apicall;
 import com.qatarmuseums.qatarmuseumsapp.calendar.CalendarEvents;
 import com.qatarmuseums.qatarmuseumsapp.commonpage.CommonModel;
 import com.qatarmuseums.qatarmuseumsapp.dining.DiningDetailModel;
+import com.qatarmuseums.qatarmuseumsapp.education.EducationEvents;
 import com.qatarmuseums.qatarmuseumsapp.heritage.HeritageOrExhibitionDetailModel;
 import com.qatarmuseums.qatarmuseumsapp.home.HomeList;
+import com.qatarmuseums.qatarmuseumsapp.museumabout.MuseumAboutModel;
 import com.qatarmuseums.qatarmuseumsapp.park.ParkList;
 import com.qatarmuseums.qatarmuseumsapp.publicart.PublicArtModel;
 
@@ -13,7 +15,6 @@ import java.util.ArrayList;
 
 import retrofit2.Call;
 import retrofit2.http.GET;
-import retrofit2.http.HEAD;
 import retrofit2.http.Header;
 import retrofit2.http.Path;
 import retrofit2.http.Query;
@@ -46,10 +47,20 @@ public interface APIInterface {
     Call<ArrayList<CommonModel>> getCollectionList(@Path("language") String language,
                                                    @Query("museum_id") String museumId);
 
-    @GET("geturl.php")
-    Call<ArrayList<CalendarEvents>> getCalendarDetails(@Header("date") Long currentTimestamp,
+    @GET("{language}/geturl.php")
+    Call<ArrayList<CalendarEvents>> getCalendarDetails(@Path("language") String language,
+                                                       @Header("date") Long currentTimestamp,
                                                        @Header("inst") String institution,
                                                        @Header("age") String ageGroup,
                                                        @Header("ptype") String programType);
 
+    @GET("{language}/about.php")
+    Call<ArrayList<MuseumAboutModel>> getMuseumAboutDetails(@Path("language") String language,
+                                                            @Query("mid") String mid);
+
+    @GET("geturl.php")
+    Call<ArrayList<EducationEvents>> getEducationCalendarDetails(@Header("date") Long currentTimestamp,
+                                                                 @Header("inst") String institution,
+                                                                 @Header("age") String ageGroup,
+                                                                 @Header("ptype") String programType);
 }
