@@ -156,7 +156,5 @@ public class CalendarAdapter extends RecyclerView.Adapter<CalendarAdapter.Calend
         Uri uri = contentResolver.insert(CalendarContract.Events.CONTENT_URI, cv);
         Toast.makeText(context, "Entered", Toast.LENGTH_SHORT).show();
 
-
-
     }
 }
