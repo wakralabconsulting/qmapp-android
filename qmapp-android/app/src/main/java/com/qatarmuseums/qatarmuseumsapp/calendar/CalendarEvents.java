@@ -20,14 +20,14 @@ public class CalendarEvents {
     @SerializedName("end_time")
     private String endTime;
     @SerializedName("age_group")
-    private Boolean ageGroup;
+    private String ageGroup;
     @SerializedName("program_type")
-    private Boolean programType;
+    private String programType;
     @SerializedName("date")
-    private Boolean eventDate;
+    private Long eventDate;
 
     public CalendarEvents(String eventTitle, String eventSubtitle, String eventTimings,
-                          String eventDetails, String startTime, String endTime, Boolean registration) {
+                          String eventDetails, String startTime, String endTime, Boolean registration, Long eventDate) {
         this.institution = eventTitle;
         this.eventTitle = eventSubtitle;
         this.eventTimings = eventTimings;
@@ -35,6 +35,7 @@ public class CalendarEvents {
         this.startTime = startTime;
         this.endTime = endTime;
         this.registration = registration;
+        this.eventDate = eventDate;
     }
 
     public String getInstitution() {
@@ -101,27 +102,27 @@ public class CalendarEvents {
         this.endTime = endTime;
     }
 
-    public Boolean getAgeGroup() {
+    public String getAgeGroup() {
         return ageGroup;
     }
 
-    public void setAgeGroup(Boolean ageGroup) {
+    public void setAgeGroup(String ageGroup) {
         this.ageGroup = ageGroup;
     }
 
-    public Boolean getProgramType() {
+    public String getProgramType() {
         return programType;
     }
 
-    public void setProgramType(Boolean programType) {
+    public void setProgramType(String programType) {
         this.programType = programType;
     }
 
-    public Boolean getEventDate() {
+    public Long getEventDate() {
         return eventDate;
     }
 
-    public void setEventDate(Boolean eventDate) {
+    public void setEventDate(Long eventDate) {
         this.eventDate = eventDate;
     }
 }

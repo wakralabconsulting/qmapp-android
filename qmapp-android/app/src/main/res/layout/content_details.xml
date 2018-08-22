@@ -16,10 +16,10 @@
         <LinearLayout
             android:id="@+id/common_content_layout"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="match_parent"
             android:background="@color/background_color"
             android:orientation="vertical"
-            android:visibility="gone">
+            android:visibility="visible">
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -296,9 +296,11 @@
             android:id="@+id/noResultFoundTxt"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_marginTop="50dp"
+            android:layout_marginTop="@dimen/margin_50"
             android:fontFamily="@font/din_next_lt_pro_regular"
-            android:text="@string/no_results_text"
+            android:gravity="center"
+            android:layout_centerInParent="true"
+            android:text="@string/unable_to_fetch_details"
             android:textAlignment="center"
             android:textColor="@android:color/black"
             android:textSize="@dimen/font_size_21"

@@ -13,24 +13,34 @@ import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.qatarmuseums.qatarmuseumsapp.R;
+import com.qatarmuseums.qatarmuseumsapp.apicall.APIClient;
+import com.qatarmuseums.qatarmuseumsapp.apicall.APIInterface;
 import com.shrikanthravi.collapsiblecalendarview.widget.CollapsibleCalendar;
 
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.GregorianCalendar;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 public class EducationCalendarActivity extends AppCompatActivity {
 
     CollapsibleCalendar collapsibleCalendar;
     RecyclerView eventListView;
     EducationAdapter educationAdapter;
-    ArrayList<EducationEvents> educationEvents;
+
     private Animation zoomOutAnimation;
     @BindView(R.id.common_toolbar)
     Toolbar toolbar;
@@ -40,7 +50,12 @@ public class EducationCalendarActivity extends AppCompatActivity {
     TextView toolbar_title;
     @BindView(R.id.toolbar_filter)
     ImageView toolbar_filter;
+    @BindView(R.id.progressBarLoading)
+    ProgressBar progressBar;
+    @BindView(R.id.noResultFoundTxt)
+    TextView noResultFoundTxt;
     RecyclerView.LayoutManager layoutManager;
+    ArrayList<EducationEvents> educationEvents = new ArrayList<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -76,7 +91,7 @@ public class EducationCalendarActivity extends AppCompatActivity {
         toolbar_filter.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent= new Intent(EducationCalendarActivity.this,EducationFilterActivity.class);
+                Intent intent = new Intent(EducationCalendarActivity.this, EducationFilterActivity.class);
                 startActivity(intent);
             }
         });
@@ -92,6 +107,21 @@ public class EducationCalendarActivity extends AppCompatActivity {
                 + collapsibleCalendar.getSelectedDay().getDay() + "/"
                 + collapsibleCalendar.getSelectedDay().getMonth()
                 + "/" + collapsibleCalendar.getSelectedDay().getYear());
+
+        String mDate = collapsibleCalendar.getSelectedDay().getDay() + "/"
+                + collapsibleCalendar.getSelectedDay().getMonth()
+                + "/" + collapsibleCalendar.getSelectedDay().getYear();
+        System.out.println("Testing date " + mDate);
+        DateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
+        Date date = null;
+        try {
+            date = (Date) dateFormat.parse(mDate);
+
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+        System.out.println("Testing date " + date.getTime());
+        getEducationCalendarDataFromApi(date.getTime(), "any", "any", "any");
 
 
         collapsibleCalendar.setCalendarListener(new CollapsibleCalendar.CalendarListener() {
@@ -121,38 +151,6 @@ public class EducationCalendarActivity extends AppCompatActivity {
             }
         });
 
-        educationEvents = new ArrayList<EducationEvents>();
-        EducationEvents events = new EducationEvents(getResources().getString(R.string.event_text_first)
-                , getResources().getString(R.string.event_text_second),
-                getResources().getString(R.string.event_timing_text),
-                getResources().getString(R.string.event_max_number));
-        educationEvents.add(events);
-        events = new EducationEvents(getResources().getString(R.string.event_text_first)
-                , getResources().getString(R.string.event_text_second),
-                getResources().getString(R.string.event_timing_text),
-                getResources().getString(R.string.event_max_number));
-        educationEvents.add(events);
-        events = new EducationEvents(getResources().getString(R.string.event_text_first)
-                , getResources().getString(R.string.event_text_second),
-                getResources().getString(R.string.event_timing_text),
-                getResources().getString(R.string.event_max_number));
-        educationEvents.add(events);
-        events = new EducationEvents(getResources().getString(R.string.event_text_first)
-                , getResources().getString(R.string.event_text_second),
-                getResources().getString(R.string.event_timing_text),
-                getResources().getString(R.string.event_max_number));
-        educationEvents.add(events);
-        events = new EducationEvents(getResources().getString(R.string.event_text_first)
-                , getResources().getString(R.string.event_text_second),
-                getResources().getString(R.string.event_timing_text),
-                getResources().getString(R.string.event_max_number));
-        educationEvents.add(events);
-        events = new EducationEvents(getResources().getString(R.string.event_text_first)
-                , getResources().getString(R.string.event_text_second),
-                getResources().getString(R.string.event_timing_text),
-                getResources().getString(R.string.event_max_number));
-        educationEvents.add(events);
-
         educationAdapter = new EducationAdapter(EducationCalendarActivity.this, educationEvents);
         layoutManager = new LinearLayoutManager(getApplication());
         eventListView.setLayoutManager(layoutManager);
@@ -178,6 +176,35 @@ public class EducationCalendarActivity extends AppCompatActivity {
                     collapsibleCalendar.expand(400);
                     collapsibleCalendar.expanded = true;
                 }
+            }
+        });
+
+    }
+
+
+    private void getEducationCalendarDataFromApi(long date, String institute, String ageGroup, String programmeType) {
+        progressBar.setVisibility(View.VISIBLE);
+        APIInterface apiService =
+                APIClient.getTempClient().create(APIInterface.class);
+        Call<ArrayList<EducationEvents>> call = apiService.
+                getEducationCalendarDetails(date, institute, ageGroup, programmeType);
+
+        call.enqueue(new Callback<ArrayList<EducationEvents>>() {
+            @Override
+            public void onResponse(Call<ArrayList<EducationEvents>> call, Response<ArrayList<EducationEvents>> response) {
+                if (response.isSuccessful()) {
+                    if (response.body() != null) {
+                        progressBar.setVisibility(View.GONE);
+                        educationEvents.addAll(response.body());
+                        educationAdapter.notifyDataSetChanged();
+                        System.out.println("check "+educationEvents);
+                    }
+                }
+            }
+
+            @Override
+            public void onFailure(Call<ArrayList<EducationEvents>> call, Throwable t) {
+
             }
         });
 

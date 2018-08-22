@@ -25,6 +25,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.qatarmuseums.qatarmuseumsapp.R;
+import com.qatarmuseums.qatarmuseumsapp.commonpage.CommonActivity;
 import com.qatarmuseums.qatarmuseumsapp.utils.CustomDialogClass;
 import com.qatarmuseums.qatarmuseumsapp.utils.Util;
 
@@ -70,12 +71,10 @@ public class CalendarAdapter extends RecyclerView.Adapter<CalendarAdapter.Calend
         holder.layoutHolder.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if (calendarEventsList.get(position).getRegistration())
-                    showRegisterDialog(holder.eventSubTitle.getText().toString(),
-                            holder.eventDetails.getText().toString());
-                else
-                    showDialog(holder.eventSubTitle.getText().toString(),
-                            holder.eventDetails.getText().toString());
+                ((CalendarActivity) context).onClickCalled(calendarEventsList.get(position).getRegistration(),
+                        holder.eventSubTitle.getText().toString(),
+                        holder.eventDetails.getText().toString());
+
             }
         });
 
