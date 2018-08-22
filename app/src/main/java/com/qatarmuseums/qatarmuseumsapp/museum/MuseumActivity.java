@@ -20,8 +20,12 @@ import android.widget.TextView;
 
 import com.github.rubensousa.gravitysnaphelper.GravitySnapHelper;
 import com.qatarmuseums.qatarmuseumsapp.R;
+import com.qatarmuseums.qatarmuseumsapp.apicall.APIClient;
+import com.qatarmuseums.qatarmuseumsapp.apicall.APIInterface;
 import com.qatarmuseums.qatarmuseumsapp.base.BaseActivity;
+import com.qatarmuseums.qatarmuseumsapp.utils.Util;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
@@ -32,6 +36,9 @@ import cn.lightsky.infiniteindicator.IndicatorConfiguration;
 import cn.lightsky.infiniteindicator.InfiniteIndicator;
 import cn.lightsky.infiniteindicator.OnPageClickListener;
 import cn.lightsky.infiniteindicator.Page;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 import static android.view.Gravity.LEFT;
 import static android.view.Gravity.RIGHT;
@@ -61,6 +68,9 @@ public class MuseumActivity extends BaseActivity implements
     SharedPreferences qmPreferences;
     int appLanguage;
     private final int english = 1;
+    ImageView sliderPlaceholderImage;
+    Util util;
+    private ArrayList<SliderImageModel> sliderImageList = new ArrayList<>();
 
 
     @Override
@@ -69,14 +79,15 @@ public class MuseumActivity extends BaseActivity implements
         setContentView(R.layout.activity_museum);
         ButterKnife.bind(this);
         setToolbarForMuseumActivity();
+        util = new Util();
         qmPreferences = PreferenceManager.getDefaultSharedPreferences(this);
         appLanguage = qmPreferences.getInt("AppLanguage", 1);
         intent = getIntent();
         sliderImageTitle.setText(intent.getStringExtra("MUSEUMTITLE"));
         animCircleIndicator = (InfiniteIndicator) findViewById(R.id.main_indicator_default_circle);
-
-        museumHorizontalScrollViewAdapter = new MuseumHorizontalScrollViewAdapter(this, museumHScrollModelList,intent.getStringExtra("MUSEUMTITLE"));
-
+        sliderPlaceholderImage = (ImageView) findViewById(R.id.ads_place_holder);
+        museumHorizontalScrollViewAdapter = new MuseumHorizontalScrollViewAdapter(this, museumHScrollModelList, intent.getStringExtra("MUSEUMTITLE"));
+        animCircleIndicator.setVisibility(View.GONE);
         if (appLanguage == english) {
             recyclerviewLayoutManager =
                     new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false);
@@ -142,7 +153,8 @@ public class MuseumActivity extends BaseActivity implements
         }
 
         prepareRecyclerViewData();
-        getSliderImagesFromList();
+        getSliderImagesfromAPI();
+
 
         scrollBarNextIconLayout.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -161,24 +173,17 @@ public class MuseumActivity extends BaseActivity implements
 
     }
 
-
-    public void getSliderImagesFromList() {
+    public void setSliderImages(ArrayList<SliderImageModel> sliderImageList) {
         ads = new ArrayList<>();
 
-        ads.add(new Page("", "http://www.qm.org.qa/sites/default/files/museum_of_islamic_art.png",
+        ads.add(new Page("", sliderImageList.get(0).getImage1(),
                 null));
-        ads.add(new Page("", "http://www.qm.org.qa/sites/default/files/national_museum_of_qatar.png",
+        ads.add(new Page("", sliderImageList.get(0).getImage2(),
                 null));
-        ads.add(new Page("", "http://www.qm.org.qa/sites/default/files/mathaf_arab_museum.png",
+        ads.add(new Page("", sliderImageList.get(0).getImage3(),
                 null));
-        ads.add(new Page("", "http://www.qm.org.qa/sites/default/files/firestation.png",
-                null));
-        ads.add(new Page("", "http://www.qm.org.qa/sites/default/files/qatar_olypic_sports_museum.png",
-                null));
-
         loadAdsToSlider(ads);
     }
-
 
     public void showBothArrows() {
         scrollBarNextIcon.setVisibility(View.VISIBLE);
@@ -243,7 +248,7 @@ public class MuseumActivity extends BaseActivity implements
                         .scrollDurationFactor(2)
                         .internal(3000)
                         .isLoop(true)
-                        .isAutoScroll(false)
+                        .isAutoScroll(true)
                         .onPageClickListener(this)
                         .direction(RIGHT)
                         .position(IndicatorConfiguration.IndicatorPosition.Center_Bottom)
@@ -255,10 +260,10 @@ public class MuseumActivity extends BaseActivity implements
                         .imageLoader(glideLoader)
                         .isStopWhileTouch(true)
                         .onPageChangeListener(this)
-                        .internal(3000)
+                        .internal(4000)
                         .scrollDurationFactor(2)
                         .isLoop(true)
-                        .isAutoScroll(false)
+                        .isAutoScroll(true)
                         .onPageClickListener(this)
                         .direction(LEFT)
                         .position(IndicatorConfiguration.IndicatorPosition.Center_Bottom)
@@ -274,7 +279,7 @@ public class MuseumActivity extends BaseActivity implements
                     .isStopWhileTouch(true)
                     .onPageChangeListener(null)
                     .scrollDurationFactor(2)
-                    .internal(3000)
+                    .internal(4000)
                     .isLoop(false)
                     .isAutoScroll(false)
                     .onPageClickListener(null)
@@ -324,6 +329,52 @@ public class MuseumActivity extends BaseActivity implements
             animCircleIndicator.start();
 
 
+    }
+
+    public void getSliderImagesfromAPI() {
+        APIInterface apiService =
+                APIClient.getTempClient().create(APIInterface.class);
+        Call<ArrayList<SliderImageModel>> call = apiService.getMuseumSliderImages("66");
+        call.enqueue(new Callback<ArrayList<SliderImageModel>>() {
+            @Override
+            public void onResponse(Call<ArrayList<SliderImageModel>> call, Response<ArrayList<SliderImageModel>> response) {
+                if (response.isSuccessful()) {
+                    if (response.body() != null) {
+                        sliderImageList.addAll(response.body());
+                        if (sliderImageList.size() != 0) {
+                            setSliderImages(sliderImageList);
+                            sliderPlaceholderImage.setVisibility(View.GONE);
+                            animCircleIndicator.setVisibility(View.VISIBLE);
+
+
+                        } else {
+                            sliderPlaceholderImage.setVisibility(View.VISIBLE);
+                            animCircleIndicator.setVisibility(View.GONE);
+                        }
+
+                    } else {
+                        sliderPlaceholderImage.setVisibility(View.VISIBLE);
+                        animCircleIndicator.setVisibility(View.GONE);
+                    }
+
+                } else {
+                    sliderPlaceholderImage.setVisibility(View.VISIBLE);
+                    animCircleIndicator.setVisibility(View.GONE);
+                }
+
+            }
+
+            @Override
+            public void onFailure(Call<ArrayList<SliderImageModel>> call, Throwable t) {
+                if (t instanceof IOException) {
+                    util.showToast(getResources().getString(R.string.check_network), getApplicationContext());
+                } else {
+                    // due to mapping issues
+                }
+                sliderPlaceholderImage.setVisibility(View.VISIBLE);
+                animCircleIndicator.setVisibility(View.GONE);
+            }
+        });
     }
 
 }
