@@ -215,7 +215,7 @@ public class CalendarActivity extends AppCompatActivity {
             showCalendarDialog(title, details);
     }
 
-    protected void showCalendarDialog(String title, final String details) {
+    protected void showCalendarDialog(final String title, final String details) {
 
         dialog = new Dialog(this, R.style.DialogNoAnimation);
         dialog.setCancelable(true);
@@ -236,7 +236,7 @@ public class CalendarActivity extends AppCompatActivity {
         dialogActionButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                addToCalendar(details);
+                addToCalendar(title, details);
                 dialog.dismiss();
 
             }
@@ -286,15 +286,16 @@ public class CalendarActivity extends AppCompatActivity {
         dialog.show();
     }
 
-    private void addToCalendar(String details) {
-
+    private void addToCalendar(String title, String details) {
+        calendarInstance.set(Calendar.HOUR_OF_DAY, 14);
+        calendarInstance.set(Calendar.MINUTE, 0);
         contentResolver = getContentResolver();
         contentValues = new ContentValues();
-        contentValues.put(CalendarContract.Events.TITLE, "Title of the event");
+        contentValues.put(CalendarContract.Events.TITLE, title);
         contentValues.put(CalendarContract.Events.DESCRIPTION, details);
-        contentValues.put(CalendarContract.Events.DTSTART, Calendar.getInstance().getTimeInMillis());
-        contentValues.put(CalendarContract.Events.DTEND, Calendar.getInstance().getTimeInMillis() + 60 * 60 * 1000);
-        contentValues.put(CalendarContract.Events.CALENDAR_ID, 1);
+        contentValues.put(CalendarContract.Events.DTSTART, calendarInstance.getTimeInMillis());
+        contentValues.put(CalendarContract.Events.DTEND, calendarInstance.getTimeInMillis() + 2 * 60 * 60 * 1000);
+        contentValues.put(CalendarContract.Events.CALENDAR_ID, 3);
         TimeZone timeZone = TimeZone.getDefault();
         contentValues.put(CalendarContract.Events.EVENT_TIMEZONE, Calendar.getInstance().getTimeZone().getID());
 

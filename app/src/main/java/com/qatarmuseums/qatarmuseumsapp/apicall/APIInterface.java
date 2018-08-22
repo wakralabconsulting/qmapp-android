@@ -64,8 +64,10 @@ public interface APIInterface {
                                                                  @Header("inst") String institution,
                                                                  @Header("age") String ageGroup,
                                                                  @Header("ptype") String programType);
-    @GET("museum_landing.php")
-    Call<ArrayList<SliderImageModel>> getMuseumSliderImages(@Query("mid") String mid);
+
+    @GET("{language}/museum_landing.php")
+    Call<ArrayList<SliderImageModel>> getMuseumSliderImages(@Path("language") String language,
+                                                            @Query("mid") String mid);
 
 
 }
