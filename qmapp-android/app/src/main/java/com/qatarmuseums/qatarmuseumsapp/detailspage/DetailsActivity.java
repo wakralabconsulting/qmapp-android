@@ -1202,7 +1202,7 @@ public class DetailsActivity extends AppCompatActivity implements IPullZoom {
         }
         APIInterface apiService =
                 APIClient.getTempClient().create(APIInterface.class);
-        Call<ArrayList<MuseumAboutModel>> call = apiService.getMuseumAboutDetails("63");
+        Call<ArrayList<MuseumAboutModel>> call = apiService.getMuseumAboutDetails(language, "63");
         call.enqueue(new Callback<ArrayList<MuseumAboutModel>>() {
             @Override
             public void onResponse(Call<ArrayList<MuseumAboutModel>> call, Response<ArrayList<MuseumAboutModel>> response) {
@@ -1335,7 +1335,7 @@ public class DetailsActivity extends AppCompatActivity implements IPullZoom {
                             //updateEnglishTable same id
                             new UpdateMuseumAboutDetailTable(DetailsActivity.this, language, i).execute();
 
-                        }else {
+                        } else {
                             museumAboutTableEnglish = new MuseumAboutTableEnglish(Long.parseLong(museumAboutModels.get(i).getMuseumId()),
                                     museumAboutModels.get(i).getTitle(),
                                     museumAboutModels.get(i).getSubTitle(),
@@ -1357,7 +1357,7 @@ public class DetailsActivity extends AppCompatActivity implements IPullZoom {
                             //updateEnglishTable same id
                             new UpdatePublicArtsDetailTable(DetailsActivity.this, language, i).execute();
 
-                        }else {
+                        } else {
                             museumAboutTableArabic = new MuseumAboutTableArabic(Long.parseLong(museumAboutModels.get(i).getMuseumId()),
                                     museumAboutModels.get(i).getTitle(),
                                     museumAboutModels.get(i).getSubTitle(),
@@ -1512,7 +1512,7 @@ public class DetailsActivity extends AppCompatActivity implements IPullZoom {
                         null, museumAboutTableEnglish.getMuseum_contact(),
                         museumAboutTableEnglish.getMuseum_lattitude(), museumAboutTableEnglish.getMuseum_longitude());
 
-            }else {
+            } else {
                 commonContentLayout.setVisibility(View.GONE);
                 noResultFoundTxt.setVisibility(View.VISIBLE);
             }
@@ -1552,7 +1552,7 @@ public class DetailsActivity extends AppCompatActivity implements IPullZoom {
                         null, museumAboutTableArabic.getMuseum_contact(),
                         museumAboutTableArabic.getMuseum_lattitude(), museumAboutTableArabic.getMuseum_longitude());
 
-            }else {
+            } else {
                 commonContentLayout.setVisibility(View.GONE);
                 noResultFoundTxt.setVisibility(View.VISIBLE);
             }

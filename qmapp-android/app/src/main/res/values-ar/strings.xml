@@ -3,14 +3,18 @@
 
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>
-
+    <string name="view_details"><u>عرض التفاصيل</u></string>
+    <string name="events">الفعاليات</string>
+    <string name="details">DETAILS</string>
+    <string name="everyday_from">Everyday From</string>
+    <string name="to">to</string>
     <string name="action_settings">عربى</string>
     <string name="title_dining">Dining</string>
     <string name="title_gift_shop">Gift Shop</string>
     <string name="title_culture_pass">Culture Pass</string>
     <string name="title_more">More</string>
     <string name="sidemenu_exhibition_text">Exhibitions</string>
-    <string name="sidemenu_events_text">Events</string>
+    <string name="sidemenu_events_text">الفعاليات</string>
     <string name="sidemenu_education_text">Education</string>
     <string name="sidemenu_tour_guide_text">Tour Guide</string>
     <string name="sidemenu_heritage_text">Heritage Sites</string>
@@ -22,6 +26,9 @@
     <string name="new_open">NOW OPEN</string>
     <string name="closed">CLOSED</string>
     <string name="notifications">Notifications</string>
+    <string name="location_title">LOCATION</string>
+    <string name="contact_title">CONTACT</string>
+    <string name="calendar_activity_tittle">التقويم</string>
     <string name="settings_activity_tittle">عربى</string>
     <string name="select_language_text">Select App Language</string>
     <string name="english">English</string>
@@ -29,6 +36,9 @@
     <string name="notification_settings">Notification Settings</string>
     <string name="reset_to_default">Reset to Default</string>
     <string name="apply">Apply</string>
+    <string name="add_to_calendar">أضف إلى التقويم</string>
+    <string name="register_now">سجل الأن</string>
+    <string name="calendar_dialog_title">Event Name</string>
     <string name="change_language_content_text">سيتم تحويلك إلى الصفحة الرئيسية بعد تغيير اللغة، هل تريد المتابعة؟</string>
     <string name="home_page_mia_title">متحف الفن الإ</string>
     <string name="home_page_national_museum_title">متحف قطر الو</string>
@@ -45,12 +55,41 @@
     <string name="education_long_description">All of our education programmes provide interactive opportunities. We hope that they create lasting memories and lead to the development of creative, compassionate and engaged individuals.\n\nFor school teachers and educators, we bring custom-made workshops, conferences and trainings to suit their needs. We also focus on working with children to encourage them to explore the world around them, engage with it, and express themselves through creative activities.\n\nAll of our activities align with Qatar Supreme Educational Council Professional Standards for Teachers and National Curriculum Standards.</string>
     <string name="discover_txt">Discover</string>
     <string name="coming_soon_content">We are working hard to bring the details at the tip of your fingers.\n\nStay Tuned.</string>
-    <string name="coming_soon_txt">Coming Soon</string>
-    <string name="close">Close</string>
+    <string name="coming_soon_txt">قريباً</string>
+    <string name="close">مغلق</string>
     <string name="register_now_content">Thank you for Registering.Further\nDetails will be sent to you on your\nemail</string>
     <string name="opening_timings">OPENING TIMINGS</string>
     <string name="exhibition_timings">EXHIBITION TIMINGS</string>
     <string name="institution">Institution -</string>
     <string name="age_group">Age Group -</string>
     <string name="programme_type">Programme Type -</string>
+    <string name="clear">Clear</string>
+    <string name="filter">Filter</string>
+    <string name="gift_shop_url">http://www.qm.org.qa/en/gift-shops</string>
+    <string name="touch_again">Touch again to exit</string>
+    <string name="map_navigation_api">http://maps.google.com/maps?q=loc:</string>
+    <string name="museum_about">Museum About</string>
+    <string name="museum_timings">MUSEUM TIMINGS</string>
+    <string name="no_results_text">No Results Found</string>
+    <string name="check_network">تفقد اتصالك بالانترنت</string>
+    <string name="collection_details_main_text">As well as being objects of great age and beauty, the ceramics in the museum were also meant to be used.\n\n
+
+From humble kitchen wares to elaborate tile panels, ceramics were a vital part of everyday life in the Islamic world.\n\n
+
+They exemplify the external influences and internal creativity that inspired this flourishing of ceramic design over 12 centuries.</string>
+    <string name="culture_pass_description">Qatar Museums Culture Pass gives you discounts, free access and exclusive opportunities across many cultural venues in Qatar and discounts at a wide range of ever expanding list of partners. Best of all, as a member you’re invited to join us in a wide range of exciting creative activities. \n\nGet access by activating your membership today.</string>
+    <string name="benefits">benefits</string>
+    <string name="culture_pass_benefits"><![CDATA[- 15% DISCOUNT AT QM CAFÉ’S ACROSS ALL VENUES  \n\n- 10% DISCOUNT ON ITEMS IN ALL QM GIFT SHOPS (without minimum purchase)  \n\n- 10% DISCOUNT AT IDAM RESTAURANT AT LUNCH TIME  \n\n- RECEIVE OUR MONTHLY NEWSLETTER TO STAY UP TO DATE ON QM AND PARTNER OFFERINGS  \n\n- GET PREMIER ACCESS TO MEMBERS ONLY TALKS &WORKSHOPS  \n\n- GET EXCLUSIVE INVITATIONS TO QM OPEN HOUSE ACCESS TO OUR WORLD CLASS CALL CENTER 8AM TO 8PM DAILY]]></string>
+    <string name="not_a_member_yet"><u>Not A Member Yet?</u></string>
+    <string name="become_a_member">BECOME A MEMBER</string>
+    <string name="already_a_member"><u>Already A Member?</u></string>
+    <string name="log_in">LOG IN</string>
+    <string name="unable_to_fetch_details">Unable to fetch details</string>
+    <string name="no_new_notification_yet">No notifications yet.</string>
+    <string name="no_events">لا توجد فعاليات</string>
+    <string name="open_settings">الإعدادات</string>
+    <string name="permission_required">الإذن مطلوب</string>
+    <string name="runtime_permission">To add events in calendar, allow <b>Qatar Museum App</b> access to your device\'s Calendar.\n\n Tap Settings > Permissions, and turn Calendar on.</string>
+    <string name="event_added">تم إضافة الفعالية للتقويم</string>
+
 </resources>

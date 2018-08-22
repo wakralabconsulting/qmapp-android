@@ -46,17 +46,28 @@ public interface APIInterface {
 
     @GET("{language}/mobile_api/museum_collection_category.json")
     Call<ArrayList<CommonModel>> getCollectionList(@Path("language") String language,
-                                                        @Query("museum_id") String museumId);
-    @GET("about.php")
-    Call<ArrayList<MuseumAboutModel>> getMuseumAboutDetails(@Query("mid") String mid);
+                                                   @Query("museum_id") String museumId);
+
+    @GET("{language}/geturl.php")
+    Call<ArrayList<CalendarEvents>> getCalendarDetails(@Path("language") String language,
+                                                       @Header("date") Long currentTimestamp,
+                                                       @Header("inst") String institution,
+                                                       @Header("age") String ageGroup,
+                                                       @Header("ptype") String programType);
+
+    @GET("{language}/about.php")
+    Call<ArrayList<MuseumAboutModel>> getMuseumAboutDetails(@Path("language") String language,
+                                                            @Query("mid") String mid);
 
     @GET("geturl.php")
     Call<ArrayList<EducationEvents>> getEducationCalendarDetails(@Header("date") Long currentTimestamp,
                                                                  @Header("inst") String institution,
                                                                  @Header("age") String ageGroup,
                                                                  @Header("ptype") String programType);
-    @GET("museum_landing.php")
-    Call<ArrayList<SliderImageModel>> getMuseumSliderImages(@Query("mid") String mid);
+
+    @GET("{language}/museum_landing.php")
+    Call<ArrayList<SliderImageModel>> getMuseumSliderImages(@Path("language") String language,
+                                                            @Query("mid") String mid);
 
 
 }

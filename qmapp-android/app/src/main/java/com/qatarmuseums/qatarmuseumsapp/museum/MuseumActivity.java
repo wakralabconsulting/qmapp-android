@@ -71,6 +71,7 @@ public class MuseumActivity extends BaseActivity implements
     ImageView sliderPlaceholderImage;
     Util util;
     private ArrayList<SliderImageModel> sliderImageList = new ArrayList<>();
+    private String language;
 
 
     @Override
@@ -334,7 +335,12 @@ public class MuseumActivity extends BaseActivity implements
     public void getSliderImagesfromAPI() {
         APIInterface apiService =
                 APIClient.getTempClient().create(APIInterface.class);
-        Call<ArrayList<SliderImageModel>> call = apiService.getMuseumSliderImages("66");
+        if (appLanguage == english) {
+            language = "en";
+        } else {
+            language = "ar";
+        }
+        Call<ArrayList<SliderImageModel>> call = apiService.getMuseumSliderImages(language, "66");
         call.enqueue(new Callback<ArrayList<SliderImageModel>>() {
             @Override
             public void onResponse(Call<ArrayList<SliderImageModel>> call, Response<ArrayList<SliderImageModel>> response) {

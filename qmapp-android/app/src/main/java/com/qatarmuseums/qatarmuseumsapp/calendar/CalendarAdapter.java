@@ -1,13 +1,14 @@
 package com.qatarmuseums.qatarmuseumsapp.calendar;
 
 import android.Manifest;
+import android.app.Activity;
 import android.app.Dialog;
 import android.content.ContentResolver;
 import android.content.ContentValues;
 import android.content.Context;
-import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
 import android.provider.CalendarContract;
 import android.support.annotation.NonNull;
@@ -24,16 +25,14 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.qatarmuseums.qatarmuseumsapp.R;
+import com.qatarmuseums.qatarmuseumsapp.commonpage.CommonActivity;
+import com.qatarmuseums.qatarmuseumsapp.utils.CustomDialogClass;
+import com.qatarmuseums.qatarmuseumsapp.utils.Util;
 
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.TimeZone;
 
-import static android.support.v4.content.ContextCompat.startActivity;
-
-/**
- * Created by MoongedePC on 23-Jul-18.
- */
 
 public class CalendarAdapter extends RecyclerView.Adapter<CalendarAdapter.CalendarAdapterViewHolder> {
     Context context;
@@ -58,17 +57,24 @@ public class CalendarAdapter extends RecyclerView.Adapter<CalendarAdapter.Calend
     }
 
     @Override
-    public void onBindViewHolder(@NonNull final CalendarAdapter.CalendarAdapterViewHolder holder, int position) {
+    public void onBindViewHolder(@NonNull final CalendarAdapter.CalendarAdapterViewHolder holder, final int position) {
 
         if (position % 2 == 1) {
             holder.layoutHolder.setBackgroundColor(Color.parseColor("#FFFFFF"));
         } else {
             holder.layoutHolder.setBackgroundColor(Color.parseColor("#FFf2f2f2"));
         }
+        holder.eventTitle.setText(calendarEventsList.get(position).getInstitution());
+        holder.eventSubTitle.setText(calendarEventsList.get(position).getEventTitle());
+        holder.eventTiming.setText(calendarEventsList.get(position).getEventTimings());
+        holder.eventDetails.setText(calendarEventsList.get(position).getEventDetails());
         holder.layoutHolder.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                showDialog(holder.eventDetails.getText().toString());
+                ((CalendarActivity) context).onClickCalled(calendarEventsList.get(position).getRegistration(),
+                        holder.eventSubTitle.getText().toString(),
+                        holder.eventDetails.getText().toString());
+
             }
         });
 
@@ -97,7 +103,7 @@ public class CalendarAdapter extends RecyclerView.Adapter<CalendarAdapter.Calend
     }
 
 
-    protected void showDialog(final String details) {
+    protected void showDialog(String title, final String details) {
 
         final Dialog dialog = new Dialog(context, R.style.DialogNoAnimation);
         dialog.setCancelable(true);
@@ -111,7 +117,7 @@ public class CalendarAdapter extends RecyclerView.Adapter<CalendarAdapter.Calend
         Button addToCalendarBtn = (Button) view.findViewById(R.id.doneBtn);
         TextView dialogTitle = (TextView) view.findViewById(R.id.dialog_tittle);
         TextView dialogContent = (TextView) view.findViewById(R.id.dialog_content);
-        dialogTitle.setText(context.getResources().getString(R.string.calendar_dialog_title));
+        dialogTitle.setText(title);
         addToCalendarBtn.setText(context.getResources().getString(R.string.add_to_calendar));
         dialogContent.setText(details);
 
@@ -135,6 +141,53 @@ public class CalendarAdapter extends RecyclerView.Adapter<CalendarAdapter.Calend
         dialog.show();
     }
 
+    protected void showRegisterDialog(String title, final String details) {
+
+        final Dialog dialog = new Dialog(context, R.style.DialogNoAnimation);
+        dialog.setCancelable(true);
+        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+
+        LayoutInflater layoutInflater = (LayoutInflater) context.getSystemService(context.LAYOUT_INFLATER_SERVICE);
+        View view = layoutInflater.inflate(R.layout.common_popup, null);
+
+        dialog.setContentView(view);
+        ImageView closeBtn = (ImageView) view.findViewById(R.id.close_dialog);
+        Button registerNowBtn = (Button) view.findViewById(R.id.doneBtn);
+        TextView dialogTitle = (TextView) view.findViewById(R.id.dialog_tittle);
+        TextView dialogContent = (TextView) view.findViewById(R.id.dialog_content);
+        dialogTitle.setText(title);
+        registerNowBtn.setText(context.getResources().getString(R.string.register_now));
+        dialogContent.setText(details);
+
+        registerNowBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                new Util().showComingSoonDialog((CalendarActivity) context);
+
+            }
+        });
+        closeBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                //Do something
+                dialog.dismiss();
+
+            }
+        });
+        dialog.show();
+    }
+
+    public void clear() {
+        final int size = calendarEventsList.size();
+        if (size > 0) {
+            for (int i = 0; i < size; i++) {
+                calendarEventsList.remove(0);
+            }
+
+            notifyItemRangeRemoved(0, size);
+        }
+    }
+
     private void addToCalendar(String details) {
 
         ContentResolver contentResolver = context.getContentResolver();
@@ -155,7 +208,6 @@ public class CalendarAdapter extends RecyclerView.Adapter<CalendarAdapter.Calend
         }
         Uri uri = contentResolver.insert(CalendarContract.Events.CONTENT_URI, cv);
         Toast.makeText(context, "Entered", Toast.LENGTH_SHORT).show();
-
 
 
     }
