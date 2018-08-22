@@ -1,6 +1,7 @@
 package com.qatarmuseums.qatarmuseumsapp.education;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
@@ -19,8 +20,11 @@ import android.widget.TextView;
 import com.qatarmuseums.qatarmuseumsapp.R;
 import com.qatarmuseums.qatarmuseumsapp.apicall.APIClient;
 import com.qatarmuseums.qatarmuseumsapp.apicall.APIInterface;
+import com.qatarmuseums.qatarmuseumsapp.utils.Util;
+import com.shrikanthravi.collapsiblecalendarview.data.Day;
 import com.shrikanthravi.collapsiblecalendarview.widget.CollapsibleCalendar;
 
+import java.io.IOException;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -56,6 +60,13 @@ public class EducationCalendarActivity extends AppCompatActivity {
     TextView noResultFoundTxt;
     RecyclerView.LayoutManager layoutManager;
     ArrayList<EducationEvents> educationEvents = new ArrayList<>();
+    Intent intent;
+    String institutionFilter, ageGroupFilter, programmeTypeFilter;
+    long selectedDate, todayDate;
+    boolean isDateSelected = false;
+    SharedPreferences datePref;
+    SharedPreferences.Editor editor;
+    Util util;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -103,31 +114,58 @@ public class EducationCalendarActivity extends AppCompatActivity {
         collapsibleCalendar.addEventTag(today.get(Calendar.YEAR),
                 today.get(Calendar.MONTH), today.get(Calendar.DAY_OF_MONTH), Color.BLUE);
 
-        System.out.println("Testing date "
-                + collapsibleCalendar.getSelectedDay().getDay() + "/"
-                + collapsibleCalendar.getSelectedDay().getMonth()
-                + "/" + collapsibleCalendar.getSelectedDay().getYear());
-
         String mDate = collapsibleCalendar.getSelectedDay().getDay() + "/"
                 + collapsibleCalendar.getSelectedDay().getMonth()
                 + "/" + collapsibleCalendar.getSelectedDay().getYear();
-        System.out.println("Testing date " + mDate);
         DateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
         Date date = null;
         try {
             date = (Date) dateFormat.parse(mDate);
+            todayDate = date.getTime();
 
         } catch (ParseException e) {
             e.printStackTrace();
         }
-        System.out.println("Testing date " + date.getTime());
-        getEducationCalendarDataFromApi(date.getTime(), "any", "any", "any");
+        if (institutionFilter == null) {
+            institutionFilter = "any";
+        }
+        if (ageGroupFilter == null) {
+            ageGroupFilter = "any";
+        }
+        if (programmeTypeFilter == null) {
+            programmeTypeFilter = "any";
+        }
+        if (isDateSelected) {
+            eventListView.setVisibility(View.GONE);
+            progressBar.setVisibility(View.VISIBLE);
+            getEducationCalendarDataFromApi(selectedDate, institutionFilter, ageGroupFilter, programmeTypeFilter);
+        } else {
+            eventListView.setVisibility(View.GONE);
+            progressBar.setVisibility(View.VISIBLE);
+            getEducationCalendarDataFromApi(todayDate, institutionFilter, ageGroupFilter, programmeTypeFilter);
+            isDateSelected = false;
+        }
 
 
         collapsibleCalendar.setCalendarListener(new CollapsibleCalendar.CalendarListener() {
             @Override
             public void onDaySelect() {
 
+                Day day = collapsibleCalendar.getSelectedDay();
+                String selected = day.getDay() + "/" + (day.getMonth() + 1) + "/" + day.getYear();
+                DateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
+                Date date = null;
+                try {
+                    date = (Date) dateFormat.parse(selected);
+                    selectedDate = date.getTime();
+
+                } catch (ParseException e) {
+                    e.printStackTrace();
+                }
+                isDateSelected = true;
+                getEducationCalendarDataFromApi(selectedDate, institutionFilter, ageGroupFilter, programmeTypeFilter);
+                eventListView.setVisibility(View.GONE);
+                progressBar.setVisibility(View.VISIBLE);
             }
 
             @Override
@@ -181,8 +219,26 @@ public class EducationCalendarActivity extends AppCompatActivity {
 
     }
 
+    @Override
+    protected void onNewIntent(Intent intent) {
+        super.onNewIntent(intent);
+        institutionFilter = intent.getStringExtra("INSTITUTION");
+        ageGroupFilter = intent.getStringExtra("AGE_GROUP");
+        programmeTypeFilter = intent.getStringExtra("PROGRAMME_TYPE");
+        if (isDateSelected) {
+            getEducationCalendarDataFromApi(selectedDate, institutionFilter, ageGroupFilter, programmeTypeFilter);
+            eventListView.setVisibility(View.GONE);
+            progressBar.setVisibility(View.VISIBLE);
+        } else {
+            getEducationCalendarDataFromApi(todayDate, institutionFilter, ageGroupFilter, programmeTypeFilter);
+            isDateSelected = false;
+            eventListView.setVisibility(View.GONE);
+            progressBar.setVisibility(View.VISIBLE);
+        }
 
-    private void getEducationCalendarDataFromApi(long date, String institute, String ageGroup, String programmeType) {
+    }
+
+    private void getEducationCalendarDataFromApi(final long date, String institute, String ageGroup, String programmeType) {
         progressBar.setVisibility(View.VISIBLE);
         APIInterface apiService =
                 APIClient.getTempClient().create(APIInterface.class);
@@ -194,19 +250,70 @@ public class EducationCalendarActivity extends AppCompatActivity {
             public void onResponse(Call<ArrayList<EducationEvents>> call, Response<ArrayList<EducationEvents>> response) {
                 if (response.isSuccessful()) {
                     if (response.body() != null) {
+                        educationEvents.clear();
                         progressBar.setVisibility(View.GONE);
+                        eventListView.setVisibility(View.VISIBLE);
                         educationEvents.addAll(response.body());
+                        boolean checkResult = checkWednesdayorSunday(date);
+                        if (!checkResult) {
+                            educationEvents.add(new EducationEvents("15476", null,
+                                    "Walk in Gallery Tours",
+                                    "Join our Museum Guides for a tour of the Museum of Islamic Art's oustanding collection of objects, spread over 1,400 years and across three continents. No booking is required to be a part of the tour.,",
+                                    "Monday - Science Tour\n" +
+                                            "\n" +
+                                            "Tuesday - Techniques Tour (from 1 July onwards)\n" +
+                                            "\n" +
+                                            "Thursday - MIA Architecture Tour\n" +
+                                            "\n" +
+                                            "Friday - Permanent Gallery Tour\n" +
+                                            "\n" +
+                                            "Saturday - Permanent Gallery Tour,",
+                                    "Museum of Islamic Art,Artiium",
+                                    "MIA", "14:00", "16:00",
+                                    "40", "adults", "gallery tour",
+                                    "MIA", "false", String.valueOf(date)
+                            ));
+                        }
                         educationAdapter.notifyDataSetChanged();
-                        System.out.println("check "+educationEvents);
+
+                    } else {
+                        progressBar.setVisibility(View.GONE);
+                        eventListView.setVisibility(View.GONE);
+                        noResultFoundTxt.setVisibility(View.VISIBLE);
                     }
                 }
             }
 
             @Override
             public void onFailure(Call<ArrayList<EducationEvents>> call, Throwable t) {
+                if (t instanceof IOException) {
+                    util.showToast(getResources().getString(R.string.check_network), getApplicationContext());
 
+                } else {
+                    // error due to mapping issues
+                }
+                eventListView.setVisibility(View.GONE);
+                noResultFoundTxt.setVisibility(View.VISIBLE);
+                progressBar.setVisibility(View.GONE);
             }
         });
 
+    }
+
+    private boolean checkWednesdayorSunday(long day) {
+
+        // Create a DateFormatter object for displaying date in specified format.
+        SimpleDateFormat formatter = new SimpleDateFormat("EEEE");
+        // Create a calendar object that will convert the date and time value in milliseconds to date.
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTimeInMillis(day);
+        String dateValue = formatter.format(calendar.getTime());
+        if (dateValue.equals("Wednesday")) {
+            return true;
+        } else if (dateValue.equals("Sunday")) {
+            return true;
+        } else {
+            return false;
+        }
     }
 }
