@@ -30,8 +30,6 @@ import com.qatarmuseums.qatarmuseumsapp.QMDatabase;
 import com.qatarmuseums.qatarmuseumsapp.R;
 import com.qatarmuseums.qatarmuseumsapp.apicall.APIClient;
 import com.qatarmuseums.qatarmuseumsapp.apicall.APIInterface;
-import com.qatarmuseums.qatarmuseumsapp.commonpage.CommonActivity;
-import com.qatarmuseums.qatarmuseumsapp.commonpage.CommonModel;
 import com.qatarmuseums.qatarmuseumsapp.commonpagedatabase.DiningTableArabic;
 import com.qatarmuseums.qatarmuseumsapp.commonpagedatabase.DiningTableEnglish;
 import com.qatarmuseums.qatarmuseumsapp.dining.DiningDetailModel;
@@ -114,7 +112,7 @@ public class DiningActivity extends AppCompatActivity implements IPullZoom {
         GlideApp.with(this)
                 .load(headerImage)
                 .centerCrop()
-                .placeholder(R.drawable.placeholdeer)
+                .placeholder(R.drawable.placeholder)
                 .into(headerImageView);
         title.setText(mainTitle);
         if (util.isNetworkAvailable(DiningActivity.this)) {

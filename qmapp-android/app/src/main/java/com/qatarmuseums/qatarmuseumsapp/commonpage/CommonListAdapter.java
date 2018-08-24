@@ -127,7 +127,7 @@ public class CommonListAdapter extends RecyclerView.Adapter<CommonListAdapter.My
         GlideApp.with(mContext)
                 .load(model.getImage())
                 .centerCrop()
-                .placeholder(R.drawable.placeholdeer)
+                .placeholder(R.drawable.placeholder)
                 .into(holder.imageView);
     }
 

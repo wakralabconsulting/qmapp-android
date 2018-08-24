@@ -36,11 +36,11 @@ public class CollectionDetailsAdapter extends  RecyclerView.Adapter<CollectionDe
         holder.thirddDescription.setText(cdl.getThirdDescription());
         GlideApp.with(mContext)
                 .load(R.drawable.collection_image1)
-                .placeholder(R.drawable.placeholdeer)
+                .placeholder(R.drawable.placeholder)
                 .into(holder.image1);
         GlideApp.with(mContext)
                 .load(R.drawable.collection_image2)
-                .placeholder(R.drawable.placeholdeer)
+                .placeholder(R.drawable.placeholder)
                 .into(holder.image2);
 
     }
