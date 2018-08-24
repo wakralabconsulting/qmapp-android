@@ -8,6 +8,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.net.Uri;
+import android.os.Build;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
@@ -406,7 +407,11 @@ public class CalendarActivity extends AppCompatActivity {
         contentValues.put(CalendarContract.Events.DESCRIPTION, details);
         contentValues.put(CalendarContract.Events.DTSTART, calendarInstance.getTimeInMillis());
         contentValues.put(CalendarContract.Events.DTEND, calendarInstance.getTimeInMillis() + 2 * 60 * 60 * 1000);
-        contentValues.put(CalendarContract.Events.CALENDAR_ID, 3);
+        if (Build.VERSION.SDK_INT > Build.VERSION_CODES.M) {
+            contentValues.put(CalendarContract.Events.CALENDAR_ID, 3);
+        } else {
+            contentValues.put(CalendarContract.Events.CALENDAR_ID, 1);
+        }
         TimeZone timeZone = TimeZone.getDefault();
         contentValues.put(CalendarContract.Events.EVENT_TIMEZONE, Calendar.getInstance().getTimeZone().getID());
 

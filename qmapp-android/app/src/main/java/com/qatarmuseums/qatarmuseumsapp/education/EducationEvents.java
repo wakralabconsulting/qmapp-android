@@ -5,17 +5,9 @@ package com.qatarmuseums.qatarmuseumsapp.education;
  */
 
 public class EducationEvents {
-    String eventTitle,eventSubtitle,eventTimings,eventMaxNumber;
-     String eid,filter,title,short_desc,long_desc,location,institution,start_time;
-     String end_time,max_group_size,age_group,program_type,category,registration,date;
+    String eid, filter, title, short_desc, long_desc, location, institution, start_time;
+    String end_time, max_group_size, age_group, program_type, category, registration, date;
 
-
-    public EducationEvents(String eventTitle, String eventSubtitle, String eventTimings, String eventMaxNumber) {
-        this.eventTitle = eventTitle;
-        this.eventSubtitle = eventSubtitle;
-        this.eventTimings = eventTimings;
-        this.eventMaxNumber = eventMaxNumber;
-    }
 
     public EducationEvents(String eid, String filter, String title, String short_desc, String long_desc,
                            String location, String institution, String start_time, String end_time,
@@ -38,37 +30,6 @@ public class EducationEvents {
         this.date = date;
     }
 
-    public String getEventTitle() {
-        return eventTitle;
-    }
-
-    public void setEventTitle(String eventTitle) {
-        this.eventTitle = eventTitle;
-    }
-
-    public String getEventSubtitle() {
-        return eventSubtitle;
-    }
-
-    public void setEventSubtitle(String eventSubtitle) {
-        this.eventSubtitle = eventSubtitle;
-    }
-
-    public String getEventTimings() {
-        return eventTimings;
-    }
-
-    public void setEventTimings(String eventTimings) {
-        this.eventTimings = eventTimings;
-    }
-
-    public String getEventMaxNumber() {
-        return eventMaxNumber;
-    }
-
-    public void setEventMaxNumber(String eventMaxNumber) {
-        this.eventMaxNumber = eventMaxNumber;
-    }
 
     public String getEid() {
         return eid;
