@@ -4,6 +4,7 @@ import android.content.Context;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.SwitchCompat;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -24,6 +25,7 @@ import butterknife.ButterKnife;
 public class SettingsPageListAdapter extends RecyclerView.Adapter<SettingsPageListAdapter.MyViewHolder> {
     private Context mContext;
     private List<SettingsPageModel> settingsPageModelList;
+
     @NonNull
     @Override
     public SettingsPageListAdapter.MyViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
@@ -47,15 +49,16 @@ public class SettingsPageListAdapter extends RecyclerView.Adapter<SettingsPageLi
 
     public class MyViewHolder extends RecyclerView.ViewHolder {
         TextView settingsItemName;
-        Button settingsItemStatusBtn;
+        SwitchCompat settingsItemStatusBtn;
+
         public MyViewHolder(View view) {
             super(view);
             settingsItemName = (TextView) view.findViewById(R.id.settings_page_item_name);
-            settingsItemStatusBtn = (Button) view.findViewById(R.id.settings_page_item_status_btn);
+            settingsItemStatusBtn = (SwitchCompat) view.findViewById(R.id.settings_page_item_status_btn);
         }
     }
 
-    public SettingsPageListAdapter(Context context, List<SettingsPageModel> settingsPageModelList){
+    public SettingsPageListAdapter(Context context, List<SettingsPageModel> settingsPageModelList) {
         this.mContext = context;
         this.settingsPageModelList = settingsPageModelList;
     }

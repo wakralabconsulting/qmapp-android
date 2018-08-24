@@ -2,19 +2,25 @@ package com.qatarmuseums.qatarmuseumsapp.utils;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.res.Configuration;
+import android.content.res.Resources;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Build;
+import android.util.DisplayMetrics;
 import android.widget.ImageView;
 import android.widget.Toast;
 
 import com.qatarmuseums.qatarmuseumsapp.R;
 
+import java.util.Locale;
+
 public class Util {
     private CustomDialogClass customDialog;
+    private String lang;
 
     public boolean checkImageResource(Context ctx, ImageView imageView,
                                       int imageResource) {
@@ -48,6 +54,7 @@ public class Util {
         customDialog.show();
 
     }
+
     public void showToast(String message, Context context) {
         Toast.makeText(context, message, Toast.LENGTH_SHORT).show();
     }
@@ -62,6 +69,22 @@ public class Util {
             return false;
         }
 
+    }
+
+    public void setLocale(Context context, int language) {
+        if (language == 1)
+            lang = "en";
+        else
+            lang = "ar";
+        Configuration configuration = context.getResources().getConfiguration();
+        configuration.setLayoutDirection(new Locale(lang));
+        context.getResources().updateConfiguration(configuration, context.getResources().getDisplayMetrics());
+        Locale myLocale = new Locale(lang);
+        Resources res = context.getResources();
+        DisplayMetrics dm = res.getDisplayMetrics();
+        Configuration conf = res.getConfiguration();
+        conf.locale = myLocale;
+        res.updateConfiguration(conf, dm);
     }
 
 }
