@@ -29,11 +29,12 @@
         android:layout_weight="1"
         android:gravity="end">
 
-        <Button
+        <android.support.v7.widget.SwitchCompat
             android:id="@+id/settings_page_item_status_btn"
-            android:layout_width="40dp"
-            android:layout_height="20dp"
-            android:background="@drawable/grey_toggle" />
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:enabled="false"
+            android:textAppearance="?android:attr/textAppearanceMedium" />
     </LinearLayout>
 
 </LinearLayout>
