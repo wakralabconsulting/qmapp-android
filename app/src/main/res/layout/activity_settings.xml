@@ -71,7 +71,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:fontFamily="@font/din_next_lt_pro_bold"
-                android:text="Select App Language"
+                android:text="@string/select_language_text"
                 android:textColor="@color/black"
                 android:textSize="@dimen/select_language_text_size" />
 
@@ -85,7 +85,6 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_gravity="bottom"
                     android:layout_marginEnd="@dimen/pading_10"
                     android:fontFamily="@font/din_next_lt_pro_light"
                     android:text="@string/english"
@@ -93,12 +92,12 @@
                     android:textColor="@color/black"
                     android:textSize="@dimen/settings_text_size" />
 
-                <Button
+                <android.support.v7.widget.SwitchCompat
                     android:id="@+id/language_change_button"
-                    android:layout_width="40dp"
-                    android:layout_height="20dp"
-                    android:background="@drawable/switch_on"
-                    android:padding="@dimen/pading_20" />
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:clickable="false"
+                    android:textAppearance="?android:attr/textAppearanceMedium" />
 
                 <TextView
                     android:layout_width="wrap_content"

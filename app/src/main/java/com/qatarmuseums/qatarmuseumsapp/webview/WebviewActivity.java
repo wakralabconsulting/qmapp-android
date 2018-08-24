@@ -52,7 +52,7 @@ public class WebviewActivity extends AppCompatActivity {
         if (TextUtils.isEmpty(url)) {
             finish();
         }
-        toolbarTitle.setText(getString(R.string.app_name));
+//        toolbarTitle.setText(getString(R.string.web_view_title));
         setUpWebView();
         webView.loadUrl(url);
         setUpCloseButtonClickListener();

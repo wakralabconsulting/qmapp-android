@@ -4,13 +4,13 @@ package com.qatarmuseums.qatarmuseumsapp.commonpage;
 import com.google.gson.annotations.SerializedName;
 
 public class CommonModel {
-    @SerializedName(value="name", alternate={"Name"})
+    @SerializedName(value = "name", alternate = {"Name","الاسم"})
     private String name;
     @SerializedName("ID")
     private String id;
     @SerializedName("Location")
     private String location;
-    @SerializedName(value="LATEST_IMAGE", alternate={"image","latest_image","image_path"})
+    @SerializedName(value = "LATEST_IMAGE", alternate = {"image", "latest_image", "image_path"})
     private String image;
     @SerializedName("start_Date")
     private String startDate;
@@ -22,7 +22,7 @@ public class CommonModel {
     private String longitude;
     @SerializedName("Latitude")
     private String latitude;
-    @SerializedName(value="SORT_ID", alternate={"sort_id", "Sort_Id"})
+    @SerializedName(value = "SORT_ID", alternate = {"sort_id", "Sort_Id"})
     private String sortId;
     private Boolean isOpen, isfavourite;
     @SerializedName("opening_time")
@@ -41,7 +41,7 @@ public class CommonModel {
 
     public CommonModel(String id, String name, String startDate,
                        String endDate, String location, String image, Boolean isOpen
-                       ) {
+    ) {
         this.id = id;
         this.name = name;
         this.startDate = startDate;
