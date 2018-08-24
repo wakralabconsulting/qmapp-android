@@ -32,6 +32,7 @@
                     android:textAllCaps="true"
                     android:ellipsize="marquee"
                     android:singleLine="true"
+                    android:text="@string/web_view_title"
                     android:textAlignment="center"
                     android:fontFamily="@font/din_next_lt_pro_regular"
                     android:textColor="@color/white"

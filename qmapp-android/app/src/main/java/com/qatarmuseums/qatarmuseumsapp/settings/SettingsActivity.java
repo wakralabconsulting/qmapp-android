@@ -1,5 +1,6 @@
 package com.qatarmuseums.qatarmuseumsapp.settings;
 
+import android.annotation.SuppressLint;
 import android.app.Dialog;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -11,6 +12,7 @@ import android.os.Bundle;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.SwitchCompat;
 import android.support.v7.widget.Toolbar;
 import android.util.DisplayMetrics;
 import android.view.MotionEvent;
@@ -46,14 +48,18 @@ public class SettingsActivity extends AppCompatActivity implements View.OnClickL
     @BindView(R.id.settings_page_recycler_view)
     RecyclerView recyclerView;
     @BindView(R.id.language_change_button)
-    Button languageChangeButton;
+    SwitchCompat languageChangeButton;
     @BindView(R.id.setting_page_reset_to_default_btn)
     Button settingPageResetToDefaultBtn;
     @BindView(R.id.setting_page_apply_btn)
     Button settingPageApplyButton;
     String language;
     Locale myLocale;
+    private SharedPreferences qmPreferences;
+    private int appLanguage;
+    private SharedPreferences.Editor editor;
 
+    @SuppressLint("ClickableViewAccessibility")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -61,12 +67,28 @@ public class SettingsActivity extends AppCompatActivity implements View.OnClickL
         ButterKnife.bind(this);
         setSupportActionBar(toolbar);
         setClicklistenerforButtons();
-        SharedPreferences qmPreferences = PreferenceManager.getDefaultSharedPreferences(this);
-        int appLanguage = qmPreferences.getInt("AppLanguage", 1);
+        qmPreferences = PreferenceManager.getDefaultSharedPreferences(this);
+        languageChangeButton.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                appLanguage = qmPreferences.getInt("AppLanguage", 1);
+                if (appLanguage == 1) {
+                    language = "ar";
+                    showDialog(language);
+                } else {
+                    language = "en";
+                    showDialog(language);
+
+                }
+                return false;
+            }
+        });
+
+        appLanguage = qmPreferences.getInt("AppLanguage", 1);
         if (appLanguage == 1) {
-            languageChangeButton.setBackgroundResource(R.drawable.switch_on);
+            languageChangeButton.setChecked(false);
         } else {
-            languageChangeButton.setBackgroundResource(R.drawable.switch_off);
+            languageChangeButton.setChecked(true);
         }
         toolbar_title.setText(getResources().getString(R.string.settings_activity_tittle));
         settingsPageListAdapter = new SettingsPageListAdapter(this, settingsPageModelList);
@@ -103,15 +125,15 @@ public class SettingsActivity extends AppCompatActivity implements View.OnClickL
     }
 
     public void prepareRecyclerViewData() {
-        SettingsPageModel model = new SettingsPageModel("Event Updates", true);
+        SettingsPageModel model = new SettingsPageModel(getString(R.string.notification_event_updates), true);
         settingsPageModelList.add(model);
-        model = new SettingsPageModel("Exhibition Updates", true);
+        model = new SettingsPageModel(getString(R.string.notification_exhibition_updates), true);
         settingsPageModelList.add(model);
-        model = new SettingsPageModel("Museum Updates", true);
+        model = new SettingsPageModel(getString(R.string.notification_museum_updates), true);
         settingsPageModelList.add(model);
-        model = new SettingsPageModel("Culture Pass Updates", true);
+        model = new SettingsPageModel(getString(R.string.notification_culturepass_updates), true);
         settingsPageModelList.add(model);
-        model = new SettingsPageModel("Tour Guide Updates", true);
+        model = new SettingsPageModel(getString(R.string.notification_tourguide_updates), true);
         settingsPageModelList.add(model);
 
         settingsPageListAdapter.notifyDataSetChanged();
@@ -124,22 +146,6 @@ public class SettingsActivity extends AppCompatActivity implements View.OnClickL
             case R.id.toolbar_back:
                 // topbar back action
                 onBackPressed();
-                break;
-
-            case R.id.language_change_button:
-                // language change action
-                SharedPreferences qmPreferences = PreferenceManager.getDefaultSharedPreferences(this);
-                int appLanguage = qmPreferences.getInt("AppLanguage", 1);
-                if (appLanguage == 1) {
-                    language = "ar";
-                    showDialog(language);
-
-                } else {
-                    language = "en";
-                    showDialog(language);
-
-                }
-
                 break;
 
             case R.id.setting_page_reset_to_default_btn:
@@ -170,14 +176,13 @@ public class SettingsActivity extends AppCompatActivity implements View.OnClickL
         res.updateConfiguration(conf, dm);
         if (lang.equalsIgnoreCase("en")) {
             language = 1;
-            languageChangeButton.setBackgroundResource(R.drawable.switch_on);
+            languageChangeButton.setChecked(true);
         } else if (lang.equalsIgnoreCase("ar")) {
             language = 2;
-            languageChangeButton.setBackgroundResource(R.drawable.switch_off);
-
+            languageChangeButton.setChecked(false);
         }
-        SharedPreferences qmPreferences = PreferenceManager.getDefaultSharedPreferences(this);
-        SharedPreferences.Editor editor = qmPreferences.edit();
+        qmPreferences = PreferenceManager.getDefaultSharedPreferences(this);
+        editor = qmPreferences.edit();
         editor.putInt("AppLanguage", language);
         editor.commit();
         refreshActivity();
@@ -195,7 +200,6 @@ public class SettingsActivity extends AppCompatActivity implements View.OnClickL
         toolbar.setOnClickListener(this);
         backArrow.setOnClickListener(this);
         toolbar_title.setOnClickListener(this);
-        languageChangeButton.setOnClickListener(this);
         settingPageResetToDefaultBtn.setOnClickListener(this);
         settingPageApplyButton.setOnClickListener(this);
     }

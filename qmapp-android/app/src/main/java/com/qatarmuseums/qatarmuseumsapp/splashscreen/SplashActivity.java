@@ -1,9 +1,11 @@
 package com.qatarmuseums.qatarmuseumsapp.splashscreen;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.os.Handler;
+import android.preference.PreferenceManager;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.widget.ImageView;
@@ -16,11 +18,14 @@ import com.bumptech.glide.request.transition.Transition;
 import com.qatarmuseums.qatarmuseumsapp.R;
 import com.qatarmuseums.qatarmuseumsapp.home.GlideApp;
 import com.qatarmuseums.qatarmuseumsapp.home.HomeActivity;
+import com.qatarmuseums.qatarmuseumsapp.utils.Util;
 
 
 public class SplashActivity extends AppCompatActivity {
     private ImageView gifView;
     Intent intent;
+    private SharedPreferences qmPreferences;
+    private int appLanguage;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -29,7 +34,9 @@ public class SplashActivity extends AppCompatActivity {
         setContentView(R.layout.activity_splash);
 
         gifView = (ImageView) findViewById(R.id.gif_view);
-
+        qmPreferences = PreferenceManager.getDefaultSharedPreferences(this);
+        appLanguage = qmPreferences.getInt("AppLanguage", 1);
+        new Util().setLocale(this, appLanguage);
         GlideApp.with(this)
                 .load(R.raw.qm_logo)
                 .apply(RequestOptions.diskCacheStrategyOf(DiskCacheStrategy.NONE))
