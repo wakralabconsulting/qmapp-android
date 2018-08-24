@@ -7,9 +7,9 @@ import android.content.ContentValues;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
-import android.graphics.Color;
 import android.net.Uri;
 import android.os.Build;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.provider.CalendarContract;
@@ -33,7 +33,9 @@ import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import com.qatarmuseums.qatarmuseumsapp.QMDatabase;
 import com.qatarmuseums.qatarmuseumsapp.R;
 import com.qatarmuseums.qatarmuseumsapp.apicall.APIClient;
 import com.qatarmuseums.qatarmuseumsapp.apicall.APIInterface;
@@ -41,17 +43,13 @@ import com.qatarmuseums.qatarmuseumsapp.utils.Util;
 import com.shrikanthravi.collapsiblecalendarview.widget.CollapsibleCalendar;
 
 import java.io.IOException;
-import java.text.DecimalFormat;
-import java.text.NumberFormat;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
+import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collections;
 import java.util.Comparator;
-import java.util.Date;
 import java.util.GregorianCalendar;
-import java.util.Locale;
+import java.util.List;
 import java.util.TimeZone;
 
 import butterknife.BindView;
@@ -81,10 +79,6 @@ public class CalendarActivity extends AppCompatActivity {
     RelativeLayout layoutContainer;
     RecyclerView.LayoutManager layoutManager;
     APIInterface apiService;
-    Date selectedDateTimeStamp;
-    NumberFormat numberFormat;
-    String selectedDate;
-    private SimpleDateFormat simpleDateFormat;
     Calendar calendarInstance;
     int MY_PERMISSIONS_REQUEST_CALENDAR = 100;
     int REQUEST_PERMISSION_SETTING = 110;
@@ -98,6 +92,12 @@ public class CalendarActivity extends AppCompatActivity {
     private SharedPreferences qmPreferences;
     private String language;
     private int appLanguage;
+    private QMDatabase qmDatabase;
+    CalendarEventsTableEnglish calendarEventsTableEnglish;
+    CalendarEventsTableArabic calendarEventsTableArabic;
+    private Integer eventsTableRowCount;
+    private Util util;
+    private Calendar today;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -106,10 +106,10 @@ public class CalendarActivity extends AppCompatActivity {
         ButterKnife.bind(this);
         setSupportActionBar(toolbar);
         toolbar_title.setText(getResources().getString(R.string.calendar_activity_tittle));
+        qmDatabase = QMDatabase.getInstance(CalendarActivity.this);
+        util = new Util();
         collapsibleCalendar = (CollapsibleCalendar) findViewById(R.id.collapsibleCalendarView);
         eventListView = (RecyclerView) findViewById(R.id.event_list);
-        numberFormat = new DecimalFormat("00");
-        simpleDateFormat = new SimpleDateFormat("dd-MM-yyyy", Locale.US);
         qmPreferences = PreferenceManager.getDefaultSharedPreferences(this);
         appLanguage = qmPreferences.getInt("AppLanguage", 1);
 
@@ -134,26 +134,21 @@ public class CalendarActivity extends AppCompatActivity {
             }
         });
 
-        Calendar today = new GregorianCalendar();
-        collapsibleCalendar.addEventTag(today.get(Calendar.YEAR),
-                today.get(Calendar.MONTH), today.get(Calendar.DAY_OF_MONTH));
-        today.add(Calendar.DATE, 1);
-        collapsibleCalendar.addEventTag(today.get(Calendar.YEAR),
-                today.get(Calendar.MONTH), today.get(Calendar.DAY_OF_MONTH), Color.BLUE);
-
         collapsibleCalendar.setCalendarListener(new CollapsibleCalendar.CalendarListener() {
             @Override
             public void onDaySelect() {
-                selectedDate = collapsibleCalendar.getSelectedItem().getDay() + "-" +
-                        numberFormat.format(collapsibleCalendar.getSelectedItem().getMonth()) + "-" +
-                        collapsibleCalendar.getSelectedItem().getYear();
-                try {
-                    selectedDateTimeStamp = (Date) simpleDateFormat.parse(selectedDate);
-                } catch (ParseException e) {
-                    e.printStackTrace();
-                }
+                calendarInstance = Calendar.getInstance();
+                calendarInstance.set(collapsibleCalendar.getSelectedItem().getYear(),
+                        collapsibleCalendar.getSelectedItem().getMonth(),
+                        collapsibleCalendar.getSelectedItem().getDay());
+                calendarInstance.set(Calendar.HOUR_OF_DAY, 14);
+                calendarInstance.set(Calendar.MINUTE, 0);
+                calendarInstance.set(Calendar.SECOND, 0);
 
-                getCalendarEventsFromAPI(selectedDateTimeStamp.getTime());
+                if (util.isNetworkAvailable(CalendarActivity.this))
+                    getCalendarEventsFromAPI(calendarInstance.getTimeInMillis());
+                else
+                    getCalendarEventsFromDatabase(calendarInstance.getTimeInMillis());
             }
 
             @Override
@@ -205,8 +200,124 @@ public class CalendarActivity extends AppCompatActivity {
                 }
             }
         });
+        today = new GregorianCalendar();
+        today.set(Calendar.HOUR_OF_DAY, 14);
+        today.set(Calendar.MINUTE, 0);
+        today.set(Calendar.SECOND, 0);
 
-        getCalendarEventsFromAPI(today.getTimeInMillis());
+        if (util.isNetworkAvailable(CalendarActivity.this))
+            getCalendarEventsFromAPI(today.getTimeInMillis());
+        else
+            getCalendarEventsFromDatabase(today.getTimeInMillis());
+
+    }
+
+    public void getCalendarEventsFromDatabase(Long timeStamp) {
+        progressBar.setVisibility(View.VISIBLE);
+        calendarAdapter.clear();
+        String language;
+        if (appLanguage == 1)
+            language = "en";
+        else
+            language = "ar";
+        new EventsRowCount(CalendarActivity.this, language, timeStamp / 1000).execute();
+    }
+
+    public void getCalendarEventsFromAPI(Long timestamp) {
+        progressBar.setVisibility(View.VISIBLE);
+        calendarAdapter.clear();
+        apiService = APIClient.getTempClient().create(APIInterface.class);
+        if (appLanguage == 1) {
+            language = "en";
+        } else {
+            language = "ar";
+        }
+        Call<ArrayList<CalendarEvents>> call = apiService.getCalendarDetails(language, timestamp / 1000,
+                "any", "any", "any");
+        call.enqueue(new Callback<ArrayList<CalendarEvents>>() {
+            @Override
+            public void onResponse(Call<ArrayList<CalendarEvents>> call, Response<ArrayList<CalendarEvents>> response) {
+                if (response.isSuccessful()) {
+                    if (response.body().size() > 0) {
+                        noEventsTxt.setVisibility(View.GONE);
+                        calendarEventList.addAll(response.body());
+                        if (!checkWednesdayOrSunday())
+                            calendarEventList.add(getLocalEvent(calendarInstance.getTimeInMillis() / 1000));
+                        updateTimeStamp();
+                        sortEventsWithStartTime();
+                        calendarAdapter.notifyDataSetChanged();
+                        eventListView.setVisibility(View.VISIBLE);
+                        new EventsRowCount(CalendarActivity.this, language, calendarInstance.getTimeInMillis()).execute();
+                    } else {
+                        noEventsTxt.setVisibility(View.VISIBLE);
+                        noEventsTxt.setText(R.string.no_events);
+                    }
+                } else {
+                    noEventsTxt.setVisibility(View.VISIBLE);
+                    noEventsTxt.setText(R.string.no_events);
+                }
+                progressBar.setVisibility(View.GONE);
+            }
+
+            @Override
+            public void onFailure(Call<ArrayList<CalendarEvents>> call, Throwable t) {
+                if (t instanceof IOException) {
+                    new Util().showToast(getResources().getString(R.string.check_network), getApplicationContext());
+                } else {
+                    // error due to mapping issues
+                }
+                noEventsTxt.setVisibility(View.VISIBLE);
+                noEventsTxt.setText(R.string.no_events);
+                progressBar.setVisibility(View.GONE);
+            }
+        });
+
+    }
+
+    public void updateTimeStamp() {
+        for (int i = 0; i < calendarEventList.size(); i++) {
+            calendarEventList.get(i).setEventDate(calendarInstance.getTimeInMillis() / 1000);
+        }
+    }
+
+    public Boolean checkWednesdayOrSunday() {
+        if (collapsibleCalendar.getSelectedItem() == null)
+            calendarInstance = new GregorianCalendar();
+        else {
+            calendarInstance = Calendar.getInstance();
+            calendarInstance.set(collapsibleCalendar.getSelectedItem().getYear(),
+                    collapsibleCalendar.getSelectedItem().getMonth(),
+                    collapsibleCalendar.getSelectedItem().getDay());
+        }
+        calendarInstance.set(Calendar.HOUR_OF_DAY, 14);
+        calendarInstance.set(Calendar.MINUTE, 0);
+        calendarInstance.set(Calendar.SECOND, 0);
+        if (calendarInstance.get(Calendar.DAY_OF_WEEK) == Calendar.SUNDAY ||
+                calendarInstance.get(Calendar.DAY_OF_WEEK) == Calendar.WEDNESDAY) {
+            return true;
+        } else
+            return false;
+    }
+
+    public CalendarEvents getLocalEvent(Long timeStamp) {
+        CalendarEvents localEvent = new CalendarEvents(15476,
+                getString(R.string.local_event_institution),
+                getString(R.string.local_event_title),
+                getString(R.string.local_event_short_description),
+                getString(R.string.local_event_long_description),
+                "14:00", "16:00", false, timeStamp,
+                "no", "Museum of Islamic Art, Atrium", 40, "MIA",
+                "Gallery tour", "Adults");
+        return localEvent;
+    }
+
+    public void sortEventsWithStartTime() {
+        Collections.sort(calendarEventList, new Comparator<CalendarEvents>() {
+            @Override
+            public int compare(CalendarEvents o1, CalendarEvents o2) {
+                return o1.getStartTime().compareTo(o2.getStartTime());
+            }
+        });
     }
 
     public void onClickCalled(Boolean registrationRequired, String title, String details) {
@@ -403,96 +514,311 @@ public class CalendarActivity extends AppCompatActivity {
         }
     }
 
-    public Boolean checkWednesdayOrSunday() {
-        if (collapsibleCalendar.getSelectedItem() == null)
-            calendarInstance = new GregorianCalendar();
-        else {
-            calendarInstance = Calendar.getInstance();
-            calendarInstance.set(collapsibleCalendar.getSelectedItem().getYear(),
-                    collapsibleCalendar.getSelectedItem().getMonth(),
-                    collapsibleCalendar.getSelectedItem().getDay());
+    public class EventsRowCount extends AsyncTask<Void, Void, Integer> {
+
+        private WeakReference<CalendarActivity> activityReference;
+        String language;
+        long timeStamp;
+
+        EventsRowCount(CalendarActivity context, String apiLanguage, long timeStamp) {
+            activityReference = new WeakReference<>(context);
+            language = apiLanguage;
+            this.timeStamp = timeStamp;
         }
-        if (calendarInstance.get(Calendar.DAY_OF_WEEK) == Calendar.SUNDAY ||
-                calendarInstance.get(Calendar.DAY_OF_WEEK) == Calendar.WEDNESDAY) {
-            return true;
-        } else
-            return false;
-    }
 
-    public CalendarEvents getLocalEvent(Long timeStamp) {
-        CalendarEvents localEvent = new CalendarEvents("MIA",
-                "Walk In Gallery Tours",
-                "Join our Museum Guides for a tour of the Museum of Islamic Art's oustanding collection of objects, spread over 1,400 years and across three continents. No booking is required to be a part of the tour.",
-                "Monday - Science Tour" +
-                        "\n\n" +
-                        "Tuesday - Techniques Tour (from 1 July onwards)" +
-                        "\n\n" +
-                        "Thursday - MIA Architecture Tour" +
-                        "\n\n" +
-                        "Friday - Permanent Gallery Tour" +
-                        "\n\n" +
-                        "Saturday - Permanent Gallery Tour",
-                "14:00",
-                "16:00",
-                false,
-                timeStamp);
-        return localEvent;
-    }
-
-    public void sortEventsWithStartTime() {
-        Collections.sort(calendarEventList, new Comparator<CalendarEvents>() {
-            @Override
-            public int compare(CalendarEvents o1, CalendarEvents o2) {
-                return o1.getStartTime().compareTo(o2.getStartTime());
-            }
-        });
-    }
-
-    public void getCalendarEventsFromAPI(Long timestamp) {
-        progressBar.setVisibility(View.VISIBLE);
-        calendarAdapter.clear();
-        apiService = APIClient.getTempClient().create(APIInterface.class);
-        final String language;
-        if (appLanguage == 1) {
-            language = "en";
-        } else {
-            language = "ar";
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
         }
-        Call<ArrayList<CalendarEvents>> call = apiService.getCalendarDetails(language, timestamp / 1000,
-                "any", "any", "any");
-        call.enqueue(new Callback<ArrayList<CalendarEvents>>() {
-            @Override
-            public void onResponse(Call<ArrayList<CalendarEvents>> call, Response<ArrayList<CalendarEvents>> response) {
-                if (response.isSuccessful()) {
-                    if (response.body().size() > 0) {
-                        noEventsTxt.setVisibility(View.GONE);
-                        calendarEventList.addAll(response.body());
-                        if (!checkWednesdayOrSunday())
-                            calendarEventList.add(getLocalEvent(calendarInstance.getTimeInMillis()));
-                        sortEventsWithStartTime();
-                        calendarAdapter.notifyDataSetChanged();
-                        eventListView.setVisibility(View.VISIBLE);
+
+        @Override
+        protected void onPostExecute(Integer integer) {
+            eventsTableRowCount = integer;
+            if (eventsTableRowCount > 0) {
+                if (calendarEventList.size() > 0 && util.isNetworkAvailable(CalendarActivity.this))
+                    new CheckEventRowExist(CalendarActivity.this, language).execute();
+                else {
+                    if (language.equals("en")) {
+                        new RetriveEnglishTableData(CalendarActivity.this, 1,
+                                timeStamp).execute();
                     } else {
-                        noEventsTxt.setVisibility(View.VISIBLE);
+                        new RetriveArabicTableData(CalendarActivity.this, 2,
+                                timeStamp).execute();
+                    }
+                }
+            } else if (calendarEventList.size() > 0) {
+                new InsertDatabaseTask(CalendarActivity.this, calendarEventsTableEnglish,
+                        calendarEventsTableArabic, language).execute();
+            } else {
+                noEventsTxt.setVisibility(View.VISIBLE);
+                noEventsTxt.setText(R.string.no_events);
+            }
+        }
+
+        @Override
+        protected Integer doInBackground(Void... voids) {
+            if (language.equals("en"))
+                return activityReference.get().qmDatabase.getCalendarEventsDao().getNumberOfRowsEnglish();
+            else
+                return activityReference.get().qmDatabase.getCalendarEventsDao().getNumberOfRowsArabic();
+
+        }
+    }
+
+    public class CheckEventRowExist extends AsyncTask<Void, Void, Void> {
+        private WeakReference<CalendarActivity> activityReference;
+        String language;
+
+        CheckEventRowExist(CalendarActivity context, String apiLanguage) {
+            activityReference = new WeakReference<>(context);
+            language = apiLanguage;
+        }
+
+        @Override
+        protected Void doInBackground(Void... voids) {
+            if (calendarEventList.size() > 0) {
+                if (language.equals("en")) {
+                    int n = activityReference.get().qmDatabase.getCalendarEventsDao().checkEnglishWithEventDateExist(
+                            calendarEventList.get(0).getEventDate());
+                    if (n > 0) {
+                        new DeleteEventsTableRow(CalendarActivity.this, language,
+                                calendarEventList.get(0).getEventDate()).execute();
+                    } else {
+                        new InsertDatabaseTask(CalendarActivity.this, calendarEventsTableEnglish,
+                                calendarEventsTableArabic, language).execute();
                     }
                 } else {
-                    noEventsTxt.setVisibility(View.VISIBLE);
+                    int n = activityReference.get().qmDatabase.getCalendarEventsDao().checkArabicWithEventDateExist(
+                            calendarEventList.get(0).getEventDate());
+                    if (n > 0) {
+                        new DeleteEventsTableRow(CalendarActivity.this, language,
+                                calendarEventList.get(0).getEventDate()).execute();
+                    } else {
+                        new InsertDatabaseTask(CalendarActivity.this, calendarEventsTableEnglish,
+                                calendarEventsTableArabic, language).execute();
+                    }
                 }
-                progressBar.setVisibility(View.GONE);
             }
+            return null;
+        }
 
-            @Override
-            public void onFailure(Call<ArrayList<CalendarEvents>> call, Throwable t) {
-                if (t instanceof IOException) {
-                    new Util().showToast(getResources().getString(R.string.check_network), getApplicationContext());
+
+    }
+
+
+    public class InsertDatabaseTask extends AsyncTask<Void, Void, Boolean> {
+        private WeakReference<CalendarActivity> activityReference;
+        private CalendarEventsTableEnglish calendarEventsTableEnglish;
+        private CalendarEventsTableArabic calendarEventsTableArabic;
+        String language;
+
+        InsertDatabaseTask(CalendarActivity context, CalendarEventsTableEnglish calendarEventsTableEnglish,
+                           CalendarEventsTableArabic calendarEventsTableArabic, String lan) {
+            activityReference = new WeakReference<>(context);
+            this.calendarEventsTableEnglish = calendarEventsTableEnglish;
+            this.calendarEventsTableArabic = calendarEventsTableArabic;
+            language = lan;
+        }
+
+        @Override
+        protected Boolean doInBackground(Void... voids) {
+            if (calendarEventList != null) {
+                if (language.equals("en")) {
+                    for (int i = 0; i < calendarEventList.size(); i++) {
+                        calendarEventsTableEnglish = new CalendarEventsTableEnglish(
+                                calendarEventList.get(i).getEventId(),
+                                calendarEventList.get(i).getEventTitle(),
+                                calendarEventList.get(i).getEventTimings(),
+                                calendarEventList.get(i).getEventDetails(),
+                                calendarEventList.get(i).getInstitution(),
+                                calendarEventList.get(i).getAgeGroup(),
+                                calendarEventList.get(i).getProgramType(),
+                                calendarEventList.get(i).getEventCategory(),
+                                calendarEventList.get(i).getEventLocation(),
+                                calendarEventList.get(i).getEventDate(),
+                                calendarEventList.get(i).getStartTime(),
+                                calendarEventList.get(i).getEndTime(),
+                                calendarEventList.get(i).getRegistration(),
+                                calendarEventList.get(i).getFilter(),
+                                calendarEventList.get(i).getMaxGroupSize()
+                        );
+                        activityReference.get().qmDatabase.getCalendarEventsDao().
+                                insertEventsTableEnglish(calendarEventsTableEnglish);
+
+                    }
                 } else {
-                    // error due to mapping issues
-                }
-                noEventsTxt.setVisibility(View.VISIBLE);
-                progressBar.setVisibility(View.GONE);
-            }
-        });
+                    for (int i = 0; i < calendarEventList.size(); i++) {
+                        calendarEventsTableArabic = new CalendarEventsTableArabic(
+                                calendarEventList.get(i).getEventId(),
+                                calendarEventList.get(i).getEventTitle(),
+                                calendarEventList.get(i).getEventTimings(),
+                                calendarEventList.get(i).getEventDetails(),
+                                calendarEventList.get(i).getInstitution(),
+                                calendarEventList.get(i).getAgeGroup(),
+                                calendarEventList.get(i).getProgramType(),
+                                calendarEventList.get(i).getEventCategory(),
+                                calendarEventList.get(i).getEventLocation(),
+                                calendarEventList.get(i).getEventDate(),
+                                calendarEventList.get(i).getStartTime(),
+                                calendarEventList.get(i).getEndTime(),
+                                calendarEventList.get(i).getRegistration(),
+                                calendarEventList.get(i).getFilter(),
+                                calendarEventList.get(i).getMaxGroupSize()
+                        );
+                        activityReference.get().qmDatabase.getCalendarEventsDao().
+                                insertEventsTableArabic(calendarEventsTableArabic);
 
+                    }
+                }
+            }
+            return true;
+        }
+
+        @Override
+        protected void onPostExecute(Boolean aBoolean) {
+//            Toast.makeText(CalendarActivity.this, "Insertion Success", Toast.LENGTH_SHORT).show();
+        }
+    }
+
+
+    public class DeleteEventsTableRow extends AsyncTask<Void, Void, Void> {
+        private WeakReference<CalendarActivity> activityReference;
+        String language;
+        long timestamp;
+
+        DeleteEventsTableRow(CalendarActivity context, String apiLanguage, long date) {
+            activityReference = new WeakReference<>(context);
+            language = apiLanguage;
+            timestamp = date;
+        }
+
+        @Override
+        protected Void doInBackground(Void... voids) {
+            if (language.equals("en")) {
+                activityReference.get().qmDatabase.getCalendarEventsDao().deleteEnglishEventsWithDate(
+                        calendarEventList.get(0).getEventDate()
+                );
+
+            } else {
+                activityReference.get().qmDatabase.getCalendarEventsDao().deleteArabicEventsWithDate(
+                        calendarEventList.get(0).getEventDate()
+                );
+            }
+
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(Void aVoid) {
+            new InsertDatabaseTask(CalendarActivity.this, calendarEventsTableEnglish,
+                    calendarEventsTableArabic, language).execute();
+
+        }
+    }
+
+    public class RetriveEnglishTableData extends AsyncTask<Void, Void, List<CalendarEventsTableEnglish>> {
+        private WeakReference<CalendarActivity> activityReference;
+        int language;
+        long eventDate;
+
+        RetriveEnglishTableData(CalendarActivity context, int appLanguage, long eventDate) {
+            activityReference = new WeakReference<>(context);
+            language = appLanguage;
+            this.eventDate = eventDate;
+        }
+
+        @Override
+        protected List<CalendarEventsTableEnglish> doInBackground(Void... voids) {
+            return activityReference.get().qmDatabase.getCalendarEventsDao().getEventsWithDateEnglish(eventDate);
+
+        }
+
+        @Override
+        protected void onPostExecute(List<CalendarEventsTableEnglish> eventsTableEnglishList) {
+            calendarEventList.clear();
+            if (eventsTableEnglishList.size() > 0) {
+                for (int i = 0; i < eventsTableEnglishList.size(); i++) {
+                    CalendarEvents calendarEvents = new CalendarEvents(
+                            eventsTableEnglishList.get(i).getEvent_id(),
+                            eventsTableEnglishList.get(i).getEvent_institution(),
+                            eventsTableEnglishList.get(i).getEvent_title(),
+                            eventsTableEnglishList.get(i).getEvent_short_description(),
+                            eventsTableEnglishList.get(i).getEvent_long_description(),
+                            eventsTableEnglishList.get(i).getEvent_start_time(),
+                            eventsTableEnglishList.get(i).getEvent_end_time(),
+                            eventsTableEnglishList.get(i).getEvent_registration(),
+                            eventsTableEnglishList.get(i).getEvent_date(),
+                            eventsTableEnglishList.get(i).getFilter(),
+                            eventsTableEnglishList.get(i).getLocation(),
+                            eventsTableEnglishList.get(i).getMax_group_size(),
+                            eventsTableEnglishList.get(i).getCategory(),
+                            eventsTableEnglishList.get(i).getEvent_age_group(),
+                            eventsTableEnglishList.get(i).getEvent_program_type()
+                    );
+                    calendarEventList.add(i, calendarEvents);
+                }
+                calendarAdapter.notifyDataSetChanged();
+                eventListView.setVisibility(View.VISIBLE);
+                noEventsTxt.setVisibility(View.GONE);
+            } else {
+                noEventsTxt.setVisibility(View.VISIBLE);
+                noEventsTxt.setText(R.string.unable_to_fetch_details);
+            }
+            progressBar.setVisibility(View.GONE);
+        }
+    }
+
+    public class RetriveArabicTableData extends AsyncTask<Void, Void,
+            List<CalendarEventsTableArabic>> {
+        private WeakReference<CalendarActivity> activityReference;
+        int language;
+        long eventDate;
+
+        RetriveArabicTableData(CalendarActivity context, int appLanguage, long eventDate) {
+            activityReference = new WeakReference<>(context);
+            language = appLanguage;
+            this.eventDate = eventDate;
+        }
+
+        @Override
+        protected List<CalendarEventsTableArabic> doInBackground(Void... voids) {
+            return activityReference.get().qmDatabase.getCalendarEventsDao().getEventsWithDateArabic(eventDate);
+
+        }
+
+        @Override
+        protected void onPostExecute(List<CalendarEventsTableArabic> eventsTableArabicList) {
+            calendarEventList.clear();
+            if (eventsTableArabicList.size() > 0) {
+                for (int i = 0; i < eventsTableArabicList.size(); i++) {
+                    CalendarEvents calendarEvents = new CalendarEvents(
+                            eventsTableArabicList.get(i).getEvent_id(),
+                            eventsTableArabicList.get(i).getEvent_institution(),
+                            eventsTableArabicList.get(i).getEvent_title(),
+                            eventsTableArabicList.get(i).getEvent_short_description(),
+                            eventsTableArabicList.get(i).getEvent_long_description(),
+                            eventsTableArabicList.get(i).getEvent_start_time(),
+                            eventsTableArabicList.get(i).getEvent_end_time(),
+                            eventsTableArabicList.get(i).getEvent_registration(),
+                            eventsTableArabicList.get(i).getEvent_date(),
+                            eventsTableArabicList.get(i).getFilter(),
+                            eventsTableArabicList.get(i).getLocation(),
+                            eventsTableArabicList.get(i).getMax_group_size(),
+                            eventsTableArabicList.get(i).getCategory(),
+                            eventsTableArabicList.get(i).getEvent_age_group(),
+                            eventsTableArabicList.get(i).getEvent_program_type()
+                    );
+                    calendarEventList.add(i, calendarEvents);
+                }
+                calendarAdapter.notifyDataSetChanged();
+                eventListView.setVisibility(View.VISIBLE);
+                noEventsTxt.setVisibility(View.GONE);
+            } else {
+                noEventsTxt.setVisibility(View.VISIBLE);
+                noEventsTxt.setText(R.string.unable_to_fetch_details);
+            }
+            progressBar.setVisibility(View.GONE);
+        }
     }
 
 }

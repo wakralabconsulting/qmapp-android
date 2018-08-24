@@ -17,7 +17,6 @@ import android.view.animation.AnimationUtils;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.qatarmuseums.qatarmuseumsapp.QMDatabase;
@@ -152,7 +151,7 @@ public class DetailsActivity extends AppCompatActivity implements IPullZoom {
         GlideApp.with(this)
                 .load(headerImage)
                 .centerCrop()
-                .placeholder(R.drawable.placeholdeer)
+                .placeholder(R.drawable.placeholder)
                 .into(headerImageView);
 
 
@@ -1215,7 +1214,7 @@ public class DetailsActivity extends AppCompatActivity implements IPullZoom {
                         GlideApp.with(DetailsActivity.this)
                                 .load(headerImage)
                                 .centerCrop()
-                                .placeholder(R.drawable.placeholdeer)
+                                .placeholder(R.drawable.placeholder)
                                 .into(headerImageView);
                         loadData(null, museumAboutModels.get(0).getShortDescription(),
                                 null,
@@ -1503,7 +1502,7 @@ public class DetailsActivity extends AppCompatActivity implements IPullZoom {
                 GlideApp.with(DetailsActivity.this)
                         .load(headerImage)
                         .centerCrop()
-                        .placeholder(R.drawable.placeholdeer)
+                        .placeholder(R.drawable.placeholder)
                         .into(headerImageView);
                 loadData(null, museumAboutTableEnglish.getMuseum_short_description(),
                         null,
@@ -1543,7 +1542,7 @@ public class DetailsActivity extends AppCompatActivity implements IPullZoom {
                 GlideApp.with(DetailsActivity.this)
                         .load(headerImage)
                         .centerCrop()
-                        .placeholder(R.drawable.placeholdeer)
+                        .placeholder(R.drawable.placeholder)
                         .into(headerImageView);
                 loadData(null, museumAboutTableArabic.getMuseum_short_description(),
                         null,

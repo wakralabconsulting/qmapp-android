@@ -84,12 +84,24 @@ They exemplify the external influences and internal creativity that inspired thi
     <string name="become_a_member">BECOME A MEMBER</string>
     <string name="already_a_member"><u>Already A Member?</u></string>
     <string name="log_in">LOG IN</string>
-    <string name="unable_to_fetch_details">Unable to fetch details</string>
+    <string name="unable_to_fetch_details">غير فادر على جلب التفاصيل</string>
     <string name="no_new_notification_yet">No notifications yet.</string>
     <string name="no_events">لا توجد فعاليات</string>
     <string name="open_settings">الإعدادات</string>
     <string name="permission_required">الإذن مطلوب</string>
     <string name="runtime_permission">To add events in calendar, allow <b>Qatar Museum App</b> access to your device\'s Calendar.\n\n Tap Settings > Permissions, and turn Calendar on.</string>
     <string name="event_added">تم إضافة الفعالية للتقويم</string>
+    <string name="local_event_institution">MIA</string>
+    <string name="local_event_title">جولات دون حجز</string>
+    <string name="local_event_short_description"> نضموا إلى مرشدي المتحف في جولة على مجموعة مقتنيات متحف الفن الإسلامي الرائعة التي تغطي 1400 سنة، وثلاث قارات. الحجز غير ضروري للمشاركة في الجولة.</string>
+    <string name="local_event_long_description">الاثنين – جولة العلوم
+
+الثلاثاء - جولة علمية
+
+الخميس – جوله متعلقه بالهندسة المعماريه للمتحف
+
+الجمعة - جولة في قاعات العرض الدائم
+
+السبت- جولة في قاعات العرض الدائم</string>
 
 </resources>
