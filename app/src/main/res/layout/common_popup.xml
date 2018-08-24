@@ -8,9 +8,10 @@
     <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/padding_40"
+        android:layout_marginEnd="@dimen/pading_25"
         android:gravity="center"
-        android:orientation="vertical"
-        android:layout_margin="@dimen/pading_20">
+        android:orientation="vertical">
 
 
         <LinearLayout
@@ -34,8 +35,9 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="@dimen/pading_25"
                 android:fontFamily="@font/din_next_lt_pro_bold"
-                android:textColor="@color/black"
                 android:textAlignment="center"
+                android:textAllCaps="true"
+                android:textColor="@color/black"
                 android:textSize="@dimen/settings_page_list_item_text_size" />
 
             <View
@@ -50,9 +52,9 @@
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="@dimen/margin_50"
                 android:layout_marginTop="@dimen/pading_25"
-                android:textAlignment="center"
                 android:paddingEnd="@dimen/pading_5"
                 android:paddingStart="@dimen/pading_5"
+                android:textAlignment="center"
                 android:textSize="@dimen/settings_text_size" />
 
 
@@ -60,11 +62,11 @@
                 android:id="@+id/doneBtn"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="@dimen/pading_25"
+                android:layout_marginBottom="@dimen/pading_15"
                 android:background="@drawable/round_corner_skyblue"
                 android:fontFamily="@font/din_next_lt_pro_bold"
                 android:textAllCaps="false"
-                android:textColor="@color/white"
+                android:textColor="@color/black"
                 android:textSize="@dimen/settings_page_list_item_text_size" />
 
         </LinearLayout>
@@ -78,8 +80,8 @@
 
             <ImageView
                 android:id="@+id/close_dialog"
-                android:layout_width="@dimen/common_popup_close_size"
-                android:layout_height="@dimen/common_popup_close_size"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
                 android:adjustViewBounds="true"
                 android:background="@drawable/popup_close"
                 android:description="@null"
