@@ -4,7 +4,7 @@ import com.google.gson.annotations.SerializedName;
 
 public class CalendarEvents {
     @SerializedName("eid")
-    private String calanderId;
+    private long eventId;
     @SerializedName("institution")
     private String institution;
     @SerializedName("title")
@@ -14,7 +14,7 @@ public class CalendarEvents {
     @SerializedName("long_desc")
     private String eventDetails;
     @SerializedName("registration")
-    private Boolean registration;
+    private boolean registration;
     @SerializedName("start_time")
     private String startTime;
     @SerializedName("end_time")
@@ -24,18 +24,35 @@ public class CalendarEvents {
     @SerializedName("program_type")
     private String programType;
     @SerializedName("date")
-    private Long eventDate;
+    private long eventDate;
+    @SerializedName("filter")
+    private String filter;
+    @SerializedName("location")
+    private String eventLocation;
+    @SerializedName("max_group_size")
+    private long maxGroupSize;
+    @SerializedName("category")
+    private String eventCategory;
 
-    public CalendarEvents(String eventTitle, String eventSubtitle, String eventTimings,
-                          String eventDetails, String startTime, String endTime, Boolean registration, Long eventDate) {
-        this.institution = eventTitle;
-        this.eventTitle = eventSubtitle;
-        this.eventTimings = eventTimings;
+    public CalendarEvents(long eid, String institution, String title, String shortDescription, String eventDetails,
+                          String startTime, String endTime, boolean registration, long eventDate,
+                          String filter, String location, long maxGroupSize, String category,
+                          String programType, String ageGroup) {
+        this.institution = institution;
+        this.eventTitle = title;
+        this.eventTimings = shortDescription;
         this.eventDetails = eventDetails;
         this.startTime = startTime;
         this.endTime = endTime;
         this.registration = registration;
         this.eventDate = eventDate;
+        this.eventId = eid;
+        this.filter = filter;
+        this.eventLocation = location;
+        this.maxGroupSize = maxGroupSize;
+        this.eventCategory = category;
+        this.programType = programType;
+        this.ageGroup = ageGroup;
     }
 
     public String getInstitution() {
@@ -78,12 +95,12 @@ public class CalendarEvents {
         this.registration = registration;
     }
 
-    public String getCalanderId() {
-        return calanderId;
+    public long getEventId() {
+        return eventId;
     }
 
-    public void setCalanderId(String calanderId) {
-        this.calanderId = calanderId;
+    public void setEventId(long eventId) {
+        this.eventId = eventId;
     }
 
     public String getStartTime() {
@@ -118,11 +135,44 @@ public class CalendarEvents {
         this.programType = programType;
     }
 
-    public Long getEventDate() {
+    public long getEventDate() {
         return eventDate;
     }
 
-    public void setEventDate(Long eventDate) {
+    public void setEventDate(long eventDate) {
         this.eventDate = eventDate;
     }
+
+    public String getFilter() {
+        return filter;
+    }
+
+    public void setFilter(String filter) {
+        this.filter = filter;
+    }
+
+    public String getEventLocation() {
+        return eventLocation;
+    }
+
+    public void setEventLocation(String eventLocation) {
+        this.eventLocation = eventLocation;
+    }
+
+    public long getMaxGroupSize() {
+        return maxGroupSize;
+    }
+
+    public void setMaxGroupSize(long maxGroupSize) {
+        this.maxGroupSize = maxGroupSize;
+    }
+
+    public String getEventCategory() {
+        return eventCategory;
+    }
+
+    public void setEventCategory(String eventCategory) {
+        this.eventCategory = eventCategory;
+    }
+
 }

@@ -180,7 +180,7 @@ public class ParkActivity extends AppCompatActivity implements IPullZoom {
                         GlideApp.with(ParkActivity.this)
                                 .load(parkLists.get(0).getImage())
                                 .centerCrop()
-                                .placeholder(R.drawable.placeholdeer)
+                                .placeholder(R.drawable.placeholder)
                                 .into(headerImageView);
                         mAdapter.notifyDataSetChanged();
                         new RowCount(ParkActivity.this, language).execute();
