@@ -1,9 +1,12 @@
 package com.qatarmuseums.qatarmuseumsapp.education;
 
 import android.app.Dialog;
+import android.content.ContentResolver;
+import android.content.ContentValues;
 import android.content.Context;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
+import android.provider.CalendarContract;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -16,9 +19,13 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.qatarmuseums.qatarmuseumsapp.R;
+import com.qatarmuseums.qatarmuseumsapp.calendar.CalendarActivity;
 import com.qatarmuseums.qatarmuseumsapp.utils.CustomDialogClass;
+import com.qatarmuseums.qatarmuseumsapp.utils.Util;
 
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.TimeZone;
 
 /**
  * Created by MoongedePC on 26-Jul-18.
@@ -43,15 +50,14 @@ public class EducationAdapter extends RecyclerView.Adapter<EducationAdapter.Educ
     }
 
     @Override
-    public void onBindViewHolder(@NonNull final EducationAdapter.EducationAdapterViewHolder holder, int position) {
+    public void onBindViewHolder(@NonNull final EducationAdapter.EducationAdapterViewHolder holder, final int position) {
 
-        if(educationEvents.size()>0){
-            for(int i=0;i<educationEvents.size();i++){
-                holder.eventTitle.setText(educationEvents.get(i).getCategory());
-                holder.eventSubTitle.setText(educationEvents.get(i).getTitle());
-                holder.eventTiming.setText(educationEvents.get(i).getShort_desc());
-                holder.eventMaxGroup.setText("Max Groups : "+educationEvents.get(i).getMax_group_size());
-            }
+        if (educationEvents.size() > 0) {
+            holder.eventTitle.setText(educationEvents.get(position).getInstitution());
+            holder.eventSubTitle.setText(educationEvents.get(position).getTitle());
+            holder.eventTiming.setText(educationEvents.get(position).getShort_desc());
+            holder.eventMaxGroup.setText("Max Group Size : " + educationEvents.get(position).getMax_group_size());
+
         }
 
         if (position % 2 == 1) {
@@ -63,8 +69,14 @@ public class EducationAdapter extends RecyclerView.Adapter<EducationAdapter.Educ
             @Override
             public void onClick(View view) {
 
-                showDialog(context.getResources().getString(R.string.education_detail),
-                        holder.eventSubTitle.getText().toString());
+                if (educationEvents.get(position).getRegistration().equals("true")) {
+                    ((EducationCalendarActivity) context)
+                            .showDialog(context.getResources().getString(R.string.register_now), educationEvents, position);
+
+                } else {
+                    ((EducationCalendarActivity) context).
+                    showDialog(context.getResources().getString(R.string.add_to_calendar), educationEvents, position);
+                }
             }
         });
     }
@@ -90,45 +102,5 @@ public class EducationAdapter extends RecyclerView.Adapter<EducationAdapter.Educ
         }
     }
 
-
-    protected void showDialog(final String details, String title) {
-
-        final Dialog dialog = new Dialog(context, R.style.DialogNoAnimation);
-        dialog.setCancelable(true);
-        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
-
-        LayoutInflater layoutInflater = (LayoutInflater) context.getSystemService(context.LAYOUT_INFLATER_SERVICE);
-        View view = layoutInflater.inflate(R.layout.common_popup, null);
-
-        dialog.setContentView(view);
-        ImageView closeBtn = (ImageView) view.findViewById(R.id.close_dialog);
-        Button registerNowBtn = (Button) view.findViewById(R.id.doneBtn);
-        TextView dialogTitle = (TextView) view.findViewById(R.id.dialog_tittle);
-        TextView dialogContent = (TextView) view.findViewById(R.id.dialog_content);
-        dialogTitle.setText(context.getResources().getString(R.string.calendar_dialog_title));
-        registerNowBtn.setText(context.getResources().getString(R.string.register_now));
-        dialogContent.setText(details);
-
-        registerNowBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                //Do something
-                CustomDialogClass cdd = new CustomDialogClass(context, context.getResources().getString(R.string.register_now_content));
-                cdd.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
-                cdd.show();
-                dialog.dismiss();
-
-            }
-        });
-        closeBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                //Do something
-                dialog.dismiss();
-
-            }
-        });
-        dialog.show();
-    }
-
 }
+   
