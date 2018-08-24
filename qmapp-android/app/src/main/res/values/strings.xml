@@ -113,5 +113,9 @@ They exemplify the external influences and internal creativity that inspired thi
     <string name="permission_required">Permission Required!</string>
     <string name="runtime_permission">To add events in calendar, allow <b>Qatar Museum App</b> access to your device\'s Calendar.\n\n Tap Settings > Permissions, and turn Calendar on.</string>
     <string name="event_added">Event added to Calendar.</string>
+    <string name="local_event_institution">MIA</string>
+    <string name="local_event_title">Walk In Gallery Tours</string>
+    <string name="local_event_short_description">Join our Museum Guides for a tour of the Museum of Islamic Art\'s oustanding collection of objects, spread over 1,400 years and across three continents. No booking is required to be a part of the tour.</string>
+    <string name="local_event_long_description">Monday - Science Tour \n\nTuesday - Techniques Tour (from 1 July onwards) \n\nThursday - MIA Architecture Tour \n\nFriday - Permanent Gallery Tour \n\nSaturday - Permanent Gallery Tour</string>
 
 </resources>
