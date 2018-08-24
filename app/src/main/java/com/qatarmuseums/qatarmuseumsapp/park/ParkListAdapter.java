@@ -91,7 +91,7 @@ public class ParkListAdapter extends RecyclerView.Adapter<ParkListAdapter.MyView
         holder.timingInfo.setText(parkList.getTimingInfo());
         GlideApp.with(mContext)
                 .load(parkList.getImage())
-                .placeholder(R.drawable.placeholdeer)
+                .placeholder(R.drawable.placeholder)
                 .into(holder.imageView);
     }
 

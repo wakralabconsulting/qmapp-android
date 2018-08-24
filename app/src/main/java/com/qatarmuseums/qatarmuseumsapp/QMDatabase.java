@@ -9,6 +9,9 @@ import android.arch.persistence.room.RoomDatabase;
 import android.content.Context;
 import android.support.annotation.NonNull;
 
+import com.qatarmuseums.qatarmuseumsapp.calendar.CalendarEventsTableArabic;
+import com.qatarmuseums.qatarmuseumsapp.calendar.CalendarEventsTableEnglish;
+import com.qatarmuseums.qatarmuseumsapp.calendar.CalendarTableDao;
 import com.qatarmuseums.qatarmuseumsapp.commonpagedatabase.DiningTableArabic;
 import com.qatarmuseums.qatarmuseumsapp.commonpagedatabase.DiningTableDao;
 import com.qatarmuseums.qatarmuseumsapp.commonpagedatabase.DiningTableEnglish;
@@ -41,7 +44,7 @@ import com.qatarmuseums.qatarmuseumsapp.park.ParkTableEnglish;
         DiningTableArabic.class, MuseumCollectionListTableEnglish.class,
         MuseumCollectionListTableArabic.class, ExhibitionListTableEnglish.class,
         ExhibitionListTableArabic.class, MuseumAboutTableEnglish.class,
-        MuseumAboutTableArabic.class},
+        MuseumAboutTableArabic.class, CalendarEventsTableEnglish.class, CalendarEventsTableArabic.class},
         version = 1, exportSchema = false)
 
 public abstract class QMDatabase extends RoomDatabase {
@@ -59,7 +62,10 @@ public abstract class QMDatabase extends RoomDatabase {
     public abstract DiningTableDao getDiningTableDao();
 
     public abstract MuseumCollectionListTableDao getMuseumCollectionListDao();
+
     public abstract MuseumAboutTableDao getMuseumAboutDao();
+
+    public abstract CalendarTableDao getCalendarEventsDao();
 
     private static QMDatabase qmDatabase;
 
