@@ -431,21 +431,25 @@ public class ParkActivity extends AppCompatActivity implements IPullZoom {
 
         @Override
         protected void onPostExecute(List<ParkTableEnglish> parkTableEnglishes) {
-            parkLists.clear();
+            if (parkTableEnglishes.size()>0) {
+                parkLists.clear();
+                for (int i = 0; i < parkTableEnglishes.size(); i++) {
+                    ParkList parkObject = new ParkList(parkTableEnglishes.get(i).getMainTitle(),
+                            parkTableEnglishes.get(i).getShortDescription(),
+                            parkTableEnglishes.get(i).getImage(),
+                            parkTableEnglishes.get(i).getLatitude(), parkTableEnglishes.get(i).getLongitude(),
+                            parkTableEnglishes.get(i).getTimingInfo(),
+                            String.valueOf(parkTableEnglishes.get(i).getSortId()));
+                    parkLists.add(i, parkObject);
+                }
 
-            for (int i = 0; i < parkTableEnglishes.size(); i++) {
-                ParkList parkObject = new ParkList(parkTableEnglishes.get(i).getMainTitle(),
-                        parkTableEnglishes.get(i).getShortDescription(),
-                        parkTableEnglishes.get(i).getImage(),
-                        parkTableEnglishes.get(i).getLatitude(), parkTableEnglishes.get(i).getLongitude(),
-                        parkTableEnglishes.get(i).getTimingInfo(),
-                        String.valueOf(parkTableEnglishes.get(i).getSortId()));
-                parkLists.add(i, parkObject);
+
+                mAdapter.notifyDataSetChanged();
+                progressBar.setVisibility(View.GONE);
+            }else {
+                progressBar.setVisibility(View.GONE);
+                noResultFoundLayout.setVisibility(View.VISIBLE);
             }
-
-
-            mAdapter.notifyDataSetChanged();
-            progressBar.setVisibility(View.GONE);
 
 
         }
@@ -469,21 +473,25 @@ public class ParkActivity extends AppCompatActivity implements IPullZoom {
 
         @Override
         protected void onPostExecute(List<ParkTableArabic> parkTableArabics) {
-            parkLists.clear();
+            if (parkTableArabics.size()>0) {
+                parkLists.clear();
+                for (int i = 0; i < parkTableArabics.size(); i++) {
+                    ParkList parkObject = new ParkList(parkTableArabics.get(i).getMainTitle(),
+                            parkTableArabics.get(i).getShortDescription(),
+                            parkTableArabics.get(i).getImage(),
+                            parkTableArabics.get(i).getLatitude(), parkTableArabics.get(i).getLongitude(),
+                            parkTableArabics.get(i).getTimingInfo(),
+                            String.valueOf(parkTableArabics.get(i).getSortId()));
+                    parkLists.add(i, parkObject);
+                }
 
-            for (int i = 0; i < parkTableArabics.size(); i++) {
-                ParkList parkObject = new ParkList(parkTableArabics.get(i).getMainTitle(),
-                        parkTableArabics.get(i).getShortDescription(),
-                        parkTableArabics.get(i).getImage(),
-                        parkTableArabics.get(i).getLatitude(), parkTableArabics.get(i).getLongitude(),
-                        parkTableArabics.get(i).getTimingInfo(),
-                        String.valueOf(parkTableArabics.get(i).getSortId()));
-                parkLists.add(i, parkObject);
+
+                mAdapter.notifyDataSetChanged();
+                progressBar.setVisibility(View.GONE);
+            }else {
+                progressBar.setVisibility(View.GONE);
+                noResultFoundLayout.setVisibility(View.VISIBLE);
             }
-
-
-            mAdapter.notifyDataSetChanged();
-            progressBar.setVisibility(View.GONE);
 
 
         }
