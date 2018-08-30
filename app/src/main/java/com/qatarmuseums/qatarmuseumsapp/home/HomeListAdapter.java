@@ -12,6 +12,7 @@ import android.widget.TextView;
 
 import com.qatarmuseums.qatarmuseumsapp.R;
 
+
 import java.util.List;
 
 public class HomeListAdapter extends RecyclerView.Adapter<HomeListAdapter.MyViewHolder> {
@@ -35,7 +36,6 @@ public class HomeListAdapter extends RecyclerView.Adapter<HomeListAdapter.MyView
         this.homeLists = homeLists;
         this.mContext = context;
     }
-
     @NonNull
     @Override
     public HomeListAdapter.MyViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {

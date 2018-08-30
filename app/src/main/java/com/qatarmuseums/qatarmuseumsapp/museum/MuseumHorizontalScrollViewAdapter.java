@@ -19,6 +19,7 @@ import com.qatarmuseums.qatarmuseumsapp.R;
 import com.qatarmuseums.qatarmuseumsapp.commonpage.CommonActivity;
 import com.qatarmuseums.qatarmuseumsapp.detailspage.DetailsActivity;
 import com.qatarmuseums.qatarmuseumsapp.park.ParkActivity;
+import com.qatarmuseums.qatarmuseumsapp.tourguide.TourGuideCommonActivity;
 import com.qatarmuseums.qatarmuseumsapp.utils.Util;
 
 import java.util.List;
@@ -59,7 +60,9 @@ public class MuseumHorizontalScrollViewAdapter extends RecyclerView.Adapter<Muse
                     navigationIntent.putExtra("COMING_FROM", mContext.getString(R.string.museum_about));
                     mContext.startActivity(navigationIntent);
                 }else if (position == 1) {
-                    util.showComingSoonDialog((MuseumActivity)mContext);
+                    navigationIntent = new Intent(mContext, TourGuideCommonActivity.class);
+                    navigationIntent.putExtra("COMING_FROM", mContext.getString(R.string.museum));
+                    mContext.startActivity(navigationIntent);
                 }else if (position == 2) {
                     navigationIntent = new Intent(mContext, CommonActivity.class);
                     navigationIntent.putExtra(mContext.getString(R.string.toolbar_title_key),
