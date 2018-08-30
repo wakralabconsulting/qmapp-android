@@ -18,10 +18,12 @@ import java.util.List;
 public class TourGuideAdapter extends RecyclerView.Adapter<TourGuideAdapter.MyViewHolder> {
     private final Context mContext;
     private List<TourGuideList> tourGuideList;
+    String comingFrom;
 
-    public TourGuideAdapter(Context context, List<TourGuideList> tourGuideList) {
+    public TourGuideAdapter(Context context, List<TourGuideList> tourGuideList, String comingFrom) {
         this.tourGuideList = tourGuideList;
         this.mContext = context;
+        this.comingFrom = comingFrom;
     }
 
     @NonNull
@@ -37,10 +39,17 @@ public class TourGuideAdapter extends RecyclerView.Adapter<TourGuideAdapter.MyVi
     public void onBindViewHolder(@NonNull MyViewHolder holder, int position) {
         TourGuideList tgList = tourGuideList.get(position);
         holder.name.setText(tgList.getName());
-        GlideApp.with(mContext)
-                .load(tgList.getImage())
-                .placeholder(R.drawable.placeholder)
-                .into(holder.imageView);
+        if (!comingFrom.equals(mContext.getString(R.string.sidemenu_text))) {
+            GlideApp.with(mContext)
+                    .load(tgList.getImage())
+                    .placeholder(R.drawable.placeholder)
+                    .into(holder.imageView);
+        }else {
+            GlideApp.with(mContext)
+                    .load(tgList.getImageurl())
+                    .placeholder(R.drawable.placeholder)
+                    .into(holder.imageView);
+        }
     }
 
     @Override

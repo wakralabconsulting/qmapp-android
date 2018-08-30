@@ -270,10 +270,9 @@ public class BaseActivity extends AppCompatActivity
             case R.id.sidemenu_tour_guide_layout:
                 // navigation drawer tour guide action
                 touchListnerForLayout(sidemenuTourGuideLayout);
-//                navigation_intent = new Intent(this, TourGuideCommonActivity.class);
-//                navigation_intent.putExtra("COMING_FROM", getString(R.string.sidemenu_text));
-//                startActivity(navigation_intent);
-                util.showComingSoonDialog(this);
+                navigation_intent = new Intent(this, TourGuideCommonActivity.class);
+                navigation_intent.putExtra("COMING_FROM", getString(R.string.sidemenu_text));
+                startActivity(navigation_intent);
                 closeDrawer();
                 break;
             case R.id.sidemenu_heritage_layout:
