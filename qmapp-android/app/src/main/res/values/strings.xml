@@ -28,6 +28,7 @@
     <string name="title_culture_pass">Culture Pass</string>
     <string name="title_more">More</string>
     <string name="sidemenu_exhibition_text">Exhibitions</string>
+    <string name="sidemenu_text">Sidemenu</string>
     <string name="sidemenu_events_text">Events</string>
     <string name="sidemenu_education_text">Education</string>
     <string name="sidemenu_tour_guide_text">Tour Guide</string>
@@ -91,8 +92,10 @@
     <string name="touch_again">Touch again to exit</string>
     <string name="map_navigation_api">http://maps.google.com/maps?q=loc:</string>
     <string name="museum_about">Museum About</string>
+    <string name="museum">Museum</string>
     <string name="museum_timings">MUSEUM TIMINGS</string>
     <string name="no_results_text">No Results Found</string>
+    <string name="explore">Explore</string>
     <string name="check_network">Check your internet connections</string>
     <string name="collection_details_main_text">As well as being objects of great age and beauty, the ceramics in the museum were also meant to be used.\n\n
 
@@ -122,5 +125,8 @@ They exemplify the external influences and internal creativity that inspired thi
     <string name="notification_museum_updates">Museum Updates</string>
     <string name="notification_culturepass_updates">Culture Pass Updates</string>
     <string name="notification_tourguide_updates">Tour Guide Updates</string>
-
+    <string name="tourguide_title">Self Guided Tours</string>
+    <string name="tourguide_title_desc">Welcome to Qatar Museum Premises. \n Explore the architrcture and the objects on display. \n Scan the QR codes available on the galleries for more information.</string>
+    <string name="tourguide_subtitle">Self Guided Tours</string>
+    <string name="tourguide_subtitle_desc">You may also try our self guided tours. \n Immerse yourself into the journeys curated specially for you by our experts.</string>
 </resources>
