@@ -133,4 +133,9 @@ They exemplify the external influences and internal creativity that inspired thi
     <string name="tourguide_sidemenu_title_desc">Welcome to Qatar Museum Premises. \n Select the museums to explore the floors and objects on display. \n Immerse yourself into the object details curated specially for you by our experts.</string>
     <string name="tourguide_subtitle_desc">You may also try our self guided tours. \n Immerse yourself into the journeys curated specially for you by our experts.</string>
     <string name="mia_tour_guide">MIA TOUR GUIDE</string>
+    <string name="title_activity_floor_map">Map</string>
+    <string name="transparency">Transparency</string>
+    <string name="switch_image">Switch Image</string>
+    <string name="clickable">Clickable</string>
+    <color name="light_gray">#D3D3D3</color>
 </resources>
