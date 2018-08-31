@@ -20,6 +20,7 @@
     <color name="collection_detail_page_background">#E6E6E5</color>
     <color name="background_color">#e6e6e5</color>
     <color name="tourguide_titile_color">#81A6D7</color>
+    <color name="semitransparent">#CC000000</color>
 
 
 </resources>
