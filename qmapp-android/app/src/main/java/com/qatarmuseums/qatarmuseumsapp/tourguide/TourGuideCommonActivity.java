@@ -14,6 +14,7 @@ import android.widget.TextView;
 
 import com.qatarmuseums.qatarmuseumsapp.R;
 import com.qatarmuseums.qatarmuseumsapp.commonpage.RecyclerTouchListener;
+import com.qatarmuseums.qatarmuseumsapp.tourguidestartpage.TourGuideStartPageActivity;
 import com.qatarmuseums.qatarmuseumsapp.utils.Util;
 
 import java.util.ArrayList;
@@ -63,6 +64,7 @@ public class TourGuideCommonActivity extends AppCompatActivity {
                         } else {
                             if (position==0){
                                 tourguideSubtitleLayout.setVisibility(View.VISIBLE);
+                                exploreLayout.setVisibility(View.VISIBLE);
                                 tourguideMainTitle.setText(getString(R.string.tourguide_title));
                                 tourguideMainDesc.setText(getString(R.string.tourguide_title_desc));
                                 tourguideSubTitle.setText(getString(R.string.tourguide_title));
@@ -85,6 +87,7 @@ public class TourGuideCommonActivity extends AppCompatActivity {
 
         if (!comingFrom.equals(getString(R.string.sidemenu_text))) {
             tourguideSubtitleLayout.setVisibility(View.VISIBLE);
+            exploreLayout.setVisibility(View.VISIBLE);
             tourguideMainTitle.setText(getString(R.string.tourguide_title));
             tourguideMainDesc.setText(getString(R.string.tourguide_title_desc));
             tourguideSubTitle.setText(getString(R.string.tourguide_title));
@@ -94,6 +97,7 @@ public class TourGuideCommonActivity extends AppCompatActivity {
             recyclerView.scrollToPosition(0);
         } else {
             tourguideSubtitleLayout.setVisibility(View.GONE);
+            exploreLayout.setVisibility(View.GONE);
             tourguideMainTitle.setText(getString(R.string.tourguide_sidemenu_title));
             tourguideMainDesc.setText(getString(R.string.tourguide_sidemenu_title_desc));
             tourGuideList.clear();
@@ -109,6 +113,7 @@ public class TourGuideCommonActivity extends AppCompatActivity {
                 } else {
                    if (tourguideSubtitleLayout.getVisibility()==View.VISIBLE){
                        tourguideSubtitleLayout.setVisibility(View.GONE);
+                       exploreLayout.setVisibility(View.GONE);
                        tourguideMainTitle.setText(getString(R.string.tourguide_sidemenu_title));
                        tourguideMainDesc.setText(getString(R.string.tourguide_sidemenu_title_desc));
                        tourGuideList.clear();
@@ -120,6 +125,13 @@ public class TourGuideCommonActivity extends AppCompatActivity {
 
                 }
 
+            }
+        });
+        exploreLayout.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent i = new Intent(TourGuideCommonActivity.this, TourGuideStartPageActivity.class);
+                startActivity(i);
             }
         });
 
@@ -161,6 +173,7 @@ public class TourGuideCommonActivity extends AppCompatActivity {
         } else {
             if (tourguideSubtitleLayout.getVisibility()==View.VISIBLE){
                 tourguideSubtitleLayout.setVisibility(View.GONE);
+                exploreLayout.setVisibility(View.GONE);
                 tourguideMainTitle.setText(getString(R.string.tourguide_sidemenu_title));
                 tourguideMainDesc.setText(getString(R.string.tourguide_sidemenu_title_desc));
                 tourGuideList.clear();
