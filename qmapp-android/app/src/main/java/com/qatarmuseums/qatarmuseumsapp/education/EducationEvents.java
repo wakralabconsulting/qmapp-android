@@ -1,12 +1,39 @@
 package com.qatarmuseums.qatarmuseumsapp.education;
 
-/**
- * Created by MoongedePC on 26-Jul-18.
- */
+import com.google.gson.annotations.SerializedName;
 
 public class EducationEvents {
-    String eid, filter, title, short_desc, long_desc, location, institution, start_time;
-    String end_time, max_group_size, age_group, program_type, category, registration, date;
+
+    @SerializedName("eid")
+    private String eid;
+    @SerializedName("institution")
+    private String institution;
+    @SerializedName("title")
+    private String title;
+    @SerializedName("short_desc")
+    private String short_desc;
+    @SerializedName("long_desc")
+    private String long_desc;
+    @SerializedName("registration")
+    private String registration;
+    @SerializedName("start_time")
+    private String start_time;
+    @SerializedName("end_time")
+    private String end_time;
+    @SerializedName("age_group")
+    private String age_group;
+    @SerializedName("program_type")
+    private String program_type;
+    @SerializedName("date")
+    private String date;
+    @SerializedName("filter")
+    private String filter;
+    @SerializedName("location")
+    private String location;
+    @SerializedName("max_group_size")
+    private String max_group_size;
+    @SerializedName("category")
+    private String category;
 
 
     public EducationEvents(String eid, String filter, String title, String short_desc, String long_desc,

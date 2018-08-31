@@ -1,31 +1,18 @@
 package com.qatarmuseums.qatarmuseumsapp.education;
 
-import android.app.Dialog;
-import android.content.ContentResolver;
-import android.content.ContentValues;
 import android.content.Context;
 import android.graphics.Color;
-import android.graphics.drawable.ColorDrawable;
-import android.provider.CalendarContract;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.Window;
-import android.widget.Button;
-import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.qatarmuseums.qatarmuseumsapp.R;
-import com.qatarmuseums.qatarmuseumsapp.calendar.CalendarActivity;
-import com.qatarmuseums.qatarmuseumsapp.utils.CustomDialogClass;
-import com.qatarmuseums.qatarmuseumsapp.utils.Util;
 
 import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.TimeZone;
 
 /**
  * Created by MoongedePC on 26-Jul-18.
@@ -75,7 +62,7 @@ public class EducationAdapter extends RecyclerView.Adapter<EducationAdapter.Educ
 
                 } else {
                     ((EducationCalendarActivity) context).
-                    showDialog(context.getResources().getString(R.string.add_to_calendar), educationEvents, position);
+                            showDialog(context.getResources().getString(R.string.add_to_calendar), educationEvents, position);
                 }
             }
         });
@@ -85,6 +72,19 @@ public class EducationAdapter extends RecyclerView.Adapter<EducationAdapter.Educ
     public int getItemCount() {
         return educationEvents.size();
     }
+
+
+    public void clear() {
+        final int size = educationEvents.size();
+        if (size > 0) {
+            for (int i = 0; i < size; i++) {
+                educationEvents.remove(0);
+            }
+
+            notifyItemRangeRemoved(0, size);
+        }
+    }
+
 
     public class EducationAdapterViewHolder extends RecyclerView.ViewHolder {
 
