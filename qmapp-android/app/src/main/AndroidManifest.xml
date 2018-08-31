@@ -97,8 +97,12 @@
             android:name=".culturepass.CulturePassActivity"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar" />
-        <activity android:name=".tourguide.TourGuideCommonActivity"
+        <activity
+            android:name=".tourguide.TourGuideCommonActivity"
             android:label=""
+            android:screenOrientation="portrait"
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity android:name=".tourguidestartpage.TourGuideStartPageActivity"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar"/>
     </application>
