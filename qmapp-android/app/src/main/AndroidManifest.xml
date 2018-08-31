@@ -59,8 +59,8 @@
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
             android:name=".education.EducationCalendarActivity"
-            android:screenOrientation="portrait"
             android:launchMode="singleTask"
+            android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
             android:name=".education.EducationFilterActivity"
@@ -97,6 +97,14 @@
             android:name=".culturepass.CulturePassActivity"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar" />
+        <activity
+            android:name=".tourguide.TourGuideCommonActivity"
+            android:label=""
+            android:screenOrientation="portrait"
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity android:name=".tourguidestartpage.TourGuideStartPageActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/AppTheme.NoActionBar"/>
     </application>
 
 </manifest>
