@@ -307,7 +307,7 @@ public class CalendarActivity extends AppCompatActivity {
                 getString(R.string.local_event_long_description),
                 "14:00", "16:00", false, timeStamp,
                 "no", "Museum of Islamic Art, Atrium", 40, "MIA",
-                "Gallery tour", "Adults");
+                "Gallery", "Adults");
         return localEvent;
     }
 

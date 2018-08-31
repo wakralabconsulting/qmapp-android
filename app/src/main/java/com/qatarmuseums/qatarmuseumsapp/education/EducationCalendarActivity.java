@@ -7,10 +7,11 @@ import android.content.ContentValues;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
-import android.graphics.Color;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.provider.CalendarContract;
 import android.provider.Settings;
 import android.support.annotation.NonNull;
@@ -34,21 +35,22 @@ import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.qatarmuseums.qatarmuseumsapp.QMDatabase;
 import com.qatarmuseums.qatarmuseumsapp.R;
 import com.qatarmuseums.qatarmuseumsapp.apicall.APIClient;
 import com.qatarmuseums.qatarmuseumsapp.apicall.APIInterface;
+import com.qatarmuseums.qatarmuseumsapp.detailspage.DetailsActivity;
 import com.qatarmuseums.qatarmuseumsapp.utils.Util;
-import com.shrikanthravi.collapsiblecalendarview.data.Day;
 import com.shrikanthravi.collapsiblecalendarview.widget.CollapsibleCalendar;
 
 import java.io.IOException;
-import java.text.DateFormat;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
+import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Date;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.GregorianCalendar;
+import java.util.List;
 import java.util.TimeZone;
 
 import butterknife.BindView;
@@ -84,8 +86,6 @@ public class EducationCalendarActivity extends AppCompatActivity {
     String institutionFilter, ageGroupFilter, programmeTypeFilter;
     long selectedDate, todayDate;
     boolean isDateSelected = false;
-    SharedPreferences datePref;
-    SharedPreferences.Editor editor;
     Util util;
     Calendar calendarInstance;
     ContentResolver contentResolver;
@@ -93,6 +93,14 @@ public class EducationCalendarActivity extends AppCompatActivity {
     int REQUEST_PERMISSION_SETTING = 110;
     ContentValues cv;
     private Dialog dialog;
+    private QMDatabase qmDatabase;
+    private Integer eventsTableRowCount;
+    EducationalCalendarEventsTableEnglish educationalCalendarEventsTableEnglish;
+    EducationalCalendarEventsTableArabic educationalCalendarEventsTableArabic;
+    private String language;
+    private SharedPreferences qmPreferences;
+    private int appLanguage;
+    private Calendar today;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -103,7 +111,11 @@ public class EducationCalendarActivity extends AppCompatActivity {
         toolbar_title.setText(getResources().getString(R.string.education_calendar_activity_tittle));
         collapsibleCalendar = (CollapsibleCalendar) findViewById(R.id.collapsibleCalendarView);
         eventListView = (RecyclerView) findViewById(R.id.event_list);
+        util = new Util();
+        qmPreferences = PreferenceManager.getDefaultSharedPreferences(this);
+        appLanguage = qmPreferences.getInt("AppLanguage", 1);
 
+        qmDatabase = QMDatabase.getInstance(EducationCalendarActivity.this);
         zoomOutAnimation = AnimationUtils.loadAnimation(getApplicationContext(),
                 R.anim.zoom_out_more);
         backArrow.setOnTouchListener(new View.OnTouchListener() {
@@ -133,19 +145,6 @@ public class EducationCalendarActivity extends AppCompatActivity {
             }
         });
 
-        
-        String mDate = collapsibleCalendar.getSelectedDay().getDay() + "/"
-                + collapsibleCalendar.getSelectedDay().getMonth()
-                + "/" + collapsibleCalendar.getSelectedDay().getYear();
-        DateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
-        Date date = null;
-        try {
-            date = (Date) dateFormat.parse(mDate);
-            todayDate = date.getTime();
-
-        } catch (ParseException e) {
-            e.printStackTrace();
-        }
         if (institutionFilter == null) {
             institutionFilter = "any";
         }
@@ -155,35 +154,53 @@ public class EducationCalendarActivity extends AppCompatActivity {
         if (programmeTypeFilter == null) {
             programmeTypeFilter = "any";
         }
-        if (isDateSelected) {
-            eventListView.setVisibility(View.GONE);
-            progressBar.setVisibility(View.VISIBLE);
-            getEducationCalendarDataFromApi(selectedDate, institutionFilter, ageGroupFilter, programmeTypeFilter);
+        educationAdapter = new EducationAdapter(EducationCalendarActivity.this, educationEvents);
+        layoutManager = new LinearLayoutManager(getApplication());
+        eventListView.setLayoutManager(layoutManager);
+        eventListView.setItemAnimator(new DefaultItemAnimator());
+        eventListView.setAdapter(educationAdapter);
+
+        today = new GregorianCalendar();
+        today.set(Calendar.HOUR_OF_DAY, 14);
+        today.set(Calendar.MINUTE, 0);
+        today.set(Calendar.SECOND, 0);
+        if (util.isNetworkAvailable(EducationCalendarActivity.this)) {
+            if (isDateSelected) {
+                eventListView.setVisibility(View.GONE);
+                progressBar.setVisibility(View.VISIBLE);
+                getEducationCalendarDataFromApi(selectedDate, institutionFilter, ageGroupFilter, programmeTypeFilter);
+            } else {
+                eventListView.setVisibility(View.GONE);
+                progressBar.setVisibility(View.VISIBLE);
+                getEducationCalendarDataFromApi(today.getTimeInMillis(), institutionFilter, ageGroupFilter, programmeTypeFilter);
+                isDateSelected = false;
+            }
         } else {
-            eventListView.setVisibility(View.GONE);
-            progressBar.setVisibility(View.VISIBLE);
-            getEducationCalendarDataFromApi(todayDate, institutionFilter, ageGroupFilter, programmeTypeFilter);
-            isDateSelected = false;
+            if (isDateSelected) {
+                getEducationCalendarEventsFromDatabase(selectedDate);
+            } else {
+                getEducationCalendarEventsFromDatabase(today.getTimeInMillis());
+            }
         }
 
 
         collapsibleCalendar.setCalendarListener(new CollapsibleCalendar.CalendarListener() {
             @Override
             public void onDaySelect() {
-
-                Day day = collapsibleCalendar.getSelectedDay();
-                String selected = day.getDay() + "/" + (day.getMonth() + 1) + "/" + day.getYear();
-                DateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
-                Date date = null;
-                try {
-                    date = (Date) dateFormat.parse(selected);
-                    selectedDate = date.getTime();
-
-                } catch (ParseException e) {
-                    e.printStackTrace();
-                }
+                calendarInstance = Calendar.getInstance();
+                calendarInstance.set(collapsibleCalendar.getSelectedItem().getYear(),
+                        collapsibleCalendar.getSelectedItem().getMonth(),
+                        collapsibleCalendar.getSelectedItem().getDay());
+                calendarInstance.set(Calendar.HOUR_OF_DAY, 14);
+                calendarInstance.set(Calendar.MINUTE, 0);
+                calendarInstance.set(Calendar.SECOND, 0);
                 isDateSelected = true;
-                getEducationCalendarDataFromApi(selectedDate, institutionFilter, ageGroupFilter, programmeTypeFilter);
+                selectedDate = calendarInstance.getTimeInMillis();
+                if (util.isNetworkAvailable(EducationCalendarActivity.this)) {
+                    getEducationCalendarDataFromApi(calendarInstance.getTimeInMillis(), institutionFilter, ageGroupFilter, programmeTypeFilter);
+                } else {
+                    getEducationCalendarEventsFromDatabase(calendarInstance.getTimeInMillis());
+                }
                 eventListView.setVisibility(View.GONE);
                 progressBar.setVisibility(View.VISIBLE);
             }
@@ -209,12 +226,6 @@ public class EducationCalendarActivity extends AppCompatActivity {
             }
         });
 
-        educationAdapter = new EducationAdapter(EducationCalendarActivity.this, educationEvents);
-        layoutManager = new LinearLayoutManager(getApplication());
-        eventListView.setLayoutManager(layoutManager);
-        eventListView.setItemAnimator(new DefaultItemAnimator());
-        eventListView.setAdapter(educationAdapter);
-
         eventListView.addOnScrollListener(new RecyclerView.OnScrollListener() {
             @Override
             public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
@@ -239,62 +250,80 @@ public class EducationCalendarActivity extends AppCompatActivity {
 
     }
 
+    private void getEducationCalendarEventsFromDatabase(long timeStamp) {
+        progressBar.setVisibility(View.VISIBLE);
+        educationAdapter.clear();
+        String language;
+        if (appLanguage == 1)
+            language = "en";
+        else
+            language = "ar";
+        new EducationCalendarActivity.EventsRowCount(EducationCalendarActivity.this, language, timeStamp / 1000).execute();
+    }
+
     @Override
     protected void onNewIntent(Intent intent) {
         super.onNewIntent(intent);
         institutionFilter = intent.getStringExtra("INSTITUTION");
         ageGroupFilter = intent.getStringExtra("AGE_GROUP");
         programmeTypeFilter = intent.getStringExtra("PROGRAMME_TYPE");
-        if (isDateSelected) {
-            getEducationCalendarDataFromApi(selectedDate, institutionFilter, ageGroupFilter, programmeTypeFilter);
-            eventListView.setVisibility(View.GONE);
-            progressBar.setVisibility(View.VISIBLE);
+        if (util.isNetworkAvailable(EducationCalendarActivity.this)) {
+            if (isDateSelected) {
+                getEducationCalendarDataFromApi(selectedDate, institutionFilter, ageGroupFilter, programmeTypeFilter);
+                eventListView.setVisibility(View.GONE);
+                progressBar.setVisibility(View.VISIBLE);
+            } else {
+                getEducationCalendarDataFromApi(today.getTimeInMillis(), institutionFilter, ageGroupFilter, programmeTypeFilter);
+                isDateSelected = false;
+                eventListView.setVisibility(View.GONE);
+                progressBar.setVisibility(View.VISIBLE);
+            }
         } else {
-            getEducationCalendarDataFromApi(todayDate, institutionFilter, ageGroupFilter, programmeTypeFilter);
-            isDateSelected = false;
-            eventListView.setVisibility(View.GONE);
-            progressBar.setVisibility(View.VISIBLE);
+            if (isDateSelected) {
+                getEducationCalendarEventsFromDatabase(selectedDate);
+                eventListView.setVisibility(View.GONE);
+                progressBar.setVisibility(View.VISIBLE);
+            } else {
+                getEducationCalendarEventsFromDatabase(today.getTimeInMillis());
+                isDateSelected = false;
+                eventListView.setVisibility(View.GONE);
+                progressBar.setVisibility(View.VISIBLE);
+            }
         }
 
     }
 
-    private void getEducationCalendarDataFromApi(final long date, String institute, String ageGroup, String programmeType) {
+    private void getEducationCalendarDataFromApi(long date, String institute, String ageGroup, String programmeType) {
         progressBar.setVisibility(View.VISIBLE);
         APIInterface apiService =
                 APIClient.getTempClient().create(APIInterface.class);
+        if (appLanguage == 1) {
+            language = "en";
+        } else {
+            language = "ar";
+        }
         Call<ArrayList<EducationEvents>> call = apiService.
-                getEducationCalendarDetails(date, institute, ageGroup, programmeType);
+                getEducationCalendarDetails(language,date / 1000, institute, ageGroup, programmeType);
 
         call.enqueue(new Callback<ArrayList<EducationEvents>>() {
             @Override
             public void onResponse(Call<ArrayList<EducationEvents>> call, Response<ArrayList<EducationEvents>> response) {
                 if (response.isSuccessful()) {
                     if (response.body() != null) {
+
                         educationEvents.clear();
                         progressBar.setVisibility(View.GONE);
+                        noResultFoundTxt.setVisibility(View.GONE);
                         eventListView.setVisibility(View.VISIBLE);
                         educationEvents.addAll(response.body());
                         boolean checkResult = checkWednesdayorSunday();
                         if (!checkResult) {
-                            educationEvents.add(new EducationEvents("15476", null,
-                                    "Walk in Gallery Tours",
-                                    "Join our Museum Guides for a tour of the Museum of Islamic Art's oustanding collection of objects, spread over 1,400 years and across three continents. No booking is required to be a part of the tour.,",
-                                    "Monday - Science Tour\n" +
-                                            "\n" +
-                                            "Tuesday - Techniques Tour (from 1 July onwards)\n" +
-                                            "\n" +
-                                            "Thursday - MIA Architecture Tour\n" +
-                                            "\n" +
-                                            "Friday - Permanent Gallery Tour\n" +
-                                            "\n" +
-                                            "Saturday - Permanent Gallery Tour,",
-                                    "Museum of Islamic Art,Artiium",
-                                    "MIA", "14:00", "16:00",
-                                    "40", "adults", "gallery tour",
-                                    "MIA", "false", String.valueOf(date)
-                            ));
+                            educationEvents.add(loadLocalEvent(calendarInstance.getTimeInMillis() / 1000));
                         }
+                        updateTimeStamp();
+                        sortEventsWithStartTime();
                         educationAdapter.notifyDataSetChanged();
+                        new EventsRowCount(EducationCalendarActivity.this, language, calendarInstance.getTimeInMillis()).execute();
 
                     } else {
                         progressBar.setVisibility(View.GONE);
@@ -320,21 +349,419 @@ public class EducationCalendarActivity extends AppCompatActivity {
 
     }
 
+    private EducationEvents loadLocalEvent(long date) {
+        EducationEvents events = new EducationEvents("15476", null,
+                "Walk in Gallery Tours",
+                "Join our Museum Guides for a tour of the Museum of Islamic Art's oustanding collection of objects, spread over 1,400 years and across three continents. No booking is required to be a part of the tour.,",
+                "Monday - Science Tour\n" +
+                        "\n" +
+                        "Tuesday - Techniques Tour (from 1 July onwards)\n" +
+                        "\n" +
+                        "Thursday - MIA Architecture Tour\n" +
+                        "\n" +
+                        "Friday - Permanent Gallery Tour\n" +
+                        "\n" +
+                        "Saturday - Permanent Gallery Tour,",
+                "Museum of Islamic Art,Artiium",
+                "MIA", "14:00", "16:00",
+                "40", "Adults", "Gallery",
+                "MIA", "false", String.valueOf(date)
+        );
+        return events;
+    }
+
+    public class EventsRowCount extends AsyncTask<Void, Void, Integer> {
+
+        private WeakReference<EducationCalendarActivity> activityReference;
+        String language;
+        long timeStamp;
+
+        EventsRowCount(EducationCalendarActivity context, String apiLanguage, long timeStamp) {
+            activityReference = new WeakReference<>(context);
+            language = apiLanguage;
+            this.timeStamp = timeStamp;
+        }
+
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+        }
+
+        @Override
+        protected void onPostExecute(Integer integer) {
+            eventsTableRowCount = integer;
+            if (eventsTableRowCount > 0) {
+                if (educationEvents.size() > 0 && util.isNetworkAvailable(EducationCalendarActivity.this))
+                    new CheckEventRowExist(EducationCalendarActivity.this, language).execute();
+                else {
+                    if (language.equals("en")) {
+                        new RetriveEnglishTableData(EducationCalendarActivity.this, 1,
+                                timeStamp).execute();
+                    } else {
+                        new RetriveArabicTableData(EducationCalendarActivity.this, 2,
+                                timeStamp).execute();
+                    }
+                }
+            } else if (educationEvents.size() > 0) {
+                new InsertDatabaseTask(EducationCalendarActivity.this, educationalCalendarEventsTableEnglish,
+                        educationalCalendarEventsTableArabic, language).execute();
+            } else {
+                progressBar.setVisibility(View.GONE);
+                eventListView.setVisibility(View.GONE);
+                noResultFoundTxt.setVisibility(View.VISIBLE);
+            }
+        }
+
+        @Override
+        protected Integer doInBackground(Void... voids) {
+            if (language.equals("en"))
+                return activityReference.get().qmDatabase.getEducationCalendarEventsDao().getNumberOfRowsEnglish();
+            else
+                return activityReference.get().qmDatabase.getEducationCalendarEventsDao().getNumberOfRowsArabic();
+
+        }
+    }
+
+    public class CheckEventRowExist extends AsyncTask<Void, Void, Void> {
+
+        private WeakReference<EducationCalendarActivity> activityReference;
+        String language;
+
+        CheckEventRowExist(EducationCalendarActivity context, String apiLanguage) {
+            activityReference = new WeakReference<>(context);
+            language = apiLanguage;
+        }
+
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+        }
+
+        @Override
+        protected void onPostExecute(Void aVoid) {
+            super.onPostExecute(aVoid);
+        }
+
+        @Override
+        protected Void doInBackground(Void... voids) {
+            if (educationEvents.size() > 0) {
+                if (language.equals("en")) {
+                    int n = activityReference.get().qmDatabase.getEducationCalendarEventsDao()
+                            .checkEnglishWithEventDateExist(educationEvents.get(0).getDate(),
+                                    educationEvents.get(0).getEid());
+                    if (n > 0) {
+                        new DeleteEventsTableRow(EducationCalendarActivity.this, language,
+                                Long.parseLong(educationEvents.get(0).getDate())).execute();
+                    } else {
+                        new InsertDatabaseTask(EducationCalendarActivity.this, educationalCalendarEventsTableEnglish,
+                                educationalCalendarEventsTableArabic, language).execute();
+                    }
+                } else {
+                    int n = activityReference.get().qmDatabase.getEducationCalendarEventsDao().checkArabicWithEventDateExist(
+                            educationEvents.get(0).getDate(),educationEvents.get(0).getEid());
+                    if (n > 0) {
+                        new DeleteEventsTableRow(EducationCalendarActivity.this, language,
+                                Long.parseLong(educationEvents.get(0).getDate())).execute();
+                    } else {
+                        new EducationCalendarActivity.InsertDatabaseTask(EducationCalendarActivity.this, educationalCalendarEventsTableEnglish,
+                                educationalCalendarEventsTableArabic, language).execute();
+                    }
+                }
+            }
+            return null;
+        }
+    }
+
+    public class InsertDatabaseTask extends AsyncTask<Void, Void, Boolean> {
+
+        private WeakReference<EducationCalendarActivity> activityReference;
+        private EducationalCalendarEventsTableEnglish educationalCalendarEventsTableEnglish;
+        private EducationalCalendarEventsTableArabic educationalCalendarEventsTableArabic;
+        String language;
+
+        public InsertDatabaseTask(EducationCalendarActivity context,
+                                  EducationalCalendarEventsTableEnglish educationalCalendarEventsTableEnglish,
+                                  EducationalCalendarEventsTableArabic educationalCalendarEventsTableArabic,
+                                  String language) {
+            this.activityReference = new WeakReference<>(context);
+            this.educationalCalendarEventsTableEnglish = educationalCalendarEventsTableEnglish;
+            this.educationalCalendarEventsTableArabic = educationalCalendarEventsTableArabic;
+            this.language = language;
+        }
+
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+        }
+
+        @Override
+        protected void onPostExecute(Boolean aBoolean) {
+            super.onPostExecute(aBoolean);
+        }
+
+        @Override
+        protected Boolean doInBackground(Void... voids) {
+            if (educationEvents != null) {
+                if (language.equals("en")) {
+                    for (int i = 0; i < educationEvents.size(); i++) {
+                        educationalCalendarEventsTableEnglish = new EducationalCalendarEventsTableEnglish(
+                                educationEvents.get(i).getEid(),
+                                educationEvents.get(i).getTitle(),
+                                educationEvents.get(i).getDate(),
+                                educationEvents.get(i).getInstitution(),
+                                educationEvents.get(i).getAge_group(),
+                                educationEvents.get(i).getProgram_type(),
+                                educationEvents.get(i).getStart_time(),
+                                educationEvents.get(i).getEnd_time(),
+                                educationEvents.get(i).getRegistration(),
+                                educationEvents.get(i).getMax_group_size(),
+                                educationEvents.get(i).getShort_desc(),
+                                educationEvents.get(i).getLong_desc(),
+                                educationEvents.get(i).getLocation(),
+                                educationEvents.get(i).getCategory(),
+                                educationEvents.get(i).getFilter()
+                        );
+                        activityReference.get().qmDatabase.getEducationCalendarEventsDao().
+                                insertEventsTableEnglish(educationalCalendarEventsTableEnglish);
+
+                    }
+                } else {
+                    for (int i = 0; i < educationEvents.size(); i++) {
+                        educationalCalendarEventsTableArabic = new EducationalCalendarEventsTableArabic(
+                                educationEvents.get(i).getEid(),
+                                educationEvents.get(i).getTitle(),
+                                educationEvents.get(i).getDate(),
+                                educationEvents.get(i).getInstitution(),
+                                educationEvents.get(i).getAge_group(),
+                                educationEvents.get(i).getProgram_type(),
+                                educationEvents.get(i).getStart_time(),
+                                educationEvents.get(i).getEnd_time(),
+                                educationEvents.get(i).getRegistration(),
+                                educationEvents.get(i).getMax_group_size(),
+                                educationEvents.get(i).getShort_desc(),
+                                educationEvents.get(i).getLong_desc(),
+                                educationEvents.get(i).getLocation(),
+                                educationEvents.get(i).getCategory(),
+                                educationEvents.get(i).getFilter()
+                        );
+                        activityReference.get().qmDatabase.getEducationCalendarEventsDao().
+                                insertEventsTableArabic(educationalCalendarEventsTableArabic);
+
+                    }
+                }
+            }
+            return true;
+        }
+    }
+
+
+    public class DeleteEventsTableRow extends AsyncTask<Void, Void, Void> {
+
+        private WeakReference<EducationCalendarActivity> activityReference;
+        String language;
+        long timestamp;
+
+        DeleteEventsTableRow(EducationCalendarActivity context, String apiLanguage, long date) {
+            activityReference = new WeakReference<>(context);
+            language = apiLanguage;
+            timestamp = date;
+        }
+
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+        }
+
+        @Override
+        protected void onPostExecute(Void aVoid) {
+            new EducationCalendarActivity.InsertDatabaseTask(EducationCalendarActivity.this, educationalCalendarEventsTableEnglish,
+                    educationalCalendarEventsTableArabic, language).execute();
+
+        }
+
+        @Override
+        protected Void doInBackground(Void... voids) {
+            if (language.equals("en")) {
+                activityReference.get().qmDatabase.getEducationCalendarEventsDao().deleteEnglishEventsWithDate(
+                        educationEvents.get(0).getDate());
+
+            } else {
+                activityReference.get().qmDatabase.getEducationCalendarEventsDao().deleteArabicEventsWithDate(
+                        educationEvents.get(0).getDate());
+            }
+
+            return null;
+        }
+    }
+
+    public class RetriveEnglishTableData extends AsyncTask<Void, Void, List<EducationalCalendarEventsTableEnglish>> {
+
+        private WeakReference<EducationCalendarActivity> activityReference;
+        int language;
+        long eventDate;
+
+        RetriveEnglishTableData(EducationCalendarActivity context, int appLanguage, long eventDate) {
+            activityReference = new WeakReference<>(context);
+            language = appLanguage;
+            this.eventDate = eventDate;
+        }
+
+
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+        }
+
+        @Override
+        protected void onPostExecute(List<EducationalCalendarEventsTableEnglish> educationalCalendarEventsTableEnglish) {
+            educationEvents.clear();
+            if (educationalCalendarEventsTableEnglish.size() > 0) {
+                for (int i = 0; i < educationalCalendarEventsTableEnglish.size(); i++) {
+                    EducationEvents educationEventsList = new EducationEvents(
+                            educationalCalendarEventsTableEnglish.get(i).getEvent_id(),
+                            educationalCalendarEventsTableEnglish.get(i).getFilter(),
+                            educationalCalendarEventsTableEnglish.get(i).getEvent_title(),
+                            educationalCalendarEventsTableEnglish.get(i).getEvent_short_description(),
+                            educationalCalendarEventsTableEnglish.get(i).getEvent_long_description(),
+                            educationalCalendarEventsTableEnglish.get(i).getLocation(),
+                            educationalCalendarEventsTableEnglish.get(i).getEvent_institution(),
+                            educationalCalendarEventsTableEnglish.get(i).getEvent_start_time(),
+                            educationalCalendarEventsTableEnglish.get(i).getEvent_end_time(),
+                            educationalCalendarEventsTableEnglish.get(i).getMax_group_size(),
+                            educationalCalendarEventsTableEnglish.get(i).getEvent_age_group(),
+                            educationalCalendarEventsTableEnglish.get(i).getEvent_program_type(),
+                            educationalCalendarEventsTableEnglish.get(i).getCategory(),
+                            educationalCalendarEventsTableEnglish.get(i).getEvent_registration(),
+                            educationalCalendarEventsTableEnglish.get(i).getEvent_date()
+                    );
+                    educationEvents.add(i, educationEventsList);
+                }
+                educationAdapter.notifyDataSetChanged();
+                eventListView.setVisibility(View.VISIBLE);
+                noResultFoundTxt.setVisibility(View.GONE);
+            } else {
+                progressBar.setVisibility(View.GONE);
+                eventListView.setVisibility(View.GONE);
+                noResultFoundTxt.setVisibility(View.VISIBLE);
+            }
+            progressBar.setVisibility(View.GONE);
+        }
+
+        @Override
+        protected List<EducationalCalendarEventsTableEnglish> doInBackground(Void... voids) {
+            if (institutionFilter.equalsIgnoreCase("any")) {
+                return activityReference.get().qmDatabase.getEducationCalendarEventsDao().getAllEventsEnglish(String.valueOf(eventDate));
+
+            } else {
+                return activityReference.get().qmDatabase.getEducationCalendarEventsDao().getEventsWithDateEnglish(String.valueOf(eventDate), institutionFilter,
+                        ageGroupFilter, programmeTypeFilter);
+            }
+        }
+    }
+
+    public class RetriveArabicTableData extends AsyncTask<Void, Void, List<EducationalCalendarEventsTableArabic>> {
+
+        private WeakReference<EducationCalendarActivity> activityReference;
+        int language;
+        long eventDate;
+
+        RetriveArabicTableData(EducationCalendarActivity context, int appLanguage, long eventDate) {
+            activityReference = new WeakReference<>(context);
+            language = appLanguage;
+            this.eventDate = eventDate;
+        }
+
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+        }
+
+        @Override
+        protected void onPostExecute(List<EducationalCalendarEventsTableArabic> educationalCalendarEventsTableArabic) {
+            educationEvents.clear();
+            if (educationalCalendarEventsTableArabic.size() > 0) {
+                for (int i = 0; i < educationalCalendarEventsTableArabic.size(); i++) {
+                    EducationEvents educationEventsList = new EducationEvents(
+                            educationalCalendarEventsTableArabic.get(i).getEvent_id(),
+                            educationalCalendarEventsTableArabic.get(i).getFilter(),
+                            educationalCalendarEventsTableArabic.get(i).getEvent_title(),
+                            educationalCalendarEventsTableArabic.get(i).getEvent_short_description(),
+                            educationalCalendarEventsTableArabic.get(i).getEvent_long_description(),
+                            educationalCalendarEventsTableArabic.get(i).getLocation(),
+                            educationalCalendarEventsTableArabic.get(i).getEvent_institution(),
+                            educationalCalendarEventsTableArabic.get(i).getEvent_start_time(),
+                            educationalCalendarEventsTableArabic.get(i).getEvent_end_time(),
+                            educationalCalendarEventsTableArabic.get(i).getMax_group_size(),
+                            educationalCalendarEventsTableArabic.get(i).getEvent_age_group(),
+                            educationalCalendarEventsTableArabic.get(i).getEvent_program_type(),
+                            educationalCalendarEventsTableArabic.get(i).getCategory(),
+                            educationalCalendarEventsTableArabic.get(i).getEvent_registration(),
+                            educationalCalendarEventsTableArabic.get(i).getEvent_date()
+                    );
+                    educationEvents.add(i, educationEventsList);
+                }
+                educationAdapter.notifyDataSetChanged();
+                eventListView.setVisibility(View.VISIBLE);
+                noResultFoundTxt.setVisibility(View.GONE);
+            } else {
+                progressBar.setVisibility(View.GONE);
+                eventListView.setVisibility(View.GONE);
+                noResultFoundTxt.setVisibility(View.VISIBLE);
+            }
+            progressBar.setVisibility(View.GONE);
+        }
+
+        @Override
+        protected List<EducationalCalendarEventsTableArabic> doInBackground(Void... voids) {
+
+            if (institutionFilter.equalsIgnoreCase("any")) {
+
+                return activityReference.get().qmDatabase.getEducationCalendarEventsDao().getAllEventsArabic(String.valueOf(eventDate));
+
+            } else {
+                return activityReference.get().qmDatabase.getEducationCalendarEventsDao().getEventsWithDateArabic(String.valueOf(eventDate), institutionFilter,
+                        ageGroupFilter, programmeTypeFilter);
+            }
+        }
+    }
+
+    public void updateTimeStamp() {
+        for (int i = 0; i < educationEvents.size(); i++) {
+            educationEvents.get(i).setDate(String.valueOf(calendarInstance.getTimeInMillis() / 1000));
+        }
+    }
+
+    public void sortEventsWithStartTime() {
+        Collections.sort(educationEvents, new Comparator<EducationEvents>() {
+            @Override
+            public int compare(EducationEvents o1, EducationEvents o2) {
+                return o1.getStart_time().compareTo(o2.getStart_time());
+            }
+        });
+    }
+
     private boolean checkWednesdayorSunday() {
 
-        if (collapsibleCalendar.getSelectedItem() == null)
+        if (collapsibleCalendar.getSelectedItem() == null) {
             calendarInstance = new GregorianCalendar();
-        else {
+            calendarInstance.set(Calendar.HOUR_OF_DAY, 14);
+            calendarInstance.set(Calendar.MINUTE, 0);
+            calendarInstance.set(Calendar.SECOND, 0);
+        } else {
             calendarInstance = Calendar.getInstance();
             calendarInstance.set(collapsibleCalendar.getSelectedItem().getYear(),
                     collapsibleCalendar.getSelectedItem().getMonth(),
                     collapsibleCalendar.getSelectedItem().getDay());
+            calendarInstance.set(Calendar.HOUR_OF_DAY, 14);
+            calendarInstance.set(Calendar.MINUTE, 0);
+            calendarInstance.set(Calendar.SECOND, 0);
         }
         if (calendarInstance.get(Calendar.DAY_OF_WEEK) == Calendar.SUNDAY ||
                 calendarInstance.get(Calendar.DAY_OF_WEEK) == Calendar.WEDNESDAY) {
             return true;
         } else
             return false;
+
     }
 
     public void showDialog(final String buttonText
