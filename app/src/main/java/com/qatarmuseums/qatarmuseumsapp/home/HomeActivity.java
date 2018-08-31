@@ -484,19 +484,24 @@ public class HomeActivity extends BaseActivity {
 
         @Override
         protected void onPostExecute(List<HomePageTableEnglish> homePageTableEnglishes) {
-            homeLists.clear();
+            if (homePageTableEnglishes.size()>0) {
+                homeLists.clear();
+                for (int i = 0; i < homePageTableEnglishes.size(); i++) {
+                    HomeList exhibitonObject = new HomeList(homePageTableEnglishes.get(i).getName()
+                            , String.valueOf(homePageTableEnglishes.get(i).getQatarmuseum_id()),
+                            homePageTableEnglishes.get(i).getImage(),
+                            homePageTableEnglishes.get(i).getTourguide_available());
+                    homeLists.add(i, exhibitonObject);
+                }
 
-            for (int i = 0; i < homePageTableEnglishes.size(); i++) {
-                HomeList exhibitonObject = new HomeList(homePageTableEnglishes.get(i).getName()
-                        , String.valueOf(homePageTableEnglishes.get(i).getQatarmuseum_id()),
-                        homePageTableEnglishes.get(i).getImage(),
-                        homePageTableEnglishes.get(i).getTourguide_available());
-                homeLists.add(i, exhibitonObject);
+
+                mAdapter.notifyDataSetChanged();
+                progressBar.setVisibility(View.GONE);
+            }else {
+                progressBar.setVisibility(View.GONE);
+                recyclerView.setVisibility(View.GONE);
+                noResultFoundLayout.setVisibility(View.VISIBLE);
             }
-
-
-            mAdapter.notifyDataSetChanged();
-            progressBar.setVisibility(View.GONE);
 
 
         }
@@ -521,20 +526,26 @@ public class HomeActivity extends BaseActivity {
 
         @Override
         protected void onPostExecute(List<HomePageTableArabic> homePageTableArabics) {
-            homeLists.clear();
+            if (homePageTableArabics.size()>0) {
+                homeLists.clear();
+                for (int i = 0; i < homePageTableArabics.size(); i++) {
+                    HomeList exhibitonObject = new HomeList(homePageTableArabics.get(i).getName()
+                            , String.valueOf(homePageTableArabics.get(i).getQatarmuseum_id()),
+                            homePageTableArabics.get(i).getImage(),
+                            homePageTableArabics.get(i).getTourguide_available());
+                    homeLists.add(i, exhibitonObject);
+                }
 
-            for (int i = 0; i < homePageTableArabics.size(); i++) {
-                HomeList exhibitonObject = new HomeList(homePageTableArabics.get(i).getName()
-                        , String.valueOf(homePageTableArabics.get(i).getQatarmuseum_id()),
-                        homePageTableArabics.get(i).getImage(),
-                        homePageTableArabics.get(i).getTourguide_available());
-                homeLists.add(i, exhibitonObject);
+
+                mAdapter.notifyDataSetChanged();
+                progressBar.setVisibility(View.GONE);
+            }else {
+                progressBar.setVisibility(View.GONE);
+                recyclerView.setVisibility(View.GONE);
+                noResultFoundLayout.setVisibility(View.VISIBLE);
             }
-
-
-            mAdapter.notifyDataSetChanged();
-            progressBar.setVisibility(View.GONE);
         }
+
     }
 
     public void getDataFromDataBase(int language) {
