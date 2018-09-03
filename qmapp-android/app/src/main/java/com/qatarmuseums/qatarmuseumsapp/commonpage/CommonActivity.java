@@ -229,7 +229,7 @@ public class CommonActivity extends AppCompatActivity {
             @Override
             public void onResponse(Call<ArrayList<CommonModel>> call, Response<ArrayList<CommonModel>> response) {
                 if (response.isSuccessful()) {
-                    if (response.body() != null) {
+                    if (response.body() != null && response.body().size() > 0) {
                         recyclerView.setVisibility(View.VISIBLE);
                         models.addAll(response.body());
                         mAdapter.notifyDataSetChanged();
