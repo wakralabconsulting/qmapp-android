@@ -456,9 +456,8 @@ public class EducationCalendarActivity extends AppCompatActivity {
                                 new UpdateEventsTableRow(EducationCalendarActivity.this, language,
                                         i, educationEvents.get(i).getDate(), educationEvents.get(i).getEid()).execute();
                             } else {
-                                new InsertDatabaseTask(EducationCalendarActivity.this, educationalCalendarEventsTableEnglish,
-                                        educationalCalendarEventsTableArabic, language).execute();
-                                break;
+                                new InsertSingleElementDatabaseTask(EducationCalendarActivity.this, educationalCalendarEventsTableEnglish,
+                                        educationalCalendarEventsTableArabic, language,i).execute();
                             }
                         }
                     } else {
@@ -477,8 +476,8 @@ public class EducationCalendarActivity extends AppCompatActivity {
                                 new UpdateEventsTableRow(EducationCalendarActivity.this, language,
                                         i, educationEvents.get(i).getDate(), educationEvents.get(i).getEid()).execute();
                             } else {
-                                new InsertDatabaseTask(EducationCalendarActivity.this, educationalCalendarEventsTableEnglish,
-                                        educationalCalendarEventsTableArabic, language).execute();
+                                new InsertSingleElementDatabaseTask(EducationCalendarActivity.this, educationalCalendarEventsTableEnglish,
+                                        educationalCalendarEventsTableArabic, language,i).execute();
                                 break;
                             }
                         }
@@ -553,6 +552,67 @@ public class EducationCalendarActivity extends AppCompatActivity {
                 );
             }
             return null;
+        }
+    }
+
+    public class InsertSingleElementDatabaseTask extends AsyncTask<Void, Void, Boolean> {
+
+        private WeakReference<EducationCalendarActivity> activityReference;
+        private EducationalCalendarEventsTableEnglish educationalCalendarEventsTableEnglish;
+        private EducationalCalendarEventsTableArabic educationalCalendarEventsTableArabic;
+        String language;
+        int position;
+
+        public InsertSingleElementDatabaseTask(EducationCalendarActivity context,
+                                  EducationalCalendarEventsTableEnglish educationalCalendarEventsTableEnglish,
+                                  EducationalCalendarEventsTableArabic educationalCalendarEventsTableArabic,
+                                  String language,int pos) {
+            this.activityReference = new WeakReference<>(context);
+            this.educationalCalendarEventsTableEnglish = educationalCalendarEventsTableEnglish;
+            this.educationalCalendarEventsTableArabic = educationalCalendarEventsTableArabic;
+            this.language = language;
+            this.position=pos;
+        }
+
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+        }
+
+        @Override
+        protected void onPostExecute(Boolean aBoolean) {
+            super.onPostExecute(aBoolean);
+        }
+
+        @Override
+        protected Boolean doInBackground(Void... voids) {
+            if (educationEvents != null) {
+                if (language.equals("en")) {
+                    educationalCalendarEventsTableEnglish = new EducationalCalendarEventsTableEnglish(
+                            educationEvents.get(position).getEid(),
+                            educationEvents.get(position).getTitle(),
+                            educationEvents.get(position).getDate(),
+                            educationEvents.get(position).getInstitution(),
+                            educationEvents.get(position).getAge_group(),
+                            educationEvents.get(position).getProgram_type(),
+                            educationEvents.get(position).getStart_time(),
+                            educationEvents.get(position).getEnd_time(),
+                            educationEvents.get(position).getRegistration(),
+                            educationEvents.get(position).getMax_group_size(),
+                            educationEvents.get(position).getShort_desc(),
+                            educationEvents.get(position).getLong_desc(),
+                            educationEvents.get(position).getLocation(),
+                            educationEvents.get(position).getCategory(),
+                            educationEvents.get(position).getFilter()
+                    );
+                    activityReference.get().qmDatabase.getEducationCalendarEventsDao().
+                            insertEventsTableEnglish(educationalCalendarEventsTableEnglish);
+
+                }else{
+
+                }
+            }
+            return true;
         }
     }
 
