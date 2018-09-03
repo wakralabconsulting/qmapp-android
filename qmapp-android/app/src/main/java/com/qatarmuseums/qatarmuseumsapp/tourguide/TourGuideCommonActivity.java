@@ -7,7 +7,10 @@ import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.view.MotionEvent;
 import android.view.View;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -26,6 +29,7 @@ public class TourGuideCommonActivity extends AppCompatActivity {
     RecyclerView recyclerView;
     Intent intent;
     ImageView backButton;
+    private Animation zoomOutAnimation;
     String comingFrom;
     private TourGuideAdapter mAdapter;
     private ArrayList<TourGuideList> tourGuideList = new ArrayList<>();
@@ -65,7 +69,7 @@ public class TourGuideCommonActivity extends AppCompatActivity {
                             if (position==0){
                                 tourguideSubtitleLayout.setVisibility(View.VISIBLE);
                                 exploreLayout.setVisibility(View.VISIBLE);
-                                tourguideMainTitle.setText(getString(R.string.tourguide_title));
+                                tourguideMainTitle.setText(getString(R.string.mia_tour_guide));
                                 tourguideMainDesc.setText(getString(R.string.tourguide_title_desc));
                                 tourguideSubTitle.setText(getString(R.string.tourguide_title));
                                 tourguideSubDesc.setText(getString(R.string.tourguide_subtitle_desc));
@@ -88,13 +92,12 @@ public class TourGuideCommonActivity extends AppCompatActivity {
         if (!comingFrom.equals(getString(R.string.sidemenu_text))) {
             tourguideSubtitleLayout.setVisibility(View.VISIBLE);
             exploreLayout.setVisibility(View.VISIBLE);
-            tourguideMainTitle.setText(getString(R.string.tourguide_title));
+            tourguideMainTitle.setText(getString(R.string.mia_tour_guide));
             tourguideMainDesc.setText(getString(R.string.tourguide_title_desc));
             tourguideSubTitle.setText(getString(R.string.tourguide_title));
             tourguideSubDesc.setText(getString(R.string.tourguide_subtitle_desc));
             tourGuideList.clear();
             prepareMiaTourGuideData();
-            recyclerView.scrollToPosition(0);
         } else {
             tourguideSubtitleLayout.setVisibility(View.GONE);
             exploreLayout.setVisibility(View.GONE);
@@ -102,31 +105,29 @@ public class TourGuideCommonActivity extends AppCompatActivity {
             tourguideMainDesc.setText(getString(R.string.tourguide_sidemenu_title_desc));
             tourGuideList.clear();
             prepareSidemenuTourGuideData();
-            recyclerView.scrollToPosition(0);
 
         }
+
         backButton.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View view) {
-                if (!comingFrom.equals(getString(R.string.sidemenu_text))) {
-                    finish();
-                } else {
-                   if (tourguideSubtitleLayout.getVisibility()==View.VISIBLE){
-                       tourguideSubtitleLayout.setVisibility(View.GONE);
-                       exploreLayout.setVisibility(View.GONE);
-                       tourguideMainTitle.setText(getString(R.string.tourguide_sidemenu_title));
-                       tourguideMainDesc.setText(getString(R.string.tourguide_sidemenu_title_desc));
-                       tourGuideList.clear();
-                       prepareSidemenuTourGuideData();
-                       recyclerView.scrollToPosition(0);
-                   }else {
-                       finish();
-                   }
-
-                }
-
+            public void onClick(View v) {
+                onBackPressed();
             }
         });
+        zoomOutAnimation = AnimationUtils.loadAnimation(getApplicationContext(),
+                R.anim.zoom_out_more);
+        backButton.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                switch (event.getAction()) {
+                    case MotionEvent.ACTION_DOWN:
+                        backButton.startAnimation(zoomOutAnimation);
+                        break;
+                }
+                return false;
+            }
+        });
+
         exploreLayout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -178,7 +179,6 @@ public class TourGuideCommonActivity extends AppCompatActivity {
                 tourguideMainDesc.setText(getString(R.string.tourguide_sidemenu_title_desc));
                 tourGuideList.clear();
                 prepareSidemenuTourGuideData();
-                recyclerView.scrollToPosition(0);
             }else {
                 finish();
             }
