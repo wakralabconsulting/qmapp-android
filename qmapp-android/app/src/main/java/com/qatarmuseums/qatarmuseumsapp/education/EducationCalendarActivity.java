@@ -456,8 +456,8 @@ public class EducationCalendarActivity extends AppCompatActivity {
                                 new UpdateEventsTableRow(EducationCalendarActivity.this, language,
                                         i, educationEvents.get(i).getDate(), educationEvents.get(i).getEid()).execute();
                             } else {
-                                new DeleteEventsTableRow(EducationCalendarActivity.this, language,
-                                        Long.parseLong(educationEvents.get(0).getDate())).execute();
+                                new InsertDatabaseTask(EducationCalendarActivity.this, educationalCalendarEventsTableEnglish,
+                                        educationalCalendarEventsTableArabic, language).execute();
                                 break;
                             }
                         }
@@ -477,8 +477,8 @@ public class EducationCalendarActivity extends AppCompatActivity {
                                 new UpdateEventsTableRow(EducationCalendarActivity.this, language,
                                         i, educationEvents.get(i).getDate(), educationEvents.get(i).getEid()).execute();
                             } else {
-                                new DeleteEventsTableRow(EducationCalendarActivity.this, language,
-                                        Long.parseLong(educationEvents.get(0).getDate())).execute();
+                                new InsertDatabaseTask(EducationCalendarActivity.this, educationalCalendarEventsTableEnglish,
+                                        educationalCalendarEventsTableArabic, language).execute();
                                 break;
                             }
                         }
@@ -635,46 +635,6 @@ public class EducationCalendarActivity extends AppCompatActivity {
                 }
             }
             return true;
-        }
-    }
-
-
-    public class DeleteEventsTableRow extends AsyncTask<Void, Void, Void> {
-
-        private WeakReference<EducationCalendarActivity> activityReference;
-        String language;
-        long timestamp;
-
-        DeleteEventsTableRow(EducationCalendarActivity context, String apiLanguage, long date) {
-            activityReference = new WeakReference<>(context);
-            language = apiLanguage;
-            timestamp = date;
-        }
-
-        @Override
-        protected void onPreExecute() {
-            super.onPreExecute();
-        }
-
-        @Override
-        protected void onPostExecute(Void aVoid) {
-            new EducationCalendarActivity.InsertDatabaseTask(EducationCalendarActivity.this, educationalCalendarEventsTableEnglish,
-                    educationalCalendarEventsTableArabic, language).execute();
-
-        }
-
-        @Override
-        protected Void doInBackground(Void... voids) {
-            if (language.equals("en")) {
-                activityReference.get().qmDatabase.getEducationCalendarEventsDao().deleteEnglishEventsWithDate(
-                        educationEvents.get(0).getDate());
-
-            } else {
-                activityReference.get().qmDatabase.getEducationCalendarEventsDao().deleteArabicEventsWithDate(
-                        educationEvents.get(0).getDate());
-            }
-
-            return null;
         }
     }
 
