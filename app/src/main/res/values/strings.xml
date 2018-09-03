@@ -128,9 +128,9 @@ They exemplify the external influences and internal creativity that inspired thi
     <string name="tourguide_title">Self Guided Tours</string>
     <string name="tourguide_sidemenu_title">TOUR GUIDES</string>
     <string name="start_tour">START TOUR</string>
-    <string name="tourguide_title_desc">Welcome to Qatar Museum Premises. \n Explore the architrcture and the objects on display. \n Scan the QR codes available on the galleries for more information.</string>
+    <string name="tourguide_title_desc">Welcome to Qatar Museum Premises. \n Explore the architrcture and the \nobjects on display. \n Scan the QR codes available on the \ngalleries for more information.</string>
     <string name="tourguide_subtitle">Self Guided Tours</string>
-    <string name="tourguide_sidemenu_title_desc">Welcome to Qatar Museum Premises. \n Select the museums to explore the floors and objects on display. \n Immerse yourself into the object details curated specially for you by our experts.</string>
-    <string name="tourguide_subtitle_desc">You may also try our self guided tours. \n Immerse yourself into the journeys curated specially for you by our experts.</string>
+    <string name="tourguide_sidemenu_title_desc">Welcome to Qatar Museum Premises.\n Select the museums to explore the\n floors and objects on display.\n Immerse yourself into the object details \ncurated specially for you by our \nexperts.</string>
+    <string name="tourguide_subtitle_desc">You may also try our self guided tours. \n Immerse yourself into the journeys \ncurated specially for you by our \nexperts.</string>
     <string name="mia_tour_guide">MIA TOUR GUIDE</string>
 </resources>
