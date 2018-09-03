@@ -72,6 +72,7 @@ public class MuseumActivity extends BaseActivity implements
     Util util;
     private ArrayList<SliderImageModel> sliderImageList = new ArrayList<>();
     private String language;
+    private String museumId;
 
 
     @Override
@@ -85,9 +86,11 @@ public class MuseumActivity extends BaseActivity implements
         appLanguage = qmPreferences.getInt("AppLanguage", 1);
         intent = getIntent();
         sliderImageTitle.setText(intent.getStringExtra("MUSEUMTITLE"));
+        museumId = intent.getStringExtra("MUSEUM_ID");
         animCircleIndicator = (InfiniteIndicator) findViewById(R.id.main_indicator_default_circle);
         sliderPlaceholderImage = (ImageView) findViewById(R.id.ads_place_holder);
-        museumHorizontalScrollViewAdapter = new MuseumHorizontalScrollViewAdapter(this, museumHScrollModelList, intent.getStringExtra("MUSEUMTITLE"));
+        museumHorizontalScrollViewAdapter = new MuseumHorizontalScrollViewAdapter(this,
+                museumHScrollModelList, intent.getStringExtra("MUSEUMTITLE"), museumId);
         animCircleIndicator.setVisibility(View.GONE);
         if (appLanguage == english) {
             recyclerviewLayoutManager =
@@ -152,8 +155,10 @@ public class MuseumActivity extends BaseActivity implements
             SnapHelper snapHelperStart = new GravitySnapHelper(Gravity.END);
             snapHelperStart.attachToRecyclerView(recyclerView);
         }
-
-        prepareRecyclerViewData();
+        if (museumId.equals("63"))
+            prepareRecyclerViewDataForMIA();
+        else
+            prepareRecyclerViewData();
         getSliderImagesfromAPI();
 
 
@@ -210,6 +215,27 @@ public class MuseumActivity extends BaseActivity implements
     }
 
     public void prepareRecyclerViewData() {
+        museumHScrollModelList.clear();
+        MuseumHScrollModel model = new MuseumHScrollModel(this,
+                getResources().getString(R.string.museum_about_text), R.drawable.about_icon);
+        museumHScrollModelList.add(model);
+
+        model = new MuseumHScrollModel(this,
+                getResources().getString(R.string.sidemenu_exhibition_text), R.drawable.exhibition_black);
+        museumHScrollModelList.add(model);
+
+        model = new MuseumHScrollModel(this,
+                getResources().getString(R.string.museum_collection_text), R.drawable.collections);
+        museumHScrollModelList.add(model);
+
+        model = new MuseumHScrollModel(this,
+                getResources().getString(R.string.sidemenu_dining_text), R.drawable.dining);
+        museumHScrollModelList.add(model);
+        museumHorizontalScrollViewAdapter.notifyDataSetChanged();
+    }
+
+    public void prepareRecyclerViewDataForMIA() {
+        museumHScrollModelList.clear();
         MuseumHScrollModel model = new MuseumHScrollModel(this,
                 getResources().getString(R.string.museum_about_text), R.drawable.about_icon);
         museumHScrollModelList.add(model);
@@ -340,7 +366,7 @@ public class MuseumActivity extends BaseActivity implements
         } else {
             language = "ar";
         }
-        Call<ArrayList<SliderImageModel>> call = apiService.getMuseumSliderImages(language, "66");
+        Call<ArrayList<SliderImageModel>> call = apiService.getMuseumSliderImages(language, museumId);
         call.enqueue(new Callback<ArrayList<SliderImageModel>>() {
             @Override
             public void onResponse(Call<ArrayList<SliderImageModel>> call, Response<ArrayList<SliderImageModel>> response) {
