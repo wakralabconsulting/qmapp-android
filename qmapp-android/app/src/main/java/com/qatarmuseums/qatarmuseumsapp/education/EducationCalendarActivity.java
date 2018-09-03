@@ -39,7 +39,6 @@ import com.qatarmuseums.qatarmuseumsapp.QMDatabase;
 import com.qatarmuseums.qatarmuseumsapp.R;
 import com.qatarmuseums.qatarmuseumsapp.apicall.APIClient;
 import com.qatarmuseums.qatarmuseumsapp.apicall.APIInterface;
-import com.qatarmuseums.qatarmuseumsapp.detailspage.DetailsActivity;
 import com.qatarmuseums.qatarmuseumsapp.utils.Util;
 import com.shrikanthravi.collapsiblecalendarview.widget.CollapsibleCalendar;
 
@@ -303,7 +302,7 @@ public class EducationCalendarActivity extends AppCompatActivity {
             language = "ar";
         }
         Call<ArrayList<EducationEvents>> call = apiService.
-                getEducationCalendarDetails(language,date / 1000, institute, ageGroup, programmeType);
+                getEducationCalendarDetails(language, date / 1000, institute, ageGroup, programmeType);
 
         call.enqueue(new Callback<ArrayList<EducationEvents>>() {
             @Override
@@ -447,26 +446,111 @@ public class EducationCalendarActivity extends AppCompatActivity {
             if (educationEvents.size() > 0) {
                 if (language.equals("en")) {
                     int n = activityReference.get().qmDatabase.getEducationCalendarEventsDao()
-                            .checkEnglishWithEventDateExist(educationEvents.get(0).getDate(),
-                                    educationEvents.get(0).getEid());
+                            .checkEnglishWithEventDateExist(educationEvents.get(0).getDate());
                     if (n > 0) {
-                        new DeleteEventsTableRow(EducationCalendarActivity.this, language,
-                                Long.parseLong(educationEvents.get(0).getDate())).execute();
+                        for (int i = 0; i < educationEvents.size(); i++) {
+                            int count = activityReference.get().qmDatabase.getEducationCalendarEventsDao()
+                                    .checkEnglishWithEventIdExist(educationEvents.get(i).getDate(),
+                                            educationEvents.get(i).getEid());
+                            if (count > 0) {
+                                new UpdateEventsTableRow(EducationCalendarActivity.this, language,
+                                        i, educationEvents.get(i).getDate(), educationEvents.get(i).getEid()).execute();
+                            } else {
+                                new DeleteEventsTableRow(EducationCalendarActivity.this, language,
+                                        Long.parseLong(educationEvents.get(0).getDate())).execute();
+                                break;
+                            }
+                        }
                     } else {
                         new InsertDatabaseTask(EducationCalendarActivity.this, educationalCalendarEventsTableEnglish,
                                 educationalCalendarEventsTableArabic, language).execute();
                     }
                 } else {
                     int n = activityReference.get().qmDatabase.getEducationCalendarEventsDao().checkArabicWithEventDateExist(
-                            educationEvents.get(0).getDate(),educationEvents.get(0).getEid());
+                            educationEvents.get(0).getDate());
                     if (n > 0) {
-                        new DeleteEventsTableRow(EducationCalendarActivity.this, language,
-                                Long.parseLong(educationEvents.get(0).getDate())).execute();
+                        for (int i = 0; i < educationEvents.size(); i++) {
+                            int count = activityReference.get().qmDatabase.getEducationCalendarEventsDao()
+                                    .checkArabicWithEventIdExist(educationEvents.get(i).getDate(),
+                                            educationEvents.get(i).getEid());
+                            if (count > 0) {
+                                new UpdateEventsTableRow(EducationCalendarActivity.this, language,
+                                        i, educationEvents.get(i).getDate(), educationEvents.get(i).getEid()).execute();
+                            } else {
+                                new DeleteEventsTableRow(EducationCalendarActivity.this, language,
+                                        Long.parseLong(educationEvents.get(0).getDate())).execute();
+                                break;
+                            }
+                        }
                     } else {
                         new EducationCalendarActivity.InsertDatabaseTask(EducationCalendarActivity.this, educationalCalendarEventsTableEnglish,
                                 educationalCalendarEventsTableArabic, language).execute();
                     }
                 }
+            }
+            return null;
+        }
+    }
+
+    public class UpdateEventsTableRow extends AsyncTask<Void, Void, Void> {
+        private WeakReference<EducationCalendarActivity> activityReference;
+        String language;
+        int position;
+        String date;
+        String id;
+
+        UpdateEventsTableRow(EducationCalendarActivity context, String apiLanguage, int p,
+                             String eventDate, String eventId) {
+            activityReference = new WeakReference<>(context);
+            language = apiLanguage;
+            position = p;
+            date = eventDate;
+            id = eventId;
+        }
+
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+        }
+
+        @Override
+        protected void onPostExecute(Void aVoid) {
+            super.onPostExecute(aVoid);
+        }
+
+        @Override
+        protected Void doInBackground(Void... voids) {
+
+            if (language.equals("en")) {
+                // updateEnglishTable table with english name
+
+                activityReference.get().qmDatabase.getEducationCalendarEventsDao().updateEventsEnglish(
+                        educationEvents.get(position).getTitle(),
+                        educationEvents.get(position).getStart_time(),
+                        educationEvents.get(position).getEnd_time(),
+                        educationEvents.get(position).getRegistration(),
+                        educationEvents.get(position).getMax_group_size(),
+                        educationEvents.get(position).getShort_desc(),
+                        educationEvents.get(position).getLong_desc(),
+                        educationEvents.get(position).getLocation(),
+                        educationEvents.get(position).getCategory(),
+                        educationEvents.get(position).getEid()
+                );
+
+
+            } else {
+                activityReference.get().qmDatabase.getEducationCalendarEventsDao().updateEventsArabic(
+                        educationEvents.get(position).getTitle(),
+                        educationEvents.get(position).getStart_time(),
+                        educationEvents.get(position).getEnd_time(),
+                        educationEvents.get(position).getRegistration(),
+                        educationEvents.get(position).getMax_group_size(),
+                        educationEvents.get(position).getShort_desc(),
+                        educationEvents.get(position).getLong_desc(),
+                        educationEvents.get(position).getLocation(),
+                        educationEvents.get(position).getCategory(),
+                        educationEvents.get(position).getEid()
+                );
             }
             return null;
         }
