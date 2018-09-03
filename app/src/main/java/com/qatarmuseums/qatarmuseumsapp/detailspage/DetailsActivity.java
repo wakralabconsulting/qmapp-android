@@ -318,8 +318,8 @@ public class DetailsActivity extends AppCompatActivity implements IPullZoom {
             }
             if (openingTime != null) {
                 this.timingLayout.setVisibility(View.VISIBLE);
-                String time = getResources().getString(R.string.everyday_from) +
-                        " " + openingTime /*+ " " + getResources().getString(R.string.to) + " " +
+                String time = /* getResources().getString(R.string.everyday_from) +" " + */
+                        openingTime /*+ " " + getResources().getString(R.string.to) + " " +
                     closingTime*/;
                 this.timingDetails.setText(time);
             }
@@ -1192,6 +1192,7 @@ public class DetailsActivity extends AppCompatActivity implements IPullZoom {
     }
 
     public void getMuseumAboutDetailsFromAPI(String id, int appLanguage) {
+        commonContentLayout.setVisibility(View.INVISIBLE);
         progressBar.setVisibility(View.VISIBLE);
         final String language;
         if (appLanguage == 1) {
@@ -1201,7 +1202,7 @@ public class DetailsActivity extends AppCompatActivity implements IPullZoom {
         }
         APIInterface apiService =
                 APIClient.getTempClient().create(APIInterface.class);
-        Call<ArrayList<MuseumAboutModel>> call = apiService.getMuseumAboutDetails(language, "63");
+        Call<ArrayList<MuseumAboutModel>> call = apiService.getMuseumAboutDetails(language, id);
         call.enqueue(new Callback<ArrayList<MuseumAboutModel>>() {
             @Override
             public void onResponse(Call<ArrayList<MuseumAboutModel>> call, Response<ArrayList<MuseumAboutModel>> response) {
