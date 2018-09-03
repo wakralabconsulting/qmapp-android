@@ -52,13 +52,6 @@ public interface EducationCalendarTableDao {
     List<EducationalCalendarEventsTableArabic> getEventsWithDateArabic(String eventDateFromAPI, String instituionFilterFromApi,
                                                                        String ageGroupFilter, String programmeFilterApi);
 
-
-    @Query("DELETE FROM educationcalendareventstenglish WHERE event_date = :eventDateFromAPI")
-    void deleteEnglishEventsWithDate(String eventDateFromAPI);
-
-    @Query("DELETE FROM educationcalendareventstarabic WHERE event_date = :eventDateFromAPI")
-    void deleteArabicEventsWithDate(String eventDateFromAPI);
-
     @Query("UPDATE educationcalendareventstenglish SET event_title = :eventTitleFromAPI," +
             "event_start_time = :eventStartTimeFromApi," +
             "event_end_time = :eventEndTimeFromApi," +
