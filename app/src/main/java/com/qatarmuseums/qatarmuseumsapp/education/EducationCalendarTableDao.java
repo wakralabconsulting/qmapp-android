@@ -7,9 +7,6 @@ import android.arch.persistence.room.Insert;
 import android.arch.persistence.room.Query;
 import android.arch.persistence.room.Update;
 
-import com.qatarmuseums.qatarmuseumsapp.calendar.CalendarEventsTableArabic;
-import com.qatarmuseums.qatarmuseumsapp.calendar.CalendarEventsTableEnglish;
-
 import java.util.List;
 
 @Dao
@@ -20,13 +17,19 @@ public interface EducationCalendarTableDao {
     @Query("SELECT COUNT(event_id) FROM educationcalendareventstarabic")
     int getNumberOfRowsArabic();
 
+    @Query("SELECT COUNT(event_id) FROM educationcalendareventstenglish WHERE event_date = :eventDateFromAPI")
+    int checkEnglishWithEventDateExist(String eventDateFromAPI);
+
+    @Query("SELECT COUNT(event_id) FROM educationcalendareventstarabic WHERE event_date = :eventDateFromAPI")
+    int checkArabicWithEventDateExist(String eventDateFromAPI);
+
     @Query("SELECT COUNT(event_id) FROM educationcalendareventstenglish WHERE event_date = :eventDateFromAPI AND "
-            + " event_id=:eventIdFromApi")
-    int checkEnglishWithEventDateExist(String eventDateFromAPI, String eventIdFromApi);
+            + " event_id = :eventIdFromApi")
+    int checkEnglishWithEventIdExist(String eventDateFromAPI, String eventIdFromApi);
 
     @Query("SELECT COUNT(event_id) FROM educationcalendareventstarabic WHERE event_date = :eventDateFromAPI AND "
-            + " event_id=:eventIdFromApi")
-    int checkArabicWithEventDateExist(String eventDateFromAPI, String eventIdFromApi);
+            + " event_id = :eventIdFromApi")
+    int checkArabicWithEventIdExist(String eventDateFromAPI, String eventIdFromApi);
 
 
     @Query("SELECT * FROM educationcalendareventstenglish WHERE event_date = :eventDateFromAPI AND "
@@ -55,6 +58,38 @@ public interface EducationCalendarTableDao {
 
     @Query("DELETE FROM educationcalendareventstarabic WHERE event_date = :eventDateFromAPI")
     void deleteArabicEventsWithDate(String eventDateFromAPI);
+
+    @Query("UPDATE educationcalendareventstenglish SET event_title = :eventTitleFromAPI," +
+            "event_start_time = :eventStartTimeFromApi," +
+            "event_end_time = :eventEndTimeFromApi," +
+            "event_registration=:registrationApi," +
+            "max_group_size=:maxGroupSizeApi," +
+            "event_short_description=:shortDescriptionApi," +
+            "event_long_description=:longDescriptionApi," +
+            "location =:locationFromApi," +
+            "category=:categoryFromApi WHERE event_id=:id")
+    void updateEventsEnglish(String eventTitleFromAPI, String eventStartTimeFromApi,
+                             String eventEndTimeFromApi, String registrationApi,
+                             String maxGroupSizeApi, String shortDescriptionApi,
+                             String longDescriptionApi, String locationFromApi,
+                             String categoryFromApi, String id);
+
+
+    @Query("UPDATE educationcalendareventstarabic SET event_title = :eventTitleFromAPI," +
+            "event_start_time = :eventStartTimeFromApi," +
+            "event_end_time = :eventEndTimeFromApi," +
+            "event_registration=:registrationApi," +
+            "max_group_size=:maxGroupSizeApi," +
+            "event_short_description=:shortDescriptionApi," +
+            "event_long_description=:longDescriptionApi," +
+            "location =:locationFromApi," +
+            "category=:categoryFromApi WHERE event_id=:id")
+    void updateEventsArabic(String eventTitleFromAPI, String eventStartTimeFromApi,
+                            String eventEndTimeFromApi, String registrationApi,
+                            String maxGroupSizeApi, String shortDescriptionApi,
+                            String longDescriptionApi, String locationFromApi,
+                            String categoryFromApi, String id);
+
 
     @Insert
     void insertEventsTableEnglish(EducationalCalendarEventsTableEnglish educationalCalendarEventsTableEnglish);
