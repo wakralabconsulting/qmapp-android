@@ -127,7 +127,9 @@
 
         <activity
             android:name=".floormap.FloorMapActivity"
-            android:label="@string/title_activity_floor_map"></activity>
+            android:screenOrientation="portrait"
+            android:theme="@style/AppTheme.NoActionBar"
+            />
     </application>
 
 </manifest>
