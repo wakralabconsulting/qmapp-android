@@ -38,6 +38,42 @@ public interface EducationCalendarTableDao {
     List<EducationalCalendarEventsTableEnglish> getEventsWithDateEnglish(String eventDateFromAPI, String instituionFilterFromApi,
                                                                          String ageGroupFilter, String programmeFilterApi);
 
+    @Query("SELECT * FROM educationcalendareventstarabic WHERE event_date = :eventDateFromAPI AND "
+            + " event_institution = :instituionFilterFromApi AND " + " event_age_group = :ageGroupFilter AND "
+            + " event_program_type = :programmeFilterApi")
+    List<EducationalCalendarEventsTableArabic> getEventsWithDateArabic(String eventDateFromAPI, String instituionFilterFromApi,
+                                                                       String ageGroupFilter, String programmeFilterApi);
+
+    @Query("SELECT * FROM educationcalendareventstenglish WHERE event_date = :eventDateFromAPI AND "
+            + " event_institution = :instituionFilterFromApi")
+    List<EducationalCalendarEventsTableEnglish> getInstitutionFilterEventsEnglish(String eventDateFromAPI,
+                                                                                  String instituionFilterFromApi);
+
+    @Query("SELECT * FROM educationcalendareventstarabic WHERE event_date = :eventDateFromAPI AND "
+            + " event_institution = :instituionFilterFromApi")
+    List<EducationalCalendarEventsTableArabic> getInstitutionFilterEventsArabic(String eventDateFromAPI,
+                                                                                String instituionFilterFromApi);
+
+    @Query("SELECT * FROM educationcalendareventstenglish WHERE event_date = :eventDateFromAPI AND "
+            + " event_age_group = :ageGroupFilterFromApi")
+    List<EducationalCalendarEventsTableEnglish> getAgeGroupFilterEventsEnglish(String eventDateFromAPI,
+                                                                                  String ageGroupFilterFromApi);
+
+    @Query("SELECT * FROM educationcalendareventstarabic WHERE event_date = :eventDateFromAPI AND "
+            + " event_age_group = :ageGroupFilterFromApi")
+    List<EducationalCalendarEventsTableArabic> getAgeGroupFilterEventsArabic(String eventDateFromAPI,
+                                                                                String ageGroupFilterFromApi);
+
+    @Query("SELECT * FROM educationcalendareventstenglish WHERE event_date = :eventDateFromAPI AND "
+            + " event_program_type = :programmeFilterFromApi")
+    List<EducationalCalendarEventsTableEnglish> getProgrammeFilterEventsEnglish(String eventDateFromAPI,
+                                                                                  String programmeFilterFromApi);
+
+    @Query("SELECT * FROM educationcalendareventstarabic WHERE event_date = :eventDateFromAPI AND "
+            + " event_program_type = :programmeFilterFromApi")
+    List<EducationalCalendarEventsTableArabic> getProgrammeFilterEventsArabic(String eventDateFromAPI,
+                                                                                String programmeFilterFromApi);
+
 
     @Query("SELECT * FROM educationcalendareventstenglish WHERE event_date = :eventDateFromAPI")
     List<EducationalCalendarEventsTableEnglish> getAllEventsEnglish(String eventDateFromAPI);
@@ -46,11 +82,6 @@ public interface EducationCalendarTableDao {
     @Query("SELECT * FROM educationcalendareventstarabic WHERE event_date = :eventDateFromAPI")
     List<EducationalCalendarEventsTableArabic> getAllEventsArabic(String eventDateFromAPI);
 
-    @Query("SELECT * FROM educationcalendareventstarabic WHERE event_date = :eventDateFromAPI AND "
-            + " event_institution = :instituionFilterFromApi AND " + " event_age_group = :ageGroupFilter AND "
-            + " event_program_type = :programmeFilterApi")
-    List<EducationalCalendarEventsTableArabic> getEventsWithDateArabic(String eventDateFromAPI, String instituionFilterFromApi,
-                                                                       String ageGroupFilter, String programmeFilterApi);
 
     @Query("UPDATE educationcalendareventstenglish SET event_title = :eventTitleFromAPI," +
             "event_start_time = :eventStartTimeFromApi," +
