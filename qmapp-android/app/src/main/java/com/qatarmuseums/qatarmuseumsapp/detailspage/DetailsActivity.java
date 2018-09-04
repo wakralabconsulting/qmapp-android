@@ -1207,7 +1207,7 @@ public class DetailsActivity extends AppCompatActivity implements IPullZoom {
             @Override
             public void onResponse(Call<ArrayList<MuseumAboutModel>> call, Response<ArrayList<MuseumAboutModel>> response) {
                 if (response.isSuccessful()) {
-                    if (response.body() != null) {
+                    if (response.body() != null && response.body().size() > 0) {
                         commonContentLayout.setVisibility(View.VISIBLE);
                         museumAboutModels = response.body();
                         timingTitle.setText(R.string.museum_timings);
@@ -1224,7 +1224,7 @@ public class DetailsActivity extends AppCompatActivity implements IPullZoom {
                         new MuseumAboutRowCount(DetailsActivity.this, language).execute();
 
                     } else {
-                        commonContentLayout.setVisibility(View.GONE);
+                        commonContentLayout.setVisibility(View.INVISIBLE);
                         noResultFoundTxt.setVisibility(View.VISIBLE);
                     }
                 } else {
@@ -1253,9 +1253,9 @@ public class DetailsActivity extends AppCompatActivity implements IPullZoom {
     public void getMuseumAboutDetailsFromDatabase(String id, int language) {
         if (language == 1) {
             progressBar.setVisibility(View.VISIBLE);
-            new RetriveMuseumAboutDataEnglish(DetailsActivity.this, language).execute();
+            new RetriveMuseumAboutDataEnglish(DetailsActivity.this, language, id).execute();
         } else {
-            new RetriveMuseumAboutDataArabic(DetailsActivity.this, language).execute();
+            new RetriveMuseumAboutDataArabic(DetailsActivity.this, language, id).execute();
         }
     }
 
@@ -1483,15 +1483,17 @@ public class DetailsActivity extends AppCompatActivity implements IPullZoom {
     public class RetriveMuseumAboutDataEnglish extends AsyncTask<Void, Void, MuseumAboutTableEnglish> {
         private WeakReference<DetailsActivity> activityReference;
         int language;
+        String museumId;
 
-        RetriveMuseumAboutDataEnglish(DetailsActivity context, int appLanguage) {
+        RetriveMuseumAboutDataEnglish(DetailsActivity context, int appLanguage, String museumId) {
             activityReference = new WeakReference<>(context);
             language = appLanguage;
+            this.museumId = museumId;
         }
 
         @Override
         protected MuseumAboutTableEnglish doInBackground(Void... voids) {
-            return activityReference.get().qmDatabase.getMuseumAboutDao().getAllMuseumAboutDataEnglish();
+            return activityReference.get().qmDatabase.getMuseumAboutDao().getMuseumAboutDataEnglish(Integer.parseInt(museumId));
         }
 
         @Override
@@ -1513,7 +1515,7 @@ public class DetailsActivity extends AppCompatActivity implements IPullZoom {
                         museumAboutTableEnglish.getMuseum_lattitude(), museumAboutTableEnglish.getMuseum_longitude());
 
             } else {
-                commonContentLayout.setVisibility(View.GONE);
+                commonContentLayout.setVisibility(View.INVISIBLE);
                 noResultFoundTxt.setVisibility(View.VISIBLE);
             }
             progressBar.setVisibility(View.GONE);
@@ -1523,15 +1525,17 @@ public class DetailsActivity extends AppCompatActivity implements IPullZoom {
     public class RetriveMuseumAboutDataArabic extends AsyncTask<Void, Void, MuseumAboutTableArabic> {
         private WeakReference<DetailsActivity> activityReference;
         int language;
+        String museumId;
 
-        RetriveMuseumAboutDataArabic(DetailsActivity context, int appLanguage) {
+        RetriveMuseumAboutDataArabic(DetailsActivity context, int appLanguage, String museumId) {
             activityReference = new WeakReference<>(context);
             language = appLanguage;
+            this.museumId = museumId;
         }
 
         @Override
         protected MuseumAboutTableArabic doInBackground(Void... voids) {
-            return activityReference.get().qmDatabase.getMuseumAboutDao().getAllMuseumAboutDataArabic();
+            return activityReference.get().qmDatabase.getMuseumAboutDao().getMuseumAboutDataArabic(Integer.parseInt(museumId));
         }
 
         @Override
@@ -1553,7 +1557,7 @@ public class DetailsActivity extends AppCompatActivity implements IPullZoom {
                         museumAboutTableArabic.getMuseum_lattitude(), museumAboutTableArabic.getMuseum_longitude());
 
             } else {
-                commonContentLayout.setVisibility(View.GONE);
+                commonContentLayout.setVisibility(View.INVISIBLE);
                 noResultFoundTxt.setVisibility(View.VISIBLE);
             }
             progressBar.setVisibility(View.GONE);
