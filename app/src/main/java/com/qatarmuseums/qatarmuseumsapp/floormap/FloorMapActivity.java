@@ -4,6 +4,7 @@ import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
+import android.support.design.widget.BottomSheetDialogFragment;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.view.animation.Animation;
@@ -93,7 +94,7 @@ public class FloorMapActivity extends AppCompatActivity implements OnMapReadyCal
             l3_g10_sc1_2, l3_g11_wr15, l3_g13_5, l3_g13_7, l3_g17_3;
     private int selectedLevel = 2;
     private LinearLayout detailsPopup;
-    private ImageView closeButton;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -104,7 +105,6 @@ public class FloorMapActivity extends AppCompatActivity implements OnMapReadyCal
         level1 = (LinearLayout) findViewById(R.id.level_2);
         levelG = (LinearLayout) findViewById(R.id.level_1);
         detailsPopup = (LinearLayout) findViewById(R.id.details_popup);
-        closeButton = (ImageView) findViewById(R.id.close_button);
         SupportMapFragment mapFragment =
                 (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
@@ -147,12 +147,6 @@ public class FloorMapActivity extends AppCompatActivity implements OnMapReadyCal
                 level1.setBackgroundColor(getResources().getColor(R.color.floor_map_buttonbg));
                 levelG.setBackgroundColor(getResources().getColor(R.color.white));
                 mGroundOverlay.setImage(BitmapDescriptorFactory.fromResource(R.drawable.qm_level_1));
-            }
-        });
-        closeButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                hideView(detailsPopup);
             }
         });
 
@@ -385,7 +379,10 @@ public class FloorMapActivity extends AppCompatActivity implements OnMapReadyCal
                 if (detailsPopup.getVisibility()==View.VISIBLE){
                     hideView(detailsPopup);
                 }
-                showView(detailsPopup,marker);
+                //showView(detailsPopup,marker);
+                BottomSheetDialogFragment bottomSheetDialogFragment = new BottomSheet3DialogFragment();
+                bottomSheetDialogFragment.show(getSupportFragmentManager(), bottomSheetDialogFragment.getTag());
+
                 return false;
             }
         });
