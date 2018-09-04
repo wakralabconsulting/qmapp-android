@@ -165,7 +165,6 @@ public class CommonActivity extends AppCompatActivity {
             else
                 getCommonListDataFromDatabase("Public_Arts_List_Page.json");
 
-
         } else if (toolbarTitle.equals(getString(R.string.sidemenu_dining_text))) {
             if (util.isNetworkAvailable(CommonActivity.this))
                 getCommonListAPIDataFromAPI("getDiningList.json");
@@ -271,12 +270,16 @@ public class CommonActivity extends AppCompatActivity {
         }
         APIInterface apiService =
                 APIClient.getClient().create(APIInterface.class);
-        Call<ArrayList<CommonModel>> call = apiService.getCommonpageList(language, pageName);
+        Call<ArrayList<CommonModel>> call;
+        if (id != null)
+            call = apiService.getCommonpageListWithID(language, pageName, id);
+        else
+            call = apiService.getCommonpageList(language, pageName);
         call.enqueue(new Callback<ArrayList<CommonModel>>() {
             @Override
             public void onResponse(Call<ArrayList<CommonModel>> call, Response<ArrayList<CommonModel>> response) {
                 if (response.isSuccessful()) {
-                    if (response.body() != null) {
+                    if (response.body() != null && response.body().size() > 0) {
                         recyclerView.setVisibility(View.VISIBLE);
                         models.addAll(response.body());
                         mAdapter.notifyDataSetChanged();
@@ -1429,9 +1432,9 @@ public class CommonActivity extends AppCompatActivity {
 
     public void getMuseumCollectionListFromDatabase() {
         if (appLanguage == 1) {
-            new RetriveMuseumCollectionDataEnglish(CommonActivity.this, appLanguage).execute();
+            new RetriveMuseumCollectionDataEnglish(CommonActivity.this, appLanguage, id).execute();
         } else {
-            new RetriveMuseumCollectionDataArabic(CommonActivity.this, appLanguage).execute();
+            new RetriveMuseumCollectionDataArabic(CommonActivity.this, appLanguage, id).execute();
         }
     }
 
@@ -1604,10 +1607,12 @@ public class CommonActivity extends AppCompatActivity {
     public class RetriveMuseumCollectionDataEnglish extends AsyncTask<Void, Void, List<MuseumCollectionListTableEnglish>> {
         private WeakReference<CommonActivity> activityReference;
         int language;
+        String museumReference;
 
-        RetriveMuseumCollectionDataEnglish(CommonActivity context, int appLanguage) {
+        RetriveMuseumCollectionDataEnglish(CommonActivity context, int appLanguage, String museumId) {
             activityReference = new WeakReference<>(context);
             language = appLanguage;
+            museumReference = museumId;
         }
 
         @Override
@@ -1617,7 +1622,8 @@ public class CommonActivity extends AppCompatActivity {
 
         @Override
         protected List<MuseumCollectionListTableEnglish> doInBackground(Void... voids) {
-            return activityReference.get().qmDatabase.getMuseumCollectionListDao().getAllDataFromMuseumListEnglishTable();
+            return activityReference.get().qmDatabase.getMuseumCollectionListDao().
+                    getDataFromEnglishTableWithReference(museumReference);
         }
 
         @Override
@@ -1643,10 +1649,12 @@ public class CommonActivity extends AppCompatActivity {
 
         private WeakReference<CommonActivity> activityReference;
         int language;
+        String museumReference;
 
-        RetriveMuseumCollectionDataArabic(CommonActivity context, int appLanguage) {
+        RetriveMuseumCollectionDataArabic(CommonActivity context, int appLanguage, String museumId) {
             activityReference = new WeakReference<>(context);
             language = appLanguage;
+            museumReference = museumId;
         }
 
         @Override
@@ -1674,7 +1682,8 @@ public class CommonActivity extends AppCompatActivity {
 
         @Override
         protected List<MuseumCollectionListTableArabic> doInBackground(Void... voids) {
-            return activityReference.get().qmDatabase.getMuseumCollectionListDao().getAllDataFromMuseumListArabicTable();
+            return activityReference.get().qmDatabase.getMuseumCollectionListDao().
+                    getDataFromArabicTableWithReference(museumReference);
         }
     }
 

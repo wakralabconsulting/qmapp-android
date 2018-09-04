@@ -17,6 +17,12 @@ public interface MuseumCollectionListTableDao {
     @Query("SELECT * FROM museumcollectionlisttableArabic")
     List<MuseumCollectionListTableArabic> getAllDataFromMuseumListArabicTable();
 
+    @Query("SELECT * FROM museumcollectionlisttableEnglish WHERE museum_referance = :museumReferenceFromApi")
+    List<MuseumCollectionListTableEnglish> getDataFromEnglishTableWithReference(String museumReferenceFromApi);
+
+    @Query("SELECT * FROM museumcollectionlisttableArabic WHERE museum_referance = :museumReferenceFromApi")
+    List<MuseumCollectionListTableArabic> getDataFromArabicTableWithReference(String museumReferenceFromApi);
+
     @Query("SELECT COUNT(name) FROM museumcollectionlisttableEnglish")
     int getNumberOfRowsEnglish();
 
@@ -42,11 +48,13 @@ public interface MuseumCollectionListTableDao {
 
     @Insert
     void insertEnglishTable(MuseumCollectionListTableEnglish museumCollectionListTableEnglish);
+
     @Insert
     void insertArabicTable(MuseumCollectionListTableArabic museumCollectionListTableArabic);
 
     @Update
     void updateEnglishTable(MuseumCollectionListTableEnglish museumCollectionListTableEnglish);
+
     @Update
     void updateArabicTable(MuseumCollectionListTableArabic museumCollectionListTableArabic);
 
@@ -61,7 +69,6 @@ public interface MuseumCollectionListTableDao {
 
     @Delete
     void deleteArabicTable(MuseumCollectionListTableArabic... museumCollectionListTableArabics);      // Note... is varargs, here note is an array
-
 
 
 }

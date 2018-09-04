@@ -300,7 +300,7 @@
             android:fontFamily="@font/din_next_lt_pro_regular"
             android:gravity="center"
             android:layout_centerInParent="true"
-            android:text="@string/unable_to_fetch_details"
+            android:text="@string/no_results_text"
             android:textAlignment="center"
             android:textColor="@android:color/black"
             android:textSize="@dimen/font_size_21"
