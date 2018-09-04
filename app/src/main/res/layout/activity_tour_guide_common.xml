@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
@@ -7,51 +7,61 @@
     android:fitsSystemWindows="true"
     tools:context=".tourguide.TourGuideCommonActivity">
 
-    <android.support.v7.widget.RecyclerView
-        android:id="@+id/tourguide_recycler_view"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:background="@color/recycler_background"
-        app:layout_behavior="@string/appbar_scrolling_view_behavior" />
-
     <android.support.design.widget.AppBarLayout
         android:id="@+id/app_bar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:theme="@style/AppTheme.AppBarOverlay">
 
-        <android.support.design.widget.CollapsingToolbarLayout
-            android:id="@+id/toolbar_layout"
+        <android.support.v7.widget.Toolbar
+            android:id="@+id/toolbar"
+            android:layout_width="match_parent"
+            android:layout_height="?android:attr/actionBarSize"
+            app:layout_collapseMode="pin"
+            app:popupTheme="@style/AppTheme.PopupOverlay">
+
+            <ImageView
+                android:id="@+id/toolbar_close"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/back_button" />
+        </android.support.v7.widget.Toolbar>
+    </android.support.design.widget.AppBarLayout>
+
+    <android.support.v4.widget.NestedScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@id/app_bar">
+
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:fitsSystemWindows="true"
-            app:contentScrim="@color/colorPrimaryDark"
-            app:layout_scrollFlags="scroll|exitUntilCollapsed"
-            app:titleEnabled="false"
-            app:toolbarId="@+id/toolbar">
+            android:descendantFocusability="blocksDescendants"
+            android:orientation="vertical">
 
             <LinearLayout
-                xmlns:android="http://schemas.android.com/apk/res/android"
+                android:id="@+id/headerLayout"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_below="@id/app_bar"
                 android:background="@color/white"
+                android:fitsSystemWindows="true"
                 android:gravity="center"
                 android:orientation="vertical"
                 android:paddingBottom="@dimen/padding_5"
                 android:paddingEnd="@dimen/padding_10"
                 android:paddingStart="@dimen/padding_10"
-                android:paddingTop="@dimen/padding_5"
-                app:layout_collapseMode="parallax"
-                android:fitsSystemWindows="true">
+                android:paddingTop="@dimen/padding_5">
 
                 <TextView
                     android:id="@+id/tourguide_tittle"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/padding_10"
                     android:fontFamily="@font/din_next_lt_pro_bold"
                     android:textAlignment="center"
                     android:textColor="@color/tourguide_titile_color"
-                    android:textSize="@dimen/font_size_21"
+                    android:textSize="@dimen/font_size_28"
                     android:visibility="visible" />
 
 
@@ -59,22 +69,23 @@
                     android:id="@+id/tourguide_title_desc"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:layout_marginBottom="@dimen/padding_10"
                     android:layout_marginEnd="@dimen/padding_15"
                     android:layout_marginStart="@dimen/padding_15"
                     android:layout_marginTop="@dimen/padding_10"
                     android:textAlignment="center"
                     android:textColor="@color/black"
-                    android:textSize="@dimen/font_size_16" />
+                    android:textSize="@dimen/font_size_14" />
 
 
                 <LinearLayout
                     android:id="@+id/explore_layout"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginStart="@dimen/padding_30"
-                    android:layout_marginEnd="@dimen/padding_30"
-                    android:layout_marginTop="@dimen/padding_5"
                     android:layout_marginBottom="@dimen/padding_5"
+                    android:layout_marginEnd="@dimen/padding_30"
+                    android:layout_marginStart="@dimen/padding_30"
+                    android:layout_marginTop="@dimen/padding_5"
                     android:background="@drawable/round_corner_skyblue"
                     android:gravity="center"
                     android:orientation="horizontal"
@@ -84,8 +95,8 @@
                         android:layout_width="@dimen/padding_30"
                         android:layout_height="@dimen/padding_30"
                         android:layout_gravity="center"
-                        android:layout_marginEnd="@dimen/padding_15"
-                        android:src="@drawable/tour_guide" />
+                        android:layout_marginEnd="@dimen/padding_5"
+                        android:src="@drawable/explore_icon" />
 
                     <TextView
                         android:layout_width="wrap_content"
@@ -97,7 +108,8 @@
                         android:textAlignment="center"
                         android:textAllCaps="false"
                         android:textColor="@color/black"
-                        android:textSize="@dimen/settings_page_list_item_text_size"
+                        android:textStyle="bold"
+                        android:textSize="@dimen/font_size_16"
                         android:visibility="visible" />
                 </LinearLayout>
 
@@ -105,31 +117,31 @@
                     android:id="@+id/tourguide_subtitle_layout"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:orientation="vertical"
-                    android:visibility="visible"
+                    android:layout_gravity="center"
                     android:gravity="center"
-                    android:layout_gravity="center">
+                    android:orientation="vertical"
+                    android:visibility="visible">
 
                     <TextView
                         android:id="@+id/tourguide_subtittle"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/padding_5"
                         android:fontFamily="@font/din_next_lt_pro_bold"
                         android:textAlignment="center"
                         android:textColor="@color/black"
-                        android:textSize="@dimen/font_size_18"
-                        android:visibility="visible"
-                        android:layout_marginTop="@dimen/padding_5"/>
+                        android:textSize="@dimen/font_size_22"
+                        android:visibility="visible" />
 
 
                     <TextView
                         android:id="@+id/tourguide_subtitle_desc"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
+                        android:layout_marginBottom="@dimen/padding_5"
                         android:layout_marginEnd="@dimen/pading_15"
                         android:layout_marginStart="@dimen/pading_15"
                         android:layout_marginTop="@dimen/padding_5"
-                        android:layout_marginBottom="@dimen/padding_5"
                         android:textAlignment="center"
                         android:textColor="@color/black"
                         android:textSize="@dimen/font_size_16" />
@@ -140,22 +152,14 @@
 
             </LinearLayout>
 
-            <android.support.v7.widget.Toolbar
-                android:id="@+id/toolbar"
+            <android.support.v7.widget.RecyclerView
+                android:id="@+id/tourguide_recycler_view"
                 android:layout_width="match_parent"
-                android:layout_height="?android:attr/actionBarSize"
-                app:layout_collapseMode="pin"
-                app:popupTheme="@style/AppTheme.PopupOverlay">
+                android:layout_height="match_parent"
+                android:layout_below="@id/headerLayout"
+                android:background="@color/recycler_background"
+                android:nestedScrollingEnabled="false" />
+        </LinearLayout>
+    </android.support.v4.widget.NestedScrollView>
 
-                <ImageView
-                    android:id="@+id/toolbar_close"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:src="@drawable/back_button" />
-            </android.support.v7.widget.Toolbar>
-
-        </android.support.design.widget.CollapsingToolbarLayout>
-    </android.support.design.widget.AppBarLayout>
-
-
-</android.support.design.widget.CoordinatorLayout>
+</RelativeLayout>
