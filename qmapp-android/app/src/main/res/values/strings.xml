@@ -96,6 +96,7 @@
     <string name="museum_timings">MUSEUM TIMINGS</string>
     <string name="no_results_text">No results found</string>
     <string name="explore">Explore</string>
+    <string name="level">Level</string>
     <string name="check_network">Check your internet connections</string>
     <string name="collection_details_main_text">As well as being objects of great age and beauty, the ceramics in the museum were also meant to be used.\n\n
 
@@ -133,4 +134,9 @@ They exemplify the external influences and internal creativity that inspired thi
     <string name="tourguide_sidemenu_title_desc">Welcome to Qatar Museum Premises.\n Select the museums to explore the\n floors and objects on display.\n Immerse yourself into the object details \ncurated specially for you by our \nexperts.</string>
     <string name="tourguide_subtitle_desc">You may also try our self guided tours. \n Immerse yourself into the journeys \ncurated specially for you by our \nexperts.</string>
     <string name="mia_tour_guide">MIA TOUR GUIDE</string>
+    <string name="title_activity_floor_map">Map</string>
+    <string name="transparency">Transparency</string>
+    <string name="switch_image">Switch Image</string>
+    <string name="clickable">Clickable</string>
+    <color name="light_gray">#D3D3D3</color>
 </resources>

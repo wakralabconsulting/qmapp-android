@@ -21,6 +21,9 @@
     <color name="background_color">#e6e6e5</color>
     <color name="tourguide_titile_color">#81A6D7</color>
     <color name="semitransparent">#CC000000</color>
+    <color name="gray">#808080</color>
+    <color name="floor_map_background">#E6E6E5</color>
+    <color name="floor_map_buttonbg">#CDD7E0</color>
 
 
 </resources>
