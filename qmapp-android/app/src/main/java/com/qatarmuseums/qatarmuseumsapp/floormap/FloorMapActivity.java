@@ -1,5 +1,8 @@
 package com.qatarmuseums.qatarmuseumsapp.floormap;
 
+import android.content.res.Resources;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
@@ -30,14 +33,18 @@ import com.qatarmuseums.qatarmuseumsapp.R;
 import java.util.ArrayList;
 import java.util.List;
 
-public class FloorMapActivity extends AppCompatActivity implements SeekBar.OnSeekBarChangeListener, OnMapReadyCallback,
+public class FloorMapActivity extends AppCompatActivity implements OnMapReadyCallback,
         GoogleMap.OnGroundOverlayClickListener {
 
     private static final int TRANSPARENCY_MAX = 100;
+    private int normalMapIconWidth=53;
+    private int normalMapIconHeight=67;
+    private int largeMapIconWidth=75;
+    private int largeMapIconHeight=93;
 
     //    private static final LatLng QM = new LatLng(25.295033, 51.538970);
     private static final LatLng QM = new LatLng(25.294730, 51.539021);
-    private static final LatLng QM_CENTER = new LatLng(25.295447, 51.539195);
+    private static final LatLng QM_CENTER = new LatLng(25.295300, 51.539195);
 
     LatLng G6_SC2 = new LatLng(25.295193, 51.539105);
     LatLng G6_SC16 = new LatLng(25.295132, 51.539102);
@@ -72,13 +79,14 @@ public class FloorMapActivity extends AppCompatActivity implements SeekBar.OnSee
     private GroundOverlay mGroundOverlay;
 
     private GroundOverlay mGroundOverlayRotated;
+    Marker selectedMarker;
 
-    private SeekBar mTransparencyBar;
+
 
     private int mCurrentEntry = 0;
     private CameraPosition position;
     GoogleMap googleMap;
-    private Button level2, level1, levelG;
+    private LinearLayout level2, level1, levelG;
     private LinearLayout levelPicker;
     private Marker l2_g1_sc3, l2_g3_sc14, l2_g5_sc6, l2_g8, l2_g8_sc1, l2_g8_sc4_1, l2_g8_sc4_2, l2_g8_sc5,
             l2_g8_sc6_1, l2_g8_sc6_2, l2_g9_sc5_1, l2_g9_sc5_2, l2_g9_sc7, g10, l3_g10_sc1_1,
@@ -91,19 +99,15 @@ public class FloorMapActivity extends AppCompatActivity implements SeekBar.OnSee
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_floor_map);
-        mTransparencyBar = (SeekBar) findViewById(R.id.transparencySeekBar);
-        mTransparencyBar.setMax(TRANSPARENCY_MAX);
-        mTransparencyBar.setProgress(0);
         levelPicker = (LinearLayout) findViewById(R.id.level_picker);
-        level2 = (Button) findViewById(R.id.level_3);
-        level1 = (Button) findViewById(R.id.level_2);
-        levelG = (Button) findViewById(R.id.level_1);
+        level2 = (LinearLayout) findViewById(R.id.level_3);
+        level1 = (LinearLayout) findViewById(R.id.level_2);
+        levelG = (LinearLayout) findViewById(R.id.level_1);
         detailsPopup = (LinearLayout) findViewById(R.id.details_popup);
         closeButton = (ImageView) findViewById(R.id.close_button);
         SupportMapFragment mapFragment =
                 (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
-
         level2.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -112,9 +116,9 @@ public class FloorMapActivity extends AppCompatActivity implements SeekBar.OnSee
                 if (position.zoom > 19)
                     showLevel3();
                 hideLevel2();
-                level2.setBackgroundColor(getResources().getColor(R.color.gray));
-                level1.setBackgroundColor(getResources().getColor(R.color.light_gray));
-                levelG.setBackgroundColor(getResources().getColor(R.color.light_gray));
+                level2.setBackgroundColor(getResources().getColor(R.color.white));
+                level1.setBackgroundColor(getResources().getColor(R.color.floor_map_buttonbg));
+                levelG.setBackgroundColor(getResources().getColor(R.color.floor_map_buttonbg));
                 mGroundOverlay.setImage(BitmapDescriptorFactory.fromResource(R.drawable.qm_level_3));
             }
         });
@@ -127,9 +131,9 @@ public class FloorMapActivity extends AppCompatActivity implements SeekBar.OnSee
                     showLevel2();
                 }
                 hideLevel3();
-                level2.setBackgroundColor(getResources().getColor(R.color.light_gray));
-                level1.setBackgroundColor(getResources().getColor(R.color.gray));
-                levelG.setBackgroundColor(getResources().getColor(R.color.light_gray));
+                level2.setBackgroundColor(getResources().getColor(R.color.floor_map_buttonbg));
+                level1.setBackgroundColor(getResources().getColor(R.color.white));
+                levelG.setBackgroundColor(getResources().getColor(R.color.floor_map_buttonbg));
                 mGroundOverlay.setImage(BitmapDescriptorFactory.fromResource(R.drawable.qm_level_2));
             }
         });
@@ -139,22 +143,26 @@ public class FloorMapActivity extends AppCompatActivity implements SeekBar.OnSee
                 selectedLevel = 0;
                 hideLevel2();
                 hideLevel3();
-                level2.setBackgroundColor(getResources().getColor(R.color.light_gray));
-                level1.setBackgroundColor(getResources().getColor(R.color.light_gray));
-                levelG.setBackgroundColor(getResources().getColor(R.color.gray));
+                level2.setBackgroundColor(getResources().getColor(R.color.floor_map_buttonbg));
+                level1.setBackgroundColor(getResources().getColor(R.color.floor_map_buttonbg));
+                levelG.setBackgroundColor(getResources().getColor(R.color.white));
                 mGroundOverlay.setImage(BitmapDescriptorFactory.fromResource(R.drawable.qm_level_1));
             }
         });
         closeButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-//                detailsPopup.setVisibility(View.INVISIBLE);
                 hideView(detailsPopup);
             }
         });
+
     }
 
-    private void showView(final View view) {
+    private void showView(final View view,Marker marker) {
+
+        selectedMarker =marker;
+        selectedMarker.setIcon(BitmapDescriptorFactory.fromBitmap(resizeMapIcons("map_marker",largeMapIconWidth,largeMapIconHeight)));
+
         Animation animation = AnimationUtils.loadAnimation(this, R.anim.slide_in_up);
         //use this to make it longer:  animation.setDuration(1000);
         animation.setAnimationListener(new Animation.AnimationListener() {
@@ -176,7 +184,9 @@ public class FloorMapActivity extends AppCompatActivity implements SeekBar.OnSee
     }
 
     private void hideView(final View view) {
-        Animation animation = AnimationUtils.loadAnimation(this, R.anim.slide_out_down);
+
+        selectedMarker.setIcon(BitmapDescriptorFactory.fromBitmap(resizeMapIcons("map_marker",normalMapIconWidth,normalMapIconHeight)));
+          Animation animation = AnimationUtils.loadAnimation(this, R.anim.slide_out_down);
         //use this to make it longer:  animation.setDuration(1000);
         animation.setAnimationListener(new Animation.AnimationListener() {
             @Override
@@ -280,18 +290,7 @@ public class FloorMapActivity extends AppCompatActivity implements SeekBar.OnSee
             }
         });
         mImages.clear();
-        mImages.add(BitmapDescriptorFactory.fromResource(R.drawable.qm_level_3));
-//        mImages.add(BitmapDescriptorFactory.fromResource(R.drawable.newark_prudential_sunny));
-
-        // Add a small, rotated overlay that is clickable by default
-        // (set by the initial state of the checkbox.)
-//        mGroundOverlayRotated = map.addGroundOverlay(new GroundOverlayOptions()
-//                .image(mImages.get(1)).anchor(0, 1)
-//                .position(NEAR_NEWARK, 4300f, 3025f)
-//                .bearing(30)
-//                .clickable(((CheckBox) findViewById(R.id.toggleClickability)).isChecked()));
-
-        // Add a large overlay at Newark on top of the smaller overlay.
+        mImages.add(BitmapDescriptorFactory.fromResource(R.drawable.qm_level_1));
         mGroundOverlay = googleMap.addGroundOverlay(new GroundOverlayOptions()
                 .image(mImages.get(mCurrentEntry)).anchor(0, 1)
                 .position(QM, 93f, 106f)
@@ -301,21 +300,19 @@ public class FloorMapActivity extends AppCompatActivity implements SeekBar.OnSee
         l2_g1_sc3 = googleMap.addMarker(new MarkerOptions()
                 .position(L2_G1_SC3)
                 .title("S1.5")
-                .icon(BitmapDescriptorFactory.fromResource(R.drawable.map_marker)));
-
+                .icon(BitmapDescriptorFactory.fromBitmap(resizeMapIcons("map_marker",normalMapIconWidth,normalMapIconHeight))));
         l2_g3_sc14 = googleMap.addMarker(new MarkerOptions()
                 .position(L2_G3_SC14)
                 .title("MW.634")
-                .icon(BitmapDescriptorFactory.fromResource(R.drawable.map_marker)));
-
+                .icon(BitmapDescriptorFactory.fromBitmap(resizeMapIcons("map_marker",normalMapIconWidth,normalMapIconHeight))));
         l2_g5_sc6 = googleMap.addMarker(new MarkerOptions()
                 .position(L2_G5_SC6)
                 .title("MW.56")
-                .icon(BitmapDescriptorFactory.fromResource(R.drawable.map_marker)));
+                .icon(BitmapDescriptorFactory.fromBitmap(resizeMapIcons("map_marker",normalMapIconWidth,normalMapIconHeight))));
         l2_g8 = googleMap.addMarker(new MarkerOptions()
                 .position(L2_G8)
                 .title("MW.56")
-                .icon(BitmapDescriptorFactory.fromResource(R.drawable.map_marker)));
+                .icon(BitmapDescriptorFactory.fromBitmap(resizeMapIcons("map_marker",normalMapIconWidth,normalMapIconHeight))));
         l2_g8_sc1 = googleMap.addMarker(new MarkerOptions()
                 .position(L2_G8_SC1)
                 .title("MW.56")
@@ -323,15 +320,15 @@ public class FloorMapActivity extends AppCompatActivity implements SeekBar.OnSee
         l2_g8_sc4_1 = googleMap.addMarker(new MarkerOptions()
                 .position(L2_G8_SC4_1)
                 .title("MW.56")
-                .icon(BitmapDescriptorFactory.fromResource(R.drawable.map_marker)));
+                .icon(BitmapDescriptorFactory.fromBitmap(resizeMapIcons("map_marker",normalMapIconWidth,normalMapIconHeight))));
         l2_g8_sc4_2 = googleMap.addMarker(new MarkerOptions()
                 .position(L2_G8_SC4_2)
                 .title("MW.56")
-                .icon(BitmapDescriptorFactory.fromResource(R.drawable.map_marker)));
+                .icon(BitmapDescriptorFactory.fromBitmap(resizeMapIcons("map_marker",normalMapIconWidth,normalMapIconHeight))));
         l2_g8_sc5 = googleMap.addMarker(new MarkerOptions()
                 .position(L2_G8_SC5)
                 .title("MW.56")
-                .icon(BitmapDescriptorFactory.fromResource(R.drawable.map_marker)));
+                .icon(BitmapDescriptorFactory.fromBitmap(resizeMapIcons("map_marker",normalMapIconWidth,normalMapIconHeight))));
         l2_g8_sc6_1 = googleMap.addMarker(new MarkerOptions()
                 .position(L2_G8_SC6_1)
                 .title("MW.56")
@@ -339,57 +336,56 @@ public class FloorMapActivity extends AppCompatActivity implements SeekBar.OnSee
         l2_g8_sc6_2 = googleMap.addMarker(new MarkerOptions()
                 .position(L2_G8_SC6_2)
                 .title("MW.56")
-                .icon(BitmapDescriptorFactory.fromResource(R.drawable.map_marker)));
+                .icon(BitmapDescriptorFactory.fromBitmap(resizeMapIcons("map_marker",normalMapIconWidth,normalMapIconHeight))));
         l2_g9_sc5_1 = googleMap.addMarker(new MarkerOptions()
                 .position(L2_G9_SC5_1)
                 .title("MW.56")
-                .icon(BitmapDescriptorFactory.fromResource(R.drawable.map_marker)));
+                .icon(BitmapDescriptorFactory.fromBitmap(resizeMapIcons("map_marker",normalMapIconWidth,normalMapIconHeight))));
         l2_g9_sc5_2 = googleMap.addMarker(new MarkerOptions()
                 .position(L2_G9_SC5_2)
                 .title("MW.56")
-                .icon(BitmapDescriptorFactory.fromResource(R.drawable.map_marker)));
+                .icon(BitmapDescriptorFactory.fromBitmap(resizeMapIcons("map_marker",normalMapIconWidth,normalMapIconHeight))));
         l2_g9_sc7 = googleMap.addMarker(new MarkerOptions()
                 .position(L2_G9_SC7)
                 .title("MW.56")
-                .icon(BitmapDescriptorFactory.fromResource(R.drawable.map_marker)));
+                .icon(BitmapDescriptorFactory.fromBitmap(resizeMapIcons("map_marker",normalMapIconWidth,normalMapIconHeight))));
 
         l3_g10_sc1_1 = googleMap.addMarker(new MarkerOptions()
                 .position(L3_G10_SC1_1)
                 .title("G10")
-                .icon(BitmapDescriptorFactory.fromResource(R.drawable.map_marker)));
+                .icon(BitmapDescriptorFactory.fromBitmap(resizeMapIcons("map_marker",normalMapIconWidth,normalMapIconHeight))));
         l3_g10_sc1_2 = googleMap.addMarker(new MarkerOptions()
                 .position(L3_G10_SC1_2)
                 .title("G10")
-                .icon(BitmapDescriptorFactory.fromResource(R.drawable.map_marker)));
+                .icon(BitmapDescriptorFactory.fromBitmap(resizeMapIcons("map_marker",normalMapIconWidth,normalMapIconHeight))));
         l3_g11_wr15 = googleMap.addMarker(new MarkerOptions()
                 .position(L3_G11_WR15)
                 .title("G10")
-                .icon(BitmapDescriptorFactory.fromResource(R.drawable.map_marker)));
+                .icon(BitmapDescriptorFactory.fromBitmap(resizeMapIcons("map_marker",normalMapIconWidth,normalMapIconHeight))));
         l3_g13_5 = googleMap.addMarker(new MarkerOptions()
                 .position(L3_G13_5)
                 .title("G10")
-                .icon(BitmapDescriptorFactory.fromResource(R.drawable.map_marker)));
+                .icon(BitmapDescriptorFactory.fromBitmap(resizeMapIcons("map_marker",normalMapIconWidth,normalMapIconHeight))));
         l3_g13_7 = googleMap.addMarker(new MarkerOptions()
                 .position(L3_G13_7)
                 .title("G10")
-                .icon(BitmapDescriptorFactory.fromResource(R.drawable.map_marker)));
+                .icon(BitmapDescriptorFactory.fromBitmap(resizeMapIcons("map_marker",normalMapIconWidth,normalMapIconHeight))));
         l3_g17_3 = googleMap.addMarker(new MarkerOptions()
                 .position(L3_G17_3)
                 .title("G10")
-                .icon(BitmapDescriptorFactory.fromResource(R.drawable.map_marker)));
+                .icon(BitmapDescriptorFactory.fromBitmap(resizeMapIcons("map_marker",normalMapIconWidth,normalMapIconHeight))));
 
-        hideLevel2();
-        hideLevel3();
-        mTransparencyBar.setOnSeekBarChangeListener(this);
+        levelG.performClick();
 
-        // Override the default content description on the view, for accessibility mode.
-        // Ideally this string would be localised.
         googleMap.setContentDescription("Google Map with ground overlay.");
         googleMap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
             @Override
             public boolean onMarkerClick(Marker marker) {
-//                if (marker.getTitle().equals("PVR CINEMAS"))
-                showView(detailsPopup);
+                //if (marker.getTitle().equals("PVR CINEMAS"))
+                if (detailsPopup.getVisibility()==View.VISIBLE){
+                    hideView(detailsPopup);
+                }
+                showView(detailsPopup,marker);
                 return false;
             }
         });
@@ -399,24 +395,10 @@ public class FloorMapActivity extends AppCompatActivity implements SeekBar.OnSee
         googleMap.setMinZoomPreference(19);
     }
 
-    @Override
-    public void onProgressChanged(SeekBar seekBar, int i, boolean b) {
-        if (mGroundOverlay != null) {
-            mGroundOverlay.setTransparency((float) i / (float) TRANSPARENCY_MAX);
-        }
-    }
-    public void switchImage(View view) {
-        mCurrentEntry = (mCurrentEntry + 1) % mImages.size();
-        mGroundOverlay.setImage(mImages.get(mCurrentEntry));
-    }
-    @Override
-    public void onStartTrackingTouch(SeekBar seekBar) {
-
-    }
-
-    @Override
-    public void onStopTrackingTouch(SeekBar seekBar) {
-
+    public Bitmap resizeMapIcons(String iconName,int width, int height){
+        Bitmap imageBitmap = BitmapFactory.decodeResource(getResources(),getResources().getIdentifier(iconName, "drawable", getPackageName()));
+        Bitmap resizedBitmap = Bitmap.createScaledBitmap(imageBitmap, width, height, false);
+        return resizedBitmap;
     }
 
     @Override
@@ -425,9 +407,6 @@ public class FloorMapActivity extends AppCompatActivity implements SeekBar.OnSee
         mGroundOverlayRotated.setTransparency(0.5f - mGroundOverlayRotated.getTransparency());
 
     }
-    public void toggleClickability(View view) {
-        if (mGroundOverlayRotated != null) {
-            mGroundOverlayRotated.setClickable(((CheckBox) view).isChecked());
-        }
-    }
+
+
 }

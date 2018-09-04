@@ -1,109 +1,140 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical">
+
     <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:background="@color/white"
-        android:padding="5dp"
-        android:visibility="gone">
-
-        <TextView
-            android:id="@+id/transparency_text"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center_vertical"
-            android:text="@string/transparency" />
-
-        <SeekBar
-            android:id="@+id/transparencySeekBar"
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:layout_toEndOf="@+id/transparency_text"
-            android:layout_toRightOf="@+id/transparency_text" />
-
-        <Button
-            android:id="@+id/switchImage"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_below="@+id/transparencySeekBar"
-            android:onClick="switchImage"
-            android:text="@string/switch_image" />
-
-        <CheckBox
-            android:id="@+id/toggleClickability"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignBottom="@+id/switchImage"
-            android:layout_toEndOf="@+id/switchImage"
-            android:layout_toRightOf="@+id/switchImage"
-            android:checked="true"
-            android:onClick="toggleClickability"
-            android:text="@string/clickable" />
-
-    </RelativeLayout>
-    <RelativeLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        android:background="@color/floor_map_background">
         <fragment
             android:id="@+id/map"
             android:name="com.google.android.gms.maps.SupportMapFragment"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             tools:context=".floormap.FloorMapActivity" />
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingEnd="@dimen/padding_15"
+            android:paddingTop="@dimen/padding_15"
+            android:visibility="visible">
+
+            <ImageView
+                android:id="@+id/scanner"
+                android:layout_width="@dimen/padding_35"
+                android:layout_height="@dimen/padding_35"
+                android:layout_alignParentStart="true"
+                android:src="@drawable/number_pad"
+                android:visibility="gone"/>
+
+            <ImageView
+                android:id="@+id/number_pad"
+                android:layout_width="@dimen/padding_35"
+                android:layout_height="@dimen/padding_35"
+                android:layout_alignParentEnd="true"
+                android:src="@drawable/number_pad" />
+
+
+        </RelativeLayout>
+
+
         <LinearLayout
             android:id="@+id/level_picker"
             android:layout_width="45dp"
             android:layout_height="130dp"
+            android:layout_alignParentBottom="true"
             android:layout_alignParentEnd="true"
-            android:layout_alignParentRight="true"
-            android:layout_centerInParent="true"
-            android:layout_marginEnd="10dp"
-            android:layout_marginRight="10dp"
+            android:layout_marginBottom="@dimen/padding_35"
+            android:layout_marginEnd="@dimen/padding_15"
             android:background="@color/white"
-            android:orientation="vertical"
-            android:padding="2dp">
-
-            <Button
+            android:orientation="vertical">
+            <LinearLayout
                 android:id="@+id/level_3"
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
                 android:layout_weight="1"
-                android:background="@color/light_gray"
+                android:background="@color/floor_map_buttonbg"
                 android:gravity="center"
-                android:text="Level    3"
-                android:textAlignment="center"
-                android:textAllCaps="false"
-                android:textSize="12sp"
-                android:textColor="@android:color/black" />
+                android:orientation="vertical">
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/level"
+                    android:textSize="7sp"
+                    android:textColor="@android:color/black"
+                    android:textAlignment="center"
+                    android:textStyle="bold"/>
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="3"
+                    android:textColor="@android:color/black"
+                    android:textSize="12sp"
+                    android:textAlignment="center"
+                    android:textStyle="bold"/>
 
-            <Button
+            </LinearLayout>
+
+
+
+            <LinearLayout
                 android:id="@+id/level_2"
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
                 android:layout_weight="1"
-                android:background="@color/white"
+                android:background="@color/floor_map_buttonbg"
                 android:gravity="center"
-                android:textSize="12sp"
-                android:text="Level    2"
-                android:textAllCaps="false"
-                android:textColor="@android:color/black" />
+                android:orientation="vertical">
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/level"
+                    android:textSize="7sp"
+                    android:textColor="@android:color/black"
+                    android:textAlignment="center"
+                    android:textStyle="bold"/>
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="2"
+                    android:textColor="@android:color/black"
+                    android:textSize="12sp"
+                    android:textAlignment="center"
+                    android:textStyle="bold"/>
 
-            <Button
+            </LinearLayout>
+
+
+            <LinearLayout
                 android:id="@+id/level_1"
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
                 android:layout_weight="1"
-                android:textSize="12sp"
-                android:background="@color/white"
+                android:background="@color/floor_map_buttonbg"
                 android:gravity="center"
-                android:text="Level    1"
-                android:textAllCaps="false"
-                android:textColor="@android:color/black" />
+                android:orientation="vertical">
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/level"
+                    android:textSize="7sp"
+                    android:textColor="@android:color/black"
+                    android:textAlignment="center"
+                    android:textStyle="bold"/>
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="1"
+                    android:textColor="@android:color/black"
+                    android:textSize="12sp"
+                    android:textAlignment="center"
+                    android:textStyle="bold"/>
+
+            </LinearLayout>
+
         </LinearLayout>
 
         <LinearLayout
@@ -116,7 +147,7 @@
             android:orientation="vertical"
             android:paddingBottom="10dp"
             android:paddingTop="10dp"
-            android:visibility="invisible">
+            android:visibility="gone">
 
             <RelativeLayout
                 android:layout_width="match_parent"
@@ -152,5 +183,6 @@
             </LinearLayout>
         </LinearLayout>
     </RelativeLayout>
+
 
 </LinearLayout>
