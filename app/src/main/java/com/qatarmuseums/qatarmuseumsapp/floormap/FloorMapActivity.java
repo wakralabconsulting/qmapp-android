@@ -93,7 +93,7 @@ public class FloorMapActivity extends AppCompatActivity implements OnMapReadyCal
 
     // BottomSheetBehavior variable
     BottomSheetBehavior mBottomSheetBehavior;
-    ImageView detailLyout;
+
     LinearLayout bottomSheet;
 
 
@@ -105,8 +105,7 @@ public class FloorMapActivity extends AppCompatActivity implements OnMapReadyCal
         level2 = (LinearLayout) findViewById(R.id.level_3);
         level1 = (LinearLayout) findViewById(R.id.level_2);
         levelG = (LinearLayout) findViewById(R.id.level_1);
-        detailLyout = (ImageView) findViewById(R.id.detail_layout);
-        bottomSheet = (LinearLayout) findViewById(R.id.bottomSheetLayout);
+        bottomSheet = (LinearLayout) findViewById(R.id.bottomSheetchild);
 
 
         mBottomSheetBehavior = BottomSheetBehavior.from(findViewById(R.id.bottomSheetLayout));
@@ -118,14 +117,14 @@ public class FloorMapActivity extends AppCompatActivity implements OnMapReadyCal
                 switch (newState) {
                     case BottomSheetBehavior.STATE_COLLAPSED:
                         disableLevelPicker();
-                        detailLyout.setVisibility(View.GONE);
+
                         break;
                     case BottomSheetBehavior.STATE_DRAGGING:
                         disableLevelPicker();
                         break;
                     case BottomSheetBehavior.STATE_EXPANDED:
                         disableLevelPicker();
-                        detailLyout.setVisibility(View.VISIBLE);
+
                         break;
                     case BottomSheetBehavior.STATE_HIDDEN:
                         enableLevelPicker();
