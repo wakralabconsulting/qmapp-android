@@ -33,6 +33,8 @@ public class CommonModel {
     private String description;
     @SerializedName("Museums_reference")
     private String museumReferance;
+    @SerializedName("museum_id")
+    private String museumId;
 
     public CommonModel() {
 
@@ -218,5 +220,13 @@ public class CommonModel {
 
     public void setMuseumReferance(String museumReferance) {
         this.museumReferance = museumReferance;
+    }
+
+    public String getMuseumId() {
+        return museumId;
+    }
+
+    public void setMuseumId(String museumId) {
+        this.museumId = museumId;
     }
 }

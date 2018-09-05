@@ -409,6 +409,7 @@ public class DetailsActivity extends AppCompatActivity implements IPullZoom {
 
     public void getHeritageOrExhibitionDetailsFromAPI(String id, int language,
                                                       final String pageName) {
+        commonContentLayout.setVisibility(View.INVISIBLE);
         progressBar.setVisibility(View.VISIBLE);
         final String appLanguage;
         if (language == 1) {
@@ -1228,7 +1229,7 @@ public class DetailsActivity extends AppCompatActivity implements IPullZoom {
                         noResultFoundTxt.setVisibility(View.VISIBLE);
                     }
                 } else {
-                    commonContentLayout.setVisibility(View.GONE);
+                    commonContentLayout.setVisibility(View.INVISIBLE);
                     noResultFoundTxt.setVisibility(View.VISIBLE);
                 }
                 progressBar.setVisibility(View.GONE);
@@ -1242,7 +1243,7 @@ public class DetailsActivity extends AppCompatActivity implements IPullZoom {
                 } else {
                     // error due to mapping issues
                 }
-                commonContentLayout.setVisibility(View.GONE);
+                commonContentLayout.setVisibility(View.INVISIBLE);
                 noResultFoundTxt.setVisibility(View.VISIBLE);
                 progressBar.setVisibility(View.GONE);
             }
@@ -1355,7 +1356,7 @@ public class DetailsActivity extends AppCompatActivity implements IPullZoom {
                                 Integer.parseInt(museumAboutModels.get(i).getMuseumId()));
                         if (n > 0) {
                             //updateEnglishTable same id
-                            new UpdatePublicArtsDetailTable(DetailsActivity.this, language, i).execute();
+                            new UpdateMuseumAboutDetailTable(DetailsActivity.this, language, i).execute();
 
                         } else {
                             museumAboutTableArabic = new MuseumAboutTableArabic(Long.parseLong(museumAboutModels.get(i).getMuseumId()),
