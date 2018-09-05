@@ -86,7 +86,7 @@
 
             <View
                 android:layout_width="match_parent"
-                android:layout_height="@dimen/padding_2"
+                android:layout_height="@dimen/pading_1"
                 android:background="@color/floor_map_background" />
 
 
@@ -121,7 +121,7 @@
 
             <View
                 android:layout_width="match_parent"
-                android:layout_height="@dimen/padding_2"
+                android:layout_height="@dimen/pading_1"
                 android:background="@color/floor_map_background" />
 
             <LinearLayout
