@@ -152,10 +152,16 @@ public class CommonActivity extends AppCompatActivity {
             }
         });
         if (toolbarTitle.equals(getString(R.string.sidemenu_exhibition_text))) {
+            /* Commented for Temporary API
             if (util.isNetworkAvailable(CommonActivity.this))
                 getCommonListAPIDataFromAPI("Exhibition_List_Page.json");
             else
                 getCommonListDataFromDatabase("Exhibition_List_Page.json");
+            */
+            if (util.isNetworkAvailable(CommonActivity.this)) // For Temporary API
+                getCommonListAPIDataFromAPI("Exhibition_List_Page.php");
+            else
+                getCommonListDataFromDatabase("Exhibition_List_Page.php");
         } else if (toolbarTitle.equals(getString(R.string.sidemenu_heritage_text))) {
             if (util.isNetworkAvailable(CommonActivity.this))
                 getCommonListAPIDataFromAPI("Heritage_List_Page.json");
@@ -177,7 +183,7 @@ public class CommonActivity extends AppCompatActivity {
                 getCommonListDataFromDatabase("getDiningList.json");
              */
 
-            if (util.isNetworkAvailable(CommonActivity.this))
+            if (util.isNetworkAvailable(CommonActivity.this))  // For Temporary API
                 getCommonListAPIDataFromAPI("getDiningList.php");
             else
                 getCommonListDataFromDatabase("getDiningList.php");
@@ -219,13 +225,19 @@ public class CommonActivity extends AppCompatActivity {
             else
                 language = "ar";
             new DiningRowCount(CommonActivity.this, language).execute();
-        } else if (apiParts.equals("getDiningList.php")) {      // For Temporary API
+        } else if (apiParts.equals("getDiningList.php")) {    // For Temporary API
             String language;
             if (appLanguage == 1)
                 language = "en";
             else
                 language = "ar";
             new DiningRowCount(CommonActivity.this, language, id).execute();
+        } else if (apiParts.equals("Exhibition_List_Page.php")) {   // For Temporary API
+            if (appLanguage == 1) {
+                new RetriveExhibitionDataEnglish(CommonActivity.this, appLanguage, id).execute();
+            } else {
+                new RetriveExhibitionDataArabic(CommonActivity.this, appLanguage, id).execute();
+            }
         }
 
 
@@ -242,6 +254,9 @@ public class CommonActivity extends AppCompatActivity {
         }
         APIInterface apiService =
                 APIClient.getClient().create(APIInterface.class);
+
+        id = "63"; // For Temporary
+
         Call<ArrayList<CommonModel>> call = apiService.getCollectionList(language, id);
         call.enqueue(new Callback<ArrayList<CommonModel>>() {
             @Override
@@ -250,6 +265,7 @@ public class CommonActivity extends AppCompatActivity {
                     if (response.body() != null && response.body().size() > 0) {
                         recyclerView.setVisibility(View.VISIBLE);
                         models.addAll(response.body());
+                        removeHtmlTags(models);
                         mAdapter.notifyDataSetChanged();
                         new MuseumCollectionRowCount(CommonActivity.this, language).execute();
                     } else {
@@ -278,6 +294,14 @@ public class CommonActivity extends AppCompatActivity {
         });
     }
 
+    public void removeHtmlTags(ArrayList<CommonModel> models) {
+        for (int i = 0; i < models.size(); i++) {
+            models.get(i).setName(util.html2string(models.get(i).getName()));
+            models.get(i).setStartDate(util.html2string(models.get(i).getStartDate()));
+            models.get(i).setEndDate(util.html2string(models.get(i).getEndDate()));
+        }
+    }
+
     private void getCommonListAPIDataFromAPI(String name) {
         progressBar.setVisibility(View.VISIBLE);
         final String language;
@@ -303,6 +327,7 @@ public class CommonActivity extends AppCompatActivity {
                     if (response.body() != null && response.body().size() > 0) {
                         recyclerView.setVisibility(View.VISIBLE);
                         models.addAll(response.body());
+                        removeHtmlTags(models);
                         mAdapter.notifyDataSetChanged();
                         if (pageName.equals("Heritage_List_Page.json")) {
                             new RowCount(CommonActivity.this, language).execute();
@@ -314,6 +339,8 @@ public class CommonActivity extends AppCompatActivity {
                             new DiningRowCount(CommonActivity.this, language).execute();
                         } else if (pageName.equals("getDiningList.php")) {  // For Temporary API
                             new DiningRowCount(CommonActivity.this, language).execute();
+                        } else if (pageName.equals("Exhibition_List_Page.php")) {  // For Temporary API
+                            new ExhibitionRowCount(CommonActivity.this, language).execute();
                         }
                     } else {
                         recyclerView.setVisibility(View.GONE);
@@ -1281,10 +1308,16 @@ public class CommonActivity extends AppCompatActivity {
                         } else {
                             //create row with corresponding id
                             exhibitionListTableEnglish = new ExhibitionListTableEnglish(Long.parseLong(models.get(i).getId()),
-                                    models.get(i).getName(), models.get(i).getImage(),
-                                    models.get(i).getStartDate(), models.get(i).getEndDate(),
-                                    models.get(i).getLocation(), null, null,
-                                    null, null);
+                                    models.get(i).getName(),
+                                    models.get(i).getImage(),
+                                    models.get(i).getStartDate(),
+                                    models.get(i).getEndDate(),
+                                    models.get(i).getLocation(),
+                                    null,
+                                    null,
+                                    null,
+                                    null,
+                                    models.get(i).getMuseumId());
                             activityReference.get().qmDatabase.getExhibitionTableDao().insert(exhibitionListTableEnglish);
 
                         }
@@ -1302,9 +1335,14 @@ public class CommonActivity extends AppCompatActivity {
                             exhibitionListTableArabic = new ExhibitionListTableArabic(Long.parseLong(models.get(i).getId()),
                                     models.get(i).getName(),
                                     models.get(i).getImage(),
-                                    models.get(i).getStartDate(), models.get(i).getEndDate(),
-                                    models.get(i).getLocation(), null, null,
-                                    null, null);
+                                    models.get(i).getStartDate(),
+                                    models.get(i).getEndDate(),
+                                    models.get(i).getLocation(),
+                                    null,
+                                    null,
+                                    null,
+                                    null,
+                                    models.get(i).getMuseumId());
                             activityReference.get().qmDatabase.getExhibitionTableDao().insert(exhibitionListTableArabic);
 
                         }
@@ -1350,8 +1388,12 @@ public class CommonActivity extends AppCompatActivity {
                                 models.get(i).getImage(),
                                 models.get(i).getStartDate(),
                                 models.get(i).getEndDate(),
-                                models.get(i).getLocation(), null, null,
-                                null, null);
+                                models.get(i).getLocation(),
+                                null,
+                                null,
+                                null,
+                                null,
+                                models.get(i).getMuseumId());
                         activityReference.get().qmDatabase.getExhibitionTableDao().insert(exhibitionListTableEnglish);
                     }
                 } else {
@@ -1361,8 +1403,12 @@ public class CommonActivity extends AppCompatActivity {
                                 models.get(i).getImage(),
                                 models.get(i).getStartDate(),
                                 models.get(i).getEndDate(),
-                                models.get(i).getLocation(), null, null,
-                                null, null);
+                                models.get(i).getLocation(),
+                                null,
+                                null,
+                                null,
+                                null,
+                                models.get(i).getMuseumId());
                         activityReference.get().qmDatabase.getExhibitionTableDao().insert(exhibitionListTableArabic);
                     }
                 }
@@ -1397,15 +1443,21 @@ public class CommonActivity extends AppCompatActivity {
             if (language == 1) {
                 // updateEnglishTable table with english name
                 activityReference.get().qmDatabase.getExhibitionTableDao().updateExhibitionListEnglish(
-                        models.get(position).getStartDate(), models.get(position).getEndDate(),
-                        models.get(position).getLocation(), models.get(position).getId()
+                        models.get(position).getStartDate(),
+                        models.get(position).getEndDate(),
+                        models.get(position).getLocation(),
+                        models.get(position).getId(),
+                        models.get(position).getMuseumId()
                 );
 
             } else {
                 // updateEnglishTable table with arabic name
                 activityReference.get().qmDatabase.getExhibitionTableDao().updateExhibitionListArabic(
-                        models.get(position).getStartDate(), models.get(position).getEndDate(),
-                        models.get(position).getLocation(), models.get(position).getId()
+                        models.get(position).getStartDate(),
+                        models.get(position).getEndDate(),
+                        models.get(position).getLocation(),
+                        models.get(position).getId(),
+                        models.get(position).getMuseumId()
                 );
             }
             return null;
@@ -1415,10 +1467,17 @@ public class CommonActivity extends AppCompatActivity {
     public class RetriveExhibitionDataEnglish extends AsyncTask<Void, Void, List<ExhibitionListTableEnglish>> {
         private WeakReference<CommonActivity> activityReference;
         int language;
+        String museumID;
 
         RetriveExhibitionDataEnglish(CommonActivity context, int appLanguage) {
             activityReference = new WeakReference<>(context);
             language = appLanguage;
+        }
+
+        RetriveExhibitionDataEnglish(CommonActivity context, int appLanguage, String museumId) {
+            activityReference = new WeakReference<>(context);
+            language = appLanguage;
+            museumID = museumId;
         }
 
         @Override
@@ -1453,17 +1512,27 @@ public class CommonActivity extends AppCompatActivity {
 
         @Override
         protected List<ExhibitionListTableEnglish> doInBackground(Void... voids) {
-            return activityReference.get().qmDatabase.getExhibitionTableDao().getAllEnglish();
+            if (museumID != null)
+                return activityReference.get().qmDatabase.getExhibitionTableDao().getExhibitionWithMuseumIdEnglish(Integer.parseInt(museumID));
+            else
+                return activityReference.get().qmDatabase.getExhibitionTableDao().getAllEnglish();
         }
     }
 
     public class RetriveExhibitionDataArabic extends AsyncTask<Void, Void, List<ExhibitionListTableArabic>> {
         private WeakReference<CommonActivity> activityReference;
         int language;
+        String museumID;
 
         RetriveExhibitionDataArabic(CommonActivity context, int appLanguage) {
             activityReference = new WeakReference<>(context);
             language = appLanguage;
+        }
+
+        RetriveExhibitionDataArabic(CommonActivity context, int appLanguage, String museumId) {
+            activityReference = new WeakReference<>(context);
+            language = appLanguage;
+            museumID = museumId;
         }
 
         @Override
@@ -1483,7 +1552,6 @@ public class CommonActivity extends AppCompatActivity {
                             exhibitionListTableArabic.get(i).getExhibition_location(),
                             exhibitionListTableArabic.get(i).getExhibition_latest_image(),
                             null);
-
                     models.add(i, commonModel);
                 }
                 mAdapter.notifyDataSetChanged();
@@ -1498,12 +1566,16 @@ public class CommonActivity extends AppCompatActivity {
 
         @Override
         protected List<ExhibitionListTableArabic> doInBackground(Void... voids) {
-            return activityReference.get().qmDatabase.getExhibitionTableDao().getAllArabic();
+            if (museumID != null)
+                return activityReference.get().qmDatabase.getExhibitionTableDao().getExhibitionWithMuseumIdArabic(Integer.parseInt(museumID));
+            else
+                return activityReference.get().qmDatabase.getExhibitionTableDao().getAllArabic();
 
         }
     }
 
     public void getMuseumCollectionListFromDatabase() {
+        id = "63"; // For Temporary
         if (appLanguage == 1) {
             new RetriveMuseumCollectionDataEnglish(CommonActivity.this, appLanguage, id).execute();
         } else {
