@@ -222,7 +222,7 @@
             android:layout_marginTop="@dimen/margin_50"
             android:fontFamily="@font/din_next_lt_pro_regular"
             android:gravity="center"
-            android:text="@string/unable_to_fetch_details"
+            android:text="@string/no_results_text"
             android:textAlignment="center"
             android:textColor="@android:color/black"
             android:textSize="@dimen/font_size_21"

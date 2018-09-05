@@ -28,6 +28,11 @@ public interface APIInterface {
     Call<ArrayList<CommonModel>> getCommonpageList(@Path("language") String language,
                                                    @Path("pageName") String pageName);
 
+    @GET("{language}/mobile_api/{pageName}")
+    Call<ArrayList<CommonModel>> getCommonpageListWithID(@Path("language") String language,
+                                                         @Path("pageName") String pageName,
+                                                         @Query("museum_id") String museumId);
+
     @GET("{language}/mobile_api/getpublicartdetail.json")
     Call<ArrayList<PublicArtModel>> getPublicArtsDetails(@Path("language") String language,
                                                          @Query("nid") String nid);

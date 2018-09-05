@@ -36,6 +36,12 @@ public interface DiningTableDao {
     @Query("SELECT * FROM diningtableArabic WHERE dining_id = :idFromAPI")
     List<DiningTableArabic> getDiningDetailsArabic(int idFromAPI);
 
+    @Query("SELECT * FROM diningtableEnglish WHERE museum_id = :museumIdFromAPI")
+    List<DiningTableEnglish> getDiningDetailsEnglishWithMuseumId(int museumIdFromAPI);
+
+    @Query("SELECT * FROM diningtableArabic WHERE museum_id = :museumIdFromAPI")
+    List<DiningTableArabic> getDiningDetailsArabicWithMuseumId(int museumIdFromAPI);
+
     @Query("UPDATE diningtableEnglish SET dining_name = :nameFromApi, dining_image = :imageFromApi," +
             " dining_sort_id = :sortIdFromApi WHERE dining_id = :id")
     void updateDiningEnglish(String nameFromApi, String imageFromApi, String id, String sortIdFromApi);
