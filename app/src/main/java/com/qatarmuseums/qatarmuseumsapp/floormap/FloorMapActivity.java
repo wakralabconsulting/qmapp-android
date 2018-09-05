@@ -128,12 +128,12 @@ public class FloorMapActivity extends AppCompatActivity implements OnMapReadyCal
                         detailLyout.setVisibility(View.VISIBLE);
                         break;
                     case BottomSheetBehavior.STATE_HIDDEN:
+                        enableLevelPicker();
                         if (selectedMarker != null) {
                             selectedMarker.setIcon(BitmapDescriptorFactory.fromBitmap(resizeMapIcons("map_marker", normalMapIconWidth, normalMapIconHeight)));
                             selectedMarker.hideInfoWindow();
                             selectedMarker = null;
-                            }
-                            enableLevelPicker();
+                        }
                         break;
                     case BottomSheetBehavior.STATE_SETTLING:
                         disableLevelPicker();
@@ -374,12 +374,12 @@ public class FloorMapActivity extends AppCompatActivity implements OnMapReadyCal
             @Override
             public boolean onMarkerClick(Marker marker) {
                 if (selectedMarker != null) {
-                    selectedMarker.setIcon(BitmapDescriptorFactory.fromBitmap(resizeMapIcons("map_marker", normalMapIconWidth, normalMapIconHeight)));
-                    selectedMarker = null;
+                    mBottomSheetBehavior.setState(BottomSheetBehavior.STATE_HIDDEN);
+                } else {
+                    selectedMarker = marker;
+                    selectedMarker.setIcon(BitmapDescriptorFactory.fromBitmap(resizeMapIcons("map_marker", largeMapIconWidth, largeMapIconHeight)));
+                    mBottomSheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
                 }
-                selectedMarker = marker;
-                selectedMarker.setIcon(BitmapDescriptorFactory.fromBitmap(resizeMapIcons("map_marker", largeMapIconWidth, largeMapIconHeight)));
-                mBottomSheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
                 return false;
             }
         });
@@ -405,22 +405,21 @@ public class FloorMapActivity extends AppCompatActivity implements OnMapReadyCal
 
     @Override
     public boolean dispatchTouchEvent(MotionEvent event) {
-        if (event.getAction() == MotionEvent.ACTION_DOWN) {
-            if (mBottomSheetBehavior.getState() == BottomSheetBehavior.STATE_COLLAPSED) {
+        if (selectedMarker != null) {
+            if (event.getAction() == MotionEvent.ACTION_DOWN) {
+                if (mBottomSheetBehavior.getState() == BottomSheetBehavior.STATE_COLLAPSED) {
 
-                Rect outRect = new Rect();
-                bottomSheet.getGlobalVisibleRect(outRect);
+                    Rect outRect = new Rect();
+                    bottomSheet.getGlobalVisibleRect(outRect);
 
-                if (!outRect.contains((int) event.getRawX(), (int) event.getRawY())) {
-                    if (selectedMarker != null) {
-                        selectedMarker.setIcon(BitmapDescriptorFactory.fromBitmap(resizeMapIcons("map_marker", normalMapIconWidth, normalMapIconHeight)));
-                        selectedMarker.hideInfoWindow();
-                        selectedMarker = null;
+                    if (!outRect.contains((int) event.getRawX(), (int) event.getRawY())) {
+                        mBottomSheetBehavior.setState(BottomSheetBehavior.STATE_HIDDEN);
+
+
                     }
-                    mBottomSheetBehavior.setState(BottomSheetBehavior.STATE_HIDDEN);
-
                 }
             }
+
         }
         return super.dispatchTouchEvent(event);
 
@@ -429,12 +428,14 @@ public class FloorMapActivity extends AppCompatActivity implements OnMapReadyCal
     public static int dpToPx(int dp) {
         return (int) (dp * Resources.getSystem().getDisplayMetrics().density);
     }
-    public void disableLevelPicker(){
+
+    public void disableLevelPicker() {
         levelG.setEnabled(false);
         level1.setEnabled(false);
         level2.setEnabled(false);
     }
-    public void enableLevelPicker(){
+
+    public void enableLevelPicker() {
         levelG.setEnabled(true);
         level1.setEnabled(true);
         level2.setEnabled(true);
