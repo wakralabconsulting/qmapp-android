@@ -1,7 +1,10 @@
 package com.qatarmuseums.qatarmuseumsapp.education;
 
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.MotionEvent;
@@ -23,6 +26,11 @@ import java.util.HashMap;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+
+import static com.qatarmuseums.qatarmuseumsapp.education.EducationCalendarActivity.AGEGROUPPREFS;
+import static com.qatarmuseums.qatarmuseumsapp.education.EducationCalendarActivity.FILTERPREFS;
+import static com.qatarmuseums.qatarmuseumsapp.education.EducationCalendarActivity.INSTITUTEPREFS;
+import static com.qatarmuseums.qatarmuseumsapp.education.EducationCalendarActivity.PROGRAMMEPREFS;
 
 public class EducationFilterActivity extends AppCompatActivity {
 
@@ -63,6 +71,9 @@ public class EducationFilterActivity extends AppCompatActivity {
     ArrayList<String> programmes;
     String institutionItem, ageGroupItem, programmeTypeItem;
     Intent navigationIntent;
+    SharedPreferences.Editor editor;
+    SharedPreferences sharedfilterpreferences;
+    int institutionPosition = 0, ageGroupPosition = 0, programmeTypePosition = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -73,6 +84,12 @@ public class EducationFilterActivity extends AppCompatActivity {
         setSupportActionBar(toolbar);
         toolbar_title.setText(getResources().getString(R.string.filter));
 
+        sharedfilterpreferences = getSharedPreferences(FILTERPREFS, Context.MODE_PRIVATE);
+
+        sharedfilterpreferences = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
+        institutionPosition = sharedfilterpreferences.getInt(INSTITUTEPREFS, 0);
+        ageGroupPosition = sharedfilterpreferences.getInt(AGEGROUPPREFS, 0);
+        programmeTypePosition = sharedfilterpreferences.getInt(PROGRAMMEPREFS, 0);
 
         zoomOutAnimation = AnimationUtils.loadAnimation(getApplicationContext(),
                 R.anim.zoom_out_more);
@@ -201,7 +218,7 @@ public class EducationFilterActivity extends AppCompatActivity {
                 // On selecting a spinner item
                 String item = adapterView.getItemAtPosition(position).toString();
                 institutionItem = instituteMap.get(item);
-                System.out.println("item " + institutionItem);
+                institutionPosition = position;
             }
 
             @Override
@@ -232,7 +249,7 @@ public class EducationFilterActivity extends AppCompatActivity {
                 // On selecting a spinner item
                 String item = adapterView.getItemAtPosition(position).toString();
                 ageGroupItem = ageMap.get(item);
-                System.out.println("item " + ageGroupItem);
+                ageGroupPosition = position;
             }
 
             @Override
@@ -263,7 +280,7 @@ public class EducationFilterActivity extends AppCompatActivity {
                 // On selecting a spinner item
                 String item = adapterView.getItemAtPosition(position).toString();
                 programmeTypeItem = programmeMap.get(item);
-                System.out.println("item " + programmeTypeItem);
+                programmeTypePosition = position;
             }
 
             @Override
@@ -279,9 +296,13 @@ public class EducationFilterActivity extends AppCompatActivity {
                 isFillInstitute = 0;
                 isFillAge = 0;
                 isFillProgramme = 0;
+                institutionPosition = 0;
+                ageGroupPosition = 0;
+                programmeTypePosition = 0;
                 setUpInstituteSpinner();
                 setUpAgeSpinner();
                 setUpProgrammeSpinner();
+                setPreferences();
                 instituteLayout.setBackground(getResources().getDrawable(R.drawable.rectangular_plain_background_layout));
                 ageGroupLayout.setBackground(getResources().getDrawable(R.drawable.rectangular_plain_background_layout));
                 programmeLayout.setBackground(getResources().getDrawable(R.drawable.rectangular_plain_background_layout));
@@ -295,11 +316,20 @@ public class EducationFilterActivity extends AppCompatActivity {
                 navigationIntent.putExtra("INSTITUTION", institutionItem);
                 navigationIntent.putExtra("AGE_GROUP", ageGroupItem);
                 navigationIntent.putExtra("PROGRAMME_TYPE", programmeTypeItem);
+                setPreferences();
                 startActivity(navigationIntent);
                 finish();
             }
         });
 
+    }
+
+    private void setPreferences() {
+        editor = sharedfilterpreferences.edit();
+        editor.putInt(INSTITUTEPREFS, institutionPosition);
+        editor.putInt(AGEGROUPPREFS, ageGroupPosition);
+        editor.putInt(PROGRAMMEPREFS, programmeTypePosition);
+        editor.commit();
     }
 
     private void setUpInstituteSpinner() {
@@ -311,6 +341,7 @@ public class EducationFilterActivity extends AppCompatActivity {
 
         // attaching data adapter to spinner
         institutionText.setAdapter(institutionDataAdapter);
+        institutionText.setSelection(institutionPosition);
 
     }
 
@@ -322,6 +353,7 @@ public class EducationFilterActivity extends AppCompatActivity {
 
         // attaching data adapter to spinner
         ageGroupText.setAdapter(ageDataAdapter);
+        ageGroupText.setSelection(ageGroupPosition);
     }
 
     private void setUpProgrammeSpinner() {
@@ -332,5 +364,6 @@ public class EducationFilterActivity extends AppCompatActivity {
 
         // attaching data adapter to spinner
         programmeTypeText.setAdapter(programmeDataAdapter);
+        programmeTypeText.setSelection(programmeTypePosition);
     }
 }
