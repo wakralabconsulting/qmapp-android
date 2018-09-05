@@ -117,29 +117,26 @@ public class FloorMapActivity extends AppCompatActivity implements OnMapReadyCal
                 int n = newState;
                 switch (newState) {
                     case BottomSheetBehavior.STATE_COLLAPSED:
+                        disableLevelPicker();
                         detailLyout.setVisibility(View.GONE);
-                        levelPicker.setEnabled(false);
                         break;
                     case BottomSheetBehavior.STATE_DRAGGING:
-                        levelPicker.setEnabled(false);
+                        disableLevelPicker();
                         break;
                     case BottomSheetBehavior.STATE_EXPANDED:
+                        disableLevelPicker();
                         detailLyout.setVisibility(View.VISIBLE);
-                        levelPicker.setEnabled(false);
                         break;
                     case BottomSheetBehavior.STATE_HIDDEN:
                         if (selectedMarker != null) {
                             selectedMarker.setIcon(BitmapDescriptorFactory.fromBitmap(resizeMapIcons("map_marker", normalMapIconWidth, normalMapIconHeight)));
                             selectedMarker.hideInfoWindow();
                             selectedMarker = null;
-
-
-                        }
-                        levelPicker.setEnabled(true);
-
+                            }
+                            enableLevelPicker();
                         break;
                     case BottomSheetBehavior.STATE_SETTLING:
-                        levelPicker.setEnabled(false);
+                        disableLevelPicker();
                         break;
                 }
             }
@@ -417,6 +414,7 @@ public class FloorMapActivity extends AppCompatActivity implements OnMapReadyCal
                 if (!outRect.contains((int) event.getRawX(), (int) event.getRawY())) {
                     if (selectedMarker != null) {
                         selectedMarker.setIcon(BitmapDescriptorFactory.fromBitmap(resizeMapIcons("map_marker", normalMapIconWidth, normalMapIconHeight)));
+                        selectedMarker.hideInfoWindow();
                         selectedMarker = null;
                     }
                     mBottomSheetBehavior.setState(BottomSheetBehavior.STATE_HIDDEN);
@@ -430,5 +428,15 @@ public class FloorMapActivity extends AppCompatActivity implements OnMapReadyCal
 
     public static int dpToPx(int dp) {
         return (int) (dp * Resources.getSystem().getDisplayMetrics().density);
+    }
+    public void disableLevelPicker(){
+        levelG.setEnabled(false);
+        level1.setEnabled(false);
+        level2.setEnabled(false);
+    }
+    public void enableLevelPicker(){
+        levelG.setEnabled(true);
+        level1.setEnabled(true);
+        level2.setEnabled(true);
     }
 }
