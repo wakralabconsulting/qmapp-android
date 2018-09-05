@@ -1,13 +1,16 @@
 package com.qatarmuseums.qatarmuseumsapp.floormap;
 
+import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Rect;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.BottomSheetBehavior;
 import android.support.v7.app.AppCompatActivity;
 import android.view.MotionEvent;
 import android.view.View;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
@@ -90,6 +93,8 @@ public class FloorMapActivity extends AppCompatActivity implements OnMapReadyCal
 
     // BottomSheetBehavior variable
     BottomSheetBehavior mBottomSheetBehavior;
+    ImageView detailLyout;
+    LinearLayout bottomSheet;
 
 
     @Override
@@ -100,22 +105,41 @@ public class FloorMapActivity extends AppCompatActivity implements OnMapReadyCal
         level2 = (LinearLayout) findViewById(R.id.level_3);
         level1 = (LinearLayout) findViewById(R.id.level_2);
         levelG = (LinearLayout) findViewById(R.id.level_1);
+        detailLyout = (ImageView) findViewById(R.id.detail_layout);
+        bottomSheet = (LinearLayout) findViewById(R.id.bottomSheetLayout);
+
 
         mBottomSheetBehavior = BottomSheetBehavior.from(findViewById(R.id.bottomSheetLayout));
+        mBottomSheetBehavior.setPeekHeight(dpToPx(170));
         mBottomSheetBehavior.setBottomSheetCallback(new BottomSheetBehavior.BottomSheetCallback() {
             @Override
             public void onStateChanged(@NonNull View bottomSheet, int newState) {
                 int n = newState;
                 switch (newState) {
                     case BottomSheetBehavior.STATE_COLLAPSED:
+                        detailLyout.setVisibility(View.GONE);
+                        levelPicker.setEnabled(false);
                         break;
                     case BottomSheetBehavior.STATE_DRAGGING:
+                        levelPicker.setEnabled(false);
                         break;
                     case BottomSheetBehavior.STATE_EXPANDED:
+                        detailLyout.setVisibility(View.VISIBLE);
+                        levelPicker.setEnabled(false);
                         break;
                     case BottomSheetBehavior.STATE_HIDDEN:
+                        if (selectedMarker != null) {
+                            selectedMarker.setIcon(BitmapDescriptorFactory.fromBitmap(resizeMapIcons("map_marker", normalMapIconWidth, normalMapIconHeight)));
+                            selectedMarker.hideInfoWindow();
+                            selectedMarker = null;
+
+
+                        }
+                        levelPicker.setEnabled(true);
+
                         break;
                     case BottomSheetBehavior.STATE_SETTLING:
+                        levelPicker.setEnabled(false);
                         break;
                 }
             }
@@ -358,7 +382,7 @@ public class FloorMapActivity extends AppCompatActivity implements OnMapReadyCal
                 }
                 selectedMarker = marker;
                 selectedMarker.setIcon(BitmapDescriptorFactory.fromBitmap(resizeMapIcons("map_marker", largeMapIconWidth, largeMapIconHeight)));
-                mBottomSheetBehavior.setState(BottomSheetBehavior.STATE_EXPANDED);
+                mBottomSheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
                 return false;
             }
         });
@@ -385,21 +409,26 @@ public class FloorMapActivity extends AppCompatActivity implements OnMapReadyCal
     @Override
     public boolean dispatchTouchEvent(MotionEvent event) {
         if (event.getAction() == MotionEvent.ACTION_DOWN) {
-            if (mBottomSheetBehavior.getState() == BottomSheetBehavior.STATE_EXPANDED) {
-                mBottomSheetBehavior.setState(BottomSheetBehavior.STATE_HIDDEN);
-                if (selectedMarker != null) {
-                    selectedMarker.setIcon(BitmapDescriptorFactory.fromBitmap(resizeMapIcons("map_marker", normalMapIconWidth, normalMapIconHeight)));
-                    selectedMarker = null;
-                }
+            if (mBottomSheetBehavior.getState() == BottomSheetBehavior.STATE_COLLAPSED) {
 
-//                Rect outRect = new Rect();
-//                bottomSheet.getGlobalVisibleRect(outRect);
-//
-//                if(!outRect.contains((int)event.getRawX(), (int)event.getRawY()))
-//                    mBottomSheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
+                Rect outRect = new Rect();
+                bottomSheet.getGlobalVisibleRect(outRect);
+
+                if (!outRect.contains((int) event.getRawX(), (int) event.getRawY())) {
+                    if (selectedMarker != null) {
+                        selectedMarker.setIcon(BitmapDescriptorFactory.fromBitmap(resizeMapIcons("map_marker", normalMapIconWidth, normalMapIconHeight)));
+                        selectedMarker = null;
+                    }
+                    mBottomSheetBehavior.setState(BottomSheetBehavior.STATE_HIDDEN);
+
+                }
             }
         }
-
         return super.dispatchTouchEvent(event);
+
+    }
+
+    public static int dpToPx(int dp) {
+        return (int) (dp * Resources.getSystem().getDisplayMetrics().density);
     }
 }
