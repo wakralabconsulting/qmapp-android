@@ -1,14 +1,19 @@
 package com.qatarmuseums.qatarmuseumsapp.floormap;
 
+import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Rect;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.design.widget.BottomSheetBehavior;
 import android.support.v7.app.AppCompatActivity;
 import android.view.MotionEvent;
 import android.view.View;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.TextView;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -90,7 +95,12 @@ public class FloorMapActivity extends AppCompatActivity implements OnMapReadyCal
 
     // BottomSheetBehavior variable
     BottomSheetBehavior mBottomSheetBehavior;
+    TextView viewDetails;
 
+
+    LinearLayout bottomSheet, popupShortlayout, popupLongLayout;
+    private Handler mHandler;
+    private Runnable mRunnable;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -100,22 +110,40 @@ public class FloorMapActivity extends AppCompatActivity implements OnMapReadyCal
         level2 = (LinearLayout) findViewById(R.id.level_3);
         level1 = (LinearLayout) findViewById(R.id.level_2);
         levelG = (LinearLayout) findViewById(R.id.level_1);
+        popupLongLayout = (LinearLayout) findViewById(R.id.details_popup_long);
+        popupShortlayout = (LinearLayout) findViewById(R.id.details_popup_short);
+        viewDetails = (TextView) findViewById(R.id.view_details_text);
+        bottomSheet = (LinearLayout) findViewById(R.id.bottomSheetchild);
+
 
         mBottomSheetBehavior = BottomSheetBehavior.from(findViewById(R.id.bottomSheetLayout));
+        mBottomSheetBehavior.setPeekHeight(dpToPx(170));
         mBottomSheetBehavior.setBottomSheetCallback(new BottomSheetBehavior.BottomSheetCallback() {
             @Override
             public void onStateChanged(@NonNull View bottomSheet, int newState) {
                 int n = newState;
                 switch (newState) {
                     case BottomSheetBehavior.STATE_COLLAPSED:
+                        disableLevelPicker();
+                        popupShortlayout.setVisibility(View.VISIBLE);
+                        popupLongLayout.setVisibility(View.GONE);
+
                         break;
                     case BottomSheetBehavior.STATE_DRAGGING:
+                        disableLevelPicker();
                         break;
                     case BottomSheetBehavior.STATE_EXPANDED:
+                        disableLevelPicker();
+                        popupShortlayout.setVisibility(View.GONE);
+                        popupLongLayout.setVisibility(View.VISIBLE);
+
                         break;
                     case BottomSheetBehavior.STATE_HIDDEN:
+                        enableLevelPicker();
+
                         break;
                     case BottomSheetBehavior.STATE_SETTLING:
+                        disableLevelPicker();
                         break;
                 }
             }
@@ -129,6 +157,12 @@ public class FloorMapActivity extends AppCompatActivity implements OnMapReadyCal
                 (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
         mBottomSheetBehavior.setState(BottomSheetBehavior.STATE_HIDDEN);
+        viewDetails.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                mBottomSheetBehavior.setState(BottomSheetBehavior.STATE_EXPANDED);
+            }
+        });
 
         level2.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -353,12 +387,16 @@ public class FloorMapActivity extends AppCompatActivity implements OnMapReadyCal
             @Override
             public boolean onMarkerClick(Marker marker) {
                 if (selectedMarker != null) {
+                    mBottomSheetBehavior.setState(BottomSheetBehavior.STATE_HIDDEN);
                     selectedMarker.setIcon(BitmapDescriptorFactory.fromBitmap(resizeMapIcons("map_marker", normalMapIconWidth, normalMapIconHeight)));
+                    selectedMarker.hideInfoWindow();
                     selectedMarker = null;
+
                 }
                 selectedMarker = marker;
                 selectedMarker.setIcon(BitmapDescriptorFactory.fromBitmap(resizeMapIcons("map_marker", largeMapIconWidth, largeMapIconHeight)));
-                mBottomSheetBehavior.setState(BottomSheetBehavior.STATE_EXPANDED);
+                mBottomSheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
+
                 return false;
             }
         });
@@ -366,6 +404,7 @@ public class FloorMapActivity extends AppCompatActivity implements OnMapReadyCal
                 new LatLng(25.294616, 51.538288), new LatLng(25.296323, 51.540369));
         googleMap.setLatLngBoundsForCameraTarget(QM);
         googleMap.setMinZoomPreference(19);
+        googleMap.getUiSettings().setMapToolbarEnabled(false);
     }
 
 
@@ -384,22 +423,68 @@ public class FloorMapActivity extends AppCompatActivity implements OnMapReadyCal
 
     @Override
     public boolean dispatchTouchEvent(MotionEvent event) {
-        if (event.getAction() == MotionEvent.ACTION_DOWN) {
-            if (mBottomSheetBehavior.getState() == BottomSheetBehavior.STATE_EXPANDED) {
-                mBottomSheetBehavior.setState(BottomSheetBehavior.STATE_HIDDEN);
-                if (selectedMarker != null) {
-                    selectedMarker.setIcon(BitmapDescriptorFactory.fromBitmap(resizeMapIcons("map_marker", normalMapIconWidth, normalMapIconHeight)));
-                    selectedMarker = null;
+        if (selectedMarker != null) {
+
+            if (event.getAction() == MotionEvent.ACTION_DOWN) {
+                if (mBottomSheetBehavior.getState() == BottomSheetBehavior.STATE_COLLAPSED) {
+
+                    Rect outRect = new Rect();
+                    bottomSheet.getGlobalVisibleRect(outRect);
+
+                    if (!outRect.contains((int) event.getRawX(), (int) event.getRawY())) {
+                        mBottomSheetBehavior.setState(BottomSheetBehavior.STATE_HIDDEN);
+                        selectedMarker.setIcon(BitmapDescriptorFactory.fromBitmap(resizeMapIcons("map_marker", normalMapIconWidth, normalMapIconHeight)));
+                        selectedMarker.hideInfoWindow();
+                        selectedMarker = null;
+
+
+                    }
+                    checkMarkerStatus();
                 }
 
-//                Rect outRect = new Rect();
-//                bottomSheet.getGlobalVisibleRect(outRect);
-//
-//                if(!outRect.contains((int)event.getRawX(), (int)event.getRawY()))
-//                    mBottomSheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
+
             }
+
+
         }
 
         return super.dispatchTouchEvent(event);
+
+    }
+
+    public static int dpToPx(int dp) {
+        return (int) (dp * Resources.getSystem().getDisplayMetrics().density);
+    }
+
+    public void disableLevelPicker() {
+        levelG.setEnabled(false);
+        level1.setEnabled(false);
+        level2.setEnabled(false);
+    }
+
+    public void enableLevelPicker() {
+        levelG.setEnabled(true);
+        level1.setEnabled(true);
+        level2.setEnabled(true);
+    }
+
+    public void checkMarkerStatus() {
+        mHandler = new Handler();
+        mRunnable = new Runnable() {
+
+            @Override
+            public void run() {
+                if (selectedMarker!=null) {
+                    if (mBottomSheetBehavior.getState() == BottomSheetBehavior.STATE_HIDDEN) {
+                        selectedMarker.setIcon(BitmapDescriptorFactory.fromBitmap(resizeMapIcons("map_marker", normalMapIconWidth, normalMapIconHeight)));
+                        selectedMarker.hideInfoWindow();
+                        selectedMarker = null;
+                    }
+                }
+            }
+        };
+        mHandler.postDelayed(mRunnable, 500);
+
+
     }
 }
