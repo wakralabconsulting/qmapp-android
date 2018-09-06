@@ -1,9 +1,11 @@
 package com.qatarmuseums.qatarmuseumsapp.home;
 
 
+import android.support.annotation.NonNull;
+
 import com.google.gson.annotations.SerializedName;
 
-public class HomeList {
+public class HomeList implements Comparable<HomeList> {
     @SerializedName("name")
     private String name;
     @SerializedName("id")
@@ -12,16 +14,19 @@ public class HomeList {
     private String image;
     @SerializedName("tourguide_available")
     private String tourguideAvailable;
+    @SerializedName("SORt_ID")
+    private Integer sortId;
 
     public HomeList() {
 
     }
 
-    public HomeList(String name, String id, String image, String tourguideAvailable) {
+    public HomeList(String name, String id, String image, String tourguideAvailable,Integer sortId) {
         this.name = name;
         this.id = id;
         this.image = image;
         this.tourguideAvailable = tourguideAvailable;
+        this.sortId =sortId;
     }
 
     public String getName() {
@@ -56,4 +61,12 @@ public class HomeList {
         this.tourguideAvailable = tourguideAvailable;
     }
 
+    public Integer getSortId() {
+        return sortId;
+    }
+
+    @Override
+    public int compareTo(@NonNull HomeList homeList) {
+        return this.sortId.compareTo(homeList.sortId);
+    }
 }
