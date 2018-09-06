@@ -28,10 +28,10 @@ public interface MuseumAboutTableDao {
     int checkArabicIdExist(int idFromAPI);
 
     @Query("SELECT * FROM museumabouttableenglish WHERE museum_id = :idFromAPI")
-    List<MuseumAboutTableEnglish> getMuseumAboutDataEnglish(int idFromAPI);
+    MuseumAboutTableEnglish getMuseumAboutDataEnglish(int idFromAPI);
 
     @Query("SELECT * FROM museumabouttablearabic WHERE museum_id = :idFromAPI")
-    List<MuseumAboutTableArabic> getMuseumAboutDataArabic(int idFromAPI);
+    MuseumAboutTableArabic getMuseumAboutDataArabic(int idFromAPI);
 
     @Query("UPDATE museumabouttableenglish SET museum_title = :museumtitleFromApi," +
             "museum_subtitle = :museumSubtitleFromApi,museum_image = :museumImageFromApi, " +
