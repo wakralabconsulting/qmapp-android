@@ -395,6 +395,13 @@ public class FloorMapActivity extends AppCompatActivity implements OnMapReadyCal
         googleMap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
             @Override
             public boolean onMarkerClick(Marker marker) {
+                if (selectedMarker != null) {
+                    mBottomSheetBehavior.setState(BottomSheetBehavior.STATE_HIDDEN);
+                    selectedMarker.setIcon(BitmapDescriptorFactory.fromBitmap(resizeMapIcons(name, normalMapIconWidth, normalMapIconHeight)));
+                    selectedMarker.hideInfoWindow();
+                    selectedMarker = null;
+
+                }
                 String temp = marker.getTitle();
                 switch (temp) {
                     case "SI.5":
@@ -458,13 +465,7 @@ public class FloorMapActivity extends AppCompatActivity implements OnMapReadyCal
 
 
                 }
-                if (selectedMarker != null) {
-                    mBottomSheetBehavior.setState(BottomSheetBehavior.STATE_HIDDEN);
-                    selectedMarker.setIcon(BitmapDescriptorFactory.fromBitmap(resizeMapIcons(name, normalMapIconWidth, normalMapIconHeight)));
-                    selectedMarker.hideInfoWindow();
-                    selectedMarker = null;
 
-                }
                 selectedMarker = marker;
                 selectedMarker.setIcon(BitmapDescriptorFactory.fromBitmap(resizeMapIcons(name, largeMapIconWidth, largeMapIconHeight)));
                 mBottomSheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
