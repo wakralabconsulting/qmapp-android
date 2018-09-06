@@ -80,6 +80,8 @@ public class CommonActivity extends AppCompatActivity {
     int appLanguage;
     String pageName = null;
     String id;
+    private APIInterface apiService;
+    private Call<ArrayList<CommonModel>> call;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -105,7 +107,8 @@ public class CommonActivity extends AppCompatActivity {
             @Override
             public void onPositionClicked(int position) {
                 if (toolbarTitle.equals(getString(R.string.sidemenu_dining_text)))
-                    navigationIntent = new Intent(CommonActivity.this, DiningActivity.class);
+                    navigationIntent = new Intent(CommonActivity.this,
+                            DiningActivity.class);
                 else if (toolbarTitle.equals(getString(R.string.museum_collection_text)))
                     navigationIntent = new Intent(CommonActivity.this,
                             CollectionDetailsActivity.class);
@@ -149,10 +152,16 @@ public class CommonActivity extends AppCompatActivity {
             }
         });
         if (toolbarTitle.equals(getString(R.string.sidemenu_exhibition_text))) {
+            /* Commented for Temporary API
             if (util.isNetworkAvailable(CommonActivity.this))
                 getCommonListAPIDataFromAPI("Exhibition_List_Page.json");
             else
                 getCommonListDataFromDatabase("Exhibition_List_Page.json");
+            */
+            if (util.isNetworkAvailable(CommonActivity.this)) // For Temporary API
+                getCommonListAPIDataFromAPI("Exhibition_List_Page.php");
+            else
+                getCommonListDataFromDatabase("Exhibition_List_Page.php");
         } else if (toolbarTitle.equals(getString(R.string.sidemenu_heritage_text))) {
             if (util.isNetworkAvailable(CommonActivity.this))
                 getCommonListAPIDataFromAPI("Heritage_List_Page.json");
@@ -165,12 +174,20 @@ public class CommonActivity extends AppCompatActivity {
             else
                 getCommonListDataFromDatabase("Public_Arts_List_Page.json");
 
-
         } else if (toolbarTitle.equals(getString(R.string.sidemenu_dining_text))) {
+
+            /* Commented for Temporary API
             if (util.isNetworkAvailable(CommonActivity.this))
                 getCommonListAPIDataFromAPI("getDiningList.json");
             else
                 getCommonListDataFromDatabase("getDiningList.json");
+             */
+
+            if (util.isNetworkAvailable(CommonActivity.this))  // For Temporary API
+                getCommonListAPIDataFromAPI("getDiningList.php");
+            else
+                getCommonListDataFromDatabase("getDiningList.php");
+
         } else if (toolbarTitle.equals(getString(R.string.museum_collection_text))) {
             if (util.isNetworkAvailable(CommonActivity.this))
                 getMuseumCollectionListFromAPI();
@@ -208,6 +225,19 @@ public class CommonActivity extends AppCompatActivity {
             else
                 language = "ar";
             new DiningRowCount(CommonActivity.this, language).execute();
+        } else if (apiParts.equals("getDiningList.php")) {    // For Temporary API
+            String language;
+            if (appLanguage == 1)
+                language = "en";
+            else
+                language = "ar";
+            new DiningRowCount(CommonActivity.this, language, id).execute();
+        } else if (apiParts.equals("Exhibition_List_Page.php")) {   // For Temporary API
+            if (appLanguage == 1) {
+                new RetriveExhibitionDataEnglish(CommonActivity.this, appLanguage, id).execute();
+            } else {
+                new RetriveExhibitionDataArabic(CommonActivity.this, appLanguage, id).execute();
+            }
         }
 
 
@@ -224,14 +254,18 @@ public class CommonActivity extends AppCompatActivity {
         }
         APIInterface apiService =
                 APIClient.getClient().create(APIInterface.class);
+
+        id = "63"; // For Temporary
+
         Call<ArrayList<CommonModel>> call = apiService.getCollectionList(language, id);
         call.enqueue(new Callback<ArrayList<CommonModel>>() {
             @Override
             public void onResponse(Call<ArrayList<CommonModel>> call, Response<ArrayList<CommonModel>> response) {
                 if (response.isSuccessful()) {
-                    if (response.body() != null) {
+                    if (response.body() != null && response.body().size() > 0) {
                         recyclerView.setVisibility(View.VISIBLE);
                         models.addAll(response.body());
+                        removeHtmlTags(models);
                         mAdapter.notifyDataSetChanged();
                         new MuseumCollectionRowCount(CommonActivity.this, language).execute();
                     } else {
@@ -260,6 +294,14 @@ public class CommonActivity extends AppCompatActivity {
         });
     }
 
+    public void removeHtmlTags(ArrayList<CommonModel> models) {
+        for (int i = 0; i < models.size(); i++) {
+            models.get(i).setName(util.html2string(models.get(i).getName()));
+            models.get(i).setStartDate(util.html2string(models.get(i).getStartDate()));
+            models.get(i).setEndDate(util.html2string(models.get(i).getEndDate()));
+        }
+    }
+
     private void getCommonListAPIDataFromAPI(String name) {
         progressBar.setVisibility(View.VISIBLE);
         final String language;
@@ -269,16 +311,23 @@ public class CommonActivity extends AppCompatActivity {
         } else {
             language = "ar";
         }
-        APIInterface apiService =
-                APIClient.getClient().create(APIInterface.class);
-        Call<ArrayList<CommonModel>> call = apiService.getCommonpageList(language, pageName);
+
+        if (pageName.contains("php"))  // For Temporary API
+            apiService = APIClient.getTempClient().create(APIInterface.class);
+        else
+            apiService = APIClient.getClient().create(APIInterface.class);
+        if (id != null)
+            call = apiService.getCommonpageListWithID(language, pageName, id);
+        else
+            call = apiService.getCommonpageList(language, pageName);
         call.enqueue(new Callback<ArrayList<CommonModel>>() {
             @Override
             public void onResponse(Call<ArrayList<CommonModel>> call, Response<ArrayList<CommonModel>> response) {
                 if (response.isSuccessful()) {
-                    if (response.body() != null) {
+                    if (response.body() != null && response.body().size() > 0) {
                         recyclerView.setVisibility(View.VISIBLE);
                         models.addAll(response.body());
+                        removeHtmlTags(models);
                         mAdapter.notifyDataSetChanged();
                         if (pageName.equals("Heritage_List_Page.json")) {
                             new RowCount(CommonActivity.this, language).execute();
@@ -288,6 +337,10 @@ public class CommonActivity extends AppCompatActivity {
                             new ExhibitionRowCount(CommonActivity.this, language).execute();
                         } else if (pageName.equals("getDiningList.json")) {
                             new DiningRowCount(CommonActivity.this, language).execute();
+                        } else if (pageName.equals("getDiningList.php")) {  // For Temporary API
+                            new DiningRowCount(CommonActivity.this, language).execute();
+                        } else if (pageName.equals("Exhibition_List_Page.php")) {  // For Temporary API
+                            new ExhibitionRowCount(CommonActivity.this, language).execute();
                         }
                     } else {
                         recyclerView.setVisibility(View.GONE);
@@ -321,10 +374,17 @@ public class CommonActivity extends AppCompatActivity {
 
         private WeakReference<CommonActivity> activityReference;
         String language;
+        String museumID;
 
         DiningRowCount(CommonActivity context, String apiLanguage) {
             activityReference = new WeakReference<>(context);
             language = apiLanguage;
+        }
+
+        DiningRowCount(CommonActivity context, String apiLanguage, String museumId) {
+            activityReference = new WeakReference<>(context);
+            language = apiLanguage;
+            museumID = museumId;
         }
 
         @Override
@@ -340,10 +400,18 @@ public class CommonActivity extends AppCompatActivity {
                     //updateEnglishTable or add row to database
                     new CheckDiningDBRowExist(CommonActivity.this, language).execute();
                 else {
-                    if (language.equals("en")) {
-                        new RetriveEnglishDiningData(CommonActivity.this, 1).execute();
+                    if (museumID == null) {
+                        if (language.equals("en")) {
+                            new RetriveEnglishDiningData(CommonActivity.this, 1).execute();
+                        } else {
+                            new RetriveArabicDiningData(CommonActivity.this, 2).execute();
+                        }
                     } else {
-                        new RetriveArabicDiningData(CommonActivity.this, 2).execute();
+                        if (language.equals("en")) {
+                            new RetriveEnglishDiningData(CommonActivity.this, 1, museumID).execute();
+                        } else {
+                            new RetriveArabicDiningData(CommonActivity.this, 2, museumID).execute();
+                        }
                     }
                 }
             } else if (models.size() > 0) {
@@ -400,10 +468,12 @@ public class CommonActivity extends AppCompatActivity {
 
                         } else {
                             //create row with corresponding id
-                            diningTableEnglish = new DiningTableEnglish(Long.parseLong(models.get(i).getId()),
+                            diningTableEnglish = new DiningTableEnglish(Long.parseLong(
+                                    models.get(i).getId()),
                                     models.get(i).getName(),
                                     models.get(i).getImage(),
-                                    models.get(i).getSortId());
+                                    models.get(i).getSortId(),
+                                    models.get(i).getMuseumId());
                             activityReference.get().qmDatabase.getDiningTableDao().insert(diningTableEnglish);
 
                         }
@@ -421,7 +491,8 @@ public class CommonActivity extends AppCompatActivity {
                             diningTableArabic = new DiningTableArabic(Long.parseLong(models.get(i).getId()),
                                     models.get(i).getName(),
                                     models.get(i).getImage(),
-                                    models.get(i).getSortId());
+                                    models.get(i).getSortId(),
+                                    models.get(i).getMuseumId());
                             activityReference.get().qmDatabase.getDiningTableDao().insert(diningTableArabic);
 
                         }
@@ -504,7 +575,8 @@ public class CommonActivity extends AppCompatActivity {
                         diningTableEnglish = new DiningTableEnglish(Long.parseLong(models.get(i).getId()),
                                 models.get(i).getName(),
                                 models.get(i).getImage(),
-                                models.get(i).getSortId());
+                                models.get(i).getSortId(),
+                                models.get(i).getMuseumId());
                         activityReference.get().qmDatabase.getDiningTableDao().insert(diningTableEnglish);
                     }
                 } else {
@@ -512,7 +584,8 @@ public class CommonActivity extends AppCompatActivity {
                         diningTableArabic = new DiningTableArabic(Long.parseLong(models.get(i).getId()),
                                 models.get(i).getName(),
                                 models.get(i).getImage(),
-                                models.get(i).getSortId());
+                                models.get(i).getSortId(),
+                                models.get(i).getMuseumId());
                         activityReference.get().qmDatabase.getDiningTableDao().insert(diningTableArabic);
                     }
                 }
@@ -525,10 +598,17 @@ public class CommonActivity extends AppCompatActivity {
     public class RetriveEnglishDiningData extends AsyncTask<Void, Void, List<DiningTableEnglish>> {
         private WeakReference<CommonActivity> activityReference;
         int language;
+        String museumID;
 
         RetriveEnglishDiningData(CommonActivity context, int appLanguage) {
             activityReference = new WeakReference<>(context);
             language = appLanguage;
+        }
+
+        RetriveEnglishDiningData(CommonActivity context, int appLanguage, String museumId) {
+            activityReference = new WeakReference<>(context);
+            language = appLanguage;
+            museumID = museumId;
         }
 
         @Override
@@ -538,31 +618,46 @@ public class CommonActivity extends AppCompatActivity {
 
         @Override
         protected void onPostExecute(List<DiningTableEnglish> diningTableEnglishList) {
-            models.clear();
-            for (int i = 0; i < diningTableEnglishList.size(); i++) {
-                CommonModel commonModel = new CommonModel(String.valueOf(diningTableEnglishList.get(i).getDining_id()),
-                        diningTableEnglishList.get(i).getDining_name(),
-                        diningTableEnglishList.get(i).getDining_image(), "", "");
-                models.add(i, commonModel);
+            if (diningTableEnglishList.size() > 0) {
+                models.clear();
+                for (int i = 0; i < diningTableEnglishList.size(); i++) {
+                    CommonModel commonModel = new CommonModel(String.valueOf(diningTableEnglishList.get(i).getDining_id()),
+                            diningTableEnglishList.get(i).getDining_name(),
+                            diningTableEnglishList.get(i).getDining_image(), "", "");
+                    models.add(i, commonModel);
 
+                }
+                mAdapter.notifyDataSetChanged();
+            } else {
+                recyclerView.setVisibility(View.GONE);
+                noResultFoundLayout.setVisibility(View.VISIBLE);
             }
-            mAdapter.notifyDataSetChanged();
             progressBar.setVisibility(View.GONE);
         }
 
         @Override
         protected List<DiningTableEnglish> doInBackground(Void... voids) {
-            return activityReference.get().qmDatabase.getDiningTableDao().getAllEnglish();
+            if (museumID != null)
+                return activityReference.get().qmDatabase.getDiningTableDao().getDiningDetailsEnglishWithMuseumId(Integer.parseInt(museumID));
+            else
+                return activityReference.get().qmDatabase.getDiningTableDao().getAllEnglish();
         }
     }
 
     public class RetriveArabicDiningData extends AsyncTask<Void, Void, List<DiningTableArabic>> {
         private WeakReference<CommonActivity> activityReference;
         int language;
+        String museumID;
 
         RetriveArabicDiningData(CommonActivity context, int appLanguage) {
             activityReference = new WeakReference<>(context);
             language = appLanguage;
+        }
+
+        RetriveArabicDiningData(CommonActivity context, int appLanguage, String museumId) {
+            activityReference = new WeakReference<>(context);
+            language = appLanguage;
+            museumID = museumId;
         }
 
         @Override
@@ -572,21 +667,29 @@ public class CommonActivity extends AppCompatActivity {
 
         @Override
         protected void onPostExecute(List<DiningTableArabic> diningTableArabicList) {
-            models.clear();
-            for (int i = 0; i < diningTableArabicList.size(); i++) {
-                CommonModel commonModel = new CommonModel(String.valueOf(diningTableArabicList.get(i).getDining_id()),
-                        diningTableArabicList.get(i).getDining_name(),
-                        diningTableArabicList.get(i).getDining_image(), "", "");
-                models.add(i, commonModel);
+            if (diningTableArabicList.size() > 0) {
+                models.clear();
+                for (int i = 0; i < diningTableArabicList.size(); i++) {
+                    CommonModel commonModel = new CommonModel(String.valueOf(diningTableArabicList.get(i).getDining_id()),
+                            diningTableArabicList.get(i).getDining_name(),
+                            diningTableArabicList.get(i).getDining_image(), "", "");
+                    models.add(i, commonModel);
 
+                }
+                mAdapter.notifyDataSetChanged();
+            } else {
+                recyclerView.setVisibility(View.GONE);
+                noResultFoundLayout.setVisibility(View.VISIBLE);
             }
-            mAdapter.notifyDataSetChanged();
             progressBar.setVisibility(View.GONE);
         }
 
         @Override
         protected List<DiningTableArabic> doInBackground(Void... voids) {
-            return activityReference.get().qmDatabase.getDiningTableDao().getAllArabic();
+            if (museumID != null)
+                return activityReference.get().qmDatabase.getDiningTableDao().getDiningDetailsArabicWithMuseumId(Integer.parseInt(museumID));
+            else
+                return activityReference.get().qmDatabase.getDiningTableDao().getAllArabic();
         }
     }
 
@@ -1205,10 +1308,16 @@ public class CommonActivity extends AppCompatActivity {
                         } else {
                             //create row with corresponding id
                             exhibitionListTableEnglish = new ExhibitionListTableEnglish(Long.parseLong(models.get(i).getId()),
-                                    models.get(i).getName(), models.get(i).getImage(),
-                                    models.get(i).getStartDate(), models.get(i).getEndDate(),
-                                    models.get(i).getLocation(), null, null,
-                                    null, null);
+                                    models.get(i).getName(),
+                                    models.get(i).getImage(),
+                                    models.get(i).getStartDate(),
+                                    models.get(i).getEndDate(),
+                                    models.get(i).getLocation(),
+                                    null,
+                                    null,
+                                    null,
+                                    null,
+                                    models.get(i).getMuseumId());
                             activityReference.get().qmDatabase.getExhibitionTableDao().insert(exhibitionListTableEnglish);
 
                         }
@@ -1226,9 +1335,14 @@ public class CommonActivity extends AppCompatActivity {
                             exhibitionListTableArabic = new ExhibitionListTableArabic(Long.parseLong(models.get(i).getId()),
                                     models.get(i).getName(),
                                     models.get(i).getImage(),
-                                    models.get(i).getStartDate(), models.get(i).getEndDate(),
-                                    models.get(i).getLocation(), null, null,
-                                    null, null);
+                                    models.get(i).getStartDate(),
+                                    models.get(i).getEndDate(),
+                                    models.get(i).getLocation(),
+                                    null,
+                                    null,
+                                    null,
+                                    null,
+                                    models.get(i).getMuseumId());
                             activityReference.get().qmDatabase.getExhibitionTableDao().insert(exhibitionListTableArabic);
 
                         }
@@ -1274,8 +1388,12 @@ public class CommonActivity extends AppCompatActivity {
                                 models.get(i).getImage(),
                                 models.get(i).getStartDate(),
                                 models.get(i).getEndDate(),
-                                models.get(i).getLocation(), null, null,
-                                null, null);
+                                models.get(i).getLocation(),
+                                null,
+                                null,
+                                null,
+                                null,
+                                models.get(i).getMuseumId());
                         activityReference.get().qmDatabase.getExhibitionTableDao().insert(exhibitionListTableEnglish);
                     }
                 } else {
@@ -1285,8 +1403,12 @@ public class CommonActivity extends AppCompatActivity {
                                 models.get(i).getImage(),
                                 models.get(i).getStartDate(),
                                 models.get(i).getEndDate(),
-                                models.get(i).getLocation(), null, null,
-                                null, null);
+                                models.get(i).getLocation(),
+                                null,
+                                null,
+                                null,
+                                null,
+                                models.get(i).getMuseumId());
                         activityReference.get().qmDatabase.getExhibitionTableDao().insert(exhibitionListTableArabic);
                     }
                 }
@@ -1321,15 +1443,21 @@ public class CommonActivity extends AppCompatActivity {
             if (language == 1) {
                 // updateEnglishTable table with english name
                 activityReference.get().qmDatabase.getExhibitionTableDao().updateExhibitionListEnglish(
-                        models.get(position).getStartDate(), models.get(position).getEndDate(),
-                        models.get(position).getLocation(), models.get(position).getId()
+                        models.get(position).getStartDate(),
+                        models.get(position).getEndDate(),
+                        models.get(position).getLocation(),
+                        models.get(position).getId(),
+                        models.get(position).getMuseumId()
                 );
 
             } else {
                 // updateEnglishTable table with arabic name
                 activityReference.get().qmDatabase.getExhibitionTableDao().updateExhibitionListArabic(
-                        models.get(position).getStartDate(), models.get(position).getEndDate(),
-                        models.get(position).getLocation(), models.get(position).getId()
+                        models.get(position).getStartDate(),
+                        models.get(position).getEndDate(),
+                        models.get(position).getLocation(),
+                        models.get(position).getId(),
+                        models.get(position).getMuseumId()
                 );
             }
             return null;
@@ -1339,10 +1467,17 @@ public class CommonActivity extends AppCompatActivity {
     public class RetriveExhibitionDataEnglish extends AsyncTask<Void, Void, List<ExhibitionListTableEnglish>> {
         private WeakReference<CommonActivity> activityReference;
         int language;
+        String museumID;
 
         RetriveExhibitionDataEnglish(CommonActivity context, int appLanguage) {
             activityReference = new WeakReference<>(context);
             language = appLanguage;
+        }
+
+        RetriveExhibitionDataEnglish(CommonActivity context, int appLanguage, String museumId) {
+            activityReference = new WeakReference<>(context);
+            language = appLanguage;
+            museumID = museumId;
         }
 
         @Override
@@ -1377,17 +1512,27 @@ public class CommonActivity extends AppCompatActivity {
 
         @Override
         protected List<ExhibitionListTableEnglish> doInBackground(Void... voids) {
-            return activityReference.get().qmDatabase.getExhibitionTableDao().getAllEnglish();
+            if (museumID != null)
+                return activityReference.get().qmDatabase.getExhibitionTableDao().getExhibitionWithMuseumIdEnglish(Integer.parseInt(museumID));
+            else
+                return activityReference.get().qmDatabase.getExhibitionTableDao().getAllEnglish();
         }
     }
 
     public class RetriveExhibitionDataArabic extends AsyncTask<Void, Void, List<ExhibitionListTableArabic>> {
         private WeakReference<CommonActivity> activityReference;
         int language;
+        String museumID;
 
         RetriveExhibitionDataArabic(CommonActivity context, int appLanguage) {
             activityReference = new WeakReference<>(context);
             language = appLanguage;
+        }
+
+        RetriveExhibitionDataArabic(CommonActivity context, int appLanguage, String museumId) {
+            activityReference = new WeakReference<>(context);
+            language = appLanguage;
+            museumID = museumId;
         }
 
         @Override
@@ -1407,7 +1552,6 @@ public class CommonActivity extends AppCompatActivity {
                             exhibitionListTableArabic.get(i).getExhibition_location(),
                             exhibitionListTableArabic.get(i).getExhibition_latest_image(),
                             null);
-
                     models.add(i, commonModel);
                 }
                 mAdapter.notifyDataSetChanged();
@@ -1422,16 +1566,20 @@ public class CommonActivity extends AppCompatActivity {
 
         @Override
         protected List<ExhibitionListTableArabic> doInBackground(Void... voids) {
-            return activityReference.get().qmDatabase.getExhibitionTableDao().getAllArabic();
+            if (museumID != null)
+                return activityReference.get().qmDatabase.getExhibitionTableDao().getExhibitionWithMuseumIdArabic(Integer.parseInt(museumID));
+            else
+                return activityReference.get().qmDatabase.getExhibitionTableDao().getAllArabic();
 
         }
     }
 
     public void getMuseumCollectionListFromDatabase() {
+        id = "63"; // For Temporary
         if (appLanguage == 1) {
-            new RetriveMuseumCollectionDataEnglish(CommonActivity.this, appLanguage).execute();
+            new RetriveMuseumCollectionDataEnglish(CommonActivity.this, appLanguage, id).execute();
         } else {
-            new RetriveMuseumCollectionDataArabic(CommonActivity.this, appLanguage).execute();
+            new RetriveMuseumCollectionDataArabic(CommonActivity.this, appLanguage, id).execute();
         }
     }
 
@@ -1604,10 +1752,12 @@ public class CommonActivity extends AppCompatActivity {
     public class RetriveMuseumCollectionDataEnglish extends AsyncTask<Void, Void, List<MuseumCollectionListTableEnglish>> {
         private WeakReference<CommonActivity> activityReference;
         int language;
+        String museumReference;
 
-        RetriveMuseumCollectionDataEnglish(CommonActivity context, int appLanguage) {
+        RetriveMuseumCollectionDataEnglish(CommonActivity context, int appLanguage, String museumId) {
             activityReference = new WeakReference<>(context);
             language = appLanguage;
+            museumReference = museumId;
         }
 
         @Override
@@ -1617,7 +1767,8 @@ public class CommonActivity extends AppCompatActivity {
 
         @Override
         protected List<MuseumCollectionListTableEnglish> doInBackground(Void... voids) {
-            return activityReference.get().qmDatabase.getMuseumCollectionListDao().getAllDataFromMuseumListEnglishTable();
+            return activityReference.get().qmDatabase.getMuseumCollectionListDao().
+                    getDataFromEnglishTableWithReference(museumReference);
         }
 
         @Override
@@ -1643,10 +1794,12 @@ public class CommonActivity extends AppCompatActivity {
 
         private WeakReference<CommonActivity> activityReference;
         int language;
+        String museumReference;
 
-        RetriveMuseumCollectionDataArabic(CommonActivity context, int appLanguage) {
+        RetriveMuseumCollectionDataArabic(CommonActivity context, int appLanguage, String museumId) {
             activityReference = new WeakReference<>(context);
             language = appLanguage;
+            museumReference = museumId;
         }
 
         @Override
@@ -1674,7 +1827,8 @@ public class CommonActivity extends AppCompatActivity {
 
         @Override
         protected List<MuseumCollectionListTableArabic> doInBackground(Void... voids) {
-            return activityReference.get().qmDatabase.getMuseumCollectionListDao().getAllDataFromMuseumListArabicTable();
+            return activityReference.get().qmDatabase.getMuseumCollectionListDao().
+                    getDataFromArabicTableWithReference(museumReference);
         }
     }
 
