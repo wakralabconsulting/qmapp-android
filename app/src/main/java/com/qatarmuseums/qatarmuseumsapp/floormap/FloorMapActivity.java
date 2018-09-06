@@ -366,28 +366,28 @@ public class FloorMapActivity extends AppCompatActivity implements OnMapReadyCal
 
         l3_g10_sc1_1 = googleMap.addMarker(new MarkerOptions()
                 .position(L3_G10_SC1_1)
-                .title("G10")
-                .icon(BitmapDescriptorFactory.fromBitmap(resizeMapIcons("map_marker", normalMapIconWidth, normalMapIconHeight))));
+                .title("PO.297")
+                .icon(BitmapDescriptorFactory.fromBitmap(resizeMapIcons("po_297", normalMapIconWidth, normalMapIconHeight))));
         l3_g10_sc1_2 = googleMap.addMarker(new MarkerOptions()
                 .position(L3_G10_SC1_2)
-                .title("G10")
-                .icon(BitmapDescriptorFactory.fromBitmap(resizeMapIcons("map_marker", normalMapIconWidth, normalMapIconHeight))));
+                .title("PO.308")
+                .icon(BitmapDescriptorFactory.fromBitmap(resizeMapIcons("po_308", normalMapIconWidth, normalMapIconHeight))));
         l3_g11_wr15 = googleMap.addMarker(new MarkerOptions()
                 .position(L3_G11_WR15)
-                .title("G10")
-                .icon(BitmapDescriptorFactory.fromBitmap(resizeMapIcons("map_marker", normalMapIconWidth, normalMapIconHeight))));
+                .title("MS.647.A.59")
+                .icon(BitmapDescriptorFactory.fromBitmap(resizeMapIcons("ms_647_a_59", normalMapIconWidth, normalMapIconHeight))));
         l3_g13_5 = googleMap.addMarker(new MarkerOptions()
                 .position(L3_G13_5)
-                .title("G10")
-                .icon(BitmapDescriptorFactory.fromBitmap(resizeMapIcons("map_marker", normalMapIconWidth, normalMapIconHeight))));
+                .title("GL.322")
+                .icon(BitmapDescriptorFactory.fromBitmap(resizeMapIcons("gl_322", normalMapIconWidth, normalMapIconHeight))));
         l3_g13_7 = googleMap.addMarker(new MarkerOptions()
                 .position(L3_G13_7)
-                .title("G10")
-                .icon(BitmapDescriptorFactory.fromBitmap(resizeMapIcons("map_marker", normalMapIconWidth, normalMapIconHeight))));
+                .title("HS.32")
+                .icon(BitmapDescriptorFactory.fromBitmap(resizeMapIcons("hs_32", normalMapIconWidth, normalMapIconHeight))));
         l3_g17_3 = googleMap.addMarker(new MarkerOptions()
                 .position(L3_G17_3)
-                .title("G10")
-                .icon(BitmapDescriptorFactory.fromBitmap(resizeMapIcons("map_marker", normalMapIconWidth, normalMapIconHeight))));
+                .title("IV.61")
+                .icon(BitmapDescriptorFactory.fromBitmap(resizeMapIcons("iv_61", normalMapIconWidth, normalMapIconHeight))));
 
         levelG.performClick();
 
@@ -437,6 +437,25 @@ public class FloorMapActivity extends AppCompatActivity implements OnMapReadyCal
                     case "MS.794":
                         name = "ms_794";
                         break;
+                    case "MS.647.A.59":
+                        name = "ms_647_a_59";
+                        break;
+                    case "HS.32":
+                        name="hs_32";
+                        break;
+                    case "GL.322":
+                        name = "gl_322";
+                        break;
+                    case "IV.61":
+                        name="iv_61";
+                        break;
+                    case "PO.297":
+                        name = "po_297";
+                        break;
+                    case "PO.308":
+                        name="po_308";
+                        break;
+
 
                 }
                 if (selectedMarker != null) {
