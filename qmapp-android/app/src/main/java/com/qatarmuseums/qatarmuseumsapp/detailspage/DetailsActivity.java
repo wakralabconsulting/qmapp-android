@@ -429,13 +429,18 @@ public class DetailsActivity extends AppCompatActivity implements IPullZoom {
                     if (response.body() != null) {
                         commonContentLayout.setVisibility(View.VISIBLE);
                         heritageOrExhibitionDetailModel = response.body();
+                        removeHtmlTags(heritageOrExhibitionDetailModel);
                         if (pageName.equals("heritage_detail_Page.json")) {
-                            loadDataForHeritageOrExhibitionDetails(null, heritageOrExhibitionDetailModel.get(0).getShortDescription(),
+                            loadDataForHeritageOrExhibitionDetails(
+                                    null,
+                                    heritageOrExhibitionDetailModel.get(0).getShortDescription(),
                                     heritageOrExhibitionDetailModel.get(0).getLongDescription(),
-                                    null, null,
+                                    null,
+                                    null,
                                     null,
                                     heritageOrExhibitionDetailModel.get(0).getLocation(),
-                                    null, heritageOrExhibitionDetailModel.get(0).getLatitude(),
+                                    null,
+                                    heritageOrExhibitionDetailModel.get(0).getLatitude(),
                                     heritageOrExhibitionDetailModel.get(0).getLongitude(),
                                     null, null);
                             new HeritageRowCount(DetailsActivity.this, appLanguage).execute();
@@ -478,6 +483,19 @@ public class DetailsActivity extends AppCompatActivity implements IPullZoom {
                 progressBar.setVisibility(View.GONE);
             }
         });
+    }
+
+    public void removeHtmlTags(ArrayList<HeritageOrExhibitionDetailModel> models) {
+        for (int i = 0; i < models.size(); i++) {
+            models.get(i).setStartDate(util.html2string(models.get(i).getStartDate()));
+            models.get(i).setEndDate(util.html2string(models.get(i).getEndDate()));
+            models.get(i).setLongDescription(util.html2string(models.get(i).getLongDescription()));
+        }
+    }
+    public void removeHtmlTagsPublicArts(ArrayList<PublicArtModel> models) {
+        for (int i = 0; i < models.size(); i++) {
+            models.get(i).setLongDescription(util.html2string(models.get(i).getLongDescription()));
+        }
     }
 
     public class ExhibitionDetailRowCount extends AsyncTask<Void, Void, Integer> {
@@ -920,6 +938,7 @@ public class DetailsActivity extends AppCompatActivity implements IPullZoom {
     }
 
     private void getPublicArtDetailsFromAPI(String id, int appLanguage) {
+        commonContentLayout.setVisibility(View.INVISIBLE);
         progressBar.setVisibility(View.VISIBLE);
         final String language;
         if (appLanguage == 1) {
@@ -938,6 +957,7 @@ public class DetailsActivity extends AppCompatActivity implements IPullZoom {
                     if (response.body() != null) {
                         commonContentLayout.setVisibility(View.VISIBLE);
                         publicArtModel = response.body();
+                        removeHtmlTagsPublicArts(publicArtModel);
                         loadData(null,
                                 publicArtModel.get(0).getShortDescription(),
                                 publicArtModel.get(0).getLongDescription(),

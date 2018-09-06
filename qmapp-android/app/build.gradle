@@ -31,7 +31,7 @@ dependencies {
     //butterknief
     implementation 'com.jakewharton:butterknife:8.8.1'
     //slider
-//firebase
+    //firebase
     implementation 'com.google.firebase:firebase-core:16.0.0'
     implementation 'com.crashlytics.sdk.android:crashlytics:2.9.3'
     //recycler view gravity start
@@ -43,23 +43,19 @@ dependencies {
     annotationProcessor 'com.github.bumptech.glide:compiler:4.7.1'
     //    calendar
     implementation project(':collapsiblecalendarview2')
-
     implementation project(':library')
-
     implementation 'com.pierfrancescosoffritti.androidyoutubeplayer:core:8.0.1'
     // database showing
     debugImplementation 'com.amitshekhar.android:debug-db:1.0.4'
     // Room dependencies
     implementation 'android.arch.persistence.room:runtime:1.0.0'
     annotationProcessor 'android.arch.persistence.room:compiler:1.0.0'
-
     //retrofit
-
     implementation 'com.squareup.retrofit2:retrofit:2.1.0'
     implementation 'com.google.code.gson:gson:2.6.2'
     implementation 'com.squareup.retrofit2:converter-gson:2.1.0'
     implementation 'com.squareup.okhttp3:logging-interceptor:3.4.1'
-
-
+    //Html tag remover
+    implementation 'org.jsoup:jsoup:1.11.3'
 }
 apply plugin: 'com.google.gms.google-services'
