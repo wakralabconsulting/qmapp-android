@@ -64,6 +64,7 @@ public class FloorMapActivity extends AppCompatActivity implements OnMapReadyCal
     LatLng L2_G9_SC5_2 = new LatLng(25.295652, 51.538927);
     LatLng L2_G5_SC6 = new LatLng(25.295686, 51.539265);
     LatLng L2_G3_SC14 = new LatLng(25.295566, 51.539397);
+    LatLng L2_G3_SC13 = new LatLng(25.295566, 51.539429);
 
     LatLng L3_G10_SC1_1 = new LatLng(25.295230, 51.539170);
     LatLng L3_G10_SC1_2 = new LatLng(25.295245, 51.539210);
@@ -88,7 +89,7 @@ public class FloorMapActivity extends AppCompatActivity implements OnMapReadyCal
     GoogleMap googleMap;
     private LinearLayout level2, level1, levelG;
     private LinearLayout levelPicker;
-    private Marker l2_g1_sc3, l2_g3_sc14, l2_g5_sc6, l2_g8, l2_g8_sc1, l2_g8_sc4_1, l2_g8_sc4_2, l2_g8_sc5,
+    private Marker l2_g1_sc3,/* l2_g3_sc14,*/l2_g3_sc13, l2_g5_sc6, l2_g8, l2_g8_sc1, l2_g8_sc4_1, l2_g8_sc4_2, l2_g8_sc5,
             l2_g8_sc6_1, l2_g8_sc6_2, l2_g9_sc5_1, l2_g9_sc5_2, l2_g9_sc7, g10, l3_g10_sc1_1,
             l3_g10_sc1_2, l3_g11_wr15, l3_g13_5, l3_g13_7, l3_g17_3;
     private int selectedLevel = 2;
@@ -96,6 +97,7 @@ public class FloorMapActivity extends AppCompatActivity implements OnMapReadyCal
     // BottomSheetBehavior variable
     BottomSheetBehavior mBottomSheetBehavior;
     TextView viewDetails;
+    String name;
 
 
     LinearLayout bottomSheet, popupShortlayout, popupLongLayout;
@@ -212,7 +214,8 @@ public class FloorMapActivity extends AppCompatActivity implements OnMapReadyCal
 
     public void showLevel2() {
         l2_g1_sc3.setVisible(true);
-        l2_g3_sc14.setVisible(true);
+        //l2_g3_sc14.setVisible(true);
+        l2_g3_sc13.setVisible(true);
         l2_g5_sc6.setVisible(true);
         l2_g8.setVisible(true);
         l2_g8_sc1.setVisible(true);
@@ -228,7 +231,8 @@ public class FloorMapActivity extends AppCompatActivity implements OnMapReadyCal
 
     public void hideLevel2() {
         l2_g1_sc3.setVisible(false);
-        l2_g3_sc14.setVisible(false);
+        //l2_g3_sc14.setVisible(false);
+        l2_g3_sc13.setVisible(false);
         l2_g5_sc6.setVisible(false);
         l2_g8.setVisible(false);
         l2_g8_sc1.setVisible(false);
@@ -304,81 +308,86 @@ public class FloorMapActivity extends AppCompatActivity implements OnMapReadyCal
 
         l2_g1_sc3 = googleMap.addMarker(new MarkerOptions()
                 .position(L2_G1_SC3)
-                .title("S1.5")
-                .icon(BitmapDescriptorFactory.fromBitmap(resizeMapIcons("map_marker", normalMapIconWidth, normalMapIconHeight))));
-        l2_g3_sc14 = googleMap.addMarker(new MarkerOptions()
-                .position(L2_G3_SC14)
+                .title("SI.5")
+                .icon(BitmapDescriptorFactory.fromBitmap(resizeMapIcons("si_5", normalMapIconWidth, normalMapIconHeight))));
+//        l2_g3_sc14 = googleMap.addMarker(new MarkerOptions()
+//                .position(L2_G3_SC14)
+//                .title("MW.634")
+//                .icon(BitmapDescriptorFactory.fromBitmap(resizeMapIcons("mw_634", normalMapIconWidth, normalMapIconHeight))));
+        l2_g3_sc13 = googleMap.addMarker(new MarkerOptions()
+                .position(L2_G3_SC13)
                 .title("MW.634")
-                .icon(BitmapDescriptorFactory.fromBitmap(resizeMapIcons("map_marker", normalMapIconWidth, normalMapIconHeight))));
+                .icon(BitmapDescriptorFactory.fromBitmap(resizeMapIcons("mw_634", normalMapIconWidth, normalMapIconHeight))));
+
         l2_g5_sc6 = googleMap.addMarker(new MarkerOptions()
                 .position(L2_G5_SC6)
                 .title("MW.56")
-                .icon(BitmapDescriptorFactory.fromBitmap(resizeMapIcons("map_marker", normalMapIconWidth, normalMapIconHeight))));
+                .icon(BitmapDescriptorFactory.fromBitmap(resizeMapIcons("mw_56", normalMapIconWidth, normalMapIconHeight))));
         l2_g8 = googleMap.addMarker(new MarkerOptions()
                 .position(L2_G8)
-                .title("MW.56")
-                .icon(BitmapDescriptorFactory.fromBitmap(resizeMapIcons("map_marker", normalMapIconWidth, normalMapIconHeight))));
+                .title("MS.523")
+                .icon(BitmapDescriptorFactory.fromBitmap(resizeMapIcons("ms_523", normalMapIconWidth, normalMapIconHeight))));
         l2_g8_sc1 = googleMap.addMarker(new MarkerOptions()
                 .position(L2_G8_SC1)
-                .title("MW.56")
-                .icon(BitmapDescriptorFactory.fromResource(R.drawable.map_marker)));
+                .title("MW.548")
+                .icon(BitmapDescriptorFactory.fromBitmap(resizeMapIcons("mw_548", normalMapIconWidth, normalMapIconHeight))));
         l2_g8_sc4_1 = googleMap.addMarker(new MarkerOptions()
                 .position(L2_G8_SC4_1)
-                .title("MW.56")
-                .icon(BitmapDescriptorFactory.fromBitmap(resizeMapIcons("map_marker", normalMapIconWidth, normalMapIconHeight))));
+                .title("MS.650")
+                .icon(BitmapDescriptorFactory.fromBitmap(resizeMapIcons("ms_650", normalMapIconWidth, normalMapIconHeight))));
         l2_g8_sc4_2 = googleMap.addMarker(new MarkerOptions()
                 .position(L2_G8_SC4_2)
-                .title("MW.56")
-                .icon(BitmapDescriptorFactory.fromBitmap(resizeMapIcons("map_marker", normalMapIconWidth, normalMapIconHeight))));
+                .title("MS.688")
+                .icon(BitmapDescriptorFactory.fromBitmap(resizeMapIcons("ms_688", normalMapIconWidth, normalMapIconHeight))));
         l2_g8_sc5 = googleMap.addMarker(new MarkerOptions()
                 .position(L2_G8_SC5)
-                .title("MW.56")
-                .icon(BitmapDescriptorFactory.fromBitmap(resizeMapIcons("map_marker", normalMapIconWidth, normalMapIconHeight))));
+                .title("MW.361.2007")
+                .icon(BitmapDescriptorFactory.fromBitmap(resizeMapIcons("mw_361_2007", normalMapIconWidth, normalMapIconHeight))));
         l2_g8_sc6_1 = googleMap.addMarker(new MarkerOptions()
                 .position(L2_G8_SC6_1)
-                .title("MW.56")
-                .icon(BitmapDescriptorFactory.fromResource(R.drawable.map_marker)));
+                .title("MS.709.2010-1")
+                .icon(BitmapDescriptorFactory.fromBitmap(resizeMapIcons("ms_709_2010_1", normalMapIconWidth, normalMapIconHeight))));
         l2_g8_sc6_2 = googleMap.addMarker(new MarkerOptions()
                 .position(L2_G8_SC6_2)
-                .title("MW.56")
-                .icon(BitmapDescriptorFactory.fromBitmap(resizeMapIcons("map_marker", normalMapIconWidth, normalMapIconHeight))));
+                .title("MS.709.2010-2")
+                .icon(BitmapDescriptorFactory.fromBitmap(resizeMapIcons("ms_709_2010_2", normalMapIconWidth, normalMapIconHeight))));
         l2_g9_sc5_1 = googleMap.addMarker(new MarkerOptions()
                 .position(L2_G9_SC5_1)
-                .title("MW.56")
-                .icon(BitmapDescriptorFactory.fromBitmap(resizeMapIcons("map_marker", normalMapIconWidth, normalMapIconHeight))));
+                .title("MW.340")
+                .icon(BitmapDescriptorFactory.fromBitmap(resizeMapIcons("mw_340", normalMapIconWidth, normalMapIconHeight))));
         l2_g9_sc5_2 = googleMap.addMarker(new MarkerOptions()
                 .position(L2_G9_SC5_2)
-                .title("MW.56")
-                .icon(BitmapDescriptorFactory.fromBitmap(resizeMapIcons("map_marker", normalMapIconWidth, normalMapIconHeight))));
+                .title("MS.794")
+                .icon(BitmapDescriptorFactory.fromBitmap(resizeMapIcons("ms_794", normalMapIconWidth, normalMapIconHeight))));
         l2_g9_sc7 = googleMap.addMarker(new MarkerOptions()
                 .position(L2_G9_SC7)
-                .title("MW.56")
-                .icon(BitmapDescriptorFactory.fromBitmap(resizeMapIcons("map_marker", normalMapIconWidth, normalMapIconHeight))));
+                .title("MW.146")
+                .icon(BitmapDescriptorFactory.fromBitmap(resizeMapIcons("mw_146", normalMapIconWidth, normalMapIconHeight))));
 
         l3_g10_sc1_1 = googleMap.addMarker(new MarkerOptions()
                 .position(L3_G10_SC1_1)
-                .title("G10")
-                .icon(BitmapDescriptorFactory.fromBitmap(resizeMapIcons("map_marker", normalMapIconWidth, normalMapIconHeight))));
+                .title("PO.297")
+                .icon(BitmapDescriptorFactory.fromBitmap(resizeMapIcons("po_297", normalMapIconWidth, normalMapIconHeight))));
         l3_g10_sc1_2 = googleMap.addMarker(new MarkerOptions()
                 .position(L3_G10_SC1_2)
-                .title("G10")
-                .icon(BitmapDescriptorFactory.fromBitmap(resizeMapIcons("map_marker", normalMapIconWidth, normalMapIconHeight))));
+                .title("PO.308")
+                .icon(BitmapDescriptorFactory.fromBitmap(resizeMapIcons("po_308", normalMapIconWidth, normalMapIconHeight))));
         l3_g11_wr15 = googleMap.addMarker(new MarkerOptions()
                 .position(L3_G11_WR15)
-                .title("G10")
-                .icon(BitmapDescriptorFactory.fromBitmap(resizeMapIcons("map_marker", normalMapIconWidth, normalMapIconHeight))));
+                .title("MS.647.A.59")
+                .icon(BitmapDescriptorFactory.fromBitmap(resizeMapIcons("ms_647_a_59", normalMapIconWidth, normalMapIconHeight))));
         l3_g13_5 = googleMap.addMarker(new MarkerOptions()
                 .position(L3_G13_5)
-                .title("G10")
-                .icon(BitmapDescriptorFactory.fromBitmap(resizeMapIcons("map_marker", normalMapIconWidth, normalMapIconHeight))));
+                .title("GL.322")
+                .icon(BitmapDescriptorFactory.fromBitmap(resizeMapIcons("gl_322", normalMapIconWidth, normalMapIconHeight))));
         l3_g13_7 = googleMap.addMarker(new MarkerOptions()
                 .position(L3_G13_7)
-                .title("G10")
-                .icon(BitmapDescriptorFactory.fromBitmap(resizeMapIcons("map_marker", normalMapIconWidth, normalMapIconHeight))));
+                .title("HS.32")
+                .icon(BitmapDescriptorFactory.fromBitmap(resizeMapIcons("hs_32", normalMapIconWidth, normalMapIconHeight))));
         l3_g17_3 = googleMap.addMarker(new MarkerOptions()
                 .position(L3_G17_3)
-                .title("G10")
-                .icon(BitmapDescriptorFactory.fromBitmap(resizeMapIcons("map_marker", normalMapIconWidth, normalMapIconHeight))));
+                .title("IV.61")
+                .icon(BitmapDescriptorFactory.fromBitmap(resizeMapIcons("iv_61", normalMapIconWidth, normalMapIconHeight))));
 
         levelG.performClick();
 
@@ -388,13 +397,77 @@ public class FloorMapActivity extends AppCompatActivity implements OnMapReadyCal
             public boolean onMarkerClick(Marker marker) {
                 if (selectedMarker != null) {
                     mBottomSheetBehavior.setState(BottomSheetBehavior.STATE_HIDDEN);
-                    selectedMarker.setIcon(BitmapDescriptorFactory.fromBitmap(resizeMapIcons("map_marker", normalMapIconWidth, normalMapIconHeight)));
+                    selectedMarker.setIcon(BitmapDescriptorFactory.fromBitmap(resizeMapIcons(name, normalMapIconWidth, normalMapIconHeight)));
                     selectedMarker.hideInfoWindow();
                     selectedMarker = null;
 
                 }
+                String temp = marker.getTitle();
+                switch (temp) {
+                    case "SI.5":
+                        name = "si_5";
+                        break;
+                    case "MW.634":
+                        name="mw_634";
+                        break;
+                    case "MW.56":
+                        name = "mw_56";
+                        break;
+                    case "MW.548":
+                        name="mw_548";
+                        break;
+                    case "MS.523":
+                        name = "ms_523";
+                        break;
+                    case "MS.709.2010-1":
+                        name="ms_709_2010_1";
+                        break;
+                    case "MS.709.2010-2":
+                        name = "ms_709_2010_2";
+                        break;
+                    case "MW.361.2007":
+                        name="mw_361_2007";
+                        break;
+
+                    case "MS.650":
+                        name = "ms_650";
+                        break;
+                    case "MS.688":
+                        name="ms_688";
+                        break;
+                    case "MW.146":
+                        name = "mw_146";
+                        break;
+                    case "MW.340":
+                        name="mw_340";
+                        break;
+                    case "MS.794":
+                        name = "ms_794";
+                        break;
+                    case "MS.647.A.59":
+                        name = "ms_647_a_59";
+                        break;
+                    case "HS.32":
+                        name="hs_32";
+                        break;
+                    case "GL.322":
+                        name = "gl_322";
+                        break;
+                    case "IV.61":
+                        name="iv_61";
+                        break;
+                    case "PO.297":
+                        name = "po_297";
+                        break;
+                    case "PO.308":
+                        name="po_308";
+                        break;
+
+
+                }
+
                 selectedMarker = marker;
-                selectedMarker.setIcon(BitmapDescriptorFactory.fromBitmap(resizeMapIcons("map_marker", largeMapIconWidth, largeMapIconHeight)));
+                selectedMarker.setIcon(BitmapDescriptorFactory.fromBitmap(resizeMapIcons(name, largeMapIconWidth, largeMapIconHeight)));
                 mBottomSheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
 
                 return false;
@@ -433,7 +506,7 @@ public class FloorMapActivity extends AppCompatActivity implements OnMapReadyCal
 
                     if (!outRect.contains((int) event.getRawX(), (int) event.getRawY())) {
                         mBottomSheetBehavior.setState(BottomSheetBehavior.STATE_HIDDEN);
-                        selectedMarker.setIcon(BitmapDescriptorFactory.fromBitmap(resizeMapIcons("map_marker", normalMapIconWidth, normalMapIconHeight)));
+                        selectedMarker.setIcon(BitmapDescriptorFactory.fromBitmap(resizeMapIcons(name, normalMapIconWidth, normalMapIconHeight)));
                         selectedMarker.hideInfoWindow();
                         selectedMarker = null;
 
@@ -476,7 +549,7 @@ public class FloorMapActivity extends AppCompatActivity implements OnMapReadyCal
             public void run() {
                 if (selectedMarker!=null) {
                     if (mBottomSheetBehavior.getState() == BottomSheetBehavior.STATE_HIDDEN) {
-                        selectedMarker.setIcon(BitmapDescriptorFactory.fromBitmap(resizeMapIcons("map_marker", normalMapIconWidth, normalMapIconHeight)));
+                        selectedMarker.setIcon(BitmapDescriptorFactory.fromBitmap(resizeMapIcons(name, normalMapIconWidth, normalMapIconHeight)));
                         selectedMarker.hideInfoWindow();
                         selectedMarker = null;
                     }
