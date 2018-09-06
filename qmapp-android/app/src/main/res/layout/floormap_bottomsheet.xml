@@ -1,26 +1,26 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.v4.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/bottomSheetLayout"
-    android:layout_width="wrap_content"
+    android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:background="#00000000"
     android:orientation="vertical"
     android:visibility="visible"
     app:behavior_hideable="true"
     app:layout_behavior="@string/bottom_sheet_behavior">
 
     <LinearLayout
+        android:id="@+id/bottomSheetchild"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_margin="@dimen/padding_10"
-        android:background="@drawable/round_corner_white"
+        android:layout_height="wrap_content"
         android:orientation="vertical">
 
         <LinearLayout
-            android:id="@+id/details_popup"
+            android:id="@+id/details_popup_short"
             android:layout_width="match_parent"
             android:layout_height="160dp"
+            android:layout_margin="@dimen/padding_10"
+            android:background="@drawable/round_corner_white_small"
             android:orientation="vertical"
             android:paddingBottom="10dp"
             android:paddingTop="10dp"
@@ -49,9 +49,9 @@
                 <LinearLayout
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
+                    android:layout_gravity="center"
                     android:layout_weight="1"
-                    android:gravity="center"
-                    android:layout_gravity="center">
+                    android:gravity="center">
 
                     <ImageView
                         android:layout_width="wrap_content"
@@ -62,9 +62,9 @@
                 <LinearLayout
                     android:layout_width="0dp"
                     android:layout_height="match_parent"
+                    android:layout_gravity="center"
                     android:layout_weight="3"
                     android:gravity="center"
-                    android:layout_gravity="center"
                     android:orientation="vertical"
                     android:padding="@dimen/padding_5">
 
@@ -156,7 +156,7 @@
                         </LinearLayout>
 
                         <TextView
-                            android:id="@+id/event_view_details"
+                            android:id="@+id/view_details_text"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_alignParentBottom="true"
@@ -176,13 +176,118 @@
 
         </LinearLayout>
 
-        <ImageView
+        <LinearLayout
+            android:id="@+id/details_popup_long"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:src="@drawable/museum_of_islamic"
-            android:visibility="gone"/>
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:orientation="vertical"
+            android:background="@color/white"
+            android:visibility="gone">
+
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="300dp"
+                android:src="@drawable/science_tour_object"
+                android:visibility="visible" />
+
+            <TextView
+                android:id="@+id/title"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/padding_10"
+                android:fontFamily="@font/din_regular"
+                android:paddingEnd="@dimen/padding_25"
+                android:paddingStart="@dimen/padding_25"
+                android:text="Albarello"
+                android:textAlignment="textStart"
+                android:textColor="@color/black"
+                android:textSize="@dimen/font_size_18"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/short_description"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/padding_10"
+                android:fontFamily="@font/din_next_lt_pro_regular"
+                android:paddingEnd="@dimen/padding_25"
+                android:paddingStart="@dimen/padding_25"
+                android:text="@string/floormap_detail1"
+                android:textAlignment="textStart"
+                android:textColor="@color/black"
+                android:textSize="@dimen/font_size_15" />
+
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="300dp"
+                android:src="@drawable/science_tour_object2"
+                android:visibility="visible" />
+
+            <TextView
+                android:id="@+id/image_desc1"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/padding_3"
+                android:fontFamily="@font/din_regular"
+                android:paddingEnd="@dimen/padding_25"
+                android:paddingStart="@dimen/padding_25"
+                android:text="@string/floormap_imagdesc1"
+                android:textAlignment="textStart"
+                android:textColor="@color/black"
+                android:textSize="@dimen/font_size_16" />
+
+            <TextView
+                android:id="@+id/title2"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/padding_10"
+                android:fontFamily="@font/din_regular"
+                android:paddingEnd="@dimen/padding_25"
+                android:paddingStart="@dimen/padding_25"
+                android:text="Object History"
+                android:textAlignment="textStart"
+                android:textColor="@color/black"
+                android:textSize="@dimen/font_size_18"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/short_description2"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/padding_10"
+                android:fontFamily="@font/din_next_lt_pro_regular"
+                android:paddingEnd="@dimen/padding_25"
+                android:paddingStart="@dimen/padding_25"
+                android:text="@string/floormap_detail2"
+                android:textAlignment="textStart"
+                android:textColor="@color/black"
+                android:textSize="@dimen/font_size_15" />
+
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="300dp"
+                android:src="@drawable/science_tour_object2" />
+
+            <TextView
+                android:id="@+id/image_desc2"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="@dimen/padding_10"
+                android:layout_marginTop="@dimen/padding_3"
+                android:fontFamily="@font/din_regular"
+                android:paddingEnd="@dimen/padding_25"
+                android:paddingStart="@dimen/padding_25"
+                android:text="@string/floormap_imagdesc2"
+                android:textAlignment="textStart"
+                android:textColor="@color/black"
+                android:textSize="@dimen/font_size_16" />
+
+
+        </LinearLayout>
+
 
     </LinearLayout>
 
 
-</LinearLayout>
+</android.support.v4.widget.NestedScrollView>
