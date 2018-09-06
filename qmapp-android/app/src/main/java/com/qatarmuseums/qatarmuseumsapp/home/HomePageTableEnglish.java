@@ -4,6 +4,7 @@ import android.arch.persistence.room.ColumnInfo;
 import android.arch.persistence.room.Entity;
 import android.arch.persistence.room.PrimaryKey;
 import android.support.annotation.NonNull;
+
 @Entity(tableName = "homepagetableEnglish")
 public class HomePageTableEnglish {
     @NonNull
@@ -24,13 +25,16 @@ public class HomePageTableEnglish {
     private String tourguide_available;
     @ColumnInfo()
     private String image;
+    @ColumnInfo()
+    private Integer sortId;
 
 
-    public HomePageTableEnglish(long qatarmuseum_id, String name, String tourguide_available, String image) {
+    public HomePageTableEnglish(long qatarmuseum_id, String name, String tourguide_available, String image, Integer sortId) {
         this.qatarmuseum_id = qatarmuseum_id;
         this.name = name;
         this.tourguide_available = tourguide_available;
         this.image = image;
+        this.sortId = sortId;
     }
 
 
@@ -58,7 +62,9 @@ public class HomePageTableEnglish {
         this.image = image;
     }
 
-
+    public Integer getSortId() {
+        return sortId;
+    }
 
     @Override
     public boolean equals(Object obj) {
@@ -73,14 +79,13 @@ public class HomePageTableEnglish {
     }
 
 
-
     @Override
     public String toString() {
         return "homepagetableEnglish{" +
                 "name=" + name +
                 ", qatarmuseum_id='" + qatarmuseum_id + '\'' +
                 ", tourguide_available='" + tourguide_available + '\'' +
-                ",image='"+image+'\''+
-                '}';
+                ",image='" + image + '\'' +
+                ",sortId='" + sortId + '\'' + '}';
     }
 }
