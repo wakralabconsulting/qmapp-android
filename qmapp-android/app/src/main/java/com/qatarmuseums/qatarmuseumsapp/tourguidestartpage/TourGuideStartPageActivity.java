@@ -55,12 +55,7 @@ public class TourGuideStartPageActivity extends AppCompatActivity {
         mainLayout.setBackground(this.getDrawable(R.drawable.museum_of_islamic));
         museumTitle.setText(getString(R.string.mia_tour_guide));
         museumDesc.setText(getString(R.string.tourguide_title_desc));
-//        startBtn.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View view) {
-//
-//            }
-//        });
+
         startBtn.setOnTouchListener(new View.OnTouchListener() {
             @Override
             public boolean onTouch(View v, MotionEvent event) {
