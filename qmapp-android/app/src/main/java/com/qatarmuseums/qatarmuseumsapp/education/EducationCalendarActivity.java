@@ -8,6 +8,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
+import android.content.res.ColorStateList;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Build;
@@ -101,8 +102,8 @@ public class EducationCalendarActivity extends AppCompatActivity {
     private SharedPreferences qmPreferences;
     SharedPreferences sharedfilterpreferences;
     SharedPreferences.Editor editor;
-    public static final String FILTERPREFS = "FilterPref" ;
-    public static final String INSTITUTEPREFS = "InstitutionPref" ;
+    public static final String FILTERPREFS = "FilterPref";
+    public static final String INSTITUTEPREFS = "InstitutionPref";
     public static final String AGEGROUPPREFS = "AgeGroupPref";
     public static final String PROGRAMMEPREFS = "ProgrammePref";
     private int appLanguage;
@@ -273,7 +274,6 @@ public class EducationCalendarActivity extends AppCompatActivity {
         institutionFilter = intent.getStringExtra("INSTITUTION");
         ageGroupFilter = intent.getStringExtra("AGE_GROUP");
         programmeTypeFilter = intent.getStringExtra("PROGRAMME_TYPE");
-
 
 
         if (util.isNetworkAvailable(EducationCalendarActivity.this)) {
@@ -919,13 +919,18 @@ public class EducationCalendarActivity extends AppCompatActivity {
 
         dialog.setContentView(view);
         ImageView closeBtn = (ImageView) view.findViewById(R.id.close_dialog);
-        Button registerNowBtn = (Button) view.findViewById(R.id.doneBtn);
+        final Button registerNowBtn = (Button) view.findViewById(R.id.doneBtn);
         TextView dialogTitle = (TextView) view.findViewById(R.id.dialog_tittle);
         TextView dialogContent = (TextView) view.findViewById(R.id.dialog_content);
 
 
         dialogTitle.setText(educationEvents.get(position).getTitle());
         registerNowBtn.setText(buttonText);
+        if (buttonText.equalsIgnoreCase(getResources().getString(R.string.register_now))) {
+            registerNowBtn.setEnabled(false);
+            registerNowBtn.setTextColor(getResources().getColor(R.color.white));
+            registerNowBtn.setBackgroundTintList(ColorStateList.valueOf(getResources().getColor(R.color.grey)));
+        }
         dialogContent.setText(educationEvents.get(position).getLong_desc());
 
         registerNowBtn.setOnClickListener(new View.OnClickListener() {
