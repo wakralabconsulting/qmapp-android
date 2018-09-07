@@ -23,6 +23,8 @@
     <string name="action_settings">Settings</string>
     <string name="everyday_from">Everyday From</string>
     <string name="to">to</string>
+    <string name="or">or</string>
+    <string name="use_qr_scanner"><u>Use the QR Scanner</u></string>
     <string name="title_dining">Dining</string>
     <string name="title_gift_shop">Gift Shop</string>
     <string name="title_culture_pass">Culture Pass</string>
@@ -76,6 +78,8 @@
     <string name="discover_txt">Discover</string>
     <string name="coming_soon_content">We are working hard to bring the details at the tip of your fingers.\n\nStay Tuned.</string>
     <string name="coming_soon_txt">Coming Soon</string>
+    <string name="alert_txt">Alert</string>
+    <string name="error_content">Please! Enter the Object Number.</string>
     <string name="close">Close</string>
     <string name="register_now_content">Thank you for Registering.Further\nDetails will be sent to you on your\nemail</string>
     <string name="opening_timings">OPENING TIMINGS</string>
@@ -88,6 +92,10 @@
     <string name="programme_type">Programme Type -</string>
     <string name="clear">Clear</string>
     <string name="filter">Filter</string>
+    <string name="object_search">Object Search</string>
+    <string name="obj_text_one">Enter The Object Number</string>
+    <string name="obj_text_two">next to</string>
+    <string name="obj_text_three">to view the details</string>
     <string name="gift_shop_url">http://www.qm.org.qa/en/gift-shops</string>
     <string name="touch_again">Touch again to exit</string>
     <string name="map_navigation_api">http://maps.google.com/maps?q=loc:</string>
