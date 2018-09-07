@@ -1,5 +1,6 @@
 package com.qatarmuseums.qatarmuseumsapp.floormap;
 
+import android.content.Intent;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -89,7 +90,8 @@ public class FloorMapActivity extends AppCompatActivity implements OnMapReadyCal
     GoogleMap googleMap;
     private LinearLayout level2, level1, levelG;
     private LinearLayout levelPicker;
-    private Marker l2_g1_sc3,/* l2_g3_sc14,*/l2_g3_sc13, l2_g5_sc6, l2_g8, l2_g8_sc1, l2_g8_sc4_1, l2_g8_sc4_2, l2_g8_sc5,
+    private Marker l2_g1_sc3,/* l2_g3_sc14,*/
+            l2_g3_sc13, l2_g5_sc6, l2_g8, l2_g8_sc1, l2_g8_sc4_1, l2_g8_sc4_2, l2_g8_sc5,
             l2_g8_sc6_1, l2_g8_sc6_2, l2_g9_sc5_1, l2_g9_sc5_2, l2_g9_sc7, g10, l3_g10_sc1_1,
             l3_g10_sc1_2, l3_g11_wr15, l3_g13_5, l3_g13_7, l3_g17_3;
     private int selectedLevel = 2;
@@ -98,6 +100,7 @@ public class FloorMapActivity extends AppCompatActivity implements OnMapReadyCal
     BottomSheetBehavior mBottomSheetBehavior;
     TextView viewDetails;
     String name;
+    ImageView numberPad;
 
 
     LinearLayout bottomSheet, popupShortlayout, popupLongLayout;
@@ -116,6 +119,15 @@ public class FloorMapActivity extends AppCompatActivity implements OnMapReadyCal
         popupShortlayout = (LinearLayout) findViewById(R.id.details_popup_short);
         viewDetails = (TextView) findViewById(R.id.view_details_text);
         bottomSheet = (LinearLayout) findViewById(R.id.bottomSheetchild);
+        numberPad=(ImageView)findViewById(R.id.number_pad);
+
+        numberPad.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent=new Intent(FloorMapActivity.this,ObjectSearchActivity.class);
+                startActivity(intent);
+            }
+        });
 
 
         mBottomSheetBehavior = BottomSheetBehavior.from(findViewById(R.id.bottomSheetLayout));
@@ -408,38 +420,38 @@ public class FloorMapActivity extends AppCompatActivity implements OnMapReadyCal
                         name = "si_5";
                         break;
                     case "MW.634":
-                        name="mw_634";
+                        name = "mw_634";
                         break;
                     case "MW.56":
                         name = "mw_56";
                         break;
                     case "MW.548":
-                        name="mw_548";
+                        name = "mw_548";
                         break;
                     case "MS.523":
                         name = "ms_523";
                         break;
                     case "MS.709.2010-1":
-                        name="ms_709_2010_1";
+                        name = "ms_709_2010_1";
                         break;
                     case "MS.709.2010-2":
                         name = "ms_709_2010_2";
                         break;
                     case "MW.361.2007":
-                        name="mw_361_2007";
+                        name = "mw_361_2007";
                         break;
 
                     case "MS.650":
                         name = "ms_650";
                         break;
                     case "MS.688":
-                        name="ms_688";
+                        name = "ms_688";
                         break;
                     case "MW.146":
                         name = "mw_146";
                         break;
                     case "MW.340":
-                        name="mw_340";
+                        name = "mw_340";
                         break;
                     case "MS.794":
                         name = "ms_794";
@@ -448,19 +460,19 @@ public class FloorMapActivity extends AppCompatActivity implements OnMapReadyCal
                         name = "ms_647_a_59";
                         break;
                     case "HS.32":
-                        name="hs_32";
+                        name = "hs_32";
                         break;
                     case "GL.322":
                         name = "gl_322";
                         break;
                     case "IV.61":
-                        name="iv_61";
+                        name = "iv_61";
                         break;
                     case "PO.297":
                         name = "po_297";
                         break;
                     case "PO.308":
-                        name="po_308";
+                        name = "po_308";
                         break;
 
 
@@ -547,7 +559,7 @@ public class FloorMapActivity extends AppCompatActivity implements OnMapReadyCal
 
             @Override
             public void run() {
-                if (selectedMarker!=null) {
+                if (selectedMarker != null) {
                     if (mBottomSheetBehavior.getState() == BottomSheetBehavior.STATE_HIDDEN) {
                         selectedMarker.setIcon(BitmapDescriptorFactory.fromBitmap(resizeMapIcons(name, normalMapIconWidth, normalMapIconHeight)));
                         selectedMarker.hideInfoWindow();
