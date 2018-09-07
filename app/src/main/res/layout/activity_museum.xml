@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical"
     tools:context="com.qatarmuseums.qatarmuseumsapp.museum.MuseumActivity">
 
@@ -11,39 +11,44 @@
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight=".8">
+
         <RelativeLayout
+            android:id="@+id/slider_layout"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:id="@+id/slider_layout"
             android:background="@color/white">
 
             <ImageView
                 android:id="@+id/ads_place_holder"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:src="@drawable/placeholder"
-                android:scaleType="fitXY"
-                />
+                android:scaleType="centerCrop"
+                android:src="@drawable/placeholder_portrait" />
 
             <cn.lightsky.infiniteindicator.InfiniteIndicator
                 android:id="@+id/main_indicator_default_circle"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                app:indicator_type="indicator_anim_circle"
-                />
+                app:indicator_type="indicator_anim_circle" />
+
+            <ImageView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:foreground="@drawable/image_overlay" />
+
             <TextView
+                android:id="@+id/slider_image_title"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:id="@+id/slider_image_title"
+                android:layout_alignParentBottom="true"
+                android:layout_centerHorizontal="true"
+                android:layout_marginBottom="@dimen/museum_page_text_margin"
+                android:fontFamily="@font/din_next_lt_pro_bold"
                 android:padding="@dimen/padding_20"
                 android:textAlignment="center"
                 android:textColor="@color/white"
                 android:textSize="@dimen/museum_page_slider_text_size"
-                android:textStyle="bold"
-                android:fontFamily="@font/din_next_lt_pro_bold"
-                android:layout_alignParentBottom="true"
-                android:layout_centerHorizontal="true"
-                android:layout_marginBottom="@dimen/museum_page_text_margin"/>
+                android:textStyle="bold" />
 
 
         </RelativeLayout>
@@ -55,27 +60,27 @@
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight=".2"
-        android:gravity="center"
         android:background="@color/white"
+        android:gravity="center"
         android:orientation="horizontal">
 
         <LinearLayout
+            android:id="@+id/horizontal_scrol_previous_icon_layout"
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_gravity="center"
             android:layout_weight=".07"
             android:gravity="start|center_vertical"
             android:orientation="vertical"
-            android:weightSum="10"
-            android:id="@+id/horizontal_scrol_previous_icon_layout">
+            android:weightSum="10">
 
             <ImageView
                 android:id="@+id/horizontal_scrol_previous_icon"
                 android:layout_width="@dimen/horizontal_scrollview_back_size"
                 android:layout_height="@dimen/horizontal_scrollview_back_size"
                 android:layout_weight="9"
-                android:visibility="gone"
-                android:src="@drawable/previous_icon_black" />
+                android:src="@drawable/previous_icon_black"
+                android:visibility="gone" />
 
             <View
                 android:layout_width="wrap_content"
@@ -95,7 +100,7 @@
 
             <android.support.v7.widget.RecyclerView
                 android:id="@+id/settings_page_recycler_view"
-                android:layout_width="match_parent"
+                android:layout_width="wrap_content"
                 android:layout_height="match_parent"
                 android:scrollbars="none" />
 
@@ -110,8 +115,7 @@
             android:layout_weight=".07"
             android:gravity="end|center_vertical"
             android:orientation="vertical"
-            android:weightSum="10"
-             >
+            android:weightSum="10">
 
             <ImageView
                 android:id="@+id/horizontal_scrol_next_icon"
@@ -119,8 +123,7 @@
                 android:layout_height="@dimen/horizontal_scrollview_back_size"
                 android:layout_weight="9"
                 android:src="@drawable/next_icon_black"
-                android:visibility="gone"
-                />
+                android:visibility="gone" />
 
             <View
                 android:layout_width="wrap_content"

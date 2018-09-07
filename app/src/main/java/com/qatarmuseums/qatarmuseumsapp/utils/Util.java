@@ -16,6 +16,10 @@ import android.widget.Toast;
 
 import com.qatarmuseums.qatarmuseumsapp.R;
 
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
+import org.jsoup.safety.Whitelist;
+
 import java.util.Locale;
 
 public class Util {
@@ -96,4 +100,16 @@ public class Util {
         res.updateConfiguration(conf, dm);
     }
 
+    public String html2string(String html) {
+        String s;
+        if (html == null)
+            return html;
+        Document document = Jsoup.parse(html);
+        document.outputSettings(new Document.OutputSettings().prettyPrint(false));//makes html() preserve linebreaks and spacing
+        document.select("br").append("\\n");
+        s = document.html().replaceAll("\\\\n", "\n");
+        s = s.replaceAll("&amp;", "and");
+        s = s.replaceAll("&nbsp;", " ");
+        return Jsoup.clean(s, "", Whitelist.none(), new Document.OutputSettings().prettyPrint(false));
+    }
 }

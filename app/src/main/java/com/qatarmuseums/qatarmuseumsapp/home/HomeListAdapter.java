@@ -36,6 +36,7 @@ public class HomeListAdapter extends RecyclerView.Adapter<HomeListAdapter.MyView
         this.homeLists = homeLists;
         this.mContext = context;
     }
+
     @NonNull
     @Override
     public HomeListAdapter.MyViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
@@ -49,7 +50,9 @@ public class HomeListAdapter extends RecyclerView.Adapter<HomeListAdapter.MyView
     public void onBindViewHolder(@NonNull HomeListAdapter.MyViewHolder holder, int position) {
         HomeList homeList = homeLists.get(position);
         holder.name.setText(homeList.getName());
-        if (homeList.getTourguideAvailable().equalsIgnoreCase("false"))
+        if (homeList.getTourguideAvailable().equalsIgnoreCase("true"))
+            holder.headphoneIcon.setVisibility(View.VISIBLE);
+        else
             holder.headphoneIcon.setVisibility(View.GONE);
 
         GlideApp.with(mContext)

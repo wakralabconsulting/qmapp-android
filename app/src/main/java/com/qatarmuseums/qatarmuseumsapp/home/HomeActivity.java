@@ -37,6 +37,7 @@ import com.qatarmuseums.qatarmuseumsapp.webview.WebviewActivity;
 import java.io.IOException;
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
 
@@ -61,6 +62,7 @@ public class HomeActivity extends BaseActivity {
     HomePageTableArabic homePageTableArabic;
     int homePageTableRowCount;
     List<HomePageTableEnglish> homePageTableEnglishes;
+    private Intent navigationIntent;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -138,16 +140,15 @@ public class HomeActivity extends BaseActivity {
             @Override
             public void onClick(View view, int position) {
                 HomeList homeList = homeLists.get(position);
-                if (homeList.getId().equals("1")) {
-                    Intent intent = new Intent(HomeActivity.this, CommonActivity.class);
-                    intent.putExtra(getString(R.string.toolbar_title_key), getString(R.string.sidemenu_exhibition_text));
-                    startActivity(intent);
-                } else if (homeList.getId().equals("63") || homeList.getId().equals("96")) {
-                    Intent intent = new Intent(HomeActivity.this, MuseumActivity.class);
-                    intent.putExtra("MUSEUMTITLE", homeList.getName());
-                    startActivity(intent);
+                if (homeList.getId().equals("12181") || homeList.getId().equals("12186")) {
+                    navigationIntent = new Intent(HomeActivity.this, CommonActivity.class);
+                    navigationIntent.putExtra(getString(R.string.toolbar_title_key), getString(R.string.sidemenu_exhibition_text));
+                    startActivity(navigationIntent);
                 } else {
-                    util.showComingSoonDialog(HomeActivity.this);
+                    navigationIntent = new Intent(HomeActivity.this, MuseumActivity.class);
+                    navigationIntent.putExtra("MUSEUMTITLE", homeList.getName());
+                    navigationIntent.putExtra("MUSEUM_ID", homeList.getId());
+                    startActivity(navigationIntent);
                 }
             }
 
@@ -248,21 +249,10 @@ public class HomeActivity extends BaseActivity {
             public void onResponse(Call<ArrayList<HomeList>> call, Response<ArrayList<HomeList>> response) {
                 if (response.isSuccessful()) {
                     if (response.body() != null) {
-                        HomeList exhibitonObject;
                         recyclerView.setVisibility(View.VISIBLE);
                         homeLists.addAll(response.body());
-                        if (language.equals("en")) {
-                            exhibitonObject = new HomeList("Exhibitions", "1",
-                                    "", "false");
-                        } else {
-                            exhibitonObject = new HomeList("المعارض", "1",
-                                    "", "false");
-                        }
-                        int secondLastIndex = homeLists.size() - 1;
-                        homeLists.add(secondLastIndex, exhibitonObject);
                         mAdapter.notifyDataSetChanged();
                         new RowCount(HomeActivity.this, language).execute();
-
                     } else {
                         recyclerView.setVisibility(View.GONE);
                         noResultFoundLayout.setVisibility(View.VISIBLE);
@@ -353,7 +343,7 @@ public class HomeActivity extends BaseActivity {
                             homePageTableEnglish = new HomePageTableEnglish(Long.parseLong(homeLists.get(i).getId()),
                                     homeLists.get(i).getName(),
                                     homeLists.get(i).getTourguideAvailable().toString(),
-                                    homeLists.get(i).getImage());
+                                    homeLists.get(i).getImage(),homeLists.get(i).getSortId());
                             activityReference.get().qmDatabase.getHomePageTableDao().insertEnglishTable(homePageTableEnglish);
 
                         }
@@ -371,7 +361,7 @@ public class HomeActivity extends BaseActivity {
                             homePageTableArabic = new HomePageTableArabic(Long.parseLong(homeLists.get(i).getId()),
                                     homeLists.get(i).getName(),
                                     homeLists.get(i).getTourguideAvailable().toString(),
-                                    homeLists.get(i).getImage());
+                                    homeLists.get(i).getImage(),homeLists.get(i).getSortId());
                             activityReference.get().qmDatabase.getHomePageTableDao().insertArabicTable(homePageTableArabic);
 
                         }
@@ -406,7 +396,7 @@ public class HomeActivity extends BaseActivity {
                         homePageTableEnglish = new HomePageTableEnglish(Long.parseLong(homeLists.get(i).getId()),
                                 homeLists.get(i).getName(),
                                 homeLists.get(i).getTourguideAvailable().toString(),
-                                homeLists.get(i).getImage());
+                                homeLists.get(i).getImage(),homeLists.get(i).getSortId());
                         activityReference.get().qmDatabase.getHomePageTableDao().insertEnglishTable(homePageTableEnglish);
                     }
                 } else {
@@ -414,7 +404,7 @@ public class HomeActivity extends BaseActivity {
                         homePageTableArabic = new HomePageTableArabic(Long.parseLong(homeLists.get(i).getId()),
                                 homeLists.get(i).getName(),
                                 homeLists.get(i).getTourguideAvailable().toString(),
-                                homeLists.get(i).getImage());
+                                homeLists.get(i).getImage(),homeLists.get(i).getSortId());
                         activityReference.get().qmDatabase.getHomePageTableDao().insertArabicTable(homePageTableArabic);
 
                     }
@@ -484,20 +474,21 @@ public class HomeActivity extends BaseActivity {
 
         @Override
         protected void onPostExecute(List<HomePageTableEnglish> homePageTableEnglishes) {
-            if (homePageTableEnglishes.size()>0) {
+            if (homePageTableEnglishes.size() > 0) {
                 homeLists.clear();
                 for (int i = 0; i < homePageTableEnglishes.size(); i++) {
                     HomeList exhibitonObject = new HomeList(homePageTableEnglishes.get(i).getName()
                             , String.valueOf(homePageTableEnglishes.get(i).getQatarmuseum_id()),
                             homePageTableEnglishes.get(i).getImage(),
-                            homePageTableEnglishes.get(i).getTourguide_available());
+                            homePageTableEnglishes.get(i).getTourguide_available(),
+                            homePageTableEnglishes.get(i).getSortId());
                     homeLists.add(i, exhibitonObject);
                 }
 
-
+                Collections.sort(homeLists);
                 mAdapter.notifyDataSetChanged();
                 progressBar.setVisibility(View.GONE);
-            }else {
+            } else {
                 progressBar.setVisibility(View.GONE);
                 recyclerView.setVisibility(View.GONE);
                 noResultFoundLayout.setVisibility(View.VISIBLE);
@@ -526,20 +517,21 @@ public class HomeActivity extends BaseActivity {
 
         @Override
         protected void onPostExecute(List<HomePageTableArabic> homePageTableArabics) {
-            if (homePageTableArabics.size()>0) {
+            if (homePageTableArabics.size() > 0) {
                 homeLists.clear();
                 for (int i = 0; i < homePageTableArabics.size(); i++) {
                     HomeList exhibitonObject = new HomeList(homePageTableArabics.get(i).getName()
                             , String.valueOf(homePageTableArabics.get(i).getQatarmuseum_id()),
                             homePageTableArabics.get(i).getImage(),
-                            homePageTableArabics.get(i).getTourguide_available());
+                            homePageTableArabics.get(i).getTourguide_available(),
+                            homePageTableArabics.get(i).getSortId());
                     homeLists.add(i, exhibitonObject);
                 }
 
-
+                Collections.sort(homeLists);
                 mAdapter.notifyDataSetChanged();
                 progressBar.setVisibility(View.GONE);
-            }else {
+            } else {
                 progressBar.setVisibility(View.GONE);
                 recyclerView.setVisibility(View.GONE);
                 noResultFoundLayout.setVisibility(View.VISIBLE);

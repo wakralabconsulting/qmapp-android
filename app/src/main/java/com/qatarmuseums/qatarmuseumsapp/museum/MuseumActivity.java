@@ -72,6 +72,7 @@ public class MuseumActivity extends BaseActivity implements
     Util util;
     private ArrayList<SliderImageModel> sliderImageList = new ArrayList<>();
     private String language;
+    private String museumId;
 
 
     @Override
@@ -85,9 +86,11 @@ public class MuseumActivity extends BaseActivity implements
         appLanguage = qmPreferences.getInt("AppLanguage", 1);
         intent = getIntent();
         sliderImageTitle.setText(intent.getStringExtra("MUSEUMTITLE"));
+        museumId = intent.getStringExtra("MUSEUM_ID");
         animCircleIndicator = (InfiniteIndicator) findViewById(R.id.main_indicator_default_circle);
         sliderPlaceholderImage = (ImageView) findViewById(R.id.ads_place_holder);
-        museumHorizontalScrollViewAdapter = new MuseumHorizontalScrollViewAdapter(this, museumHScrollModelList, intent.getStringExtra("MUSEUMTITLE"));
+        museumHorizontalScrollViewAdapter = new MuseumHorizontalScrollViewAdapter(this,
+                museumHScrollModelList, intent.getStringExtra("MUSEUMTITLE"), museumId);
         animCircleIndicator.setVisibility(View.GONE);
         if (appLanguage == english) {
             recyclerviewLayoutManager =
@@ -100,78 +103,78 @@ public class MuseumActivity extends BaseActivity implements
             recyclerviewLayoutManager.scrollToPosition(0);
         }
 
-
         recyclerView.setLayoutManager(recyclerviewLayoutManager);
         recyclerView.setItemAnimator(new DefaultItemAnimator());
         recyclerView.setAdapter(museumHorizontalScrollViewAdapter);
 
+        if (museumId.equals("63") || museumId.equals("96")) {
+            prepareRecyclerViewDataForMIA();
 
-        recyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
-            @Override
-            public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
-                super.onScrollStateChanged(recyclerView, newState);
-            }
+            recyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
+                @Override
+                public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
+                    super.onScrollStateChanged(recyclerView, newState);
+                }
 
-            @Override
-            public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
-                super.onScrolled(recyclerView, dx, dy);
-                int lastCompleteVisibleItemPosition = 0;
-                int firstVisibleItemPosition = 0;
-                lastCompleteVisibleItemPosition = ((LinearLayoutManager) recyclerView
-                        .getLayoutManager()).findLastCompletelyVisibleItemPosition();
-                firstVisibleItemPosition = ((LinearLayoutManager) recyclerView
-                        .getLayoutManager()).findFirstVisibleItemPosition();
+                @Override
+                public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
+                    super.onScrolled(recyclerView, dx, dy);
+                    int lastCompleteVisibleItemPosition = 0;
+                    int firstVisibleItemPosition = 0;
+                    lastCompleteVisibleItemPosition = ((LinearLayoutManager) recyclerView
+                            .getLayoutManager()).findLastCompletelyVisibleItemPosition();
+                    firstVisibleItemPosition = ((LinearLayoutManager) recyclerView
+                            .getLayoutManager()).findFirstVisibleItemPosition();
 
-                if (appLanguage == english) {
-                    if (firstVisibleItemPosition == 0) {
-                        showRightArrow();
-                    } else if (lastCompleteVisibleItemPosition == museumHScrollModelList.size() - 1) {
-                        showLeftArrow();
+                    if (appLanguage == english) {
+                        if (firstVisibleItemPosition == 0) {
+                            showRightArrow();
+                        } else if (lastCompleteVisibleItemPosition == museumHScrollModelList.size() - 1) {
+                            showLeftArrow();
+                        } else {
+                            showBothArrows();
+                        }
                     } else {
-                        showBothArrows();
-                    }
-                } else {
-                    if (firstVisibleItemPosition == 0) {
-                        showRightArrow();
-                    } else if (lastCompleteVisibleItemPosition == museumHScrollModelList.size() - 1) {
+                        if (firstVisibleItemPosition == 0) {
+                            showRightArrow();
+                        } else if (lastCompleteVisibleItemPosition == museumHScrollModelList.size() - 1) {
 
-                        showLeftArrow();
-                    } else {
-                        showBothArrows();
+                            showLeftArrow();
+                        } else {
+                            showBothArrows();
+                        }
+
                     }
 
                 }
+            });
 
+            if (appLanguage == english) {
+                SnapHelper snapHelperStart = new GravitySnapHelper(Gravity.START);
+                snapHelperStart.attachToRecyclerView(recyclerView);
+            } else {
+                SnapHelper snapHelperStart = new GravitySnapHelper(Gravity.END);
+                snapHelperStart.attachToRecyclerView(recyclerView);
             }
-        });
 
-        if (appLanguage == english) {
-            SnapHelper snapHelperStart = new GravitySnapHelper(Gravity.START);
-            snapHelperStart.attachToRecyclerView(recyclerView);
-        } else {
-            SnapHelper snapHelperStart = new GravitySnapHelper(Gravity.END);
-            snapHelperStart.attachToRecyclerView(recyclerView);
-        }
+            scrollBarNextIconLayout.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    recyclerviewLayoutManager.scrollToPosition(5);
 
-        prepareRecyclerViewData();
+                }
+            });
+            scrollBarPreviousIconLayout.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    recyclerviewLayoutManager.scrollToPosition(0);
+
+                }
+            });
+        } else
+            prepareRecyclerViewData();
+
         getSliderImagesfromAPI();
-
-
-        scrollBarNextIconLayout.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                recyclerviewLayoutManager.scrollToPosition(5);
-
-            }
-        });
-        scrollBarPreviousIconLayout.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                recyclerviewLayoutManager.scrollToPosition(0);
-
-            }
-        });
-
     }
 
     public void setSliderImages(ArrayList<SliderImageModel> sliderImageList) {
@@ -210,6 +213,27 @@ public class MuseumActivity extends BaseActivity implements
     }
 
     public void prepareRecyclerViewData() {
+        museumHScrollModelList.clear();
+        MuseumHScrollModel model = new MuseumHScrollModel(this,
+                getResources().getString(R.string.museum_about_text), R.drawable.about_icon);
+        museumHScrollModelList.add(model);
+
+        model = new MuseumHScrollModel(this,
+                getResources().getString(R.string.sidemenu_exhibition_text), R.drawable.exhibition_black);
+        museumHScrollModelList.add(model);
+
+        model = new MuseumHScrollModel(this,
+                getResources().getString(R.string.museum_collection_text), R.drawable.collections);
+        museumHScrollModelList.add(model);
+
+        model = new MuseumHScrollModel(this,
+                getResources().getString(R.string.sidemenu_dining_text), R.drawable.dining);
+        museumHScrollModelList.add(model);
+        museumHorizontalScrollViewAdapter.notifyDataSetChanged();
+    }
+
+    public void prepareRecyclerViewDataForMIA() {
+        museumHScrollModelList.clear();
         MuseumHScrollModel model = new MuseumHScrollModel(this,
                 getResources().getString(R.string.museum_about_text), R.drawable.about_icon);
         museumHScrollModelList.add(model);
@@ -224,11 +248,9 @@ public class MuseumActivity extends BaseActivity implements
                 getResources().getString(R.string.museum_collection_text), R.drawable.collections);
         museumHScrollModelList.add(model);
 
-
         model = new MuseumHScrollModel(this,
                 getResources().getString(R.string.sidemenu_parks_text), R.drawable.park_black);
         museumHScrollModelList.add(model);
-
 
         model = new MuseumHScrollModel(this,
                 getResources().getString(R.string.sidemenu_dining_text), R.drawable.dining);
@@ -340,7 +362,7 @@ public class MuseumActivity extends BaseActivity implements
         } else {
             language = "ar";
         }
-        Call<ArrayList<SliderImageModel>> call = apiService.getMuseumSliderImages(language, "66");
+        Call<ArrayList<SliderImageModel>> call = apiService.getMuseumSliderImages(language, museumId);
         call.enqueue(new Callback<ArrayList<SliderImageModel>>() {
             @Override
             public void onResponse(Call<ArrayList<SliderImageModel>> call, Response<ArrayList<SliderImageModel>> response) {
@@ -351,8 +373,6 @@ public class MuseumActivity extends BaseActivity implements
                             setSliderImages(sliderImageList);
                             sliderPlaceholderImage.setVisibility(View.GONE);
                             animCircleIndicator.setVisibility(View.VISIBLE);
-
-
                         } else {
                             sliderPlaceholderImage.setVisibility(View.VISIBLE);
                             animCircleIndicator.setVisibility(View.GONE);

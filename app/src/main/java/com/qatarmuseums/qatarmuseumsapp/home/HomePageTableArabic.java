@@ -16,13 +16,17 @@ public class HomePageTableArabic {
     private String tourguide_available;
     @ColumnInfo()
     private String image;
+    @ColumnInfo()
+    private Integer sortId;
+
 
     public HomePageTableArabic(@NonNull long qatarmuseum_id, String name,
-                               String tourguide_available, String image) {
+                               String tourguide_available, String image,Integer sortId) {
         this.qatarmuseum_id = qatarmuseum_id;
         this.name = name;
         this.tourguide_available = tourguide_available;
         this.image = image;
+        this.sortId =sortId;
     }
 
     @NonNull
@@ -54,6 +58,10 @@ public class HomePageTableArabic {
         return image;
     }
 
+    public Integer getSortId() {
+        return sortId;
+    }
+
     public void setImage(String image) {
         this.image = image;
     }
@@ -77,6 +85,7 @@ public class HomePageTableArabic {
                 ", qatarmuseum_id='" + qatarmuseum_id + '\'' +
                 ", tourguide_available='" + tourguide_available + '\'' +
                 ",image='"+image+'\''+
+                ",sortId='"+sortId+'\''+
                 '}';
     }
 }
