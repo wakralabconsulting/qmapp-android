@@ -121,6 +121,7 @@ public class BaseActivity extends AppCompatActivity
     @BindView(R.id.sidemenu_settings_layout)
     LinearLayout sidemenuSettingsLayout;
 
+
     private FrameLayout fullView;
     private FrameLayout activityContainer;
     Animation fadeInAnimation, fadeOutAnimation, zoomOutAnimation;
@@ -244,7 +245,9 @@ public class BaseActivity extends AppCompatActivity
                 handlingDrawer();
                 break;
 
+
             case R.id.sidemenu_exibition_layout:
+            case R.id.sidemenu_exibition_icon:
                 touchListnerForLayout(sidemenuExibitionLayout);
                 navigation_intent = new Intent(this, CommonActivity.class);
                 navigation_intent.putExtra(getString(R.string.toolbar_title_key), getString(R.string.sidemenu_exhibition_text));
@@ -253,6 +256,7 @@ public class BaseActivity extends AppCompatActivity
                 break;
 
             case R.id.sidemenu_event_layout:
+            case R.id.sidemenu_event_icon:
                 touchListnerForLayout(sidemenuEventLayout);
                 navigation_intent = new Intent(getApplicationContext(), CalendarActivity.class);
                 startActivity(navigation_intent);
@@ -260,6 +264,7 @@ public class BaseActivity extends AppCompatActivity
                 break;
 
             case R.id.sidemenu_education_layout:
+            case R.id.sidemenu_education_icon:
                 touchListnerForLayout(sidemenuEducationLayout);
                 sidemenuEducationLayout.startAnimation(zoomOutAnimation);
                 navigation_intent = new Intent(this, EducationActivity.class);
@@ -268,6 +273,7 @@ public class BaseActivity extends AppCompatActivity
                 break;
 
             case R.id.sidemenu_tour_guide_layout:
+            case R.id.sidemenu_tour_guide_icon:
                 // navigation drawer tour guide action
                 touchListnerForLayout(sidemenuTourGuideLayout);
                 navigation_intent = new Intent(this, TourGuideCommonActivity.class);
@@ -276,6 +282,7 @@ public class BaseActivity extends AppCompatActivity
                 closeDrawer();
                 break;
             case R.id.sidemenu_heritage_layout:
+            case R.id.sidemenu_heritage_icon:
                 touchListnerForLayout(sidemenuHeritageLayout);
                 navigation_intent = new Intent(this, CommonActivity.class);
                 navigation_intent.putExtra(getString(R.string.toolbar_title_key), getString(R.string.sidemenu_heritage_text));
@@ -284,6 +291,7 @@ public class BaseActivity extends AppCompatActivity
                 break;
 
             case R.id.sidemenu_public_arts_layout:
+            case R.id.sidemenu_public_arts_icon:
                 touchListnerForLayout(sidemenuPublicArtsLayout);
                 navigation_intent = new Intent(this, CommonActivity.class);
                 navigation_intent.putExtra(getString(R.string.toolbar_title_key), getString(R.string.sidemenu_public_arts_text));
@@ -292,6 +300,7 @@ public class BaseActivity extends AppCompatActivity
                 break;
 
             case R.id.sidemenu_dining_layout:
+            case R.id.sidemenu_dining_icon:
                 touchListnerForLayout(sidemenuDiningLayout);
                 navigation_intent = new Intent(this, CommonActivity.class);
                 navigation_intent.putExtra(getString(R.string.toolbar_title_key), getString(R.string.sidemenu_dining_text));
@@ -300,6 +309,7 @@ public class BaseActivity extends AppCompatActivity
                 break;
 
             case R.id.sidemenu_gift_shop_layout:
+            case R.id.sidemenu_gift_shop_icon:
                 touchListnerForLayout(sidemenuGiftShopLayout);
                 sidemenuGiftShopLayout.startAnimation(zoomOutAnimation);
                 navigation_intent = new Intent(BaseActivity.this, WebviewActivity.class);
@@ -308,6 +318,7 @@ public class BaseActivity extends AppCompatActivity
                 closeDrawer();
                 break;
             case R.id.sidemenu_park_layout:
+            case R.id.sidemenu_park_icon:
                 touchListnerForLayout(sidemenuParkLayout);
                 navigation_intent = new Intent(BaseActivity.this, ParkActivity.class);
                 startActivity(navigation_intent);
@@ -315,6 +326,7 @@ public class BaseActivity extends AppCompatActivity
                 break;
 
             case R.id.sidemenu_settings_layout:
+            case R.id.sidemenu_settings_icon:
                 // navigation drawer settings action
                 touchListnerForLayout(sidemenuSettingsLayout);
                 Intent settingsIntent = new Intent(this, SettingsActivity.class);
