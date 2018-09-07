@@ -257,7 +257,7 @@ public class DiningActivity extends AppCompatActivity implements IPullZoom {
             @Override
             public void onResponse(Call<ArrayList<DiningDetailModel>> call, Response<ArrayList<DiningDetailModel>> response) {
                 if (response.isSuccessful()) {
-                    if (response.body() != null) {
+                    if (response.body() != null && response.body().size() > 0) {
                         diningContent.setVisibility(View.VISIBLE);
                         diningDetailModels = response.body();
                         loadData(diningDetailModels.get(0).getDescription(),

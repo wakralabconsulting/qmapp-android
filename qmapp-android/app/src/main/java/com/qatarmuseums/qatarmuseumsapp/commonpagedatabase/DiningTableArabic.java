@@ -12,6 +12,8 @@ public class DiningTableArabic {
     @PrimaryKey(autoGenerate = false)
     private long dining_id;
     @ColumnInfo()
+    private String museum_id;
+    @ColumnInfo()
     private String dining_name;
     @ColumnInfo()
     private String dining_image;
@@ -31,11 +33,12 @@ public class DiningTableArabic {
     private String closing_time;
 
     public DiningTableArabic(@NonNull long dining_id, String dining_name,
-                             String dining_image, String dining_sort_id) {
+                             String dining_image, String dining_sort_id, String museum_id) {
         this.dining_id = dining_id;
         this.dining_name = dining_name;
         this.dining_image = dining_image;
         this.dining_sort_id = dining_sort_id;
+        this.museum_id = museum_id;
     }
 
 
@@ -118,6 +121,14 @@ public class DiningTableArabic {
 
     public void setClosing_time(String closing_time) {
         this.closing_time = closing_time;
+    }
+
+    public String getMuseum_id() {
+        return museum_id;
+    }
+
+    public void setMuseum_id(String museum_id) {
+        this.museum_id = museum_id;
     }
 }
 

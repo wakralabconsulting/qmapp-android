@@ -33,6 +33,12 @@ public interface ExhibitionTableDao {
     @Query("SELECT COUNT(exhibition_id) FROM exhibitionlistarabic WHERE exhibition_id = :idFromAPI")
     int checkArabicIdExist(int idFromAPI);
 
+    @Query("SELECT * FROM exhibitionlistenglish WHERE museum_id = :museumIdFromAPI")
+    List<ExhibitionListTableEnglish> getExhibitionWithMuseumIdEnglish(int museumIdFromAPI);
+
+    @Query("SELECT * FROM exhibitionlistarabic WHERE museum_id = :museumIdFromAPI")
+    List<ExhibitionListTableArabic> getExhibitionWithMuseumIdArabic(int museumIdFromAPI);
+
     @Query("SELECT * FROM exhibitionlistenglish WHERE exhibition_id = :idFromAPI")
     List<ExhibitionListTableEnglish> getExhibitionDetailsEnglish(int idFromAPI);
 
@@ -40,9 +46,10 @@ public interface ExhibitionTableDao {
     List<ExhibitionListTableArabic> getExhibitionDetailsArabic(int idFromAPI);
 
     @Query("UPDATE exhibitionlistenglish SET exhibition_start_date = :startDateFromApi," +
-            "exhibition_end_date = :endDateFromApi,exhibition_location = :locationFromApi WHERE exhibition_id=:id")
+            "exhibition_end_date = :endDateFromApi,exhibition_location = :locationFromApi," +
+            "museum_id = :museumIdFromApi WHERE exhibition_id=:id")
     void updateExhibitionListEnglish(String startDateFromApi, String endDateFromApi,
-                                     String locationFromApi, String id);
+                                     String locationFromApi, String id, String museumIdFromApi);
 
     @Query("UPDATE exhibitionlistenglish SET exhibition_start_date = :startDateFromApi," +
             "exhibition_end_date = :endDateFromApi," +
@@ -57,9 +64,10 @@ public interface ExhibitionTableDao {
                                        String id);
 
     @Query("UPDATE exhibitionlistarabic SET exhibition_start_date = :startDateFromApi," +
-            "exhibition_end_date = :endDateFromApi,exhibition_location = :locationFromApi WHERE exhibition_id=:id")
+            "exhibition_end_date = :endDateFromApi,exhibition_location = :locationFromApi," +
+            "museum_id = :museumIdFromApi WHERE exhibition_id=:id")
     void updateExhibitionListArabic(String startDateFromApi, String endDateFromApi,
-                                    String locationFromApi, String id);
+                                    String locationFromApi, String id, String museumIdFromApi);
 
     @Query("UPDATE exhibitionlistarabic SET exhibition_start_date = :startDateFromApi," +
             "exhibition_end_date = :endDateFromApi," +
