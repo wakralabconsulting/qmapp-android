@@ -112,11 +112,14 @@ public class CommonActivity extends AppCompatActivity {
                 else if (toolbarTitle.equals(getString(R.string.museum_collection_text)))
                     navigationIntent = new Intent(CommonActivity.this,
                             CollectionDetailsActivity.class);
+
                 else
                     navigationIntent = new Intent(CommonActivity.this, DetailsActivity.class);
                 navigationIntent.putExtra("HEADER_IMAGE", models.get(position).getImage());
                 navigationIntent.putExtra("MAIN_TITLE", models.get(position).getName());
+                navigationIntent.putExtra("LONG_DESC", models.get(position).getDescription());
                 navigationIntent.putExtra("ID", models.get(position).getId());
+                navigationIntent.putExtra("CATEGORY_ID", models.get(position).getCategory());
                 navigationIntent.putExtra("COMING_FROM", toolbarTitle);
                 navigationIntent.putExtra("IS_FAVOURITE", models.get(position).getIsfavourite());
                 navigationIntent.putExtra("LONGITUDE", models.get(position).getLongitude());
@@ -189,7 +192,7 @@ public class CommonActivity extends AppCompatActivity {
                 getCommonListDataFromDatabase("getDiningList.php");
 
         } else if (toolbarTitle.equals(getString(R.string.museum_collection_text))) {
-             
+
             if (util.isNetworkAvailable(CommonActivity.this))
                 getMuseumCollectionListFromAPI();
             else
@@ -255,8 +258,6 @@ public class CommonActivity extends AppCompatActivity {
         }
         APIInterface apiService =
                 APIClient.getTempClient().create(APIInterface.class);
-
-        id = "63"; // For Temporary
 
         Call<ArrayList<CommonModel>> call = apiService.getCollectionList(language, id);
         call.enqueue(new Callback<ArrayList<CommonModel>>() {
