@@ -7,6 +7,7 @@ import android.content.ContentValues;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
+import android.content.res.ColorStateList;
 import android.net.Uri;
 import android.os.Build;
 import android.os.AsyncTask;
@@ -380,7 +381,9 @@ public class CalendarActivity extends AppCompatActivity {
         dialogTitle.setText(title);
         dialogActionButton.setText(getResources().getString(R.string.register_now));
         dialogContent.setText(details);
-
+        dialogActionButton.setEnabled(false);
+        dialogActionButton.setTextColor(getResources().getColor(R.color.white));
+        dialogActionButton.setBackgroundTintList(ColorStateList.valueOf(getResources().getColor(R.color.grey)));
         dialogActionButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {

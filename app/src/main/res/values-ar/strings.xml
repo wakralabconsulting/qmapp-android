@@ -109,4 +109,6 @@
     <string name="museum_about_text">عن</string>
     <string name="museum_collection_text">المجموعات</string>
     <string name="open_in_google_maps">أضغط هنا للعرض في خرائط جووجل</string>
+    <string name="alert_txt">Alert</string>
+    <string name="error_content">Please! Enter the Object Number.</string>
 </resources>
