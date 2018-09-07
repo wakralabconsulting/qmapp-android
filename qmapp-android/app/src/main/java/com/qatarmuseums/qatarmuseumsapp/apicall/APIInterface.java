@@ -9,6 +9,7 @@ import com.qatarmuseums.qatarmuseumsapp.heritage.HeritageOrExhibitionDetailModel
 import com.qatarmuseums.qatarmuseumsapp.home.HomeList;
 import com.qatarmuseums.qatarmuseumsapp.museum.SliderImageModel;
 import com.qatarmuseums.qatarmuseumsapp.museumabout.MuseumAboutModel;
+import com.qatarmuseums.qatarmuseumsapp.museumcollectiondetails.CollectionDetailsList;
 import com.qatarmuseums.qatarmuseumsapp.park.ParkList;
 import com.qatarmuseums.qatarmuseumsapp.publicart.PublicArtModel;
 
@@ -74,6 +75,8 @@ public interface APIInterface {
     @GET("{language}/museum_landing.php")
     Call<ArrayList<SliderImageModel>> getMuseumSliderImages(@Path("language") String language,
                                                             @Query("mid") String mid);
-
+    @GET("{language}/mobile_api/collection_by_category.php")
+    Call<ArrayList<CollectionDetailsList>> getMuseumCollectionDetails(@Path("language") String language,
+                                                                      @Query("category") String category);
 
 }
