@@ -189,6 +189,7 @@ public class CommonActivity extends AppCompatActivity {
                 getCommonListDataFromDatabase("getDiningList.php");
 
         } else if (toolbarTitle.equals(getString(R.string.museum_collection_text))) {
+             
             if (util.isNetworkAvailable(CommonActivity.this))
                 getMuseumCollectionListFromAPI();
             else
@@ -253,7 +254,7 @@ public class CommonActivity extends AppCompatActivity {
             language = "ar";
         }
         APIInterface apiService =
-                APIClient.getClient().create(APIInterface.class);
+                APIClient.getTempClient().create(APIInterface.class);
 
         id = "63"; // For Temporary
 
