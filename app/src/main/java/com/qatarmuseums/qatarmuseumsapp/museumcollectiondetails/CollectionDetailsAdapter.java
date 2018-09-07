@@ -30,7 +30,6 @@ public class CollectionDetailsAdapter extends  RecyclerView.Adapter<CollectionDe
     public void onBindViewHolder(@NonNull MyViewHolder holder, int position) {
       CollectionDetailsList cdl = collectionDetailsList.get(position);
       holder.mainTitle.setText(cdl.getMainTitle());
-        holder.subTitle.setText(cdl.getSubTitle());
         holder.firstDescription.setText(cdl.getFirstDescription());
         holder.secondDescription.setText(cdl.getSecondDescription());
         holder.thirddDescription.setText(cdl.getThirdDescription());
