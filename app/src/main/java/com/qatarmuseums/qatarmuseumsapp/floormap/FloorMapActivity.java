@@ -1,6 +1,6 @@
 package com.qatarmuseums.qatarmuseumsapp.floormap;
 
-import android.content.res.Resources;
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
@@ -8,11 +8,8 @@ import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
-import android.widget.Button;
-import android.widget.CheckBox;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.SeekBar;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -37,10 +34,10 @@ public class FloorMapActivity extends AppCompatActivity implements OnMapReadyCal
         GoogleMap.OnGroundOverlayClickListener {
 
     private static final int TRANSPARENCY_MAX = 100;
-    private int normalMapIconWidth=53;
-    private int normalMapIconHeight=67;
-    private int largeMapIconWidth=75;
-    private int largeMapIconHeight=93;
+    private int normalMapIconWidth = 53;
+    private int normalMapIconHeight = 67;
+    private int largeMapIconWidth = 75;
+    private int largeMapIconHeight = 93;
 
     //    private static final LatLng QM = new LatLng(25.295033, 51.538970);
     private static final LatLng QM = new LatLng(25.294730, 51.539021);
@@ -82,7 +79,6 @@ public class FloorMapActivity extends AppCompatActivity implements OnMapReadyCal
     Marker selectedMarker;
 
 
-
     private int mCurrentEntry = 0;
     private CameraPosition position;
     GoogleMap googleMap;
@@ -94,6 +90,7 @@ public class FloorMapActivity extends AppCompatActivity implements OnMapReadyCal
     private int selectedLevel = 2;
     private LinearLayout detailsPopup;
     private ImageView closeButton;
+    private ImageView numberPad;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -105,6 +102,7 @@ public class FloorMapActivity extends AppCompatActivity implements OnMapReadyCal
         levelG = (LinearLayout) findViewById(R.id.level_1);
         detailsPopup = (LinearLayout) findViewById(R.id.details_popup);
         closeButton = (ImageView) findViewById(R.id.close_button);
+        numberPad = (ImageView) findViewById(R.id.number_pad);
         SupportMapFragment mapFragment =
                 (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
@@ -156,12 +154,20 @@ public class FloorMapActivity extends AppCompatActivity implements OnMapReadyCal
             }
         });
 
+        numberPad.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(FloorMapActivity.this, ObjectSearchActivity.class);
+                startActivity(intent);
+            }
+        });
+
     }
 
-    private void showView(final View view,Marker marker) {
+    private void showView(final View view, Marker marker) {
 
-        selectedMarker =marker;
-        selectedMarker.setIcon(BitmapDescriptorFactory.fromBitmap(resizeMapIcons("map_marker",largeMapIconWidth,largeMapIconHeight)));
+        selectedMarker = marker;
+        selectedMarker.setIcon(BitmapDescriptorFactory.fromBitmap(resizeMapIcons("map_marker", largeMapIconWidth, largeMapIconHeight)));
 
         Animation animation = AnimationUtils.loadAnimation(this, R.anim.slide_in_up);
         //use this to make it longer:  animation.setDuration(1000);
@@ -185,8 +191,8 @@ public class FloorMapActivity extends AppCompatActivity implements OnMapReadyCal
 
     private void hideView(final View view) {
 
-        selectedMarker.setIcon(BitmapDescriptorFactory.fromBitmap(resizeMapIcons("map_marker",normalMapIconWidth,normalMapIconHeight)));
-          Animation animation = AnimationUtils.loadAnimation(this, R.anim.slide_out_down);
+        selectedMarker.setIcon(BitmapDescriptorFactory.fromBitmap(resizeMapIcons("map_marker", normalMapIconWidth, normalMapIconHeight)));
+        Animation animation = AnimationUtils.loadAnimation(this, R.anim.slide_out_down);
         //use this to make it longer:  animation.setDuration(1000);
         animation.setAnimationListener(new Animation.AnimationListener() {
             @Override
@@ -300,19 +306,19 @@ public class FloorMapActivity extends AppCompatActivity implements OnMapReadyCal
         l2_g1_sc3 = googleMap.addMarker(new MarkerOptions()
                 .position(L2_G1_SC3)
                 .title("S1.5")
-                .icon(BitmapDescriptorFactory.fromBitmap(resizeMapIcons("map_marker",normalMapIconWidth,normalMapIconHeight))));
+                .icon(BitmapDescriptorFactory.fromBitmap(resizeMapIcons("map_marker", normalMapIconWidth, normalMapIconHeight))));
         l2_g3_sc14 = googleMap.addMarker(new MarkerOptions()
                 .position(L2_G3_SC14)
                 .title("MW.634")
-                .icon(BitmapDescriptorFactory.fromBitmap(resizeMapIcons("map_marker",normalMapIconWidth,normalMapIconHeight))));
+                .icon(BitmapDescriptorFactory.fromBitmap(resizeMapIcons("map_marker", normalMapIconWidth, normalMapIconHeight))));
         l2_g5_sc6 = googleMap.addMarker(new MarkerOptions()
                 .position(L2_G5_SC6)
                 .title("MW.56")
-                .icon(BitmapDescriptorFactory.fromBitmap(resizeMapIcons("map_marker",normalMapIconWidth,normalMapIconHeight))));
+                .icon(BitmapDescriptorFactory.fromBitmap(resizeMapIcons("map_marker", normalMapIconWidth, normalMapIconHeight))));
         l2_g8 = googleMap.addMarker(new MarkerOptions()
                 .position(L2_G8)
                 .title("MW.56")
-                .icon(BitmapDescriptorFactory.fromBitmap(resizeMapIcons("map_marker",normalMapIconWidth,normalMapIconHeight))));
+                .icon(BitmapDescriptorFactory.fromBitmap(resizeMapIcons("map_marker", normalMapIconWidth, normalMapIconHeight))));
         l2_g8_sc1 = googleMap.addMarker(new MarkerOptions()
                 .position(L2_G8_SC1)
                 .title("MW.56")
@@ -320,15 +326,15 @@ public class FloorMapActivity extends AppCompatActivity implements OnMapReadyCal
         l2_g8_sc4_1 = googleMap.addMarker(new MarkerOptions()
                 .position(L2_G8_SC4_1)
                 .title("MW.56")
-                .icon(BitmapDescriptorFactory.fromBitmap(resizeMapIcons("map_marker",normalMapIconWidth,normalMapIconHeight))));
+                .icon(BitmapDescriptorFactory.fromBitmap(resizeMapIcons("map_marker", normalMapIconWidth, normalMapIconHeight))));
         l2_g8_sc4_2 = googleMap.addMarker(new MarkerOptions()
                 .position(L2_G8_SC4_2)
                 .title("MW.56")
-                .icon(BitmapDescriptorFactory.fromBitmap(resizeMapIcons("map_marker",normalMapIconWidth,normalMapIconHeight))));
+                .icon(BitmapDescriptorFactory.fromBitmap(resizeMapIcons("map_marker", normalMapIconWidth, normalMapIconHeight))));
         l2_g8_sc5 = googleMap.addMarker(new MarkerOptions()
                 .position(L2_G8_SC5)
                 .title("MW.56")
-                .icon(BitmapDescriptorFactory.fromBitmap(resizeMapIcons("map_marker",normalMapIconWidth,normalMapIconHeight))));
+                .icon(BitmapDescriptorFactory.fromBitmap(resizeMapIcons("map_marker", normalMapIconWidth, normalMapIconHeight))));
         l2_g8_sc6_1 = googleMap.addMarker(new MarkerOptions()
                 .position(L2_G8_SC6_1)
                 .title("MW.56")
@@ -336,44 +342,44 @@ public class FloorMapActivity extends AppCompatActivity implements OnMapReadyCal
         l2_g8_sc6_2 = googleMap.addMarker(new MarkerOptions()
                 .position(L2_G8_SC6_2)
                 .title("MW.56")
-                .icon(BitmapDescriptorFactory.fromBitmap(resizeMapIcons("map_marker",normalMapIconWidth,normalMapIconHeight))));
+                .icon(BitmapDescriptorFactory.fromBitmap(resizeMapIcons("map_marker", normalMapIconWidth, normalMapIconHeight))));
         l2_g9_sc5_1 = googleMap.addMarker(new MarkerOptions()
                 .position(L2_G9_SC5_1)
                 .title("MW.56")
-                .icon(BitmapDescriptorFactory.fromBitmap(resizeMapIcons("map_marker",normalMapIconWidth,normalMapIconHeight))));
+                .icon(BitmapDescriptorFactory.fromBitmap(resizeMapIcons("map_marker", normalMapIconWidth, normalMapIconHeight))));
         l2_g9_sc5_2 = googleMap.addMarker(new MarkerOptions()
                 .position(L2_G9_SC5_2)
                 .title("MW.56")
-                .icon(BitmapDescriptorFactory.fromBitmap(resizeMapIcons("map_marker",normalMapIconWidth,normalMapIconHeight))));
+                .icon(BitmapDescriptorFactory.fromBitmap(resizeMapIcons("map_marker", normalMapIconWidth, normalMapIconHeight))));
         l2_g9_sc7 = googleMap.addMarker(new MarkerOptions()
                 .position(L2_G9_SC7)
                 .title("MW.56")
-                .icon(BitmapDescriptorFactory.fromBitmap(resizeMapIcons("map_marker",normalMapIconWidth,normalMapIconHeight))));
+                .icon(BitmapDescriptorFactory.fromBitmap(resizeMapIcons("map_marker", normalMapIconWidth, normalMapIconHeight))));
 
         l3_g10_sc1_1 = googleMap.addMarker(new MarkerOptions()
                 .position(L3_G10_SC1_1)
                 .title("G10")
-                .icon(BitmapDescriptorFactory.fromBitmap(resizeMapIcons("map_marker",normalMapIconWidth,normalMapIconHeight))));
+                .icon(BitmapDescriptorFactory.fromBitmap(resizeMapIcons("map_marker", normalMapIconWidth, normalMapIconHeight))));
         l3_g10_sc1_2 = googleMap.addMarker(new MarkerOptions()
                 .position(L3_G10_SC1_2)
                 .title("G10")
-                .icon(BitmapDescriptorFactory.fromBitmap(resizeMapIcons("map_marker",normalMapIconWidth,normalMapIconHeight))));
+                .icon(BitmapDescriptorFactory.fromBitmap(resizeMapIcons("map_marker", normalMapIconWidth, normalMapIconHeight))));
         l3_g11_wr15 = googleMap.addMarker(new MarkerOptions()
                 .position(L3_G11_WR15)
                 .title("G10")
-                .icon(BitmapDescriptorFactory.fromBitmap(resizeMapIcons("map_marker",normalMapIconWidth,normalMapIconHeight))));
+                .icon(BitmapDescriptorFactory.fromBitmap(resizeMapIcons("map_marker", normalMapIconWidth, normalMapIconHeight))));
         l3_g13_5 = googleMap.addMarker(new MarkerOptions()
                 .position(L3_G13_5)
                 .title("G10")
-                .icon(BitmapDescriptorFactory.fromBitmap(resizeMapIcons("map_marker",normalMapIconWidth,normalMapIconHeight))));
+                .icon(BitmapDescriptorFactory.fromBitmap(resizeMapIcons("map_marker", normalMapIconWidth, normalMapIconHeight))));
         l3_g13_7 = googleMap.addMarker(new MarkerOptions()
                 .position(L3_G13_7)
                 .title("G10")
-                .icon(BitmapDescriptorFactory.fromBitmap(resizeMapIcons("map_marker",normalMapIconWidth,normalMapIconHeight))));
+                .icon(BitmapDescriptorFactory.fromBitmap(resizeMapIcons("map_marker", normalMapIconWidth, normalMapIconHeight))));
         l3_g17_3 = googleMap.addMarker(new MarkerOptions()
                 .position(L3_G17_3)
                 .title("G10")
-                .icon(BitmapDescriptorFactory.fromBitmap(resizeMapIcons("map_marker",normalMapIconWidth,normalMapIconHeight))));
+                .icon(BitmapDescriptorFactory.fromBitmap(resizeMapIcons("map_marker", normalMapIconWidth, normalMapIconHeight))));
 
         levelG.performClick();
 
@@ -382,10 +388,10 @@ public class FloorMapActivity extends AppCompatActivity implements OnMapReadyCal
             @Override
             public boolean onMarkerClick(Marker marker) {
                 //if (marker.getTitle().equals("PVR CINEMAS"))
-                if (detailsPopup.getVisibility()==View.VISIBLE){
+                if (detailsPopup.getVisibility() == View.VISIBLE) {
                     hideView(detailsPopup);
                 }
-                showView(detailsPopup,marker);
+                showView(detailsPopup, marker);
                 return false;
             }
         });
@@ -395,8 +401,8 @@ public class FloorMapActivity extends AppCompatActivity implements OnMapReadyCal
         googleMap.setMinZoomPreference(19);
     }
 
-    public Bitmap resizeMapIcons(String iconName,int width, int height){
-        Bitmap imageBitmap = BitmapFactory.decodeResource(getResources(),getResources().getIdentifier(iconName, "drawable", getPackageName()));
+    public Bitmap resizeMapIcons(String iconName, int width, int height) {
+        Bitmap imageBitmap = BitmapFactory.decodeResource(getResources(), getResources().getIdentifier(iconName, "drawable", getPackageName()));
         Bitmap resizedBitmap = Bitmap.createScaledBitmap(imageBitmap, width, height, false);
         return resizedBitmap;
     }
