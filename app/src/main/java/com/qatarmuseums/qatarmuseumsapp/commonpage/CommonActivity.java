@@ -1647,7 +1647,9 @@ public class CommonActivity extends AppCompatActivity {
                             //create row with corresponding id
                             museumCollectionListTableEnglish = new MuseumCollectionListTableEnglish(models.get(i).getName(),
                                     models.get(i).getImage(), models.get(i).getMuseumId(),models.get(i).getCategory(),
-                                    models.get(i).getDescription());
+                                    models.get(i).getDescription(),null,
+                                    null,null,null,null,
+                                    null,null);
                             activityReference.get().qmDatabase.getMuseumCollectionListDao().insertEnglishTable(museumCollectionListTableEnglish);
 
                         }
@@ -1664,7 +1666,9 @@ public class CommonActivity extends AppCompatActivity {
                             //create row with corresponding id
                             museumCollectionListTableArabic = new MuseumCollectionListTableArabic(models.get(i).getName(),
                                     models.get(i).getImage(), models.get(i).getMuseumId(),
-                                    models.get(i).getCategory(),models.get(i).getDescription());
+                                    models.get(i).getCategory(),models.get(i).getDescription(),null,
+                                    null,null,null,null,
+                                    null,null);
                             activityReference.get().qmDatabase.getMuseumCollectionListDao().insertArabicTable(museumCollectionListTableArabic);
 
                         }
@@ -1698,14 +1702,19 @@ public class CommonActivity extends AppCompatActivity {
                     for (int i = 0; i < models.size(); i++) {
                         museumCollectionListTableEnglish = new MuseumCollectionListTableEnglish(models.get(i).getName(),
                                 models.get(i).getImage(), models.get(i).getMuseumId(),
-                                models.get(i).getCategory(),models.get(i).getDescription());
+                                models.get(i).getCategory(),models.get(i).getDescription(),null,
+                        null,null,null,null,
+                                null,null);
                         activityReference.get().qmDatabase.getMuseumCollectionListDao().insertEnglishTable(museumCollectionListTableEnglish);
                     }
                 } else {
                     for (int i = 0; i < models.size(); i++) {
                         museumCollectionListTableArabic = new MuseumCollectionListTableArabic(models.get(i).getName(),
                                 models.get(i).getImage(), models.get(i).getMuseumId(),
-                                models.get(i).getCategory(),models.get(i).getDescription());
+                                models.get(i).getCategory(),models.get(i).getDescription(),
+                                null,
+                                null,null,null,null,
+                                null,null);
                         activityReference.get().qmDatabase.getMuseumCollectionListDao().insertArabicTable(museumCollectionListTableArabic);
                     }
                 }
@@ -1734,14 +1743,14 @@ public class CommonActivity extends AppCompatActivity {
         protected Void doInBackground(Void... voids) {
             if (language == 1) {
                 // updateEnglishTable table with english name
-                activityReference.get().qmDatabase.getMuseumCollectionListDao().updateMuseumTableEnglish(
+                activityReference.get().qmDatabase.getMuseumCollectionListDao().updateMuseumListTableEnglish(
                         models.get(position).getImage(), models.get(position).getMuseumId(),
                         models.get(position).getCategory(),models.get(position).getDescription(),
                         models.get(position).getName());
 
             } else {
                 // updateEnglishTable table with arabic name
-                activityReference.get().qmDatabase.getMuseumCollectionListDao().updateMuseumTableArabic(
+                activityReference.get().qmDatabase.getMuseumCollectionListDao().updateMuseumListTableArabic(
                         models.get(position).getImage(), models.get(position).getMuseumId(),
                         models.get(position).getCategory(),models.get(position).getDescription(),
                         models.get(position).getName());
