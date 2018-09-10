@@ -1577,6 +1577,7 @@ public class CommonActivity extends AppCompatActivity {
     }
 
     public void getMuseumCollectionListFromDatabase() {
+         // For Temporary
         if (appLanguage == 1) {
             new RetriveMuseumCollectionDataEnglish(CommonActivity.this, appLanguage, id).execute();
         } else {

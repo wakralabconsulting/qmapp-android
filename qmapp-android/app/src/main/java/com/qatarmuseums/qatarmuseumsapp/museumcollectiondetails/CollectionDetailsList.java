@@ -17,10 +17,12 @@ public class CollectionDetailsList {
     private String secondDescription;
     @SerializedName("long_description")
     private String thirdDescription;
+    @SerializedName("category")
+    private String categoryId;
 
     public CollectionDetailsList(String mainTitle, String about,
                                  String image1, String image2, String firstDescription,
-                                 String secondDescription, String thirdDescription) {
+                                 String secondDescription, String thirdDescription,String categoryId) {
         this.mainTitle = mainTitle;
         this.about = about;
         this.image1 = image1;
@@ -28,6 +30,7 @@ public class CollectionDetailsList {
         this.firstDescription = firstDescription;
         this.secondDescription = secondDescription;
         this.thirdDescription = thirdDescription;
+        this.categoryId =categoryId;
     }
 
 
@@ -61,5 +64,9 @@ public class CollectionDetailsList {
 
     public void setMainTitle(String mainTitle) {
         this.mainTitle = mainTitle;
+    }
+
+    public String getCategoryId() {
+        return categoryId;
     }
 }
