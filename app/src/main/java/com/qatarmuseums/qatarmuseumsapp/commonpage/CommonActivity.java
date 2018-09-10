@@ -1793,8 +1793,8 @@ public class CommonActivity extends AppCompatActivity {
             models.clear();
             if (museumCollectionListTableEnglishes.size() > 0) {
                 for (int i = 0; i < museumCollectionListTableEnglishes.size(); i++) {
-                    CommonModel commonModel = new CommonModel(museumCollectionListTableEnglishes.get(i).getName(),
-                            museumCollectionListTableEnglishes.get(i).getImage(), museumCollectionListTableEnglishes.get(i).getMuseum_id(),
+                    CommonModel commonModel = new CommonModel(museumCollectionListTableEnglishes.get(i).getMuseum_id(),museumCollectionListTableEnglishes.get(i).getName(),
+                            museumCollectionListTableEnglishes.get(i).getImage(),
                             museumCollectionListTableEnglishes.get(i).getCategory(),museumCollectionListTableEnglishes.get(i).getCollection_description());
                     models.add(i, commonModel);
                 }
@@ -1830,8 +1830,8 @@ public class CommonActivity extends AppCompatActivity {
             models.clear();
             if (museumCollectionListTableArabics.size() > 0) {
                 for (int i = 0; i < museumCollectionListTableArabics.size(); i++) {
-                    CommonModel commonModel = new CommonModel(museumCollectionListTableArabics.get(i).getName(),
-                            museumCollectionListTableArabics.get(i).getImage(), museumCollectionListTableArabics.get(i).getMuseum_id(),
+                    CommonModel commonModel = new CommonModel( museumCollectionListTableArabics.get(i).getMuseum_id(),museumCollectionListTableArabics.get(i).getName(),
+                            museumCollectionListTableArabics.get(i).getImage(),
                             museumCollectionListTableArabics.get(i).getCategory(),museumCollectionListTableArabics.get(i).getCollection_description());
                     models.add(i, commonModel);
                 }
