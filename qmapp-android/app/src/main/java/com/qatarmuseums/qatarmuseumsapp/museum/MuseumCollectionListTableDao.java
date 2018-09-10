@@ -38,15 +38,15 @@ public interface MuseumCollectionListTableDao {
     @Query("UPDATE museumcollectionlisttableEnglish SET image = :imageFromApi," +
             "museum_id = :museumIdFromApi,category=:categoryFromApi," +
             " collection_description=:collectionDescriptionFromApi WHERE name=:name")
-    void updateMuseumTableEnglish(String imageFromApi, String museumIdFromApi, String categoryFromApi,
-                                  String collectionDescriptionFromApi, String name);
+    void updateMuseumListTableEnglish(String imageFromApi, String museumIdFromApi, String categoryFromApi,
+                                      String collectionDescriptionFromApi, String name);
 
     @Query("UPDATE museumcollectionlisttableArabic SET image = :imageFromApi," +
             "museum_id = :museumIdFromApi,category=:categoryFromApi," +
             " collection_description=:collectionDescriptionFromApi WHERE name=:name")
-    void updateMuseumTableArabic(String imageFromApi, String museumIdFromApi,
-                                 String categoryFromApi,
-                                 String collectionDescriptionFromApi, String name);
+    void updateMuseumListTableArabic(String imageFromApi, String museumIdFromApi,
+                                     String categoryFromApi,
+                                     String collectionDescriptionFromApi, String name);
 
 
     @Insert
