@@ -16,13 +16,16 @@ import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.ScrollView;
 import android.widget.TextView;
+import android.os.AsyncTask;
 
+import com.qatarmuseums.qatarmuseumsapp.QMDatabase;
 import com.qatarmuseums.qatarmuseumsapp.R;
 import com.qatarmuseums.qatarmuseumsapp.apicall.APIClient;
 import com.qatarmuseums.qatarmuseumsapp.apicall.APIInterface;
 import com.qatarmuseums.qatarmuseumsapp.utils.Util;
 
 import java.io.IOException;
+import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -64,6 +67,8 @@ public class CollectionDetailsActivity extends AppCompatActivity {
     Util util;
     int appLanguage;
     SharedPreferences qmPreferences;
+    int collectionDetailRowCount;
+    QMDatabase qmDatabase;
 
 
     @Override
@@ -73,6 +78,7 @@ public class CollectionDetailsActivity extends AppCompatActivity {
         ButterKnife.bind(this);
         setSupportActionBar(toolbar);
         intent = getIntent();
+        qmDatabase = QMDatabase.getInstance(CollectionDetailsActivity.this);
         util = new Util();
         categoryId = intent.getStringExtra("CATEGORY_ID");
         zoomOutAnimation = AnimationUtils.loadAnimation(getApplicationContext(),
@@ -145,6 +151,9 @@ public class CollectionDetailsActivity extends AppCompatActivity {
                         collectionDetailsList.addAll(response.body());
                         removeHtmlTags(collectionDetailsList);
                         mAdapter.notifyDataSetChanged();
+                        new CollectionDetailRowCount(CollectionDetailsActivity.this, appLanguage).execute();
+
+
                     } else {
                         detailLyout.setVisibility(View.GONE);
                         noResultFoundLayout.setVisibility(View.VISIBLE);
@@ -181,4 +190,49 @@ public class CollectionDetailsActivity extends AppCompatActivity {
 
         }
     }
+
+    public class CollectionDetailRowCount extends AsyncTask<Void, Void, Integer> {
+
+        private WeakReference<CollectionDetailsActivity> activityReference;
+        String language;
+
+
+        CollectionDetailRowCount(CollectionDetailsActivity context, int apiLanguage) {
+            activityReference = new WeakReference<>(context);
+            if (appLanguage == 1) {
+                language = "en";
+            } else {
+                language = "ar";
+            }
+
+        }
+
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+        }
+
+        @Override
+        protected void onPostExecute(Integer integer) {
+            collectionDetailRowCount = integer;
+            if (collectionDetailRowCount > 0) {
+                //updateEnglishTable or add row to database
+                //new CheckCollectonDetailDBRowExist(CollectionDetailsActivity.this, language).execute();
+            }
+        }
+
+        @Override
+        protected Integer doInBackground(Void... voids) {
+            if (language.equals("en")) {
+                return activityReference.get().qmDatabase.getMuseumCollectionListDao().getNumberOfRowsEnglish();
+            } else {
+                return activityReference.get().qmDatabase.getMuseumCollectionListDao().getNumberOfRowsArabic();
+            }
+        }
+    }
+
+
+
+
+
 }
