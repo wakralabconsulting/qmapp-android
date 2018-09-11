@@ -14,12 +14,12 @@ public class MuseumCollectionListTableArabic {
     @ColumnInfo()
     private String museum_id;
     @ColumnInfo()
-    private String category;
+    private long category;
     @ColumnInfo()
     private String collection_description;
 
 
-    public MuseumCollectionListTableArabic(@NonNull String name, String image, String museum_id, String category,
+    public MuseumCollectionListTableArabic(@NonNull String name, String image, String museum_id, long category,
                                            String collection_description) {
         this.name = name;
         this.image = image;
@@ -50,11 +50,11 @@ public class MuseumCollectionListTableArabic {
         return museum_id;
     }
 
-    public String getCategory() {
+    public long getCategory() {
         return category;
     }
 
-    public void setCategory(String category) {
+    public void setCategory(long category) {
         this.category = category;
     }
 

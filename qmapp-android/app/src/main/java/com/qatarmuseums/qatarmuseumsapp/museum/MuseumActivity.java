@@ -28,7 +28,7 @@ import com.qatarmuseums.qatarmuseumsapp.utils.Util;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Locale;
+
 
 import butterknife.BindView;
 import butterknife.ButterKnife;

@@ -38,14 +38,14 @@ public interface MuseumCollectionListTableDao {
     @Query("UPDATE museumcollectionlisttableEnglish SET image = :imageFromApi," +
             "museum_id = :museumIdFromApi,category=:categoryFromApi," +
             " collection_description=:collectionDescriptionFromApi WHERE name=:name")
-    void updateMuseumListTableEnglish(String imageFromApi, String museumIdFromApi, String categoryFromApi,
+    void updateMuseumListTableEnglish(String imageFromApi, String museumIdFromApi, long categoryFromApi,
                                       String collectionDescriptionFromApi, String name);
 
     @Query("UPDATE museumcollectionlisttableArabic SET image = :imageFromApi," +
             "museum_id = :museumIdFromApi,category=:categoryFromApi," +
             " collection_description=:collectionDescriptionFromApi WHERE name=:name")
     void updateMuseumListTableArabic(String imageFromApi, String museumIdFromApi,
-                                     String categoryFromApi,
+                                     long categoryFromApi,
                                      String collectionDescriptionFromApi, String name);
 
 

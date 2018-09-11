@@ -52,7 +52,7 @@ public interface APIInterface {
 
     @GET("{language}/mobile_api/museum_collection_category.php")
     Call<ArrayList<CommonModel>> getCollectionList(@Path("language") String language,
-                                                   @Query("museum_id") String museumId);
+                                                       @Query("museum_id") String museumId);
 
     @GET("{language}/geturl.php")
     Call<ArrayList<CalendarEvents>> getCalendarDetails(@Path("language") String language,
