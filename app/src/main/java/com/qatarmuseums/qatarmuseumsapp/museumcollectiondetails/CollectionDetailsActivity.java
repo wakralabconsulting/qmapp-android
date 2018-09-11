@@ -84,7 +84,7 @@ public class CollectionDetailsActivity extends AppCompatActivity {
         intent = getIntent();
         qmDatabase = QMDatabase.getInstance(CollectionDetailsActivity.this);
         util = new Util();
-        categoryId = intent.getStringExtra("CATEGORY_ID");
+        categoryId = intent.getStringExtra("ID");
         zoomOutAnimation = AnimationUtils.loadAnimation(getApplicationContext(),
                 R.anim.zoom_out_more);
         collectionTitle.setText(intent.getStringExtra("MAIN_TITLE"));

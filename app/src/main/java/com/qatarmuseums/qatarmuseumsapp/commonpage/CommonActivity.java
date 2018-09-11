@@ -119,7 +119,6 @@ public class CommonActivity extends AppCompatActivity {
                 navigationIntent.putExtra("MAIN_TITLE", models.get(position).getName());
                 navigationIntent.putExtra("LONG_DESC", models.get(position).getDescription());
                 navigationIntent.putExtra("ID", models.get(position).getId());
-                navigationIntent.putExtra("CATEGORY_ID", models.get(position).getCategory());
                 navigationIntent.putExtra("COMING_FROM", toolbarTitle);
                 navigationIntent.putExtra("IS_FAVOURITE", models.get(position).getIsfavourite());
                 navigationIntent.putExtra("LONGITUDE", models.get(position).getLongitude());
@@ -1577,7 +1576,6 @@ public class CommonActivity extends AppCompatActivity {
     }
 
     public void getMuseumCollectionListFromDatabase() {
-         // For Temporary
         if (appLanguage == 1) {
             new RetriveMuseumCollectionDataEnglish(CommonActivity.this, appLanguage, id).execute();
         } else {
@@ -1646,8 +1644,7 @@ public class CommonActivity extends AppCompatActivity {
                         } else {
                             //create row with corresponding id
                             museumCollectionListTableEnglish = new MuseumCollectionListTableEnglish(models.get(i).getName(),
-                                    models.get(i).getImage(), models.get(i).getMuseumId(),models.get(i).getCategory(),
-                                    models.get(i).getDescription());
+                                    models.get(i).getImage(), models.get(i).getMuseumId(), models.get(i).getCategory(),models.get(i).getDescription());
                             activityReference.get().qmDatabase.getMuseumCollectionListDao().insertEnglishTable(museumCollectionListTableEnglish);
 
                         }
@@ -1663,8 +1660,7 @@ public class CommonActivity extends AppCompatActivity {
                         } else {
                             //create row with corresponding id
                             museumCollectionListTableArabic = new MuseumCollectionListTableArabic(models.get(i).getName(),
-                                    models.get(i).getImage(), models.get(i).getMuseumId(),
-                                    models.get(i).getCategory(),models.get(i).getDescription());
+                                    models.get(i).getImage(), models.get(i).getMuseumId(), models.get(i).getCategory(),models.get(i).getDescription());
                             activityReference.get().qmDatabase.getMuseumCollectionListDao().insertArabicTable(museumCollectionListTableArabic);
 
                         }
@@ -1697,15 +1693,13 @@ public class CommonActivity extends AppCompatActivity {
                 if (language.equals("en")) {
                     for (int i = 0; i < models.size(); i++) {
                         museumCollectionListTableEnglish = new MuseumCollectionListTableEnglish(models.get(i).getName(),
-                                models.get(i).getImage(), models.get(i).getMuseumId(),
-                                models.get(i).getCategory(),models.get(i).getDescription());
+                                models.get(i).getImage(), models.get(i).getMuseumId(), models.get(i).getCategory(),models.get(i).getDescription());
                         activityReference.get().qmDatabase.getMuseumCollectionListDao().insertEnglishTable(museumCollectionListTableEnglish);
                     }
                 } else {
                     for (int i = 0; i < models.size(); i++) {
                         museumCollectionListTableArabic = new MuseumCollectionListTableArabic(models.get(i).getName(),
-                                models.get(i).getImage(), models.get(i).getMuseumId(),
-                                models.get(i).getCategory(),models.get(i).getDescription());
+                                models.get(i).getImage(), models.get(i).getMuseumId(), models.get(i).getCategory(),models.get(i).getDescription());
                         activityReference.get().qmDatabase.getMuseumCollectionListDao().insertArabicTable(museumCollectionListTableArabic);
                     }
                 }
@@ -1735,16 +1729,16 @@ public class CommonActivity extends AppCompatActivity {
             if (language == 1) {
                 // updateEnglishTable table with english name
                 activityReference.get().qmDatabase.getMuseumCollectionListDao().updateMuseumListTableEnglish(
-                        models.get(position).getImage(), models.get(position).getMuseumId(),
-                        models.get(position).getCategory(),models.get(position).getDescription(),
-                        models.get(position).getName());
+                        models.get(position).getImage(),
+                        models.get(position).getMuseumId(), models.get(position).getCategory(),
+                        models.get(position).getDescription(),models.get(position).getName());
 
             } else {
                 // updateEnglishTable table with arabic name
                 activityReference.get().qmDatabase.getMuseumCollectionListDao().updateMuseumListTableArabic(
-                        models.get(position).getImage(), models.get(position).getMuseumId(),
-                        models.get(position).getCategory(),models.get(position).getDescription(),
-                        models.get(position).getName());
+                        models.get(position).getImage(),
+                        models.get(position).getMuseumId(), models.get(position).getCategory(),
+                        models.get(position).getDescription(),models.get(position).getName());
             }
             return null;
         }
@@ -1784,9 +1778,11 @@ public class CommonActivity extends AppCompatActivity {
             models.clear();
             if (museumCollectionListTableEnglishes.size() > 0) {
                 for (int i = 0; i < museumCollectionListTableEnglishes.size(); i++) {
-                    CommonModel commonModel = new CommonModel(museumCollectionListTableEnglishes.get(i).getMuseum_id(),museumCollectionListTableEnglishes.get(i).getName(),
+                    CommonModel commonModel = new CommonModel(museumCollectionListTableEnglishes.get(i).getName(),
                             museumCollectionListTableEnglishes.get(i).getImage(),
-                            museumCollectionListTableEnglishes.get(i).getCategory(),museumCollectionListTableEnglishes.get(i).getCollection_description());
+                            museumCollectionListTableEnglishes.get(i).getCollection_description(),
+                            museumCollectionListTableEnglishes.get(i).getMuseum_id(),
+                            museumCollectionListTableEnglishes.get(i).getCategory());
                     models.add(i, commonModel);
                 }
                 mAdapter.notifyDataSetChanged();
@@ -1821,9 +1817,11 @@ public class CommonActivity extends AppCompatActivity {
             models.clear();
             if (museumCollectionListTableArabics.size() > 0) {
                 for (int i = 0; i < museumCollectionListTableArabics.size(); i++) {
-                    CommonModel commonModel = new CommonModel( museumCollectionListTableArabics.get(i).getMuseum_id(),museumCollectionListTableArabics.get(i).getName(),
+                    CommonModel commonModel = new CommonModel(museumCollectionListTableArabics.get(i).getName(),
                             museumCollectionListTableArabics.get(i).getImage(),
-                            museumCollectionListTableArabics.get(i).getCategory(),museumCollectionListTableArabics.get(i).getCollection_description());
+                            museumCollectionListTableArabics.get(i).getCollection_description(),
+                            museumCollectionListTableArabics.get(i).getMuseum_id(),
+                            museumCollectionListTableArabics.get(i).getCategory());
                     models.add(i, commonModel);
                 }
                 mAdapter.notifyDataSetChanged();
