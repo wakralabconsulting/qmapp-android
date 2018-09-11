@@ -84,7 +84,7 @@ public class CollectionDetailsActivity extends AppCompatActivity {
         intent = getIntent();
         qmDatabase = QMDatabase.getInstance(CollectionDetailsActivity.this);
         util = new Util();
-        categoryId = intent.getStringExtra("ID");
+        categoryId = String.valueOf(intent.getLongExtra("CATEGORY_ID",0));
         zoomOutAnimation = AnimationUtils.loadAnimation(getApplicationContext(),
                 R.anim.zoom_out_more);
         collectionTitle.setText(intent.getStringExtra("MAIN_TITLE"));
@@ -432,11 +432,12 @@ public class CollectionDetailsActivity extends AppCompatActivity {
                     collectionDetailsList.add(i, collectionDetailsList1);
 
                 }
+                detailLyout.setVisibility(View.VISIBLE);
                 mAdapter.notifyDataSetChanged();
                 progressBar.setVisibility(View.GONE);
             } else {
                 progressBar.setVisibility(View.GONE);
-                recyclerView.setVisibility(View.GONE);
+                detailLyout.setVisibility(View.GONE);
                 noResultFoundLayout.setVisibility(View.VISIBLE);
             }
         }
@@ -478,11 +479,12 @@ public class CollectionDetailsActivity extends AppCompatActivity {
                     collectionDetailsList.add(i, collectionDetailsList1);
 
                 }
+                detailLyout.setVisibility(View.VISIBLE);
                 mAdapter.notifyDataSetChanged();
                 progressBar.setVisibility(View.GONE);
             } else {
                 progressBar.setVisibility(View.GONE);
-                recyclerView.setVisibility(View.GONE);
+                detailLyout.setVisibility(View.GONE);
                 noResultFoundLayout.setVisibility(View.VISIBLE);
             }
         }
