@@ -32,7 +32,7 @@ public interface MuseumCollectionListTableDao {
     @Query("SELECT COUNT(name) FROM museumcollectionlisttableEnglish WHERE name = :nameFromAPI")
     int checkNameExistEnglish(String nameFromAPI);
 
-    @Query("SELECT COUNT(name) FROM museumcollectionlisttableEnglish WHERE name = :nameFromAPI")
+    @Query("SELECT COUNT(name) FROM museumcollectionlisttableArabic WHERE name = :nameFromAPI")
     int checkNameExistArabic(String nameFromAPI);
 
     @Query("UPDATE museumcollectionlisttableEnglish SET image = :imageFromApi," +

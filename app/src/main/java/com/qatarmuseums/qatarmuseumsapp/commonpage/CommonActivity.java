@@ -119,6 +119,7 @@ public class CommonActivity extends AppCompatActivity {
                 navigationIntent.putExtra("MAIN_TITLE", models.get(position).getName());
                 navigationIntent.putExtra("LONG_DESC", models.get(position).getDescription());
                 navigationIntent.putExtra("ID", models.get(position).getId());
+                navigationIntent.putExtra("CATEGORY_ID", models.get(position).getCategory());
                 navigationIntent.putExtra("COMING_FROM", toolbarTitle);
                 navigationIntent.putExtra("IS_FAVOURITE", models.get(position).getIsfavourite());
                 navigationIntent.putExtra("LONGITUDE", models.get(position).getLongitude());
