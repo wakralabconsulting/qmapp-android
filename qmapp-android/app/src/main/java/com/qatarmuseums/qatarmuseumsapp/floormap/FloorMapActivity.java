@@ -102,8 +102,8 @@ public class FloorMapActivity extends AppCompatActivity implements OnMapReadyCal
     String name;
     ImageView numberPad;
 
-
-    LinearLayout bottomSheet, popupShortlayout, popupLongLayout;
+    View bottomSheet;
+    LinearLayout popupShortlayout, popupLongLayout;
     private Handler mHandler;
     private Runnable mRunnable;
 
@@ -118,19 +118,19 @@ public class FloorMapActivity extends AppCompatActivity implements OnMapReadyCal
         popupLongLayout = (LinearLayout) findViewById(R.id.details_popup_long);
         popupShortlayout = (LinearLayout) findViewById(R.id.details_popup_short);
         viewDetails = (TextView) findViewById(R.id.view_details_text);
-        bottomSheet = (LinearLayout) findViewById(R.id.bottomSheetchild);
-        numberPad=(ImageView)findViewById(R.id.number_pad);
+        bottomSheet = findViewById(R.id.bottomSheetLayout);
+        numberPad = (ImageView) findViewById(R.id.number_pad);
 
         numberPad.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent=new Intent(FloorMapActivity.this,ObjectSearchActivity.class);
+                Intent intent = new Intent(FloorMapActivity.this, ObjectSearchActivity.class);
                 startActivity(intent);
             }
         });
 
 
-        mBottomSheetBehavior = BottomSheetBehavior.from(findViewById(R.id.bottomSheetLayout));
+        mBottomSheetBehavior = BottomSheetBehavior.from(bottomSheet);
         mBottomSheetBehavior.setPeekHeight(dpToPx(170));
         mBottomSheetBehavior.setBottomSheetCallback(new BottomSheetBehavior.BottomSheetCallback() {
             @Override
@@ -141,7 +141,6 @@ public class FloorMapActivity extends AppCompatActivity implements OnMapReadyCal
                         disableLevelPicker();
                         popupShortlayout.setVisibility(View.VISIBLE);
                         popupLongLayout.setVisibility(View.GONE);
-
                         break;
                     case BottomSheetBehavior.STATE_DRAGGING:
                         disableLevelPicker();

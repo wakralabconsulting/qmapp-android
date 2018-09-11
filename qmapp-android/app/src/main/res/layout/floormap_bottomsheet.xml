@@ -7,6 +7,7 @@
     android:orientation="vertical"
     android:visibility="visible"
     app:behavior_hideable="true"
+    android:clipToPadding="true"
     app:layout_behavior="@string/bottom_sheet_behavior">
 
     <LinearLayout
@@ -19,7 +20,6 @@
             android:id="@+id/details_popup_short"
             android:layout_width="match_parent"
             android:layout_height="160dp"
-            android:layout_margin="@dimen/padding_10"
             android:background="@drawable/round_corner_white_small"
             android:orientation="vertical"
             android:paddingBottom="10dp"
