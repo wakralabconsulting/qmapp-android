@@ -17,11 +17,11 @@ public interface MuseumCollectionListTableDao {
     @Query("SELECT * FROM museumcollectionlisttableArabic")
     List<MuseumCollectionListTableArabic> getAllDataFromMuseumListArabicTable();
 
-    @Query("SELECT * FROM museumcollectionlisttableEnglish WHERE museum_referance = :museumReferenceFromApi")
-    List<MuseumCollectionListTableEnglish> getDataFromEnglishTableWithReference(String museumReferenceFromApi);
+    @Query("SELECT * FROM museumcollectionlisttableEnglish WHERE museum_id = :museumIdFromApi")
+    List<MuseumCollectionListTableEnglish> getDataFromEnglishTableWithReference(String museumIdFromApi);
 
-    @Query("SELECT * FROM museumcollectionlisttableArabic WHERE museum_referance = :museumReferenceFromApi")
-    List<MuseumCollectionListTableArabic> getDataFromArabicTableWithReference(String museumReferenceFromApi);
+    @Query("SELECT * FROM museumcollectionlisttableArabic WHERE museum_id = :museumIdFromApi")
+    List<MuseumCollectionListTableArabic> getDataFromArabicTableWithReference(String museumIdFromApi);
 
     @Query("SELECT COUNT(name) FROM museumcollectionlisttableEnglish")
     int getNumberOfRowsEnglish();
@@ -32,18 +32,21 @@ public interface MuseumCollectionListTableDao {
     @Query("SELECT COUNT(name) FROM museumcollectionlisttableEnglish WHERE name = :nameFromAPI")
     int checkNameExistEnglish(String nameFromAPI);
 
-    @Query("SELECT COUNT(name) FROM museumcollectionlisttableEnglish WHERE name = :nameFromAPI")
+    @Query("SELECT COUNT(name) FROM museumcollectionlisttableArabic WHERE name = :nameFromAPI")
     int checkNameExistArabic(String nameFromAPI);
 
     @Query("UPDATE museumcollectionlisttableEnglish SET image = :imageFromApi," +
-            "museum_referance = :museumReferanceFromApi WHERE name=:name")
-    void updateMuseumTableEnglish(String imageFromApi, String museumReferanceFromApi,
-                                  String name);
+            "museum_id = :museumIdFromApi,category=:categoryFromApi," +
+            " collection_description=:collectionDescriptionFromApi WHERE name=:name")
+    void updateMuseumListTableEnglish(String imageFromApi, String museumIdFromApi, long categoryFromApi,
+                                      String collectionDescriptionFromApi, String name);
 
     @Query("UPDATE museumcollectionlisttableArabic SET image = :imageFromApi," +
-            "museum_referance = :museumReferanceFromApi WHERE name=:name")
-    void updateMuseumTableArabic(String imageFromApi, String museumReferanceFromApi,
-                                 String name);
+            "museum_id = :museumIdFromApi,category=:categoryFromApi," +
+            " collection_description=:collectionDescriptionFromApi WHERE name=:name")
+    void updateMuseumListTableArabic(String imageFromApi, String museumIdFromApi,
+                                     long categoryFromApi,
+                                     String collectionDescriptionFromApi, String name);
 
 
     @Insert

@@ -35,8 +35,7 @@
         android:textAlignment="center"
         android:textColor="@color/black"
         android:textSize="@dimen/font_size_18"
-        android:textStyle="bold"
-        android:visibility="gone"/>
+        android:textStyle="bold" />
 
     <TextView
         android:id="@+id/first_description"

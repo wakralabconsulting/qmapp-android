@@ -30,15 +30,16 @@ public class CollectionDetailsAdapter extends  RecyclerView.Adapter<CollectionDe
     public void onBindViewHolder(@NonNull MyViewHolder holder, int position) {
       CollectionDetailsList cdl = collectionDetailsList.get(position);
       holder.mainTitle.setText(cdl.getMainTitle());
+        holder.subTitle.setText(cdl.getAbout());
         holder.firstDescription.setText(cdl.getFirstDescription());
         holder.secondDescription.setText(cdl.getSecondDescription());
         holder.thirddDescription.setText(cdl.getThirdDescription());
         GlideApp.with(mContext)
-                .load(R.drawable.collection_image1)
+                .load(cdl.getImage1())
                 .placeholder(R.drawable.placeholder)
                 .into(holder.image1);
         GlideApp.with(mContext)
-                .load(R.drawable.collection_image2)
+                .load(cdl.getImage2())
                 .placeholder(R.drawable.placeholder)
                 .into(holder.image2);
 
