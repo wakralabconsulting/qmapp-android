@@ -30,6 +30,9 @@ import com.qatarmuseums.qatarmuseumsapp.education.EducationalCalendarEventsTable
 import com.qatarmuseums.qatarmuseumsapp.home.HomePageTableArabic;
 import com.qatarmuseums.qatarmuseumsapp.home.HomePageTableDao;
 import com.qatarmuseums.qatarmuseumsapp.home.HomePageTableEnglish;
+import com.qatarmuseums.qatarmuseumsapp.museum.MuseumCollectionDetailTableArabic;
+import com.qatarmuseums.qatarmuseumsapp.museum.MuseumCollectionDetailTableDao;
+import com.qatarmuseums.qatarmuseumsapp.museum.MuseumCollectionDetailTableEnglish;
 import com.qatarmuseums.qatarmuseumsapp.museum.MuseumCollectionListTableArabic;
 import com.qatarmuseums.qatarmuseumsapp.museum.MuseumCollectionListTableDao;
 import com.qatarmuseums.qatarmuseumsapp.museum.MuseumCollectionListTableEnglish;
@@ -48,7 +51,8 @@ import com.qatarmuseums.qatarmuseumsapp.park.ParkTableEnglish;
         MuseumCollectionListTableArabic.class, ExhibitionListTableEnglish.class,
         ExhibitionListTableArabic.class, MuseumAboutTableEnglish.class,
         MuseumAboutTableArabic.class, CalendarEventsTableEnglish.class, CalendarEventsTableArabic.class,
-        EducationalCalendarEventsTableEnglish.class, EducationalCalendarEventsTableArabic.class},
+        EducationalCalendarEventsTableEnglish.class, EducationalCalendarEventsTableArabic.class,
+        MuseumCollectionDetailTableEnglish.class, MuseumCollectionDetailTableArabic.class},
         version = 1, exportSchema = false)
 
 public abstract class QMDatabase extends RoomDatabase {
@@ -66,6 +70,8 @@ public abstract class QMDatabase extends RoomDatabase {
     public abstract DiningTableDao getDiningTableDao();
 
     public abstract MuseumCollectionListTableDao getMuseumCollectionListDao();
+
+    public abstract MuseumCollectionDetailTableDao getMuseumCollectionDetailDao();
 
     public abstract MuseumAboutTableDao getMuseumAboutDao();
 
