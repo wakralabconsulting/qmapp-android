@@ -29,21 +29,25 @@ public class CommonModel {
     private String openingTime;
     @SerializedName("close_time")
     private String closingTime;
-    @SerializedName("Description")
+    @SerializedName(value = "Description", alternate = {"collection_description"})
     private String description;
     @SerializedName("Museums_reference")
     private String museumReferance;
     @SerializedName("museum_id")
     private String museumId;
+    @SerializedName("category")
+    private long category;
+
+
 
     public CommonModel() {
 
     }
 
 
+
     public CommonModel(String id, String name, String startDate,
-                       String endDate, String location, String image, Boolean isOpen
-    ) {
+                       String endDate, String location, String image, Boolean isOpen) {
         this.id = id;
         this.name = name;
         this.startDate = startDate;
@@ -54,11 +58,7 @@ public class CommonModel {
 
     }
 
-    public CommonModel(String name, String image, String museumReferance) {
-        this.name = name;
-        this.image = image;
-        this.museumReferance = museumReferance;
-    }
+
 
     public CommonModel(String id, String name, String image, String latitude,
                        String longitude) {
@@ -67,6 +67,15 @@ public class CommonModel {
         this.image = image;
         this.latitude = latitude;
         this.longitude = longitude;
+    }
+
+    public CommonModel(String name, String image, String description, String museumId,
+                       long category) {
+        this.name = name;
+        this.image = image;
+        this.description = description;
+        this.museumId = museumId;
+        this.category = category;
     }
 
     public CommonModel(String name, String id, String location, String image,
@@ -228,5 +237,9 @@ public class CommonModel {
 
     public void setMuseumId(String museumId) {
         this.museumId = museumId;
+    }
+
+    public long getCategory() {
+        return category;
     }
 }

@@ -12,12 +12,21 @@ public class MuseumCollectionListTableArabic {
     @ColumnInfo()
     private String image;
     @ColumnInfo()
-    private String museum_referance;
+    private String museum_id;
+    @ColumnInfo()
+    private long category;
+    @ColumnInfo()
+    private String collection_description;
 
-    public MuseumCollectionListTableArabic(@NonNull String name, String image, String museum_referance) {
+
+    public MuseumCollectionListTableArabic(@NonNull String name, String image, String museum_id, long category,
+                                           String collection_description) {
         this.name = name;
         this.image = image;
-        this.museum_referance = museum_referance;
+        this.museum_id = museum_id;
+        this.category = category;
+        this.collection_description = collection_description;
+
     }
 
     @NonNull
@@ -37,30 +46,41 @@ public class MuseumCollectionListTableArabic {
         this.image = image;
     }
 
-    public String getMuseum_referance() {
-        return museum_referance;
+    public String getMuseum_id() {
+        return museum_id;
     }
 
-    public void setMuseum_referance(String museum_referance) {
-        this.museum_referance = museum_referance;
+    public long getCategory() {
+        return category;
     }
 
-    @Override
-    public boolean equals(Object obj) {
-        if (this == obj) return true;
-        if (!(obj instanceof MuseumCollectionListTableArabic)) return false;
+    public void setCategory(long category) {
+        this.category = category;
+    }
 
-        MuseumCollectionListTableArabic museumCollectionListTableArabic = (MuseumCollectionListTableArabic) obj;
-        return name != null ? museumCollectionListTableArabic.equals(museumCollectionListTableArabic.name) : museumCollectionListTableArabic.name == null;
+    public String getCollection_description() {
+        return collection_description;
+    }
+
+    public void setCollection_description(String collection_description) {
+        this.collection_description = collection_description;
+    }
+
+    public void setMuseum_id(String museum_id) {
+        this.museum_id = museum_id;
 
     }
+
+
 
     @Override
     public String toString() {
         return "museumcollectionlisttableArabic{" +
                 "name ='" + name + '\'' +
                 ", image='" + image + '\'' +
-                ",museum_referance='"+museum_referance+'\''+
+                ",museum_id='"+museum_id+'\''+
+                "category ='" + category + '\'' +
+                ", collection_description='" + collection_description + '\'' +
                 '}';
     }
 }

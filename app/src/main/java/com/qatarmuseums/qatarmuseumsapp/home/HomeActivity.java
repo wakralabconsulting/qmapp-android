@@ -343,7 +343,7 @@ public class HomeActivity extends BaseActivity {
                             homePageTableEnglish = new HomePageTableEnglish(Long.parseLong(homeLists.get(i).getId()),
                                     homeLists.get(i).getName(),
                                     homeLists.get(i).getTourguideAvailable().toString(),
-                                    homeLists.get(i).getImage(),homeLists.get(i).getSortId());
+                                    homeLists.get(i).getImage(),1);
                             activityReference.get().qmDatabase.getHomePageTableDao().insertEnglishTable(homePageTableEnglish);
 
                         }
@@ -361,7 +361,7 @@ public class HomeActivity extends BaseActivity {
                             homePageTableArabic = new HomePageTableArabic(Long.parseLong(homeLists.get(i).getId()),
                                     homeLists.get(i).getName(),
                                     homeLists.get(i).getTourguideAvailable().toString(),
-                                    homeLists.get(i).getImage(),homeLists.get(i).getSortId());
+                                    homeLists.get(i).getImage(),1);
                             activityReference.get().qmDatabase.getHomePageTableDao().insertArabicTable(homePageTableArabic);
 
                         }
@@ -396,7 +396,7 @@ public class HomeActivity extends BaseActivity {
                         homePageTableEnglish = new HomePageTableEnglish(Long.parseLong(homeLists.get(i).getId()),
                                 homeLists.get(i).getName(),
                                 homeLists.get(i).getTourguideAvailable().toString(),
-                                homeLists.get(i).getImage(),homeLists.get(i).getSortId());
+                                homeLists.get(i).getImage(),1);
                         activityReference.get().qmDatabase.getHomePageTableDao().insertEnglishTable(homePageTableEnglish);
                     }
                 } else {
@@ -404,7 +404,7 @@ public class HomeActivity extends BaseActivity {
                         homePageTableArabic = new HomePageTableArabic(Long.parseLong(homeLists.get(i).getId()),
                                 homeLists.get(i).getName(),
                                 homeLists.get(i).getTourguideAvailable().toString(),
-                                homeLists.get(i).getImage(),homeLists.get(i).getSortId());
+                                homeLists.get(i).getImage(),1);
                         activityReference.get().qmDatabase.getHomePageTableDao().insertArabicTable(homePageTableArabic);
 
                     }
@@ -480,12 +480,12 @@ public class HomeActivity extends BaseActivity {
                     HomeList exhibitonObject = new HomeList(homePageTableEnglishes.get(i).getName()
                             , String.valueOf(homePageTableEnglishes.get(i).getQatarmuseum_id()),
                             homePageTableEnglishes.get(i).getImage(),
-                            homePageTableEnglishes.get(i).getTourguide_available(),
-                            homePageTableEnglishes.get(i).getSortId());
+                            homePageTableEnglishes.get(i).getTourguide_available()/*,
+                            homePageTableEnglishes.get(i).getSortId()*/);
                     homeLists.add(i, exhibitonObject);
                 }
 
-                Collections.sort(homeLists);
+                /*Collections.sort(homeLists);*/
                 mAdapter.notifyDataSetChanged();
                 progressBar.setVisibility(View.GONE);
             } else {
@@ -523,12 +523,12 @@ public class HomeActivity extends BaseActivity {
                     HomeList exhibitonObject = new HomeList(homePageTableArabics.get(i).getName()
                             , String.valueOf(homePageTableArabics.get(i).getQatarmuseum_id()),
                             homePageTableArabics.get(i).getImage(),
-                            homePageTableArabics.get(i).getTourguide_available(),
-                            homePageTableArabics.get(i).getSortId());
+                            homePageTableArabics.get(i).getTourguide_available()/*,
+                            homePageTableArabics.get(i).getSortId()*/);
                     homeLists.add(i, exhibitonObject);
                 }
 
-                Collections.sort(homeLists);
+               /* Collections.sort(homeLists);*/
                 mAdapter.notifyDataSetChanged();
                 progressBar.setVisibility(View.GONE);
             } else {
