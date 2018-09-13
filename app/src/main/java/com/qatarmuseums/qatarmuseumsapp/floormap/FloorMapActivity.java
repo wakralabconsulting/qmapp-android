@@ -11,6 +11,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.design.widget.BottomSheetBehavior;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.view.MotionEvent;
 import android.view.View;
@@ -23,6 +24,7 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.github.chrisbanes.photoview.PhotoView;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
@@ -118,6 +120,7 @@ public class FloorMapActivity extends AppCompatActivity implements OnMapReadyCal
 
     private RelativeLayout levelPickerRelative;
     private RelativeLayout.LayoutParams params;
+    private ImageView imageToZoom;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -131,12 +134,12 @@ public class FloorMapActivity extends AppCompatActivity implements OnMapReadyCal
         popupLongLayout = (LinearLayout) findViewById(R.id.details_popup_long);
         popupShortlayout = (LinearLayout) findViewById(R.id.details_popup_short);
         viewDetails = (TextView) findViewById(R.id.view_details_text);
-
+        imageToZoom = (ImageView) findViewById(R.id.image_to_zoom);
         bottomSheet = findViewById(R.id.bottomSheetLayout);
         numberPad = (ImageView) findViewById(R.id.number_pad);
         params = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.WRAP_CONTENT, RelativeLayout.LayoutParams.WRAP_CONTENT);
-        numberPad=(ImageView)findViewById(R.id.number_pad);
-        qrCode=(ImageView)findViewById(R.id.scanner);
+        numberPad = (ImageView) findViewById(R.id.number_pad);
+        qrCode = (ImageView) findViewById(R.id.scanner);
 
 
         numberPad.setOnClickListener(new View.OnClickListener() {
@@ -144,15 +147,21 @@ public class FloorMapActivity extends AppCompatActivity implements OnMapReadyCal
             public void onClick(View view) {
                 Intent intent = new Intent(FloorMapActivity.this, ObjectSearchActivity.class);
                 startActivity(intent);
-                Intent numberPadIntent=new Intent(FloorMapActivity.this,ObjectSearchActivity.class);
+                Intent numberPadIntent = new Intent(FloorMapActivity.this, ObjectSearchActivity.class);
                 startActivity(numberPadIntent);
+            }
+        });
+        imageToZoom.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                openDialogForZoomingImage();
             }
         });
 
         qrCode.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent qrCodeIntent=new Intent(FloorMapActivity.this,BarCodeCaptureActivity.class);
+                Intent qrCodeIntent = new Intent(FloorMapActivity.this, BarCodeCaptureActivity.class);
                 startActivity(qrCodeIntent);
             }
         });
@@ -558,7 +567,6 @@ public class FloorMapActivity extends AppCompatActivity implements OnMapReadyCal
                         selectedMarker = null;
 
 
-
                     }
                     checkMarkerStatus();
                 }
@@ -613,7 +621,16 @@ public class FloorMapActivity extends AppCompatActivity implements OnMapReadyCal
     }
 
 
-
+    public void openDialogForZoomingImage() {
+        AlertDialog.Builder mBuilder = new AlertDialog.Builder(FloorMapActivity.this/*,android.R.style.Theme_DeviceDefault_Light_NoActionBar_Fullscreen*/);
+        View mView = getLayoutInflater().inflate(R.layout.zooming_layout, null);
+        PhotoView photoView = mView.findViewById(R.id.imageView);
+        photoView.setImageResource(R.drawable.science_tour_object);
+        mBuilder.setView(mView);
+        AlertDialog mDialog = mBuilder.create();
+        mDialog.show();
+        mDialog.setCancelable(true);
+    }
 
 
 }

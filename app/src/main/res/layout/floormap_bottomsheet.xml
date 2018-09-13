@@ -189,6 +189,7 @@
             <ImageView
                 android:layout_width="wrap_content"
                 android:layout_height="300dp"
+                android:id="@+id/image_to_zoom"
                 android:src="@drawable/science_tour_object"
                 android:visibility="visible" />
 
