@@ -65,46 +65,6 @@ class BarcodeGraphicTracker extends Tracker<Barcode> {
             e.printStackTrace();
         }
 
-
-//        String cipherText = item.rawValue;
-//        String secret = "UIY&^UB*((%#N";
-//        byte[] cipherData = Base64.decode(cipherText, Base64.DEFAULT); //Base64.getDecoder().decode(cipherText);
-//        byte[] saltData = Arrays.copyOfRange(cipherData, 8, 16);
-//        MessageDigest md5 = null;
-//        try {
-//            md5 = MessageDigest.getInstance("MD5");
-//        } catch (NoSuchAlgorithmException e) {
-//            e.printStackTrace();
-//        }
-//        final byte[][] keyAndIV = GenerateKeyAndIV(32, 16, 1, saltData, secret.getBytes(StandardCharsets.UTF_8), md5);
-//        SecretKeySpec key = new SecretKeySpec(keyAndIV[0], "AES");
-//        IvParameterSpec iv = new IvParameterSpec(keyAndIV[1]);
-//        byte[] encrypted = Arrays.copyOfRange(cipherData, 16, cipherData.length);
-//        Cipher aesCBC = null;
-//        try {
-//            aesCBC = Cipher.getInstance("AES/CBC/PKCS5Padding");
-//        } catch (NoSuchAlgorithmException e) {
-//            e.printStackTrace();
-//        } catch (NoSuchPaddingException e) {
-//            e.printStackTrace();
-//        }
-//        try {
-//            aesCBC.init(Cipher.DECRYPT_MODE, key, iv);
-//        } catch (InvalidKeyException e) {
-//            e.printStackTrace();
-//        } catch (InvalidAlgorithmParameterException e) {
-//            e.printStackTrace();
-//        }
-//        byte[] decryptedData = new byte[0];
-//        try {
-//            decryptedData = aesCBC.doFinal(encrypted);
-//        } catch (IllegalBlockSizeException e) {
-//            e.printStackTrace();
-//        } catch (BadPaddingException e) {
-//            e.printStackTrace();
-//        }
-//        String decryptedText = new String(decryptedData, StandardCharsets.UTF_8);
-
         String[] parts = decryptedText.split(",");
         if (parts.length == 3) {
             for (String part : parts) {
