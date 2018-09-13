@@ -99,6 +99,22 @@ public class ObjectSearchActivity extends AppCompatActivity implements View.OnCl
             }
         });
 
+        qrScanner.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent imageIntent=new Intent(ObjectSearchActivity.this,BarCodeCaptureActivity.class);
+                startActivity(imageIntent);
+            }
+        });
+
+        qrScannerLink.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent imageIntent=new Intent(ObjectSearchActivity.this,BarCodeCaptureActivity.class);
+                startActivity(imageIntent);
+            }
+        });
+
     }
 
     @Override

@@ -101,6 +101,7 @@ public class FloorMapActivity extends AppCompatActivity implements OnMapReadyCal
     TextView viewDetails;
     String name;
     ImageView numberPad;
+    ImageView qrCode;
 
 
     LinearLayout bottomSheet, popupShortlayout, popupLongLayout;
@@ -120,12 +121,21 @@ public class FloorMapActivity extends AppCompatActivity implements OnMapReadyCal
         viewDetails = (TextView) findViewById(R.id.view_details_text);
         bottomSheet = (LinearLayout) findViewById(R.id.bottomSheetchild);
         numberPad=(ImageView)findViewById(R.id.number_pad);
+        qrCode=(ImageView)findViewById(R.id.scanner);
 
         numberPad.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent=new Intent(FloorMapActivity.this,ObjectSearchActivity.class);
-                startActivity(intent);
+                Intent numberPadIntent=new Intent(FloorMapActivity.this,ObjectSearchActivity.class);
+                startActivity(numberPadIntent);
+            }
+        });
+
+        qrCode.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent qrCodeIntent=new Intent(FloorMapActivity.this,BarCodeCaptureActivity.class);
+                startActivity(qrCodeIntent);
             }
         });
 
