@@ -25,6 +25,7 @@
     <string name="to">to</string>
     <string name="or">or</string>
     <string name="use_qr_scanner"><u>Use the QR Scanner</u></string>
+    <string name="use_the_keypad"><u>Use the Keypad</u></string>
     <string name="title_dining">Dining</string>
     <string name="title_gift_shop">Gift Shop</string>
     <string name="title_culture_pass">Culture Pass</string>
@@ -126,6 +127,7 @@ They exemplify the external influences and internal creativity that inspired thi
     <string name="open_settings">Settings</string>
     <string name="permission_required">Permission Required!</string>
     <string name="runtime_permission">To add events in calendar, allow <b>Qatar Museum App</b> access to your device\'s Calendar.\n\n Tap Settings > Permissions, and turn Calendar on.</string>
+    <string name="camera_runtime_permission">To scan QR Code, allow <b>Qatar Museum App</b> access to your device\'s Camera.\n\n Tap Settings > Permissions, and turn Camera on.</string>
     <string name="event_added">Event added to Calendar.</string>
     <string name="local_event_institution">MIA</string>
     <string name="local_event_title">Walk In Gallery Tours</string>
@@ -154,4 +156,4 @@ They exemplify the external influences and internal creativity that inspired thi
     <string name="floormap_detail2">According to the Medici Archival records in Florence, this vas is possibly one of the three \'alberegli domaschini\' owned by Piero di Cosimo de Medici (1416-59), the de-facto ruler of Florence from 1464-69."
        detailSecondLabel.text = "Like his father before him, Piero continued the family\'s tradition of artistic patronage, extending the collection beyond Italian Renaissance works to include Dutch and Flemish paintings, as well as rare books. This particular vase most probably remained in royal or aristocratic families for generations, before being discovered - along with four other similar vases - in a private Italian collection in 2005. Before this re-discovery, only one other albarello of its kind was recorded in the Musee des arts Decoratifs, Paris.</string>
     <string name="floormap_imagdesc2">Portrait of Piero di Cosimo de\' Medici \nBronzino (Agnolo di Cosimo) (15031 en dash572) \nFlorence, 1550en dash 1570 \nNational Gallery, London</string>
-</resources>
+   </resources>
