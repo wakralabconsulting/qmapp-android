@@ -26,6 +26,7 @@
     <color name="gray">#808080</color>
     <color name="floor_map_background">#E6E6E5</color>
     <color name="floor_map_buttonbg">#CDD7E0</color>
+    <color name="scanner_line">#00ceff</color>
 
 
 </resources>

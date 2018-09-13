@@ -110,7 +110,7 @@ public class FloorMapActivity extends AppCompatActivity implements OnMapReadyCal
     String name;
     ImageView numberPad;
     private boolean pickerInAboveState = false;
-
+    ImageView qrCode;
     View bottomSheet;
     LinearLayout popupShortlayout, popupLongLayout;
     private Handler mHandler;
@@ -131,9 +131,12 @@ public class FloorMapActivity extends AppCompatActivity implements OnMapReadyCal
         popupLongLayout = (LinearLayout) findViewById(R.id.details_popup_long);
         popupShortlayout = (LinearLayout) findViewById(R.id.details_popup_short);
         viewDetails = (TextView) findViewById(R.id.view_details_text);
+
         bottomSheet = findViewById(R.id.bottomSheetLayout);
         numberPad = (ImageView) findViewById(R.id.number_pad);
         params = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.WRAP_CONTENT, RelativeLayout.LayoutParams.WRAP_CONTENT);
+        numberPad=(ImageView)findViewById(R.id.number_pad);
+        qrCode=(ImageView)findViewById(R.id.scanner);
 
 
         numberPad.setOnClickListener(new View.OnClickListener() {
@@ -141,6 +144,16 @@ public class FloorMapActivity extends AppCompatActivity implements OnMapReadyCal
             public void onClick(View view) {
                 Intent intent = new Intent(FloorMapActivity.this, ObjectSearchActivity.class);
                 startActivity(intent);
+                Intent numberPadIntent=new Intent(FloorMapActivity.this,ObjectSearchActivity.class);
+                startActivity(numberPadIntent);
+            }
+        });
+
+        qrCode.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent qrCodeIntent=new Intent(FloorMapActivity.this,BarCodeCaptureActivity.class);
+                startActivity(qrCodeIntent);
             }
         });
 

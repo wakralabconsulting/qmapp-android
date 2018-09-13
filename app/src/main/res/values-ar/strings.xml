@@ -88,6 +88,7 @@
     <string name="open_settings">الإعدادات</string>
     <string name="permission_required">الإذن مطلوب</string>
     <string name="runtime_permission">لإضافة الفعالية للتقويم، يجب السماح لتطبيق متحف قطر بالولوج لتقويم الجهاز. \n\nاضغط على الإعدادات>التصاريح، وقم بتفعيل التقويم</string>
+    <string name="camera_runtime_permission">To scan QR Code, allow <b>Qatar Museum App</b> access to your device\'s Camera.\n\n Tap Settings > Permissions, and turn Camera on.</string>
     <string name="event_added">تم إضافة الفعالية للتقويم</string>
     <string name="local_event_institution">MIA</string>
     <string name="local_event_title">جولات دون حجز</string>
@@ -111,4 +112,12 @@
     <string name="open_in_google_maps">أضغط هنا للعرض في خرائط جووجل</string>
     <string name="alert_txt">Alert</string>
     <string name="error_content">Please! Enter the Object Number.</string>
+    <string name="object_search">Object Search</string>
+    <string name="obj_text_one">Enter The Object Number</string>
+    <string name="obj_text_two">next to</string>
+    <string name="obj_text_three">to view the details</string>
+    <string name="or">or</string>
+    <string name="use_qr_scanner"><u>Use the QR Scanner</u></string>
+    <string name="use_the_keypad"><u>Use the Keypad</u></string>
+
 </resources>
