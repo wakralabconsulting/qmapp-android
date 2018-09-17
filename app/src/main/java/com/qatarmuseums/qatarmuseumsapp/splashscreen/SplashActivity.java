@@ -56,7 +56,7 @@ public class SplashActivity extends AppCompatActivity {
                 startActivity(intent);
                 finish();
             }
-        }, 3000);
+        }, 2800);
     }
 
     @Override
@@ -74,9 +74,5 @@ public class SplashActivity extends AppCompatActivity {
         super.onPostCreate(savedInstanceState);
     }
 
-    private void hide() {
-        intent = new Intent(this, HomeActivity.class);
-        startActivity(intent);
-        finish();
-    }
+
 }
