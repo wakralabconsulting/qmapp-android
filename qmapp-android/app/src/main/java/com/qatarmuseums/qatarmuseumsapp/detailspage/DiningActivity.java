@@ -57,7 +57,7 @@ public class DiningActivity extends AppCompatActivity implements IPullZoom {
     boolean isFavourite;
     Toolbar toolbar;
     TextView title, shortDescription, longDescription, timingDetails,
-            locationDetails, mapDetails, forMoreInfo;
+            locationDetails, mapDetails;
     private Util util;
     private Animation zoomOutAnimation;
     private PullToZoomCoordinatorLayout coordinatorLayout;
@@ -102,7 +102,6 @@ public class DiningActivity extends AppCompatActivity implements IPullZoom {
         title = (TextView) findViewById(R.id.main_title);
         shortDescription = (TextView) findViewById(R.id.short_description);
         longDescription = (TextView) findViewById(R.id.long_description);
-        forMoreInfo = (TextView) findViewById(R.id.more_info);
         timingDetails = (TextView) findViewById(R.id.timing_info);
         locationDetails = (TextView) findViewById(R.id.location_info);
         mapDetails = (TextView) findViewById(R.id.map_info);
@@ -139,9 +138,6 @@ public class DiningActivity extends AppCompatActivity implements IPullZoom {
         int length = ss.length();
         ss.setSpan(clickableSpan, length - 4, length, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
         ss.setSpan(new UnderlineSpan(), length - 4, length, 0);
-        forMoreInfo.setText(ss);
-        forMoreInfo.setMovementMethod(LinkMovementMethod.getInstance());
-        forMoreInfo.setHighlightColor(Color.TRANSPARENT);
         mapDetails.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

@@ -39,6 +39,13 @@ public class TourGuideAdapter extends RecyclerView.Adapter<TourGuideAdapter.MyVi
     public void onBindViewHolder(@NonNull MyViewHolder holder, int position) {
         TourGuideList tgList = tourGuideList.get(position);
         holder.name.setText(tgList.getName());
+        if(tgList.getName().equalsIgnoreCase("Museum Of Islamic Art")){
+            holder.headphoneIcon.setVisibility(View.VISIBLE);
+            holder.headphoneIcon.setImageResource(R.drawable.floor_map_circle);
+
+        }else{
+            holder.headphoneIcon.setVisibility(View.GONE);
+        }
         if (!comingFrom.equals(mContext.getString(R.string.sidemenu_text))) {
             GlideApp.with(mContext)
                     .load(tgList.getImage())
