@@ -7,6 +7,7 @@
     android:orientation="vertical"
     android:visibility="visible"
     app:behavior_hideable="true"
+    android:background="@color/white"
     app:layout_behavior="@string/bottom_sheet_behavior">
 
     <LinearLayout
@@ -19,7 +20,6 @@
             android:id="@+id/details_popup_short"
             android:layout_width="match_parent"
             android:layout_height="160dp"
-            android:layout_margin="@dimen/padding_10"
             android:background="@drawable/round_corner_white_small"
             android:orientation="vertical"
             android:paddingBottom="10dp"
@@ -179,15 +179,17 @@
         <LinearLayout
             android:id="@+id/details_popup_long"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="match_parent"
             android:gravity="center"
+            app:layout_behavior="@string/appbar_scrolling_view_behavior"
             android:orientation="vertical"
             android:background="@color/white"
-            android:visibility="gone">
+           >
 
             <ImageView
                 android:layout_width="wrap_content"
                 android:layout_height="300dp"
+                android:id="@+id/image_to_zoom"
                 android:src="@drawable/science_tour_object"
                 android:visibility="visible" />
 
