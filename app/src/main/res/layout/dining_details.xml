@@ -63,20 +63,7 @@
                 android:textColor="@color/black"
                 android:textSize="@dimen/font_size_15"
                 android:visibility="gone" />
-
-            <!--<TextView-->
-                <!--android:id="@+id/more_info"-->
-                <!--android:layout_width="wrap_content"-->
-                <!--android:layout_height="wrap_content"-->
-                <!--android:layout_marginBottom="@dimen/text_margin"-->
-                <!--android:layout_marginEnd="@dimen/text_margin"-->
-                <!--android:layout_marginStart="@dimen/text_margin"-->
-                <!--android:fontFamily="@font/din_next_lt_pro_regular"-->
-                <!--android:text="@string/for_more_information_text"-->
-                <!--android:textAlignment="center"-->
-                <!--android:textColor="@color/black"-->
-                <!--android:textSize="@dimen/font_size_15" />-->
-
+            
             <LinearLayout
                 android:id="@+id/timing_layout"
                 android:layout_width="match_parent"
