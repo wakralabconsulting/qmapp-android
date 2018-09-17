@@ -1,5 +1,7 @@
 package com.qatarmuseums.qatarmuseumsapp.floormap;
 
+import android.animation.Animator;
+import android.animation.AnimatorListenerAdapter;
 import android.content.Intent;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
@@ -9,13 +11,20 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.design.widget.BottomSheetBehavior;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
+import android.view.animation.TranslateAnimation;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import com.github.chrisbanes.photoview.PhotoView;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
@@ -73,6 +82,7 @@ public class FloorMapActivity extends AppCompatActivity implements OnMapReadyCal
     LatLng L3_G13_5 = new LatLng(25.295664, 51.539330);
     LatLng L3_G13_7 = new LatLng(25.295628, 51.539360);
     LatLng L3_G17_3 = new LatLng(25.295505, 51.538905);
+    String markerTitle = "";
 
     LatLng G10 = new LatLng(25.295245, 51.539210);
 
@@ -101,12 +111,16 @@ public class FloorMapActivity extends AppCompatActivity implements OnMapReadyCal
     TextView viewDetails;
     String name;
     ImageView numberPad;
+    private boolean pickerInAboveState = false;
     ImageView qrCode;
-
-
-    LinearLayout bottomSheet, popupShortlayout, popupLongLayout;
+    View bottomSheet;
+    LinearLayout popupShortlayout, popupLongLayout;
     private Handler mHandler;
     private Runnable mRunnable;
+
+    private RelativeLayout levelPickerRelative;
+    private RelativeLayout.LayoutParams params;
+    private ImageView imageToZoom;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -116,32 +130,45 @@ public class FloorMapActivity extends AppCompatActivity implements OnMapReadyCal
         level2 = (LinearLayout) findViewById(R.id.level_3);
         level1 = (LinearLayout) findViewById(R.id.level_2);
         levelG = (LinearLayout) findViewById(R.id.level_1);
+        levelPickerRelative = (RelativeLayout) findViewById(R.id.level_picker_relative);
         popupLongLayout = (LinearLayout) findViewById(R.id.details_popup_long);
         popupShortlayout = (LinearLayout) findViewById(R.id.details_popup_short);
         viewDetails = (TextView) findViewById(R.id.view_details_text);
-        bottomSheet = (LinearLayout) findViewById(R.id.bottomSheetchild);
-        numberPad=(ImageView)findViewById(R.id.number_pad);
-        qrCode=(ImageView)findViewById(R.id.scanner);
+        imageToZoom = (ImageView) findViewById(R.id.image_to_zoom);
+        bottomSheet = findViewById(R.id.bottomSheetLayout);
+        numberPad = (ImageView) findViewById(R.id.number_pad);
+        params = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.WRAP_CONTENT, RelativeLayout.LayoutParams.WRAP_CONTENT);
+        numberPad = (ImageView) findViewById(R.id.number_pad);
+        qrCode = (ImageView) findViewById(R.id.scanner);
+
 
         numberPad.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent numberPadIntent=new Intent(FloorMapActivity.this,ObjectSearchActivity.class);
+                Intent intent = new Intent(FloorMapActivity.this, ObjectSearchActivity.class);
+                startActivity(intent);
+                Intent numberPadIntent = new Intent(FloorMapActivity.this, ObjectSearchActivity.class);
                 startActivity(numberPadIntent);
+            }
+        });
+        imageToZoom.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                openDialogForZoomingImage();
             }
         });
 
         qrCode.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent qrCodeIntent=new Intent(FloorMapActivity.this,BarCodeCaptureActivity.class);
+                Intent qrCodeIntent = new Intent(FloorMapActivity.this, BarCodeCaptureActivity.class);
                 startActivity(qrCodeIntent);
             }
         });
 
 
-        mBottomSheetBehavior = BottomSheetBehavior.from(findViewById(R.id.bottomSheetLayout));
-        mBottomSheetBehavior.setPeekHeight(dpToPx(170));
+        mBottomSheetBehavior = BottomSheetBehavior.from(bottomSheet);
+        mBottomSheetBehavior.setPeekHeight(dpToPx(160));
         mBottomSheetBehavior.setBottomSheetCallback(new BottomSheetBehavior.BottomSheetCallback() {
             @Override
             public void onStateChanged(@NonNull View bottomSheet, int newState) {
@@ -150,21 +177,18 @@ public class FloorMapActivity extends AppCompatActivity implements OnMapReadyCal
                     case BottomSheetBehavior.STATE_COLLAPSED:
                         disableLevelPicker();
                         popupShortlayout.setVisibility(View.VISIBLE);
-                        popupLongLayout.setVisibility(View.GONE);
-
                         break;
                     case BottomSheetBehavior.STATE_DRAGGING:
                         disableLevelPicker();
                         break;
                     case BottomSheetBehavior.STATE_EXPANDED:
-                        disableLevelPicker();
                         popupShortlayout.setVisibility(View.GONE);
-                        popupLongLayout.setVisibility(View.VISIBLE);
-
+                        disableLevelPicker();
                         break;
                     case BottomSheetBehavior.STATE_HIDDEN:
+                        checkMarkerStatus();
+                        markerTitle = "";
                         enableLevelPicker();
-
                         break;
                     case BottomSheetBehavior.STATE_SETTLING:
                         disableLevelPicker();
@@ -181,12 +205,13 @@ public class FloorMapActivity extends AppCompatActivity implements OnMapReadyCal
                 (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
         mBottomSheetBehavior.setState(BottomSheetBehavior.STATE_HIDDEN);
-        viewDetails.setOnClickListener(new View.OnClickListener() {
+        popupShortlayout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 mBottomSheetBehavior.setState(BottomSheetBehavior.STATE_EXPANDED);
             }
         });
+
 
         level2.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -417,81 +442,90 @@ public class FloorMapActivity extends AppCompatActivity implements OnMapReadyCal
         googleMap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
             @Override
             public boolean onMarkerClick(Marker marker) {
-                if (selectedMarker != null) {
-                    mBottomSheetBehavior.setState(BottomSheetBehavior.STATE_HIDDEN);
-                    selectedMarker.setIcon(BitmapDescriptorFactory.fromBitmap(resizeMapIcons(name, normalMapIconWidth, normalMapIconHeight)));
-                    selectedMarker.hideInfoWindow();
-                    selectedMarker = null;
 
+
+                if (markerTitle.equals(marker.getTitle())) {
+
+                    Toast.makeText(FloorMapActivity.this, "same Name", Toast.LENGTH_SHORT).show();
+
+                } else {
+                    markerTitle = marker.getTitle();
+
+                    if (selectedMarker != null) {
+                        mBottomSheetBehavior.setState(BottomSheetBehavior.STATE_HIDDEN);
+                        selectedMarker.setIcon(BitmapDescriptorFactory.fromBitmap(resizeMapIcons(name, normalMapIconWidth, normalMapIconHeight)));
+                        selectedMarker = null;
+
+                    }
+
+                    String temp = marker.getTitle();
+                    switch (temp) {
+                        case "SI.5":
+                            name = "si_5";
+                            break;
+                        case "MW.634":
+                            name = "mw_634";
+                            break;
+                        case "MW.56":
+                            name = "mw_56";
+                            break;
+                        case "MW.548":
+                            name = "mw_548";
+                            break;
+                        case "MS.523":
+                            name = "ms_523";
+                            break;
+                        case "MS.709.2010-1":
+                            name = "ms_709_2010_1";
+                            break;
+                        case "MS.709.2010-2":
+                            name = "ms_709_2010_2";
+                            break;
+                        case "MW.361.2007":
+                            name = "mw_361_2007";
+                            break;
+
+                        case "MS.650":
+                            name = "ms_650";
+                            break;
+                        case "MS.688":
+                            name = "ms_688";
+                            break;
+                        case "MW.146":
+                            name = "mw_146";
+                            break;
+                        case "MW.340":
+                            name = "mw_340";
+                            break;
+                        case "MS.794":
+                            name = "ms_794";
+                            break;
+                        case "MS.647.A.59":
+                            name = "ms_647_a_59";
+                            break;
+                        case "HS.32":
+                            name = "hs_32";
+                            break;
+                        case "GL.322":
+                            name = "gl_322";
+                            break;
+                        case "IV.61":
+                            name = "iv_61";
+                            break;
+                        case "PO.297":
+                            name = "po_297";
+                            break;
+                        case "PO.308":
+                            name = "po_308";
+                            break;
+
+
+                    }
+
+                    selectedMarker = marker;
+                    selectedMarker.setIcon(BitmapDescriptorFactory.fromBitmap(resizeMapIcons(name, largeMapIconWidth, largeMapIconHeight)));
+                    mBottomSheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
                 }
-                String temp = marker.getTitle();
-                switch (temp) {
-                    case "SI.5":
-                        name = "si_5";
-                        break;
-                    case "MW.634":
-                        name = "mw_634";
-                        break;
-                    case "MW.56":
-                        name = "mw_56";
-                        break;
-                    case "MW.548":
-                        name = "mw_548";
-                        break;
-                    case "MS.523":
-                        name = "ms_523";
-                        break;
-                    case "MS.709.2010-1":
-                        name = "ms_709_2010_1";
-                        break;
-                    case "MS.709.2010-2":
-                        name = "ms_709_2010_2";
-                        break;
-                    case "MW.361.2007":
-                        name = "mw_361_2007";
-                        break;
-
-                    case "MS.650":
-                        name = "ms_650";
-                        break;
-                    case "MS.688":
-                        name = "ms_688";
-                        break;
-                    case "MW.146":
-                        name = "mw_146";
-                        break;
-                    case "MW.340":
-                        name = "mw_340";
-                        break;
-                    case "MS.794":
-                        name = "ms_794";
-                        break;
-                    case "MS.647.A.59":
-                        name = "ms_647_a_59";
-                        break;
-                    case "HS.32":
-                        name = "hs_32";
-                        break;
-                    case "GL.322":
-                        name = "gl_322";
-                        break;
-                    case "IV.61":
-                        name = "iv_61";
-                        break;
-                    case "PO.297":
-                        name = "po_297";
-                        break;
-                    case "PO.308":
-                        name = "po_308";
-                        break;
-
-
-                }
-
-                selectedMarker = marker;
-                selectedMarker.setIcon(BitmapDescriptorFactory.fromBitmap(resizeMapIcons(name, largeMapIconWidth, largeMapIconHeight)));
-                mBottomSheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
-
                 return false;
             }
         });
@@ -500,6 +534,7 @@ public class FloorMapActivity extends AppCompatActivity implements OnMapReadyCal
         googleMap.setLatLngBoundsForCameraTarget(QM);
         googleMap.setMinZoomPreference(19);
         googleMap.getUiSettings().setMapToolbarEnabled(false);
+
     }
 
 
@@ -529,7 +564,6 @@ public class FloorMapActivity extends AppCompatActivity implements OnMapReadyCal
                     if (!outRect.contains((int) event.getRawX(), (int) event.getRawY())) {
                         mBottomSheetBehavior.setState(BottomSheetBehavior.STATE_HIDDEN);
                         selectedMarker.setIcon(BitmapDescriptorFactory.fromBitmap(resizeMapIcons(name, normalMapIconWidth, normalMapIconHeight)));
-                        selectedMarker.hideInfoWindow();
                         selectedMarker = null;
 
 
@@ -564,6 +598,7 @@ public class FloorMapActivity extends AppCompatActivity implements OnMapReadyCal
     }
 
     public void checkMarkerStatus() {
+        popupShortlayout.setVisibility(View.VISIBLE);
         mHandler = new Handler();
         mRunnable = new Runnable() {
 
@@ -574,12 +609,28 @@ public class FloorMapActivity extends AppCompatActivity implements OnMapReadyCal
                         selectedMarker.setIcon(BitmapDescriptorFactory.fromBitmap(resizeMapIcons(name, normalMapIconWidth, normalMapIconHeight)));
                         selectedMarker.hideInfoWindow();
                         selectedMarker = null;
+
+
                     }
                 }
             }
         };
-        mHandler.postDelayed(mRunnable, 500);
+        mHandler.postDelayed(mRunnable, 200);
 
 
     }
+
+
+    public void openDialogForZoomingImage() {
+        AlertDialog.Builder mBuilder = new AlertDialog.Builder(FloorMapActivity.this/*,android.R.style.Theme_DeviceDefault_Light_NoActionBar_Fullscreen*/);
+        View mView = getLayoutInflater().inflate(R.layout.zooming_layout, null);
+        PhotoView photoView = mView.findViewById(R.id.imageView);
+        photoView.setImageResource(R.drawable.science_tour_object);
+        mBuilder.setView(mView);
+        AlertDialog mDialog = mBuilder.create();
+        mDialog.show();
+        mDialog.setCancelable(true);
+    }
+
+
 }
