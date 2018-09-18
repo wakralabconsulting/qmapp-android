@@ -39,21 +39,23 @@ public class TourGuideAdapter extends RecyclerView.Adapter<TourGuideAdapter.MyVi
     public void onBindViewHolder(@NonNull MyViewHolder holder, int position) {
         TourGuideList tgList = tourGuideList.get(position);
         holder.name.setText(tgList.getName());
-        if(tgList.getName().equalsIgnoreCase("Museum Of Islamic Art")){
+        if (tgList.getMuseumId() != null && tgList.getMuseumId().equals("63")) {
             holder.headphoneIcon.setVisibility(View.VISIBLE);
             holder.headphoneIcon.setImageResource(R.drawable.floor_map_circle);
 
-        }else{
+        } else {
             holder.headphoneIcon.setVisibility(View.GONE);
         }
-        if (!comingFrom.equals(mContext.getString(R.string.sidemenu_text))) {
-            GlideApp.with(mContext)
-                    .load(tgList.getImage())
-                    .placeholder(R.drawable.placeholder)
-                    .into(holder.imageView);
-        }else {
+        if (comingFrom.equals(mContext.getString(R.string.tourguide_sidemenu_title))) {
             GlideApp.with(mContext)
                     .load(tgList.getImageurl())
+                    .placeholder(R.drawable.placeholder)
+                    .into(holder.imageView);
+        } else {
+            holder.headphoneIcon.setVisibility(View.VISIBLE);
+            holder.headphoneIcon.setImageResource(R.drawable.audio_circle);
+            GlideApp.with(mContext)
+                    .load(tgList.getImage())
                     .placeholder(R.drawable.placeholder)
                     .into(holder.imageView);
         }
