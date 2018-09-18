@@ -27,6 +27,11 @@
     <color name="floor_map_background">#E6E6E5</color>
     <color name="floor_map_buttonbg">#CDD7E0</color>
     <color name="scanner_line">#00ceff</color>
+    <color name="object_preview_image_bg">#CDD9D5</color>
+    <color name="object_preview_bg">#E9EFED</color>
+    <color name="object_preview_data_bg">#F5F9F8</color>
+
+
 
 
 </resources>

@@ -58,6 +58,8 @@ dependencies {
     implementation 'com.squareup.okhttp3:logging-interceptor:3.4.1'
     //Html tag remover
     implementation 'org.jsoup:jsoup:1.11.3'
+    //stepper indicator
+    implementation 'com.github.badoualy:stepper-indicator:1.0.7'
 //    google vision api
     implementation 'com.google.android.gms:play-services-vision:15.0.2'
 }
