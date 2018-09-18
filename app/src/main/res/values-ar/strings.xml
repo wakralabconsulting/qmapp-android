@@ -12,6 +12,7 @@
     <string name="title_dining">العشاء</string>
     <string name="title_gift_shop">محل الهدايا</string>
     <string name="title_culture_pass">ممر الثقافة</string>
+    <string name="education_calendar_activity_tittle">التقويم التعليمي</string>
     <string name="title_more">More</string>
     <string name="sidemenu_exhibition_text">المعارض</string>
     <string name="sidemenu_events_text">الفعاليات</string>
@@ -112,12 +113,46 @@
     <string name="open_in_google_maps">أضغط هنا للعرض في خرائط جووجل</string>
     <string name="alert_txt">Alert</string>
     <string name="error_content">Please! Enter the Object Number.</string>
-    <string name="object_search">Object Search</string>
-    <string name="obj_text_one">Enter The Object Number</string>
-    <string name="obj_text_two">next to</string>
-    <string name="obj_text_three">to view the details</string>
-    <string name="or">or</string>
+    <string name="location_alert_txt">حدث خطأ ما</string>
+    <string name="location_error_content">للأسف لقد تعذر فتح خرائط جوجل</string>
+    <string name="object_search">بحث القطع</string>
+    <string name="obj_text_one">يرجى إدخال رقم القطعة</string>
+    <string name="obj_text_two">بجانب</string>
+    <string name="obj_text_three">لرؤية التفاصيل</string>
+    <string name="or">أو</string>
     <string name="use_qr_scanner"><u>Use the QR Scanner</u></string>
     <string name="use_the_keypad"><u>Use the Keypad</u></string>
 
+    <string name="any">أي</string>
+    <string name="years">التبادل الثقافي</string>
+    <string name="public_art">تعليم الفن الشعبي</string>
+    <string name="cultural">تعليم التراث الثقافي</string>
+    <string name="mia_education">تعليم متحف الفن الإسلامي</string>
+    <string name="mathaf">تعليم المتحف</string>
+    <string name="national">المتحف الوطني</string>
+    <string name="qosm">تعليم المتحف الرياضي</string>
+    <string name="family">تقويم برامج الأسرة والمدرسة</string>
+
+    <string name="all_ages">جميع الفئات العمرية</string>
+    <string name="teachers">المعلمين</string>
+    <string name="nursery">الحضانة/قبل الروضة (3-5 سنوات)</string>
+    <string name="early">الابتدائية المبكرة (5-7 سنوات)</string>
+    <string name="primary">الإبتدائية (8-11 سنوات)</string>
+    <string name="preparatory">الإعدادية (12-14 سنة)</string>
+    <string name="secondary">الثانوية (15-18 سنة)</string>
+    <string name="college">الكلية والجامعة (17-24 سنة)</string>
+    <string name="youth">الشباب</string>
+    <string name="adults">البالغون</string>
+    <string name="seniors">كبار السن</string>
+    <string name="families">العائلات</string>
+    <string name="special_needs">الاحتياجات الخاصة</string>
+
+    <string name="art">ورشة الفنون</string>
+    <string name="field">الرحلة الميدانية</string>
+    <string name="gallery">جولة معرض الصور</string>
+    <string name="lecture">المحاضرة</string>
+    <string name="photography">التصوير</string>
+    <string name="reading">مجموعة القراءة</string>
+    <string name="research">الأبحاث</string>
+    <string name="workshop">ورشة العمل</string>
 </resources>

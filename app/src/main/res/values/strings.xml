@@ -48,7 +48,7 @@
     <string name="contact_title">CONTACT</string>
     <string name="settings_activity_tittle">SETTINGS</string>
     <string name="calendar_activity_tittle">CALENDAR</string>
-    <string name="education_calendar_activity_tittle">EDUCATION CALENDAR</string>
+    <string name="education_calendar_activity_tittle">EDUCATION CALENDAR</string>التقويم التعليمي
     <string name="select_language_text">Select App Language</string>
     <string name="english">English</string>
     <string name="arabic">عربى</string>
@@ -81,6 +81,8 @@
     <string name="coming_soon_txt">Coming Soon</string>
     <string name="alert_txt">Alert</string>
     <string name="error_content">Please! Enter the Object Number.</string>
+    <string name="location_alert_txt">Something went wrong</string>
+    <string name="location_error_content">Unfortunately we cannot open Google Maps.</string>
     <string name="close">Close</string>
     <string name="register_now_content">Thank you for Registering.Further\nDetails will be sent to you on your\nemail</string>
     <string name="opening_timings">OPENING TIMINGS</string>
@@ -156,4 +158,37 @@ They exemplify the external influences and internal creativity that inspired thi
     <string name="floormap_detail2">According to the Medici Archival records in Florence, this vas is possibly one of the three \'alberegli domaschini\' owned by Piero di Cosimo de Medici (1416-59), the de-facto ruler of Florence from 1464-69."
        detailSecondLabel.text = "Like his father before him, Piero continued the family\'s tradition of artistic patronage, extending the collection beyond Italian Renaissance works to include Dutch and Flemish paintings, as well as rare books. This particular vase most probably remained in royal or aristocratic families for generations, before being discovered - along with four other similar vases - in a private Italian collection in 2005. Before this re-discovery, only one other albarello of its kind was recorded in the Musee des arts Decoratifs, Paris.</string>
     <string name="floormap_imagdesc2">Portrait of Piero di Cosimo de\' Medici \nBronzino (Agnolo di Cosimo) (15031 en dash572) \nFlorence, 1550en dash 1570 \nNational Gallery, London</string>
-   </resources>
+    <string name="any">Any</string>
+    <string name="years">Years of Cultural Education</string>
+    <string name="public_art">Public Art Education</string>
+    <string name="cultural">Cultural Heritage Education</string>
+    <string name="mia_education">MIA Education</string>
+    <string name="mathaf">Mathaf Education</string>
+    <string name="national">National Museum</string>
+    <string name="qosm">3-2-1 QOSM Education</string>
+    <string name="family">Family &amp; School Programmes Calendar</string>
+
+    <string name="all_ages">All Ages</string>
+    <string name="teachers">Teachers</string>
+    <string name="nursery">Nursery/Pre-KG(3-5 Years)</string>
+    <string name="early">Early Primary(5-7 Years)</string>
+    <string name="primary">Primary(8-11 Years)</string>
+    <string name="preparatory">Preparatory(12-14 Years)</string>
+    <string name="secondary">Secondary(15-18 Years)</string>
+    <string name="college">College &amp; University(17-24 Years)</string>
+    <string name="youth">Youth</string>
+    <string name="adults">Adults</string>
+    <string name="seniors">Seniors</string>
+    <string name="families">Families</string>
+    <string name="special_needs">Special Needs</string>
+
+    <string name="art">Art Workshop</string>
+    <string name="field">Field Trip</string>
+    <string name="gallery">Gallery Tour</string>
+    <string name="lecture">Lecture</string>
+    <string name="photography">Photography</string>
+    <string name="reading">Reading Group</string>
+    <string name="research">Research</string>
+    <string name="workshop">Workshop</string>
+
+</resources>
