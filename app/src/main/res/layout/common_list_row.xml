@@ -58,25 +58,7 @@
             android:textSize="@dimen/home_list_item_name"
             android:textStyle="bold" />
 
-        <TextView
-            android:id="@+id/date_text"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_below="@id/name_text"
-            android:fontFamily="@font/din_medium_alternate"
-            android:textColor="@android:color/white"
-            android:textSize="@dimen/name_description"
-            android:singleLine="true"
-            android:visibility="gone" />
-        <TextView
-            android:id="@+id/location_text"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_below="@id/date_text"
-            android:fontFamily="@font/din_medium_alternate"
-            android:textColor="@android:color/white"
-            android:textSize="@dimen/name_description"
-            android:visibility="gone" />
+
 
     </RelativeLayout>
 </RelativeLayout>

@@ -3,7 +3,6 @@ package com.qatarmuseums.qatarmuseumsapp.detailspage;
 import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.graphics.Color;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -14,7 +13,6 @@ import android.support.v7.widget.Toolbar;
 import android.text.SpannableString;
 import android.text.Spanned;
 import android.text.TextPaint;
-import android.text.method.LinkMovementMethod;
 import android.text.style.ClickableSpan;
 import android.text.style.UnderlineSpan;
 import android.view.MotionEvent;
@@ -141,9 +139,13 @@ public class DiningActivity extends AppCompatActivity implements IPullZoom {
         mapDetails.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                String geoUri = "http://maps.google.com/maps?q=loc:" + latitude + "," + longitude + " (" + mainTitle + ")";
-                Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(geoUri));
-                startActivity(intent);
+                if (latitude != null) {
+                    String geoUri = "http://maps.google.com/maps?q=loc:" + latitude + "," + longitude + " (" + mainTitle + ")";
+                    Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(geoUri));
+                    startActivity(intent);
+                } else {
+                    util.showLocationAlertDialog(DiningActivity.this);
+                }
             }
         });
         if (isFavourite)
@@ -319,9 +321,6 @@ public class DiningActivity extends AppCompatActivity implements IPullZoom {
         if (latitude != null) {
             latitude = convertDegreetoDecimalMeasure(latitude);
             longitude = convertDegreetoDecimalMeasure(longitude);
-        } else {
-            latitude = "25.29818300";
-            longitude = "51.53972222";
         }
     }
 

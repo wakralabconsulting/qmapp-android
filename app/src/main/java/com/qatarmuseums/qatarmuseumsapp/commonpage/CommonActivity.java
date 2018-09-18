@@ -155,16 +155,10 @@ public class CommonActivity extends AppCompatActivity {
             }
         });
         if (toolbarTitle.equals(getString(R.string.sidemenu_exhibition_text))) {
-            /* Commented for Temporary API
             if (util.isNetworkAvailable(CommonActivity.this))
                 getCommonListAPIDataFromAPI("Exhibition_List_Page.json");
             else
                 getCommonListDataFromDatabase("Exhibition_List_Page.json");
-            */
-            if (util.isNetworkAvailable(CommonActivity.this)) // For Temporary API
-                getCommonListAPIDataFromAPI("Exhibition_List_Page.php");
-            else
-                getCommonListDataFromDatabase("Exhibition_List_Page.php");
         } else if (toolbarTitle.equals(getString(R.string.sidemenu_heritage_text))) {
             if (util.isNetworkAvailable(CommonActivity.this))
                 getCommonListAPIDataFromAPI("Heritage_List_Page.json");
@@ -236,15 +230,7 @@ public class CommonActivity extends AppCompatActivity {
             else
                 language = "ar";
             new DiningRowCount(CommonActivity.this, language, id).execute();
-        } else if (apiParts.equals("Exhibition_List_Page.php")) {   // For Temporary API
-            if (appLanguage == 1) {
-                new RetriveExhibitionDataEnglish(CommonActivity.this, appLanguage, id).execute();
-            } else {
-                new RetriveExhibitionDataArabic(CommonActivity.this, appLanguage, id).execute();
-            }
         }
-
-
     }
 
 
@@ -341,8 +327,6 @@ public class CommonActivity extends AppCompatActivity {
                             new DiningRowCount(CommonActivity.this, language).execute();
                         } else if (pageName.equals("getDiningList.php")) {  // For Temporary API
                             new DiningRowCount(CommonActivity.this, language).execute();
-                        } else if (pageName.equals("Exhibition_List_Page.php")) {  // For Temporary API
-                            new ExhibitionRowCount(CommonActivity.this, language).execute();
                         }
                     } else {
                         recyclerView.setVisibility(View.GONE);

@@ -158,9 +158,13 @@ public class DetailsActivity extends AppCompatActivity implements IPullZoom {
         mapDetails.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                String geoUri = getString(R.string.map_navigation_api) + latitude + "," + longitude + " (" + mainTitle + ")";
-                Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(geoUri));
-                startActivity(intent);
+                if (latitude != null) {
+                    String geoUri = getString(R.string.map_navigation_api) + latitude + "," + longitude + " (" + mainTitle + ")";
+                    Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(geoUri));
+                    startActivity(intent);
+                } else {
+                    util.showLocationAlertDialog(DetailsActivity.this);
+                }
             }
         });
         if (isFavourite)
@@ -251,6 +255,9 @@ public class DetailsActivity extends AppCompatActivity implements IPullZoom {
         String value = degreeValue.trim();
         String[] latParts = value.split("°");
         float degree = Float.parseFloat(latParts[0]);
+        if (degree == 0.0) {
+            return null;
+        }
         value = latParts[1].trim();
         latParts = value.split("'");
         float min = Float.parseFloat(latParts[0]);
@@ -260,7 +267,6 @@ public class DetailsActivity extends AppCompatActivity implements IPullZoom {
         String result;
         result = String.valueOf(degree + (min / 60) + (sec / 3600));
         return result;
-
 
     }
 
@@ -335,9 +341,6 @@ public class DetailsActivity extends AppCompatActivity implements IPullZoom {
                 if (latitude.contains("°")) {
                     latitude = convertDegreetoDecimalMeasure(latitude);
                     longitude = convertDegreetoDecimalMeasure(longitude);
-                } else {
-                    latitude = "25.29818300";
-                    longitude = "51.53972222";
                 }
             }
         } else {
@@ -396,9 +399,6 @@ public class DetailsActivity extends AppCompatActivity implements IPullZoom {
                     latitude = convertDegreetoDecimalMeasure(latitude);
                     longitude = convertDegreetoDecimalMeasure(longitude);
                 }
-            } else {
-                latitude = "25.29818300";
-                longitude = "51.53972222";
             }
         } else {
             commonContentLayout.setVisibility(View.INVISIBLE);
@@ -492,6 +492,7 @@ public class DetailsActivity extends AppCompatActivity implements IPullZoom {
             models.get(i).setLongDescription(util.html2string(models.get(i).getLongDescription()));
         }
     }
+
     public void removeHtmlTagsPublicArts(ArrayList<PublicArtModel> models) {
         for (int i = 0; i < models.size(); i++) {
             models.get(i).setLongDescription(util.html2string(models.get(i).getLongDescription()));
@@ -724,7 +725,6 @@ public class DetailsActivity extends AppCompatActivity implements IPullZoom {
             return activityReference.get().qmDatabase.getExhibitionTableDao().getExhibitionDetailsArabic(Integer.parseInt(heritageId));
         }
     }
-
 
     public class HeritageRowCount extends AsyncTask<Void, Void, Integer> {
 
@@ -1123,7 +1123,6 @@ public class DetailsActivity extends AppCompatActivity implements IPullZoom {
         }
     }
 
-
     public class RetriveEnglishPublicArtsData extends AsyncTask<Void, Void, List<PublicArtsTableEnglish>> {
 
         private WeakReference<DetailsActivity> activityReference;
@@ -1321,7 +1320,6 @@ public class DetailsActivity extends AppCompatActivity implements IPullZoom {
 
         }
     }
-
 
     public class CheckMuseumAboutDBRowExist extends AsyncTask<Void, Void, Void> {
 
@@ -1584,6 +1582,4 @@ public class DetailsActivity extends AppCompatActivity implements IPullZoom {
             progressBar.setVisibility(View.GONE);
         }
     }
-
-
 }
