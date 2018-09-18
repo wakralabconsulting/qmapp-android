@@ -38,8 +38,8 @@ public class CommonListAdapter extends RecyclerView.Adapter<CommonListAdapter.My
             listenerRef = new WeakReference<>(listener);
             imageView = (ImageView) view.findViewById(R.id.common_image_view);
             name = (TextView) view.findViewById(R.id.name_text);
-            dateDetails = (TextView) view.findViewById(R.id.date_text);
-            locationDetails = (TextView) view.findViewById(R.id.location_text);
+//            dateDetails = (TextView) view.findViewById(R.id.date_text);
+//            locationDetails = (TextView) view.findViewById(R.id.location_text);
             favIcon = (ImageView) view.findViewById(R.id.favourite);
             statusTag = (TextView) view.findViewById(R.id.open_close_tag);
             view.setOnClickListener(this);
@@ -98,14 +98,7 @@ public class CommonListAdapter extends RecyclerView.Adapter<CommonListAdapter.My
     public void onBindViewHolder(@NonNull CommonListAdapter.MyViewHolder holder, int position) {
         CommonModel model = commonModelList.get(position);
         holder.name.setText(model.getName());
-        if (model.getStartDate() != null) {
-            holder.dateDetails.setVisibility(View.VISIBLE);
-            holder.dateDetails.setText(model.getStartDate());
-        }
-        if (model.getLocation() != null) {
-            holder.locationDetails.setVisibility(View.VISIBLE);
-            holder.locationDetails.setText(model.getLocation());
-        }
+
         if (model.getIsfavourite() != null) {
             holder.favIcon.setVisibility(View.VISIBLE);
             if (model.getIsfavourite())
