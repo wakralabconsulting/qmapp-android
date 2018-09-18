@@ -38,8 +38,6 @@ public class CommonListAdapter extends RecyclerView.Adapter<CommonListAdapter.My
             listenerRef = new WeakReference<>(listener);
             imageView = (ImageView) view.findViewById(R.id.common_image_view);
             name = (TextView) view.findViewById(R.id.name_text);
-//            dateDetails = (TextView) view.findViewById(R.id.date_text);
-//            locationDetails = (TextView) view.findViewById(R.id.location_text);
             favIcon = (ImageView) view.findViewById(R.id.favourite);
             statusTag = (TextView) view.findViewById(R.id.open_close_tag);
             view.setOnClickListener(this);
