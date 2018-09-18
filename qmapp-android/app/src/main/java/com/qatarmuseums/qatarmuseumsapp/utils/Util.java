@@ -68,6 +68,15 @@ public class Util {
 
     }
 
+    public void showLocationAlertDialog(Activity activity) {
+        customDialog = new CustomDialogClass(activity
+                , activity.getResources().getString(R.string.location_alert_txt)
+                , activity.getResources().getString(R.string.location_error_content));
+        customDialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+        customDialog.show();
+
+    }
+
     public void showToast(String message, Context context) {
         Toast.makeText(context, message, Toast.LENGTH_SHORT).show();
     }
