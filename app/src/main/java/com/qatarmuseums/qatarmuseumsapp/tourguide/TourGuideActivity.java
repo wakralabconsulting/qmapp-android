@@ -116,7 +116,7 @@ public class TourGuideActivity extends AppCompatActivity {
                 "http://www.qm.org.qa/sites/default/files/mathaf_arab_museum.png");
         tourGuideList.add(tourguideObject);
         tourguideObject = new TourGuideList("Firestation - Artists In Residence", "119",
-                "");
+                null);
         tourGuideList.add(tourguideObject);
         tourguideObject = new TourGuideList("Qatar Olympic And Sports Museum", "67",
                 "http://www.qm.org.qa/sites/default/files/qatar_olypic_sports_museum.png");

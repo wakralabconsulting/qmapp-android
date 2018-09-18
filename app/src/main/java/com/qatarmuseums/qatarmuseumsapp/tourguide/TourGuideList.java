@@ -6,6 +6,7 @@ public class TourGuideList {
     String tourId;
     String imageurl;
     int image;
+    String tourguideId;
 
     public TourGuideList(String name, String tourId, int image) {
         this.name = name;
