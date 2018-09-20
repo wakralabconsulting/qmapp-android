@@ -108,12 +108,21 @@
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
-            android:name=".tourguide.TourGuideCommonActivity"
+            android:name=".tourguide.TourGuideActivity"
+            android:label=""
+            android:screenOrientation="portrait"
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity
+            android:name=".tourguidedetails.TourGuideDetailsActivity"
             android:label=""
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
             android:name=".tourguidestartpage.TourGuideStartPageActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity
+            android:name=".tourguidestartpage.SelfGuidedStartPageActivity"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar" />
         <!--

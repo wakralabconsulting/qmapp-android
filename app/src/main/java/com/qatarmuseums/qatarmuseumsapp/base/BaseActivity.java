@@ -28,7 +28,7 @@ import com.qatarmuseums.qatarmuseumsapp.notification.NotificationActivity;
 import com.qatarmuseums.qatarmuseumsapp.objectpreview.ObjectPreviewActivity;
 import com.qatarmuseums.qatarmuseumsapp.park.ParkActivity;
 import com.qatarmuseums.qatarmuseumsapp.settings.SettingsActivity;
-import com.qatarmuseums.qatarmuseumsapp.tourguide.TourGuideCommonActivity;
+import com.qatarmuseums.qatarmuseumsapp.tourguide.TourGuideActivity;
 import com.qatarmuseums.qatarmuseumsapp.utils.Util;
 import com.qatarmuseums.qatarmuseumsapp.webview.WebviewActivity;
 
@@ -277,8 +277,7 @@ public class BaseActivity extends AppCompatActivity
             case R.id.sidemenu_tour_guide_icon:
                 // navigation drawer tour guide action
                 touchListnerForLayout(sidemenuTourGuideLayout);
-                navigation_intent = new Intent(this, TourGuideCommonActivity.class);
-                navigation_intent.putExtra("COMING_FROM", getString(R.string.sidemenu_text));
+                navigation_intent = new Intent(this, TourGuideActivity.class);
                 startActivity(navigation_intent);
                 closeDrawer();
                 break;

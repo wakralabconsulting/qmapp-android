@@ -13,13 +13,12 @@ import android.view.animation.AnimationUtils;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.qatarmuseums.qatarmuseumsapp.R;
 import com.qatarmuseums.qatarmuseumsapp.commonpage.CommonActivity;
 import com.qatarmuseums.qatarmuseumsapp.detailspage.DetailsActivity;
 import com.qatarmuseums.qatarmuseumsapp.park.ParkActivity;
-import com.qatarmuseums.qatarmuseumsapp.tourguide.TourGuideCommonActivity;
+import com.qatarmuseums.qatarmuseumsapp.tourguidedetails.TourGuideDetailsActivity;
 import com.qatarmuseums.qatarmuseumsapp.utils.Util;
 
 import java.util.List;
@@ -59,8 +58,8 @@ public class MuseumHorizontalScrollViewAdapter extends RecyclerView.Adapter<Muse
                     navigationIntent.putExtra("ID", museumId);
                     mContext.startActivity(navigationIntent);
                 } else if (museumHScrollModelList.get(position).getTextName().equals(mContext.getResources().getString(R.string.sidemenu_tour_guide_text))) {
-                    navigationIntent = new Intent(mContext, TourGuideCommonActivity.class);
-                    navigationIntent.putExtra("COMING_FROM", mContext.getString(R.string.museum));
+                    navigationIntent = new Intent(mContext, TourGuideDetailsActivity.class);
+                    navigationIntent.putExtra("ID", museumId);
                     mContext.startActivity(navigationIntent);
                 } else if (museumHScrollModelList.get(position).getTextName().equals(mContext.getResources().getString(R.string.sidemenu_exhibition_text))) {
                     navigationIntent = new Intent(mContext, CommonActivity.class);
