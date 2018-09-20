@@ -113,8 +113,4 @@ public abstract class QMDatabase extends RoomDatabase {
         return null;
     }
 
-    @Override
-    public void clearAllTables() {
-
-    }
 }
