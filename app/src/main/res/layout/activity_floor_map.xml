@@ -30,8 +30,8 @@
                 android:layout_width="@dimen/padding_35"
                 android:layout_height="@dimen/padding_35"
                 android:layout_alignParentStart="true"
-                android:src="@drawable/qr_button"
                 android:layout_marginStart="@dimen/padding_15"
+                android:src="@drawable/qr_button"
                 android:visibility="gone" />
 
             <ImageView
@@ -43,12 +43,14 @@
 
 
         </RelativeLayout>
+
         <RelativeLayout
-            android:layout_width="wrap_content"
+            android:id="@+id/level_picker_relative"
+            android:layout_width="80dp"
             android:layout_height="wrap_content"
-            android:layout_alignParentEnd="true"
             android:layout_alignParentBottom="true"
-            android:id="@+id/level_picker_relative">
+            android:layout_alignParentEnd="true">
+
             <LinearLayout
                 android:id="@+id/level_picker"
                 android:layout_width="40dp"
@@ -56,9 +58,10 @@
                 android:layout_marginBottom="@dimen/padding_35"
                 android:layout_marginEnd="@dimen/padding_15"
                 android:layout_marginStart="@dimen/padding_15"
-               android:layout_marginTop="@dimen/padding_15"
+                android:layout_marginTop="@dimen/padding_15"
                 android:background="@color/white"
                 android:elevation="@dimen/padding_5"
+                android:gravity="end"
                 android:orientation="vertical">
 
                 <LinearLayout
@@ -160,8 +163,6 @@
                 </LinearLayout>
             </LinearLayout>
         </RelativeLayout>
-
-
 
 
     </RelativeLayout>
