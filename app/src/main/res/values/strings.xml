@@ -3,20 +3,6 @@
     <string name="web_view_title">Qatar Museums</string>
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>
-    <string name="event_text_first">MIA</string>
-    <string name="hiphen"> - </string>
-    <string name="event_text_second">SCHOOL GUIDED VISITS</string>
-    <string name="timings">Timings :</string>
-    <string name="education_event_size">Max. size group 25</string>
-    <string name="event_timing_text">Timings: 8:30 am
-    11:30 am (last entry 10:50)</string>
-    <string name="event_max_number">Max. group size 25</string>
-    <string name="event_detail_text">Nestled in the heart of the MIA is Alain
-        Ducasse\'s first restaurant in the Middle East \'Idam\' means \'generosity\'and each dish is a</string>
-    <string name="education_detail">MIA in association with UCLQ are delighted welcome Prof. Dr. Efim Rezvan,
-        Editor-in-Chief of Manuscripta Orientalia the International Journal for Oriental Manuscripts Research
-        and Deputy Director of Kunstkamera Museum (Saint-Petersburg, Russia)
-        to give a lecture on the life of the MIA manuscript MS 248</string>
     <string name="view_details"><u>View Details</u></string>
     <string name="events">EVENTS</string>
     <string name="details">DETAILS</string>
