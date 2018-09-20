@@ -20,8 +20,4 @@ class PagerAdapter extends FragmentPagerAdapter {
         return PageFragment.newInstance(position , position == getCount() );
     }
 
-//    @Override
-//    public CharSequence getPageTitle(int position) {
-//        return "Page" + position;
-//    }
 }

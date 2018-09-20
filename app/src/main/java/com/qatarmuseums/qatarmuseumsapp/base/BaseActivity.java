@@ -327,7 +327,6 @@ public class BaseActivity extends AppCompatActivity
 
             case R.id.sidemenu_settings_layout:
             case R.id.sidemenu_settings_icon:
-                    // navigation drawer settings action
                 touchListnerForLayout(sidemenuSettingsLayout);
                 Intent settingsIntent = new Intent(this, SettingsActivity.class);
                 startActivity(settingsIntent);
