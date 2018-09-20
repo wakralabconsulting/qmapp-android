@@ -30,6 +30,7 @@
     <color name="object_preview_image_bg">#CDD9D5</color>
     <color name="object_preview_bg">#E9EFED</color>
     <color name="object_preview_data_bg">#F5F9F8</color>
+    <color name="object_preview_line_color">#b3bdc2</color>
 
 
 

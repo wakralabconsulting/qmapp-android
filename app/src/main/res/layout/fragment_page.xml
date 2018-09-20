@@ -53,13 +53,14 @@
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="2.5"
-        android:background="@color/object_preview_image_bg"
+        android:background="@drawable/round_corner_object_preview"
         android:orientation="vertical">
 
         <ImageView
+            android:id="@+id/main_image"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:id="@+id/main_image"
+            android:padding="@dimen/padding_20"
             android:src="@drawable/science_tour_object2" />
 
     </LinearLayout>

@@ -17,11 +17,11 @@ class PagerAdapter extends FragmentPagerAdapter {
 
     @Override
     public Fragment getItem(int position) {
-        return PageFragment.newInstance(position + 1, position == getCount() - 1);
+        return PageFragment.newInstance(position , position == getCount() );
     }
 
-    @Override
-    public CharSequence getPageTitle(int position) {
-        return "Page " + position;
-    }
+//    @Override
+//    public CharSequence getPageTitle(int position) {
+//        return "Page" + position;
+//    }
 }
