@@ -33,7 +33,7 @@ public class CommonModel {
     private String description;
     @SerializedName("Museums_reference")
     private String museumReferance;
-    @SerializedName("museum_id")
+    @SerializedName(value = "museum_id", alternate = {"museums"})
     private String museumId;
     @SerializedName("category")
     private long category;
