@@ -155,4 +155,11 @@
     <string name="reading">مجموعة القراءة</string>
     <string name="research">الأبحاث</string>
     <string name="workshop">ورشة العمل</string>
+
+    <string name="start_tour">إبدأ الجولة</string>
+    <string name="explore">تصفح</string>
+    <string name="level">Level</string>
+    <string name="tourguide_sidemenu_title">المرشد</string>
+    <string name="tourguide_sidemenu_title_desc">اغمر نفسك في تفاصيل القطعة التي اختيرت خصيصا لك من قبل خبرائنا. \n\n أهلا بك في متاحف قطر. يرججى اختيار المتحف لإستكشاف القطع المعروضة.</string>
+    <string name="tourguide_title_desc">Welcome to Qatar Museum Premises. \n Explore the architrcture and the \nobjects on display. \n Scan the QR codes available on the \ngalleries for more information.</string>
 </resources>
