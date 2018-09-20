@@ -20,7 +20,8 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:paddingEnd="@dimen/padding_10"
-                android:paddingStart="@dimen/padding_10">
+                android:paddingStart="@dimen/padding_10"
+                android:gravity="center">
 
                 <ImageView
                     android:id="@+id/back_btn"
@@ -35,19 +36,20 @@
                     android:layout_height="wrap_content"
                     android:layout_alignParentEnd="true"
                     android:layout_centerInParent="true"
-                    android:orientation="horizontal">
+                    android:orientation="horizontal"
+                    android:gravity="center">
 
                     <ImageView
                         android:id="@+id/share_btn"
-                        android:layout_width="30dp"
-                        android:layout_height="30dp"
-                        android:layout_marginEnd="@dimen/padding_15"
+                        android:layout_width="27dp"
+                        android:layout_height="27dp"
+                        android:layout_marginEnd="@dimen/padding_30"
                         android:src="@drawable/share_white" />
 
                     <ImageView
                         android:id="@+id/location_btn"
-                        android:layout_width="30dp"
-                        android:layout_height="30dp"
+                        android:layout_width="27dp"
+                        android:layout_height="27dp"
                         android:layout_marginEnd="@dimen/padding_5"
                         android:src="@drawable/location_icon" />
 
