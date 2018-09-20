@@ -155,16 +155,10 @@ public class CommonActivity extends AppCompatActivity {
             }
         });
         if (toolbarTitle.equals(getString(R.string.sidemenu_exhibition_text))) {
-            /* Commented for Temporary API
             if (util.isNetworkAvailable(CommonActivity.this))
                 getCommonListAPIDataFromAPI("Exhibition_List_Page.json");
             else
                 getCommonListDataFromDatabase("Exhibition_List_Page.json");
-            */
-            if (util.isNetworkAvailable(CommonActivity.this)) // For Temporary API
-                getCommonListAPIDataFromAPI("Exhibition_List_Page.php");
-            else
-                getCommonListDataFromDatabase("Exhibition_List_Page.php");
         } else if (toolbarTitle.equals(getString(R.string.sidemenu_heritage_text))) {
             if (util.isNetworkAvailable(CommonActivity.this))
                 getCommonListAPIDataFromAPI("Heritage_List_Page.json");
@@ -178,19 +172,10 @@ public class CommonActivity extends AppCompatActivity {
                 getCommonListDataFromDatabase("Public_Arts_List_Page.json");
 
         } else if (toolbarTitle.equals(getString(R.string.sidemenu_dining_text))) {
-
-            /* Commented for Temporary API
             if (util.isNetworkAvailable(CommonActivity.this))
                 getCommonListAPIDataFromAPI("getDiningList.json");
             else
                 getCommonListDataFromDatabase("getDiningList.json");
-             */
-
-            if (util.isNetworkAvailable(CommonActivity.this))  // For Temporary API
-                getCommonListAPIDataFromAPI("getDiningList.php");
-            else
-                getCommonListDataFromDatabase("getDiningList.php");
-
         } else if (toolbarTitle.equals(getString(R.string.museum_collection_text))) {
 
             if (util.isNetworkAvailable(CommonActivity.this))
@@ -229,22 +214,7 @@ public class CommonActivity extends AppCompatActivity {
             else
                 language = "ar";
             new DiningRowCount(CommonActivity.this, language).execute();
-        } else if (apiParts.equals("getDiningList.php")) {    // For Temporary API
-            String language;
-            if (appLanguage == 1)
-                language = "en";
-            else
-                language = "ar";
-            new DiningRowCount(CommonActivity.this, language, id).execute();
-        } else if (apiParts.equals("Exhibition_List_Page.php")) {   // For Temporary API
-            if (appLanguage == 1) {
-                new RetriveExhibitionDataEnglish(CommonActivity.this, appLanguage, id).execute();
-            } else {
-                new RetriveExhibitionDataArabic(CommonActivity.this, appLanguage, id).execute();
-            }
         }
-
-
     }
 
 
@@ -339,10 +309,6 @@ public class CommonActivity extends AppCompatActivity {
                             new ExhibitionRowCount(CommonActivity.this, language).execute();
                         } else if (pageName.equals("getDiningList.json")) {
                             new DiningRowCount(CommonActivity.this, language).execute();
-                        } else if (pageName.equals("getDiningList.php")) {  // For Temporary API
-                            new DiningRowCount(CommonActivity.this, language).execute();
-                        } else if (pageName.equals("Exhibition_List_Page.php")) {  // For Temporary API
-                            new ExhibitionRowCount(CommonActivity.this, language).execute();
                         }
                     } else {
                         recyclerView.setVisibility(View.GONE);
@@ -370,7 +336,6 @@ public class CommonActivity extends AppCompatActivity {
         });
 
     }
-
 
     public class DiningRowCount extends AsyncTask<Void, Void, Integer> {
 
@@ -891,7 +856,6 @@ public class CommonActivity extends AppCompatActivity {
         }
     }
 
-
     public class RetriveEnglishPublicArtsData extends AsyncTask<Void, Void, List<PublicArtsTableEnglish>> {
         private WeakReference<CommonActivity> activityReference;
         int language;
@@ -1008,7 +972,6 @@ public class CommonActivity extends AppCompatActivity {
         }
     }
 
-
     public class InsertDataToDataBase extends AsyncTask<Void, Void, Boolean> {
         private WeakReference<CommonActivity> activityReference;
         private HeritageListTableEnglish heritageListTableEnglish;
@@ -1054,7 +1017,6 @@ public class CommonActivity extends AppCompatActivity {
 
         }
     }
-
 
     public class CheckDBRowExist extends AsyncTask<Void, Void, Void> {
         private WeakReference<CommonActivity> activityReference;
@@ -1233,7 +1195,6 @@ public class CommonActivity extends AppCompatActivity {
             return activityReference.get().qmDatabase.getHeritageListTableDao().getAllArabic();
         }
     }
-
 
     public class ExhibitionRowCount extends AsyncTask<Void, Void, Integer> {
 
@@ -1619,7 +1580,6 @@ public class CommonActivity extends AppCompatActivity {
         }
     }
 
-
     public class CheckMuseumCollectionDBRowExist extends AsyncTask<Void, Void, Void> {
         private WeakReference<CommonActivity> activityReference;
         private MuseumCollectionListTableEnglish museumCollectionListTableEnglish;
@@ -1671,7 +1631,6 @@ public class CommonActivity extends AppCompatActivity {
             return null;
         }
     }
-
 
     public class InsertMuseumCollectionListDataToDataBase extends AsyncTask<Void, Void, Boolean> {
         private WeakReference<CommonActivity> activityReference;
@@ -1750,7 +1709,6 @@ public class CommonActivity extends AppCompatActivity {
 
 
     }
-
 
     public class RetriveMuseumCollectionDataEnglish extends AsyncTask<Void, Void, List<MuseumCollectionListTableEnglish>> {
         private WeakReference<CommonActivity> activityReference;
@@ -1840,6 +1798,5 @@ public class CommonActivity extends AppCompatActivity {
                     getDataFromArabicTableWithReference(museumReference);
         }
     }
-
 
 }
