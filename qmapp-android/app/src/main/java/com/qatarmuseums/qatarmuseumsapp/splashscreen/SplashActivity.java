@@ -1,5 +1,6 @@
 package com.qatarmuseums.qatarmuseumsapp.splashscreen;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
@@ -17,7 +18,7 @@ import pl.droidsonroids.gif.GifDrawable;
 import pl.droidsonroids.gif.GifImageView;
 
 
-public class SplashActivity extends AppCompatActivity {
+public class SplashActivity extends Activity {
     Intent intent;
     private SharedPreferences qmPreferences;
     private int appLanguage;
