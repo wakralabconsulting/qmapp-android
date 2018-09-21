@@ -4,7 +4,7 @@ package com.qatarmuseums.qatarmuseumsapp.commonpage;
 import com.google.gson.annotations.SerializedName;
 
 public class CommonModel {
-    @SerializedName(value = "name", alternate = {"Name","الاسم"})
+    @SerializedName(value = "name", alternate = {"Name", "الاسم"})
     private String name;
     @SerializedName("ID")
     private String id;
@@ -39,11 +39,9 @@ public class CommonModel {
     private long category;
 
 
-
     public CommonModel() {
 
     }
-
 
 
     public CommonModel(String id, String name, String startDate,
@@ -59,7 +57,6 @@ public class CommonModel {
     }
 
 
-
     public CommonModel(String id, String name, String image, String latitude,
                        String longitude) {
         this.id = id;
@@ -70,11 +67,19 @@ public class CommonModel {
     }
 
     public CommonModel(String name, String image, String description, String museumId
-                       ) {
+    ) {
         this.name = name;
         this.image = image;
         this.description = description;
         this.museumId = museumId;
+    }
+
+    public CommonModel(String name, String image, String museumReferance
+    ) {
+        this.name = name;
+        this.image = image;
+        this.museumReferance = museumReferance;
+
     }
 
     public CommonModel(String name, String id, String location, String image,
@@ -226,9 +231,6 @@ public class CommonModel {
         return museumReferance;
     }
 
-    public void setMuseumReferance(String museumReferance) {
-        this.museumReferance = museumReferance;
-    }
 
     public String getMuseumId() {
         return museumId;
