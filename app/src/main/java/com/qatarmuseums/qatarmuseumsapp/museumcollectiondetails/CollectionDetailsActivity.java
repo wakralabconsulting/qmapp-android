@@ -65,7 +65,7 @@ public class CollectionDetailsActivity extends AppCompatActivity {
     private Animation zoomOutAnimation;
     private CollectionDetailsAdapter mAdapter;
     private ArrayList<CollectionDetailsList> collectionDetailsList = new ArrayList<>();
-    private String categoryId;
+    private String categoryName;
     Util util;
     int appLanguage;
     SharedPreferences qmPreferences;
@@ -84,10 +84,10 @@ public class CollectionDetailsActivity extends AppCompatActivity {
         intent = getIntent();
         qmDatabase = QMDatabase.getInstance(CollectionDetailsActivity.this);
         util = new Util();
-        categoryId = String.valueOf(intent.getLongExtra("CATEGORY_ID",0));
+        categoryName = intent.getStringExtra("MAIN_TITLE");
         zoomOutAnimation = AnimationUtils.loadAnimation(getApplicationContext(),
                 R.anim.zoom_out_more);
-        collectionTitle.setText(intent.getStringExtra("MAIN_TITLE"));
+        collectionTitle.setText(categoryName);
         longDescription.setText(intent.getStringExtra("LONG_DESC"));
         mAdapter = new CollectionDetailsAdapter(this, collectionDetailsList);
         RecyclerView.LayoutManager layoutManager =
@@ -145,7 +145,7 @@ public class CollectionDetailsActivity extends AppCompatActivity {
         }
         APIInterface apiService =
                 APIClient.getTempClient().create(APIInterface.class);
-        Call<ArrayList<CollectionDetailsList>> call = apiService.getMuseumCollectionDetails(language, categoryId);
+        Call<ArrayList<CollectionDetailsList>> call = apiService.getMuseumCollectionDetails(language, categoryName);
         call.enqueue(new Callback<ArrayList<CollectionDetailsList>>() {
             @Override
             public void onResponse(Call<ArrayList<CollectionDetailsList>> call, Response<ArrayList<CollectionDetailsList>> response) {
@@ -414,7 +414,7 @@ public class CollectionDetailsActivity extends AppCompatActivity {
         @Override
         protected List<MuseumCollectionDetailTableEnglish> doInBackground(Void... voids) {
             return activityReference.get().qmDatabase.getMuseumCollectionDetailDao().
-                    getAllDataFromMuseumDetailEnglishTable(categoryId);
+                    getAllDataFromMuseumDetailEnglishTable(categoryName);
         }
 
         @Override
@@ -461,7 +461,7 @@ public class CollectionDetailsActivity extends AppCompatActivity {
         @Override
         protected List<MuseumCollectionDetailTableArabic> doInBackground(Void... voids) {
             return activityReference.get().qmDatabase.getMuseumCollectionDetailDao().
-                    getAllDataFromMuseumDetailArabicTable(categoryId);
+                    getAllDataFromMuseumDetailArabicTable(categoryName);
         }
 
         @Override
