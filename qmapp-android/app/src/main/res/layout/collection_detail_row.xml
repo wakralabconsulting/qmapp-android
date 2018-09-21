@@ -35,7 +35,8 @@
         android:textAlignment="center"
         android:textColor="@color/black"
         android:textSize="@dimen/font_size_18"
-        android:textStyle="bold" />
+        android:textStyle="bold"
+        android:visibility="gone"/>
 
     <TextView
         android:id="@+id/first_description"
@@ -50,7 +51,8 @@
         android:paddingEnd="@dimen/padding_15"
         android:layout_marginTop="@dimen/padding_10"
         android:layout_marginBottom="@dimen/padding_10"
-        android:textSize="@dimen/font_size_16" />
+        android:textSize="@dimen/font_size_16"
+        android:visibility="gone"/>
 
     <ImageView
         android:id="@+id/collection_image1"
@@ -77,7 +79,8 @@
         android:id="@+id/collection_image2"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:scaleType="centerCrop" />
+        android:scaleType="centerCrop"
+        android:visibility="gone"/>
 
     <TextView
         android:id="@+id/third_description"
@@ -92,5 +95,6 @@
         android:paddingEnd="@dimen/padding_15"
         android:layout_marginTop="@dimen/padding_10"
         android:layout_marginBottom="@dimen/padding_10"
-        android:textSize="@dimen/font_size_16"  />
+        android:textSize="@dimen/font_size_16"
+        android:visibility="gone"/>
 </LinearLayout>
