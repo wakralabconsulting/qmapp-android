@@ -36,16 +36,15 @@ public interface MuseumCollectionListTableDao {
     int checkNameExistArabic(String nameFromAPI);
 
     @Query("UPDATE museumcollectionlisttableEnglish SET image = :imageFromApi," +
-            "museum_id = :museumIdFromApi,category=:categoryFromApi," +
+            "museum_id = :museumIdFromApi," +
             " collection_description=:collectionDescriptionFromApi WHERE name=:name")
-    void updateMuseumListTableEnglish(String imageFromApi, String museumIdFromApi, long categoryFromApi,
+    void updateMuseumListTableEnglish(String imageFromApi, String museumIdFromApi,
                                       String collectionDescriptionFromApi, String name);
 
     @Query("UPDATE museumcollectionlisttableArabic SET image = :imageFromApi," +
-            "museum_id = :museumIdFromApi,category=:categoryFromApi," +
+            "museum_id = :museumIdFromApi," +
             " collection_description=:collectionDescriptionFromApi WHERE name=:name")
     void updateMuseumListTableArabic(String imageFromApi, String museumIdFromApi,
-                                     long categoryFromApi,
                                      String collectionDescriptionFromApi, String name);
 
 
