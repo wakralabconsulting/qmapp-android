@@ -101,7 +101,18 @@ public class CollectionDetailsActivity extends AppCompatActivity {
         if (util.isNetworkAvailable(CollectionDetailsActivity.this))
             getMuseumCollectionDetailFromAPI();
         else
-//            getMuseumCollectionDetailFromDatabase();
+            getMuseumCollectionDetailFromDatabase();
+        toolbarClose.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                switch (event.getAction()) {
+                    case MotionEvent.ACTION_DOWN:
+                        toolbarClose.startAnimation(zoomOutAnimation);
+                        break;
+                }
+                return false;
+            }
+        });
         toolbarClose.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -155,7 +166,7 @@ public class CollectionDetailsActivity extends AppCompatActivity {
                         collectionDetailsList.addAll(response.body());
                         removeHtmlTags(collectionDetailsList);
                         mAdapter.notifyDataSetChanged();
-                        //new CollectionDetailRowCount(CollectionDetailsActivity.this, appLanguage).execute();
+                        new CollectionDetailRowCount(CollectionDetailsActivity.this, appLanguage).execute();
 
 
                     } else {
@@ -185,13 +196,13 @@ public class CollectionDetailsActivity extends AppCompatActivity {
 
     }
 
-//    public void getMuseumCollectionDetailFromDatabase() {
-//        if (appLanguage == 1) {
-//            new RetriveMuseumCollectionDetailDataEnglish(CollectionDetailsActivity.this, appLanguage).execute();
-//        } else {
-//            new RetriveMuseumCollectionDetailDataArabic(CollectionDetailsActivity.this, appLanguage).execute();
-//        }
-//    }
+    public void getMuseumCollectionDetailFromDatabase() {
+        if (appLanguage == 1) {
+            new RetriveMuseumCollectionDetailDataEnglish(CollectionDetailsActivity.this, appLanguage).execute();
+        } else {
+            new RetriveMuseumCollectionDetailDataArabic(CollectionDetailsActivity.this, appLanguage).execute();
+        }
+    }
 
     public void removeHtmlTags(ArrayList<CollectionDetailsList> models) {
         for (int i = 0; i < models.size(); i++) {
@@ -200,295 +211,279 @@ public class CollectionDetailsActivity extends AppCompatActivity {
         }
     }
 
-//    public class CollectionDetailRowCount extends AsyncTask<Void, Void, Integer> {
-//
-//        private WeakReference<CollectionDetailsActivity> activityReference;
-//        String language;
-//
-//
-//        CollectionDetailRowCount(CollectionDetailsActivity context, int apiLanguage) {
-//            activityReference = new WeakReference<>(context);
-//            if (appLanguage == 1) {
-//                language = "en";
-//            } else {
-//                language = "ar";
-//            }
-//
-//        }
-//
-//        @Override
-//        protected void onPreExecute() {
-//            super.onPreExecute();
-//        }
-//
-//        @Override
-//        protected void onPostExecute(Integer integer) {
-//            collectionDetailRowCount = integer;
-//            if (collectionDetailRowCount > 0) {
-//                //updateEnglishTable or add row to database
-//                new CheckMuseumCollectionDetailDBRowExist(CollectionDetailsActivity.this, language).execute();
-//
-//            } else {
-//                //create databse
-//                new InsertMuseumCollectionDetailListDataToDataBase(CollectionDetailsActivity.this, museumCollectionDetailTableEnglish,
-//                        museumCollectionDetailTableArabic, language).execute();
-//
-//            }
-//        }
-//
-//        @Override
-//        protected Integer doInBackground(Void... voids) {
-//            if (language.equals("en")) {
-//                return activityReference.get().qmDatabase.getMuseumCollectionDetailDao().getNumberOfRowsEnglish();
-//            } else {
-//                return activityReference.get().qmDatabase.getMuseumCollectionDetailDao().getNumberOfRowsArabic();
-//            }
-//        }
+    public class CollectionDetailRowCount extends AsyncTask<Void, Void, Integer> {
 
-//        public class InsertMuseumCollectionDetailListDataToDataBase extends AsyncTask<Void, Void, Boolean> {
-//            private WeakReference<CollectionDetailsActivity> activityReference;
-//            private MuseumCollectionDetailTableEnglish museumCollectionDetailTableEnglish;
-//            private MuseumCollectionDetailTableArabic museumCollectionDetailTableArabic;
-//            String language;
-//
-//            InsertMuseumCollectionDetailListDataToDataBase(CollectionDetailsActivity context,
-//                                                           MuseumCollectionDetailTableEnglish museumCollectionDetailTableEnglish,
-//                                                           MuseumCollectionDetailTableArabic museumCollectionDetailTableArabic, String appLanguage) {
-//                activityReference = new WeakReference<>(context);
-//                this.museumCollectionDetailTableEnglish = museumCollectionDetailTableEnglish;
-//                this.museumCollectionDetailTableArabic = museumCollectionDetailTableArabic;
-//                this.language = appLanguage;
-//            }
-//
-//            @Override
-//            protected Boolean doInBackground(Void... voids) {
-//                if (collectionDetailsList != null) {
-//                    if (language.equals("en")) {
-//                        for (int i = 0; i < collectionDetailsList.size(); i++) {
-//                            museumCollectionDetailTableEnglish = new MuseumCollectionDetailTableEnglish(collectionDetailsList.get(i).getCategoryId(), collectionDetailsList.get(i).getMainTitle(),
-//                                    collectionDetailsList.get(i).getAbout(), collectionDetailsList.get(i).getImage1(),
-//                                    collectionDetailsList.get(i).getImage2(), collectionDetailsList.get(i).getFirstDescription(),
-//                                    collectionDetailsList.get(i).getSecondDescription(), collectionDetailsList.get(i).getThirdDescription()
-//                            );
-//                            activityReference.get().qmDatabase.getMuseumCollectionDetailDao().insertEnglishTable(museumCollectionDetailTableEnglish);
-//                        }
-//                    } else {
-//                        for (int i = 0; i < collectionDetailsList.size(); i++) {
-//                            museumCollectionDetailTableArabic = new MuseumCollectionDetailTableArabic(collectionDetailsList.get(i).getCategoryId(), collectionDetailsList.get(i).getMainTitle(),
-//                                    collectionDetailsList.get(i).getAbout(), collectionDetailsList.get(i).getImage1(),
-//                                    collectionDetailsList.get(i).getImage2(), collectionDetailsList.get(i).getFirstDescription(),
-//                                    collectionDetailsList.get(i).getSecondDescription(), collectionDetailsList.get(i).getThirdDescription()
-//                            );
-//                            activityReference.get().qmDatabase.getMuseumCollectionDetailDao().insertArabicTable(museumCollectionDetailTableArabic);
-//                        }
-//                    }
-//                }
-//                return true;
-//            }
-//
-//            @Override
-//            protected void onPostExecute(Boolean aBoolean) {
-//
-//            }
-//        }
+        private WeakReference<CollectionDetailsActivity> activityReference;
+        String language;
 
 
-//        public class CheckMuseumCollectionDetailDBRowExist extends AsyncTask<Void, Void, Void> {
-//            private WeakReference<CollectionDetailsActivity> activityReference;
-//            private MuseumCollectionDetailTableEnglish museumCollectionDetailTableEnglish;
-//            private MuseumCollectionDetailTableArabic museumCollectionDetailTableArabic;
-//            String language;
-//
-//            CheckMuseumCollectionDetailDBRowExist(CollectionDetailsActivity context, String apiLanguage) {
-//                activityReference = new WeakReference<>(context);
-//                language = apiLanguage;
-//            }
-//
-//            @Override
-//            protected Void doInBackground(Void... voids) {
-//                if (collectionDetailsList.size() > 0) {
-//                    if (language.equals("en")) {
-//                        for (int i = 0; i < collectionDetailsList.size(); i++) {
-//                            int n = activityReference.get().qmDatabase.getMuseumCollectionDetailDao().checkTitleExistEnglish(
-//                                    collectionDetailsList.get(i).getMainTitle());
-//                            if (n > 0) {
-//                                //updateEnglishTable same id
-//                                new UpdateMuseumCollectionDetailTable(CollectionDetailsActivity.this, appLanguage, i).execute();
-//
-//                            } else {
-//                                //create row with corresponding name
-//                                museumCollectionDetailTableEnglish = new MuseumCollectionDetailTableEnglish(collectionDetailsList.get(i).getCategoryId(), collectionDetailsList.get(i).getMainTitle(),
-//                                        collectionDetailsList.get(i).getAbout(), collectionDetailsList.get(i).getImage1(),
-//                                        collectionDetailsList.get(i).getImage2(), collectionDetailsList.get(i).getFirstDescription(),
-//                                        collectionDetailsList.get(i).getSecondDescription(), collectionDetailsList.get(i).getThirdDescription()
-//                                );
-//                                activityReference.get().qmDatabase.getMuseumCollectionDetailDao().insertEnglishTable(museumCollectionDetailTableEnglish);
-//
-//                            }
-//                        }
-//                    } else {
-//                        for (int i = 0; i < collectionDetailsList.size(); i++) {
-//                            int n = activityReference.get().qmDatabase.getMuseumCollectionDetailDao().checkTitleExistArabic(
-//                                    collectionDetailsList.get(i).getMainTitle());
-//                            if (n > 0) {
-//                                //updateEnglishTable same id
-//                                new UpdateMuseumCollectionDetailTable(CollectionDetailsActivity.this, appLanguage, i).execute();
-//
-//                            } else {
-//                                //create row with corresponding name
-//                                museumCollectionDetailTableArabic = new MuseumCollectionDetailTableArabic(collectionDetailsList.get(i).getCategoryId(), collectionDetailsList.get(i).getMainTitle(),
-//                                        collectionDetailsList.get(i).getAbout(), collectionDetailsList.get(i).getImage1(),
-//                                        collectionDetailsList.get(i).getImage2(), collectionDetailsList.get(i).getFirstDescription(),
-//                                        collectionDetailsList.get(i).getSecondDescription(), collectionDetailsList.get(i).getThirdDescription()
-//                                );
-//                                activityReference.get().qmDatabase.getMuseumCollectionDetailDao().insertArabicTable(museumCollectionDetailTableArabic);
-//
-//                            }
-//                        }
-//                    }
-//                }
-//                return null;
-//            }
-//        }
-//
-//    }
+        CollectionDetailRowCount(CollectionDetailsActivity context, int apiLanguage) {
+            activityReference = new WeakReference<>(context);
+            if (appLanguage == 1) {
+                language = "en";
+            } else {
+                language = "ar";
+            }
+
+        }
+
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+        }
+
+        @Override
+        protected void onPostExecute(Integer integer) {
+            collectionDetailRowCount = integer;
+            if (collectionDetailRowCount > 0) {
+                //updateEnglishTable or add row to database
+                new CheckMuseumCollectionDetailDBRowExist(CollectionDetailsActivity.this, language).execute();
+
+            } else {
+                //create databse
+                new InsertMuseumCollectionDetailListDataToDataBase(CollectionDetailsActivity.this, museumCollectionDetailTableEnglish,
+                        museumCollectionDetailTableArabic, language).execute();
+
+            }
+        }
+
+        @Override
+        protected Integer doInBackground(Void... voids) {
+            if (language.equals("en")) {
+                return activityReference.get().qmDatabase.getMuseumCollectionDetailDao().getNumberOfRowsEnglish();
+            } else {
+                return activityReference.get().qmDatabase.getMuseumCollectionDetailDao().getNumberOfRowsArabic();
+            }
+        }
+
+        public class InsertMuseumCollectionDetailListDataToDataBase extends AsyncTask<Void, Void, Boolean> {
+            private WeakReference<CollectionDetailsActivity> activityReference;
+            private MuseumCollectionDetailTableEnglish museumCollectionDetailTableEnglish;
+            private MuseumCollectionDetailTableArabic museumCollectionDetailTableArabic;
+            String language;
+
+            InsertMuseumCollectionDetailListDataToDataBase(CollectionDetailsActivity context,
+                                                           MuseumCollectionDetailTableEnglish museumCollectionDetailTableEnglish,
+                                                           MuseumCollectionDetailTableArabic museumCollectionDetailTableArabic, String appLanguage) {
+                activityReference = new WeakReference<>(context);
+                this.museumCollectionDetailTableEnglish = museumCollectionDetailTableEnglish;
+                this.museumCollectionDetailTableArabic = museumCollectionDetailTableArabic;
+                this.language = appLanguage;
+            }
+
+            @Override
+            protected Boolean doInBackground(Void... voids) {
+                if (collectionDetailsList != null) {
+                    if (language.equals("en")) {
+                        for (int i = 0; i < collectionDetailsList.size(); i++) {
+                            museumCollectionDetailTableEnglish = new MuseumCollectionDetailTableEnglish(collectionDetailsList.get(i).getCategoryName(), collectionDetailsList.get(i).getMainTitle(),
+                                    collectionDetailsList.get(i).getImage1(),
+                                    collectionDetailsList.get(i).getFirstDescription());
+                            activityReference.get().qmDatabase.getMuseumCollectionDetailDao().insertEnglishTable(museumCollectionDetailTableEnglish);
+                        }
+                    } else {
+                        for (int i = 0; i < collectionDetailsList.size(); i++) {
+                            museumCollectionDetailTableArabic = new MuseumCollectionDetailTableArabic(collectionDetailsList.get(i).getCategoryName(), collectionDetailsList.get(i).getMainTitle(),
+                                    collectionDetailsList.get(i).getImage1(),
+                                    collectionDetailsList.get(i).getFirstDescription());
+                            activityReference.get().qmDatabase.getMuseumCollectionDetailDao().insertArabicTable(museumCollectionDetailTableArabic);
+                        }
+                    }
+                }
+                return true;
+            }
+
+            @Override
+            protected void onPostExecute(Boolean aBoolean) {
+
+            }
+        }
 
 
-//    public class UpdateMuseumCollectionDetailTable extends AsyncTask<Void, Void, Void> {
-//        private WeakReference<CollectionDetailsActivity> activityReference;
-//        int language;
-//        int position;
-//
-//        UpdateMuseumCollectionDetailTable(CollectionDetailsActivity context, int apiLanguage, int p) {
-//            activityReference = new WeakReference<>(context);
-//            language = apiLanguage;
-//            position = p;
-//        }
-//
-//        @Override
-//        protected Void doInBackground(Void... voids) {
-//            if (language == 1) {
-//                // updateEnglishTable table with english name
-//                activityReference.get().qmDatabase.getMuseumCollectionDetailDao().updateMuseumDetailTableEnglish(
-//                        collectionDetailsList.get(position).getCategoryId(),
-//                        collectionDetailsList.get(position).getAbout(), collectionDetailsList.get(position).getImage1(),
-//                        collectionDetailsList.get(position).getImage2(), collectionDetailsList.get(position).getFirstDescription(),
-//                        collectionDetailsList.get(position).getSecondDescription(), collectionDetailsList.get(position).getThirdDescription(),
-//                        collectionDetailsList.get(position).getMainTitle());
-//
-//            } else {
-//                // updateEnglishTable table with arabic name
-//                activityReference.get().qmDatabase.getMuseumCollectionDetailDao().updateMuseumDetailTableArabic(
-//                        collectionDetailsList.get(position).getCategoryId(),
-//                        collectionDetailsList.get(position).getAbout(), collectionDetailsList.get(position).getImage1(),
-//                        collectionDetailsList.get(position).getImage2(), collectionDetailsList.get(position).getFirstDescription(),
-//                        collectionDetailsList.get(position).getSecondDescription(), collectionDetailsList.get(position).getThirdDescription(),
-//                        collectionDetailsList.get(position).getMainTitle());
-//
-//            }
-//            return null;
-//        }
-//
-//        @Override
-//        protected void onPostExecute(Void aVoid) {
-//        }
-//
-//
-//    }
+        public class CheckMuseumCollectionDetailDBRowExist extends AsyncTask<Void, Void, Void> {
+            private WeakReference<CollectionDetailsActivity> activityReference;
+            private MuseumCollectionDetailTableEnglish museumCollectionDetailTableEnglish;
+            private MuseumCollectionDetailTableArabic museumCollectionDetailTableArabic;
+            String language;
+
+            CheckMuseumCollectionDetailDBRowExist(CollectionDetailsActivity context, String apiLanguage) {
+                activityReference = new WeakReference<>(context);
+                language = apiLanguage;
+            }
+
+            @Override
+            protected Void doInBackground(Void... voids) {
+                if (collectionDetailsList.size() > 0) {
+                    if (language.equals("en")) {
+                        for (int i = 0; i < collectionDetailsList.size(); i++) {
+                            int n = activityReference.get().qmDatabase.getMuseumCollectionDetailDao().checkTitleExistEnglish(
+                                    collectionDetailsList.get(i).getMainTitle());
+                            if (n > 0) {
+                                //updateEnglishTable same id
+                                new UpdateMuseumCollectionDetailTable(CollectionDetailsActivity.this, appLanguage, i).execute();
+
+                            } else {
+                                //create row with corresponding name
+                                museumCollectionDetailTableEnglish = new MuseumCollectionDetailTableEnglish(collectionDetailsList.get(i).getCategoryName(), collectionDetailsList.get(i).getMainTitle(),
+                                        collectionDetailsList.get(i).getImage1(),
+                                        collectionDetailsList.get(i).getFirstDescription());
+                                activityReference.get().qmDatabase.getMuseumCollectionDetailDao().insertEnglishTable(museumCollectionDetailTableEnglish);
+
+                            }
+                        }
+                    } else {
+                        for (int i = 0; i < collectionDetailsList.size(); i++) {
+                            int n = activityReference.get().qmDatabase.getMuseumCollectionDetailDao().checkTitleExistArabic(
+                                    collectionDetailsList.get(i).getMainTitle());
+                            if (n > 0) {
+                                //updateEnglishTable same id
+                                new UpdateMuseumCollectionDetailTable(CollectionDetailsActivity.this, appLanguage, i).execute();
+
+                            } else {
+                                //create row with corresponding name
+                                museumCollectionDetailTableArabic = new MuseumCollectionDetailTableArabic(collectionDetailsList.get(i).getCategoryName(), collectionDetailsList.get(i).getMainTitle(),
+                                        collectionDetailsList.get(i).getImage1(),
+                                        collectionDetailsList.get(i).getFirstDescription());
+                                activityReference.get().qmDatabase.getMuseumCollectionDetailDao().insertArabicTable(museumCollectionDetailTableArabic);
+
+                            }
+                        }
+                    }
+                }
+                return null;
+            }
+        }
+
+    }
 
 
-//    public class RetriveMuseumCollectionDetailDataEnglish extends AsyncTask<Void, Void, List<MuseumCollectionDetailTableEnglish>> {
-//        private WeakReference<CollectionDetailsActivity> activityReference;
-//        int language;
-//
-//        RetriveMuseumCollectionDetailDataEnglish(CollectionDetailsActivity context, int appLanguage) {
-//            activityReference = new WeakReference<>(context);
-//            language = appLanguage;
-//        }
-//
-//        @Override
-//        protected void onPreExecute() {
-//            progressBar.setVisibility(View.VISIBLE);
-//        }
-//
-//        @Override
-//        protected List<MuseumCollectionDetailTableEnglish> doInBackground(Void... voids) {
-//            return activityReference.get().qmDatabase.getMuseumCollectionDetailDao().
-//                    getAllDataFromMuseumDetailEnglishTable(categoryName);
-//        }
-//
-//        @Override
-//        protected void onPostExecute(List<MuseumCollectionDetailTableEnglish> museumCollectionListTableEnglishes) {
-//            collectionDetailsList.clear();
-//            if (museumCollectionListTableEnglishes.size() > 0) {
-//                for (int i = 0; i < museumCollectionListTableEnglishes.size(); i++) {
-//                    CollectionDetailsList collectionDetailsList1 = new CollectionDetailsList(museumCollectionListTableEnglishes.get(i).getDetail_title(), museumCollectionListTableEnglishes.get(i).getDetail_about(),
-//                            museumCollectionListTableEnglishes.get(i).getDetail_image1(),
-//                            museumCollectionListTableEnglishes.get(i).getDetail_image2(),
-//                            museumCollectionListTableEnglishes.get(i).getDetail_description1(),
-//                            museumCollectionListTableEnglishes.get(i).getDetail_description2(),
-//                            museumCollectionListTableEnglishes.get(i).getDetail_description3(),
-//                            museumCollectionListTableEnglishes.get(i).getCategory_id());
-//                    collectionDetailsList.add(i, collectionDetailsList1);
-//
-//                }
-//                detailLyout.setVisibility(View.VISIBLE);
-//                mAdapter.notifyDataSetChanged();
-//                progressBar.setVisibility(View.GONE);
-//            } else {
-//                progressBar.setVisibility(View.GONE);
-//                detailLyout.setVisibility(View.GONE);
-//                noResultFoundLayout.setVisibility(View.VISIBLE);
-//            }
-//        }
-//    }
+    public class UpdateMuseumCollectionDetailTable extends AsyncTask<Void, Void, Void> {
+        private WeakReference<CollectionDetailsActivity> activityReference;
+        int language;
+        int position;
+
+        UpdateMuseumCollectionDetailTable(CollectionDetailsActivity context, int apiLanguage, int p) {
+            activityReference = new WeakReference<>(context);
+            language = apiLanguage;
+            position = p;
+        }
+
+        @Override
+        protected Void doInBackground(Void... voids) {
+            if (language == 1) {
+                // updateEnglishTable table with english name
+                activityReference.get().qmDatabase.getMuseumCollectionDetailDao().updateMuseumDetailTableEnglish(
+                        collectionDetailsList.get(position).getCategoryName(),
+                        collectionDetailsList.get(position).getImage1(),
+                        collectionDetailsList.get(position).getFirstDescription(),
+                        collectionDetailsList.get(position).getMainTitle());
+
+            } else {
+                // updateEnglishTable table with arabic name
+                activityReference.get().qmDatabase.getMuseumCollectionDetailDao().updateMuseumDetailTableArabic(
+                        collectionDetailsList.get(position).getCategoryName(),
+                        collectionDetailsList.get(position).getImage1(),
+                        collectionDetailsList.get(position).getFirstDescription(),
+                        collectionDetailsList.get(position).getMainTitle());
+
+            }
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(Void aVoid) {
+        }
 
 
-//    public class RetriveMuseumCollectionDetailDataArabic extends AsyncTask<Void, Void, List<MuseumCollectionDetailTableArabic>> {
-//        private WeakReference<CollectionDetailsActivity> activityReference;
-//        int language;
-//
-//        RetriveMuseumCollectionDetailDataArabic(CollectionDetailsActivity context, int appLanguage) {
-//            activityReference = new WeakReference<>(context);
-//            language = appLanguage;
-//        }
-//
-//        @Override
-//        protected void onPreExecute() {
-//            progressBar.setVisibility(View.VISIBLE);
-//        }
-//
-//        @Override
-//        protected List<MuseumCollectionDetailTableArabic> doInBackground(Void... voids) {
-//            return activityReference.get().qmDatabase.getMuseumCollectionDetailDao().
-//                    getAllDataFromMuseumDetailArabicTable(categoryName);
-//        }
-//
-//        @Override
-//        protected void onPostExecute(List<MuseumCollectionDetailTableArabic> museumCollectionDetailTableArabics) {
-//            collectionDetailsList.clear();
-//            if (museumCollectionDetailTableArabics.size() > 0) {
-//                for (int i = 0; i < museumCollectionDetailTableArabics.size(); i++) {
-//                    CollectionDetailsList collectionDetailsList1 = new CollectionDetailsList(museumCollectionDetailTableArabics.get(i).getDetail_title(), museumCollectionDetailTableArabics.get(i).getDetail_about(),
-//                            museumCollectionDetailTableArabics.get(i).getDetail_image1(),
-//                            museumCollectionDetailTableArabics.get(i).getDetail_image2(),
-//                            museumCollectionDetailTableArabics.get(i).getDetail_description1(),
-//                            museumCollectionDetailTableArabics.get(i).getDetail_description2(),
-//                            museumCollectionDetailTableArabics.get(i).getDetail_description3(),
-//                            museumCollectionDetailTableArabics.get(i).getCategory_id());
-//                    collectionDetailsList.add(i, collectionDetailsList1);
-//
-//                }
-//                detailLyout.setVisibility(View.VISIBLE);
-//                mAdapter.notifyDataSetChanged();
-//                progressBar.setVisibility(View.GONE);
-//            } else {
-//                progressBar.setVisibility(View.GONE);
-//                detailLyout.setVisibility(View.GONE);
-//                noResultFoundLayout.setVisibility(View.VISIBLE);
-//            }
-//        }
-//    }
+    }
+
+
+    public class RetriveMuseumCollectionDetailDataEnglish extends AsyncTask<Void, Void, List<MuseumCollectionDetailTableEnglish>> {
+        private WeakReference<CollectionDetailsActivity> activityReference;
+        int language;
+
+        RetriveMuseumCollectionDetailDataEnglish(CollectionDetailsActivity context, int appLanguage) {
+            activityReference = new WeakReference<>(context);
+            language = appLanguage;
+        }
+
+        @Override
+        protected void onPreExecute() {
+            progressBar.setVisibility(View.VISIBLE);
+        }
+
+        @Override
+        protected List<MuseumCollectionDetailTableEnglish> doInBackground(Void... voids) {
+            return activityReference.get().qmDatabase.getMuseumCollectionDetailDao().
+                    getAllDataFromMuseumDetailEnglishTable(categoryName);
+        }
+
+        @Override
+        protected void onPostExecute(List<MuseumCollectionDetailTableEnglish> museumCollectionListTableEnglishes) {
+            collectionDetailsList.clear();
+            if (museumCollectionListTableEnglishes.size() > 0) {
+                for (int i = 0; i < museumCollectionListTableEnglishes.size(); i++) {
+                    CollectionDetailsList collectionDetailsList1 = new CollectionDetailsList(museumCollectionListTableEnglishes.get(i).getDetail_title(),
+                            museumCollectionListTableEnglishes.get(i).getDetail_image1(),
+                            museumCollectionListTableEnglishes.get(i).getDetail_description1(),
+                            museumCollectionListTableEnglishes.get(i).getCategory_id());
+                    collectionDetailsList.add(i, collectionDetailsList1);
+
+                }
+                detailLyout.setVisibility(View.VISIBLE);
+                mAdapter.notifyDataSetChanged();
+                progressBar.setVisibility(View.GONE);
+            } else {
+                progressBar.setVisibility(View.GONE);
+                detailLyout.setVisibility(View.GONE);
+                noResultFoundLayout.setVisibility(View.VISIBLE);
+            }
+        }
+    }
+
+
+    public class RetriveMuseumCollectionDetailDataArabic extends AsyncTask<Void, Void, List<MuseumCollectionDetailTableArabic>> {
+        private WeakReference<CollectionDetailsActivity> activityReference;
+        int language;
+
+        RetriveMuseumCollectionDetailDataArabic(CollectionDetailsActivity context, int appLanguage) {
+            activityReference = new WeakReference<>(context);
+            language = appLanguage;
+        }
+
+        @Override
+        protected void onPreExecute() {
+            progressBar.setVisibility(View.VISIBLE);
+        }
+
+        @Override
+        protected List<MuseumCollectionDetailTableArabic> doInBackground(Void... voids) {
+            return activityReference.get().qmDatabase.getMuseumCollectionDetailDao().
+                    getAllDataFromMuseumDetailArabicTable(categoryName);
+        }
+
+        @Override
+        protected void onPostExecute(List<MuseumCollectionDetailTableArabic> museumCollectionDetailTableArabics) {
+            collectionDetailsList.clear();
+            if (museumCollectionDetailTableArabics.size() > 0) {
+                for (int i = 0; i < museumCollectionDetailTableArabics.size(); i++) {
+                    CollectionDetailsList collectionDetailsList1 = new CollectionDetailsList(museumCollectionDetailTableArabics.get(i).getDetail_title(),
+                            museumCollectionDetailTableArabics.get(i).getDetail_image1(),
+                            museumCollectionDetailTableArabics.get(i).getDetail_description1(),
+                            museumCollectionDetailTableArabics.get(i).getCategory_id());
+                    collectionDetailsList.add(i, collectionDetailsList1);
+
+                }
+                detailLyout.setVisibility(View.VISIBLE);
+                mAdapter.notifyDataSetChanged();
+                progressBar.setVisibility(View.GONE);
+            } else {
+                progressBar.setVisibility(View.GONE);
+                detailLyout.setVisibility(View.GONE);
+                noResultFoundLayout.setVisibility(View.VISIBLE);
+            }
+        }
+    }
 
 
 }
