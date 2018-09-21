@@ -78,8 +78,5 @@ public interface APIInterface {
     @GET("{language}/mobile_api/collection_ws.json")
     Call<ArrayList<CollectionDetailsList>> getMuseumCollectionDetails(@Path("language") String language,
                                                                       @Query("category") String category);
-//    @GET("{language}/mobile_api/collection_ws.json")
-//    Call<ArrayList<CollectionDetailsList>> getMuseumCollectionDetails2(@Path("language") String language,
-//                                                                      @Query("category") String category);
 
 }
