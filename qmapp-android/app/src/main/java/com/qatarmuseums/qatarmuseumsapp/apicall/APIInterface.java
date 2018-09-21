@@ -50,7 +50,7 @@ public interface APIInterface {
     @GET("{language}/mobile_api/park_service_combined.json")
     Call<ArrayList<ParkList>> getParkDetails(@Path("language") String language);
 
-    @GET("{language}/mobile_api/museum_collection_category.php")
+    @GET("{language}/mobile_api/museum_collection_category.json")
     Call<ArrayList<CommonModel>> getCollectionList(@Path("language") String language,
                                                        @Query("museum_id") String museumId);
 
@@ -75,8 +75,11 @@ public interface APIInterface {
     @GET("{language}/museum_landing.php")
     Call<ArrayList<SliderImageModel>> getMuseumSliderImages(@Path("language") String language,
                                                             @Query("mid") String mid);
-    @GET("{language}/mobile_api/collection_by_category.php")
+    @GET("{language}/mobile_api/collection_ws.json")
     Call<ArrayList<CollectionDetailsList>> getMuseumCollectionDetails(@Path("language") String language,
                                                                       @Query("category") String category);
+//    @GET("{language}/mobile_api/collection_ws.json")
+//    Call<ArrayList<CollectionDetailsList>> getMuseumCollectionDetails2(@Path("language") String language,
+//                                                                      @Query("category") String category);
 
 }
