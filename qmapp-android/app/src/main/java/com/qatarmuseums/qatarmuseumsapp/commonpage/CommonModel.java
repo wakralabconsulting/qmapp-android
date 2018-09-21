@@ -69,13 +69,12 @@ public class CommonModel {
         this.longitude = longitude;
     }
 
-    public CommonModel(String name, String image, String description, String museumId,
-                       long category) {
+    public CommonModel(String name, String image, String description, String museumId
+                       ) {
         this.name = name;
         this.image = image;
         this.description = description;
         this.museumId = museumId;
-        this.category = category;
     }
 
     public CommonModel(String name, String id, String location, String image,
