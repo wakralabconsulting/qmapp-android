@@ -17,6 +17,7 @@ import android.widget.TextView;
 
 import com.qatarmuseums.qatarmuseumsapp.R;
 import com.qatarmuseums.qatarmuseumsapp.floormap.FloorMapActivity;
+import com.qatarmuseums.qatarmuseumsapp.objectpreview.ObjectPreviewActivity;
 
 public class SelfGuidedStartPageActivity extends AppCompatActivity {
     FrameLayout mainLayout;
@@ -41,6 +42,23 @@ public class SelfGuidedStartPageActivity extends AppCompatActivity {
         startBtn = (Button) findViewById(R.id.start_btn);
         zoomOutAnimation = AnimationUtils.loadAnimation(getApplicationContext(),
                 R.anim.zoom_out);
+        zoomOutAnimation.setAnimationListener(new Animation.AnimationListener() {
+            @Override
+            public void onAnimationStart(Animation animation) {
+
+            }
+
+            @Override
+            public void onAnimationEnd(Animation animation) {
+                Intent i = new Intent(SelfGuidedStartPageActivity.this, ObjectPreviewActivity.class);
+                startActivity(i);
+            }
+
+            @Override
+            public void onAnimationRepeat(Animation animation) {
+
+            }
+        });
         intent = getIntent();
 
         tourId = intent.getStringExtra("ID");

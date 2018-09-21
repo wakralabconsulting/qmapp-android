@@ -25,6 +25,7 @@ import com.qatarmuseums.qatarmuseumsapp.commonpage.CommonActivity;
 import com.qatarmuseums.qatarmuseumsapp.culturepass.CulturePassActivity;
 import com.qatarmuseums.qatarmuseumsapp.education.EducationActivity;
 import com.qatarmuseums.qatarmuseumsapp.notification.NotificationActivity;
+import com.qatarmuseums.qatarmuseumsapp.objectpreview.ObjectPreviewActivity;
 import com.qatarmuseums.qatarmuseumsapp.park.ParkActivity;
 import com.qatarmuseums.qatarmuseumsapp.settings.SettingsActivity;
 import com.qatarmuseums.qatarmuseumsapp.tourguide.TourGuideActivity;
@@ -326,7 +327,6 @@ public class BaseActivity extends AppCompatActivity
 
             case R.id.sidemenu_settings_layout:
             case R.id.sidemenu_settings_icon:
-                // navigation drawer settings action
                 touchListnerForLayout(sidemenuSettingsLayout);
                 Intent settingsIntent = new Intent(this, SettingsActivity.class);
                 startActivity(settingsIntent);

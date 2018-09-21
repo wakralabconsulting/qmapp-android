@@ -15,6 +15,7 @@ import android.widget.TextView;
 import com.bumptech.glide.load.engine.Resource;
 import com.qatarmuseums.qatarmuseumsapp.R;
 import com.qatarmuseums.qatarmuseumsapp.floormap.FloorMapActivity;
+import com.qatarmuseums.qatarmuseumsapp.objectpreview.ObjectPreviewActivity;
 
 public class TourGuideStartPageActivity extends AppCompatActivity {
     FrameLayout mainLayout;
@@ -67,6 +68,7 @@ public class TourGuideStartPageActivity extends AppCompatActivity {
                 return false;
             }
         });
+
 
     }
 }
