@@ -15,19 +15,16 @@ public class MuseumCollectionListTableEnglish {
     @ColumnInfo()
     private String museum_id;
     @ColumnInfo()
-    private long category;
-    @ColumnInfo()
     private String collection_description;
 
 
 
     public MuseumCollectionListTableEnglish(@NonNull String name, String image,
-                                            String museum_id, long category,
+                                            String museum_id,
                                             String collection_description) {
         this.name = name;
         this.image = image;
         this.museum_id = museum_id;
-        this.category = category;
         this.collection_description = collection_description;
 
     }
@@ -57,14 +54,6 @@ public class MuseumCollectionListTableEnglish {
         this.museum_id = museum_id;
     }
 
-    public long getCategory() {
-        return category;
-    }
-
-    public void setCategory(long category) {
-        this.category = category;
-    }
-
     public String getCollection_description() {
         return collection_description;
     }
@@ -82,7 +71,6 @@ public class MuseumCollectionListTableEnglish {
                 "name ='" + name + '\'' +
                 ", image='" + image + '\'' +
                 ",museum_id='"+museum_id+'\''+
-                "category ='" + category + '\'' +
                 ", collection_description='" + collection_description + '\'' +
                 '}';
     }
