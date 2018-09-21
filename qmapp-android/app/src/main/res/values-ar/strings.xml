@@ -164,8 +164,8 @@
     <string name="tourguide_title_desc">Welcome to Qatar Museum Premises. \n Explore the architrcture and the \nobjects on display. \n Scan the QR codes available on the \ngalleries for more information.</string>
     <!--////////////////////// check-->
     <string name="sidemenu_text">Sidemenu</string>
-    <string name="change_language_dialog_title">Change Language?</string>
-    <string name="change_language_button_text">Continue</string>
+    <string name="change_language_dialog_title">تغيير اللغة</string>
+    <string name="change_language_button_text">المتابعة</string>
     <string name="contact_mail">info@mia.org.qa</string>
     <string name="for_more_information_text">For more information and to make a reservation, visit <u>MIA.</u></string>
     <string name="museum">Museum</string>

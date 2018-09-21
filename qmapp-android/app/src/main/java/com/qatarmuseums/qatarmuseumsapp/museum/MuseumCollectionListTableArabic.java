@@ -14,17 +14,14 @@ public class MuseumCollectionListTableArabic {
     @ColumnInfo()
     private String museum_id;
     @ColumnInfo()
-    private long category;
-    @ColumnInfo()
     private String collection_description;
 
 
-    public MuseumCollectionListTableArabic(@NonNull String name, String image, String museum_id, long category,
+    public MuseumCollectionListTableArabic(@NonNull String name, String image, String museum_id,
                                            String collection_description) {
         this.name = name;
         this.image = image;
         this.museum_id = museum_id;
-        this.category = category;
         this.collection_description = collection_description;
 
     }
@@ -50,14 +47,6 @@ public class MuseumCollectionListTableArabic {
         return museum_id;
     }
 
-    public long getCategory() {
-        return category;
-    }
-
-    public void setCategory(long category) {
-        this.category = category;
-    }
-
     public String getCollection_description() {
         return collection_description;
     }
@@ -79,7 +68,6 @@ public class MuseumCollectionListTableArabic {
                 "name ='" + name + '\'' +
                 ", image='" + image + '\'' +
                 ",museum_id='"+museum_id+'\''+
-                "category ='" + category + '\'' +
                 ", collection_description='" + collection_description + '\'' +
                 '}';
     }
