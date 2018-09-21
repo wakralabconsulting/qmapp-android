@@ -265,20 +265,20 @@ public class CollectionDetailsActivity extends AppCompatActivity {
                 if (collectionDetailsList != null) {
                     if (language.equals("en")) {
                         for (int i = 0; i < collectionDetailsList.size(); i++) {
-                            museumCollectionDetailTableEnglish = new MuseumCollectionDetailTableEnglish(collectionDetailsList.get(i).getCategoryId(),collectionDetailsList.get(i).getMainTitle(),
+                            museumCollectionDetailTableEnglish = new MuseumCollectionDetailTableEnglish(collectionDetailsList.get(i).getCategoryId(), collectionDetailsList.get(i).getMainTitle(),
                                     collectionDetailsList.get(i).getAbout(), collectionDetailsList.get(i).getImage1(),
                                     collectionDetailsList.get(i).getImage2(), collectionDetailsList.get(i).getFirstDescription(),
                                     collectionDetailsList.get(i).getSecondDescription(), collectionDetailsList.get(i).getThirdDescription()
-                                    );
+                            );
                             activityReference.get().qmDatabase.getMuseumCollectionDetailDao().insertEnglishTable(museumCollectionDetailTableEnglish);
                         }
                     } else {
                         for (int i = 0; i < collectionDetailsList.size(); i++) {
-                            museumCollectionDetailTableArabic = new MuseumCollectionDetailTableArabic(collectionDetailsList.get(i).getCategoryId(),collectionDetailsList.get(i).getMainTitle(),
+                            museumCollectionDetailTableArabic = new MuseumCollectionDetailTableArabic(collectionDetailsList.get(i).getCategoryId(), collectionDetailsList.get(i).getMainTitle(),
                                     collectionDetailsList.get(i).getAbout(), collectionDetailsList.get(i).getImage1(),
                                     collectionDetailsList.get(i).getImage2(), collectionDetailsList.get(i).getFirstDescription(),
                                     collectionDetailsList.get(i).getSecondDescription(), collectionDetailsList.get(i).getThirdDescription()
-                                    );
+                            );
                             activityReference.get().qmDatabase.getMuseumCollectionDetailDao().insertArabicTable(museumCollectionDetailTableArabic);
                         }
                     }
@@ -317,11 +317,11 @@ public class CollectionDetailsActivity extends AppCompatActivity {
 
                             } else {
                                 //create row with corresponding name
-                                museumCollectionDetailTableEnglish = new MuseumCollectionDetailTableEnglish(collectionDetailsList.get(i).getCategoryId(),collectionDetailsList.get(i).getMainTitle(),
+                                museumCollectionDetailTableEnglish = new MuseumCollectionDetailTableEnglish(collectionDetailsList.get(i).getCategoryId(), collectionDetailsList.get(i).getMainTitle(),
                                         collectionDetailsList.get(i).getAbout(), collectionDetailsList.get(i).getImage1(),
                                         collectionDetailsList.get(i).getImage2(), collectionDetailsList.get(i).getFirstDescription(),
                                         collectionDetailsList.get(i).getSecondDescription(), collectionDetailsList.get(i).getThirdDescription()
-                                      );
+                                );
                                 activityReference.get().qmDatabase.getMuseumCollectionDetailDao().insertEnglishTable(museumCollectionDetailTableEnglish);
 
                             }
@@ -336,11 +336,11 @@ public class CollectionDetailsActivity extends AppCompatActivity {
 
                             } else {
                                 //create row with corresponding name
-                                museumCollectionDetailTableArabic = new MuseumCollectionDetailTableArabic(  collectionDetailsList.get(i).getCategoryId(),collectionDetailsList.get(i).getMainTitle(),
+                                museumCollectionDetailTableArabic = new MuseumCollectionDetailTableArabic(collectionDetailsList.get(i).getCategoryId(), collectionDetailsList.get(i).getMainTitle(),
                                         collectionDetailsList.get(i).getAbout(), collectionDetailsList.get(i).getImage1(),
                                         collectionDetailsList.get(i).getImage2(), collectionDetailsList.get(i).getFirstDescription(),
                                         collectionDetailsList.get(i).getSecondDescription(), collectionDetailsList.get(i).getThirdDescription()
-                           );
+                                );
                                 activityReference.get().qmDatabase.getMuseumCollectionDetailDao().insertArabicTable(museumCollectionDetailTableArabic);
 
                             }
