@@ -2,27 +2,22 @@ package com.qatarmuseums.qatarmuseumsapp.splashscreen;
 
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.graphics.drawable.Drawable;
 import android.os.Bundle;
-import android.os.Handler;
 import android.preference.PreferenceManager;
-import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
-import android.widget.ImageView;
 
-import com.bumptech.glide.load.engine.DiskCacheStrategy;
-import com.bumptech.glide.load.resource.gif.GifDrawable;
-import com.bumptech.glide.request.RequestOptions;
-import com.bumptech.glide.request.target.DrawableImageViewTarget;
-import com.bumptech.glide.request.transition.Transition;
 import com.qatarmuseums.qatarmuseumsapp.R;
-import com.qatarmuseums.qatarmuseumsapp.home.GlideApp;
 import com.qatarmuseums.qatarmuseumsapp.home.HomeActivity;
 import com.qatarmuseums.qatarmuseumsapp.utils.Util;
 
+import java.io.IOException;
+
+import pl.droidsonroids.gif.AnimationListener;
+import pl.droidsonroids.gif.GifDrawable;
+import pl.droidsonroids.gif.GifImageView;
+
 
 public class SplashActivity extends AppCompatActivity {
-    private ImageView gifView;
     Intent intent;
     private SharedPreferences qmPreferences;
     private int appLanguage;
@@ -32,31 +27,33 @@ public class SplashActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
 
         setContentView(R.layout.activity_splash);
+        GifDrawable gifFromResource = null;
+        try {
+            gifFromResource = new GifDrawable(getResources(), R.raw.qm_logo);
 
-        gifView = (ImageView) findViewById(R.id.gif_view);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        if (gifFromResource != null) {
+            gifFromResource.setLoopCount(1);
+            gifFromResource.addAnimationListener(new AnimationListener() {
+                @Override
+                public void onAnimationCompleted(int loopNumber) {
+                    intent = new Intent(SplashActivity.this, HomeActivity.class);
+                    startActivity(intent);
+                    finish();
+                }
+            });
+        } else {
+            intent = new Intent(SplashActivity.this, HomeActivity.class);
+            startActivity(intent);
+            finish();
+        }
+
         qmPreferences = PreferenceManager.getDefaultSharedPreferences(this);
         appLanguage = qmPreferences.getInt("AppLanguage", 1);
         new Util().setLocale(this, appLanguage);
-        GlideApp.with(this)
-                .load(R.raw.qm_logo)
-                .apply(RequestOptions.diskCacheStrategyOf(DiskCacheStrategy.NONE))
-                .into(new DrawableImageViewTarget(gifView) {
-                    @Override
-                    public void onResourceReady(Drawable resource, @Nullable Transition<? super Drawable> transition) {
-                        if (resource instanceof GifDrawable) {
-                            ((GifDrawable) resource).setLoopCount(1);
-                        }
-                        super.onResourceReady(resource, transition);
-                    }
-                });
-        intent = new Intent(this, HomeActivity.class);
-        new Handler().postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                startActivity(intent);
-                finish();
-            }
-        }, 2800);
+
     }
 
     @Override
