@@ -4,7 +4,9 @@ import android.arch.persistence.room.Dao;
 import android.arch.persistence.room.Insert;
 import android.arch.persistence.room.Query;
 import android.arch.persistence.room.Update;
+import android.support.annotation.NonNull;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Dao
@@ -33,29 +35,38 @@ public interface MuseumAboutTableDao {
     @Query("SELECT * FROM museumabouttablearabic WHERE museum_id = :idFromAPI")
     MuseumAboutTableArabic getMuseumAboutDataArabic(int idFromAPI);
 
-    @Query("UPDATE museumabouttableenglish SET museum_title = :museumtitleFromApi," +
-            "museum_subtitle = :museumSubtitleFromApi,museum_image = :museumImageFromApi, " +
-            "museum_short_description = :museumShortDescriptionFromApi,museum_long_description = :museumLongDescriptionFromApi, " +
-            "museum_opening_time = :museumOpeningTimeFromApi,museum_lattitude = :museumLattitude,museum_longitude = :museumLongitude," +
-            " museum_contact = :museumContactFromApi,museum_filter = :museumFilterFromApi WHERE museum_id=:idFromApi")
-    void updateMuseumAboutDataEnglish(String museumtitleFromApi,
-                                      String museumSubtitleFromApi, String museumImageFromApi,
-                                      String museumShortDescriptionFromApi,
-                                      String museumLongDescriptionFromApi, String museumOpeningTimeFromApi,
-                                      String museumLattitude,String museumLongitude, String museumContactFromApi,
-                                      String museumFilterFromApi, String idFromApi);
+    @Query("UPDATE museumabouttableenglish SET museum_name = :museumnameFromApi," +
+            "tourguide_available = :tourguideAvailableFromApi,short_description = :museumshortDescriptionFromApi," +
+            "long_description = :museumLongDescriptionFromApi, " +
+            "museum_image = :museumImageFromApi,museum_contact_number = :museumContactNumberFromApi, " +
+            "museum_contact_email = :museumContactEmailFromApi,museum_lattitude = :museumLattitude," +
+            "museum_longitude = :museumLongitude," +
+            "tourguide_availability = :museumtourguideAvailabilityFromApi," +
+            "museum_subtitle = :museumSubtitleFromApi," +
+            "museum_opening_time = :museumOpeningTimeFromApi WHERE museum_id=:idFromApi")
+    void updateMuseumAboutDataEnglish(String museumnameFromApi,
+                                      String tourguideAvailableFromApi, String museumshortDescriptionFromApi,
+                                      String museumLongDescriptionFromApi,
+                                      String museumImageFromApi, String museumContactNumberFromApi,
+                                      String museumContactEmailFromApi, String museumLattitude,
+                                      String museumLongitude, String museumtourguideAvailabilityFromApi,
+                                      String museumSubtitleFromApi, String museumOpeningTimeFromApi, long idFromApi);
 
-    @Query("UPDATE museumabouttablearabic SET museum_title = :museumtitleFromApi," +
-            "museum_subtitle = :museumSubtitleFromApi,museum_image = :museumImageFromApi, " +
-            "museum_short_description = :museumShortDescriptionFromApi,museum_long_description = :museumLongDescriptionFromApi, " +
-            "museum_opening_time = :museumOpeningTimeFromApi,museum_lattitude = :museumLattitude,museum_longitude = :museumLongitude," +
-            " museum_contact = :museumContactFromApi,museum_filter = :museumFilterFromApi WHERE museum_id=:idFromApi")
-    void updateMuseumAboutDataArabic(String museumtitleFromApi,
-                                     String museumSubtitleFromApi, String museumImageFromApi,
-                                     String museumShortDescriptionFromApi,
-                                     String museumLongDescriptionFromApi, String museumOpeningTimeFromApi,
-                                     String museumLattitude, String museumLongitude, String museumContactFromApi,
-                                     String museumFilterFromApi, String idFromApi);
+    @Query("UPDATE museumabouttablearabic SET museum_name = :museumnameFromApi," +
+            "tourguide_available = :tourguideAvailableFromApi,short_description = :museumShortDescriptionFromApi,long_description = :museumLongDescriptionFromApi, " +
+            "museum_image = :museumImageFromApi,museum_contact_number = :museumContactNumberFromApi, " +
+            "museum_contact_email = :museumContactEmailFromApi,museum_lattitude = :museumLattitude," +
+            "museum_longitude = :museumLongitude," +
+            "tourguide_availability = :museumtourguideAvailabilityFromApi," +
+            "museum_subtitle = :museumSubtitleFromApi," +
+            "museum_opening_time = :museumOpeningTimeFromApi WHERE museum_id=:idFromApi")
+    void updateMuseumAboutDataArabic(String museumnameFromApi,
+                                     String tourguideAvailableFromApi, String museumShortDescriptionFromApi,
+                                     String museumLongDescriptionFromApi,
+                                     String museumImageFromApi, String museumContactNumberFromApi,
+                                     String museumContactEmailFromApi, String museumLattitude,
+                                     String museumLongitude, String museumtourguideAvailabilityFromApi,
+                                     String museumSubtitleFromApi, String museumOpeningTimeFromApi, long idFromApi);
 
     @Insert
     void insert(MuseumAboutTableEnglish museumAboutTableEnglish);
