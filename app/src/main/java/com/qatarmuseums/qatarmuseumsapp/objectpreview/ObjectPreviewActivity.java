@@ -14,6 +14,7 @@ import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.ImageView;
 
+import com.booking.rtlviewpager.RtlViewPager;
 import com.qatarmuseums.qatarmuseumsapp.R;
 import com.qatarmuseums.qatarmuseumsapp.floormap.FloorMapActivity;
 
@@ -38,7 +39,7 @@ public class ObjectPreviewActivity extends AppCompatActivity {
         shareBtn = findViewById(R.id.share_btn);
         locationBtn = findViewById(R.id.location_btn);
         setSupportActionBar(toolbar);
-        final ViewPager pager = findViewById(R.id.pager);
+        final ViewPager pager = (RtlViewPager) findViewById(R.id.pager);
         assert pager != null;
         pager.setAdapter(new PagerAdapter(getSupportFragmentManager()));
         stepIndicatorRecyclerView = findViewById(R.id.idRecyclerViewHorizontalList);
