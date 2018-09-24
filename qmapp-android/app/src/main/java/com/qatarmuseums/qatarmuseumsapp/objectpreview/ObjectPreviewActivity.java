@@ -10,6 +10,8 @@ import android.support.v7.widget.Toolbar;
 import android.util.DisplayMetrics;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.widget.ImageView;
 
 import com.qatarmuseums.qatarmuseumsapp.R;
@@ -25,7 +27,7 @@ public class ObjectPreviewActivity extends AppCompatActivity {
     private RecyclerView stepIndicatorRecyclerView;
     private StepIndicatorAdapter stepIndicatorAdapter;
     private List<CurrentIndicatorPosition> currentIndicatorPositionList = new ArrayList<>();
-
+    Animation zoomOutAnimation;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -41,26 +43,31 @@ public class ObjectPreviewActivity extends AppCompatActivity {
         pager.setAdapter(new PagerAdapter(getSupportFragmentManager()));
         stepIndicatorRecyclerView = findViewById(R.id.idRecyclerViewHorizontalList);
         stepIndicatorAdapter = new StepIndicatorAdapter(currentIndicatorPositionList, 5, getScreenWidth());
+        currentIndicatorPositionList.clear();
+        CurrentIndicatorPosition c = new CurrentIndicatorPosition(0);
+        currentIndicatorPositionList.add(c);
+        stepIndicatorAdapter.notifyDataSetChanged();
         LinearLayoutManager horizontalLayoutManager = new LinearLayoutManager(ObjectPreviewActivity.this, LinearLayoutManager.HORIZONTAL, false);
         stepIndicatorRecyclerView.setLayoutManager(horizontalLayoutManager);
         stepIndicatorRecyclerView.setAdapter(stepIndicatorAdapter);
         RecyclerView.OnItemTouchListener disabler = new RecyclerViewDisabler();
         stepIndicatorRecyclerView.addOnItemTouchListener(disabler);
-
+        zoomOutAnimation = AnimationUtils.loadAnimation(getApplicationContext(),
+                R.anim.zoom_out_more);
 
         pager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
             @Override
             public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
-                currentIndicatorPositionList.clear();
-                CurrentIndicatorPosition c = new CurrentIndicatorPosition(position);
-                currentIndicatorPositionList.add(c);
-                stepIndicatorAdapter.notifyDataSetChanged();
+
 
             }
 
             @Override
             public void onPageSelected(int position) {
-
+                currentIndicatorPositionList.clear();
+                CurrentIndicatorPosition c = new CurrentIndicatorPosition(position);
+                currentIndicatorPositionList.add(c);
+                stepIndicatorAdapter.notifyDataSetChanged();
             }
 
             @Override
@@ -76,17 +83,51 @@ public class ObjectPreviewActivity extends AppCompatActivity {
 
             }
         });
+        backBtn.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                switch (event.getAction()) {
+                    case MotionEvent.ACTION_DOWN:
+                        backBtn.startAnimation(zoomOutAnimation);
+                        break;
+                }
+                return false;
+            }
+        });
         shareBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
 
             }
         });
+        shareBtn.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                switch (event.getAction()) {
+                    case MotionEvent.ACTION_DOWN:
+                        shareBtn.startAnimation(zoomOutAnimation);
+                        break;
+                }
+                return false;
+            }
+        });
+
         locationBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 Intent i = new Intent(ObjectPreviewActivity.this, FloorMapActivity.class);
                 startActivity(i);
+            }
+        });
+        locationBtn.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                switch (event.getAction()) {
+                    case MotionEvent.ACTION_DOWN:
+                        locationBtn.startAnimation(zoomOutAnimation);
+                        break;
+                }
+                return false;
             }
         });
 

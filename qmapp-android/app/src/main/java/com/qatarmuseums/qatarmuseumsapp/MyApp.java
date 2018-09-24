@@ -7,6 +7,8 @@ import android.content.res.Resources;
 import android.preference.PreferenceManager;
 import android.util.DisplayMetrics;
 
+import com.squareup.leakcanary.LeakCanary;
+
 import java.util.Locale;
 
 /**
@@ -19,7 +21,13 @@ public class MyApp extends Application {
     @Override
     public void onCreate() {
         super.onCreate();
-
+        if (LeakCanary.isInAnalyzerProcess(this)) {
+            // This process is dedicated to LeakCanary for heap analysis.
+            // You should not init your app in this process.
+            return;
+        }
+        LeakCanary.install(this);
+        // Normal app init code...
         SharedPreferences qmPreferences = PreferenceManager.getDefaultSharedPreferences(this);
         int appLanguage = qmPreferences.getInt("AppLanguage", 1);
         if (appLanguage == 2) {
