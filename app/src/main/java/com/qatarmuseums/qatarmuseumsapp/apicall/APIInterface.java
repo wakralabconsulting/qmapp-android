@@ -61,9 +61,9 @@ public interface APIInterface {
                                                        @Header("age") String ageGroup,
                                                        @Header("ptype") String programType);
 
-    @GET("{language}/about.php")
+    @GET("{language}/mobile_api/museum-detail.json")
     Call<ArrayList<MuseumAboutModel>> getMuseumAboutDetails(@Path("language") String language,
-                                                            @Query("mid") String mid);
+                                                            @Query("nid") String nid);
 
     @GET("{language}/geturl.php")
     Call<ArrayList<EducationEvents>> getEducationCalendarDetails(@Path("language") String language,
