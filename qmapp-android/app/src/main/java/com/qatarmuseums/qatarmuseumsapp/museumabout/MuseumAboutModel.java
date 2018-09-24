@@ -2,136 +2,103 @@ package com.qatarmuseums.qatarmuseumsapp.museumabout;
 
 import com.google.gson.annotations.SerializedName;
 
+import java.util.ArrayList;
+
 public class MuseumAboutModel {
-    @SerializedName("title")
-    private String title;
-    @SerializedName("mid")
+    @SerializedName("name")
+    private String name;
+    @SerializedName("id")
     private String museumId;
-    @SerializedName("image")
-    private String image;
-    @SerializedName("longitude")
+    @SerializedName("tourguide_available")
+    private String tourGuideAvailable;
+    @SerializedName("Mobile_descriptif")
+    private ArrayList<String> descriptionList;
+    @SerializedName("Multimedia_file")
+    private ArrayList<String> imageList;
+    @SerializedName("contact_number")
+    private String contactNumber;
+    @SerializedName("contact_email")
+    private String contactEmail;
+    @SerializedName("mobile_longtitude")
     private String longitude;
-    @SerializedName("latitude")
+    @SerializedName("mobile_latitude")
     private String latitude;
-    @SerializedName("short_desc")
-    private String shortDescription;
-    @SerializedName("long_desc")
-    private String longDescription;
-    @SerializedName("subtitle")
+    @SerializedName("tour_guide_availability")
+    private String tourGuideAvailability;
+    @SerializedName("Subtitle")
     private String subTitle;
-    @SerializedName("filter")
-    private String filter;
-    @SerializedName("contact")
-    private String contact;
     @SerializedName("opening_time")
     private String timingInfo;
 
     public MuseumAboutModel() {
     }
 
-    public MuseumAboutModel(String title, String museumId, String image,
-                            String longitude, String latitude, String shortDescription,
-                            String longDescription, String subTitle, String filter,
-                            String contact, String timingInfo) {
-        this.title = title;
+    public MuseumAboutModel(String name, String museumId, String tourGuideAvailable,
+                            ArrayList<String> descriptionList, ArrayList<String> imageList,
+                            String contactNumber, String contactEmail, String longitude,
+                            String latitude, String tourGuideAvailability, String subTitle,
+                            String timingInfo) {
+        this.name = name;
         this.museumId = museumId;
-        this.image = image;
+        this.tourGuideAvailable = tourGuideAvailable;
+        this.descriptionList = descriptionList;
+        this.imageList = imageList;
+        this.contactNumber = contactNumber;
+        this.contactEmail = contactEmail;
         this.longitude = longitude;
         this.latitude = latitude;
-        this.shortDescription = shortDescription;
-        this.longDescription = longDescription;
+        this.tourGuideAvailability = tourGuideAvailability;
         this.subTitle = subTitle;
-        this.filter = filter;
-        this.contact = contact;
         this.timingInfo = timingInfo;
     }
 
-    public String getTitle() {
-        return title;
-    }
 
-    public void setTitle(String title) {
-        this.title = title;
+    public String getName() {
+        return name;
     }
 
     public String getMuseumId() {
         return museumId;
     }
 
-    public void setMuseumId(String museumId) {
-        this.museumId = museumId;
+    public String getTourGuideAvailable() {
+        return tourGuideAvailable;
     }
 
-    public String getImage() {
-        return image;
+    public ArrayList<String> getDescriptionList() {
+        return descriptionList;
     }
 
-    public void setImage(String image) {
-        this.image = image;
+    public ArrayList<String> getImageList() {
+        return imageList;
+    }
+
+    public String getContactNumber() {
+        return contactNumber;
+    }
+
+    public String getContactEmail() {
+        return contactEmail;
     }
 
     public String getLongitude() {
         return longitude;
     }
 
-    public void setLongitude(String longitude) {
-        this.longitude = longitude;
-    }
-
     public String getLatitude() {
         return latitude;
     }
 
-    public void setLatitude(String latitude) {
-        this.latitude = latitude;
-    }
-
-    public String getShortDescription() {
-        return shortDescription;
-    }
-
-    public void setShortDescription(String shortDescription) {
-        this.shortDescription = shortDescription;
-    }
-
-    public String getLongDescription() {
-        return longDescription;
-    }
-
-    public void setLongDescription(String longDescription) {
-        this.longDescription = longDescription;
+    public String getTourGuideAvailability() {
+        return tourGuideAvailability;
     }
 
     public String getSubTitle() {
         return subTitle;
     }
 
-    public void setSubTitle(String subTitle) {
-        this.subTitle = subTitle;
-    }
-
-    public String getFilter() {
-        return filter;
-    }
-
-    public void setFilter(String filter) {
-        this.filter = filter;
-    }
-
-    public String getContact() {
-        return contact;
-    }
-
-    public void setContact(String contact) {
-        this.contact = contact;
-    }
-
     public String getTimingInfo() {
         return timingInfo;
-    }
-
-    public void setTimingInfo(String timingInfo) {
-        this.timingInfo = timingInfo;
     }
 }
 
