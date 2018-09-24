@@ -7,7 +7,6 @@ import com.qatarmuseums.qatarmuseumsapp.dining.DiningDetailModel;
 import com.qatarmuseums.qatarmuseumsapp.education.EducationEvents;
 import com.qatarmuseums.qatarmuseumsapp.heritage.HeritageOrExhibitionDetailModel;
 import com.qatarmuseums.qatarmuseumsapp.home.HomeList;
-import com.qatarmuseums.qatarmuseumsapp.museum.SliderImageModel;
 import com.qatarmuseums.qatarmuseumsapp.museumabout.MuseumAboutModel;
 import com.qatarmuseums.qatarmuseumsapp.museumcollectiondetails.CollectionDetailsList;
 import com.qatarmuseums.qatarmuseumsapp.park.ParkList;
@@ -72,10 +71,7 @@ public interface APIInterface {
                                                                  @Header("age") String ageGroup,
                                                                  @Header("ptype") String programType);
 
-    @GET("{language}/museum_landing.php")
-    Call<ArrayList<SliderImageModel>> getMuseumSliderImages(@Path("language") String language,
-                                                            @Query("mid") String mid);
-    @GET("{language}/mobile_api/collection_ws.json")
+     @GET("{language}/mobile_api/collection_ws.json")
     Call<ArrayList<CollectionDetailsList>> getMuseumCollectionDetails(@Path("language") String language,
                                                                       @Query("category") String category);
 
