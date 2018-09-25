@@ -29,15 +29,15 @@ public interface MuseumCollectionDetailTableDao {
 
     @Query("UPDATE museumcollectiondetailtableEnglish SET category_id = :categoryIdFromApi," +
             "detail_image1 = :image1FromApi," +
-            " detail_description1=:description1FromApi WHERE detail_title=:titleFromApi")
+            " detail_about=:aboutFromApi WHERE detail_title=:titleFromApi")
     void updateMuseumDetailTableEnglish(String categoryIdFromApi, String image1FromApi,
-                                      String description1FromApi,String titleFromApi);
+                                      String aboutFromApi,String titleFromApi);
 
     @Query("UPDATE museumcollectiondetailtableArabic SET category_id = :categoryIdFromApi," +
             "detail_image1 = :image1FromApi," +
-            " detail_description1=:description1FromApi WHERE detail_title=:titleFromApi")
+            " detail_about=:aboutFromApi WHERE detail_title=:titleFromApi")
     void updateMuseumDetailTableArabic(String categoryIdFromApi, String image1FromApi,
-                                       String description1FromApi,String titleFromApi);
+                                       String aboutFromApi,String titleFromApi);
 
 
     @Insert
