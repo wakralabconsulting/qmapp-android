@@ -3,6 +3,7 @@ package com.qatarmuseums.qatarmuseumsapp.museumcollectiondetails;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
+import android.support.v4.widget.NestedScrollView;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
@@ -60,7 +61,7 @@ public class CollectionDetailsActivity extends AppCompatActivity {
     TextView noResultFoundLayout;
 
     @BindView(R.id.details_layout)
-    ScrollView detailLyout;
+    NestedScrollView detailLyout;
 
     private Animation zoomOutAnimation;
     private CollectionDetailsAdapter mAdapter;
@@ -278,14 +279,14 @@ public class CollectionDetailsActivity extends AppCompatActivity {
                         for (int i = 0; i < collectionDetailsList.size(); i++) {
                             museumCollectionDetailTableEnglish = new MuseumCollectionDetailTableEnglish(collectionDetailsList.get(i).getCategoryName(), collectionDetailsList.get(i).getMainTitle(),
                                     collectionDetailsList.get(i).getImage1(),
-                                    collectionDetailsList.get(i).getFirstDescription());
+                                    collectionDetailsList.get(i).getAbout());
                             activityReference.get().qmDatabase.getMuseumCollectionDetailDao().insertEnglishTable(museumCollectionDetailTableEnglish);
                         }
                     } else {
                         for (int i = 0; i < collectionDetailsList.size(); i++) {
                             museumCollectionDetailTableArabic = new MuseumCollectionDetailTableArabic(collectionDetailsList.get(i).getCategoryName(), collectionDetailsList.get(i).getMainTitle(),
                                     collectionDetailsList.get(i).getImage1(),
-                                    collectionDetailsList.get(i).getFirstDescription());
+                                    collectionDetailsList.get(i).getAbout());
                             activityReference.get().qmDatabase.getMuseumCollectionDetailDao().insertArabicTable(museumCollectionDetailTableArabic);
                         }
                     }
@@ -326,7 +327,7 @@ public class CollectionDetailsActivity extends AppCompatActivity {
                                 //create row with corresponding name
                                 museumCollectionDetailTableEnglish = new MuseumCollectionDetailTableEnglish(collectionDetailsList.get(i).getCategoryName(), collectionDetailsList.get(i).getMainTitle(),
                                         collectionDetailsList.get(i).getImage1(),
-                                        collectionDetailsList.get(i).getFirstDescription());
+                                        collectionDetailsList.get(i).getAbout());
                                 activityReference.get().qmDatabase.getMuseumCollectionDetailDao().insertEnglishTable(museumCollectionDetailTableEnglish);
 
                             }
@@ -343,7 +344,7 @@ public class CollectionDetailsActivity extends AppCompatActivity {
                                 //create row with corresponding name
                                 museumCollectionDetailTableArabic = new MuseumCollectionDetailTableArabic(collectionDetailsList.get(i).getCategoryName(), collectionDetailsList.get(i).getMainTitle(),
                                         collectionDetailsList.get(i).getImage1(),
-                                        collectionDetailsList.get(i).getFirstDescription());
+                                        collectionDetailsList.get(i).getAbout());
                                 activityReference.get().qmDatabase.getMuseumCollectionDetailDao().insertArabicTable(museumCollectionDetailTableArabic);
 
                             }
@@ -375,7 +376,7 @@ public class CollectionDetailsActivity extends AppCompatActivity {
                 activityReference.get().qmDatabase.getMuseumCollectionDetailDao().updateMuseumDetailTableEnglish(
                         collectionDetailsList.get(position).getCategoryName(),
                         collectionDetailsList.get(position).getImage1(),
-                        collectionDetailsList.get(position).getFirstDescription(),
+                        collectionDetailsList.get(position).getAbout(),
                         collectionDetailsList.get(position).getMainTitle());
 
             } else {
@@ -383,7 +384,7 @@ public class CollectionDetailsActivity extends AppCompatActivity {
                 activityReference.get().qmDatabase.getMuseumCollectionDetailDao().updateMuseumDetailTableArabic(
                         collectionDetailsList.get(position).getCategoryName(),
                         collectionDetailsList.get(position).getImage1(),
-                        collectionDetailsList.get(position).getFirstDescription(),
+                        collectionDetailsList.get(position).getAbout(),
                         collectionDetailsList.get(position).getMainTitle());
 
             }
@@ -425,7 +426,7 @@ public class CollectionDetailsActivity extends AppCompatActivity {
                 for (int i = 0; i < museumCollectionListTableEnglishes.size(); i++) {
                     CollectionDetailsList collectionDetailsList1 = new CollectionDetailsList(museumCollectionListTableEnglishes.get(i).getDetail_title(),
                             museumCollectionListTableEnglishes.get(i).getDetail_image1(),
-                            museumCollectionListTableEnglishes.get(i).getDetail_description1(),
+                            museumCollectionListTableEnglishes.get(i).getDetail_about(),
                             museumCollectionListTableEnglishes.get(i).getCategory_id());
                     collectionDetailsList.add(i, collectionDetailsList1);
 
@@ -469,7 +470,7 @@ public class CollectionDetailsActivity extends AppCompatActivity {
                 for (int i = 0; i < museumCollectionDetailTableArabics.size(); i++) {
                     CollectionDetailsList collectionDetailsList1 = new CollectionDetailsList(museumCollectionDetailTableArabics.get(i).getDetail_title(),
                             museumCollectionDetailTableArabics.get(i).getDetail_image1(),
-                            museumCollectionDetailTableArabics.get(i).getDetail_description1(),
+                            museumCollectionDetailTableArabics.get(i).getDetail_about(),
                             museumCollectionDetailTableArabics.get(i).getCategory_id());
                     collectionDetailsList.add(i, collectionDetailsList1);
 
