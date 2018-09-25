@@ -73,7 +73,7 @@
     <string name="register_now_content">Thank you for Registering.Further\nDetails will be sent to you on your\nemail</string>
     <string name="opening_timings">OPENING TIMINGS</string>
     <string name="exhibition_timings">EXHIBITION TIMINGS</string>
-    <string name="open_in_google_maps">Click here to open in Google Maps</string>
+    <string name="open_in_google_maps">Click here to view location</string>
     <string name="contact_mail">info@mia.org.qa</string>
     <string name="for_more_information_text">For more information and to make a reservation, visit <u>MIA.</u></string>
     <string name="institution">Institution -</string>
