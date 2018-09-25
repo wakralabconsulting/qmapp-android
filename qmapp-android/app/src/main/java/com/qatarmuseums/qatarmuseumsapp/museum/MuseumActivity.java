@@ -12,6 +12,7 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 
 import android.support.v7.widget.SnapHelper;
+import android.util.DisplayMetrics;
 import android.view.Gravity;
 import android.view.View;
 import android.widget.ImageView;
@@ -90,8 +91,9 @@ public class MuseumActivity extends BaseActivity implements
         museumId = intent.getStringExtra("MUSEUM_ID");
         animCircleIndicator = (InfiniteIndicator) findViewById(R.id.main_indicator_default_circle);
         sliderPlaceholderImage = (ImageView) findViewById(R.id.ads_place_holder);
+
         museumHorizontalScrollViewAdapter = new MuseumHorizontalScrollViewAdapter(this,
-                museumHScrollModelList, intent.getStringExtra("MUSEUMTITLE"), museumId);
+                museumHScrollModelList, intent.getStringExtra("MUSEUMTITLE"), museumId,getScreenWidth());
         animCircleIndicator.setVisibility(View.GONE);
         if (appLanguage == english) {
             recyclerviewLayoutManager =
@@ -414,5 +416,11 @@ public class MuseumActivity extends BaseActivity implements
 
 
     }
-
+    public int getScreenWidth() {
+        DisplayMetrics displayMetrics = new DisplayMetrics();
+        getWindowManager().getDefaultDisplay().getMetrics(displayMetrics);
+        int width = displayMetrics.widthPixels;
+        width = width / 5;
+        return width;
+    }
 }
