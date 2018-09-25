@@ -5,26 +5,26 @@ import com.google.gson.annotations.SerializedName;
 public class CollectionDetailsList {
     @SerializedName("Title")
     private String mainTitle;
-    //    @SerializedName("about")
-//    private String about;
+    @SerializedName("Body")
+    private String about;
     @SerializedName("image")
     private String image1;
-    //    @SerializedName("image_main")
+//    @SerializedName("image_main")
 //    private String image2;
-    @SerializedName("Body")
-    private String firstDescription;
-    //    @SerializedName("highlight_description")
+//    @SerializedName("short_description")
+//    private String firstDescription;
+//    @SerializedName("highlight_description")
 //    private String secondDescription;
 //    @SerializedName("long_description")
 //    private String thirdDescription;
     @SerializedName("Category_collection")
     private String categoryName;
 
-    public CollectionDetailsList(String mainTitle, String image1, String firstDescription,
+    public CollectionDetailsList(String mainTitle, String image1, String about,
                                  String categoryName) {
         this.mainTitle = mainTitle;
         this.image1 = image1;
-        this.firstDescription = firstDescription;
+        this.about = about;
         this.categoryName = categoryName;
     }
     //    public CollectionDetailsList(String mainTitle, String about,
@@ -45,9 +45,9 @@ public class CollectionDetailsList {
         return mainTitle;
     }
 
-//    public String getAbout() {
-//        return about;
-//    }
+    public String getAbout() {
+        return about;
+    }
 
     public String getImage1() {
         return image1;
@@ -57,9 +57,9 @@ public class CollectionDetailsList {
 //        return image2;
 //    }
 
-    public String getFirstDescription() {
-        return firstDescription;
-    }
+//    public String getFirstDescription() {
+//        return firstDescription;
+//    }
 
 //    public String getSecondDescription() {
 //        return secondDescription;
