@@ -70,7 +70,6 @@ public class LocationActivity extends AppCompatActivity implements OnMapReadyCal
 
         googleMap.addMarker(new MarkerOptions()
                 .position(new LatLng(latitude, longitude))
-                .title("LinkedIn")
                 .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED)));
         googleMap.animateCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(latitude, longitude), 10));
 
