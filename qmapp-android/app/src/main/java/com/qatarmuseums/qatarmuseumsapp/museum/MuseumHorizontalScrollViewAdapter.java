@@ -31,6 +31,7 @@ public class MuseumHorizontalScrollViewAdapter extends RecyclerView.Adapter<Muse
     private Intent navigationIntent;
     String title;
     Util util;
+    private int screenWidth;
     private MuseumHScrollModel museumHScrollModel;
 
     @NonNull
@@ -38,6 +39,8 @@ public class MuseumHorizontalScrollViewAdapter extends RecyclerView.Adapter<Muse
     public MyViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View itemView = LayoutInflater.from(parent.getContext())
                 .inflate(R.layout.musuem_horizontal_scroll_page_list_row, parent, false);
+        itemView.setLayoutParams(new LinearLayout.LayoutParams(screenWidth,
+                ViewGroup.LayoutParams.WRAP_CONTENT));
 
         return new MyViewHolder(itemView);
     }
@@ -119,7 +122,7 @@ public class MuseumHorizontalScrollViewAdapter extends RecyclerView.Adapter<Muse
     public MuseumHorizontalScrollViewAdapter(Context context,
                                              List<MuseumHScrollModel> museumHScrollModelList,
                                              String title,
-                                             String museumId) {
+                                             String museumId,int screenWidth) {
         this.mContext = context;
         util = new Util();
         this.museumHScrollModelList = museumHScrollModelList;
@@ -127,5 +130,6 @@ public class MuseumHorizontalScrollViewAdapter extends RecyclerView.Adapter<Muse
                 R.anim.zoom_out_more);
         this.title = title;
         this.museumId = museumId;
+        this.screenWidth = screenWidth;
     }
 }
