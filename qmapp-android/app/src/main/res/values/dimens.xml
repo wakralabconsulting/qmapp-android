@@ -63,6 +63,6 @@
     <dimen name="font_size_22">22sp</dimen>
     <dimen name="font_size_25">25sp</dimen>
     <dimen name="font_size_28">28sp</dimen>
-    <dimen name="collection_detail_underline">50dp</dimen>
+    <dimen name="collection_detail_underline">30dp</dimen>
     <dimen name="font_size_40">40sp</dimen>
 </resources>
