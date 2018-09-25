@@ -84,7 +84,7 @@ public class TourGuideDetailsActivity extends AppCompatActivity {
                     }
                 }));
 
-        if (museumId.equals("63")) {
+        if (museumId.equals("63")|| museumId.equals("96")) {
             tourguideMainTitle.setText(getString(R.string.mia_tour_guide));
             tourguideMainDesc.setText(getString(R.string.tourguide_title_desc));
             tourguideSubTitle.setText(getString(R.string.tourguide_title));
