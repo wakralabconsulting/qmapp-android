@@ -2,10 +2,9 @@ package com.qatarmuseums.qatarmuseumsapp.tourguidestartpage;
 
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
-import android.support.design.widget.TabLayout;
-import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.view.MotionEvent;
@@ -13,19 +12,19 @@ import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.Button;
-import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.qatarmuseums.qatarmuseumsapp.QMDatabase;
 import com.qatarmuseums.qatarmuseumsapp.R;
 import com.qatarmuseums.qatarmuseumsapp.apicall.APIClient;
 import com.qatarmuseums.qatarmuseumsapp.apicall.APIInterface;
-import com.qatarmuseums.qatarmuseumsapp.floormap.FloorMapActivity;
 import com.qatarmuseums.qatarmuseumsapp.museum.GlideLoader;
 import com.qatarmuseums.qatarmuseumsapp.objectpreview.ObjectPreviewActivity;
 import com.qatarmuseums.qatarmuseumsapp.utils.Util;
 
 import java.io.IOException;
+import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 
 import cn.lightsky.infiniteindicator.IndicatorConfiguration;
@@ -59,7 +58,10 @@ public class SelfGuidedStartPageActivity extends AppCompatActivity implements
     ArrayList<Page> ads;
     ImageView sliderPlaceholderImage;
     TextView noResultFoundTxt;
-
+    int selfGuideStartRowCount;
+    QMDatabase qmDatabase;
+    TourGuideStartPageEnglish tourGuideStartPageEnglish;
+    TourGuideStartPageArabic tourGuideStartPageArabic;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -68,6 +70,7 @@ public class SelfGuidedStartPageActivity extends AppCompatActivity implements
         appLanguage = qmPreferences.getInt("AppLanguage", 1);
         playButton = (ImageView) findViewById(R.id.playBtn);
         util = new Util();
+        qmDatabase = QMDatabase.getInstance(SelfGuidedStartPageActivity.this);
         museumTitle = (TextView) findViewById(R.id.museum_tittle);
         sliderPlaceholderImage = (ImageView) findViewById(R.id.ads_place_holder);
         museumDesc = (TextView) findViewById(R.id.museum_desc);
@@ -78,7 +81,11 @@ public class SelfGuidedStartPageActivity extends AppCompatActivity implements
         tourId = intent.getStringExtra("ID");
         tourId="63";
         tourName = intent.getStringExtra("TOUR_NAME");
-        getSliderImagesfromAPI();
+        if (util.isNetworkAvailable(SelfGuidedStartPageActivity.this))
+            getSliderImagesandDdetailsfromAPI();
+        else
+            getSliderImagesandDdetailsfromDatabase();
+
         zoomOutAnimation = AnimationUtils.loadAnimation(getApplicationContext(),
                 R.anim.zoom_out);
         zoomOutAnimation.setAnimationListener(new Animation.AnimationListener() {
@@ -120,7 +127,7 @@ public class SelfGuidedStartPageActivity extends AppCompatActivity implements
     }
 
 
-    public void getSliderImagesfromAPI(){
+    public void getSliderImagesandDdetailsfromAPI(){
         APIInterface apiService =
                 APIClient.getClient().create(APIInterface.class);
         if (appLanguage == english) {
@@ -147,6 +154,7 @@ public class SelfGuidedStartPageActivity extends AppCompatActivity implements
                                 }
 
                                 setSliderImages(sliderList);
+                                new SelfGuideStartRowCount(SelfGuidedStartPageActivity.this, language).execute();
                                 sliderPlaceholderImage.setVisibility(View.GONE);
                                 animCircleIndicator.setVisibility(View.VISIBLE);
                             }else {
@@ -275,4 +283,205 @@ public class SelfGuidedStartPageActivity extends AppCompatActivity implements
         }
         loadAdsToSlider(ads);
     }
+
+    public void getSliderImagesandDdetailsfromDatabase(){
+
+    }
+
+    public class SelfGuideStartRowCount extends AsyncTask<Void, Void, Integer> {
+
+        private WeakReference<SelfGuidedStartPageActivity> activityReference;
+        String language;
+
+
+        SelfGuideStartRowCount(SelfGuidedStartPageActivity context, String apiLanguage) {
+            activityReference = new WeakReference<>(context);
+            language = apiLanguage;
+        }
+
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+        }
+
+        @Override
+        protected void onPostExecute(Integer integer) {
+            selfGuideStartRowCount = integer;
+            if (selfGuideStartRowCount > 0) {
+                //updateEnglishTable or add row to database
+                new CheckTourGuideStartPageDBRowExist(SelfGuidedStartPageActivity.this, language).execute();
+            } else {
+                //create databse
+                new InsertTourGuideStartPageDatabaseTask(SelfGuidedStartPageActivity.this, tourGuideStartPageEnglish,
+                        tourGuideStartPageArabic, language).execute();
+
+            }
+        }
+
+        @Override
+        protected Integer doInBackground(Void... voids) {
+            if (language.equals("en")) {
+                return activityReference.get().qmDatabase.getMuseumAboutDao().getNumberOfRowsEnglish();
+            } else {
+                return activityReference.get().qmDatabase.getMuseumAboutDao().getNumberOfRowsArabic();
+            }
+
+
+        }
+    }
+
+    public class CheckTourGuideStartPageDBRowExist extends AsyncTask<Void, Void, Void> {
+
+        private WeakReference<SelfGuidedStartPageActivity> activityReference;
+        private TourGuideStartPageEnglish tourGuideStartPageEnglish;
+        private TourGuideStartPageArabic tourGuideStartPageArabic;
+        String language;
+
+        CheckTourGuideStartPageDBRowExist(SelfGuidedStartPageActivity context, String apiLanguage) {
+            activityReference = new WeakReference<>(context);
+            language = apiLanguage;
+        }
+
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+        }
+
+        @Override
+        protected void onPostExecute(Void aVoid) {
+            super.onPostExecute(aVoid);
+        }
+
+        @Override
+        protected Void doInBackground(Void... voids) {
+            if (selfGuideStarterModels.size() > 0) {
+                if (language.equals("en")) {
+                    for (int i = 0; i < selfGuideStarterModels.size(); i++) {
+                        int n = activityReference.get().qmDatabase.getTourGuideStartPageDao().checkEnglishIdExist(
+                                selfGuideStarterModels.get(i).getMuseumsEntity());
+                        if (n > 0) {
+                            //updateEnglishTable same id
+                            new UpdateTourGuideStartPageDetailTable(SelfGuidedStartPageActivity.this, language, i).execute();
+
+                        } else {
+                            tourGuideStartPageEnglish = new TourGuideStartPageEnglish(selfGuideStarterModels.get(i).getTitle(),
+                                    selfGuideStarterModels.get(i).getDescription(),
+                                    selfGuideStarterModels.get(i).getMuseumsEntity());
+                            activityReference.get().qmDatabase.getTourGuideStartPageDao().insert(tourGuideStartPageEnglish);
+
+                        }
+                    }
+                } else {
+                    for (int i = 0; i < selfGuideStarterModels.size(); i++) {
+
+                            int n = activityReference.get().qmDatabase.getTourGuideStartPageDao().checkArabicIdExist(
+                                    selfGuideStarterModels.get(i).getMuseumsEntity());
+                            if (n > 0) {
+                                //updateEnglishTable same id
+                                new UpdateTourGuideStartPageDetailTable(SelfGuidedStartPageActivity.this, language, i).execute();
+
+                            } else {
+                                tourGuideStartPageArabic = new TourGuideStartPageArabic(selfGuideStarterModels.get(i).getTitle(),
+                                        selfGuideStarterModels.get(i).getDescription(),
+                                        selfGuideStarterModels.get(i).getMuseumsEntity());
+                                activityReference.get().qmDatabase.getTourGuideStartPageDao().insert(tourGuideStartPageArabic);
+
+                            }
+                    }
+                }
+            }
+
+            return null;
+        }
+    }
+
+    public class InsertTourGuideStartPageDatabaseTask extends AsyncTask<Void, Void, Boolean> {
+        private WeakReference<SelfGuidedStartPageActivity> activityReference;
+        private TourGuideStartPageEnglish tourGuideStartPageEnglish;
+        private TourGuideStartPageArabic tourGuideStartPageArabic;
+        String language;
+
+        InsertTourGuideStartPageDatabaseTask(SelfGuidedStartPageActivity context, TourGuideStartPageEnglish tourGuideStartPageEnglish,
+                                      TourGuideStartPageArabic tourGuideStartPageArabic, String lan) {
+            activityReference = new WeakReference<>(context);
+            this.tourGuideStartPageEnglish = tourGuideStartPageEnglish;
+            this.tourGuideStartPageArabic = tourGuideStartPageArabic;
+            language = lan;
+        }
+
+        @Override
+        protected Boolean doInBackground(Void... voids) {
+            if (selfGuideStarterModels != null) {
+                if (language.equals("en")) {
+                    for (int i = 0; i < selfGuideStarterModels.size(); i++) {
+                        tourGuideStartPageEnglish = new TourGuideStartPageEnglish(selfGuideStarterModels.get(i).getTitle(),
+                                selfGuideStarterModels.get(i).getMuseumsEntity(),
+                                selfGuideStarterModels.get(i).getDescription());
+                        activityReference.get().qmDatabase.getTourGuideStartPageDao().insert(tourGuideStartPageEnglish);
+
+                    }
+                } else {
+                    for (int i = 0; i < selfGuideStarterModels.size(); i++) {
+                        tourGuideStartPageArabic = new TourGuideStartPageArabic(selfGuideStarterModels.get(i).getTitle(),
+                                selfGuideStarterModels.get(i).getMuseumsEntity(),
+                                selfGuideStarterModels.get(i).getDescription());
+                        activityReference.get().qmDatabase.getTourGuideStartPageDao().insert(tourGuideStartPageArabic);
+
+                    }
+                }
+            }
+            return true;
+        }
+
+        @Override
+        protected void onPostExecute(Boolean aBoolean) {
+
+        }
+    }
+
+    public class UpdateTourGuideStartPageDetailTable extends AsyncTask<Void, Void, Void> {
+
+        private WeakReference<SelfGuidedStartPageActivity> activityReference;
+        String language;
+        int position;
+
+        UpdateTourGuideStartPageDetailTable(SelfGuidedStartPageActivity context, String apiLanguage, int p) {
+            activityReference = new WeakReference<>(context);
+            language = apiLanguage;
+            position = p;
+        }
+
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+        }
+
+        @Override
+        protected void onPostExecute(Void aVoid) {
+            super.onPostExecute(aVoid);
+        }
+
+        @Override
+        protected Void doInBackground(Void... voids) {
+            if (language.equals("en")) {
+                // updateEnglishTable table with english name
+                activityReference.get().qmDatabase.getTourGuideStartPageDao().updateMuseumAboutDataEnglish(
+                        selfGuideStarterModels.get(0).getTitle(), selfGuideStarterModels.get(0).getTitle(),
+                        selfGuideStarterModels.get(0).getMuseumsEntity()
+                       );
+            } else {
+                // updateArabicTable table with arabic name
+                activityReference.get().qmDatabase.getTourGuideStartPageDao().updateMuseumAboutDataArabic(
+                        selfGuideStarterModels.get(0).getTitle(), selfGuideStarterModels.get(0).getTitle(),
+                        selfGuideStarterModels.get(0).getMuseumsEntity()
+                );
+
+            }
+            return null;
+        }
+    }
+
+
+
+
 }
