@@ -162,8 +162,9 @@ public class DetailsActivity extends AppCompatActivity implements IPullZoom {
             @Override
             public void onClick(View v) {
                 if (latitude != null) {
-                    String geoUri = getString(R.string.map_navigation_api) + latitude + "," + longitude + " (" + mainTitle + ")";
-                    Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(geoUri));
+                    Intent intent = new Intent(DetailsActivity.this, LocationActivity.class);
+                    intent.putExtra("Latitude",latitude);
+                    intent.putExtra("Longitude",longitude);
                     startActivity(intent);
                 } else {
                     util.showLocationAlertDialog(DetailsActivity.this);
@@ -1563,7 +1564,7 @@ public class DetailsActivity extends AppCompatActivity implements IPullZoom {
 
 
                 String description1 = museumAboutTableEnglish.getShort_description();
-                String description2  = museumAboutTableEnglish.getLong_description();
+                String description2 = museumAboutTableEnglish.getLong_description();
 
 
                 loadData(null, description1,
@@ -1611,9 +1612,7 @@ public class DetailsActivity extends AppCompatActivity implements IPullZoom {
                         .placeholder(R.drawable.placeholder)
                         .into(headerImageView);
                 String description1 = museumAboutTableArabic.getShort_description();
-                String description2  = museumAboutTableArabic.getLong_description();
-
-
+                String description2 = museumAboutTableArabic.getLong_description();
 
 
                 loadData(null, description1,
