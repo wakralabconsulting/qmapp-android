@@ -14,7 +14,7 @@ import cn.lightsky.infiniteindicator.ImageLoader;
 /**
  * Created by  exalture on 16/1/31.
  */
-public class GlideLoader implements ImageLoader {
+public class GlideLoaderForMuseum implements ImageLoader {
 
     public void initLoader(Context context) {
 

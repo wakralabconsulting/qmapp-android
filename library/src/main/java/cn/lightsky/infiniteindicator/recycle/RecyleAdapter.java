@@ -64,6 +64,7 @@ public class RecyleAdapter extends RecyclingPagerAdapter {
                 convertView,
                 container);
 
+
         return convertView;
     }
 

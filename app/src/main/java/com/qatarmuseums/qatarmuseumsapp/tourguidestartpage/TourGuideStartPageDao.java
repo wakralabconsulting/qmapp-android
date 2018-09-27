@@ -28,16 +28,16 @@ public interface TourGuideStartPageDao {
     @Query("SELECT * FROM tourguidestartpageenglish WHERE museum_entity = :mEntityFromAPI")
     TourGuideStartPageEnglish getTourGuideStartPageDataEnglish(String mEntityFromAPI);
 
-    @Query("SELECT * FROM museumabouttablearabic WHERE museum_id = :mEntityFromAPI")
-    TourGuideStartPageArabic getTourGuideStartPageDataArabic(int mEntityFromAPI);
+    @Query("SELECT * FROM tourguidestartpagearabic WHERE museum_entity = :mEntityFromAPI")
+    TourGuideStartPageArabic getTourGuideStartPageDataArabic(String mEntityFromAPI);
 
     @Query("UPDATE tourguidestartpageenglish SET title = :museumtitleFromApi," +
             "description = :tourguidedescriptionFromApi WHERE museum_entity=:mEntityFromApi")
-    void updateMuseumAboutDataEnglish( String museumtitleFromApi, String tourguidedescriptionFromApi,
+    void updateTourGuideStartDataEnglish( String museumtitleFromApi, String tourguidedescriptionFromApi,
                                        String mEntityFromApi);
     @Query("UPDATE tourguidestartpagearabic SET title = :museumtitleFromApi," +
             "description = :tourguidedescriptionFromApi WHERE museum_entity=:mEntityFromApi")
-    void updateMuseumAboutDataArabic( String museumtitleFromApi, String tourguidedescriptionFromApi,
+    void updateTourGuideStartDataArabic( String museumtitleFromApi, String tourguidedescriptionFromApi,
                                        String mEntityFromApi);
 
     @Insert
