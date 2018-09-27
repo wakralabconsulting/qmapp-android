@@ -11,6 +11,7 @@ import com.qatarmuseums.qatarmuseumsapp.museumabout.MuseumAboutModel;
 import com.qatarmuseums.qatarmuseumsapp.museumcollectiondetails.CollectionDetailsList;
 import com.qatarmuseums.qatarmuseumsapp.park.ParkList;
 import com.qatarmuseums.qatarmuseumsapp.publicart.PublicArtModel;
+import com.qatarmuseums.qatarmuseumsapp.tourguidestartpage.SelfGuideStarterModel;
 
 import java.util.ArrayList;
 
@@ -74,5 +75,8 @@ public interface APIInterface {
      @GET("{language}/mobile_api/collection_ws.json")
     Call<ArrayList<CollectionDetailsList>> getMuseumCollectionDetails(@Path("language") String language,
                                                                       @Query("category") String category);
+    @GET("{language}/mobile_api/tour_guide_list_museums.json")
+    Call<ArrayList<SelfGuideStarterModel>> getSelfGuideStarterPageDetails(@Path("language") String language,
+                                                                          @Query("museum_id") String museum_id);
 
 }
