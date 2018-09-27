@@ -171,7 +171,11 @@
             android:name=".objectpreview.ObjectPreviewActivity"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar" />
-        <activity android:name=".objectpreview.ObjectPreviewDetailsActivity"
+        <activity
+            android:name=".objectpreview.ObjectPreviewDetailsActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity android:name=".detailspage.LocationActivity"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar"/>
     </application>
