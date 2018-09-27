@@ -410,7 +410,14 @@ public class MuseumActivity extends BaseActivity implements
 
             @Override
             public void onFailure(Call<ArrayList<MuseumAboutModel>> call, Throwable t) {
+                if (t instanceof IOException) {
+                    util.showToast(getResources().getString(R.string.check_network), getApplicationContext());
 
+                } else {
+                    // error due to mapping issues
+                }
+                sliderPlaceholderImage.setVisibility(View.VISIBLE);
+                animCircleIndicator.setVisibility(View.GONE);
             }
         });
 
