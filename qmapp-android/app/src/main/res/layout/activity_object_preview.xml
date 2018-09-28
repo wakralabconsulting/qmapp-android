@@ -95,7 +95,8 @@
             android:text="@string/no_results_text"
             android:textColor="@android:color/black"
             android:textSize="@dimen/font_size_21"
-            android:visibility="gone"/>
+            android:visibility="gone"
+            android:id="@+id/noResultFoundTxt"/>
         <ProgressBar
             android:id="@+id/progressBarLoading"
             style="?android:attr/progressBarStyle"
