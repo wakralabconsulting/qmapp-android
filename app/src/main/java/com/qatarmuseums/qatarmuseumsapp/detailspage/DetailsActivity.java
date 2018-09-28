@@ -123,7 +123,6 @@ public class DetailsActivity extends AppCompatActivity implements IPullZoom {
         contactLayout = (LinearLayout) findViewById(R.id.contact_layout);
         commonContentLayout = (LinearLayout) findViewById(R.id.common_content_layout);
         noResultFoundTxt = (TextView) findViewById(R.id.noResultFoundTxt);
-
         util = new Util();
         title.setText(mainTitle);
         if (comingFrom.equals(getString(R.string.sidemenu_exhibition_text))) {
