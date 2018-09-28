@@ -97,6 +97,7 @@ public class SelfGuidedStartPageActivity extends AppCompatActivity implements
             @Override
             public void onAnimationEnd(Animation animation) {
                 Intent i = new Intent(SelfGuidedStartPageActivity.this, ObjectPreviewActivity.class);
+                i.putExtra("TOURID",tourId);
                 startActivity(i);
             }
 
