@@ -17,7 +17,8 @@ import java.util.List;
 public class StepIndicatorAdapter extends RecyclerView.Adapter<StepIndicatorAdapter.MyViewHolder> {
     private int count;
     private List<CurrentIndicatorPosition> currentIndicatorPosition;
-    private int screenWidth;
+    private int screenWidth, listItemsSize;
+
 
     @NonNull
     @Override
@@ -34,9 +35,9 @@ public class StepIndicatorAdapter extends RecyclerView.Adapter<StepIndicatorAdap
     @Override
     public void onBindViewHolder(@NonNull MyViewHolder holder, int position) {
 
-        if (position == 0) {
+        if (currentIndicatorPosition.get(0).getOriginalPosition() == 0&& position==0) {
             holder.firstLine.setVisibility(View.INVISIBLE);
-        } else if (position == count - 1) {
+        } else if (currentIndicatorPosition.get(0).getOriginalPosition() == listItemsSize - 1 && position==4) {
             holder.lastLine.setVisibility(View.INVISIBLE);
         } else {
             holder.firstLine.setVisibility(View.VISIBLE);
@@ -44,8 +45,9 @@ public class StepIndicatorAdapter extends RecyclerView.Adapter<StepIndicatorAdap
         }
 
 
+
         if (currentIndicatorPosition.size() > 0) {
-            if (position == 0 || position == count - 1) {
+            if (position == 0 || position == listItemsSize - 1) {
                 if (position == currentIndicatorPosition.get(0).getCurrentPosition()) {
                     holder.indicatorImage.setImageResource(R.drawable.stripper_active_solid);
 
@@ -87,10 +89,11 @@ public class StepIndicatorAdapter extends RecyclerView.Adapter<StepIndicatorAdap
     }
 
     public StepIndicatorAdapter(List<CurrentIndicatorPosition> currentIndicatorPosition,
-                                int count, int screenWidth) {
+                                int count, int screenWidth, int listItemsSize) {
         this.currentIndicatorPosition = currentIndicatorPosition;
         this.count = count;
         this.screenWidth = screenWidth;
+        this.listItemsSize = listItemsSize;
     }
 
 
