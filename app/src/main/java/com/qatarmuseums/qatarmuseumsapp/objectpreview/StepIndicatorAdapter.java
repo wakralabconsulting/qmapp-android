@@ -37,13 +37,13 @@ public class StepIndicatorAdapter extends RecyclerView.Adapter<StepIndicatorAdap
 
         if (currentIndicatorPosition.get(0).getOriginalPosition() < 5 && position == 0) {
             holder.firstLine.setVisibility(View.INVISIBLE);
-        }  else if (endController <= (listItemsSize - 1) % 5 && position > (listItemsSize - 1) % 5) {
+        } else if (endController <= (listItemsSize - 1) % 5 && position > (listItemsSize - 1) % 5 ) {
             holder.lastLine.setVisibility(View.INVISIBLE);
             holder.firstLine.setVisibility(View.INVISIBLE);
             holder.indicatorImage.setVisibility(View.INVISIBLE);
         } else if (endController <= (listItemsSize - 1) % 5 && position == (listItemsSize - 1) % 5) {
             holder.lastLine.setVisibility(View.INVISIBLE);
-        }else if (currentIndicatorPosition.get(0).getOriginalPosition() == listItemsSize - 1 && position == 4) {
+        } else if (currentIndicatorPosition.get(0).getOriginalPosition() == listItemsSize - 1 && position == 4) {
             holder.lastLine.setVisibility(View.INVISIBLE);
         } else {
             holder.firstLine.setVisibility(View.VISIBLE);
