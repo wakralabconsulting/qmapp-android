@@ -1,7 +1,9 @@
 package com.qatarmuseums.qatarmuseumsapp.objectpreview;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
@@ -13,13 +15,24 @@ import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.ProgressBar;
+import android.widget.TextView;
 
 import com.booking.rtlviewpager.RtlViewPager;
 import com.qatarmuseums.qatarmuseumsapp.R;
+import com.qatarmuseums.qatarmuseumsapp.apicall.APIClient;
+import com.qatarmuseums.qatarmuseumsapp.apicall.APIInterface;
 import com.qatarmuseums.qatarmuseumsapp.floormap.FloorMapActivity;
+import com.qatarmuseums.qatarmuseumsapp.utils.Util;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 
 public class ObjectPreviewActivity extends AppCompatActivity {
@@ -29,19 +42,37 @@ public class ObjectPreviewActivity extends AppCompatActivity {
     private StepIndicatorAdapter stepIndicatorAdapter;
     private List<CurrentIndicatorPosition> currentIndicatorPositionList = new ArrayList<>();
     Animation zoomOutAnimation;
-
+    ProgressBar progressBar;
+    LinearLayout commonContentLayout;
+    TextView noResultFoundTxt;
+    Intent intent;
+    String tourId;
+    int language;
+    SharedPreferences qmPreferences;
+    private Util util;
+    ViewPager pager;
+    ArrayList<ObjectPreviewModel> objectPreviewModels = new ArrayList<>();
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_object_preview);
+        setSupportActionBar(toolbar);
+        intent = getIntent();
+
+        util = new Util();
+        tourId = intent.getStringExtra("TOURID");
+        tourId="12216";
         toolbar = findViewById(R.id.toolbar);
         backBtn = findViewById(R.id.back_btn);
         shareBtn = findViewById(R.id.share_btn);
         locationBtn = findViewById(R.id.location_btn);
-        setSupportActionBar(toolbar);
-        final ViewPager pager = (RtlViewPager) findViewById(R.id.pager);
+        progressBar = (ProgressBar) findViewById(R.id.progressBarLoading);
+        commonContentLayout = (LinearLayout) findViewById(R.id.main_content_layout);
+        noResultFoundTxt = (TextView) findViewById(R.id.noResultFoundTxt);
+        qmPreferences = PreferenceManager.getDefaultSharedPreferences(this);
+        language = qmPreferences.getInt("AppLanguage", 1);
+         pager = (RtlViewPager) findViewById(R.id.pager);
         assert pager != null;
-        pager.setAdapter(new PagerAdapter(getSupportFragmentManager()));
         stepIndicatorRecyclerView = findViewById(R.id.idRecyclerViewHorizontalList);
         stepIndicatorAdapter = new StepIndicatorAdapter(currentIndicatorPositionList, 5, getScreenWidth());
         currentIndicatorPositionList.clear();
@@ -56,6 +87,8 @@ public class ObjectPreviewActivity extends AppCompatActivity {
         zoomOutAnimation = AnimationUtils.loadAnimation(getApplicationContext(),
                 R.anim.zoom_out_more);
 
+
+        getObjectPreviewDetailsFromAPI(tourId,language);
         pager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
             @Override
             public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
@@ -159,6 +192,53 @@ public class ObjectPreviewActivity extends AppCompatActivity {
         int width = displayMetrics.widthPixels;
         width = width / 5;
         return width;
+    }
+
+    public void getObjectPreviewDetailsFromAPI(String id, int appLanguage){
+        progressBar.setVisibility(View.VISIBLE);
+        final String language;
+        if (appLanguage == 1) {
+            language = "en";
+        } else {
+            language = "ar";
+        }
+        APIInterface apiService =
+                APIClient.getClient().create(APIInterface.class);
+        Call<ArrayList<ObjectPreviewModel>> call = apiService.getObjectPreviewDetails(language, id);
+        call.enqueue(new Callback<ArrayList<ObjectPreviewModel>>() {
+            @Override
+            public void onResponse(Call<ArrayList<ObjectPreviewModel>> call, Response<ArrayList<ObjectPreviewModel>> response) {
+                if (response.isSuccessful()) {
+                    if (response.body() != null && response.body().size() > 0) {
+                        commonContentLayout.setVisibility(View.VISIBLE);
+                        objectPreviewModels = response.body();
+                        pager.setAdapter(new PagerAdapter(getSupportFragmentManager(),objectPreviewModels.size(),objectPreviewModels));
+                    }else {
+                        commonContentLayout.setVisibility(View.GONE);
+                        noResultFoundTxt.setVisibility(View.VISIBLE);
+                    }
+
+                }else {
+                    commonContentLayout.setVisibility(View.GONE);
+                    noResultFoundTxt.setVisibility(View.VISIBLE);
+                }
+                progressBar.setVisibility(View.GONE);
+            }
+
+            @Override
+            public void onFailure(Call<ArrayList<ObjectPreviewModel>> call, Throwable t) {
+                if (t instanceof IOException) {
+                    util.showToast(getResources().getString(R.string.check_network), getApplicationContext());
+
+                } else {
+                    // error due to mapping issues
+                }
+                commonContentLayout.setVisibility(View.GONE);
+                noResultFoundTxt.setVisibility(View.VISIBLE);
+                progressBar.setVisibility(View.GONE);
+            }
+        });
+
     }
 
 }
