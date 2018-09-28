@@ -9,6 +9,7 @@ import com.qatarmuseums.qatarmuseumsapp.heritage.HeritageOrExhibitionDetailModel
 import com.qatarmuseums.qatarmuseumsapp.home.HomeList;
 import com.qatarmuseums.qatarmuseumsapp.museumabout.MuseumAboutModel;
 import com.qatarmuseums.qatarmuseumsapp.museumcollectiondetails.CollectionDetailsList;
+import com.qatarmuseums.qatarmuseumsapp.objectpreview.ObjectPreviewModel;
 import com.qatarmuseums.qatarmuseumsapp.park.ParkList;
 import com.qatarmuseums.qatarmuseumsapp.publicart.PublicArtModel;
 import com.qatarmuseums.qatarmuseumsapp.tourguidestartpage.SelfGuideStarterModel;
@@ -78,5 +79,8 @@ public interface APIInterface {
     @GET("{language}/mobile_api/tour_guide_list_museums.json")
     Call<ArrayList<SelfGuideStarterModel>> getSelfGuideStarterPageDetails(@Path("language") String language,
                                                                           @Query("museum_id") String museum_id);
+    @GET("{language}/mobile_api/collection_by_tour_guide.json")
+    Call<ArrayList<ObjectPreviewModel>> getObjectPreviewDetails(@Path("language") String language,
+                                                                       @Query("tour_guide_id") String tourGuideId);
 
 }
