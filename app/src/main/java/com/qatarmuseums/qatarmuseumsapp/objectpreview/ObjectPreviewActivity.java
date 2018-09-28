@@ -74,14 +74,8 @@ public class ObjectPreviewActivity extends AppCompatActivity {
          pager = (RtlViewPager) findViewById(R.id.pager);
         assert pager != null;
         stepIndicatorRecyclerView = findViewById(R.id.idRecyclerViewHorizontalList);
-        stepIndicatorAdapter = new StepIndicatorAdapter(currentIndicatorPositionList, 5, getScreenWidth());
-        currentIndicatorPositionList.clear();
-        CurrentIndicatorPosition c = new CurrentIndicatorPosition(0);
-        currentIndicatorPositionList.add(c);
-        stepIndicatorAdapter.notifyDataSetChanged();
-        LinearLayoutManager horizontalLayoutManager = new LinearLayoutManager(ObjectPreviewActivity.this, LinearLayoutManager.HORIZONTAL, false);
-        stepIndicatorRecyclerView.setLayoutManager(horizontalLayoutManager);
-        stepIndicatorRecyclerView.setAdapter(stepIndicatorAdapter);
+
+
         RecyclerView.OnItemTouchListener disabler = new RecyclerViewDisabler();
         stepIndicatorRecyclerView.addOnItemTouchListener(disabler);
         zoomOutAnimation = AnimationUtils.loadAnimation(getApplicationContext(),
@@ -212,6 +206,17 @@ public class ObjectPreviewActivity extends AppCompatActivity {
                     if (response.body() != null && response.body().size() > 0) {
                         commonContentLayout.setVisibility(View.VISIBLE);
                         objectPreviewModels = response.body();
+                        if (objectPreviewModels.size()<6)
+                        stepIndicatorAdapter = new StepIndicatorAdapter(currentIndicatorPositionList, objectPreviewModels.size(), getScreenWidth(),objectPreviewModels.size());
+                        else
+                            stepIndicatorAdapter = new StepIndicatorAdapter(currentIndicatorPositionList, 5, getScreenWidth(),objectPreviewModels.size());
+                        currentIndicatorPositionList.clear();
+                        CurrentIndicatorPosition c = new CurrentIndicatorPosition(0);
+                        currentIndicatorPositionList.add(c);
+                        stepIndicatorAdapter.notifyDataSetChanged();
+                        LinearLayoutManager horizontalLayoutManager = new LinearLayoutManager(ObjectPreviewActivity.this, LinearLayoutManager.HORIZONTAL, false);
+                        stepIndicatorRecyclerView.setLayoutManager(horizontalLayoutManager);
+                        stepIndicatorRecyclerView.setAdapter(stepIndicatorAdapter);
                         pager.setAdapter(new PagerAdapter(getSupportFragmentManager(),objectPreviewModels.size(),objectPreviewModels));
                     }else {
                         commonContentLayout.setVisibility(View.GONE);
