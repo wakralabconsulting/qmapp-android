@@ -38,7 +38,7 @@ import retrofit2.Response;
 public class ObjectPreviewActivity extends AppCompatActivity {
     Toolbar toolbar;
     ImageView backBtn, shareBtn, locationBtn;
-    private RecyclerView stepIndicatorRecyclerView;
+    RecyclerView stepIndicatorRecyclerView;
     private StepIndicatorAdapter stepIndicatorAdapter;
     private List<CurrentIndicatorPosition> currentIndicatorPositionList = new ArrayList<>();
     Animation zoomOutAnimation;
@@ -52,6 +52,7 @@ public class ObjectPreviewActivity extends AppCompatActivity {
     private Util util;
     ViewPager pager;
     ArrayList<ObjectPreviewModel> objectPreviewModels = new ArrayList<>();
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -61,7 +62,7 @@ public class ObjectPreviewActivity extends AppCompatActivity {
 
         util = new Util();
         tourId = intent.getStringExtra("TOURID");
-        tourId="12216";
+        tourId = "12216";
         toolbar = findViewById(R.id.toolbar);
         backBtn = findViewById(R.id.back_btn);
         shareBtn = findViewById(R.id.share_btn);
@@ -71,7 +72,7 @@ public class ObjectPreviewActivity extends AppCompatActivity {
         noResultFoundTxt = (TextView) findViewById(R.id.noResultFoundTxt);
         qmPreferences = PreferenceManager.getDefaultSharedPreferences(this);
         language = qmPreferences.getInt("AppLanguage", 1);
-         pager = (RtlViewPager) findViewById(R.id.pager);
+        pager = (RtlViewPager) findViewById(R.id.pager);
         assert pager != null;
         stepIndicatorRecyclerView = findViewById(R.id.idRecyclerViewHorizontalList);
 
@@ -82,7 +83,7 @@ public class ObjectPreviewActivity extends AppCompatActivity {
                 R.anim.zoom_out_more);
 
 
-        getObjectPreviewDetailsFromAPI(tourId,language);
+        getObjectPreviewDetailsFromAPI(tourId, language);
         pager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
             @Override
             public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
@@ -188,7 +189,7 @@ public class ObjectPreviewActivity extends AppCompatActivity {
         return width;
     }
 
-    public void getObjectPreviewDetailsFromAPI(String id, int appLanguage){
+    public void getObjectPreviewDetailsFromAPI(String id, int appLanguage) {
         progressBar.setVisibility(View.VISIBLE);
         final String language;
         if (appLanguage == 1) {
@@ -206,10 +207,12 @@ public class ObjectPreviewActivity extends AppCompatActivity {
                     if (response.body() != null && response.body().size() > 0) {
                         commonContentLayout.setVisibility(View.VISIBLE);
                         objectPreviewModels = response.body();
-                        if (objectPreviewModels.size()<6)
-                        stepIndicatorAdapter = new StepIndicatorAdapter(currentIndicatorPositionList, objectPreviewModels.size(), getScreenWidth(),objectPreviewModels.size());
+                        if (objectPreviewModels.size() == 1)
+                            stepIndicatorRecyclerView.setVisibility(View.GONE);
+                        if (objectPreviewModels.size() < 6)
+                            stepIndicatorAdapter = new StepIndicatorAdapter(currentIndicatorPositionList, objectPreviewModels.size(), getScreenWidth(), objectPreviewModels.size());
                         else
-                            stepIndicatorAdapter = new StepIndicatorAdapter(currentIndicatorPositionList, 5, getScreenWidth(),objectPreviewModels.size());
+                            stepIndicatorAdapter = new StepIndicatorAdapter(currentIndicatorPositionList, 5, getScreenWidth(), objectPreviewModels.size());
                         currentIndicatorPositionList.clear();
                         CurrentIndicatorPosition c = new CurrentIndicatorPosition(0);
                         currentIndicatorPositionList.add(c);
@@ -217,13 +220,13 @@ public class ObjectPreviewActivity extends AppCompatActivity {
                         LinearLayoutManager horizontalLayoutManager = new LinearLayoutManager(ObjectPreviewActivity.this, LinearLayoutManager.HORIZONTAL, false);
                         stepIndicatorRecyclerView.setLayoutManager(horizontalLayoutManager);
                         stepIndicatorRecyclerView.setAdapter(stepIndicatorAdapter);
-                        pager.setAdapter(new PagerAdapter(getSupportFragmentManager(),objectPreviewModels.size(),objectPreviewModels));
-                    }else {
+                        pager.setAdapter(new PagerAdapter(getSupportFragmentManager(), objectPreviewModels.size(), objectPreviewModels));
+                    } else {
                         commonContentLayout.setVisibility(View.GONE);
                         noResultFoundTxt.setVisibility(View.VISIBLE);
                     }
 
-                }else {
+                } else {
                     commonContentLayout.setVisibility(View.GONE);
                     noResultFoundTxt.setVisibility(View.VISIBLE);
                 }
