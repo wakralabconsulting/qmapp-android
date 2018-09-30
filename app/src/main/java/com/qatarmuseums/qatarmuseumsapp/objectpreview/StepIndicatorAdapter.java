@@ -1,9 +1,7 @@
 package com.qatarmuseums.qatarmuseumsapp.objectpreview;
 
-import android.content.Context;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
-import android.util.DisplayMetrics;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -18,6 +16,7 @@ public class StepIndicatorAdapter extends RecyclerView.Adapter<StepIndicatorAdap
     private int count;
     private List<CurrentIndicatorPosition> currentIndicatorPosition;
     private int screenWidth, listItemsSize;
+    private int endController;
 
 
     @NonNull
@@ -34,29 +33,39 @@ public class StepIndicatorAdapter extends RecyclerView.Adapter<StepIndicatorAdap
 
     @Override
     public void onBindViewHolder(@NonNull MyViewHolder holder, int position) {
+        endController = listItemsSize - 1 - currentIndicatorPosition.get(0).getOriginalPosition();
 
-        if (currentIndicatorPosition.get(0).getOriginalPosition() == 0&& position==0) {
+        if (currentIndicatorPosition.get(0).getOriginalPosition() < 5 && position == 0) {
             holder.firstLine.setVisibility(View.INVISIBLE);
-        } else if (currentIndicatorPosition.get(0).getOriginalPosition() == listItemsSize - 1 && position==4) {
+        } else if (endController <= (listItemsSize - 1) % 5 && position > (listItemsSize - 1) % 5 ) {
+            holder.lastLine.setVisibility(View.INVISIBLE);
+            holder.firstLine.setVisibility(View.INVISIBLE);
+            holder.indicatorImage.setVisibility(View.INVISIBLE);
+        } else if (endController <= (listItemsSize - 1) % 5 && position == (listItemsSize - 1) % 5) {
+            holder.lastLine.setVisibility(View.INVISIBLE);
+        } else if (currentIndicatorPosition.get(0).getOriginalPosition() == listItemsSize - 1 && position == 4) {
             holder.lastLine.setVisibility(View.INVISIBLE);
         } else {
             holder.firstLine.setVisibility(View.VISIBLE);
+            holder.indicatorImage.setVisibility(View.VISIBLE);
             holder.lastLine.setVisibility(View.VISIBLE);
         }
-
-
 
         if (currentIndicatorPosition.size() > 0) {
             if (position == 0 || position == listItemsSize - 1) {
                 if (position == currentIndicatorPosition.get(0).getCurrentPosition()) {
                     holder.indicatorImage.setImageResource(R.drawable.stripper_active_solid);
-
-                } else
+                } else if (currentIndicatorPosition.get(0).getOriginalPosition() > 5)
+                    holder.indicatorImage.setImageResource(R.drawable.stripper_inactive_solid);
+                else
                     holder.indicatorImage.setImageResource(R.drawable.stripper_inactive_end_solid);
+            } else if (endController <= (listItemsSize - 1) % 5 && position == (listItemsSize - 1) % 5 &&
+                    currentIndicatorPosition.get(0).getCurrentPosition() != position) {
+                holder.indicatorImage.setImageResource(R.drawable.stripper_inactive_end_solid);
+                holder.lastLine.setVisibility(View.INVISIBLE);
             } else {
                 if (position == currentIndicatorPosition.get(0).getCurrentPosition()) {
                     holder.indicatorImage.setImageResource(R.drawable.stripper_active_solid);
-
                 } else
                     holder.indicatorImage.setImageResource(R.drawable.stripper_inactive_solid);
 
