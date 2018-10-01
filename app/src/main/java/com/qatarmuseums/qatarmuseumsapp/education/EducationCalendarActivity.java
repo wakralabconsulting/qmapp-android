@@ -180,7 +180,7 @@ public class EducationCalendarActivity extends AppCompatActivity {
         today.set(Calendar.HOUR_OF_DAY, 0);
         today.set(Calendar.MINUTE, 0);
         today.set(Calendar.SECOND, 0);
-        day = (String) DateFormat.format("dd", today);
+        day = (String) DateFormat.format("d", today);
         monthNumber = (String) DateFormat.format("M", today);
         year = (String) DateFormat.format("yyyy", today);
         if (util.isNetworkAvailable(EducationCalendarActivity.this)) {
@@ -219,7 +219,7 @@ public class EducationCalendarActivity extends AppCompatActivity {
                 isDateSelected = true;
                 selectedDate = calendarInstance.getTimeInMillis();
                 if (util.isNetworkAvailable(EducationCalendarActivity.this)) {
-                    day = (String) DateFormat.format("dd", selectedDate);
+                    day = (String) DateFormat.format("d", selectedDate);
                     monthNumber = (String) DateFormat.format("M", selectedDate);
                     year = (String) DateFormat.format("yyyy", selectedDate);
                     getEducationCalendarDataFromApi(institutionFilter, ageGroupFilter, programmeTypeFilter, monthNumber, day, year, selectedDate);
@@ -308,10 +308,9 @@ public class EducationCalendarActivity extends AppCompatActivity {
         ageGroupFilter = intent.getStringExtra("AGE_GROUP");
         programmeTypeFilter = intent.getStringExtra("PROGRAMME_TYPE");
 
-
         if (util.isNetworkAvailable(EducationCalendarActivity.this)) {
             if (isDateSelected) {
-                day = (String) DateFormat.format("dd", selectedDate);
+                day = (String) DateFormat.format("d", selectedDate);
                 monthNumber = (String) DateFormat.format("M", selectedDate);
                 year = (String) DateFormat.format("yyyy", selectedDate);
                 getEducationCalendarDataFromApi(institutionFilter, ageGroupFilter, programmeTypeFilter, monthNumber, day, year, selectedDate);
