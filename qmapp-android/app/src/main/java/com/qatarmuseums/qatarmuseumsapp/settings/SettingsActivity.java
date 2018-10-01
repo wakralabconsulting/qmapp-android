@@ -21,6 +21,7 @@ import android.view.Window;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.Button;
+import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -210,8 +211,9 @@ public class SettingsActivity extends AppCompatActivity implements View.OnClickL
         dialog.setCancelable(true);
         dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
 
-        View view = getLayoutInflater().inflate(R.layout.common_popup, null);
+        View view = getLayoutInflater().inflate(R.layout.settings_pop_up, null);
         dialog.setContentView(view);
+
         ImageView closeBtn = (ImageView) view.findViewById(R.id.close_dialog);
         Button changeLanguageBtn = (Button) view.findViewById(R.id.doneBtn);
         TextView dialogTitle = (TextView) view.findViewById(R.id.dialog_tittle);
