@@ -2,19 +2,21 @@ package com.qatarmuseums.qatarmuseumsapp.education;
 
 import com.google.gson.annotations.SerializedName;
 
+import java.util.ArrayList;
+
 public class EducationEvents {
 
-    @SerializedName("eid")
+    @SerializedName("item_id")
     private String eid;
     @SerializedName("institution")
     private String institution;
     @SerializedName("title")
     private String title;
-    @SerializedName("short_desc")
+    @SerializedName("Introduction_Text")
     private String short_desc;
-    @SerializedName("long_desc")
-    private String long_desc;
-    @SerializedName("registration")
+    @SerializedName("main_description")
+    private ArrayList<String> long_desc;
+    @SerializedName("Register")
     private String registration;
     @SerializedName("start_time")
     private String start_time;
@@ -22,7 +24,7 @@ public class EducationEvents {
     private String end_time;
     @SerializedName("age_group")
     private String age_group;
-    @SerializedName("program_type")
+    @SerializedName("Programme_type")
     private String program_type;
     @SerializedName("date")
     private String date;
@@ -34,12 +36,14 @@ public class EducationEvents {
     private String max_group_size;
     @SerializedName("category")
     private String category;
+    @SerializedName("field_eduprog_repeat_field_date")
+    private ArrayList<String> field;
 
 
-    public EducationEvents(String eid, String filter, String title, String short_desc, String long_desc,
+    public EducationEvents(String eid, String filter, String title, String short_desc, ArrayList<String> long_desc,
                            String location, String institution, String start_time, String end_time,
                            String max_group_size, String age_group,
-                           String program_type, String category, String registration, String date) {
+                           String program_type, String category, String registration, String date, ArrayList<String> fieldVal) {
         this.eid = eid;
         this.filter = filter;
         this.title = title;
@@ -55,6 +59,7 @@ public class EducationEvents {
         this.category = category;
         this.registration = registration;
         this.date = date;
+        this.field = fieldVal;
     }
 
 
@@ -90,11 +95,11 @@ public class EducationEvents {
         this.short_desc = short_desc;
     }
 
-    public String getLong_desc() {
+    public ArrayList<String> getLong_desc() {
         return long_desc;
     }
 
-    public void setLong_desc(String long_desc) {
+    public void setLong_desc(ArrayList<String> long_desc) {
         this.long_desc = long_desc;
     }
 
@@ -176,5 +181,13 @@ public class EducationEvents {
 
     public void setDate(String date) {
         this.date = date;
+    }
+
+    public ArrayList<String> getField() {
+        return field;
+    }
+
+    public void setField(ArrayList<String> field) {
+        this.field = field;
     }
 }
