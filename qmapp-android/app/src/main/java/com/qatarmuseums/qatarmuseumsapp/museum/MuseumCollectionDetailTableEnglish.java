@@ -17,26 +17,34 @@ public class MuseumCollectionDetailTableEnglish {
     private String detail_about;
     @ColumnInfo()
     private String detail_image1;
-    @ColumnInfo()
-    private String detail_image2;
-    @ColumnInfo()
-    private String detail_description1;
-    @ColumnInfo()
-    private String detail_description2;
-    @ColumnInfo()
-    private String detail_description3;
+//    @ColumnInfo()
+//    private String detail_image2;
+//    @ColumnInfo()
+//    private String detail_description1;
+//    @ColumnInfo()
+//    private String detail_description2;
+//    @ColumnInfo()
+//    private String detail_description3;
 
-    public MuseumCollectionDetailTableEnglish(String category_id, @NonNull String detail_title, String detail_about,
-                                              String detail_image1, String detail_image2, String detail_description1,
-                                              String detail_description2, String detail_description3) {
+//    public MuseumCollectionDetailTableEnglish(String category_id, @NonNull String detail_title, String detail_about,
+//                                              String detail_image1, String detail_image2, String detail_description1,
+//                                              String detail_description2, String detail_description3) {
+//        this.category_id = category_id;
+//        this.detail_title = detail_title;
+//        this.detail_about = detail_about;
+//        this.detail_image1 = detail_image1;
+//        this.detail_image2 = detail_image2;
+//        this.detail_description1 = detail_description1;
+//        this.detail_description2 = detail_description2;
+//        this.detail_description3 = detail_description3;
+//    }
+
+
+    public MuseumCollectionDetailTableEnglish(String category_id, @NonNull String detail_title, String detail_image1, String detail_about) {
         this.category_id = category_id;
         this.detail_title = detail_title;
-        this.detail_about = detail_about;
         this.detail_image1 = detail_image1;
-        this.detail_image2 = detail_image2;
-        this.detail_description1 = detail_description1;
-        this.detail_description2 = detail_description2;
-        this.detail_description3 = detail_description3;
+        this.detail_about = detail_about;
     }
 
     public String getCategory_id() {
@@ -55,32 +63,32 @@ public class MuseumCollectionDetailTableEnglish {
         return detail_image1;
     }
 
-    public String getDetail_image2() {
-        return detail_image2;
-    }
+//    public String getDetail_image2() {
+//        return detail_image2;
+//    }
 
-    public String getDetail_description1() {
-        return detail_description1;
-    }
+//    public String getDetail_description1() {
+//        return detail_description1;
+//    }
 
-    public String getDetail_description2() {
-        return detail_description2;
-    }
-
-    public String getDetail_description3() {
-        return detail_description3;
-    }
+    //    public String getDetail_description2() {
+//        return detail_description2;
+//    }
+//
+//    public String getDetail_description3() {
+//        return detail_description3;
+//    }
     @Override
     public String toString() {
         return "museumcollectiondetailtableEnglish{" +
                 "category_id ='" + category_id + '\'' +
                 ", detail_title='" + detail_title + '\'' +
-                ",detail_about='"+detail_about+'\''+
+               /* ",detail_about='"+detail_about+'\''+*/
                 "detail_image1 ='" + detail_image1 + '\'' +
-                ", detail_image2='" + detail_image2 + '\'' +
-                "detail_description1 ='" + detail_description1 + '\'' +
-                ", detail_description2='" + detail_description2 + '\'' +
-                ", detail_description3='" + detail_description3 + '\'' +
+              /*  ", detail_image2='" + detail_image2 + '\'' +*/
+                "detail_about ='" + detail_about + '\'' +
+               /* ", detail_description2='" + detail_description2 + '\'' +
+                ", detail_description3='" + detail_description3 + '\'' +*/
                 '}';
     }
 }

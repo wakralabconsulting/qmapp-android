@@ -4,20 +4,32 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 
-class PagerAdapter extends FragmentPagerAdapter {
+import java.util.ArrayList;
 
-    public PagerAdapter(FragmentManager fm) {
+class PagerAdapter extends FragmentPagerAdapter {
+    int count;
+    ArrayList<ObjectPreviewModel> objectPreviewModels =new ArrayList<>();
+    PageFragment pageFragment;
+
+    public PagerAdapter(FragmentManager fm, int count, ArrayList<ObjectPreviewModel> objectPreviewModels) {
         super(fm);
+        this.count =count;
+        this.objectPreviewModels =objectPreviewModels;
+        pageFragment = new PageFragment();
     }
 
     @Override
     public int getCount() {
-        return 5;
+        return count;
     }
 
     @Override
     public Fragment getItem(int position) {
-        return PageFragment.newInstance(position , position == getCount() );
+        return pageFragment.newInstance(position , position == getCount(),
+                objectPreviewModels.get(position).getMainTitle(),objectPreviewModels.get(position).getAccessionNumber(),
+                objectPreviewModels.get(position).getImage(),objectPreviewModels.get(position).getProduction(),
+                objectPreviewModels.get(position).getProductionDates(),objectPreviewModels.get(position).getPeriodStyle(),
+                objectPreviewModels.get(position).getTechniqueandMaterials(),objectPreviewModels.get(position).getDimensions());
     }
 
 }

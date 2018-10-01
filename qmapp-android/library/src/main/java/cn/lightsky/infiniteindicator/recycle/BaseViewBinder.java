@@ -5,6 +5,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 
 import cn.lightsky.infiniteindicator.ImageLoader;
 import cn.lightsky.infiniteindicator.IndicatorConfiguration;
@@ -34,9 +35,11 @@ public class BaseViewBinder implements ViewBinder {
             convertView = LayoutInflater.from(context).inflate(R.layout.simple_slider_view, null);
             holder = new ViewHolder(convertView);
             convertView.setTag(holder);
+
         }
 
         if (holder.target != null) {
+            holder.target.setScaleType(ImageView.ScaleType.CENTER_INSIDE);
             if (mOnPageClickListener != null) {
                 holder.target.setOnClickListener(new View.OnClickListener() {
                     @Override
@@ -59,6 +62,7 @@ public class BaseViewBinder implements ViewBinder {
 
         public ViewHolder(View view) {
             target = (ImageView) view.findViewById(R.id.slider_image);
+            target.setScaleType(ImageView.ScaleType.CENTER_INSIDE);
         }
     }
 }

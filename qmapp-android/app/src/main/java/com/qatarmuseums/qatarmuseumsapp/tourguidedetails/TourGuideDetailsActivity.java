@@ -84,7 +84,7 @@ public class TourGuideDetailsActivity extends AppCompatActivity {
                     }
                 }));
 
-        if (museumId.equals("63")) {
+        if (museumId.equals("63")|| museumId.equals("96")) {
             tourguideMainTitle.setText(getString(R.string.mia_tour_guide));
             tourguideMainDesc.setText(getString(R.string.tourguide_title_desc));
             tourguideSubTitle.setText(getString(R.string.tourguide_title));
@@ -126,7 +126,7 @@ public class TourGuideDetailsActivity extends AppCompatActivity {
     public void prepareMiaTourGuideData() {
         tourguideObject = new TourGuideList("Science Tour", "10", R.drawable.science_tour);
         tourGuideList.add(tourguideObject);
-        tourguideObject = new TourGuideList("MIA Highlights Tour", "11", R.drawable.mia);
+        tourguideObject = new TourGuideList(getString(R.string.coming_soon_txt), "11", R.drawable.mia);
         tourGuideList.add(tourguideObject);
         tourguideObject = new TourGuideList(getString(R.string.coming_soon_txt), "12", R.drawable.coming_soon_1);
         tourGuideList.add(tourguideObject);

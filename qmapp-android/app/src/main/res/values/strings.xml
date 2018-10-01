@@ -73,7 +73,7 @@
     <string name="register_now_content">Thank you for Registering.Further\nDetails will be sent to you on your\nemail</string>
     <string name="opening_timings">OPENING TIMINGS</string>
     <string name="exhibition_timings">EXHIBITION TIMINGS</string>
-    <string name="open_in_google_maps">Click here to open in Google Maps</string>
+    <string name="open_in_google_maps">Click here to view location</string>
     <string name="contact_mail">info@mia.org.qa</string>
     <string name="for_more_information_text">For more information and to make a reservation, visit <u>MIA.</u></string>
     <string name="institution">Institution -</string>
@@ -167,6 +167,11 @@ They exemplify the external influences and internal creativity that inspired thi
     <string name="seniors">Seniors</string>
     <string name="families">Families</string>
     <string name="special_needs">Special Needs</string>
+    <string name="production_text">Production:</string>
+    <string name="production_dates">production dates:</string>
+    <string name="period_style">period/Style:</string>
+    <string name="technique_materials">Technique and materials:</string>
+    <string name="dimension">Dimensions:</string>
 
     <string name="art">Art Workshop</string>
     <string name="field">Field Trip</string>

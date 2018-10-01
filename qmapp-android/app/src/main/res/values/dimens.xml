@@ -50,6 +50,9 @@
     <dimen name="settings_page_list_item_text_size">21sp</dimen>
     <dimen name="horizontal_scrollview_back_size">30dp</dimen>
     <dimen name="font_size_14">14sp</dimen>
+    <dimen name="font_size_9">9sp</dimen>
+    <dimen name="font_size_10">10sp</dimen>
+    <dimen name="font_size_11">11sp</dimen>
     <dimen name="font_size_19">19sp</dimen>
     <dimen name="museum_page_text_margin">100dp</dimen>
     <dimen name="museum_page_slider_text_size">35sp</dimen>
@@ -60,6 +63,6 @@
     <dimen name="font_size_22">22sp</dimen>
     <dimen name="font_size_25">25sp</dimen>
     <dimen name="font_size_28">28sp</dimen>
-    <dimen name="collection_detail_underline">50dp</dimen>
+    <dimen name="collection_detail_underline">30dp</dimen>
     <dimen name="font_size_40">40sp</dimen>
 </resources>

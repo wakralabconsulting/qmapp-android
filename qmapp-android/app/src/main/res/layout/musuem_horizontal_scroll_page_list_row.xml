@@ -36,6 +36,7 @@
             android:layout_marginTop="@dimen/pading_1"
             android:fontFamily="@font/din_next_lt_pro_regular"
             android:text="@string/sidemenu_parks_text"
+            android:textSize="@dimen/font_size_11"
             android:textColor="@color/black" />
     </LinearLayout>
 

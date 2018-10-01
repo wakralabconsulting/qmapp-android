@@ -27,21 +27,17 @@ public interface MuseumCollectionDetailTableDao {
     @Query("SELECT COUNT(detail_title) FROM museumcollectiondetailtableArabic WHERE detail_title = :titleFromAPI")
     int checkTitleExistArabic(String titleFromAPI);
 
-    @Query("UPDATE museumcollectiondetailtableEnglish SET category_id = :categoryIdFromApi, detail_about = :detailAboutFromApi," +
-            "detail_image1 = :image1FromApi,detail_image2=:image2FromApi," +
-            " detail_description1=:description1FromApi, detail_description2=:description2FromApi , detail_description3=:description3FromApi " +
-            "WHERE detail_title=:titleFromApi")
-    void updateMuseumDetailTableEnglish(String categoryIdFromApi,String detailAboutFromApi, String image1FromApi, String image2FromApi,
-                                      String description1FromApi,String description2FromApi,
-                                      String description3FromApi,String titleFromApi);
+    @Query("UPDATE museumcollectiondetailtableEnglish SET category_id = :categoryIdFromApi," +
+            "detail_image1 = :image1FromApi," +
+            " detail_about=:aboutFromApi WHERE detail_title=:titleFromApi")
+    void updateMuseumDetailTableEnglish(String categoryIdFromApi, String image1FromApi,
+                                      String aboutFromApi,String titleFromApi);
 
-    @Query("UPDATE museumcollectiondetailtableArabic SET category_id = :categoryIdFromApi, detail_about = :detailAboutFromApi," +
-            "detail_image1 = :image1FromApi,detail_image2=:image2FromApi," +
-            " detail_description1=:description1FromApi, detail_description2=:description2FromApi , detail_description3=:description3FromApi " +
-            "WHERE detail_title=:titleFromApi")
-    void updateMuseumDetailTableArabic(String categoryIdFromApi,String detailAboutFromApi, String image1FromApi, String image2FromApi,
-                                      String description1FromApi,String description2FromApi,
-                                      String description3FromApi,String titleFromApi);
+    @Query("UPDATE museumcollectiondetailtableArabic SET category_id = :categoryIdFromApi," +
+            "detail_image1 = :image1FromApi," +
+            " detail_about=:aboutFromApi WHERE detail_title=:titleFromApi")
+    void updateMuseumDetailTableArabic(String categoryIdFromApi, String image1FromApi,
+                                       String aboutFromApi,String titleFromApi);
 
 
     @Insert
