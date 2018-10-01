@@ -7,11 +7,12 @@ import com.qatarmuseums.qatarmuseumsapp.dining.DiningDetailModel;
 import com.qatarmuseums.qatarmuseumsapp.education.EducationEvents;
 import com.qatarmuseums.qatarmuseumsapp.heritage.HeritageOrExhibitionDetailModel;
 import com.qatarmuseums.qatarmuseumsapp.home.HomeList;
-import com.qatarmuseums.qatarmuseumsapp.museum.SliderImageModel;
 import com.qatarmuseums.qatarmuseumsapp.museumabout.MuseumAboutModel;
 import com.qatarmuseums.qatarmuseumsapp.museumcollectiondetails.CollectionDetailsList;
+import com.qatarmuseums.qatarmuseumsapp.objectpreview.ObjectPreviewModel;
 import com.qatarmuseums.qatarmuseumsapp.park.ParkList;
 import com.qatarmuseums.qatarmuseumsapp.publicart.PublicArtModel;
+import com.qatarmuseums.qatarmuseumsapp.tourguidestartpage.SelfGuideStarterModel;
 
 import java.util.ArrayList;
 
@@ -61,9 +62,9 @@ public interface APIInterface {
                                                        @Header("age") String ageGroup,
                                                        @Header("ptype") String programType);
 
-    @GET("{language}/about.php")
+    @GET("{language}/mobile_api/museum-detail.json")
     Call<ArrayList<MuseumAboutModel>> getMuseumAboutDetails(@Path("language") String language,
-                                                            @Query("mid") String mid);
+                                                            @Query("nid") String nid);
 
 //    @GET("{language}/geturl.php")
 //    Call<ArrayList<EducationEvents>> getEducationCalendarDetails(@Path("language") String language,
@@ -83,11 +84,14 @@ public interface APIInterface {
                                                                  @Query("cck_multiple_field_remove_fields") String cckValue);
 
 
-    @GET("{language}/museum_landing.php")
-    Call<ArrayList<SliderImageModel>> getMuseumSliderImages(@Path("language") String language,
-                                                            @Query("mid") String mid);
-    @GET("{language}/mobile_api/collection_ws.json")
+     @GET("{language}/mobile_api/collection_ws.json")
     Call<ArrayList<CollectionDetailsList>> getMuseumCollectionDetails(@Path("language") String language,
                                                                       @Query("category") String category);
+    @GET("{language}/mobile_api/tour_guide_list_museums.json")
+    Call<ArrayList<SelfGuideStarterModel>> getSelfGuideStarterPageDetails(@Path("language") String language,
+                                                                          @Query("museum_id") String museum_id);
+    @GET("{language}/mobile_api/collection_by_tour_guide.json")
+    Call<ArrayList<ObjectPreviewModel>> getObjectPreviewDetails(@Path("language") String language,
+                                                                       @Query("tour_guide_id") String tourGuideId);
 
 }
