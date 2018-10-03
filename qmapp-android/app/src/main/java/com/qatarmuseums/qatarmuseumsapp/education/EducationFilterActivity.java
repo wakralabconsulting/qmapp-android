@@ -124,7 +124,7 @@ public class EducationFilterActivity extends AppCompatActivity {
         institutions.add(getResources().getString(R.string.family));
 
         final HashMap<String, String> instituteMap = new HashMap<String, String>();
-        instituteMap.put(getResources().getString(R.string.any), "any");
+        instituteMap.put(getResources().getString(R.string.any), "All");
         instituteMap.put(getResources().getString(R.string.years), "Years");
         instituteMap.put(getResources().getString(R.string.public_art), "Public");
         instituteMap.put(getResources().getString(R.string.cultural), "Cultural");
@@ -151,7 +151,7 @@ public class EducationFilterActivity extends AppCompatActivity {
         age.add(getResources().getString(R.string.special_needs));
 
         final HashMap<String, String> ageMap = new HashMap<String, String>();
-        ageMap.put(getResources().getString(R.string.any), "any");
+        ageMap.put(getResources().getString(R.string.any), "All");
         ageMap.put(getResources().getString(R.string.all_ages), "Allages");
         ageMap.put(getResources().getString(R.string.teachers), "Nursery");
         ageMap.put(getResources().getString(R.string.nursery), "Preschool");
@@ -178,7 +178,7 @@ public class EducationFilterActivity extends AppCompatActivity {
         programmes.add(getResources().getString(R.string.workshop));
 
         final HashMap<String, String> programmeMap = new HashMap<String, String>();
-        programmeMap.put(getResources().getString(R.string.any), "any");
+        programmeMap.put(getResources().getString(R.string.any), "All");
         programmeMap.put(getResources().getString(R.string.art), "Art");
         programmeMap.put(getResources().getString(R.string.field), "Field");
         programmeMap.put(getResources().getString(R.string.gallery), "Gallery");
