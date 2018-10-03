@@ -41,6 +41,8 @@ public class EducationalCalendarEventsTableArabic {
     private String category;
     @ColumnInfo()
     private String filter;
+    @ColumnInfo()
+    private String field;
 
     public EducationalCalendarEventsTableArabic( String event_id,
                                                 String event_title, String event_date,
@@ -49,7 +51,7 @@ public class EducationalCalendarEventsTableArabic {
                                                 String event_end_time, String event_registration,
                                                 String max_group_size, String event_short_description,
                                                 String event_long_description,
-                                                String location, String category, String filter) {
+                                                String location, String category, String filter,String field) {
         this.event_id = event_id;
         this.event_title = event_title;
         this.event_date = event_date;
@@ -65,6 +67,8 @@ public class EducationalCalendarEventsTableArabic {
         this.location = location;
         this.category = category;
         this.filter = filter;
+        this.field=field;
+
     }
 
     @NonNull
@@ -192,7 +196,16 @@ public class EducationalCalendarEventsTableArabic {
         return filter;
     }
 
+    public String getField() {
+        return field;
+    }
+
+    public void setField(String field) {
+        this.field = field;
+    }
+
     public void setFilter(String filter) {
         this.filter = filter;
     }
+
 }

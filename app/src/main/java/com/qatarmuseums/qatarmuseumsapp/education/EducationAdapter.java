@@ -22,6 +22,7 @@ public class EducationAdapter extends RecyclerView.Adapter<EducationAdapter.Educ
 
     Context context;
     ArrayList<EducationEvents> educationEvents;
+    ArrayList<String> descriptionVal;
 
     public EducationAdapter(Context context, ArrayList<EducationEvents> educationEvents) {
         this.context = context;
@@ -43,10 +44,10 @@ public class EducationAdapter extends RecyclerView.Adapter<EducationAdapter.Educ
             holder.eventTitle.setText(educationEvents.get(position).getInstitution());
             holder.eventSubTitle.setText(educationEvents.get(position).getTitle());
             holder.eventTiming.setText(educationEvents.get(position).getShort_desc());
-            holder.eventMaxGroup.setText("Max Group Size : " + educationEvents.get(position).getMax_group_size());
 
         }
 
+        descriptionVal=educationEvents.get(position).getLong_desc();
         if (position % 2 == 1) {
             holder.layoutHolder.setBackgroundColor(Color.parseColor("#FFFFFF"));
         } else {
@@ -88,14 +89,13 @@ public class EducationAdapter extends RecyclerView.Adapter<EducationAdapter.Educ
 
     public class EducationAdapterViewHolder extends RecyclerView.ViewHolder {
 
-        public TextView eventTitle, eventSubTitle, eventMaxGroup, eventTiming, viewDetails;
+        public TextView eventTitle, eventSubTitle, eventTiming, viewDetails;
         public LinearLayout layoutHolder;
 
         public EducationAdapterViewHolder(View itemView) {
             super(itemView);
             eventTitle = (TextView) itemView.findViewById(R.id.event_title);
             eventSubTitle = (TextView) itemView.findViewById(R.id.event_subtitle);
-            eventMaxGroup = (TextView) itemView.findViewById(R.id.event_max_size);
             eventTiming = (TextView) itemView.findViewById(R.id.event_timing);
             viewDetails = (TextView) itemView.findViewById(R.id.event_view_details);
             layoutHolder = (LinearLayout) itemView.findViewById(R.id.layout_holder);
