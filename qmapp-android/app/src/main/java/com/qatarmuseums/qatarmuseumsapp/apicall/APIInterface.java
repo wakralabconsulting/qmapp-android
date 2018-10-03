@@ -66,13 +66,6 @@ public interface APIInterface {
     Call<ArrayList<MuseumAboutModel>> getMuseumAboutDetails(@Path("language") String language,
                                                             @Query("nid") String nid);
 
-//    @GET("{language}/geturl.php")
-//    Call<ArrayList<EducationEvents>> getEducationCalendarDetails(@Path("language") String language,
-//                                                                 @Header("date") Long currentTimestamp,
-//                                                                 @Header("inst") String institution,
-//                                                                 @Header("age") String ageGroup,
-//                                                                 @Header("ptype") String programType);
-
     @GET("{language}/mobile_api/ws_education.json")
     Call<ArrayList<EducationEvents>> getEducationCalendarDetails(@Path("language") String language,
                                                                  @Query("institution") String institution,
