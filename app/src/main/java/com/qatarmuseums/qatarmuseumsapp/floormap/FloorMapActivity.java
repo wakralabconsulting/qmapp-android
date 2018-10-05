@@ -60,7 +60,9 @@ public class FloorMapActivity extends AppCompatActivity implements OnMapReadyCal
     LatLng G6_SC2 = new LatLng(25.295193, 51.539105);
     LatLng G6_SC16 = new LatLng(25.295132, 51.539102);
     LatLng G6_14 = new LatLng(25.295093, 51.539125);
+    LatLng G10 = new LatLng(25.295245, 51.539210);
 
+    // Science Tour
     LatLng L2_G1_SC3 = new LatLng(25.295141, 51.539185);
     LatLng L2_G8 = new LatLng(25.295500, 51.538855);
     LatLng L2_G8_SC1 = new LatLng(25.295468, 51.538905);
@@ -73,7 +75,6 @@ public class FloorMapActivity extends AppCompatActivity implements OnMapReadyCal
     LatLng L2_G9_SC5_1 = new LatLng(25.295654, 51.538918);
     LatLng L2_G9_SC5_2 = new LatLng(25.295652, 51.538927);
     LatLng L2_G5_SC6 = new LatLng(25.295686, 51.539265);
-    LatLng L2_G3_SC14 = new LatLng(25.295566, 51.539397);
     LatLng L2_G3_SC13 = new LatLng(25.295566, 51.539429);
 
     LatLng L3_G10_SC1_1 = new LatLng(25.295230, 51.539170);
@@ -82,10 +83,47 @@ public class FloorMapActivity extends AppCompatActivity implements OnMapReadyCal
     LatLng L3_G13_5 = new LatLng(25.295664, 51.539330);
     LatLng L3_G13_7 = new LatLng(25.295628, 51.539360);
     LatLng L3_G17_3 = new LatLng(25.295505, 51.538905);
+
+    // Highlight Tour
+    LatLng L2_G1_SC2 = new LatLng(25.295195, 51.539160);
+    LatLng L2_G1_SC7 = new LatLng(25.295215, 51.539395);
+    LatLng L2_G1_SC8 = new LatLng(25.295268, 51.539373);
+    LatLng L2_G1_SC13 = new LatLng(25.295180, 51.539248);
+    LatLng L2_G1_SC14 = new LatLng(25.295205, 51.539319);
+    LatLng L2_G2_2 = new LatLng(25.295220, 51.539450);
+    LatLng L2_G3_SC14_1 = new LatLng(25.295548, 51.539406);
+    LatLng L2_G3_SC14_2 = new LatLng(25.295580, 51.539392);
+    LatLng L2_G3_WR4 = new LatLng(25.295540, 51.539470);
+    LatLng L2_G4_SC5 = new LatLng(25.295690, 51.539312);
+    LatLng L2_G3_SC3 = new LatLng(25.295715, 51.539348);
+    LatLng L2_G5_SC5 = new LatLng(25.295715, 51.539205);
+    LatLng L2_G5_SC11 = new LatLng(25.295735, 51.539225);
+    LatLng L2_G7_SC13 = new LatLng(25.295395, 51.538915);
+    LatLng L2_G7_SC8 = new LatLng(25.295345, 51.538880);
+    LatLng L2_G7_SC4 = new LatLng(25.295450, 51.538908);
+
+    LatLng L3_G10_WR2_1 = new LatLng(25.295130, 51.539217);
+    LatLng L3_G10_WR2_2 = new LatLng(25.295138, 51.539240);
+    LatLng L3_G10_PODIUM14 = new LatLng(25.295188, 51.539240);
+    LatLng L3_G10_PODIUM9 = new LatLng(25.295222, 51.539333);
+    LatLng L3_G11_14 = new LatLng(25.295392, 51.539495);
+    LatLng L3_G12_11 = new LatLng(25.295530, 51.539390);
+    LatLng L3_G12_12 = new LatLng(25.295492, 51.539405);
+    LatLng L3_G12_17 = new LatLng(25.295480, 51.539440);
+    LatLng L3_G12_WR5 = new LatLng(25.295540, 51.539470);
+    LatLng L3_G13_2 = new LatLng(25.295690, 51.539402);
+    LatLng L3_G13_15 = new LatLng(25.295660, 51.539375);
+    LatLng L3_G14_7 = new LatLng(25.295693, 51.539270);
+    LatLng L3_G14_13 = new LatLng(25.295723, 51.539225);
+    LatLng L3_G15_13 = new LatLng(25.295150, 51.539135);
+    LatLng L3_G16_WR5 = new LatLng(25.295444, 51.538955);
+    LatLng L3_G17_8 = new LatLng(25.295504, 51.538880);
+    LatLng L3_G17_9 = new LatLng(25.295490, 51.538850);
+    LatLng L3_G18_1 = new LatLng(25.295555, 51.538892);
+    LatLng L3_G18_2 = new LatLng(25.295557, 51.538906);
+    LatLng L3_G18_11 = new LatLng(25.295613, 51.538914);
+
     String markerTitle = "";
-
-    LatLng G10 = new LatLng(25.295245, 51.539210);
-
 
     private final List<BitmapDescriptor> mImages = new ArrayList<BitmapDescriptor>();
 
@@ -357,6 +395,7 @@ public class FloorMapActivity extends AppCompatActivity implements OnMapReadyCal
                 .position(L2_G1_SC3)
                 .title("SI.5")
                 .icon(BitmapDescriptorFactory.fromBitmap(resizeMapIcons("si_5", normalMapIconWidth, normalMapIconHeight))));
+
 //        l2_g3_sc14 = googleMap.addMarker(new MarkerOptions()
 //                .position(L2_G3_SC14)
 //                .title("MW.634")
