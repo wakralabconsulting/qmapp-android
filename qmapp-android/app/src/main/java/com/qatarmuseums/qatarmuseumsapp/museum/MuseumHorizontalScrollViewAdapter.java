@@ -1,5 +1,6 @@
 package com.qatarmuseums.qatarmuseumsapp.museum;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.support.annotation.NonNull;
@@ -61,9 +62,14 @@ public class MuseumHorizontalScrollViewAdapter extends RecyclerView.Adapter<Muse
                     navigationIntent.putExtra("ID", museumId);
                     mContext.startActivity(navigationIntent);
                 } else if (museumHScrollModelList.get(position).getTextName().equals(mContext.getResources().getString(R.string.sidemenu_tour_guide_text))) {
-                    navigationIntent = new Intent(mContext, TourGuideDetailsActivity.class);
-                    navigationIntent.putExtra("ID", museumId);
-                    mContext.startActivity(navigationIntent);
+                    if (museumId.equals("61") || museumId.equals("66") ||
+                            museumId.equals("635") || museumId.equals("638")) {
+                        util.showComingSoonDialog((Activity) mContext);
+                    } else {
+                        navigationIntent = new Intent(mContext, TourGuideDetailsActivity.class);
+                        navigationIntent.putExtra("ID", museumId);
+                        mContext.startActivity(navigationIntent);
+                    }
                 } else if (museumHScrollModelList.get(position).getTextName().equals(mContext.getResources().getString(R.string.sidemenu_exhibition_text))) {
                     navigationIntent = new Intent(mContext, CommonActivity.class);
                     navigationIntent.putExtra(mContext.getString(R.string.toolbar_title_key), mContext.getString(R.string.sidemenu_exhibition_text));
@@ -122,7 +128,7 @@ public class MuseumHorizontalScrollViewAdapter extends RecyclerView.Adapter<Muse
     public MuseumHorizontalScrollViewAdapter(Context context,
                                              List<MuseumHScrollModel> museumHScrollModelList,
                                              String title,
-                                             String museumId,int screenWidth) {
+                                             String museumId, int screenWidth) {
         this.mContext = context;
         util = new Util();
         this.museumHScrollModelList = museumHScrollModelList;

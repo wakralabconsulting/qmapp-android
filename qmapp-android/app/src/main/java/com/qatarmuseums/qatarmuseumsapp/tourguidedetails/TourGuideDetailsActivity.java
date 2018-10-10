@@ -128,10 +128,6 @@ public class TourGuideDetailsActivity extends AppCompatActivity {
         tourGuideList.add(tourguideObject);
         tourguideObject = new TourGuideList(getString(R.string.coming_soon_txt), "11", R.drawable.mia);
         tourGuideList.add(tourguideObject);
-        tourguideObject = new TourGuideList(getString(R.string.coming_soon_txt), "12", R.drawable.coming_soon_1);
-        tourGuideList.add(tourguideObject);
-        tourguideObject = new TourGuideList(getString(R.string.coming_soon_txt), "13", R.drawable.coming_soon_2);
-        tourGuideList.add(tourguideObject);
         mAdapter.notifyDataSetChanged();
 
     }

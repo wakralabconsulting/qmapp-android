@@ -87,11 +87,11 @@
                     android:layout_alignParentBottom="true"
                     android:layout_gravity="center"
                     android:layout_marginBottom="@dimen/padding_15"
-                    android:background="@drawable/round_corner_skyblue"
+                    android:background="@drawable/round_corner_black"
                     android:fontFamily="@font/din_next_lt_pro_bold"
                     android:gravity="center"
                     android:textAllCaps="false"
-                    android:textColor="@color/black"
+                    android:textColor="@color/white"
                     android:textSize="@dimen/settings_page_list_item_text_size" />
 
 
