@@ -64,7 +64,7 @@ public class MuseumActivity extends BaseActivity implements
     LinearLayout scrollBarPreviousIconLayout;
     private IndicatorConfiguration configuration;
     private InfiniteIndicator animCircleIndicator;
-    private GlideLoader glideLoader;
+    private GlideLoaderForMuseum glideLoader;
     ArrayList<Page> ads;
     Intent intent;
     SharedPreferences qmPreferences;
@@ -262,7 +262,7 @@ public class MuseumActivity extends BaseActivity implements
     public void loadAdsToSlider(ArrayList<Page> adsImages) {
         int appLanguage = qmPreferences.getInt("AppLanguage", 1);
         if (adsImages.size() > 1) {
-            glideLoader = new GlideLoader();
+            glideLoader = new GlideLoaderForMuseum();
             if (appLanguage == english) {
                 configuration = new IndicatorConfiguration.Builder()
                         .imageLoader(glideLoader)
@@ -296,7 +296,7 @@ public class MuseumActivity extends BaseActivity implements
             }
 
         } else {
-            glideLoader = new GlideLoader();
+            glideLoader = new GlideLoaderForMuseum();
             configuration = new IndicatorConfiguration.Builder()
                     .imageLoader(glideLoader)
                     .isStopWhileTouch(true)
@@ -410,7 +410,14 @@ public class MuseumActivity extends BaseActivity implements
 
             @Override
             public void onFailure(Call<ArrayList<MuseumAboutModel>> call, Throwable t) {
+                if (t instanceof IOException) {
+                    util.showToast(getResources().getString(R.string.check_network), getApplicationContext());
 
+                } else {
+                    // error due to mapping issues
+                }
+                sliderPlaceholderImage.setVisibility(View.VISIBLE);
+                animCircleIndicator.setVisibility(View.GONE);
             }
         });
 

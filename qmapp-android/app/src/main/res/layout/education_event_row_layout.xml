@@ -9,7 +9,7 @@
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="90dp"
+        android:layout_height="115dp"
         android:orientation="horizontal"
         android:paddingEnd="@dimen/padding_10"
         android:paddingStart="@dimen/padding_10"
@@ -83,25 +83,14 @@
             android:layout_weight="7"
             android:orientation="vertical"
             android:padding="@dimen/padding_5"
-            android:weightSum="9">
+            android:weightSum="10">
 
             <TextView
                 android:id="@+id/event_timing"
                 android:layout_width="wrap_content"
                 android:layout_height="0dp"
                 android:layout_marginTop="@dimen/padding_10"
-                android:layout_weight="4"
-                android:fontFamily="@font/din_next_lt_pro_light"
-                android:gravity="start"
-                android:maxLines="3"
-                android:textColor="@color/black"
-                android:textSize="@dimen/text_size_9" />
-
-            <TextView
-                android:id="@+id/event_max_size"
-                android:layout_width="wrap_content"
-                android:layout_height="0dp"
-                android:layout_weight="3"
+                android:layout_weight="9"
                 android:fontFamily="@font/din_next_lt_pro_light"
                 android:gravity="start"
                 android:textColor="@color/black"
@@ -112,7 +101,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="0dp"
                 android:layout_gravity="end"
-                android:layout_weight="2"
+                android:layout_weight="1"
                 android:gravity="end"
                 android:text="@string/view_details"
                 android:textColor="@color/black"

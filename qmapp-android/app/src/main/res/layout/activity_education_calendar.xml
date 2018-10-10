@@ -2,9 +2,9 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/layout_container"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:id="@+id/layout_container"
     tools:context="com.qatarmuseums.qatarmuseumsapp.education.EducationCalendarActivity">
 
     <android.support.design.widget.AppBarLayout
@@ -106,60 +106,62 @@
                 android:background="@color/darkGray" />
         </LinearLayout>
 
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content">
 
-            <TextView
+
+            <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:fontFamily="@font/din_next_lt_pro_bold"
-                android:gravity="center"
-                android:paddingBottom="@dimen/padding_10"
-                android:text="@string/details"
-                android:textAllCaps="true"
-                android:textColor="@color/black"
-                android:textSize="@dimen/events_title_size"
-                android:textStyle="bold" />
-        </LinearLayout>
+                android:layout_height="wrap_content">
 
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:orientation="vertical">
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:fontFamily="@font/din_next_lt_pro_bold"
+                    android:gravity="center"
+                    android:paddingBottom="@dimen/padding_10"
+                    android:text="@string/details"
+                    android:textAllCaps="true"
+                    android:textColor="@color/black"
+                    android:textSize="@dimen/events_title_size"
+                    android:textStyle="bold" />
+            </LinearLayout>
 
-            <android.support.v7.widget.RecyclerView
-                android:id="@+id/event_list"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:visibility="visible">
-
-            </android.support.v7.widget.RecyclerView>
-            <ProgressBar
-                android:id="@+id/progressBarLoading"
-                style="?android:attr/progressBarStyle"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_centerInParent="true"
-                android:layout_gravity="center"
-                android:layout_marginTop="150dp"
-                android:visibility="gone" />
-
-
-            <TextView
-                android:id="@+id/noResultFoundTxt"
+            <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:layout_marginTop="@dimen/margin_50"
-                android:fontFamily="@font/din_next_lt_pro_regular"
-                android:gravity="center"
-                android:layout_centerInParent="true"
-                android:text="@string/no_events"
-                android:textAlignment="center"
-                android:textColor="@android:color/black"
-                android:textSize="@dimen/font_size_21"
-                android:visibility="gone" />
-        </LinearLayout>
-    </LinearLayout>
+                android:orientation="vertical">
 
+                <android.support.v7.widget.RecyclerView
+                    android:id="@+id/event_list"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:visibility="visible">
+
+                </android.support.v7.widget.RecyclerView>
+
+                <ProgressBar
+                    android:id="@+id/progressBarLoading"
+                    style="?android:attr/progressBarStyle"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_centerInParent="true"
+                    android:layout_gravity="center"
+                    android:layout_marginTop="150dp"
+                    android:visibility="gone" />
+
+
+                <TextView
+                    android:id="@+id/noResultFoundTxt"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_centerInParent="true"
+                    android:layout_marginTop="@dimen/margin_50"
+                    android:fontFamily="@font/din_next_lt_pro_regular"
+                    android:gravity="center"
+                    android:text="@string/no_events"
+                    android:textAlignment="center"
+                    android:textColor="@android:color/black"
+                    android:textSize="@dimen/font_size_21"
+                    android:visibility="gone" />
+            </LinearLayout>
+    </LinearLayout>
 </RelativeLayout>
