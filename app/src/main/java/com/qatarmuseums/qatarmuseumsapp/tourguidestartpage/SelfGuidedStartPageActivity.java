@@ -81,6 +81,7 @@ public class SelfGuidedStartPageActivity extends AppCompatActivity implements
         tourId = intent.getStringExtra("ID");
         tourId = "63";
         tourName = intent.getStringExtra("TOUR_NAME");
+        museumTitle.setText(tourName);
         if (util.isNetworkAvailable(SelfGuidedStartPageActivity.this))
             getSliderImagesandDdetailsfromAPI();
         else
@@ -146,7 +147,6 @@ public class SelfGuidedStartPageActivity extends AppCompatActivity implements
                                 if (selfGuideStarterModels.get(i).getNid().equals("12216"))
                                     selfGuideStarterModel = selfGuideStarterModels.get(i);
                             }
-                            museumTitle.setText(tourName);
                             museumDesc.setText(selfGuideStarterModel.getDescription());
                             if (selfGuideStarterModel.getImageList().size() > 0) {
                                 ArrayList<String> sliderList = new ArrayList<>();
@@ -507,7 +507,6 @@ public class SelfGuidedStartPageActivity extends AppCompatActivity implements
         protected void onPostExecute(TourGuideStartPageEnglish tourGuideStartPageEnglish) {
             if (tourGuideStartPageEnglish != null) {
                 noResultFoundTxt.setVisibility(View.GONE);
-                museumTitle.setText(tourGuideStartPageEnglish.getTitle());
                 museumDesc.setText(tourGuideStartPageEnglish.getDescription());
 
 
@@ -540,7 +539,6 @@ public class SelfGuidedStartPageActivity extends AppCompatActivity implements
         protected void onPostExecute(TourGuideStartPageArabic tourGuideStartPageArabic) {
             if (tourGuideStartPageArabic != null) {
                 noResultFoundTxt.setVisibility(View.GONE);
-                museumTitle.setText(tourGuideStartPageArabic.getTitle());
                 museumDesc.setText(tourGuideStartPageArabic.getDescription());
             } else {
 
