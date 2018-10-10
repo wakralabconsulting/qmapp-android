@@ -3,11 +3,11 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/bottomSheetLayout"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
+    android:layout_height="match_parent"
+    android:background="@color/white"
     android:orientation="vertical"
     android:visibility="visible"
     app:behavior_hideable="true"
-    android:background="@color/white"
     app:layout_behavior="@string/bottom_sheet_behavior">
 
     <LinearLayout
@@ -26,15 +26,26 @@
             android:paddingTop="10dp"
             android:visibility="visible">
 
+            <TextView
+                android:id="@+id/no_data_text"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:gravity="center"
+                android:text="@string/no_results_text"
+                android:visibility="gone" />
+
             <RelativeLayout
                 android:layout_width="match_parent"
-                android:layout_height="20dp">
+                android:layout_height="wrap_content">
 
                 <TextView
+                    android:id="@+id/popup_title"
                     android:layout_width="wrap_content"
-                    android:layout_height="match_parent"
-                    android:paddingLeft="20dp"
-                    android:paddingStart="20dp"
+                    android:layout_height="wrap_content"
+                    android:ellipsize="end"
+                    android:lines="1"
+                    android:paddingEnd="10dp"
+                    android:paddingStart="10dp"
                     android:text="@string/alberallo"
                     android:textColor="@android:color/black"
                     android:textStyle="bold" />
@@ -54,8 +65,11 @@
                     android:gravity="center">
 
                     <ImageView
+                        android:id="@+id/popup_image"
                         android:layout_width="wrap_content"
                         android:layout_height="match_parent"
+                        android:paddingEnd="@dimen/pading_5"
+                        android:paddingStart="@dimen/pading_5"
                         android:src="@drawable/po_297" />
                 </LinearLayout>
 
@@ -89,6 +103,7 @@
                                 android:textStyle="bold" />
 
                             <TextView
+                                android:id="@+id/production_txt"
                                 android:layout_width="0dp"
                                 android:layout_height="wrap_content"
                                 android:layout_weight="1"
@@ -117,6 +132,7 @@
                                 android:textStyle="bold" />
 
                             <TextView
+                                android:id="@+id/production_date"
                                 android:layout_width="0dp"
                                 android:layout_height="wrap_content"
                                 android:layout_weight="1"
@@ -145,6 +161,7 @@
                                 android:textStyle="bold" />
 
                             <TextView
+                                android:id="@+id/period_style"
                                 android:layout_width="0dp"
                                 android:layout_height="wrap_content"
                                 android:layout_weight="1"
@@ -180,16 +197,16 @@
             android:id="@+id/details_popup_long"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:gravity="center"
-            app:layout_behavior="@string/appbar_scrolling_view_behavior"
-            android:orientation="vertical"
             android:background="@color/white"
-           >
+            android:gravity="center"
+            android:orientation="vertical"
+            app:layout_behavior="@string/appbar_scrolling_view_behavior">
+
 
             <ImageView
-                android:layout_width="wrap_content"
-                android:layout_height="300dp"
                 android:id="@+id/image_to_zoom"
+                android:layout_width="match_parent"
+                android:layout_height="300dp"
                 android:src="@drawable/science_tour_object"
                 android:visibility="visible" />
 
@@ -211,6 +228,7 @@
                 android:id="@+id/short_description"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_marginBottom="@dimen/padding_10"
                 android:layout_marginTop="@dimen/padding_10"
                 android:fontFamily="@font/din_next_lt_pro_regular"
                 android:paddingEnd="@dimen/padding_25"
@@ -221,40 +239,68 @@
                 android:textSize="@dimen/font_size_15" />
 
             <ImageView
-                android:layout_width="wrap_content"
-                android:layout_height="300dp"
+                android:id="@+id/image_1"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="@dimen/padding_10"
+                android:paddingEnd="@dimen/padding_25"
+                android:paddingStart="@dimen/padding_25"
+                android:scaleType="fitCenter"
                 android:src="@drawable/science_tour_object2"
-                android:visibility="visible" />
+                android:visibility="gone" />
+
+            <ImageView
+                android:id="@+id/image_2"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="@dimen/padding_10"
+                android:paddingEnd="@dimen/padding_25"
+                android:paddingStart="@dimen/padding_25"
+                android:scaleType="fitCenter"
+                android:src="@drawable/science_tour_object2"
+                android:visibility="gone" />
+
+            <ImageView
+                android:id="@+id/image_3"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="@dimen/padding_10"
+                android:paddingEnd="@dimen/padding_25"
+                android:paddingStart="@dimen/padding_25"
+                android:scaleType="fitCenter"
+                android:src="@drawable/science_tour_object2"
+                android:visibility="gone" />
 
             <TextView
                 android:id="@+id/image_desc1"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/padding_3"
                 android:fontFamily="@font/din_regular"
                 android:paddingEnd="@dimen/padding_25"
                 android:paddingStart="@dimen/padding_25"
                 android:text="@string/floormap_imagdesc1"
                 android:textAlignment="textStart"
                 android:textColor="@color/black"
-                android:textSize="@dimen/font_size_16" />
+                android:textSize="@dimen/font_size_16"
+                android:visibility="gone" />
 
             <TextView
-                android:id="@+id/title2"
+                android:id="@+id/history_title"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="@dimen/padding_10"
                 android:fontFamily="@font/din_regular"
                 android:paddingEnd="@dimen/padding_25"
                 android:paddingStart="@dimen/padding_25"
-                android:text="Object History"
+                android:text="@string/object_history"
                 android:textAlignment="textStart"
                 android:textColor="@color/black"
                 android:textSize="@dimen/font_size_18"
-                android:textStyle="bold" />
+                android:textStyle="bold"
+                android:visibility="gone" />
 
             <TextView
-                android:id="@+id/short_description2"
+                android:id="@+id/history_description"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="@dimen/padding_10"
@@ -264,26 +310,34 @@
                 android:text="@string/floormap_detail2"
                 android:textAlignment="textStart"
                 android:textColor="@color/black"
-                android:textSize="@dimen/font_size_15" />
+                android:textSize="@dimen/font_size_15"
+                android:visibility="gone" />
 
             <ImageView
-                android:layout_width="wrap_content"
-                android:layout_height="300dp"
-                android:src="@drawable/science_tour_object2" />
+                android:id="@+id/image_4"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="@dimen/padding_3"
+                android:paddingEnd="@dimen/padding_25"
+                android:paddingStart="@dimen/padding_25"
+                android:paddingTop="@dimen/pading_10"
+                android:scaleType="fitCenter"
+                android:src="@drawable/science_tour_object2"
+                android:visibility="gone" />
 
             <TextView
                 android:id="@+id/image_desc2"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="@dimen/padding_10"
-                android:layout_marginTop="@dimen/padding_3"
+                android:layout_marginBottom="@dimen/padding_20"
                 android:fontFamily="@font/din_regular"
                 android:paddingEnd="@dimen/padding_25"
                 android:paddingStart="@dimen/padding_25"
                 android:text="@string/floormap_imagdesc2"
                 android:textAlignment="textStart"
                 android:textColor="@color/black"
-                android:textSize="@dimen/font_size_16" />
+                android:textSize="@dimen/font_size_16"
+                android:visibility="gone" />
 
 
         </LinearLayout>
