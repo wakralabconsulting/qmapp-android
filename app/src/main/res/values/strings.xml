@@ -167,6 +167,11 @@ They exemplify the external influences and internal creativity that inspired thi
     <string name="seniors">Seniors</string>
     <string name="families">Families</string>
     <string name="special_needs">Special Needs</string>
+    <string name="production_text">Production:</string>
+    <string name="production_dates">production dates:</string>
+    <string name="period_style">period/Style:</string>
+    <string name="technique_materials">Technique and materials:</string>
+    <string name="dimension">Dimensions:</string>
 
     <string name="art">Art Workshop</string>
     <string name="field">Field Trip</string>
