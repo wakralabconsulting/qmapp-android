@@ -115,7 +115,7 @@
                 android:textStyle="bold" />
 
             <TextView
-                android:id="@+id/short_description2"
+                android:id="@+id/history_description"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="@dimen/padding_10"
