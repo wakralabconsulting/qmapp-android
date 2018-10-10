@@ -93,7 +93,7 @@ public class MuseumActivity extends BaseActivity implements
         sliderPlaceholderImage = (ImageView) findViewById(R.id.ads_place_holder);
 
         museumHorizontalScrollViewAdapter = new MuseumHorizontalScrollViewAdapter(this,
-                museumHScrollModelList, intent.getStringExtra("MUSEUMTITLE"), museumId,getScreenWidth());
+                museumHScrollModelList, intent.getStringExtra("MUSEUMTITLE"), museumId, getScreenWidth());
         animCircleIndicator.setVisibility(View.GONE);
         if (appLanguage == english) {
             recyclerviewLayoutManager =
@@ -110,8 +110,13 @@ public class MuseumActivity extends BaseActivity implements
         recyclerView.setItemAnimator(new DefaultItemAnimator());
         recyclerView.setAdapter(museumHorizontalScrollViewAdapter);
 
-        if (museumId.equals("63") || museumId.equals("96")) {
-            prepareRecyclerViewDataForMIA();
+        if (museumId.equals("63") || museumId.equals("96") || museumId.equals("61") || museumId.equals("66") ||
+                museumId.equals("635") || museumId.equals("638")) {
+
+            if (museumId.equals("63") || museumId.equals("96"))
+                prepareRecyclerViewDataForMIA();
+            else
+                prepareRecyclerViewDataFor5();
 
             recyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
                 @Override
@@ -182,7 +187,7 @@ public class MuseumActivity extends BaseActivity implements
 
     public void setSliderImages(ArrayList<String> sliderImageList) {
         ads = new ArrayList<>();
-        for (int i=0;i<sliderImageList.size();i++){
+        for (int i = 0; i < sliderImageList.size(); i++) {
             ads.add(new Page("", sliderImageList.get(i),
                     null));
         }
@@ -250,6 +255,28 @@ public class MuseumActivity extends BaseActivity implements
 
         model = new MuseumHScrollModel(this,
                 getResources().getString(R.string.sidemenu_parks_text), R.drawable.park_black);
+        museumHScrollModelList.add(model);
+
+        model = new MuseumHScrollModel(this,
+                getResources().getString(R.string.sidemenu_dining_text), R.drawable.dining);
+        museumHScrollModelList.add(model);
+        museumHorizontalScrollViewAdapter.notifyDataSetChanged();
+    }
+
+    public void prepareRecyclerViewDataFor5() {
+        museumHScrollModelList.clear();
+        MuseumHScrollModel model = new MuseumHScrollModel(this,
+                getResources().getString(R.string.museum_about_text), R.drawable.about_icon);
+        museumHScrollModelList.add(model);
+        model = new MuseumHScrollModel(this,
+                getResources().getString(R.string.sidemenu_tour_guide_text), R.drawable.audio_circle);
+        museumHScrollModelList.add(model);
+        model = new MuseumHScrollModel(this,
+                getResources().getString(R.string.sidemenu_exhibition_text), R.drawable.exhibition_black);
+        museumHScrollModelList.add(model);
+
+        model = new MuseumHScrollModel(this,
+                getResources().getString(R.string.museum_collection_text), R.drawable.collections);
         museumHScrollModelList.add(model);
 
         model = new MuseumHScrollModel(this,
@@ -370,23 +397,23 @@ public class MuseumActivity extends BaseActivity implements
                     if (response.body() != null) {
                         museumAboutModels.addAll(response.body());
                         if (museumAboutModels.size() != 0) {
-                            if (museumAboutModels.get(0).getImageList().size()>0){
+                            if (museumAboutModels.get(0).getImageList().size() > 0) {
                                 int imageSliderSize;
-                                ArrayList<String> sliderList=new ArrayList<>();
-                                if (museumAboutModels.get(0).getImageList().size()>=4){
-                                    imageSliderSize =4;
-                                }else {
+                                ArrayList<String> sliderList = new ArrayList<>();
+                                if (museumAboutModels.get(0).getImageList().size() >= 4) {
+                                    imageSliderSize = 4;
+                                } else {
                                     imageSliderSize = museumAboutModels.get(0).getImageList().size();
                                 }
 
-                                for (int i =1; i<imageSliderSize;i++){
-                                    sliderList.add(i-1, museumAboutModels.get(0).getImageList().get(i));
+                                for (int i = 1; i < imageSliderSize; i++) {
+                                    sliderList.add(i - 1, museumAboutModels.get(0).getImageList().get(i));
                                 }
 
                                 setSliderImages(sliderList);
                                 sliderPlaceholderImage.setVisibility(View.GONE);
                                 animCircleIndicator.setVisibility(View.VISIBLE);
-                            }else {
+                            } else {
                                 sliderPlaceholderImage.setVisibility(View.VISIBLE);
                                 animCircleIndicator.setVisibility(View.GONE);
                             }
@@ -423,6 +450,7 @@ public class MuseumActivity extends BaseActivity implements
 
 
     }
+
     public int getScreenWidth() {
         DisplayMetrics displayMetrics = new DisplayMetrics();
         getWindowManager().getDefaultDisplay().getMetrics(displayMetrics);

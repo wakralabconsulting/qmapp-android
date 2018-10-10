@@ -19,7 +19,6 @@ import com.qatarmuseums.qatarmuseumsapp.QMDatabase;
 import com.qatarmuseums.qatarmuseumsapp.R;
 import com.qatarmuseums.qatarmuseumsapp.apicall.APIClient;
 import com.qatarmuseums.qatarmuseumsapp.apicall.APIInterface;
-import com.qatarmuseums.qatarmuseumsapp.museum.GlideLoaderForMuseum;
 import com.qatarmuseums.qatarmuseumsapp.objectpreview.ObjectPreviewActivity;
 import com.qatarmuseums.qatarmuseumsapp.utils.Util;
 
@@ -61,6 +60,7 @@ public class SelfGuidedStartPageActivity extends AppCompatActivity implements
     QMDatabase qmDatabase;
     TourGuideStartPageEnglish tourGuideStartPageEnglish;
     TourGuideStartPageArabic tourGuideStartPageArabic;
+    private SelfGuideStarterModel selfGuideStarterModel;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -97,7 +97,7 @@ public class SelfGuidedStartPageActivity extends AppCompatActivity implements
             @Override
             public void onAnimationEnd(Animation animation) {
                 Intent i = new Intent(SelfGuidedStartPageActivity.this, ObjectPreviewActivity.class);
-                i.putExtra("TOURID",tourId);
+                i.putExtra("TOURID", tourId);
                 startActivity(i);
             }
 
@@ -141,13 +141,17 @@ public class SelfGuidedStartPageActivity extends AppCompatActivity implements
                     if (response.body() != null) {
                         selfGuideStarterModels.addAll(response.body());
                         if (selfGuideStarterModels.size() != 0) {
-                            museumTitle.setText(selfGuideStarterModels.get(0).getTitle());
-                            museumDesc.setText(selfGuideStarterModels.get(0).getDescription());
-
-                            if (selfGuideStarterModels.get(0).getImageList().size() > 0) {
+                            for (int i = 0; i < selfGuideStarterModels.size(); i++) {
+                                //Temporary
+                                if (selfGuideStarterModels.get(i).getNid().equals("12216"))
+                                    selfGuideStarterModel = selfGuideStarterModels.get(i);
+                            }
+                            museumTitle.setText(tourName);
+                            museumDesc.setText(selfGuideStarterModel.getDescription());
+                            if (selfGuideStarterModel.getImageList().size() > 0) {
                                 ArrayList<String> sliderList = new ArrayList<>();
-                                for (int i = 0; i < selfGuideStarterModels.get(0).getImageList().size(); i++) {
-                                    sliderList.add(i, selfGuideStarterModels.get(0).getImageList().get(i));
+                                for (int i = 0; i < selfGuideStarterModel.getImageList().size(); i++) {
+                                    sliderList.add(i, selfGuideStarterModel.getImageList().get(i));
                                 }
 
                                 setSliderImages(sliderList);
@@ -367,7 +371,7 @@ public class SelfGuidedStartPageActivity extends AppCompatActivity implements
 
                         } else {
                             tourGuideStartPageEnglish = new TourGuideStartPageEnglish(selfGuideStarterModels.get(i).getTitle()
-                                    ,selfGuideStarterModels.get(i).getMuseumsEntity(),
+                                    , selfGuideStarterModels.get(i).getMuseumsEntity(),
                                     selfGuideStarterModels.get(i).getDescription());
                             activityReference.get().qmDatabase.getTourGuideStartPageDao().insert(tourGuideStartPageEnglish);
 
@@ -507,7 +511,6 @@ public class SelfGuidedStartPageActivity extends AppCompatActivity implements
                 museumDesc.setText(tourGuideStartPageEnglish.getDescription());
 
 
-
             } else {
 
                 noResultFoundTxt.setVisibility(View.VISIBLE);
@@ -547,12 +550,14 @@ public class SelfGuidedStartPageActivity extends AppCompatActivity implements
 
         }
     }
+
     @Override
     protected void onPause() {
         super.onPause();
         if (configuration != null)
             animCircleIndicator.stop();
     }
+
     @Override
     protected void onResume() {
         super.onResume();
