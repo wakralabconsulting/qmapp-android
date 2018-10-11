@@ -18,27 +18,35 @@ import java.util.ArrayList;
 
 public class PageFragment extends Fragment {
 
-    private TextView mainTitle,acessionText,productionText,productionDateText,
-            periodStyleText,techniqueMaterialText,dimensionText;
+    private TextView mainTitle, acessionText, productionText, productionDateText,
+            periodStyleText, techniqueMaterialText, dimensionText;
     private ImageView mainImageView;
+    String title, description, history, summary, mainImage;
+    ArrayList<String> imageList;
 
     public PageFragment() {
     }
 
-    public  PageFragment newInstance(int position, boolean isLast, String mainTitle, String accessionNumber,
-                                     String image, String productionText, String productionDateText,
-                                     String periodStyleText, String techniqueMaterial, String dimension) {
+    public PageFragment newInstance(int position, boolean isLast, String mainTitle, String accessionNumber,
+                                    String image, String productionText, String productionDateText,
+                                    String periodStyleText, String techniqueMaterial, String dimension,
+                                    String curatorialDescription, String objectHistory, String objectENGSummary,
+                                    ArrayList<String> images) {
 
         Bundle args = new Bundle();
         args.putInt("POSITION", position);
-        args.putString("MAINTITLE",mainTitle);
-        args.putString("ACCESIONNUMBER",accessionNumber);
-        args.putString("IMAGE",image);
-        args.putString("PRODUCTION",productionText);
-        args.putString("PRODUCTIONDATE",productionDateText);
-        args.putString("PERIODSTYLETEXT",periodStyleText);
-        args.putString("TECHNIQUEMATERIAL",techniqueMaterial);
-        args.putString("DIMENSION",dimension);
+        args.putString("MAINTITLE", mainTitle);
+        args.putString("ACCESIONNUMBER", accessionNumber);
+        args.putString("IMAGE", image);
+        args.putString("PRODUCTION", productionText);
+        args.putString("PRODUCTIONDATE", productionDateText);
+        args.putString("PERIODSTYLETEXT", periodStyleText);
+        args.putString("TECHNIQUEMATERIAL", techniqueMaterial);
+        args.putString("DIMENSION", dimension);
+        args.putString("DESCRIPTION", curatorialDescription);
+        args.putString("HISTORY", objectHistory);
+        args.putString("SUMMARY", objectENGSummary);
+        args.putStringArrayList("IMAGES", images);
         if (isLast)
             args.putBoolean("isLast", true);
         final PageFragment fragment = new PageFragment();
@@ -54,15 +62,21 @@ public class PageFragment extends Fragment {
         acessionText = (TextView) view.findViewById(R.id.acession_number);
         productionText = (TextView) view.findViewById(R.id.production_text);
         productionDateText = (TextView) view.findViewById(R.id.production_date_text);
-        periodStyleText = (TextView) view.findViewById(R.id. period_style);
-        techniqueMaterialText = (TextView) view.findViewById(R.id. technique_material);
-        dimensionText = (TextView) view.findViewById(R.id. dimension_text);
+        periodStyleText = (TextView) view.findViewById(R.id.period_style);
+        techniqueMaterialText = (TextView) view.findViewById(R.id.technique_material);
+        dimensionText = (TextView) view.findViewById(R.id.dimension_text);
 
         mainImageView = (ImageView) view.findViewById(R.id.main_image);
         mainImageView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 Intent intent = new Intent(getActivity(), ObjectPreviewDetailsActivity.class);
+                intent.putExtra("Title", title);
+                intent.putExtra("Image", mainImage);
+                intent.putExtra("Description", description);
+                intent.putExtra("History", history);
+                intent.putExtra("Summary", summary);
+                intent.putStringArrayListExtra("Images", imageList);
                 startActivity(intent);
 
             }
@@ -71,12 +85,18 @@ public class PageFragment extends Fragment {
     }
 
 
-
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         final int position = getArguments().getInt("POSITION", 0);
-        mainTitle.setText(getArguments().getString("MAINTITLE"));
+        title = getArguments().getString("MAINTITLE");
+        mainImage = getArguments().getString("IMAGE");
+        description = getArguments().getString("DESCRIPTION");
+        history = getArguments().getString("HISTORY");
+        summary = getArguments().getString("SUMMARY");
+        imageList = getArguments().getStringArrayList("IMAGES");
+
+        mainTitle.setText(title);
         acessionText.setText(getArguments().getString("ACCESIONNUMBER"));
         productionText.setText(getArguments().getString("PRODUCTION"));
         productionDateText.setText(getArguments().getString("PRODUCTIONDATE"));
@@ -84,7 +104,7 @@ public class PageFragment extends Fragment {
         techniqueMaterialText.setText(getArguments().getString("TECHNIQUEMATERIAL"));
         dimensionText.setText(getArguments().getString("DIMENSION"));
         GlideApp.with(this)
-                .load(getArguments().getString("IMAGE"))
+                .load(mainImage)
                 .centerInside()
                 .placeholder(R.drawable.placeholder)
                 .into(mainImageView);

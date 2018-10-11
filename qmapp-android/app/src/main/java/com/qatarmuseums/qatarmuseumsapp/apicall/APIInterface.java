@@ -85,7 +85,7 @@ public interface APIInterface {
     Call<ArrayList<SelfGuideStarterModel>> getSelfGuideStarterPageDetails(@Path("language") String language,
                                                                           @Query("museum_id") String museum_id);
     @GET("{language}/mobile_api/collection_by_tour_guide.json")
-    Call<ArrayList<ObjectPreviewModel>> getObjectPreviewDetails(@Path("language") String language,
+    Call<ArrayList<ArtifactDetails>> getObjectPreviewDetails(@Path("language") String language,
                                                                        @Query("tour_guide_id") String tourGuideId);
 
     @GET("{language}/mobile_api/collection_by_tour_guide.json")
