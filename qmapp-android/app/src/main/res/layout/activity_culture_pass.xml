@@ -126,7 +126,7 @@
                     android:layout_marginEnd="@dimen/pading_10"
                     android:layout_marginStart="@dimen/pading_10"
                     android:layout_marginTop="@dimen/pading_10"
-                    android:background="@drawable/round_corner_pink"
+                    android:background="@drawable/round_corner_black"
                     android:fontFamily="@font/din_next_lt_pro_bold"
                     android:text="@string/become_a_member"
                     android:textColor="@color/white" />
@@ -147,7 +147,7 @@
                     android:layout_marginEnd="@dimen/pading_10"
                     android:layout_marginStart="@dimen/pading_10"
                     android:layout_marginTop="@dimen/pading_10"
-                    android:background="@drawable/round_corner_skyblue"
+                    android:background="@drawable/round_corner_black"
                     android:fontFamily="@font/din_next_lt_pro_bold"
                     android:text="@string/log_in"
                     android:textColor="@color/white" />

@@ -139,7 +139,7 @@ public class DiningActivity extends AppCompatActivity implements IPullZoom {
         mapDetails.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (latitude != null) {
+                if (latitude != null && !latitude.equals("")) {
                     String geoUri = "http://maps.google.com/maps?q=loc:" + latitude + "," + longitude + " (" + mainTitle + ")";
                     Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(geoUri));
                     startActivity(intent);
@@ -318,7 +318,7 @@ public class DiningActivity extends AppCompatActivity implements IPullZoom {
             this.locationDetails.setText(locationInfo);
         }
 
-        if (latitude != null) {
+        if (latitude != null && !latitude.equals("") && latitude.contains("°")) {
             latitude = convertDegreetoDecimalMeasure(latitude);
             longitude = convertDegreetoDecimalMeasure(longitude);
         }

@@ -5,6 +5,7 @@ import com.qatarmuseums.qatarmuseumsapp.calendar.CalendarEvents;
 import com.qatarmuseums.qatarmuseumsapp.commonpage.CommonModel;
 import com.qatarmuseums.qatarmuseumsapp.dining.DiningDetailModel;
 import com.qatarmuseums.qatarmuseumsapp.education.EducationEvents;
+import com.qatarmuseums.qatarmuseumsapp.floormap.ArtifactDetails;
 import com.qatarmuseums.qatarmuseumsapp.heritage.HeritageOrExhibitionDetailModel;
 import com.qatarmuseums.qatarmuseumsapp.home.HomeList;
 import com.qatarmuseums.qatarmuseumsapp.museumabout.MuseumAboutModel;
@@ -53,7 +54,7 @@ public interface APIInterface {
 
     @GET("{language}/mobile_api/museum_collection_category.json")
     Call<ArrayList<CommonModel>> getCollectionList(@Path("language") String language,
-                                                       @Query("museum_id") String museumId);
+                                                   @Query("museum_id") String museumId);
 
     @GET("{language}/mobile_api/new_ws_educations.json")
     Call<ArrayList<CalendarEvents>> getCalendarDetails(@Path("language") String language,
@@ -81,14 +82,17 @@ public interface APIInterface {
                                                                  @Query("cck_multiple_field_remove_fields") String cckValue);
 
 
-     @GET("{language}/mobile_api/collection_ws.json")
+    @GET("{language}/mobile_api/collection_ws.json")
     Call<ArrayList<CollectionDetailsList>> getMuseumCollectionDetails(@Path("language") String language,
                                                                       @Query("category") String category);
     @GET("{language}/mobile_api/tour_guide_list_museums.json")
     Call<ArrayList<SelfGuideStarterModel>> getSelfGuideStarterPageDetails(@Path("language") String language,
                                                                           @Query("museum_id") String museum_id);
     @GET("{language}/mobile_api/collection_by_tour_guide.json")
-    Call<ArrayList<ObjectPreviewModel>> getObjectPreviewDetails(@Path("language") String language,
+    Call<ArrayList<ArtifactDetails>> getObjectPreviewDetails(@Path("language") String language,
                                                                        @Query("tour_guide_id") String tourGuideId);
+
+    @GET("{language}/mobile_api/collection_by_tour_guide.json")
+    Call<ArrayList<ArtifactDetails>> getArtifactList(@Path("language") String language);
 
 }

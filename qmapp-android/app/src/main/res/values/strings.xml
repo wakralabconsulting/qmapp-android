@@ -181,6 +181,7 @@ They exemplify the external influences and internal creativity that inspired thi
     <string name="reading">Reading Group</string>
     <string name="research">Research</string>
     <string name="workshop">Workshop</string>
+    <string name="object_history">Object History</string>
 
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
