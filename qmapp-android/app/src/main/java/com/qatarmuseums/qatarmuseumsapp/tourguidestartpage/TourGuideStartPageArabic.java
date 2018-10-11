@@ -11,13 +11,16 @@ public class TourGuideStartPageArabic {
     private String title;
     @NonNull
     @PrimaryKey(autoGenerate = false)
+    private String nid;
+    @ColumnInfo()
     private String museum_entity;
     @ColumnInfo()
     private String description;
 
-    public TourGuideStartPageArabic(String title, @NonNull String museum_entity,
+    public TourGuideStartPageArabic(String title, @NonNull String nid, String museum_entity,
                                     String description) {
         this.title = title;
+        this.nid = nid;
         this.museum_entity = museum_entity;
         this.description = description;
     }
@@ -27,6 +30,10 @@ public class TourGuideStartPageArabic {
     }
 
     @NonNull
+    public String getNid() {
+        return nid;
+    }
+
     public String getMuseum_entity() {
         return museum_entity;
     }

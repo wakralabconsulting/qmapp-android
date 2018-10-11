@@ -168,8 +168,8 @@ They exemplify the external influences and internal creativity that inspired thi
     <string name="families">Families</string>
     <string name="special_needs">Special Needs</string>
     <string name="production_text">Production:</string>
-    <string name="production_dates">production dates:</string>
-    <string name="period_style">period/Style:</string>
+    <string name="production_dates">Production dates:</string>
+    <string name="period_style">Period/Style:</string>
     <string name="technique_materials">Technique and materials:</string>
     <string name="dimension">Dimensions:</string>
 
@@ -182,5 +182,7 @@ They exemplify the external influences and internal creativity that inspired thi
     <string name="research">Research</string>
     <string name="workshop">Workshop</string>
     <string name="object_history">Object History</string>
+    <string name="science_tour">Science Tour</string>
+    <string name="no_location_data">No Location Data</string>
 
 </resources>
