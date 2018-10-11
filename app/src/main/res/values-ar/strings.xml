@@ -9,18 +9,18 @@
     <string name="everyday_from">يومياً من</string>
     <string name="to">إلى</string>
     <string name="action_settings">عربى</string>
-    <string name="title_dining">العشاء</string>
+    <string name="title_dining">الطعام</string>
     <string name="title_gift_shop">محل الهدايا</string>
-    <string name="title_culture_pass">ممر الثقافة</string>
+    <string name="title_culture_pass">بطاقتك إلى الثقافة</string>
     <string name="education_calendar_activity_tittle">التقويم التعليمي</string>
-    <string name="title_more">More</string>
+    <string name="title_more">المزيد</string>
     <string name="sidemenu_exhibition_text">المعارض</string>
     <string name="sidemenu_events_text">الفعاليات</string>
     <string name="sidemenu_education_text">التعليم</string>
     <string name="sidemenu_tour_guide_text">الدليل السياحي</string>
     <string name="sidemenu_heritage_text">المواقع التراثية</string>
-    <string name="sidemenu_public_arts_text">الفنون الشعبية</string>
-    <string name="sidemenu_dining_text">العشاء</string>
+    <string name="sidemenu_public_arts_text">الفنون العامة</string>
+    <string name="sidemenu_dining_text">الطعام</string>
     <string name="sidemenu_gift_shop_text">محل الهدايا</string>
     <string name="sidemenu_parks_text">الحدائق</string>
     <string name="toolbar_title_key">TOOLBAR_TITLE</string>
@@ -36,7 +36,7 @@
     <string name="arabic">عربى</string>
     <string name="notification_settings">إعدادات الإشعارات</string>
     <string name="reset_to_default">إعداة تعيين للوضع الإفتراضي</string>
-    <string name="apply">قدم</string>
+    <string name="apply">تقديم</string>
     <string name="add_to_calendar">أضف إلى التقويم</string>
     <string name="register_now">سجل الأن</string>
     <string name="calendar_dialog_title">اسم الفعالية</string>
@@ -55,7 +55,7 @@
     <string name="education_short_description">Our numerous programmes are designed for families, university students and adults.\n\nFind out what\'s on offer and register ahead to secure your place.</string>
     <string name="education_long_description">All of our education programmes provide interactive opportunities. We hope that they create lasting memories and lead to the development of creative, compassionate and engaged individuals.\n\nFor school teachers and educators, we bring custom-made workshops, conferences and trainings to suit their needs. We also focus on working with children to encourage them to explore the world around them, engage with it, and express themselves through creative activities.\n\nAll of our activities align with Qatar Supreme Educational Council Professional Standards for Teachers and National Curriculum Standards.</string>
     <string name="discover_txt">الاستكشاف</string>
-    <string name="coming_soon_content">نحن نعمل بجد لجعل التفاصيل متاحة. \n\nستكون خرائط المتحف و تفاصيل القطع الخاصة بالمتحف متوفرة عما قريب. \n\nترقّب</string>
+    <string name="coming_soon_content">نحن نعمل بجد لجعل التفاصيل متاحة. \n\nستكون خرائط المتحف و تفاصيل القطع الخاصة بالمتحف متوفرة عما قريب \n\nترقّب</string>
     <string name="coming_soon_txt">قريباً</string>
     <string name="close">مغلق</string>
     <string name="register_now_content">شكراً لك للتسجيل معنا. المزيد من التفاصيل ستصل إليك على طريق البريد الإلكتروني</string>
@@ -64,8 +64,8 @@
     <string name="institution">المعهد -</string>
     <string name="age_group">الفئة العمرية -</string>
     <string name="programme_type">نوع البرنامج -</string>
-    <string name="clear">مسح</string>
-    <string name="filter">تنقية</string>
+    <string name="clear">أغلق</string>
+    <string name="filter">بحث</string>
     <string name="gift_shop_url">http://www.qm.org.qa/en/gift-shops</string>
     <string name="touch_again">اضغط مرة أخرى للخروج</string>
     <string name="map_navigation_api">http://maps.google.com/maps?q=loc:</string>
@@ -77,11 +77,11 @@
 من المطبخ المتواضع إلى وضع لوحات البلاط ، كان السيراميك جزءًا حيويًا من الحياة اليومية في العالم الإسلامي. \ n \ n
 إنها تجسد التأثيرات الخارجية والإبداع الداخلي الذي ألهم هذا الازدهار في تصميم السيراميك على مدى 12 قرنا ."</string>
     <string name="culture_pass_description">يمنحك برنامج "ممر متاحف قطر للثقافة" خصومات ودخول مجاني وفرص حصرية عبر العديد من الأماكن الثقافية في قطر والخصومات على مجموعة واسعة من قائمة الشركاء المتزايدة. أفضل ما في الأمر ، كعضو انت مدعو للانضمام إلينا في مجموعة واسعة من الأنشطة الإبداعية المثيرة. \n\n يمكنك الدخول عن طريق تفعيل عضويتك اليوم</string>
-    <string name="benefits">الفوائد</string>
+    <string name="benefits">المزايا</string>
     <string name="culture_pass_benefits">- خصم بنسبة 15٪ في QM CAFÉ\'S على جميع المنتجات \n\n- خصم بنسبة 10٪ على العناصر في جميع متاجر هدايا QM (بدون حد أدنى من الشراء) \n\n - خصم بنسبة 10٪ في مطعم IDAM في وقت الغداء \n\n- استلام النشرة الإخبارية الشهرية للبقاء على إطلاع على عروض متاحف قطر والشركاء \n\n- الحصول على وصول أولي إلى مناقشات وحلقات الأعضاء فقط \n\n- الحصول على دعوات حصرية إلى مركز اتصال متاحف قطر ذو المواصفات العالمية من 8 صباحًا إلى 8 مساءً يوميًا></string>
     <string name="not_a_member_yet"><u>لست عضواً بعد؟</u></string>
     <string name="become_a_member">أنضم إلينا الأن</string>
-    <string name="already_a_member"><u>عضو بالعفل؟</u></string>
+    <string name="already_a_member"><u>عضو سابق؟</u></string>
     <string name="log_in">تسجيل الدخول</string>
     <string name="unable_to_fetch_details">غير فادر على جلب التفاصيل</string>
     <string name="no_new_notification_yet">لا توجد إشعارات بعد</string>
@@ -106,7 +106,7 @@
     <string name="notification_event_updates">تحديثات الفعالية</string>
     <string name="notification_exhibition_updates">تحديثات المعرض</string>
     <string name="notification_museum_updates">تحديثات المتحف</string>
-    <string name="notification_culturepass_updates">تحديثات ممر الثقافة</string>
+    <string name="notification_culturepass_updates">تحديثات بطاقة الثقافة</string>
     <string name="notification_tourguide_updates">تحديثات الدليل السياحي</string>
     <string name="museum_about_text">عن</string>
     <string name="museum_collection_text">المجموعات</string>
@@ -116,7 +116,7 @@
     <string name="location_alert_txt">حدث خطأ ما</string>
     <string name="location_error_content">للأسف لقد تعذر فتح خرائط جوجل</string>
     <string name="object_search">بحث القطع</string>
-    <string name="obj_text_one">يرجى إدخال رقم القطعة</string>
+    <string name="obj_text_one">ادخل رقم القطعة</string>
     <string name="obj_text_two">بجانب</string>
     <string name="obj_text_three">لرؤية التفاصيل</string>
     <string name="or">أو</string>
@@ -167,13 +167,11 @@
     <string name="change_language_dialog_title">تغيير اللغة</string>
     <string name="change_language_button_text">المتابعة</string>
     <string name="contact_mail">info@mia.org.qa</string>
-    <string name="for_more_information_text">For more information and to make a reservation, visit <u>MIA.</u></string>
-    <string name="museum">Museum</string>
     <string name="alberallo">Alberallo</string>
-    <string name="tourguide_title">Self Guided Tours</string>
-    <string name="tourguide_subtitle">Self Guided Tours</string>
-    <string name="tourguide_subtitle_desc">You may also try our self guided tours. \n Immerse yourself into the journeys \ncurated specially for you by our \nexperts.</string>
-    <string name="mia_tour_guide">MIA TOUR GUIDE</string>
+    <string name="tourguide_title">تجول كما يحلو لك</string>
+    <string name="tourguide_subtitle">تجول كما يحلو لك</string>
+    <string name="tourguide_subtitle_desc">ربما تريد أن تجرب جولاتنا كما يحلو لك \n اغمر نفسك في تفاصيل القطعة التي اختيرت خصيصا لك من قبل خبرائنا..</string>
+    <string name="mia_tour_guide">دليل متحف الفن الإسلامي</string>
     <string name="title_activity_floor_map">Map</string>
     <string name="transparency">Transparency</string>
     <string name="switch_image">Switch Image</string>
@@ -184,5 +182,15 @@
     <string name="floormap_detail2">According to the Medici Archival records in Florence, this vas is possibly one of the three \'alberegli domaschini\' owned by Piero di Cosimo de Medici (1416-59), the de-facto ruler of Florence from 1464-69."
        detailSecondLabel.text = "Like his father before him, Piero continued the family\'s tradition of artistic patronage, extending the collection beyond Italian Renaissance works to include Dutch and Flemish paintings, as well as rare books. This particular vase most probably remained in royal or aristocratic families for generations, before being discovered - along with four other similar vases - in a private Italian collection in 2005. Before this re-discovery, only one other albarello of its kind was recorded in the Musee des arts Decoratifs, Paris.</string>
     <string name="floormap_imagdesc2">Portrait of Piero di Cosimo de\' Medici \nBronzino (Agnolo di Cosimo) (15031 en dash572) \nFlorence, 1550en dash 1570 \nNational Gallery, London</string>
+
+    <string name="production_text">الانتاج:</string>
+    <string name="production_dates">تاريخ الإنتاج:</string>
+    <string name="period_style">الفترة/النمط:</string>
+    <string name="technique_materials">Technique and materials:</string>
+    <string name="dimension">Dimensions:</string>
+
+    <string name="object_history">Object History</string>
+    <string name="science_tour">جولة علمية</string>
+    <string name="no_location_data">No Location Data</string>
 
 </resources>
