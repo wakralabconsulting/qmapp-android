@@ -43,6 +43,11 @@ public class EducationalCalendarEventsTableArabic {
     private String filter;
     @ColumnInfo()
     private String field;
+    private String age;
+    @ColumnInfo()
+    private String associatedTopics;
+    @ColumnInfo()
+    private String museum;
 
     public EducationalCalendarEventsTableArabic( String event_id,
                                                 String event_title, String event_date,
@@ -51,7 +56,8 @@ public class EducationalCalendarEventsTableArabic {
                                                 String event_end_time, String event_registration,
                                                 String max_group_size, String event_short_description,
                                                 String event_long_description,
-                                                String location, String category, String filter,String field) {
+                                                String location, String category, String filter,String field,
+                                                 String age,String associatedTopics,String museum) {
         this.event_id = event_id;
         this.event_title = event_title;
         this.event_date = event_date;
@@ -68,6 +74,9 @@ public class EducationalCalendarEventsTableArabic {
         this.category = category;
         this.filter = filter;
         this.field=field;
+        this.age=age;
+        this.associatedTopics=associatedTopics;
+        this.museum=museum;
 
     }
 
@@ -208,4 +217,27 @@ public class EducationalCalendarEventsTableArabic {
         this.filter = filter;
     }
 
+    public String getAge() {
+        return age;
+    }
+
+    public void setAge(String age) {
+        this.age = age;
+    }
+
+    public String getAssociatedTopics() {
+        return associatedTopics;
+    }
+
+    public void setAssociatedTopics(String associatedTopics) {
+        this.associatedTopics = associatedTopics;
+    }
+
+    public String getMuseum() {
+        return museum;
+    }
+
+    public void setMuseum(String museum) {
+        this.museum = museum;
+    }
 }
