@@ -4,7 +4,6 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
-import android.support.design.widget.Snackbar;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
@@ -156,6 +155,7 @@ public class ObjectPreviewActivity extends AppCompatActivity {
                     i.putExtra("Position", position);
                     i.putExtra("Level", floorLevel);
                     startActivity(i);
+                    overridePendingTransition(R.anim.flipfadein, R.anim.flipfadeout);
                 } else {
                     Toast.makeText(ObjectPreviewActivity.this, "No Location Data", Toast.LENGTH_SHORT).show();
                 }
