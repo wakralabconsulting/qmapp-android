@@ -1046,12 +1046,10 @@ public class EducationCalendarActivity extends AppCompatActivity {
             String svalue = start.substring(start.lastIndexOf("-") + 1);
             String[] stimeArray = svalue.trim().split("-");
             String startTime = stimeArray[0].trim();
-            System.out.println("Check time s" + startTime);
             String end = educationEvents.get(i).getEnd_time().get(0);
             String evalue = end.substring(end.lastIndexOf("-") + 1);
             String[] etimeArray = evalue.trim().split("-");
             String endTime = etimeArray[0].trim();
-            System.out.println("Check time e" + endTime);
             ArrayList<String> startDateVal = new ArrayList<String>();
             startDateVal.add(0, startTime);
             ArrayList<String> endDateVal = new ArrayList<String>();

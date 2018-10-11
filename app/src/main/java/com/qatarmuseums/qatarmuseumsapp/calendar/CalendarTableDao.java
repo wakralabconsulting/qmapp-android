@@ -43,22 +43,6 @@ public interface CalendarTableDao {
     @Query("DELETE FROM calendareventstarabic WHERE event_date = :eventDateFromAPI")
     void deleteArabicEventsWithDate(long eventDateFromAPI);
 
-//    public class CalendarConverters {
-//        @TypeConverter
-//        public ArrayList<String> fromCalendarString(String value) {
-//            Type listType = new TypeToken<ArrayList<String>>() {
-//            }.getType();
-//            return new Gson().fromJson(value, listType);
-//        }
-//
-//        @TypeConverter
-//        public String fromCalendarArrayList(ArrayList<String> list) {
-//            Gson gson = new Gson();
-//            String json = gson.toJson(list);
-//            return json;
-//        }
-//    }
-
     @Insert
     void insertEventsTableEnglish(CalendarEventsTableEnglish calendarEventsTableEnglish);
 

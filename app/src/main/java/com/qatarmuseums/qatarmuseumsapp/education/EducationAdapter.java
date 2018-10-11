@@ -45,7 +45,6 @@ public class EducationAdapter extends RecyclerView.Adapter<EducationAdapter.Educ
             holder.eventSubTitle.setText(educationEvents.get(position).getTitle());
             holder.eventTiming.setText(educationEvents.get(position).getShort_desc());
         }
-//        descriptionVal=educationEvents.get(position).getLong_desc();
         if (position % 2 == 1) {
             holder.layoutHolder.setBackgroundColor(Color.parseColor("#FFFFFF"));
         } else {

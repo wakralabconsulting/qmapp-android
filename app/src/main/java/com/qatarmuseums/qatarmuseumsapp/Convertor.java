@@ -8,10 +8,6 @@ import com.google.gson.reflect.TypeToken;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
 
-/**
- * Created by MoongedePC on 11-Oct-18.
- */
-
 public class Convertor {
     @TypeConverter
     public ArrayList<String> fromString(String value) {
