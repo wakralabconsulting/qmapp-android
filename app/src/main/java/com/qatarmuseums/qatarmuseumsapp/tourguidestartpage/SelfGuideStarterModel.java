@@ -13,6 +13,8 @@ public class SelfGuideStarterModel {
     private ArrayList<String> imageList;
     @SerializedName("Museums_entity")
     private String museumsEntity;
+    @SerializedName("Nid")
+    private String nid;
 
     public SelfGuideStarterModel(String title, String description, ArrayList<String> imageList, String museumsEntity) {
         this.title = title;
@@ -35,5 +37,9 @@ public class SelfGuideStarterModel {
 
     public String getMuseumsEntity() {
         return museumsEntity;
+    }
+
+    public String getNid() {
+        return nid;
     }
 }
