@@ -1,7 +1,12 @@
 package com.qatarmuseums.qatarmuseumsapp.education;
 
-import com.google.gson.annotations.SerializedName;
+import android.arch.persistence.room.TypeConverter;
 
+import com.google.gson.Gson;
+import com.google.gson.annotations.SerializedName;
+import com.google.gson.reflect.TypeToken;
+
+import java.lang.reflect.Type;
 import java.util.ArrayList;
 
 public class EducationEvents {
@@ -15,13 +20,13 @@ public class EducationEvents {
     @SerializedName("Introduction_Text")
     private String short_desc;
     @SerializedName("main_description")
-    private ArrayList<String> long_desc;
+    private String long_desc;
     @SerializedName("Register")
     private String registration;
-    @SerializedName("start_time")
-    private String start_time;
-    @SerializedName("end_time")
-    private String end_time;
+    @SerializedName("start_Date")
+    private ArrayList<String> start_time;
+    @SerializedName("End_Date")
+    private ArrayList<String> end_time;
     @SerializedName("age_group")
     private String age_group;
     @SerializedName("Programme_type")
@@ -38,12 +43,21 @@ public class EducationEvents {
     private String category;
     @SerializedName("field_eduprog_repeat_field_date")
     private ArrayList<String> field;
+    @SerializedName("Age_group")
+    private ArrayList<String> age;
+    @SerializedName("Associated_topics")
+    private ArrayList<String> associatedTopics;
+    @SerializedName("Museum_Department")
+    private String museumDepartment;
 
 
-    public EducationEvents(String eid, String filter, String title, String short_desc, ArrayList<String> long_desc,
-                           String location, String institution, String start_time, String end_time,
+
+    public EducationEvents(String eid, String filter, String title, String short_desc, String long_desc,
+                           String location, String institution, ArrayList<String> start_time, ArrayList<String> end_time,
                            String max_group_size, String age_group,
-                           String program_type, String category, String registration, String date, ArrayList<String> fieldVal) {
+                           String program_type, String category,
+                           String registration, String date, ArrayList<String> fieldVal,
+                           ArrayList<String> age, ArrayList<String> topics,String museum) {
         this.eid = eid;
         this.filter = filter;
         this.title = title;
@@ -60,6 +74,10 @@ public class EducationEvents {
         this.registration = registration;
         this.date = date;
         this.field = fieldVal;
+        this.age=age;
+        this.associatedTopics=topics;
+        this.museumDepartment=museum;
+
     }
 
 
@@ -95,11 +113,11 @@ public class EducationEvents {
         this.short_desc = short_desc;
     }
 
-    public ArrayList<String> getLong_desc() {
+    public String getLong_desc() {
         return long_desc;
     }
 
-    public void setLong_desc(ArrayList<String> long_desc) {
+    public void setLong_desc(String long_desc) {
         this.long_desc = long_desc;
     }
 
@@ -119,19 +137,19 @@ public class EducationEvents {
         this.institution = institution;
     }
 
-    public String getStart_time() {
+    public ArrayList<String> getStart_time() {
         return start_time;
     }
 
-    public void setStart_time(String start_time) {
+    public void setStart_time(ArrayList<String> start_time) {
         this.start_time = start_time;
     }
 
-    public String getEnd_time() {
+    public ArrayList<String> getEnd_time() {
         return end_time;
     }
 
-    public void setEnd_time(String end_time) {
+    public void setEnd_time(ArrayList<String> end_time) {
         this.end_time = end_time;
     }
 
@@ -189,5 +207,29 @@ public class EducationEvents {
 
     public void setField(ArrayList<String> field) {
         this.field = field;
+    }
+
+    public ArrayList<String> getAge() {
+        return age;
+    }
+
+    public void setAge(ArrayList<String> age) {
+        this.age = age;
+    }
+
+    public ArrayList<String> getAssociatedTopics() {
+        return associatedTopics;
+    }
+
+    public void setAssociatedTopics(ArrayList<String> associatedTopics) {
+        this.associatedTopics = associatedTopics;
+    }
+
+    public String getMuseumDepartment() {
+        return museumDepartment;
+    }
+
+    public void setMuseumDepartment(String museumDepartment) {
+        this.museumDepartment = museumDepartment;
     }
 }

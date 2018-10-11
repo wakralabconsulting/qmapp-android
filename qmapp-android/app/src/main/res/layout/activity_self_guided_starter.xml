@@ -13,8 +13,8 @@
         android:id="@+id/ads_place_holder"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:src="@drawable/placeholder_portrait"
         android:scaleType="centerCrop"
+        android:src="@drawable/placeholder_portrait"
         android:visibility="gone" />
 
     <cn.lightsky.infiniteindicator.InfiniteIndicator
@@ -58,8 +58,8 @@
         android:id="@+id/museum_tittle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_centerInParent="true"
         android:layout_centerHorizontal="true"
+        android:layout_centerInParent="true"
         android:layout_marginTop="@dimen/padding_10"
         android:fontFamily="@font/din_next_lt_pro_bold"
         android:paddingEnd="@dimen/padding_15"
@@ -104,9 +104,7 @@
             android:textAllCaps="false"
             android:textColor="@color/white"
             android:textSize="@dimen/settings_page_list_item_text_size"
-            android:visibility="visible"
-
-            />
+            android:visibility="visible" />
 
     </LinearLayout>
 

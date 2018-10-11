@@ -2,26 +2,28 @@ package com.qatarmuseums.qatarmuseumsapp.calendar;
 
 import com.google.gson.annotations.SerializedName;
 
+import java.util.ArrayList;
+
 public class CalendarEvents {
-    @SerializedName("eid")
+    @SerializedName("item_id")
     private long eventId;
     @SerializedName("institution")
     private String institution;
     @SerializedName("title")
     private String eventTitle;
-    @SerializedName("short_desc")
+    @SerializedName("Introduction_Text")
     private String eventTimings;
-    @SerializedName("long_desc")
+    @SerializedName("main_description")
     private String eventDetails;
-    @SerializedName("registration")
+    @SerializedName("Register")
     private boolean registration;
-    @SerializedName("start_time")
-    private String startTime;
-    @SerializedName("end_time")
-    private String endTime;
+    @SerializedName("start_Date")
+    private ArrayList<String> startTime;
+    @SerializedName("End_Date")
+    private ArrayList<String> endTime;
     @SerializedName("age_group")
     private String ageGroup;
-    @SerializedName("program_type")
+    @SerializedName("Programme_type")
     private String programType;
     @SerializedName("date")
     private long eventDate;
@@ -33,11 +35,20 @@ public class CalendarEvents {
     private long maxGroupSize;
     @SerializedName("category")
     private String eventCategory;
+    @SerializedName("field_eduprog_repeat_field_date")
+    private ArrayList<String> field;
+    @SerializedName("Age_group")
+    private ArrayList<String> age;
+    @SerializedName("Associated_topics")
+    private ArrayList<String> associatedTopics;
+    @SerializedName("Museum_Department")
+    private String museumDepartment;
 
     public CalendarEvents(long eid, String institution, String title, String shortDescription, String eventDetails,
-                          String startTime, String endTime, boolean registration, long eventDate,
+                          ArrayList<String> startTime, ArrayList<String> endTime, boolean registration, long eventDate,
                           String filter, String location, long maxGroupSize, String category,
-                          String programType, String ageGroup) {
+                          String programType, String ageGroup,ArrayList<String> filedVal,
+                          ArrayList<String> age, ArrayList<String> topics,String museum) {
         this.institution = institution;
         this.eventTitle = title;
         this.eventTimings = shortDescription;
@@ -53,6 +64,10 @@ public class CalendarEvents {
         this.eventCategory = category;
         this.programType = programType;
         this.ageGroup = ageGroup;
+        this.field=filedVal;
+        this.age=age;
+        this.associatedTopics=topics;
+        this.museumDepartment=museum;
     }
 
     public String getInstitution() {
@@ -103,19 +118,19 @@ public class CalendarEvents {
         this.eventId = eventId;
     }
 
-    public String getStartTime() {
+    public ArrayList<String> getStartTime() {
         return startTime;
     }
 
-    public void setStartTime(String startTime) {
+    public void setStartTime(ArrayList<String> startTime) {
         this.startTime = startTime;
     }
 
-    public String getEndTime() {
+    public ArrayList<String> getEndTime() {
         return endTime;
     }
 
-    public void setEndTime(String endTime) {
+    public void setEndTime(ArrayList<String> endTime) {
         this.endTime = endTime;
     }
 
@@ -175,4 +190,35 @@ public class CalendarEvents {
         this.eventCategory = eventCategory;
     }
 
+    public ArrayList<String> getField() {
+        return field;
+    }
+
+    public void setField(ArrayList<String> field) {
+        this.field = field;
+    }
+
+    public ArrayList<String> getAge() {
+        return age;
+    }
+
+    public void setAge(ArrayList<String> age) {
+        this.age = age;
+    }
+
+    public ArrayList<String> getAssociatedTopics() {
+        return associatedTopics;
+    }
+
+    public void setAssociatedTopics(ArrayList<String> associatedTopics) {
+        this.associatedTopics = associatedTopics;
+    }
+
+    public String getMuseumDepartment() {
+        return museumDepartment;
+    }
+
+    public void setMuseumDepartment(String museumDepartment) {
+        this.museumDepartment = museumDepartment;
+    }
 }
