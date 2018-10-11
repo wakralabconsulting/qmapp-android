@@ -665,7 +665,7 @@ public class FloorMapActivity extends AppCompatActivity implements OnMapReadyCal
             timerTask.cancel();
         }
         if (artifactPosition != null) {
-            googleMap.animateCamera(CameraUpdateFactory.newLatLngZoom(marker.getPosition(), 21));
+            googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(marker.getPosition(), 21));
             artifactPosition = null;
         }
         timer = new Timer();

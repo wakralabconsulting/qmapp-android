@@ -183,5 +183,6 @@ They exemplify the external influences and internal creativity that inspired thi
     <string name="workshop">Workshop</string>
     <string name="object_history">Object History</string>
     <string name="science_tour">Science Tour</string>
+    <string name="no_location_data">No Location Data</string>
 
 </resources>
