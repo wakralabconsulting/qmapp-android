@@ -60,7 +60,7 @@
                     android:layout_marginTop="@dimen/padding_10"
                     android:fontFamily="@font/din_next_lt_pro_bold"
                     android:textAlignment="center"
-                    android:textColor="@color/tourguide_titile_color"
+                    android:textColor="@color/black"
                     android:textSize="@dimen/font_size_28"
                     android:visibility="visible" />
 
@@ -86,7 +86,7 @@
                     android:layout_marginEnd="@dimen/padding_30"
                     android:layout_marginStart="@dimen/padding_30"
                     android:layout_marginTop="@dimen/padding_5"
-                    android:background="@drawable/round_corner_skyblue"
+                    android:background="@drawable/round_corner_black"
                     android:gravity="center"
                     android:orientation="horizontal"
                     android:padding="@dimen/padding_10">
@@ -107,7 +107,7 @@
                         android:text="@string/explore"
                         android:textAlignment="center"
                         android:textAllCaps="false"
-                        android:textColor="@color/black"
+                        android:textColor="@color/white"
                         android:textStyle="bold"
                         android:textSize="@dimen/font_size_16"
                         android:visibility="visible" />

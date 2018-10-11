@@ -23,6 +23,7 @@ import com.booking.rtlviewpager.RtlViewPager;
 import com.qatarmuseums.qatarmuseumsapp.R;
 import com.qatarmuseums.qatarmuseumsapp.apicall.APIClient;
 import com.qatarmuseums.qatarmuseumsapp.apicall.APIInterface;
+import com.qatarmuseums.qatarmuseumsapp.floormap.ArtifactDetails;
 import com.qatarmuseums.qatarmuseumsapp.floormap.FloorMapActivity;
 import com.qatarmuseums.qatarmuseumsapp.utils.Util;
 
@@ -51,7 +52,7 @@ public class ObjectPreviewActivity extends AppCompatActivity {
     SharedPreferences qmPreferences;
     private Util util;
     ViewPager pager;
-    ArrayList<ObjectPreviewModel> objectPreviewModels = new ArrayList<>();
+    ArrayList<ArtifactDetails> objectPreviewModels = new ArrayList<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -199,10 +200,10 @@ public class ObjectPreviewActivity extends AppCompatActivity {
         }
         APIInterface apiService =
                 APIClient.getClient().create(APIInterface.class);
-        Call<ArrayList<ObjectPreviewModel>> call = apiService.getObjectPreviewDetails(language, id);
-        call.enqueue(new Callback<ArrayList<ObjectPreviewModel>>() {
+        Call<ArrayList<ArtifactDetails>> call = apiService.getObjectPreviewDetails(language, id);
+        call.enqueue(new Callback<ArrayList<ArtifactDetails>>() {
             @Override
-            public void onResponse(Call<ArrayList<ObjectPreviewModel>> call, Response<ArrayList<ObjectPreviewModel>> response) {
+            public void onResponse(Call<ArrayList<ArtifactDetails>> call, Response<ArrayList<ArtifactDetails>> response) {
                 if (response.isSuccessful()) {
                     if (response.body() != null && response.body().size() > 0) {
                         commonContentLayout.setVisibility(View.VISIBLE);
@@ -234,7 +235,7 @@ public class ObjectPreviewActivity extends AppCompatActivity {
             }
 
             @Override
-            public void onFailure(Call<ArrayList<ObjectPreviewModel>> call, Throwable t) {
+            public void onFailure(Call<ArrayList<ArtifactDetails>> call, Throwable t) {
                 if (t instanceof IOException) {
                     util.showToast(getResources().getString(R.string.check_network), getApplicationContext());
 
