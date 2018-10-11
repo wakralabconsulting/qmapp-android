@@ -4,11 +4,16 @@ import android.arch.persistence.room.Dao;
 import android.arch.persistence.room.Delete;
 import android.arch.persistence.room.Insert;
 import android.arch.persistence.room.Query;
+import android.arch.persistence.room.TypeConverter;
 import android.arch.persistence.room.Update;
 
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 import com.qatarmuseums.qatarmuseumsapp.commonpagedatabase.ExhibitionListTableArabic;
 import com.qatarmuseums.qatarmuseumsapp.commonpagedatabase.ExhibitionListTableEnglish;
 
+import java.lang.reflect.Type;
+import java.util.ArrayList;
 import java.util.List;
 
 @Dao
@@ -37,6 +42,22 @@ public interface CalendarTableDao {
 
     @Query("DELETE FROM calendareventstarabic WHERE event_date = :eventDateFromAPI")
     void deleteArabicEventsWithDate(long eventDateFromAPI);
+
+//    public class CalendarConverters {
+//        @TypeConverter
+//        public ArrayList<String> fromCalendarString(String value) {
+//            Type listType = new TypeToken<ArrayList<String>>() {
+//            }.getType();
+//            return new Gson().fromJson(value, listType);
+//        }
+//
+//        @TypeConverter
+//        public String fromCalendarArrayList(ArrayList<String> list) {
+//            Gson gson = new Gson();
+//            String json = gson.toJson(list);
+//            return json;
+//        }
+//    }
 
     @Insert
     void insertEventsTableEnglish(CalendarEventsTableEnglish calendarEventsTableEnglish);
