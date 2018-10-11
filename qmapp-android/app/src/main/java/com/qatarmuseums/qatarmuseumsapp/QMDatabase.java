@@ -6,6 +6,7 @@ import android.arch.persistence.room.DatabaseConfiguration;
 import android.arch.persistence.room.InvalidationTracker;
 import android.arch.persistence.room.Room;
 import android.arch.persistence.room.RoomDatabase;
+import android.arch.persistence.room.TypeConverters;
 import android.content.Context;
 import android.support.annotation.NonNull;
 
@@ -58,6 +59,8 @@ import com.qatarmuseums.qatarmuseumsapp.tourguidestartpage.TourGuideStartPageEng
         MuseumCollectionDetailTableEnglish.class, MuseumCollectionDetailTableArabic.class,
         TourGuideStartPageEnglish.class, TourGuideStartPageArabic.class},
         version = 1, exportSchema = false)
+@TypeConverters({Convertor.class})
+
 
 public abstract class QMDatabase extends RoomDatabase {
 
@@ -82,6 +85,7 @@ public abstract class QMDatabase extends RoomDatabase {
     public abstract CalendarTableDao getCalendarEventsDao();
 
     public abstract EducationCalendarTableDao getEducationCalendarEventsDao();
+
     public abstract TourGuideStartPageDao getTourGuideStartPageDao();
 
     private static QMDatabase qmDatabase;

@@ -43,6 +43,12 @@ public class EducationalCalendarEventsTableEnglish {
     private String filter;
     @ColumnInfo()
     private String field;
+    @ColumnInfo()
+    private String age;
+    @ColumnInfo()
+    private String associatedTopics;
+    @ColumnInfo()
+    private String museum;
 
 
     public EducationalCalendarEventsTableEnglish(String event_id, String event_title,
@@ -51,7 +57,8 @@ public class EducationalCalendarEventsTableEnglish {
                                                  String event_end_time, String event_registration,
                                                  String max_group_size, String event_short_description,
                                                  String event_long_description,
-                                                 String location, String category, String filter, String field) {
+                                                 String location, String category, String filter, String field,
+                                                 String age,String associatedTopics,String museum) {
         this.event_id = event_id;
         this.event_title = event_title;
         this.event_date = event_date;
@@ -68,6 +75,9 @@ public class EducationalCalendarEventsTableEnglish {
         this.category = category;
         this.filter = filter;
         this.field = field;
+        this.age=age;
+        this.associatedTopics=associatedTopics;
+        this.museum=museum;
     }
 
     @NonNull
@@ -209,5 +219,29 @@ public class EducationalCalendarEventsTableEnglish {
 
     public void setField(String field) {
         this.field = field;
+    }
+
+    public String getAge() {
+        return age;
+    }
+
+    public void setAge(String age) {
+        this.age = age;
+    }
+
+    public String getAssociatedTopics() {
+        return associatedTopics;
+    }
+
+    public void setAssociatedTopics(String associatedTopics) {
+        this.associatedTopics = associatedTopics;
+    }
+
+    public String getMuseum() {
+        return museum;
+    }
+
+    public void setMuseum(String museum) {
+        this.museum = museum;
     }
 }

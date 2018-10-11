@@ -8,12 +8,14 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.design.widget.AppBarLayout;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
+import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
@@ -85,6 +87,7 @@ public class DetailsActivity extends AppCompatActivity implements IPullZoom {
     boolean fromMuseumAbout = false;
     String first_description;
     String long_description;
+    FrameLayout frameLayout;
 
     @SuppressLint("ClickableViewAccessibility")
     @Override
@@ -105,6 +108,8 @@ public class DetailsActivity extends AppCompatActivity implements IPullZoom {
         setSupportActionBar(toolbar);
         toolbarClose = (ImageView) findViewById(R.id.toolbar_close);
         headerImageView = (ImageView) findViewById(R.id.header_img);
+        frameLayout=(FrameLayout)findViewById(R.id.fragment_frame_layout);
+        frameLayout.setVisibility(View.GONE);
         title = (TextView) findViewById(R.id.main_title);
         subTitle = (TextView) findViewById(R.id.sub_title);
         shortDescription = (TextView) findViewById(R.id.short_description);
@@ -284,6 +289,12 @@ public class DetailsActivity extends AppCompatActivity implements IPullZoom {
             @Override
             public void onOffsetChanged(AppBarLayout appBarLayout, int verticalOffset) {
                 headerOffSetSize = verticalOffset;
+            }
+        });
+        zoomView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
             }
         });
     }
