@@ -9,8 +9,8 @@ import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.content.res.ColorStateList;
 import android.net.Uri;
-import android.os.Build;
 import android.os.AsyncTask;
+import android.os.Build;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.provider.CalendarContract;
@@ -23,6 +23,8 @@ import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.text.format.DateFormat;
+import android.util.DisplayMetrics;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
@@ -30,12 +32,14 @@ import android.view.Window;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.Button;
+import android.widget.FrameLayout;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
+import com.qatarmuseums.qatarmuseumsapp.Convertor;
 import com.qatarmuseums.qatarmuseumsapp.QMDatabase;
 import com.qatarmuseums.qatarmuseumsapp.R;
 import com.qatarmuseums.qatarmuseumsapp.apicall.APIClient;
@@ -45,13 +49,18 @@ import com.shrikanthravi.collapsiblecalendarview.widget.CollapsibleCalendar;
 
 import java.io.IOException;
 import java.lang.ref.WeakReference;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.List;
 import java.util.TimeZone;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -76,6 +85,8 @@ public class CalendarActivity extends AppCompatActivity {
     TextView noEventsTxt;
     @BindView(R.id.progressBarLoading)
     ProgressBar progressBar;
+    @BindView(R.id.progress)
+    LinearLayout progress;
     @BindView(R.id.container)
     RelativeLayout layoutContainer;
     RecyclerView.LayoutManager layoutManager;
@@ -99,6 +110,9 @@ public class CalendarActivity extends AppCompatActivity {
     private Integer eventsTableRowCount;
     private Util util;
     private Calendar today;
+    String day;
+    String monthNumber;
+    String year;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -135,6 +149,14 @@ public class CalendarActivity extends AppCompatActivity {
             }
         });
 
+        progress.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+            }
+        });
+
+
         collapsibleCalendar.setCalendarListener(new CollapsibleCalendar.CalendarListener() {
             @Override
             public void onDaySelect() {
@@ -142,12 +164,14 @@ public class CalendarActivity extends AppCompatActivity {
                 calendarInstance.set(collapsibleCalendar.getSelectedItem().getYear(),
                         collapsibleCalendar.getSelectedItem().getMonth(),
                         collapsibleCalendar.getSelectedItem().getDay());
-                calendarInstance.set(Calendar.HOUR_OF_DAY, 14);
+                calendarInstance.set(Calendar.HOUR_OF_DAY, 0);
                 calendarInstance.set(Calendar.MINUTE, 0);
                 calendarInstance.set(Calendar.SECOND, 0);
-
+                day = (String) DateFormat.format("d", calendarInstance);
+                monthNumber = (String) DateFormat.format("M", calendarInstance);
+                year = (String) DateFormat.format("yyyy", calendarInstance);
                 if (util.isNetworkAvailable(CalendarActivity.this))
-                    getCalendarEventsFromAPI(calendarInstance.getTimeInMillis());
+                    getCalendarEventsFromAPI(monthNumber, day, year, calendarInstance.getTimeInMillis());
                 else
                     getCalendarEventsFromDatabase(calendarInstance.getTimeInMillis());
             }
@@ -201,20 +225,36 @@ public class CalendarActivity extends AppCompatActivity {
                 }
             }
         });
+
+        eventListView.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View view, MotionEvent motionEvent) {
+                // Scrolling up
+                if (collapsibleCalendar.expanded) {
+                    collapsibleCalendar.collapse(400);
+                } else {
+                    // Scrolling down
+                    collapsibleCalendar.expand(400);
+                    collapsibleCalendar.expanded = true;
+                }
+                return false;
+            }
+        });
         today = new GregorianCalendar();
-        today.set(Calendar.HOUR_OF_DAY, 14);
+        today.set(Calendar.HOUR_OF_DAY, 0);
         today.set(Calendar.MINUTE, 0);
         today.set(Calendar.SECOND, 0);
-
+        day = (String) DateFormat.format("d", today);
+        monthNumber = (String) DateFormat.format("M", today);
+        year = (String) DateFormat.format("yyyy", today);
         if (util.isNetworkAvailable(CalendarActivity.this))
-            getCalendarEventsFromAPI(today.getTimeInMillis());
+            getCalendarEventsFromAPI(monthNumber, day, year, today.getTimeInMillis());
         else
             getCalendarEventsFromDatabase(today.getTimeInMillis());
-
     }
 
     public void getCalendarEventsFromDatabase(Long timeStamp) {
-        progressBar.setVisibility(View.VISIBLE);
+        progress.setVisibility(View.VISIBLE);
         calendarAdapter.clear();
         String language;
         if (appLanguage == 1)
@@ -224,31 +264,33 @@ public class CalendarActivity extends AppCompatActivity {
         new EventsRowCount(CalendarActivity.this, language, timeStamp / 1000).execute();
     }
 
-    public void getCalendarEventsFromAPI(Long timestamp) {
-        progressBar.setVisibility(View.VISIBLE);
+    public void getCalendarEventsFromAPI(final String month, final String day, final String year, final long timeStamp) {
+        progress.setVisibility(View.VISIBLE);
         calendarAdapter.clear();
-        apiService = APIClient.getTempClient().create(APIInterface.class);
+        apiService = APIClient.getClient().create(APIInterface.class);
         if (appLanguage == 1) {
             language = "en";
         } else {
             language = "ar";
         }
-        Call<ArrayList<CalendarEvents>> call = apiService.getCalendarDetails(language, timestamp / 1000,
-                "any", "any", "any");
+        Call<ArrayList<CalendarEvents>> call = apiService.getCalendarDetails(language,
+                "All", "All", "All", month, day, year, "field_eduprog_date");
         call.enqueue(new Callback<ArrayList<CalendarEvents>>() {
             @Override
             public void onResponse(Call<ArrayList<CalendarEvents>> call, Response<ArrayList<CalendarEvents>> response) {
                 if (response.isSuccessful()) {
                     if (response.body().size() > 0) {
+
                         noEventsTxt.setVisibility(View.GONE);
                         calendarEventList.addAll(response.body());
-                        if (!checkWednesdayOrSunday())
-                            calendarEventList.add(getLocalEvent(calendarInstance.getTimeInMillis() / 1000));
-                        updateTimeStamp();
+                        removeHtmlTags(calendarEventList);
+                        updateTimeStamp(timeStamp);
+                        updateStartAndEndTime();
+                        convertToTimstamp(day, month, year);
                         sortEventsWithStartTime();
                         calendarAdapter.notifyDataSetChanged();
                         eventListView.setVisibility(View.VISIBLE);
-                        new EventsRowCount(CalendarActivity.this, language, calendarInstance.getTimeInMillis()).execute();
+                        new EventsRowCount(CalendarActivity.this, language, timeStamp / 1000).execute();
                     } else {
                         noEventsTxt.setVisibility(View.VISIBLE);
                         noEventsTxt.setText(R.string.no_events);
@@ -257,7 +299,8 @@ public class CalendarActivity extends AppCompatActivity {
                     noEventsTxt.setVisibility(View.VISIBLE);
                     noEventsTxt.setText(R.string.no_events);
                 }
-                progressBar.setVisibility(View.GONE);
+                progress.setVisibility(View.GONE);
+
             }
 
             @Override
@@ -269,66 +312,105 @@ public class CalendarActivity extends AppCompatActivity {
                 }
                 noEventsTxt.setVisibility(View.VISIBLE);
                 noEventsTxt.setText(R.string.no_events);
-                progressBar.setVisibility(View.GONE);
+                progress.setVisibility(View.GONE);
             }
         });
 
     }
 
-    public void updateTimeStamp() {
+    public void removeHtmlTags(ArrayList<CalendarEvents> models) {
+        for (int i = 0; i < models.size(); i++) {
+            ArrayList<String> fieldval = models.get(i).getField();
+            fieldval.set(0, util.html2string(fieldval.get(0)));
+            models.get(i).setField(fieldval);
+            ArrayList<String> startDateVal = models.get(i).getStartTime();
+            startDateVal.set(0, util.html2string(startDateVal.get(0)));
+            models.get(i).setStartTime(startDateVal);
+            ArrayList<String> endDateVal = models.get(i).getEndTime();
+            endDateVal.set(0, util.html2string(endDateVal.get(0)));
+            models.get(i).setEndTime(endDateVal);
+            models.get(i).setProgramType(util.html2string(models.get(i).getProgramType()));
+            models.get(i).setEventDetails(util.html2string(models.get(i).getEventDetails()));
+            models.get(i).setEventTitle(util.html2string(models.get(i).getEventTitle()));
+        }
+    }
+
+    public void updateTimeStamp(long timestamp) {
         for (int i = 0; i < calendarEventList.size(); i++) {
-            calendarEventList.get(i).setEventDate(calendarInstance.getTimeInMillis() / 1000);
+            calendarEventList.get(i).setEventDate(timestamp / 1000);
         }
     }
 
-    public Boolean checkWednesdayOrSunday() {
-        if (collapsibleCalendar.getSelectedItem() == null)
-            calendarInstance = new GregorianCalendar();
-        else {
-            calendarInstance = Calendar.getInstance();
-            calendarInstance.set(collapsibleCalendar.getSelectedItem().getYear(),
-                    collapsibleCalendar.getSelectedItem().getMonth(),
-                    collapsibleCalendar.getSelectedItem().getDay());
+    public void updateStartAndEndTime() {
+        //extracting time from text and updating the time field
+        for (int i = 0; i < calendarEventList.size(); i++) {
+            String start = calendarEventList.get(i).getStartTime().get(0);
+            String svalue = start.substring(start.lastIndexOf("-") + 1);
+            String[] stimeArray = svalue.trim().split("-");
+            String startTime = stimeArray[0].trim();
+            String end = calendarEventList.get(i).getEndTime().get(0);
+            String evalue = end.substring(end.lastIndexOf("-") + 1);
+            String[] etimeArray = evalue.trim().split("-");
+            String endTime = etimeArray[0].trim();
+            ArrayList<String> startDateVal = new ArrayList<String>();
+            startDateVal.add(0, startTime);
+            ArrayList<String> endDateVal = new ArrayList<String>();
+            endDateVal.add(0, endTime);
+            calendarEventList.get(i).setStartTime(startDateVal);
+            calendarEventList.get(i).setEndTime(endDateVal);
         }
-        calendarInstance.set(Calendar.HOUR_OF_DAY, 14);
-        calendarInstance.set(Calendar.MINUTE, 0);
-        calendarInstance.set(Calendar.SECOND, 0);
-        if (calendarInstance.get(Calendar.DAY_OF_WEEK) == Calendar.SUNDAY ||
-                calendarInstance.get(Calendar.DAY_OF_WEEK) == Calendar.WEDNESDAY) {
-            return true;
-        } else
-            return false;
     }
 
-    public CalendarEvents getLocalEvent(Long timeStamp) {
-        CalendarEvents localEvent = new CalendarEvents(15476,
-                getString(R.string.local_event_institution),
-                getString(R.string.local_event_title),
-                getString(R.string.local_event_short_description),
-                getString(R.string.local_event_long_description),
-                "14:00", "16:00", false, timeStamp,
-                "no", "Museum of Islamic Art, Atrium", 40, "MIA",
-                "Gallery", "Adults");
-        return localEvent;
+    public void convertToTimstamp(String day, String month, String year) {
+//        converting time to timstamp and updating
+        for (int i = 0; i < calendarEventList.size(); i++) {
+            String str_start_date = day + "-" + month + "-" + year + " " + calendarEventList.get(i).getStartTime().get(0);
+            String str_end_date = day + "-" + month + "-" + year + " " + calendarEventList.get(i).getEndTime().get(0);
+            ArrayList<String> st = new ArrayList<String>();
+            st.add(0, String.valueOf(convertDate(str_start_date)));
+            ArrayList<String> en = new ArrayList<String>();
+            en.add(0, String.valueOf(convertDate(str_end_date)));
+            calendarEventList.get(i).setStartTime(st);
+            calendarEventList.get(i).setEndTime(en);
+        }
+    }
+
+    public long convertDate(String dateVal) {
+        SimpleDateFormat formatter = new SimpleDateFormat("dd-MM-yyyy HH:mm");
+        Date date = null;
+        try {
+            date = (Date) formatter.parse(dateVal);
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+        return date.getTime();
     }
 
     public void sortEventsWithStartTime() {
         Collections.sort(calendarEventList, new Comparator<CalendarEvents>() {
             @Override
             public int compare(CalendarEvents o1, CalendarEvents o2) {
-                return o1.getStartTime().compareTo(o2.getStartTime());
+                return o1.getStartTime().get(0).compareTo(o2.getStartTime().get(0));
             }
         });
     }
 
-    public void onClickCalled(Boolean registrationRequired, String title, String details) {
+    public void onClickCalled(Boolean registrationRequired, String title, String details, String startDate, String endDate) {
         if (registrationRequired)
             showRegisterDialog(title, details);
         else
-            showCalendarDialog(title, details);
+            showCalendarDialog(title, details, startDate, endDate);
     }
 
-    protected void showCalendarDialog(final String title, final String details) {
+    public int getScreenheight() {
+        DisplayMetrics displayMetrics = new DisplayMetrics();
+        getWindowManager().getDefaultDisplay().getMetrics(displayMetrics);
+        double height = displayMetrics.heightPixels;
+        height = (height) * (0.75);
+        return (int) height;
+    }
+
+    protected void showCalendarDialog(final String title, final String details, final String startDate, final String endDate) {
 
         dialog = new Dialog(this, R.style.DialogNoAnimation);
         dialog.setCancelable(true);
@@ -336,12 +418,15 @@ public class CalendarActivity extends AppCompatActivity {
 
         layoutInflater = (LayoutInflater) getSystemService(LAYOUT_INFLATER_SERVICE);
         View view = layoutInflater.inflate(R.layout.common_popup, null);
-
         dialog.setContentView(view);
+        FrameLayout contentLayout = (FrameLayout) view.findViewById(R.id.content_frame_layout);
         closeBtn = (ImageView) view.findViewById(R.id.close_dialog);
         dialogActionButton = (Button) view.findViewById(R.id.doneBtn);
         dialogTitle = (TextView) view.findViewById(R.id.dialog_tittle);
         dialogContent = (TextView) view.findViewById(R.id.dialog_content);
+        int heightValue = getScreenheight();
+        contentLayout.setLayoutParams(new FrameLayout.LayoutParams(FrameLayout.LayoutParams.MATCH_PARENT, heightValue));
+
         dialogTitle.setText(title);
         dialogActionButton.setText(getResources().getString(R.string.add_to_calendar));
         dialogContent.setText(details);
@@ -349,7 +434,7 @@ public class CalendarActivity extends AppCompatActivity {
         dialogActionButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                addToCalendar(title, details);
+                addToCalendar(title, details, startDate, endDate);
                 dialog.dismiss();
 
             }
@@ -374,10 +459,14 @@ public class CalendarActivity extends AppCompatActivity {
         View view = layoutInflater.inflate(R.layout.common_popup, null);
 
         dialog.setContentView(view);
+        FrameLayout contentLayout = (FrameLayout) view.findViewById(R.id.content_frame_layout);
         closeBtn = (ImageView) view.findViewById(R.id.close_dialog);
         dialogActionButton = (Button) view.findViewById(R.id.doneBtn);
         dialogTitle = (TextView) view.findViewById(R.id.dialog_tittle);
         dialogContent = (TextView) view.findViewById(R.id.dialog_content);
+        int heightValue = getScreenheight();
+        contentLayout.setLayoutParams(new FrameLayout.LayoutParams(FrameLayout.LayoutParams.MATCH_PARENT, heightValue));
+
         dialogTitle.setText(title);
         dialogActionButton.setText(getResources().getString(R.string.register_now));
         dialogContent.setText(details);
@@ -401,15 +490,13 @@ public class CalendarActivity extends AppCompatActivity {
         dialog.show();
     }
 
-    private void addToCalendar(String title, String details) {
-        calendarInstance.set(Calendar.HOUR_OF_DAY, 14);
-        calendarInstance.set(Calendar.MINUTE, 0);
+    private void addToCalendar(String title, String details, String startDate, String endDate) {
         contentResolver = getContentResolver();
         contentValues = new ContentValues();
         contentValues.put(CalendarContract.Events.TITLE, title);
         contentValues.put(CalendarContract.Events.DESCRIPTION, details);
-        contentValues.put(CalendarContract.Events.DTSTART, calendarInstance.getTimeInMillis());
-        contentValues.put(CalendarContract.Events.DTEND, calendarInstance.getTimeInMillis() + 2 * 60 * 60 * 1000);
+        contentValues.put(CalendarContract.Events.DTSTART, startDate);
+        contentValues.put(CalendarContract.Events.DTEND, endDate);
         if (Build.VERSION.SDK_INT > Build.VERSION_CODES.M) {
             contentValues.put(CalendarContract.Events.CALENDAR_ID, 3);
         } else {
@@ -462,7 +549,6 @@ public class CalendarActivity extends AppCompatActivity {
             }
         }
     }
-
 
     protected void showNavigationDialog(String title, final String details) {
 
@@ -539,7 +625,7 @@ public class CalendarActivity extends AppCompatActivity {
             eventsTableRowCount = integer;
             if (eventsTableRowCount > 0) {
                 if (calendarEventList.size() > 0 && util.isNetworkAvailable(CalendarActivity.this))
-                    new CheckEventRowExist(CalendarActivity.this, language).execute();
+                    new CheckEventRowExist(CalendarActivity.this, language, timeStamp).execute();
                 else {
                     if (language.equals("en")) {
                         new RetriveEnglishTableData(CalendarActivity.this, 1,
@@ -551,7 +637,7 @@ public class CalendarActivity extends AppCompatActivity {
                 }
             } else if (calendarEventList.size() > 0) {
                 new InsertDatabaseTask(CalendarActivity.this, calendarEventsTableEnglish,
-                        calendarEventsTableArabic, language).execute();
+                        calendarEventsTableArabic, language, timeStamp).execute();
             } else {
                 noEventsTxt.setVisibility(View.VISIBLE);
                 noEventsTxt.setText(R.string.no_events);
@@ -571,10 +657,12 @@ public class CalendarActivity extends AppCompatActivity {
     public class CheckEventRowExist extends AsyncTask<Void, Void, Void> {
         private WeakReference<CalendarActivity> activityReference;
         String language;
+        long timeStamp;
 
-        CheckEventRowExist(CalendarActivity context, String apiLanguage) {
+        CheckEventRowExist(CalendarActivity context, String apiLanguage, long timestamp) {
             activityReference = new WeakReference<>(context);
             language = apiLanguage;
+            timeStamp = timestamp;
         }
 
         @Override
@@ -582,23 +670,23 @@ public class CalendarActivity extends AppCompatActivity {
             if (calendarEventList.size() > 0) {
                 if (language.equals("en")) {
                     int n = activityReference.get().qmDatabase.getCalendarEventsDao().checkEnglishWithEventDateExist(
-                            calendarEventList.get(0).getEventDate());
+                            timeStamp);
                     if (n > 0) {
                         new DeleteEventsTableRow(CalendarActivity.this, language,
-                                calendarEventList.get(0).getEventDate()).execute();
+                                timeStamp).execute();
                     } else {
                         new InsertDatabaseTask(CalendarActivity.this, calendarEventsTableEnglish,
-                                calendarEventsTableArabic, language).execute();
+                                calendarEventsTableArabic, language, timeStamp).execute();
                     }
                 } else {
                     int n = activityReference.get().qmDatabase.getCalendarEventsDao().checkArabicWithEventDateExist(
-                            calendarEventList.get(0).getEventDate());
+                            timeStamp);
                     if (n > 0) {
                         new DeleteEventsTableRow(CalendarActivity.this, language,
-                                calendarEventList.get(0).getEventDate()).execute();
+                                timeStamp).execute();
                     } else {
                         new InsertDatabaseTask(CalendarActivity.this, calendarEventsTableEnglish,
-                                calendarEventsTableArabic, language).execute();
+                                calendarEventsTableArabic, language, timeStamp).execute();
                     }
                 }
             }
@@ -608,19 +696,20 @@ public class CalendarActivity extends AppCompatActivity {
 
     }
 
-
     public class InsertDatabaseTask extends AsyncTask<Void, Void, Boolean> {
         private WeakReference<CalendarActivity> activityReference;
         private CalendarEventsTableEnglish calendarEventsTableEnglish;
         private CalendarEventsTableArabic calendarEventsTableArabic;
         String language;
+        long timestamp;
 
         InsertDatabaseTask(CalendarActivity context, CalendarEventsTableEnglish calendarEventsTableEnglish,
-                           CalendarEventsTableArabic calendarEventsTableArabic, String lan) {
+                           CalendarEventsTableArabic calendarEventsTableArabic, String lan, long time) {
             activityReference = new WeakReference<>(context);
             this.calendarEventsTableEnglish = calendarEventsTableEnglish;
             this.calendarEventsTableArabic = calendarEventsTableArabic;
             language = lan;
+            timestamp = time;
         }
 
         @Override
@@ -628,6 +717,13 @@ public class CalendarActivity extends AppCompatActivity {
             if (calendarEventList != null) {
                 if (language.equals("en")) {
                     for (int i = 0; i < calendarEventList.size(); i++) {
+                        ArrayList<String> fieldval = new ArrayList<String>();
+                        fieldval = calendarEventList.get(i).getField();
+                        ArrayList<String> startDate = new ArrayList<String>();
+                        startDate = calendarEventList.get(i).getStartTime();
+                        ArrayList<String> endDate = new ArrayList<String>();
+                        endDate = calendarEventList.get(i).getEndTime();
+                        Convertor converters = new Convertor();
                         calendarEventsTableEnglish = new CalendarEventsTableEnglish(
                                 calendarEventList.get(i).getEventId(),
                                 calendarEventList.get(i).getEventTitle(),
@@ -638,12 +734,16 @@ public class CalendarActivity extends AppCompatActivity {
                                 calendarEventList.get(i).getProgramType(),
                                 calendarEventList.get(i).getEventCategory(),
                                 calendarEventList.get(i).getEventLocation(),
-                                calendarEventList.get(i).getEventDate(),
-                                calendarEventList.get(i).getStartTime(),
-                                calendarEventList.get(i).getEndTime(),
+                                timestamp,
+                                util.html2string(startDate.get(0)),
+                                util.html2string(endDate.get(0)),
                                 calendarEventList.get(i).getRegistration(),
                                 calendarEventList.get(i).getFilter(),
-                                calendarEventList.get(i).getMaxGroupSize()
+                                calendarEventList.get(i).getMaxGroupSize(),
+                                util.html2string(fieldval.get(0)),
+                                converters.fromArrayList(calendarEventList.get(i).getAge()),
+                                converters.fromArrayList(calendarEventList.get(i).getAssociatedTopics()),
+                                calendarEventList.get(i).getMuseumDepartment()
                         );
                         activityReference.get().qmDatabase.getCalendarEventsDao().
                                 insertEventsTableEnglish(calendarEventsTableEnglish);
@@ -651,6 +751,14 @@ public class CalendarActivity extends AppCompatActivity {
                     }
                 } else {
                     for (int i = 0; i < calendarEventList.size(); i++) {
+
+                        ArrayList<String> fieldval = new ArrayList<String>();
+                        fieldval = calendarEventList.get(i).getField();
+                        ArrayList<String> startDate = new ArrayList<String>();
+                        startDate = calendarEventList.get(i).getStartTime();
+                        ArrayList<String> endDate = new ArrayList<String>();
+                        endDate = calendarEventList.get(i).getEndTime();
+                        Convertor converters = new Convertor();
                         calendarEventsTableArabic = new CalendarEventsTableArabic(
                                 calendarEventList.get(i).getEventId(),
                                 calendarEventList.get(i).getEventTitle(),
@@ -661,12 +769,16 @@ public class CalendarActivity extends AppCompatActivity {
                                 calendarEventList.get(i).getProgramType(),
                                 calendarEventList.get(i).getEventCategory(),
                                 calendarEventList.get(i).getEventLocation(),
-                                calendarEventList.get(i).getEventDate(),
-                                calendarEventList.get(i).getStartTime(),
-                                calendarEventList.get(i).getEndTime(),
+                                timestamp,
+                                util.html2string(startDate.get(0)),
+                                util.html2string(endDate.get(0)),
                                 calendarEventList.get(i).getRegistration(),
                                 calendarEventList.get(i).getFilter(),
-                                calendarEventList.get(i).getMaxGroupSize()
+                                calendarEventList.get(i).getMaxGroupSize(),
+                                util.html2string(fieldval.get(0)),
+                                converters.fromArrayList(calendarEventList.get(i).getAge()),
+                                converters.fromArrayList(calendarEventList.get(i).getAssociatedTopics()),
+                                calendarEventList.get(i).getMuseumDepartment()
                         );
                         activityReference.get().qmDatabase.getCalendarEventsDao().
                                 insertEventsTableArabic(calendarEventsTableArabic);
@@ -683,7 +795,6 @@ public class CalendarActivity extends AppCompatActivity {
         }
     }
 
-
     public class DeleteEventsTableRow extends AsyncTask<Void, Void, Void> {
         private WeakReference<CalendarActivity> activityReference;
         String language;
@@ -699,12 +810,12 @@ public class CalendarActivity extends AppCompatActivity {
         protected Void doInBackground(Void... voids) {
             if (language.equals("en")) {
                 activityReference.get().qmDatabase.getCalendarEventsDao().deleteEnglishEventsWithDate(
-                        calendarEventList.get(0).getEventDate()
+                        timestamp
                 );
 
             } else {
                 activityReference.get().qmDatabase.getCalendarEventsDao().deleteArabicEventsWithDate(
-                        calendarEventList.get(0).getEventDate()
+                        timestamp
                 );
             }
 
@@ -714,7 +825,7 @@ public class CalendarActivity extends AppCompatActivity {
         @Override
         protected void onPostExecute(Void aVoid) {
             new InsertDatabaseTask(CalendarActivity.this, calendarEventsTableEnglish,
-                    calendarEventsTableArabic, language).execute();
+                    calendarEventsTableArabic, language, timestamp).execute();
 
         }
     }
@@ -739,16 +850,23 @@ public class CalendarActivity extends AppCompatActivity {
         @Override
         protected void onPostExecute(List<CalendarEventsTableEnglish> eventsTableEnglishList) {
             calendarEventList.clear();
+            ArrayList<String> fieldval = new ArrayList<String>();
+            ArrayList<String> startDate = new ArrayList<String>();
+            ArrayList<String> endDate = new ArrayList<String>();
+            Convertor converters = new Convertor();
             if (eventsTableEnglishList.size() > 0) {
                 for (int i = 0; i < eventsTableEnglishList.size(); i++) {
+                    startDate.add(0, eventsTableEnglishList.get(i).getEvent_start_time());
+                    endDate.add(0, eventsTableEnglishList.get(i).getEvent_end_time());
+                    fieldval.add(0, eventsTableEnglishList.get(i).getField());
                     CalendarEvents calendarEvents = new CalendarEvents(
                             eventsTableEnglishList.get(i).getEvent_id(),
                             eventsTableEnglishList.get(i).getEvent_institution(),
                             eventsTableEnglishList.get(i).getEvent_title(),
                             eventsTableEnglishList.get(i).getEvent_short_description(),
                             eventsTableEnglishList.get(i).getEvent_long_description(),
-                            eventsTableEnglishList.get(i).getEvent_start_time(),
-                            eventsTableEnglishList.get(i).getEvent_end_time(),
+                            startDate,
+                            endDate,
                             eventsTableEnglishList.get(i).getEvent_registration(),
                             eventsTableEnglishList.get(i).getEvent_date(),
                             eventsTableEnglishList.get(i).getFilter(),
@@ -756,7 +874,11 @@ public class CalendarActivity extends AppCompatActivity {
                             eventsTableEnglishList.get(i).getMax_group_size(),
                             eventsTableEnglishList.get(i).getCategory(),
                             eventsTableEnglishList.get(i).getEvent_age_group(),
-                            eventsTableEnglishList.get(i).getEvent_program_type()
+                            eventsTableEnglishList.get(i).getEvent_program_type(),
+                            fieldval,
+                            converters.fromString(eventsTableEnglishList.get(i).getAge()),
+                            converters.fromString(eventsTableEnglishList.get(i).getAssociatedTopics()),
+                            eventsTableEnglishList.get(i).getMuseum()
                     );
                     calendarEventList.add(i, calendarEvents);
                 }
@@ -765,9 +887,9 @@ public class CalendarActivity extends AppCompatActivity {
                 noEventsTxt.setVisibility(View.GONE);
             } else {
                 noEventsTxt.setVisibility(View.VISIBLE);
-                noEventsTxt.setText(R.string.unable_to_fetch_details);
+                noEventsTxt.setText(R.string.no_events);
             }
-            progressBar.setVisibility(View.GONE);
+            progress.setVisibility(View.GONE);
         }
     }
 
@@ -792,16 +914,23 @@ public class CalendarActivity extends AppCompatActivity {
         @Override
         protected void onPostExecute(List<CalendarEventsTableArabic> eventsTableArabicList) {
             calendarEventList.clear();
+            ArrayList<String> fieldval = new ArrayList<String>();
+            ArrayList<String> startDate = new ArrayList<String>();
+            ArrayList<String> endDate = new ArrayList<String>();
+            Convertor converters = new Convertor();
             if (eventsTableArabicList.size() > 0) {
                 for (int i = 0; i < eventsTableArabicList.size(); i++) {
+                    startDate.add(0, eventsTableArabicList.get(i).getEvent_start_time());
+                    endDate.add(0, eventsTableArabicList.get(i).getEvent_end_time());
+                    fieldval.add(0, eventsTableArabicList.get(i).getField());
                     CalendarEvents calendarEvents = new CalendarEvents(
                             eventsTableArabicList.get(i).getEvent_id(),
                             eventsTableArabicList.get(i).getEvent_institution(),
                             eventsTableArabicList.get(i).getEvent_title(),
                             eventsTableArabicList.get(i).getEvent_short_description(),
                             eventsTableArabicList.get(i).getEvent_long_description(),
-                            eventsTableArabicList.get(i).getEvent_start_time(),
-                            eventsTableArabicList.get(i).getEvent_end_time(),
+                            startDate,
+                            endDate,
                             eventsTableArabicList.get(i).getEvent_registration(),
                             eventsTableArabicList.get(i).getEvent_date(),
                             eventsTableArabicList.get(i).getFilter(),
@@ -809,7 +938,11 @@ public class CalendarActivity extends AppCompatActivity {
                             eventsTableArabicList.get(i).getMax_group_size(),
                             eventsTableArabicList.get(i).getCategory(),
                             eventsTableArabicList.get(i).getEvent_age_group(),
-                            eventsTableArabicList.get(i).getEvent_program_type()
+                            eventsTableArabicList.get(i).getEvent_program_type(),
+                            fieldval,
+                            converters.fromString(eventsTableArabicList.get(i).getAge()),
+                            converters.fromString(eventsTableArabicList.get(i).getAssociatedTopics()),
+                            eventsTableArabicList.get(i).getMuseum()
                     );
                     calendarEventList.add(i, calendarEvents);
                 }
@@ -818,9 +951,9 @@ public class CalendarActivity extends AppCompatActivity {
                 noEventsTxt.setVisibility(View.GONE);
             } else {
                 noEventsTxt.setVisibility(View.VISIBLE);
-                noEventsTxt.setText(R.string.unable_to_fetch_details);
+                noEventsTxt.setText(R.string.no_events);
             }
-            progressBar.setVisibility(View.GONE);
+            progress.setVisibility(View.GONE);
         }
     }
 

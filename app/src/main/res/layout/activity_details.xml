@@ -7,7 +7,11 @@
     android:layout_height="match_parent"
     android:fitsSystemWindows="true"
     tools:context="com.qatarmuseums.qatarmuseumsapp.detailspage.DetailsActivity">
-
+<FrameLayout
+    android:id="@+id/fragment_frame_layout"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:visibility="gone"></FrameLayout>
     <android.support.design.widget.AppBarLayout
         android:id="@+id/app_bar"
         android:layout_width="match_parent"
