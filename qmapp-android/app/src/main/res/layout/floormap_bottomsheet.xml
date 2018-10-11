@@ -97,7 +97,7 @@
                                 android:layout_width="0dp"
                                 android:layout_height="wrap_content"
                                 android:layout_weight="1"
-                                android:text="production:"
+                                android:text="@string/production_text"
                                 android:textColor="@color/black"
                                 android:textSize="@dimen/font_size_14"
                                 android:textStyle="bold" />
@@ -126,7 +126,7 @@
                                 android:layout_width="0dp"
                                 android:layout_height="wrap_content"
                                 android:layout_weight="1"
-                                android:text="production dates:"
+                                android:text="@string/production_dates"
                                 android:textColor="@color/black"
                                 android:textSize="@dimen/font_size_14"
                                 android:textStyle="bold" />
@@ -155,7 +155,7 @@
                                 android:layout_width="0dp"
                                 android:layout_height="wrap_content"
                                 android:layout_weight="1"
-                                android:text="period/Style:"
+                                android:text="@string/period_style"
                                 android:textColor="@color/black"
                                 android:textSize="@dimen/font_size_14"
                                 android:textStyle="bold" />

@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
+import android.support.design.widget.Snackbar;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
@@ -18,6 +19,7 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.booking.rtlviewpager.RtlViewPager;
 import com.qatarmuseums.qatarmuseumsapp.R;
@@ -53,6 +55,7 @@ public class ObjectPreviewActivity extends AppCompatActivity {
     private Util util;
     ViewPager pager;
     ArrayList<ArtifactDetails> objectPreviewModels = new ArrayList<>();
+    private int currentPosition;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -94,6 +97,7 @@ public class ObjectPreviewActivity extends AppCompatActivity {
 
             @Override
             public void onPageSelected(int position) {
+                currentPosition = position;
                 currentIndicatorPositionList.clear();
                 CurrentIndicatorPosition c = new CurrentIndicatorPosition(position);
                 currentIndicatorPositionList.add(c);
@@ -145,8 +149,16 @@ public class ObjectPreviewActivity extends AppCompatActivity {
         locationBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent i = new Intent(ObjectPreviewActivity.this, FloorMapActivity.class);
-                startActivity(i);
+                String position = objectPreviewModels.get(currentPosition).getArtifactPosition();
+                String floorLevel = objectPreviewModels.get(currentPosition).getFloorLevel();
+                if (position != null && floorLevel != null && !position.equals("") && !floorLevel.equals("")) {
+                    Intent i = new Intent(ObjectPreviewActivity.this, FloorMapActivity.class);
+                    i.putExtra("Position", position);
+                    i.putExtra("Level", floorLevel);
+                    startActivity(i);
+                } else {
+                    Toast.makeText(ObjectPreviewActivity.this, "No Location Data", Toast.LENGTH_SHORT).show();
+                }
             }
         });
         locationBtn.setOnTouchListener(new View.OnTouchListener() {
