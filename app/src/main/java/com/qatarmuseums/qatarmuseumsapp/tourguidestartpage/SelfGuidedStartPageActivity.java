@@ -45,7 +45,7 @@ public class SelfGuidedStartPageActivity extends AppCompatActivity implements
     private Animation zoomOutAnimation;
     private Intent intent;
     Util util;
-    String tourId, tourName;
+    String museumId, tourName;
     private IndicatorConfiguration configuration;
     private InfiniteIndicator animCircleIndicator;
     private GlideLoaderForTourGuide glideLoader;
@@ -61,6 +61,7 @@ public class SelfGuidedStartPageActivity extends AppCompatActivity implements
     TourGuideStartPageEnglish tourGuideStartPageEnglish;
     TourGuideStartPageArabic tourGuideStartPageArabic;
     private SelfGuideStarterModel selfGuideStarterModel;
+    private String tourId;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -78,8 +79,9 @@ public class SelfGuidedStartPageActivity extends AppCompatActivity implements
         animCircleIndicator = (InfiniteIndicator) findViewById(R.id.main_indicator_default_circle);
         startBtn = (Button) findViewById(R.id.start_btn);
         intent = getIntent();
-        tourId = intent.getStringExtra("ID");
-        tourId = "63";
+        museumId = intent.getStringExtra("ID");
+        museumId = "63";
+        tourId = "12216";
         tourName = intent.getStringExtra("TOUR_NAME");
         museumTitle.setText(tourName);
         if (util.isNetworkAvailable(SelfGuidedStartPageActivity.this))
@@ -98,7 +100,7 @@ public class SelfGuidedStartPageActivity extends AppCompatActivity implements
             @Override
             public void onAnimationEnd(Animation animation) {
                 Intent i = new Intent(SelfGuidedStartPageActivity.this, ObjectPreviewActivity.class);
-                i.putExtra("TOURID", tourId);
+                i.putExtra("TOURID", museumId);
                 startActivity(i);
             }
 
@@ -134,7 +136,7 @@ public class SelfGuidedStartPageActivity extends AppCompatActivity implements
             language = "ar";
         }
         sliderPlaceholderImage.setVisibility(View.VISIBLE);
-        Call<ArrayList<SelfGuideStarterModel>> call = apiService.getSelfGuideStarterPageDetails(language, tourId);
+        Call<ArrayList<SelfGuideStarterModel>> call = apiService.getSelfGuideStarterPageDetails(language, museumId);
         call.enqueue(new Callback<ArrayList<SelfGuideStarterModel>>() {
             @Override
             public void onResponse(Call<ArrayList<SelfGuideStarterModel>> call, Response<ArrayList<SelfGuideStarterModel>> response) {
@@ -144,24 +146,27 @@ public class SelfGuidedStartPageActivity extends AppCompatActivity implements
                         if (selfGuideStarterModels.size() != 0) {
                             for (int i = 0; i < selfGuideStarterModels.size(); i++) {
                                 //Temporary
-                                if (selfGuideStarterModels.get(i).getNid().equals("12216"))
+                                if (selfGuideStarterModels.get(i).getNid().equals("12216") ||
+                                        selfGuideStarterModels.get(i).getNid().equals("12226"))
                                     selfGuideStarterModel = selfGuideStarterModels.get(i);
                             }
-                            museumDesc.setText(selfGuideStarterModel.getDescription());
-                            if (selfGuideStarterModel.getImageList().size() > 0) {
-                                ArrayList<String> sliderList = new ArrayList<>();
-                                for (int i = 0; i < selfGuideStarterModel.getImageList().size(); i++) {
-                                    sliderList.add(i, selfGuideStarterModel.getImageList().get(i));
-                                }
+                            if (selfGuideStarterModel != null) {
+                                museumDesc.setText(selfGuideStarterModel.getDescription());
+                                if (selfGuideStarterModel.getImageList().size() > 0) {
+                                    ArrayList<String> sliderList = new ArrayList<>();
+                                    for (int i = 0; i < selfGuideStarterModel.getImageList().size(); i++) {
+                                        sliderList.add(i, selfGuideStarterModel.getImageList().get(i));
+                                    }
 
-                                setSliderImages(sliderList);
-                                new SelfGuideStartRowCount(SelfGuidedStartPageActivity.this, language).execute();
-                                sliderPlaceholderImage.setVisibility(View.GONE);
-                                animCircleIndicator.setVisibility(View.VISIBLE);
-                            } else {
-                                sliderPlaceholderImage.setVisibility(View.VISIBLE);
-                                noResultFoundTxt.setVisibility(View.VISIBLE);
-                                animCircleIndicator.setVisibility(View.GONE);
+                                    setSliderImages(sliderList);
+                                    new SelfGuideStartRowCount(SelfGuidedStartPageActivity.this, language).execute();
+                                    sliderPlaceholderImage.setVisibility(View.GONE);
+                                    animCircleIndicator.setVisibility(View.VISIBLE);
+                                } else {
+                                    sliderPlaceholderImage.setVisibility(View.VISIBLE);
+                                    noResultFoundTxt.setVisibility(View.VISIBLE);
+                                    animCircleIndicator.setVisibility(View.GONE);
+                                }
                             }
 
                         } else {
@@ -364,14 +369,16 @@ public class SelfGuidedStartPageActivity extends AppCompatActivity implements
                 if (language.equals("en")) {
                     for (int i = 0; i < selfGuideStarterModels.size(); i++) {
                         int n = activityReference.get().qmDatabase.getTourGuideStartPageDao().checkEnglishIdExist(
-                                selfGuideStarterModels.get(i).getMuseumsEntity());
+                                selfGuideStarterModels.get(i).getNid());
                         if (n > 0) {
                             //updateEnglishTable same id
-                            new UpdateTourGuideStartPageDetailTable(SelfGuidedStartPageActivity.this, language, i).execute();
+                            new UpdateTourGuideStartPageDetailTable(SelfGuidedStartPageActivity.this,
+                                    language, i).execute();
 
                         } else {
-                            tourGuideStartPageEnglish = new TourGuideStartPageEnglish(selfGuideStarterModels.get(i).getTitle()
-                                    , selfGuideStarterModels.get(i).getMuseumsEntity(),
+                            tourGuideStartPageEnglish = new TourGuideStartPageEnglish(selfGuideStarterModels.get(i).getTitle(),
+                                    selfGuideStarterModels.get(i).getNid(),
+                                    selfGuideStarterModels.get(i).getMuseumsEntity(),
                                     selfGuideStarterModels.get(i).getDescription());
                             activityReference.get().qmDatabase.getTourGuideStartPageDao().insert(tourGuideStartPageEnglish);
 
@@ -381,13 +388,14 @@ public class SelfGuidedStartPageActivity extends AppCompatActivity implements
                     for (int i = 0; i < selfGuideStarterModels.size(); i++) {
 
                         int n = activityReference.get().qmDatabase.getTourGuideStartPageDao().checkArabicIdExist(
-                                selfGuideStarterModels.get(i).getMuseumsEntity());
+                                selfGuideStarterModels.get(i).getNid());
                         if (n > 0) {
                             //updateEnglishTable same id
                             new UpdateTourGuideStartPageDetailTable(SelfGuidedStartPageActivity.this, language, i).execute();
 
                         } else {
                             tourGuideStartPageArabic = new TourGuideStartPageArabic(selfGuideStarterModels.get(i).getTitle(),
+                                    selfGuideStarterModels.get(i).getNid(),
                                     selfGuideStarterModels.get(i).getMuseumsEntity(),
                                     selfGuideStarterModels.get(i).getDescription());
                             activityReference.get().qmDatabase.getTourGuideStartPageDao().insert(tourGuideStartPageArabic);
@@ -421,6 +429,7 @@ public class SelfGuidedStartPageActivity extends AppCompatActivity implements
                 if (language.equals("en")) {
                     for (int i = 0; i < selfGuideStarterModels.size(); i++) {
                         tourGuideStartPageEnglish = new TourGuideStartPageEnglish(selfGuideStarterModels.get(i).getTitle(),
+                                selfGuideStarterModels.get(i).getNid(),
                                 selfGuideStarterModels.get(i).getMuseumsEntity(),
                                 selfGuideStarterModels.get(i).getDescription());
                         activityReference.get().qmDatabase.getTourGuideStartPageDao().insert(tourGuideStartPageEnglish);
@@ -429,6 +438,7 @@ public class SelfGuidedStartPageActivity extends AppCompatActivity implements
                 } else {
                     for (int i = 0; i < selfGuideStarterModels.size(); i++) {
                         tourGuideStartPageArabic = new TourGuideStartPageArabic(selfGuideStarterModels.get(i).getTitle(),
+                                selfGuideStarterModels.get(i).getNid(),
                                 selfGuideStarterModels.get(i).getMuseumsEntity(),
                                 selfGuideStarterModels.get(i).getDescription());
                         activityReference.get().qmDatabase.getTourGuideStartPageDao().insert(tourGuideStartPageArabic);
@@ -472,14 +482,16 @@ public class SelfGuidedStartPageActivity extends AppCompatActivity implements
             if (language.equals("en")) {
                 // updateEnglishTable table with english name
                 activityReference.get().qmDatabase.getTourGuideStartPageDao().updateTourGuideStartDataEnglish(
-                        selfGuideStarterModels.get(0).getTitle(), selfGuideStarterModels.get(0).getDescription(),
-                        selfGuideStarterModels.get(0).getMuseumsEntity()
+                        selfGuideStarterModels.get(position).getTitle(), selfGuideStarterModels.get(position).getDescription(),
+                        selfGuideStarterModels.get(position).getMuseumsEntity(),
+                        selfGuideStarterModels.get(position).getNid()
                 );
             } else {
                 // updateArabicTable table with arabic name
                 activityReference.get().qmDatabase.getTourGuideStartPageDao().updateTourGuideStartDataArabic(
-                        selfGuideStarterModels.get(0).getTitle(), selfGuideStarterModels.get(0).getDescription(),
-                        selfGuideStarterModels.get(0).getMuseumsEntity()
+                        selfGuideStarterModels.get(position).getTitle(), selfGuideStarterModels.get(position).getDescription(),
+                        selfGuideStarterModels.get(position).getMuseumsEntity(),
+                        selfGuideStarterModels.get(position).getNid()
                 );
 
             }
@@ -490,17 +502,18 @@ public class SelfGuidedStartPageActivity extends AppCompatActivity implements
     public class RetriveSelfGuideStartDataEnglish extends AsyncTask<Void, Void, TourGuideStartPageEnglish> {
         private WeakReference<SelfGuidedStartPageActivity> activityReference;
         int language;
-        String museumId;
+        String tourId;
 
-        RetriveSelfGuideStartDataEnglish(SelfGuidedStartPageActivity context, int appLanguage, String museumId) {
+        RetriveSelfGuideStartDataEnglish(SelfGuidedStartPageActivity context, int appLanguage, String tourId) {
             activityReference = new WeakReference<>(context);
             language = appLanguage;
-            this.museumId = museumId;
+            this.tourId = tourId;
         }
 
         @Override
         protected TourGuideStartPageEnglish doInBackground(Void... voids) {
-            return activityReference.get().qmDatabase.getTourGuideStartPageDao().getTourGuideStartPageDataEnglish(tourId);
+            return activityReference.get().qmDatabase.getTourGuideStartPageDao().
+                    getTourGuideStartPageDataEnglish(tourId);
         }
 
         @Override
@@ -522,17 +535,18 @@ public class SelfGuidedStartPageActivity extends AppCompatActivity implements
     public class RetriveSelfGuideStartDataArabic extends AsyncTask<Void, Void, TourGuideStartPageArabic> {
         private WeakReference<SelfGuidedStartPageActivity> activityReference;
         int language;
-        String museumId;
+        String tourId;
 
-        RetriveSelfGuideStartDataArabic(SelfGuidedStartPageActivity context, int appLanguage, String museumId) {
+        RetriveSelfGuideStartDataArabic(SelfGuidedStartPageActivity context, int appLanguage, String tourId) {
             activityReference = new WeakReference<>(context);
             language = appLanguage;
-            this.museumId = museumId;
+            this.tourId = tourId;
         }
 
         @Override
         protected TourGuideStartPageArabic doInBackground(Void... voids) {
-            return activityReference.get().qmDatabase.getTourGuideStartPageDao().getTourGuideStartPageDataArabic(tourId);
+            return activityReference.get().qmDatabase.getTourGuideStartPageDao().
+                    getTourGuideStartPageDataArabic(tourId);
         }
 
         @Override

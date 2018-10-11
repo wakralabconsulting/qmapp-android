@@ -124,7 +124,7 @@ public class TourGuideDetailsActivity extends AppCompatActivity {
     }
 
     public void prepareMiaTourGuideData() {
-        tourguideObject = new TourGuideList("Science Tour", "10", R.drawable.science_tour);
+        tourguideObject = new TourGuideList(getString(R.string.science_tour), "10", R.drawable.science_tour);
         tourGuideList.add(tourguideObject);
         tourguideObject = new TourGuideList(getString(R.string.coming_soon_txt), "11", R.drawable.mia);
         tourGuideList.add(tourguideObject);
