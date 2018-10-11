@@ -347,11 +347,6 @@ public class MuseumActivity extends BaseActivity implements
         super.onResume();
         if (configuration != null)
             animCircleIndicator.start();
-        super.onResume();
-        if (configuration != null)
-            animCircleIndicator.start();
-
-
     }
 
     public void getSliderImagesfromAPI() {
