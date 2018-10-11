@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
+import android.support.design.widget.Snackbar;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
@@ -55,6 +56,7 @@ public class ObjectPreviewActivity extends AppCompatActivity {
     ViewPager pager;
     ArrayList<ArtifactDetails> objectPreviewModels = new ArrayList<>();
     private int currentPosition;
+    private LinearLayout rootLayout;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -70,6 +72,7 @@ public class ObjectPreviewActivity extends AppCompatActivity {
         backBtn = findViewById(R.id.back_btn);
         shareBtn = findViewById(R.id.share_btn);
         locationBtn = findViewById(R.id.location_btn);
+        rootLayout = findViewById(R.id.layout_root);
         progressBar = (ProgressBar) findViewById(R.id.progressBarLoading);
         commonContentLayout = (LinearLayout) findViewById(R.id.main_content_layout);
         noResultFoundTxt = (TextView) findViewById(R.id.noResultFoundTxt);
@@ -157,7 +160,7 @@ public class ObjectPreviewActivity extends AppCompatActivity {
                     startActivity(i);
                     overridePendingTransition(R.anim.flipfadein, R.anim.flipfadeout);
                 } else {
-                    Toast.makeText(ObjectPreviewActivity.this, "No Location Data", Toast.LENGTH_SHORT).show();
+                    Snackbar.make(rootLayout, R.string.no_location_data, Snackbar.LENGTH_SHORT).show();
                 }
             }
         });

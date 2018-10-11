@@ -191,5 +191,6 @@
 
     <string name="object_history">Object History</string>
     <string name="science_tour">جولة علمية</string>
+    <string name="no_location_data">No Location Data</string>
 
 </resources>
