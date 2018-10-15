@@ -1,10 +1,14 @@
 package com.qatarmuseums.qatarmuseumsapp.floormap;
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
 import com.google.gson.annotations.SerializedName;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 
-public class ArtifactDetails {
+public class ArtifactDetails implements Parcelable{
     @SerializedName("Title")
     private String title;
     @SerializedName("Accession_Number")
@@ -51,6 +55,44 @@ public class ArtifactDetails {
     private String TechniqueMaterials;
     @SerializedName("Period/Style")
     private String PeriodStyle;
+
+    protected ArtifactDetails(Parcel in) {
+        title = in.readString();
+        accessionNumber = in.readString();
+        nid = in.readString();
+        curatorialDescription = in.readString();
+        dimensions = in.readString();
+        mainTitle = in.readString();
+        objectENGSummary = in.readString();
+        objectHistory = in.readString();
+        production = in.readString();
+        productionDates = in.readString();
+        image = in.readString();
+        tourGuideId = in.readString();
+        artifactNumber = in.readString();
+        artifactPosition = in.readString();
+        audioDescriptif = in.readString();
+        images = in.createStringArrayList();
+        audioFile = in.readString();
+        floorLevel = in.readString();
+        galleryNumber = in.readString();
+        sortId = in.readString();
+        ArtistCreatorAuthor = in.readString();
+        TechniqueMaterials = in.readString();
+        PeriodStyle = in.readString();
+    }
+
+    public static final Creator<ArtifactDetails> CREATOR = new Creator<ArtifactDetails>() {
+        @Override
+        public ArtifactDetails createFromParcel(Parcel in) {
+            return new ArtifactDetails(in);
+        }
+
+        @Override
+        public ArtifactDetails[] newArray(int size) {
+            return new ArtifactDetails[size];
+        }
+    };
 
     public String getTitle() {
         return title;
@@ -234,5 +276,37 @@ public class ArtifactDetails {
 
     public void setPeriodStyle(String periodStyle) {
         PeriodStyle = periodStyle;
+    }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeString(title);
+        dest.writeString(accessionNumber);
+        dest.writeString(nid);
+        dest.writeString(curatorialDescription);
+        dest.writeString(dimensions);
+        dest.writeString(mainTitle);
+        dest.writeString(objectENGSummary);
+        dest.writeString(objectHistory);
+        dest.writeString(production);
+        dest.writeString(productionDates);
+        dest.writeString(image);
+        dest.writeString(tourGuideId);
+        dest.writeString(artifactNumber);
+        dest.writeString(artifactPosition);
+        dest.writeString(audioDescriptif);
+        dest.writeStringList(images);
+        dest.writeString(audioFile);
+        dest.writeString(floorLevel);
+        dest.writeString(galleryNumber);
+        dest.writeString(sortId);
+        dest.writeString(ArtistCreatorAuthor);
+        dest.writeString(TechniqueMaterials);
+        dest.writeString(PeriodStyle);
     }
 }

@@ -70,7 +70,7 @@
                         android:layout_height="match_parent"
                         android:paddingEnd="@dimen/pading_5"
                         android:paddingStart="@dimen/pading_5"
-                        android:src="@drawable/po_297" />
+                        android:src="@drawable/placeholder_portrait" />
                 </LinearLayout>
 
                 <LinearLayout
@@ -107,7 +107,6 @@
                                 android:layout_width="0dp"
                                 android:layout_height="wrap_content"
                                 android:layout_weight="1"
-                                android:text="Syria(Damascus)"
                                 android:textColor="@color/black"
                                 android:textSize="@dimen/font_size_14"
                                 android:textStyle="normal" />
@@ -136,7 +135,6 @@
                                 android:layout_width="0dp"
                                 android:layout_height="wrap_content"
                                 android:layout_weight="1"
-                                android:text="1400 - 1425 CE"
                                 android:textColor="@color/black"
                                 android:textSize="@dimen/font_size_14"
                                 android:textStyle="normal" />
@@ -165,7 +163,6 @@
                                 android:layout_width="0dp"
                                 android:layout_height="wrap_content"
                                 android:layout_weight="1"
-                                android:text="Mamluk"
                                 android:textColor="@color/black"
                                 android:textSize="@dimen/font_size_14"
                                 android:textStyle="normal" />
@@ -207,8 +204,18 @@
                 android:id="@+id/image_to_zoom"
                 android:layout_width="match_parent"
                 android:layout_height="300dp"
-                android:src="@drawable/science_tour_object"
+                android:src="@drawable/placeholder"
                 android:visibility="visible" />
+
+            <LinearLayout
+                android:id="@+id/audio_control_details_page"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:orientation="horizontal"
+                android:visibility="visible">
+
+            </LinearLayout>
 
             <TextView
                 android:id="@+id/title"
@@ -218,7 +225,6 @@
                 android:fontFamily="@font/din_regular"
                 android:paddingEnd="@dimen/padding_25"
                 android:paddingStart="@dimen/padding_25"
-                android:text="Albarello"
                 android:textAlignment="textStart"
                 android:textColor="@color/black"
                 android:textSize="@dimen/font_size_18"
