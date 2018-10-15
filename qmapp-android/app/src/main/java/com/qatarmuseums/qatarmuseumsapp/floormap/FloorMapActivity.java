@@ -1,5 +1,6 @@
 package com.qatarmuseums.qatarmuseumsapp.floormap;
 
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.res.Resources;
@@ -7,6 +8,8 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.graphics.Rect;
+import android.media.AudioManager;
+import android.media.MediaPlayer;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
@@ -19,11 +22,14 @@ import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
+import android.widget.SeekBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.github.chrisbanes.photoview.PhotoView;
 import com.google.android.gms.maps.CameraUpdateFactory;
@@ -50,6 +56,7 @@ import com.qatarmuseums.qatarmuseumsapp.utils.Util;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Timer;
 
@@ -58,7 +65,7 @@ import retrofit2.Callback;
 import retrofit2.Response;
 
 public class FloorMapActivity extends AppCompatActivity implements OnMapReadyCallback,
-        GoogleMap.OnGroundOverlayClickListener {
+        GoogleMap.OnGroundOverlayClickListener, MediaPlayer.OnBufferingUpdateListener, MediaPlayer.OnCompletionListener, SeekBar.OnSeekBarChangeListener {
 
     private static final int TRANSPARENCY_MAX = 100;
     private int normalMapIconWidth = 53;
@@ -184,11 +191,26 @@ public class FloorMapActivity extends AppCompatActivity implements OnMapReadyCal
     private ArtifactDetails artifactDetails;
     private CoordinatorLayout floormapLayout;
     private Snackbar snackbar;
-    Intent intent;
     private String artifactPosition, floorLevel;
     private ArrayList<ArtifactDetails> artifactList;
     private Timer timer;
     private CustomTimerTask timerTask;
+
+    private SeekBar seekBar;
+    private MediaPlayer mediaPlayer;
+    private int lengthOfAudio;
+    final String audioURL = "http://www.qm.org.qa/sites/default/files/floors.mp3";
+    private ImageView btn_play, btn_pause;
+    private final Handler handler = new Handler();
+    private final Runnable r = new Runnable() {
+        @Override
+        public void run() {
+            updateSeekProgress();
+        }
+    };
+    private LinearLayout audioLayout, audioLayoutDetails;
+    private String key;
+    private Iterator<String> myVeryOwnIterator;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -232,8 +254,12 @@ public class FloorMapActivity extends AppCompatActivity implements OnMapReadyCal
         qmPreferences = PreferenceManager.getDefaultSharedPreferences(this);
         appLanguage = qmPreferences.getInt("AppLanguage", 1);
         artifactList = new ArrayList<ArtifactDetails>();
-        fetchArtifactsFromAPI();
-        intent = getIntent();
+        if (getIntent().getParcelableArrayListExtra("RESPONSE") != null) {
+            artifactList.clear();
+            artifactList = getIntent().getParcelableArrayListExtra("RESPONSE");
+            addDatasToHashMap();
+        } else
+            fetchArtifactsFromAPI();
         numberPad.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -310,10 +336,11 @@ public class FloorMapActivity extends AppCompatActivity implements OnMapReadyCal
         level2.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                audioLayout.setVisibility(View.GONE);
+                pauseAudio();
                 selectedLevel = 2;
                 position = googleMap.getCameraPosition();
-                if (position.zoom > 19)
-                    showLevel3();
+                showLevel3();
                 hideLevel2();
                 level2.setBackgroundColor(getResources().getColor(R.color.white));
                 level1.setBackgroundColor(getResources().getColor(R.color.floor_map_buttonbg));
@@ -324,11 +351,11 @@ public class FloorMapActivity extends AppCompatActivity implements OnMapReadyCal
         level1.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                audioLayout.setVisibility(View.GONE);
+                pauseAudio();
                 selectedLevel = 1;
                 position = googleMap.getCameraPosition();
-                if (position.zoom > 19) {
-                    showLevel2();
-                }
+                showLevel2();
                 hideLevel3();
                 level2.setBackgroundColor(getResources().getColor(R.color.floor_map_buttonbg));
                 level1.setBackgroundColor(getResources().getColor(R.color.white));
@@ -339,6 +366,7 @@ public class FloorMapActivity extends AppCompatActivity implements OnMapReadyCal
         levelG.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                audioLayout.setVisibility(View.VISIBLE);
                 selectedLevel = 0;
                 hideLevel2();
                 hideLevel3();
@@ -348,6 +376,128 @@ public class FloorMapActivity extends AppCompatActivity implements OnMapReadyCal
                 mGroundOverlay.setImage(BitmapDescriptorFactory.fromResource(R.drawable.qm_level_1));
             }
         });
+        initialize_Controls();
+    }
+
+    private void initialize_Controls() {
+        audioLayout = findViewById(R.id.audio_control);
+        audioLayoutDetails = findViewById(R.id.audio_control_details_page);
+
+        btn_play = new ImageView(this);
+        btn_play.setImageDrawable(getDrawable(R.drawable.play_black));
+        btn_pause = new ImageView(this);
+        btn_pause.setImageDrawable(getDrawable(R.drawable.pause_black));
+        btn_pause.setVisibility(View.GONE);
+
+        seekBar = new SeekBar(this);
+        LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+        seekBar.setLayoutParams(lp);
+        seekBar.setOnSeekBarChangeListener(this);
+
+        audioLayout.addView(btn_play);
+        audioLayout.addView(btn_pause);
+        audioLayout.addView(seekBar);
+
+
+        btn_play.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (utils.isNetworkAvailable(getApplicationContext())) {
+                    try {
+                        mediaPlayer.setDataSource(audioURL);
+                        mediaPlayer.prepare();
+                        lengthOfAudio = mediaPlayer.getDuration();
+
+                    } catch (Exception e) {
+                        //Log.e("Error", e.getMessage());
+                    }
+                    playAudio();
+                    updateSeekProgress();
+                } else {
+                    Toast.makeText(FloorMapActivity.this, R.string.check_network, Toast.LENGTH_SHORT).show();
+                }
+            }
+        });
+        btn_pause.setOnClickListener(new View.OnClickListener()
+
+        {
+            @Override
+            public void onClick(View v) {
+                pauseAudio();
+                updateSeekProgress();
+            }
+        });
+
+        mediaPlayer = new MediaPlayer();
+        mediaPlayer.setOnBufferingUpdateListener(this);
+        mediaPlayer.setOnCompletionListener(this);
+
+    }
+
+    @Override
+    public void onBufferingUpdate(MediaPlayer mediaPlayer, int percent) {
+        seekBar.setSecondaryProgress(percent);
+    }
+
+    @Override
+    public void onCompletion(MediaPlayer mp) {
+        btn_play.setVisibility(View.VISIBLE);
+        btn_pause.setVisibility(View.GONE);
+    }
+
+    @Override
+    public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+
+    }
+
+    @Override
+    public void onStartTrackingTouch(SeekBar seekBar) {
+
+    }
+
+    @Override
+    public void onStopTrackingTouch(SeekBar seekBar) {
+        if (mediaPlayer.isPlaying()) {
+            mediaPlayer.seekTo((lengthOfAudio / 100) * seekBar.getProgress());
+        }
+    }
+
+    private void updateSeekProgress() {
+        if (mediaPlayer.isPlaying()) {
+            seekBar.setProgress((int) (((float) mediaPlayer.getCurrentPosition() / lengthOfAudio) * 100));
+            handler.postDelayed(r, 1000);
+        }
+    }
+
+    private void stopAudio() {
+        if (mediaPlayer != null) {
+            mediaPlayer.stop();
+        }
+        btn_play.setVisibility(View.VISIBLE);
+        btn_pause.setVisibility(View.GONE);
+        seekBar.setProgress(0);
+    }
+
+    private void pauseAudio() {
+        if (mediaPlayer != null) {
+            mediaPlayer.pause();
+        }
+        btn_play.setVisibility(View.VISIBLE);
+        btn_pause.setVisibility(View.GONE);
+    }
+
+    private void playAudio() {
+        if (mediaPlayer != null) {
+            mediaPlayer.start();
+        }
+        AudioManager audio = (AudioManager) this.getSystemService(Context.AUDIO_SERVICE);
+        if (audio != null) {
+            if (audio.getStreamVolume(AudioManager.STREAM_MUSIC) == 0)
+                Toast.makeText(this, R.string.increase_volume, Toast.LENGTH_SHORT).show();
+        }
+        btn_play.setVisibility(View.GONE);
+        btn_pause.setVisibility(View.VISIBLE);
+
     }
 
     public void fetchArtifactsFromAPI() {
@@ -366,12 +516,7 @@ public class FloorMapActivity extends AppCompatActivity implements OnMapReadyCal
                 if (response.isSuccessful()) {
                     if (response.body().size() > 0) {
                         artifactList.addAll(response.body());
-
-                        for (int i = 0; i < artifactList.size(); i++) {
-                            ArtifactDetails artifactDetails = artifactList.get(i);
-                            artifactDetailsMap.put(artifactDetails.getArtifactPosition(), artifactDetails);
-                        }
-                        checkforhighlight();
+                        addDatasToHashMap();
                     }
                 }
                 progressBar.setVisibility(View.GONE);
@@ -389,34 +534,30 @@ public class FloorMapActivity extends AppCompatActivity implements OnMapReadyCal
         });
     }
 
-    public void checkforhighlight() {
-        artifactPosition = intent.getStringExtra("Position");
-        floorLevel = intent.getStringExtra("Level");
+    public void addDatasToHashMap() {
+        artifactDetailsMap.clear();
+        for (int i = 0; i < artifactList.size(); i++) {
+            artifactDetails = artifactList.get(i);
+            artifactDetailsMap.put(artifactDetails.getArtifactPosition(), artifactDetails);
+        }
+    }
+
+    public void checkForHighlight() {
+        artifactPosition = getIntent().getStringExtra("Position");
+        floorLevel = getIntent().getStringExtra("Level");
         if (artifactPosition != null) {
             if (floorLevel.equals("2"))
                 level1.performClick();
             else
                 level2.performClick();
-            markerClick(markerHashMap.get(artifactPosition));
+            if (markerHashMap.get(artifactPosition) != null)
+                markerClick(markerHashMap.get(artifactPosition));
         }
 
     }
 
     public void showLevel2() {
-        l2_g1_sc3.setVisible(true);
-        //l2_g3_sc14.setVisible(true);
-        l2_g3_sc13.setVisible(true);
-        l2_g5_sc6.setVisible(true);
-        l2_g8.setVisible(true);
-        l2_g8_sc1.setVisible(true);
-        l2_g8_sc4_1.setVisible(true);
-        l2_g8_sc4_2.setVisible(true);
-        l2_g8_sc5.setVisible(true);
-        l2_g8_sc6_1.setVisible(true);
-        l2_g8_sc6_2.setVisible(true);
-        l2_g9_sc5_1.setVisible(true);
-        l2_g9_sc5_2.setVisible(true);
-        l2_g9_sc7.setVisible(true);
+        showCorrespondingMarkers("l2");
     }
 
     public void hideLevel2() {
@@ -437,12 +578,7 @@ public class FloorMapActivity extends AppCompatActivity implements OnMapReadyCal
     }
 
     public void showLevel3() {
-        l3_g10_sc1_1.setVisible(true);
-        l3_g10_sc1_2.setVisible(true);
-        l3_g11_wr15.setVisible(true);
-        l3_g13_5.setVisible(true);
-        l3_g13_7.setVisible(true);
-        l3_g17_3.setVisible(true);
+        showCorrespondingMarkers("l3");
     }
 
     public void hideLevel3() {
@@ -472,18 +608,7 @@ public class FloorMapActivity extends AppCompatActivity implements OnMapReadyCal
                 } else {
                     mGroundOverlay.setVisible(true);
                     levelPicker.setVisibility(View.VISIBLE);
-
                 }
-                if (position.zoom <= 19.0 && selectedLevel == 1) {
-                    hideLevel2();
-                } else if (position.zoom > 19 && selectedLevel == 1) {
-                    showLevel2();
-                } else if (position.zoom <= 19.0 && selectedLevel == 2) {
-                    hideLevel3();
-                } else if (position.zoom > 19 && selectedLevel == 2) {
-                    showLevel3();
-                }
-
             }
         });
 
@@ -497,6 +622,7 @@ public class FloorMapActivity extends AppCompatActivity implements OnMapReadyCal
 
         addMarkers();
         levelG.performClick();
+        checkForHighlight();
 
         googleMap.setContentDescription("Google Map with ground overlay.");
         googleMap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
@@ -540,21 +666,20 @@ public class FloorMapActivity extends AppCompatActivity implements OnMapReadyCal
                 .position(L2_G1_SC3)
                 .title("SI.5")
                 .snippet("l2_g1_sc3")
+                .visible(false)
                 .icon(BitmapDescriptorFactory.fromBitmap(resizeMapIcons("si_5", normalMapIconWidth, normalMapIconHeight))));
         markerHashMap.put("l2_g1_sc3", l2_g1_sc3);
-//        l2_g3_sc14 = googleMap.addMarker(new MarkerOptions()
-//                .position(L2_G3_SC14)
-//                .title("MW.634")
-//                .icon(BitmapDescriptorFactory.fromBitmap(resizeMapIcons("mw_634", normalMapIconWidth, normalMapIconHeight))));
         l2_g3_sc13 = googleMap.addMarker(new MarkerOptions()
                 .position(L2_G3_SC13)
                 .title("MW.634")
                 .snippet("l2_g3_sc13")
+                .visible(false)
                 .icon(BitmapDescriptorFactory.fromBitmap(resizeMapIcons("mw_634", normalMapIconWidth, normalMapIconHeight))));
         markerHashMap.put("l2_g3_sc13", l2_g3_sc13);
         l2_g5_sc6 = googleMap.addMarker(new MarkerOptions()
                 .position(L2_G5_SC6)
                 .title("MW.56")
+                .visible(false)
                 .snippet("l2_g5_sc6")
                 .icon(BitmapDescriptorFactory.fromBitmap(resizeMapIcons("mw_56", normalMapIconWidth, normalMapIconHeight))));
         markerHashMap.put("l2_g5_sc6", l2_g5_sc6);
@@ -563,60 +688,70 @@ public class FloorMapActivity extends AppCompatActivity implements OnMapReadyCal
                 .position(L2_G8)
                 .title("MS.523")
                 .snippet("l2_g8")
+                .visible(false)
                 .icon(BitmapDescriptorFactory.fromBitmap(resizeMapIcons("ms_523", normalMapIconWidth, normalMapIconHeight))));
         markerHashMap.put("l2_g8", l2_g8);
         l2_g8_sc1 = googleMap.addMarker(new MarkerOptions()
                 .position(L2_G8_SC1)
                 .title("MW.548")
                 .snippet("l2_g8_sc1")
+                .visible(false)
                 .icon(BitmapDescriptorFactory.fromBitmap(resizeMapIcons("mw_548", normalMapIconWidth, normalMapIconHeight))));
         markerHashMap.put("l2_g8_sc1", l2_g8_sc1);
         l2_g8_sc4_1 = googleMap.addMarker(new MarkerOptions()
                 .position(L2_G8_SC4_1)
                 .title("MS.650")
                 .snippet("l2_g8_sc4_1")
+                .visible(false)
                 .icon(BitmapDescriptorFactory.fromBitmap(resizeMapIcons("ms_650", normalMapIconWidth, normalMapIconHeight))));
         markerHashMap.put("l2_g8_sc4_1", l2_g8_sc4_1);
         l2_g8_sc4_2 = googleMap.addMarker(new MarkerOptions()
                 .position(L2_G8_SC4_2)
                 .title("MS.688")
                 .snippet("l2_g8_sc4_2")
+                .visible(false)
                 .icon(BitmapDescriptorFactory.fromBitmap(resizeMapIcons("ms_688", normalMapIconWidth, normalMapIconHeight))));
         markerHashMap.put("l2_g8_sc4_2", l2_g8_sc4_2);
         l2_g8_sc5 = googleMap.addMarker(new MarkerOptions()
                 .position(L2_G8_SC5)
                 .title("MW.361.2007")
                 .snippet("l2_g8_sc5")
+                .visible(false)
                 .icon(BitmapDescriptorFactory.fromBitmap(resizeMapIcons("mw_361_2007", normalMapIconWidth, normalMapIconHeight))));
         markerHashMap.put("l2_g8_sc5", l2_g8_sc5);
         l2_g8_sc6_1 = googleMap.addMarker(new MarkerOptions()
                 .position(L2_G8_SC6_1)
                 .title("MS.709.2010-1")
                 .snippet("l2_g8_sc6_1")
+                .visible(false)
                 .icon(BitmapDescriptorFactory.fromBitmap(resizeMapIcons("ms_709_2010_1", normalMapIconWidth, normalMapIconHeight))));
         markerHashMap.put("l2_g8_sc6_1", l2_g8_sc6_1);
         l2_g8_sc6_2 = googleMap.addMarker(new MarkerOptions()
                 .position(L2_G8_SC6_2)
                 .title("MS.709.2010-2")
                 .snippet("l2_g8_sc6_2")
+                .visible(false)
                 .icon(BitmapDescriptorFactory.fromBitmap(resizeMapIcons("ms_709_2010_2", normalMapIconWidth, normalMapIconHeight))));
         markerHashMap.put("l2_g8_sc6_2", l2_g8_sc6_2);
         l2_g9_sc5_1 = googleMap.addMarker(new MarkerOptions()
                 .position(L2_G9_SC5_1)
                 .title("MW.340")
                 .snippet("l2_g9_sc5_1")
+                .visible(false)
                 .icon(BitmapDescriptorFactory.fromBitmap(resizeMapIcons("mw_340", normalMapIconWidth, normalMapIconHeight))));
         markerHashMap.put("l2_g9_sc5_1", l2_g9_sc5_1);
         l2_g9_sc5_2 = googleMap.addMarker(new MarkerOptions()
                 .position(L2_G9_SC5_2)
                 .title("MS.794")
                 .snippet("l2_g9_sc5_2")
+                .visible(false)
                 .icon(BitmapDescriptorFactory.fromBitmap(resizeMapIcons("ms_794", normalMapIconWidth, normalMapIconHeight))));
         markerHashMap.put("l2_g9_sc5_2", l2_g9_sc5_2);
         l2_g9_sc7 = googleMap.addMarker(new MarkerOptions()
                 .position(L2_G9_SC7)
                 .title("MW.146")
                 .snippet("l2_g9_sc7")
+                .visible(false)
                 .icon(BitmapDescriptorFactory.fromBitmap(resizeMapIcons("mw_146", normalMapIconWidth, normalMapIconHeight))));
         markerHashMap.put("l2_g9_sc7", l2_g9_sc7);
 
@@ -624,39 +759,75 @@ public class FloorMapActivity extends AppCompatActivity implements OnMapReadyCal
                 .position(L3_G10_SC1_1)
                 .title("PO.297")
                 .snippet("l3_g10_sc1_1")
+                .visible(false)
                 .icon(BitmapDescriptorFactory.fromBitmap(resizeMapIcons("po_297", normalMapIconWidth, normalMapIconHeight))));
         markerHashMap.put("l3_g10_sc1_1", l3_g10_sc1_1);
         l3_g10_sc1_2 = googleMap.addMarker(new MarkerOptions()
                 .position(L3_G10_SC1_2)
                 .title("PO.308")
                 .snippet("l3_g10_sc1_2")
+                .visible(false)
                 .icon(BitmapDescriptorFactory.fromBitmap(resizeMapIcons("po_308", normalMapIconWidth, normalMapIconHeight))));
         markerHashMap.put("l3_g10_sc1_2", l3_g10_sc1_2);
         l3_g11_wr15 = googleMap.addMarker(new MarkerOptions()
                 .position(L3_G11_WR15)
                 .title("MS.647.A.59")
                 .snippet("l3_g11_wr15")
+                .visible(false)
                 .icon(BitmapDescriptorFactory.fromBitmap(resizeMapIcons("ms_647_a_59", normalMapIconWidth, normalMapIconHeight))));
         markerHashMap.put("l3_g11_wr15", l3_g11_wr15);
         l3_g13_5 = googleMap.addMarker(new MarkerOptions()
                 .position(L3_G13_5)
                 .title("GL.322")
                 .snippet("l3_g13_5")
+                .visible(false)
                 .icon(BitmapDescriptorFactory.fromBitmap(resizeMapIcons("gl_322", normalMapIconWidth, normalMapIconHeight))));
         markerHashMap.put("l3_g13_5", l3_g13_5);
         l3_g13_7 = googleMap.addMarker(new MarkerOptions()
                 .position(L3_G13_7)
                 .title("HS.32")
                 .snippet("l3_g13_7")
+                .visible(false)
                 .icon(BitmapDescriptorFactory.fromBitmap(resizeMapIcons("hs_32", normalMapIconWidth, normalMapIconHeight))));
         markerHashMap.put("l3_g13_7", l3_g13_7);
         l3_g17_3 = googleMap.addMarker(new MarkerOptions()
                 .position(L3_G17_3)
                 .title("IV.61")
                 .snippet("l3_g17_3")
+                .visible(false)
                 .icon(BitmapDescriptorFactory.fromBitmap(resizeMapIcons("iv_61", normalMapIconWidth, normalMapIconHeight))));
         markerHashMap.put("l3_g17_3", l3_g17_3);
 
+    }
+
+    public void showCorrespondingMarkers(String level) {
+        myVeryOwnIterator = artifactDetailsMap.keySet().iterator();
+        while (myVeryOwnIterator.hasNext()) {
+            key = myVeryOwnIterator.next();
+            if (key.contains(level) && markerHashMap.get(key) != null) {
+                markerHashMap.get(key).setVisible(true);
+            }
+        }
+    }
+
+    public void showAudioControllerDetailsPage() {
+        audioLayout.removeView(btn_play);
+        audioLayout.removeView(btn_pause);
+        audioLayout.removeView(seekBar);
+        audioLayoutDetails.setPadding(15, 15, 15, 15);
+        audioLayoutDetails.addView(btn_play);
+        audioLayoutDetails.addView(btn_pause);
+        audioLayoutDetails.addView(seekBar);
+    }
+
+    public void showAudioControllerGroundFloor() {
+        audioLayoutDetails.removeView(btn_play);
+        audioLayoutDetails.removeView(btn_pause);
+        audioLayoutDetails.removeView(seekBar);
+        audioLayoutDetails.setPadding(0, 0, 0, 0);
+        audioLayout.addView(btn_play);
+        audioLayout.addView(btn_pause);
+        audioLayout.addView(seekBar);
     }
 
     public void markerClick(Marker marker) {
@@ -684,6 +855,9 @@ public class FloorMapActivity extends AppCompatActivity implements OnMapReadyCal
                     .placeholder(R.drawable.placeholder_portrait)
                     .centerCrop()
                     .into(popupImage);
+            if (artifactDetails.getAudioFile() != null && !artifactDetails.getAudioFile().equals("")) {
+                showAudioControllerDetailsPage();
+            }
             maiTtitle.setText(utils.html2string(artifactDetails.getMainTitle()));
             shortDescription.setText(artifactDetails.getCuratorialDescription());
             GlideApp.with(FloorMapActivity.this)
@@ -842,6 +1016,7 @@ public class FloorMapActivity extends AppCompatActivity implements OnMapReadyCal
             timer.cancel();
             timerTask.cancel();
         }
+        stopAudio();
         if (mBottomSheetBehavior.getState() != BottomSheetBehavior.STATE_HIDDEN) {
             mBottomSheetBehavior.setState(BottomSheetBehavior.STATE_HIDDEN);
             selectedMarker.setIcon(BitmapDescriptorFactory.fromBitmap(resizeMapIcons(name, normalMapIconWidth, normalMapIconHeight)));
@@ -878,6 +1053,8 @@ public class FloorMapActivity extends AppCompatActivity implements OnMapReadyCal
                         mBottomSheetBehavior.setState(BottomSheetBehavior.STATE_HIDDEN);
                         selectedMarker.setIcon(BitmapDescriptorFactory.fromBitmap(resizeMapIcons(name, normalMapIconWidth, normalMapIconHeight)));
                         selectedMarker = null;
+                        if (audioLayout.getChildCount() == 0)
+                            showAudioControllerGroundFloor();
                     }
                     checkMarkerStatus();
                 }
