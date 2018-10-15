@@ -157,6 +157,7 @@ public class ObjectPreviewActivity extends AppCompatActivity {
                     Intent i = new Intent(ObjectPreviewActivity.this, FloorMapActivity.class);
                     i.putExtra("Position", position);
                     i.putExtra("Level", floorLevel);
+                    i.putExtra("RESPONSE", objectPreviewModels);
                     startActivity(i);
                     overridePendingTransition(R.anim.flipfadein, R.anim.flipfadeout);
                 } else {
