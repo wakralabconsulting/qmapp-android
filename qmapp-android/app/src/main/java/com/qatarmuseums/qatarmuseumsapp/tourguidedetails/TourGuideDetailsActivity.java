@@ -72,8 +72,9 @@ public class TourGuideDetailsActivity extends AppCompatActivity {
                         } else {
                             navigationIntent = new Intent(TourGuideDetailsActivity.this,
                                     SelfGuidedStartPageActivity.class);
-                            navigationIntent.putExtra("ID",tourGuideList.get(position).getMuseumId());
-                            navigationIntent.putExtra("TOUR_NAME",tourGuideList.get(position).getName());
+                            navigationIntent.putExtra("MUSEUM_ID", tourGuideList.get(position).getMuseumId());
+                            navigationIntent.putExtra("TOUR_NAME", tourGuideList.get(position).getName());
+                            navigationIntent.putExtra("TOUR_ID", tourGuideList.get(position).getTourId());
                             startActivity(navigationIntent);
                         }
                     }
@@ -84,7 +85,7 @@ public class TourGuideDetailsActivity extends AppCompatActivity {
                     }
                 }));
 
-        if (museumId.equals("63")|| museumId.equals("96")) {
+        if (museumId.equals("63") || museumId.equals("96")) {
             tourguideMainTitle.setText(getString(R.string.mia_tour_guide));
             tourguideMainDesc.setText(getString(R.string.tourguide_title_desc));
             tourguideSubTitle.setText(getString(R.string.tourguide_title));
@@ -124,9 +125,9 @@ public class TourGuideDetailsActivity extends AppCompatActivity {
     }
 
     public void prepareMiaTourGuideData() {
-        tourguideObject = new TourGuideList(getString(R.string.science_tour), "10", R.drawable.science_tour);
+        tourguideObject = new TourGuideList(getString(R.string.science_tour), "12216", R.drawable.science_tour, "63");
         tourGuideList.add(tourguideObject);
-        tourguideObject = new TourGuideList(getString(R.string.coming_soon_txt), "11", R.drawable.mia);
+        tourguideObject = new TourGuideList(getString(R.string.highlight_tour), "12471", R.drawable.mia, "63");
         tourGuideList.add(tourguideObject);
         mAdapter.notifyDataSetChanged();
 

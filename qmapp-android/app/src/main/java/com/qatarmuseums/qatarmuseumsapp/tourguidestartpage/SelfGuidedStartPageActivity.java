@@ -13,6 +13,7 @@ import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.qatarmuseums.qatarmuseumsapp.QMDatabase;
@@ -62,6 +63,7 @@ public class SelfGuidedStartPageActivity extends AppCompatActivity implements
     TourGuideStartPageArabic tourGuideStartPageArabic;
     private SelfGuideStarterModel selfGuideStarterModel;
     private String tourId;
+    private ProgressBar progressLoader;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -78,10 +80,10 @@ public class SelfGuidedStartPageActivity extends AppCompatActivity implements
         noResultFoundTxt = (TextView) findViewById(R.id.noResultFoundTxt);
         animCircleIndicator = (InfiniteIndicator) findViewById(R.id.main_indicator_default_circle);
         startBtn = (Button) findViewById(R.id.start_btn);
+        progressLoader = findViewById(R.id.progress_bar_loading);
         intent = getIntent();
-        museumId = intent.getStringExtra("ID");
-        museumId = "63";
-        tourId = "12216";
+        museumId = intent.getStringExtra("MUSEUM_ID");
+        tourId = intent.getStringExtra("TOUR_ID");
         tourName = intent.getStringExtra("TOUR_NAME");
         museumTitle.setText(tourName);
         if (util.isNetworkAvailable(SelfGuidedStartPageActivity.this))
@@ -100,7 +102,7 @@ public class SelfGuidedStartPageActivity extends AppCompatActivity implements
             @Override
             public void onAnimationEnd(Animation animation) {
                 Intent i = new Intent(SelfGuidedStartPageActivity.this, ObjectPreviewActivity.class);
-                i.putExtra("TOURID", museumId);
+                i.putExtra("TOUR_ID", tourId);
                 startActivity(i);
             }
 
@@ -128,6 +130,7 @@ public class SelfGuidedStartPageActivity extends AppCompatActivity implements
 
 
     public void getSliderImagesandDdetailsfromAPI() {
+        progressLoader.setVisibility(View.VISIBLE);
         APIInterface apiService =
                 APIClient.getClient().create(APIInterface.class);
         if (appLanguage == 1) {
@@ -140,14 +143,14 @@ public class SelfGuidedStartPageActivity extends AppCompatActivity implements
         call.enqueue(new Callback<ArrayList<SelfGuideStarterModel>>() {
             @Override
             public void onResponse(Call<ArrayList<SelfGuideStarterModel>> call, Response<ArrayList<SelfGuideStarterModel>> response) {
+                progressLoader.setVisibility(View.GONE);
                 if (response.isSuccessful()) {
                     if (response.body() != null) {
                         selfGuideStarterModels.addAll(response.body());
                         if (selfGuideStarterModels.size() != 0) {
                             for (int i = 0; i < selfGuideStarterModels.size(); i++) {
                                 //Temporary
-                                if (selfGuideStarterModels.get(i).getNid().equals("12216") ||
-                                        selfGuideStarterModels.get(i).getNid().equals("12226"))
+                                if (selfGuideStarterModels.get(i).getNid().equals(tourId))
                                     selfGuideStarterModel = selfGuideStarterModels.get(i);
                             }
                             if (selfGuideStarterModel != null) {
@@ -157,14 +160,12 @@ public class SelfGuidedStartPageActivity extends AppCompatActivity implements
                                     for (int i = 0; i < selfGuideStarterModel.getImageList().size(); i++) {
                                         sliderList.add(i, selfGuideStarterModel.getImageList().get(i));
                                     }
-
                                     setSliderImages(sliderList);
                                     new SelfGuideStartRowCount(SelfGuidedStartPageActivity.this, language).execute();
                                     sliderPlaceholderImage.setVisibility(View.GONE);
                                     animCircleIndicator.setVisibility(View.VISIBLE);
                                 } else {
                                     sliderPlaceholderImage.setVisibility(View.VISIBLE);
-                                    noResultFoundTxt.setVisibility(View.VISIBLE);
                                     animCircleIndicator.setVisibility(View.GONE);
                                 }
                             }
@@ -199,6 +200,7 @@ public class SelfGuidedStartPageActivity extends AppCompatActivity implements
                 sliderPlaceholderImage.setVisibility(View.VISIBLE);
                 animCircleIndicator.setVisibility(View.GONE);
                 noResultFoundTxt.setVisibility(View.VISIBLE);
+                progressLoader.setVisibility(View.GONE);
             }
         });
     }
