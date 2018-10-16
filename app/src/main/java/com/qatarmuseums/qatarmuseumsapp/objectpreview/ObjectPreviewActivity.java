@@ -66,8 +66,7 @@ public class ObjectPreviewActivity extends AppCompatActivity {
         intent = getIntent();
 
         util = new Util();
-        tourId = intent.getStringExtra("TOURID");
-        tourId = "12216";
+        tourId = intent.getStringExtra("TOUR_ID");
         toolbar = findViewById(R.id.toolbar);
         backBtn = findViewById(R.id.back_btn);
         shareBtn = findViewById(R.id.share_btn);
@@ -82,12 +81,10 @@ public class ObjectPreviewActivity extends AppCompatActivity {
         assert pager != null;
         stepIndicatorRecyclerView = findViewById(R.id.idRecyclerViewHorizontalList);
 
-
         RecyclerView.OnItemTouchListener disabler = new RecyclerViewDisabler();
         stepIndicatorRecyclerView.addOnItemTouchListener(disabler);
         zoomOutAnimation = AnimationUtils.loadAnimation(getApplicationContext(),
                 R.anim.zoom_out_more);
-
 
         getObjectPreviewDetailsFromAPI(tourId, language);
         pager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
@@ -151,17 +148,20 @@ public class ObjectPreviewActivity extends AppCompatActivity {
         locationBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                String position = objectPreviewModels.get(currentPosition).getArtifactPosition();
-                String floorLevel = objectPreviewModels.get(currentPosition).getFloorLevel();
-                if (position != null && floorLevel != null && !position.equals("") && !floorLevel.equals("")) {
-                    Intent i = new Intent(ObjectPreviewActivity.this, FloorMapActivity.class);
-                    i.putExtra("Position", position);
-                    i.putExtra("Level", floorLevel);
-                    i.putExtra("RESPONSE", objectPreviewModels);
-                    startActivity(i);
-                    overridePendingTransition(R.anim.flipfadein, R.anim.flipfadeout);
-                } else {
-                    Snackbar.make(rootLayout, R.string.no_location_data, Snackbar.LENGTH_SHORT).show();
+                if (objectPreviewModels.size() > 0) {
+                    String position = objectPreviewModels.get(currentPosition).getArtifactPosition();
+                    String floorLevel = objectPreviewModels.get(currentPosition).getFloorLevel();
+                    if (position != null && floorLevel != null && !position.equals("") && !floorLevel.equals("")) {
+                        Intent i = new Intent(ObjectPreviewActivity.this, FloorMapActivity.class);
+                        i.putExtra("Position", position);
+                        i.putExtra("Level", floorLevel);
+                        i.putExtra("TourId", tourId);
+                        i.putExtra("RESPONSE", objectPreviewModels);
+                        startActivity(i);
+                        overridePendingTransition(R.anim.flipfadein, R.anim.flipfadeout);
+                    } else {
+                        Snackbar.make(rootLayout, R.string.no_location_data, Snackbar.LENGTH_SHORT).show();
+                    }
                 }
             }
         });
@@ -223,6 +223,7 @@ public class ObjectPreviewActivity extends AppCompatActivity {
                 if (response.isSuccessful()) {
                     if (response.body() != null && response.body().size() > 0) {
                         commonContentLayout.setVisibility(View.VISIBLE);
+                        locationBtn.setVisibility(View.VISIBLE);
                         objectPreviewModels = response.body();
                         if (objectPreviewModels.size() == 1)
                             stepIndicatorRecyclerView.setVisibility(View.GONE);
