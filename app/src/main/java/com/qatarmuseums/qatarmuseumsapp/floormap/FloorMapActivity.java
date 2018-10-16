@@ -1,5 +1,6 @@
 package com.qatarmuseums.qatarmuseumsapp.floormap;
 
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -7,6 +8,7 @@ import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
+import android.graphics.PorterDuff;
 import android.graphics.Rect;
 import android.media.AudioManager;
 import android.media.MediaPlayer;
@@ -20,6 +22,7 @@ import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
@@ -60,6 +63,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Timer;
 
+import io.fabric.sdk.android.services.concurrency.AsyncTask;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -139,9 +143,9 @@ public class FloorMapActivity extends AppCompatActivity implements OnMapReadyCal
     LatLng L3_G16_WR5 = new LatLng(25.295444, 51.538955);
     LatLng L3_G17_8 = new LatLng(25.295504, 51.538880);
     LatLng L3_G17_9 = new LatLng(25.295490, 51.538850);
-    LatLng L3_G18_1 = new LatLng(25.295555, 51.538892);
-    LatLng L3_G18_2 = new LatLng(25.295557, 51.538906);
-    LatLng L3_G18_11 = new LatLng(25.295613, 51.538914);
+    LatLng L3_G17_1 = new LatLng(25.295555, 51.538892);
+    LatLng L3_G17_2 = new LatLng(25.295557, 51.538906);
+    LatLng L3_G17_11 = new LatLng(25.295613, 51.538914);
 
     String markerTitle = "";
 
@@ -158,10 +162,15 @@ public class FloorMapActivity extends AppCompatActivity implements OnMapReadyCal
     GoogleMap googleMap;
     private LinearLayout level2, level1, levelG;
     private LinearLayout levelPicker;
-    private Marker l2_g1_sc3,/* l2_g3_sc14,*/
-            l2_g3_sc13, l2_g5_sc6, l2_g8, l2_g8_sc1, l2_g8_sc4_1, l2_g8_sc4_2, l2_g8_sc5,
-            l2_g8_sc6_1, l2_g8_sc6_2, l2_g9_sc5_1, l2_g9_sc5_2, l2_g9_sc7, g10, l3_g10_sc1_1,
-            l3_g10_sc1_2, l3_g11_wr15, l3_g13_5, l3_g13_7, l3_g17_3;
+    private Marker l2_g1_sc3, l2_g3_sc13, l2_g5_sc6, l2_g8, l2_g8_sc1, l2_g8_sc4_1, l2_g8_sc4_2,
+            l2_g8_sc5, l2_g8_sc6_1, l2_g8_sc6_2, l2_g9_sc5_1, l2_g9_sc5_2, l2_g9_sc7, l3_g10_sc1_1,
+            l3_g10_sc1_2, l3_g11_wr15, l3_g13_5, l3_g13_7, l3_g17_3,
+            l2_g1_sc2, l2_g1_sc13, l2_g1_sc14, l2_g1_sc8, l2_g1_sc7, l2_g2_2, l2_g3_wr4, l2_g3_sc14_1,
+            l2_g3_sc14_2, l2_g4_sc3, l2_g4_sc5, l2_g5_sc11, l2_g5_sc5, l2_g7_sc4, l2_g7_sc8,
+            l2_g7_sc13, l3_g10_podium9, l3_g10_podium14, l3_g10_wr2_1, l3_g10_wr2_2, l3_g11_14,
+            l3_g12_11, l3_g12_12, l3_g12_17, l3_g12_wr5, l3_g13_2, l3_g13_15, l3_g14_13, l3_g14_7,
+            l3_g15_13, l3_g16_wr5, l3_g17_1, l3_g17_2, l3_g17_8, l3_g17_9, l3_g17_11;
+
     private int selectedLevel = 2;
 
     // BottomSheetBehavior variable
@@ -199,8 +208,9 @@ public class FloorMapActivity extends AppCompatActivity implements OnMapReadyCal
     private SeekBar seekBar;
     private MediaPlayer mediaPlayer;
     private int lengthOfAudio;
-    final String audioURL = "http://www.qm.org.qa/sites/default/files/floors.mp3";
-    private ImageView btn_play, btn_pause;
+    final String groundFloorAudioURL = "http://www.qm.org.qa/sites/default/files/floors.mp3";
+    String audioURL;
+    private ImageView btn_play;
     private final Handler handler = new Handler();
     private final Runnable r = new Runnable() {
         @Override
@@ -211,6 +221,10 @@ public class FloorMapActivity extends AppCompatActivity implements OnMapReadyCal
     private LinearLayout audioLayout, audioLayoutDetails;
     private String key;
     private Iterator<String> myVeryOwnIterator;
+    private boolean playPause;
+    private ProgressDialog progressDialog;
+    private boolean initialStage = true;
+    private String tourId;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -254,6 +268,7 @@ public class FloorMapActivity extends AppCompatActivity implements OnMapReadyCal
         qmPreferences = PreferenceManager.getDefaultSharedPreferences(this);
         appLanguage = qmPreferences.getInt("AppLanguage", 1);
         artifactList = new ArrayList<ArtifactDetails>();
+        tourId = getIntent().getStringExtra("TourId");
         if (getIntent().getParcelableArrayListExtra("RESPONSE") != null) {
             artifactList.clear();
             artifactList = getIntent().getParcelableArrayListExtra("RESPONSE");
@@ -263,8 +278,6 @@ public class FloorMapActivity extends AppCompatActivity implements OnMapReadyCal
         numberPad.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent = new Intent(FloorMapActivity.this, ObjectSearchActivity.class);
-                startActivity(intent);
                 Intent numberPadIntent = new Intent(FloorMapActivity.this, ObjectSearchActivity.class);
                 startActivity(numberPadIntent);
             }
@@ -370,6 +383,7 @@ public class FloorMapActivity extends AppCompatActivity implements OnMapReadyCal
                 selectedLevel = 0;
                 hideLevel2();
                 hideLevel3();
+                showAudioControllerGroundFloor();
                 level2.setBackgroundColor(getResources().getColor(R.color.floor_map_buttonbg));
                 level1.setBackgroundColor(getResources().getColor(R.color.floor_map_buttonbg));
                 levelG.setBackgroundColor(getResources().getColor(R.color.white));
@@ -385,53 +399,87 @@ public class FloorMapActivity extends AppCompatActivity implements OnMapReadyCal
 
         btn_play = new ImageView(this);
         btn_play.setImageDrawable(getDrawable(R.drawable.play_black));
-        btn_pause = new ImageView(this);
-        btn_pause.setImageDrawable(getDrawable(R.drawable.pause_black));
-        btn_pause.setVisibility(View.GONE);
 
         seekBar = new SeekBar(this);
         LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
         seekBar.setLayoutParams(lp);
+//        seekBar.getProgressDrawable().setColorFilter(getResources().getColor(R.color.yellow_audio), PorterDuff.Mode.SRC_ATOP);
+//        seekBar.getThumb().setColorFilter(getResources().getColor(R.color.white), PorterDuff.Mode.SRC_ATOP);
         seekBar.setOnSeekBarChangeListener(this);
 
         audioLayout.addView(btn_play);
-        audioLayout.addView(btn_pause);
         audioLayout.addView(seekBar);
 
+        audioURL = groundFloorAudioURL;
 
         btn_play.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 if (utils.isNetworkAvailable(getApplicationContext())) {
-                    try {
-                        mediaPlayer.setDataSource(audioURL);
-                        mediaPlayer.prepare();
-                        lengthOfAudio = mediaPlayer.getDuration();
-
-                    } catch (Exception e) {
-                        //Log.e("Error", e.getMessage());
+                    if (!playPause) {
+                        btn_play.setImageDrawable(getDrawable(R.drawable.pause_black));
+                        if (initialStage) {
+                            new Player().execute(audioURL);
+                        } else {
+                            if (!mediaPlayer.isPlaying()) {
+                                playAudio();
+                                updateSeekProgress();
+                            }
+                        }
+                        playPause = true;
+                    } else {
+                        btn_play.setImageDrawable(getDrawable(R.drawable.play_black));
+                        if (mediaPlayer.isPlaying()) {
+                            pauseAudio();
+                        }
+                        playPause = false;
                     }
-                    playAudio();
-                    updateSeekProgress();
                 } else {
                     Toast.makeText(FloorMapActivity.this, R.string.check_network, Toast.LENGTH_SHORT).show();
                 }
             }
         });
-        btn_pause.setOnClickListener(new View.OnClickListener()
-
-        {
-            @Override
-            public void onClick(View v) {
-                pauseAudio();
-                updateSeekProgress();
-            }
-        });
-
         mediaPlayer = new MediaPlayer();
         mediaPlayer.setOnBufferingUpdateListener(this);
         mediaPlayer.setOnCompletionListener(this);
+        mediaPlayer.setAudioStreamType(AudioManager.STREAM_MUSIC);
+        progressDialog = new ProgressDialog(this);
+    }
 
+    class Player extends AsyncTask<String, Void, Boolean> {
+        @Override
+        protected Boolean doInBackground(String... strings) {
+            Boolean prepared = false;
+            try {
+                mediaPlayer.setDataSource(strings[0]);
+                mediaPlayer.prepare();
+                lengthOfAudio = mediaPlayer.getDuration();
+                prepared = true;
+
+            } catch (Exception e) {
+                prepared = false;
+            }
+            return prepared;
+        }
+
+        @Override
+        protected void onPostExecute(Boolean aBoolean) {
+            super.onPostExecute(aBoolean);
+
+            if (progressDialog.isShowing()) {
+                progressDialog.cancel();
+            }
+            playAudio();
+            updateSeekProgress();
+            initialStage = false;
+        }
+
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+            progressDialog.setMessage("Buffering...");
+            progressDialog.show();
+        }
     }
 
     @Override
@@ -441,8 +489,11 @@ public class FloorMapActivity extends AppCompatActivity implements OnMapReadyCal
 
     @Override
     public void onCompletion(MediaPlayer mp) {
-        btn_play.setVisibility(View.VISIBLE);
-        btn_pause.setVisibility(View.GONE);
+        initialStage = true;
+        playPause = false;
+        mediaPlayer.stop();
+        mediaPlayer.reset();
+        btn_play.setImageDrawable(getDrawable(R.drawable.play_black));
     }
 
     @Override
@@ -471,10 +522,12 @@ public class FloorMapActivity extends AppCompatActivity implements OnMapReadyCal
 
     private void stopAudio() {
         if (mediaPlayer != null) {
+            initialStage = true;
+            playPause = false;
             mediaPlayer.stop();
+            mediaPlayer.reset();
         }
-        btn_play.setVisibility(View.VISIBLE);
-        btn_pause.setVisibility(View.GONE);
+        btn_play.setImageDrawable(getDrawable(R.drawable.play_black));
         seekBar.setProgress(0);
     }
 
@@ -482,8 +535,7 @@ public class FloorMapActivity extends AppCompatActivity implements OnMapReadyCal
         if (mediaPlayer != null) {
             mediaPlayer.pause();
         }
-        btn_play.setVisibility(View.VISIBLE);
-        btn_pause.setVisibility(View.GONE);
+        btn_play.setImageDrawable(getDrawable(R.drawable.play_black));
     }
 
     private void playAudio() {
@@ -495,9 +547,7 @@ public class FloorMapActivity extends AppCompatActivity implements OnMapReadyCal
             if (audio.getStreamVolume(AudioManager.STREAM_MUSIC) == 0)
                 Toast.makeText(this, R.string.increase_volume, Toast.LENGTH_SHORT).show();
         }
-        btn_play.setVisibility(View.GONE);
-        btn_pause.setVisibility(View.VISIBLE);
-
+        btn_play.setImageDrawable(getDrawable(R.drawable.pause_black));
     }
 
     public void fetchArtifactsFromAPI() {
@@ -561,20 +611,43 @@ public class FloorMapActivity extends AppCompatActivity implements OnMapReadyCal
     }
 
     public void hideLevel2() {
-        l2_g1_sc3.setVisible(false);
-        //l2_g3_sc14.setVisible(false);
-        l2_g3_sc13.setVisible(false);
-        l2_g5_sc6.setVisible(false);
-        l2_g8.setVisible(false);
-        l2_g8_sc1.setVisible(false);
-        l2_g8_sc4_1.setVisible(false);
-        l2_g8_sc4_2.setVisible(false);
-        l2_g8_sc5.setVisible(false);
-        l2_g8_sc6_1.setVisible(false);
-        l2_g8_sc6_2.setVisible(false);
-        l2_g9_sc5_1.setVisible(false);
-        l2_g9_sc5_2.setVisible(false);
-        l2_g9_sc7.setVisible(false);
+        if (tourId != null && (tourId.equals("12216") || tourId.equals("12226"))) {
+            l2_g1_sc3.setVisible(false);
+            l2_g3_sc13.setVisible(false);
+            l2_g5_sc6.setVisible(false);
+            l2_g8.setVisible(false);
+            l2_g8_sc1.setVisible(false);
+            l2_g8_sc4_1.setVisible(false);
+            l2_g8_sc4_2.setVisible(false);
+            l2_g8_sc5.setVisible(false);
+            l2_g8_sc6_1.setVisible(false);
+            l2_g8_sc6_2.setVisible(false);
+            l2_g9_sc5_1.setVisible(false);
+            l2_g9_sc5_2.setVisible(false);
+            l2_g9_sc7.setVisible(false);
+        } else {
+            l2_g1_sc2.setVisible(false);
+            l2_g1_sc3.setVisible(false);
+            l2_g1_sc7.setVisible(false);
+            l2_g1_sc8.setVisible(false);
+            l2_g1_sc13.setVisible(false);
+            l2_g1_sc14.setVisible(false);
+            l2_g2_2.setVisible(false);
+            l2_g3_sc14_1.setVisible(false);
+            l2_g3_sc14_2.setVisible(false);
+            l2_g3_wr4.setVisible(false);
+            l2_g4_sc3.setVisible(false);
+            l2_g4_sc5.setVisible(false);
+            l2_g5_sc5.setVisible(false);
+            l2_g5_sc11.setVisible(false);
+            l2_g7_sc4.setVisible(false);
+            l2_g7_sc8.setVisible(false);
+            l2_g7_sc13.setVisible(false);
+            l2_g8_sc1.setVisible(false);
+            l2_g8_sc5.setVisible(false);
+            l2_g9_sc7.setVisible(false);
+
+        }
     }
 
     public void showLevel3() {
@@ -582,12 +655,35 @@ public class FloorMapActivity extends AppCompatActivity implements OnMapReadyCal
     }
 
     public void hideLevel3() {
-        l3_g10_sc1_1.setVisible(false);
-        l3_g10_sc1_2.setVisible(false);
-        l3_g11_wr15.setVisible(false);
-        l3_g13_5.setVisible(false);
-        l3_g13_7.setVisible(false);
-        l3_g17_3.setVisible(false);
+        if (tourId != null && (tourId.equals("12216") || tourId.equals("12226"))) {
+            l3_g10_sc1_1.setVisible(false);
+            l3_g10_sc1_2.setVisible(false);
+            l3_g11_wr15.setVisible(false);
+            l3_g13_5.setVisible(false);
+            l3_g13_7.setVisible(false);
+            l3_g17_3.setVisible(false);
+        } else {
+            l3_g10_podium9.setVisible(false);
+            l3_g10_podium14.setVisible(false);
+            l3_g10_wr2_1.setVisible(false);
+            l3_g10_wr2_2.setVisible(false);
+            l3_g11_14.setVisible(false);
+            l3_g12_11.setVisible(false);
+            l3_g12_12.setVisible(false);
+            l3_g12_17.setVisible(false);
+            l3_g12_wr5.setVisible(false);
+            l3_g13_2.setVisible(false);
+            l3_g13_15.setVisible(false);
+            l3_g14_7.setVisible(false);
+            l3_g14_13.setVisible(false);
+            l3_g15_13.setVisible(false);
+            l3_g16_wr5.setVisible(false);
+            l3_g17_1.setVisible(false);
+            l3_g17_2.setVisible(false);
+            l3_g17_8.setVisible(false);
+            l3_g17_9.setVisible(false);
+            l3_g17_11.setVisible(false);
+        }
     }
 
     @Override
@@ -619,8 +715,10 @@ public class FloorMapActivity extends AppCompatActivity implements OnMapReadyCal
                 .image(mImages.get(mCurrentEntry)).anchor(0, 1)
                 .position(QM, 93f, 106f)
                 .bearing(-22));
-
-        addMarkers();
+        if (tourId != null && (tourId.equals("12216") || tourId.equals("12226")))
+            addScienceTourMarkers();
+        else
+            addHighlightMarkers();
         levelG.performClick();
         checkForHighlight();
 
@@ -661,7 +759,7 @@ public class FloorMapActivity extends AppCompatActivity implements OnMapReadyCal
 
     }
 
-    public void addMarkers() {
+    public void addScienceTourMarkers() {
         l2_g1_sc3 = googleMap.addMarker(new MarkerOptions()
                 .position(L2_G1_SC3)
                 .title("SI.5")
@@ -800,6 +898,294 @@ public class FloorMapActivity extends AppCompatActivity implements OnMapReadyCal
 
     }
 
+    public void addHighlightMarkers() {
+        l2_g1_sc2 = googleMap.addMarker(new MarkerOptions()
+                .position(L2_G1_SC2)
+                .title("GL.378")
+                .snippet("l2_g1_sc2")
+                .visible(false)
+                .icon(BitmapDescriptorFactory.fromBitmap(resizeMapIcons("default_map_marker", normalMapIconWidth, normalMapIconHeight))));
+        markerHashMap.put("l2_g1_sc2", l2_g1_sc2);
+        l2_g1_sc3 = googleMap.addMarker(new MarkerOptions()
+                .position(L2_G1_SC3)
+                .title("SI.5")
+                .snippet("l2_g1_sc3")
+                .visible(false)
+                .icon(BitmapDescriptorFactory.fromBitmap(resizeMapIcons("si_5", normalMapIconWidth, normalMapIconHeight))));
+        markerHashMap.put("l2_g1_sc3", l2_g1_sc3);
+        l2_g1_sc13 = googleMap.addMarker(new MarkerOptions()
+                .position(L2_G1_SC13)
+                .title("MW.7")
+                .snippet("l2_g1_sc13")
+                .visible(false)
+                .icon(BitmapDescriptorFactory.fromBitmap(resizeMapIcons("default_map_marker", normalMapIconWidth, normalMapIconHeight))));
+        markerHashMap.put("l2_g1_sc13", l2_g1_sc13);
+        l2_g1_sc14 = googleMap.addMarker(new MarkerOptions()
+                .position(L2_G1_SC14)
+                .title("PO.24")
+                .snippet("l2_g1_sc14")
+                .visible(false)
+                .icon(BitmapDescriptorFactory.fromBitmap(resizeMapIcons("default_map_marker", normalMapIconWidth, normalMapIconHeight))));
+        markerHashMap.put("l2_g1_sc14", l2_g1_sc14);
+        l2_g1_sc8 = googleMap.addMarker(new MarkerOptions()
+                .position(L2_G1_SC8)
+                .title("JE.170")
+                .visible(false)
+                .snippet("l2_g1_sc8")
+                .icon(BitmapDescriptorFactory.fromBitmap(resizeMapIcons("default_map_marker", normalMapIconWidth, normalMapIconHeight))));
+        markerHashMap.put("l2_g1_sc8", l2_g1_sc8);
+        l2_g1_sc7 = googleMap.addMarker(new MarkerOptions()
+                .position(L2_G1_SC7)
+                .title("JE.85")
+                .visible(false)
+                .snippet("l2_g1_sc7")
+                .icon(BitmapDescriptorFactory.fromBitmap(resizeMapIcons("default_map_marker", normalMapIconWidth, normalMapIconHeight))));
+        markerHashMap.put("l2_g1_sc7", l2_g1_sc7);
+
+        l2_g2_2 = googleMap.addMarker(new MarkerOptions()
+                .position(L2_G2_2)
+                .title("MS.621")
+                .snippet("l2_g2_2")
+                .visible(false)
+                .icon(BitmapDescriptorFactory.fromBitmap(resizeMapIcons("default_map_marker", normalMapIconWidth, normalMapIconHeight))));
+        markerHashMap.put("l2_g2_2", l2_g2_2);
+        l2_g3_wr4 = googleMap.addMarker(new MarkerOptions()
+                .position(L2_G3_WR4)
+                .title("SW.59")
+                .snippet("l2_g3_wr4")
+                .visible(false)
+                .icon(BitmapDescriptorFactory.fromBitmap(resizeMapIcons("default_map_marker", normalMapIconWidth, normalMapIconHeight))));
+        markerHashMap.put("l2_g3_wr4", l2_g3_wr4);
+        l2_g3_sc14_1 = googleMap.addMarker(new MarkerOptions()
+                .position(L2_G3_SC14_1)
+                .title("MW.221")
+                .snippet("l2_g3_sc14_1")
+                .visible(false)
+                .icon(BitmapDescriptorFactory.fromBitmap(resizeMapIcons("default_map_marker", normalMapIconWidth, normalMapIconHeight))));
+        markerHashMap.put("l2_g3_sc14_1", l2_g3_sc14_1);
+        l2_g3_sc14_2 = googleMap.addMarker(new MarkerOptions()
+                .position(L2_G3_SC14_2)
+                .title("WW.2")
+                .snippet("l2_g3_sc14_2")
+                .visible(false)
+                .icon(BitmapDescriptorFactory.fromBitmap(resizeMapIcons("default_map_marker", normalMapIconWidth, normalMapIconHeight))));
+        markerHashMap.put("l2_g3_sc14_2", l2_g3_sc14_2);
+        l2_g4_sc3 = googleMap.addMarker(new MarkerOptions()
+                .position(L2_G8_SC4_1)
+                .title("PO.124")
+                .snippet("l2_g4_sc3")
+                .visible(false)
+                .icon(BitmapDescriptorFactory.fromBitmap(resizeMapIcons("default_map_marker", normalMapIconWidth, normalMapIconHeight))));
+        markerHashMap.put("l2_g4_sc3", l2_g4_sc3);
+        l2_g4_sc5 = googleMap.addMarker(new MarkerOptions()
+                .position(L2_G4_SC5)
+                .title("PO.228")
+                .snippet("l2_g4_sc5")
+                .visible(false)
+                .icon(BitmapDescriptorFactory.fromBitmap(resizeMapIcons("default_map_marker", normalMapIconWidth, normalMapIconHeight))));
+        markerHashMap.put("l2_g4_sc5", l2_g4_sc5);
+        l2_g5_sc11 = googleMap.addMarker(new MarkerOptions()
+                .position(L2_G5_SC11)
+                .title("PO.788")
+                .snippet("l2_g5_sc11")
+                .visible(false)
+                .icon(BitmapDescriptorFactory.fromBitmap(resizeMapIcons("default_map_marker", normalMapIconWidth, normalMapIconHeight))));
+        markerHashMap.put("l2_g5_sc11", l2_g5_sc11);
+
+        l2_g5_sc5 = googleMap.addMarker(new MarkerOptions()
+                .position(L2_G5_SC5)
+                .title("UNKNOWN")
+                .snippet("l2_g5_sc5")
+                .visible(false)
+                .icon(BitmapDescriptorFactory.fromBitmap(resizeMapIcons("default_map_marker", normalMapIconWidth, normalMapIconHeight))));
+        markerHashMap.put("l2_g5_sc5", l2_g5_sc5);
+
+        l2_g7_sc4 = googleMap.addMarker(new MarkerOptions()
+                .position(L2_G7_SC4)
+                .title("JE.210")
+                .snippet("l2_g7_sc4")
+                .visible(false)
+                .icon(BitmapDescriptorFactory.fromBitmap(resizeMapIcons("default_map_marker", normalMapIconWidth, normalMapIconHeight))));
+        markerHashMap.put("l2_g7_sc4", l2_g7_sc4);
+        l2_g7_sc8 = googleMap.addMarker(new MarkerOptions()
+                .position(L2_G7_SC8)
+                .title("TI.199")
+                .snippet("l2_g7_sc8")
+                .visible(false)
+                .icon(BitmapDescriptorFactory.fromBitmap(resizeMapIcons("default_map_marker", normalMapIconWidth, normalMapIconHeight))));
+        markerHashMap.put("l2_g7_sc8", l2_g7_sc8);
+        l2_g7_sc13 = googleMap.addMarker(new MarkerOptions()
+                .position(L2_G7_SC13)
+                .title("MS.196")
+                .snippet("l2_g7_sc13")
+                .visible(false)
+                .icon(BitmapDescriptorFactory.fromBitmap(resizeMapIcons("default_map_marker", normalMapIconWidth, normalMapIconHeight))));
+        markerHashMap.put("l2_g7_sc13", l2_g7_sc13);
+        l2_g8_sc1 = googleMap.addMarker(new MarkerOptions()
+                .position(L2_G8_SC1)
+                .title("MW.548")
+                .snippet("l2_g8_sc1")
+                .visible(false)
+                .icon(BitmapDescriptorFactory.fromBitmap(resizeMapIcons("default_map_marker", normalMapIconWidth, normalMapIconHeight))));
+        markerHashMap.put("l2_g8_sc1", l2_g8_sc1);
+        l2_g8_sc5 = googleMap.addMarker(new MarkerOptions()
+                .position(L2_G8_SC5)
+                .title("MW.361")
+                .snippet("l2_g8_sc5")
+                .visible(false)
+                .icon(BitmapDescriptorFactory.fromBitmap(resizeMapIcons("default_map_marker", normalMapIconWidth, normalMapIconHeight))));
+        markerHashMap.put("l2_g8_sc5", l2_g8_sc5);
+        l2_g9_sc7 = googleMap.addMarker(new MarkerOptions()
+                .position(L2_G9_SC7)
+                .title("MW.146")
+                .snippet("l2_g9_sc7")
+                .visible(false)
+                .icon(BitmapDescriptorFactory.fromBitmap(resizeMapIcons("default_map_marker", normalMapIconWidth, normalMapIconHeight))));
+        markerHashMap.put("l2_g9_sc7", l2_g9_sc7);
+
+        l3_g10_podium9 = googleMap.addMarker(new MarkerOptions()
+                .position(L3_G10_PODIUM9)
+                .title("TE.7")
+                .snippet("l3_g10_podium9")
+                .visible(false)
+                .icon(BitmapDescriptorFactory.fromBitmap(resizeMapIcons("default_map_marker", normalMapIconWidth, normalMapIconHeight))));
+        markerHashMap.put("l3_g10_podium9", l3_g10_podium9);
+        l3_g10_podium14 = googleMap.addMarker(new MarkerOptions()
+                .position(L3_G10_PODIUM14)
+                .title("CA.22")
+                .snippet("l3_g10_podium14")
+                .visible(false)
+                .icon(BitmapDescriptorFactory.fromBitmap(resizeMapIcons("default_map_marker", normalMapIconWidth, normalMapIconHeight))));
+        markerHashMap.put("l3_g10_podium14", l3_g10_podium14);
+        l3_g10_wr2_1 = googleMap.addMarker(new MarkerOptions()
+                .position(L3_G10_WR2_1)
+                .title("ww.15")
+                .snippet("l3_g10_wr2_1")
+                .visible(false)
+                .icon(BitmapDescriptorFactory.fromBitmap(resizeMapIcons("default_map_marker", normalMapIconWidth, normalMapIconHeight))));
+        markerHashMap.put("l3_g10_wr2_1", l3_g10_wr2_1);
+        l3_g10_wr2_2 = googleMap.addMarker(new MarkerOptions()
+                .position(L3_G10_WR2_2)
+                .title("WW.33")
+                .snippet("l3_g10_wr2_2")
+                .visible(false)
+                .icon(BitmapDescriptorFactory.fromBitmap(resizeMapIcons("default_map_marker", normalMapIconWidth, normalMapIconHeight))));
+        markerHashMap.put("l3_g10_wr2_2", l3_g10_wr2_2);
+        l3_g11_14 = googleMap.addMarker(new MarkerOptions()
+                .position(L3_G11_14)
+                .title("GL.6")
+                .snippet("l3_g11_14")
+                .visible(false)
+                .icon(BitmapDescriptorFactory.fromBitmap(resizeMapIcons("default_map_marker", normalMapIconWidth, normalMapIconHeight))));
+        markerHashMap.put("l3_g11_14", l3_g11_14);
+        l3_g12_11 = googleMap.addMarker(new MarkerOptions()
+                .position(L3_G12_11)
+                .title("MW.469")
+                .snippet("l3_g12_11")
+                .visible(false)
+                .icon(BitmapDescriptorFactory.fromBitmap(resizeMapIcons("default_map_marker", normalMapIconWidth, normalMapIconHeight))));
+        markerHashMap.put("l3_g12_11", l3_g12_11);
+        l3_g12_12 = googleMap.addMarker(new MarkerOptions()
+                .position(L3_G12_12)
+                .title("SW.74")
+                .snippet("l3_g12_12")
+                .visible(false)
+                .icon(BitmapDescriptorFactory.fromBitmap(resizeMapIcons("default_map_marker", normalMapIconWidth, normalMapIconHeight))));
+        markerHashMap.put("l3_g12_12", l3_g12_12);
+        l3_g12_17 = googleMap.addMarker(new MarkerOptions()
+                .position(L3_G12_17)
+                .title("MW.122")
+                .snippet("l3_g12_17")
+                .visible(false)
+                .icon(BitmapDescriptorFactory.fromBitmap(resizeMapIcons("default_map_marker", normalMapIconWidth, normalMapIconHeight))));
+        markerHashMap.put("l3_g12_17", l3_g12_17);
+        l3_g12_wr5 = googleMap.addMarker(new MarkerOptions()
+                .position(L3_G12_WR5)
+                .title("CA.77")
+                .snippet("l3_g12_wr5")
+                .visible(false)
+                .icon(BitmapDescriptorFactory.fromBitmap(resizeMapIcons("default_map_marker", normalMapIconWidth, normalMapIconHeight))));
+        markerHashMap.put("l3_g12_wr5", l3_g12_wr5);
+        l3_g13_2 = googleMap.addMarker(new MarkerOptions()
+                .position(L3_G13_2)
+                .title("GL.108")
+                .snippet("l3_g13_2")
+                .visible(false)
+                .icon(BitmapDescriptorFactory.fromBitmap(resizeMapIcons("default_map_marker", normalMapIconWidth, normalMapIconHeight))));
+        markerHashMap.put("l3_g13_2", l3_g13_2);
+        l3_g13_15 = googleMap.addMarker(new MarkerOptions()
+                .position(L3_G13_15)
+                .title("SW.151")
+                .snippet("l3_g13_15")
+                .visible(false)
+                .icon(BitmapDescriptorFactory.fromBitmap(resizeMapIcons("default_map_marker", normalMapIconWidth, normalMapIconHeight))));
+        markerHashMap.put("l3_g13_15l3_g13_15", l3_g13_2);
+        l3_g14_13 = googleMap.addMarker(new MarkerOptions()
+                .position(L3_G14_13)
+                .title("PO.53")
+                .snippet("l3_g14_13")
+                .visible(false)
+                .icon(BitmapDescriptorFactory.fromBitmap(resizeMapIcons("default_map_marker", normalMapIconWidth, normalMapIconHeight))));
+        markerHashMap.put("l3_g14_13", l3_g14_13);
+        l3_g14_7 = googleMap.addMarker(new MarkerOptions()
+                .position(L3_G14_7)
+                .title("PO.215")
+                .snippet("l3_g14_7")
+                .visible(false)
+                .icon(BitmapDescriptorFactory.fromBitmap(resizeMapIcons("default_map_marker", normalMapIconWidth, normalMapIconHeight))));
+        markerHashMap.put("l3_g14_7", l3_g14_7);
+        l3_g15_13 = googleMap.addMarker(new MarkerOptions()
+                .position(L3_G15_13)
+                .title("MW.6")
+                .snippet("l3_g15_13")
+                .visible(false)
+                .icon(BitmapDescriptorFactory.fromBitmap(resizeMapIcons("default_map_marker", normalMapIconWidth, normalMapIconHeight))));
+        markerHashMap.put("l3_g15_13", l3_g15_13);
+        l3_g16_wr5 = googleMap.addMarker(new MarkerOptions()
+                .position(L3_G16_WR5)
+                .title("C.1810")
+                .snippet("l3_g16_wr5")
+                .visible(false)
+                .icon(BitmapDescriptorFactory.fromBitmap(resizeMapIcons("default_map_marker", normalMapIconWidth, normalMapIconHeight))));
+        markerHashMap.put("l3_g16_wr5", l3_g16_wr5);
+        l3_g17_1 = googleMap.addMarker(new MarkerOptions()
+                .position(L3_G17_1)
+                .title("C.1570")
+                .snippet("l3_g17_1")
+                .visible(false)
+                .icon(BitmapDescriptorFactory.fromBitmap(resizeMapIcons("default_map_marker", normalMapIconWidth, normalMapIconHeight))));
+        markerHashMap.put("l3_g17_1", l3_g17_1);
+        l3_g17_2 = googleMap.addMarker(new MarkerOptions()
+                .position(L3_G17_2)
+                .title("PO.265")
+                .snippet("l3_g17_2")
+                .visible(false)
+                .icon(BitmapDescriptorFactory.fromBitmap(resizeMapIcons("default_map_marker", normalMapIconWidth, normalMapIconHeight))));
+        markerHashMap.put("l3_g17_2", l3_g17_2);
+        l3_g17_8 = googleMap.addMarker(new MarkerOptions()
+                .position(L3_G17_8)
+                .title("JE.180")
+                .snippet("l3_g17_8")
+                .visible(false)
+                .icon(BitmapDescriptorFactory.fromBitmap(resizeMapIcons("default_map_marker", normalMapIconWidth, normalMapIconHeight))));
+        markerHashMap.put("l3_g17_8", l3_g17_8);
+        l3_g17_9 = googleMap.addMarker(new MarkerOptions()
+                .position(L3_G17_9)
+                .title("JE.69")
+                .snippet("l3_g17_9")
+                .visible(false)
+                .icon(BitmapDescriptorFactory.fromBitmap(resizeMapIcons("default_map_marker", normalMapIconWidth, normalMapIconHeight))));
+        markerHashMap.put("l3_g17_9", l3_g17_9);
+        l3_g17_11 = googleMap.addMarker(new MarkerOptions()
+                .position(L3_G17_8)
+                .title("AA.39")
+                .snippet("l3_g17_11")
+                .visible(false)
+                .icon(BitmapDescriptorFactory.fromBitmap(resizeMapIcons("default_map_marker", normalMapIconWidth, normalMapIconHeight))));
+        markerHashMap.put("l3_g17_11", l3_g17_11);
+
+    }
+
     public void showCorrespondingMarkers(String level) {
         myVeryOwnIterator = artifactDetailsMap.keySet().iterator();
         while (myVeryOwnIterator.hasNext()) {
@@ -812,22 +1198,25 @@ public class FloorMapActivity extends AppCompatActivity implements OnMapReadyCal
 
     public void showAudioControllerDetailsPage() {
         audioLayout.removeView(btn_play);
-        audioLayout.removeView(btn_pause);
         audioLayout.removeView(seekBar);
-        audioLayoutDetails.setPadding(15, 15, 15, 15);
+        audioLayoutDetails.setPadding(75, 30, 75, 30);
+        audioLayoutDetails.removeView(btn_play);
+        audioLayoutDetails.removeView(seekBar);
         audioLayoutDetails.addView(btn_play);
-        audioLayoutDetails.addView(btn_pause);
         audioLayoutDetails.addView(seekBar);
+        stopAudio();
     }
 
     public void showAudioControllerGroundFloor() {
         audioLayoutDetails.removeView(btn_play);
-        audioLayoutDetails.removeView(btn_pause);
         audioLayoutDetails.removeView(seekBar);
         audioLayoutDetails.setPadding(0, 0, 0, 0);
+        audioLayout.removeView(btn_play);
+        audioLayout.removeView(seekBar);
         audioLayout.addView(btn_play);
-        audioLayout.addView(btn_pause);
         audioLayout.addView(seekBar);
+        stopAudio();
+        audioURL = groundFloorAudioURL;
     }
 
     public void markerClick(Marker marker) {
@@ -857,6 +1246,7 @@ public class FloorMapActivity extends AppCompatActivity implements OnMapReadyCal
                     .into(popupImage);
             if (artifactDetails.getAudioFile() != null && !artifactDetails.getAudioFile().equals("")) {
                 showAudioControllerDetailsPage();
+                audioURL = artifactDetails.getAudioFile();
             }
             maiTtitle.setText(utils.html2string(artifactDetails.getMainTitle()));
             shortDescription.setText(artifactDetails.getCuratorialDescription());
@@ -963,6 +1353,9 @@ public class FloorMapActivity extends AppCompatActivity implements OnMapReadyCal
             case "PO.308":
                 name = "po_308";
                 break;
+            default:
+                name = "default_map_marker";
+                break;
         }
         googleMap.animateCamera(CameraUpdateFactory.newLatLng(marker.getPosition()));
         if (noDataTxt.getVisibility() != View.VISIBLE) {
@@ -1018,6 +1411,7 @@ public class FloorMapActivity extends AppCompatActivity implements OnMapReadyCal
         }
         stopAudio();
         if (mBottomSheetBehavior.getState() != BottomSheetBehavior.STATE_HIDDEN) {
+            showAudioControllerGroundFloor();
             mBottomSheetBehavior.setState(BottomSheetBehavior.STATE_HIDDEN);
             selectedMarker.setIcon(BitmapDescriptorFactory.fromBitmap(resizeMapIcons(name, normalMapIconWidth, normalMapIconHeight)));
             selectedMarker = null;
@@ -1055,6 +1449,7 @@ public class FloorMapActivity extends AppCompatActivity implements OnMapReadyCal
                         selectedMarker = null;
                         if (audioLayout.getChildCount() == 0)
                             showAudioControllerGroundFloor();
+                        stopAudio();
                     }
                     checkMarkerStatus();
                 }
@@ -1125,5 +1520,10 @@ public class FloorMapActivity extends AppCompatActivity implements OnMapReadyCal
         mDialog.setCancelable(true);
     }
 
-
+    @Override
+    protected void onPause() {
+        super.onPause();
+        pauseAudio();
+        playPause = false;
+    }
 }

@@ -10,6 +10,7 @@
     <color name="semi_transparent_for_common_popup">#CC000000</color>
     <color name="outer_ring_color">#b2c1ca</color>
     <color name="yellow">#f2e926</color>
+    <color name="yellow_audio">#F8C246</color>
     <color name="grey">#aa989898</color>
     <color name="recycler_background">#CCCCCC</color>
     <color name="number_pad_bg">#e6e6e5</color>

@@ -53,6 +53,7 @@
                         android:layout_width="27dp"
                         android:layout_height="27dp"
                         android:layout_marginEnd="@dimen/padding_5"
+                        android:visibility="gone"
                         android:src="@drawable/location_icon" />
 
                 </LinearLayout>
