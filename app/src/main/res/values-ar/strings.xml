@@ -194,5 +194,6 @@
     <string name="no_location_data">No Location Data</string>
     <string name="increase_volume">Please Increase Volume</string>
     <string name="highlight_tour">Highlights Tour</string>
+    <string name="loading">Loading...</string>
 
 </resources>
