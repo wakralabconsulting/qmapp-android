@@ -477,7 +477,7 @@ public class FloorMapActivity extends AppCompatActivity implements OnMapReadyCal
         @Override
         protected void onPreExecute() {
             super.onPreExecute();
-            progressDialog.setMessage("Buffering...");
+            progressDialog.setMessage(getString(R.string.loading));
             progressDialog.show();
         }
     }

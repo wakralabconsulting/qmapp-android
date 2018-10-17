@@ -21,7 +21,7 @@ public class PageFragment extends Fragment {
     private TextView mainTitle, acessionText, productionText, productionDateText,
             periodStyleText, techniqueMaterialText, dimensionText;
     private ImageView mainImageView;
-    String title, description, history, summary, mainImage;
+    String title, description, history, summary, mainImage, audio;
     ArrayList<String> imageList;
 
     public PageFragment() {
@@ -31,7 +31,7 @@ public class PageFragment extends Fragment {
                                     String image, String productionText, String productionDateText,
                                     String periodStyleText, String techniqueMaterial, String dimension,
                                     String curatorialDescription, String objectHistory, String objectENGSummary,
-                                    ArrayList<String> images) {
+                                    ArrayList<String> images, String audio) {
 
         Bundle args = new Bundle();
         args.putInt("POSITION", position);
@@ -47,6 +47,7 @@ public class PageFragment extends Fragment {
         args.putString("HISTORY", objectHistory);
         args.putString("SUMMARY", objectENGSummary);
         args.putStringArrayList("IMAGES", images);
+        args.putString("AUDIO", audio);
         if (isLast)
             args.putBoolean("isLast", true);
         final PageFragment fragment = new PageFragment();
@@ -76,6 +77,7 @@ public class PageFragment extends Fragment {
                 intent.putExtra("Description", description);
                 intent.putExtra("History", history);
                 intent.putExtra("Summary", summary);
+                intent.putExtra("Audio", audio);
                 intent.putStringArrayListExtra("Images", imageList);
                 startActivity(intent);
 
@@ -94,6 +96,7 @@ public class PageFragment extends Fragment {
         description = getArguments().getString("DESCRIPTION");
         history = getArguments().getString("HISTORY");
         summary = getArguments().getString("SUMMARY");
+        audio = getArguments().getString("AUDIO");
         imageList = getArguments().getStringArrayList("IMAGES");
 
         mainTitle.setText(title);

@@ -33,7 +33,8 @@ class PagerAdapter extends FragmentPagerAdapter {
                 objectPreviewModels.get(position).getProductionDates(), objectPreviewModels.get(position).getPeriodStyle(),
                 objectPreviewModels.get(position).getTechniqueMaterials(), objectPreviewModels.get(position).getDimensions(),
                 objectPreviewModels.get(position).getCuratorialDescription(), objectPreviewModels.get(position).getObjectHistory(),
-                objectPreviewModels.get(position).getObjectENGSummary(), objectPreviewModels.get(position).getImages());
+                objectPreviewModels.get(position).getObjectENGSummary(), objectPreviewModels.get(position).getImages(),
+                objectPreviewModels.get(position).getAudioFile());
     }
 
 }

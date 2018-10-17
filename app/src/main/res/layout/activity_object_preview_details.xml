@@ -60,6 +60,33 @@
                 android:src="@drawable/science_tour_object"
                 android:visibility="visible" />
 
+            <LinearLayout
+                android:id="@+id/audio_control"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:orientation="horizontal"
+                android:paddingEnd="@dimen/pading_25"
+                android:paddingStart="@dimen/pading_25"
+                android:paddingTop="@dimen/pading_10"
+                android:paddingBottom="@dimen/padding_5"
+                android:visibility="gone">
+
+                <ImageView
+                    android:id="@+id/play_button"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:src="@drawable/play_black"
+                    android:gravity="center" />
+
+                <SeekBar
+                    android:id="@+id/seek_bar"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center" />
+
+            </LinearLayout>
+
             <TextView
                 android:id="@+id/title"
                 android:layout_width="match_parent"
