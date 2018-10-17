@@ -1,14 +1,22 @@
 package com.qatarmuseums.qatarmuseumsapp.objectpreview;
 
+import android.app.ProgressDialog;
+import android.content.Context;
 import android.content.Intent;
+import android.media.AudioManager;
+import android.media.MediaPlayer;
 import android.net.Uri;
+import android.os.Handler;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.SeekBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
 
 import com.github.chrisbanes.photoview.PhotoView;
@@ -20,9 +28,12 @@ import com.qatarmuseums.qatarmuseumsapp.utils.Util;
 
 import java.util.ArrayList;
 
-public class ObjectPreviewDetailsActivity extends AppCompatActivity {
+import io.fabric.sdk.android.services.concurrency.AsyncTask;
+
+public class ObjectPreviewDetailsActivity extends AppCompatActivity implements SeekBar.OnSeekBarChangeListener, MediaPlayer.OnBufferingUpdateListener, MediaPlayer.OnCompletionListener {
     Toolbar toolbar;
-    ImageView closeBtn, image1, image2, image3, image4, imageToZoom;
+    ImageView closeBtn, image1, image2, image3, image4, imageToZoom, playButton;
+
     TextView maiTtitle, shortDescription, image1Description, historyTitle, historyDescription,
             image2Description;
     String title, description, history, summary, mainImage;
@@ -30,6 +41,21 @@ public class ObjectPreviewDetailsActivity extends AppCompatActivity {
 
     private Intent intent;
     private Util utils;
+    private SeekBar seekBar;
+    private String audioURL;
+    private boolean playPause;
+    private ProgressDialog progressDialog;
+    private boolean initialStage = true;
+    private MediaPlayer mediaPlayer;
+    private int lengthOfAudio;
+    private final Handler handler = new Handler();
+    private final Runnable r = new Runnable() {
+        @Override
+        public void run() {
+            updateSeekProgress();
+        }
+    };
+    private LinearLayout audioControlLayout;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -42,6 +68,7 @@ public class ObjectPreviewDetailsActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 finish();
+                stopAudio();
             }
         });
 
@@ -56,6 +83,9 @@ public class ObjectPreviewDetailsActivity extends AppCompatActivity {
         image4 = findViewById(R.id.image_4);
         image1Description = findViewById(R.id.image_desc1);
         image2Description = findViewById(R.id.image_desc2);
+        audioControlLayout = findViewById(R.id.audio_control);
+        playButton = findViewById(R.id.play_button);
+        seekBar = findViewById(R.id.seek_bar);
         utils = new Util();
         intent = getIntent();
         title = intent.getStringExtra("Title");
@@ -64,6 +94,9 @@ public class ObjectPreviewDetailsActivity extends AppCompatActivity {
         history = intent.getStringExtra("History");
         summary = intent.getStringExtra("Summary");
         imageList = intent.getStringArrayListExtra("Images");
+        audioURL = intent.getStringExtra("Audio");
+        if (audioURL != null && !audioURL.equals(""))
+            audioControlLayout.setVisibility(View.VISIBLE);
         imageToZoom.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -110,7 +143,149 @@ public class ObjectPreviewDetailsActivity extends AppCompatActivity {
                     break;
             }
         }
+        initialize_Controls();
+    }
 
+    private void initialize_Controls() {
+
+        seekBar.setOnSeekBarChangeListener(this);
+
+        playButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (utils.isNetworkAvailable(getApplicationContext())) {
+                    if (!playPause) {
+                        playButton.setImageDrawable(getDrawable(R.drawable.pause_black));
+                        if (initialStage) {
+                            new Player().execute(audioURL);
+                        } else {
+                            if (!mediaPlayer.isPlaying()) {
+                                playAudio();
+                                updateSeekProgress();
+                            }
+                        }
+                        playPause = true;
+                    } else {
+                        playButton.setImageDrawable(getDrawable(R.drawable.play_black));
+                        if (mediaPlayer.isPlaying()) {
+                            pauseAudio();
+                        }
+                        playPause = false;
+                    }
+                } else {
+                    Toast.makeText(ObjectPreviewDetailsActivity.this, R.string.check_network, Toast.LENGTH_SHORT).show();
+                }
+            }
+        });
+        mediaPlayer = new MediaPlayer();
+        mediaPlayer.setOnBufferingUpdateListener(this);
+        mediaPlayer.setOnCompletionListener(this);
+        mediaPlayer.setAudioStreamType(AudioManager.STREAM_MUSIC);
+        progressDialog = new ProgressDialog(this);
+    }
+
+    class Player extends AsyncTask<String, Void, Boolean> {
+        @Override
+        protected Boolean doInBackground(String... strings) {
+            Boolean prepared = false;
+            try {
+                mediaPlayer.setDataSource(strings[0]);
+                mediaPlayer.prepare();
+                lengthOfAudio = mediaPlayer.getDuration();
+                prepared = true;
+
+            } catch (Exception e) {
+                prepared = false;
+            }
+            return prepared;
+        }
+
+        @Override
+        protected void onPostExecute(Boolean aBoolean) {
+            super.onPostExecute(aBoolean);
+
+            if (progressDialog.isShowing()) {
+                progressDialog.cancel();
+            }
+            playAudio();
+            updateSeekProgress();
+            initialStage = false;
+        }
+
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+            progressDialog.setMessage(getString(R.string.loading));
+            progressDialog.show();
+        }
+    }
+
+    @Override
+    public void onBufferingUpdate(MediaPlayer mediaPlayer, int percent) {
+        seekBar.setSecondaryProgress(percent);
+    }
+
+    @Override
+    public void onCompletion(MediaPlayer mp) {
+        initialStage = true;
+        playPause = false;
+        mediaPlayer.stop();
+        mediaPlayer.reset();
+        playButton.setImageDrawable(getDrawable(R.drawable.play_black));
+    }
+
+    @Override
+    public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+
+    }
+
+    @Override
+    public void onStartTrackingTouch(SeekBar seekBar) {
+
+    }
+
+    @Override
+    public void onStopTrackingTouch(SeekBar seekBar) {
+        if (mediaPlayer.isPlaying()) {
+            mediaPlayer.seekTo((lengthOfAudio / 100) * seekBar.getProgress());
+        }
+    }
+
+    private void updateSeekProgress() {
+        if (mediaPlayer.isPlaying()) {
+            seekBar.setProgress((int) (((float) mediaPlayer.getCurrentPosition() / lengthOfAudio) * 100));
+            handler.postDelayed(r, 1000);
+        }
+    }
+
+    private void stopAudio() {
+        if (mediaPlayer != null) {
+            initialStage = true;
+            playPause = false;
+            mediaPlayer.stop();
+            mediaPlayer.reset();
+        }
+        playButton.setImageDrawable(getDrawable(R.drawable.play_black));
+        seekBar.setProgress(0);
+    }
+
+    private void pauseAudio() {
+        if (mediaPlayer != null) {
+            mediaPlayer.pause();
+        }
+        playButton.setImageDrawable(getDrawable(R.drawable.play_black));
+    }
+
+    private void playAudio() {
+        if (mediaPlayer != null) {
+            mediaPlayer.start();
+        }
+        AudioManager audio = (AudioManager) this.getSystemService(Context.AUDIO_SERVICE);
+        if (audio != null) {
+            if (audio.getStreamVolume(AudioManager.STREAM_MUSIC) == 0)
+                Toast.makeText(this, R.string.increase_volume, Toast.LENGTH_SHORT).show();
+        }
+        playButton.setImageDrawable(getDrawable(R.drawable.pause_black));
     }
 
     public void setImage1() {
@@ -155,6 +330,19 @@ public class ObjectPreviewDetailsActivity extends AppCompatActivity {
         AlertDialog mDialog = mBuilder.create();
         mDialog.show();
         mDialog.setCancelable(true);
+    }
+
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        stopAudio();
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        pauseAudio();
+        playPause = false;
     }
 
 }
