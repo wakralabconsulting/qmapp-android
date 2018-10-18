@@ -5,10 +5,9 @@ import android.os.Parcelable;
 
 import com.google.gson.annotations.SerializedName;
 
-import java.io.Serializable;
 import java.util.ArrayList;
 
-public class ArtifactDetails implements Parcelable{
+public class ArtifactDetails implements Parcelable {
     @SerializedName("Title")
     private String title;
     @SerializedName("Accession_Number")
@@ -50,11 +49,11 @@ public class ArtifactDetails implements Parcelable{
     @SerializedName("sort_id")
     private String sortId;
     @SerializedName("Artist/Creator/Author")
-    private String ArtistCreatorAuthor;
+    private String artistCreatorAuthor;
     @SerializedName("Technique_&_Materials")
-    private String TechniqueMaterials;
+    private String techniqueMaterials;
     @SerializedName("Period/Style")
-    private String PeriodStyle;
+    private String periodStyle;
 
     protected ArtifactDetails(Parcel in) {
         title = in.readString();
@@ -77,9 +76,39 @@ public class ArtifactDetails implements Parcelable{
         floorLevel = in.readString();
         galleryNumber = in.readString();
         sortId = in.readString();
-        ArtistCreatorAuthor = in.readString();
-        TechniqueMaterials = in.readString();
-        PeriodStyle = in.readString();
+        artistCreatorAuthor = in.readString();
+        techniqueMaterials = in.readString();
+        periodStyle = in.readString();
+    }
+
+    public ArtifactDetails(long nid, String title, String accessionNumber, String tourGuideId, String mainTitle,
+                           String image, String artifactPosition, String audioFile, String audioDescriptif,
+                           String curatorialDescription, ArrayList<String> images, String floorLevel, String galleryNumber,
+                           String objectHistory, String production, String productionDates, String periodStyle,
+                           String artistCreatorAuthor, String techniqueMaterials, String artifactNumber,
+                           String dimensions, String sortId) {
+        this.nid = String.valueOf(nid);
+        this.title = title;
+        this.accessionNumber = accessionNumber;
+        this.tourGuideId = tourGuideId;
+        this.mainTitle = mainTitle;
+        this.image = image;
+        this.artifactPosition = artifactPosition;
+        this.audioFile = audioFile;
+        this.audioDescriptif = audioDescriptif;
+        this.curatorialDescription = curatorialDescription;
+        this.images = images;
+        this.floorLevel = floorLevel;
+        this.galleryNumber = galleryNumber;
+        this.objectHistory = objectHistory;
+        this.production = production;
+        this.productionDates = productionDates;
+        this.periodStyle = periodStyle;
+        this.artistCreatorAuthor = artistCreatorAuthor;
+        this.techniqueMaterials = techniqueMaterials;
+        this.artifactNumber = artifactNumber;
+        this.dimensions = dimensions;
+        this.sortId = String.valueOf(sortId);
     }
 
     public static final Creator<ArtifactDetails> CREATOR = new Creator<ArtifactDetails>() {
@@ -255,27 +284,27 @@ public class ArtifactDetails implements Parcelable{
     }
 
     public String getArtistCreatorAuthor() {
-        return ArtistCreatorAuthor;
+        return artistCreatorAuthor;
     }
 
     public void setArtistCreatorAuthor(String artistCreatorAuthor) {
-        ArtistCreatorAuthor = artistCreatorAuthor;
+        this.artistCreatorAuthor = artistCreatorAuthor;
     }
 
     public String getTechniqueMaterials() {
-        return TechniqueMaterials;
+        return techniqueMaterials;
     }
 
     public void setTechniqueMaterials(String techniqueMaterials) {
-        TechniqueMaterials = techniqueMaterials;
+        this.techniqueMaterials = techniqueMaterials;
     }
 
     public String getPeriodStyle() {
-        return PeriodStyle;
+        return periodStyle;
     }
 
     public void setPeriodStyle(String periodStyle) {
-        PeriodStyle = periodStyle;
+        this.periodStyle = periodStyle;
     }
 
     @Override
@@ -305,8 +334,8 @@ public class ArtifactDetails implements Parcelable{
         dest.writeString(floorLevel);
         dest.writeString(galleryNumber);
         dest.writeString(sortId);
-        dest.writeString(ArtistCreatorAuthor);
-        dest.writeString(TechniqueMaterials);
-        dest.writeString(PeriodStyle);
+        dest.writeString(artistCreatorAuthor);
+        dest.writeString(techniqueMaterials);
+        dest.writeString(periodStyle);
     }
 }
