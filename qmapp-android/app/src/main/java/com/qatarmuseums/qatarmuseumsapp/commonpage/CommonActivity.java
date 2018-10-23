@@ -14,7 +14,9 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
+import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
@@ -82,6 +84,8 @@ public class CommonActivity extends AppCompatActivity {
     String id;
     private APIInterface apiService;
     private Call<ArrayList<CommonModel>> call;
+    LinearLayout retryLayout;
+    Button retryButton;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -96,6 +100,8 @@ public class CommonActivity extends AppCompatActivity {
         qmDatabase = QMDatabase.getInstance(CommonActivity.this);
         progressBar = (ProgressBar) findViewById(R.id.progressBarLoading);
         noResultFoundLayout = (RelativeLayout) findViewById(R.id.no_result_layout);
+        retryLayout = findViewById(R.id.retry_layout);
+        retryButton = findViewById(R.id.retry_btn);
         qmPreferences = PreferenceManager.getDefaultSharedPreferences(this);
         appLanguage = qmPreferences.getInt("AppLanguage", 1);
         toolbarTitle = intent.getStringExtra(getString(R.string.toolbar_title_key));
@@ -142,6 +148,25 @@ public class CommonActivity extends AppCompatActivity {
         });
         zoomOutAnimation = AnimationUtils.loadAnimation(getApplicationContext(),
                 R.anim.zoom_out_more);
+        retryButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                getData();
+                progressBar.setVisibility(View.VISIBLE);
+                retryLayout.setVisibility(View.GONE);
+            }
+        });
+        retryButton.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                switch (event.getAction()) {
+                    case MotionEvent.ACTION_DOWN:
+                        retryButton.startAnimation(zoomOutAnimation);
+                        break;
+                }
+                return false;
+            }
+        });
         backArrow.setOnTouchListener(new View.OnTouchListener() {
             @Override
             public boolean onTouch(View v, MotionEvent event) {
@@ -153,6 +178,10 @@ public class CommonActivity extends AppCompatActivity {
                 return false;
             }
         });
+        getData();
+    }
+
+    public void getData() {
         if (toolbarTitle.equals(getString(R.string.sidemenu_exhibition_text))) {
             if (util.isNetworkAvailable(CommonActivity.this))
                 getCommonListAPIDataFromAPI("Exhibition_List_Page.json");
@@ -245,21 +274,15 @@ public class CommonActivity extends AppCompatActivity {
                     }
                 } else {
                     recyclerView.setVisibility(View.GONE);
-                    noResultFoundLayout.setVisibility(View.VISIBLE);
+                    retryLayout.setVisibility(View.VISIBLE);
                 }
                 progressBar.setVisibility(View.GONE);
             }
 
             @Override
             public void onFailure(Call<ArrayList<CommonModel>> call, Throwable t) {
-                if (t instanceof IOException) {
-                    util.showToast(getResources().getString(R.string.check_network), getApplicationContext());
-
-                } else {
-                    // error due to mapping issues
-                }
                 recyclerView.setVisibility(View.GONE);
-                noResultFoundLayout.setVisibility(View.VISIBLE);
+                retryLayout.setVisibility(View.VISIBLE);
                 progressBar.setVisibility(View.GONE);
             }
         });
@@ -315,21 +338,15 @@ public class CommonActivity extends AppCompatActivity {
                     }
                 } else {
                     recyclerView.setVisibility(View.GONE);
-                    noResultFoundLayout.setVisibility(View.VISIBLE);
+                    retryLayout.setVisibility(View.VISIBLE);
                 }
                 progressBar.setVisibility(View.GONE);
             }
 
             @Override
             public void onFailure(Call<ArrayList<CommonModel>> call, Throwable t) {
-                if (t instanceof IOException) {
-                    util.showToast(getResources().getString(R.string.check_network), getApplicationContext());
-
-                } else {
-                    // error due to mapping issues
-                }
                 recyclerView.setVisibility(View.GONE);
-                noResultFoundLayout.setVisibility(View.VISIBLE);
+                retryLayout.setVisibility(View.VISIBLE);
                 progressBar.setVisibility(View.GONE);
             }
         });
@@ -385,7 +402,8 @@ public class CommonActivity extends AppCompatActivity {
                 new InsertDiningDataToDataBase(CommonActivity.this, diningTableEnglish, diningTableArabic, language).execute();
             } else {
                 recyclerView.setVisibility(View.GONE);
-                noResultFoundLayout.setVisibility(View.VISIBLE);
+                retryLayout.setVisibility(View.VISIBLE);
+                progressBar.setVisibility(View.GONE);
             }
         }
 
@@ -596,7 +614,7 @@ public class CommonActivity extends AppCompatActivity {
                 mAdapter.notifyDataSetChanged();
             } else {
                 recyclerView.setVisibility(View.GONE);
-                noResultFoundLayout.setVisibility(View.VISIBLE);
+                retryLayout.setVisibility(View.VISIBLE);
             }
             progressBar.setVisibility(View.GONE);
         }
@@ -645,7 +663,7 @@ public class CommonActivity extends AppCompatActivity {
                 mAdapter.notifyDataSetChanged();
             } else {
                 recyclerView.setVisibility(View.GONE);
-                noResultFoundLayout.setVisibility(View.VISIBLE);
+                retryLayout.setVisibility(View.VISIBLE);
             }
             progressBar.setVisibility(View.GONE);
         }
@@ -874,10 +892,12 @@ public class CommonActivity extends AppCompatActivity {
             models.clear();
             if (publicArtsTableEnglish.size() > 0) {
                 for (int i = 0; i < publicArtsTableEnglish.size(); i++) {
-                    CommonModel commonModel = new CommonModel(String.valueOf(publicArtsTableEnglish.get(i).getPublic_arts_id()),
+                    CommonModel commonModel = new CommonModel(
+                            String.valueOf(publicArtsTableEnglish.get(i).getPublic_arts_id()),
                             publicArtsTableEnglish.get(i).getPublic_arts_name(),
-                            "",
-                            publicArtsTableEnglish.get(i).getLatitude(), publicArtsTableEnglish.get(i).getLongitude());
+                            publicArtsTableEnglish.get(i).getPublic_arts_image(),
+                            publicArtsTableEnglish.get(i).getLatitude(),
+                            publicArtsTableEnglish.get(i).getLongitude());
                     models.add(i, commonModel);
 
                 }
@@ -886,7 +906,7 @@ public class CommonActivity extends AppCompatActivity {
             } else {
                 progressBar.setVisibility(View.GONE);
                 recyclerView.setVisibility(View.GONE);
-                noResultFoundLayout.setVisibility(View.VISIBLE);
+                retryLayout.setVisibility(View.VISIBLE);
             }
         }
 
@@ -917,7 +937,7 @@ public class CommonActivity extends AppCompatActivity {
                 for (int i = 0; i < publicArtsTableArabic.size(); i++) {
                     CommonModel commonModel = new CommonModel(String.valueOf(publicArtsTableArabic.get(i).getPublic_arts_id()),
                             publicArtsTableArabic.get(i).getPublic_arts_name(),
-                            "",
+                            publicArtsTableArabic.get(i).getPublic_arts_image(),
                             publicArtsTableArabic.get(i).getLatitude(), publicArtsTableArabic.get(i).getLongitude());
                     models.add(i, commonModel);
 
@@ -927,7 +947,7 @@ public class CommonActivity extends AppCompatActivity {
             } else {
                 progressBar.setVisibility(View.GONE);
                 recyclerView.setVisibility(View.GONE);
-                noResultFoundLayout.setVisibility(View.VISIBLE);
+                retryLayout.setVisibility(View.VISIBLE);
             }
         }
 
@@ -1135,10 +1155,11 @@ public class CommonActivity extends AppCompatActivity {
             models.clear();
             if (heritageListTableEnglishes.size() > 0) {
                 for (int i = 0; i < heritageListTableEnglishes.size(); i++) {
-                    CommonModel commonModel = new CommonModel(String.valueOf(heritageListTableEnglishes.get(i).getHeritage_id()),
+                    CommonModel commonModel = new CommonModel(
                             heritageListTableEnglishes.get(i).getHeritage_name(),
-                            null, null, null,
-                            heritageListTableEnglishes.get(i).getHeritage_image(),
+                            String.valueOf(heritageListTableEnglishes.get(i).getHeritage_id()),
+                            null, heritageListTableEnglishes.get(i).getHeritage_image(),
+                            null, null,
                             null, null);
                     models.add(i, commonModel);
 
@@ -1148,7 +1169,7 @@ public class CommonActivity extends AppCompatActivity {
             } else {
                 progressBar.setVisibility(View.GONE);
                 recyclerView.setVisibility(View.GONE);
-                noResultFoundLayout.setVisibility(View.VISIBLE);
+                retryLayout.setVisibility(View.VISIBLE);
             }
         }
     }
@@ -1173,9 +1194,11 @@ public class CommonActivity extends AppCompatActivity {
             models.clear();
             if (heritageListTableArabics.size() > 0) {
                 for (int i = 0; i < heritageListTableArabics.size(); i++) {
-                    CommonModel commonModel = new CommonModel(String.valueOf(heritageListTableArabics.get(i).getHeritage_id()),
+                    CommonModel commonModel = new CommonModel(
                             heritageListTableArabics.get(i).getHeritage_name(),
-                            null, null, null, heritageListTableArabics.get(i).getHeritage_image(),
+                            String.valueOf(heritageListTableArabics.get(i).getHeritage_id()),
+                            null, heritageListTableArabics.get(i).getHeritage_image(),
+                            null, null,
                             null, null);
                     models.add(i, commonModel);
 
@@ -1185,7 +1208,7 @@ public class CommonActivity extends AppCompatActivity {
             } else {
                 progressBar.setVisibility(View.GONE);
                 recyclerView.setVisibility(View.GONE);
-                noResultFoundLayout.setVisibility(View.VISIBLE);
+                retryLayout.setVisibility(View.VISIBLE);
             }
         }
 
@@ -1468,7 +1491,7 @@ public class CommonActivity extends AppCompatActivity {
             } else {
                 progressBar.setVisibility(View.GONE);
                 recyclerView.setVisibility(View.GONE);
-                noResultFoundLayout.setVisibility(View.VISIBLE);
+                retryLayout.setVisibility(View.VISIBLE);
             }
         }
 
@@ -1521,7 +1544,7 @@ public class CommonActivity extends AppCompatActivity {
             } else {
                 progressBar.setVisibility(View.GONE);
                 recyclerView.setVisibility(View.GONE);
-                noResultFoundLayout.setVisibility(View.VISIBLE);
+                retryLayout.setVisibility(View.VISIBLE);
             }
 
         }
@@ -1755,7 +1778,7 @@ public class CommonActivity extends AppCompatActivity {
             } else {
                 progressBar.setVisibility(View.GONE);
                 recyclerView.setVisibility(View.GONE);
-                noResultFoundLayout.setVisibility(View.VISIBLE);
+                retryLayout.setVisibility(View.VISIBLE);
             }
         }
     }
@@ -1792,7 +1815,7 @@ public class CommonActivity extends AppCompatActivity {
             } else {
                 progressBar.setVisibility(View.GONE);
                 recyclerView.setVisibility(View.GONE);
-                noResultFoundLayout.setVisibility(View.VISIBLE);
+                retryLayout.setVisibility(View.VISIBLE);
             }
         }
 

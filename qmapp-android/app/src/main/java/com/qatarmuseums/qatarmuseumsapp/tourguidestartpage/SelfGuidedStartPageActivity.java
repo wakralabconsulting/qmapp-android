@@ -13,7 +13,9 @@ import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.ProgressBar;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.qatarmuseums.qatarmuseumsapp.QMDatabase;
@@ -42,7 +44,7 @@ public class SelfGuidedStartPageActivity extends AppCompatActivity implements
         ViewPager.OnPageChangeListener, OnPageClickListener {
     ImageView playButton;
     TextView museumTitle, museumDesc;
-    Button startBtn;
+    Button startBtn, retryButton;
     private Animation zoomOutAnimation;
     private Intent intent;
     Util util;
@@ -64,6 +66,8 @@ public class SelfGuidedStartPageActivity extends AppCompatActivity implements
     private SelfGuideStarterModel selfGuideStarterModel;
     private String tourId;
     private ProgressBar progressLoader;
+    LinearLayout retryLayout;
+    private RelativeLayout mainLayout;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -78,6 +82,9 @@ public class SelfGuidedStartPageActivity extends AppCompatActivity implements
         sliderPlaceholderImage = (ImageView) findViewById(R.id.ads_place_holder);
         museumDesc = (TextView) findViewById(R.id.museum_desc);
         noResultFoundTxt = (TextView) findViewById(R.id.noResultFoundTxt);
+        mainLayout = findViewById(R.id.main_content);
+        retryLayout = findViewById(R.id.retry_layout);
+        retryButton = findViewById(R.id.retry_btn);
         animCircleIndicator = (InfiniteIndicator) findViewById(R.id.main_indicator_default_circle);
         startBtn = (Button) findViewById(R.id.start_btn);
         progressLoader = findViewById(R.id.progress_bar_loading);
@@ -93,27 +100,35 @@ public class SelfGuidedStartPageActivity extends AppCompatActivity implements
 
         zoomOutAnimation = AnimationUtils.loadAnimation(getApplicationContext(),
                 R.anim.zoom_out);
-        zoomOutAnimation.setAnimationListener(new Animation.AnimationListener() {
-            @Override
-            public void onAnimationStart(Animation animation) {
 
-            }
-
+        intent = getIntent();
+        startBtn.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onAnimationEnd(Animation animation) {
+            public void onClick(View v) {
                 Intent i = new Intent(SelfGuidedStartPageActivity.this, ObjectPreviewActivity.class);
                 i.putExtra("TOUR_ID", tourId);
                 startActivity(i);
             }
-
+        });
+        retryButton.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onAnimationRepeat(Animation animation) {
-
+            public void onClick(View v) {
+                getSliderImagesandDdetailsfromAPI();
+                progressLoader.setVisibility(View.VISIBLE);
+                retryLayout.setVisibility(View.GONE);
             }
         });
-        intent = getIntent();
-
-
+        retryButton.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                switch (event.getAction()) {
+                    case MotionEvent.ACTION_DOWN:
+                        retryButton.startAnimation(zoomOutAnimation);
+                        break;
+                }
+                return false;
+            }
+        });
         startBtn.setOnTouchListener(new View.OnTouchListener() {
             @Override
             public boolean onTouch(View v, MotionEvent event) {
@@ -147,6 +162,9 @@ public class SelfGuidedStartPageActivity extends AppCompatActivity implements
                 if (response.isSuccessful()) {
                     if (response.body() != null) {
                         selfGuideStarterModels.addAll(response.body());
+                        mainLayout.setVisibility(View.VISIBLE);
+                        retryLayout.setVisibility(View.GONE);
+                        noResultFoundTxt.setVisibility(View.GONE);
                         if (selfGuideStarterModels.size() != 0) {
                             for (int i = 0; i < selfGuideStarterModels.size(); i++) {
                                 //Temporary
@@ -173,33 +191,30 @@ public class SelfGuidedStartPageActivity extends AppCompatActivity implements
                         } else {
                             sliderPlaceholderImage.setVisibility(View.VISIBLE);
                             animCircleIndicator.setVisibility(View.GONE);
+                            mainLayout.setVisibility(View.GONE);
                             noResultFoundTxt.setVisibility(View.VISIBLE);
                         }
 
                     } else {
                         sliderPlaceholderImage.setVisibility(View.VISIBLE);
                         animCircleIndicator.setVisibility(View.GONE);
-                        noResultFoundTxt.setVisibility(View.VISIBLE);
+                        mainLayout.setVisibility(View.GONE);
+                        retryLayout.setVisibility(View.VISIBLE);
                     }
 
                 } else {
                     sliderPlaceholderImage.setVisibility(View.VISIBLE);
                     animCircleIndicator.setVisibility(View.GONE);
-                    noResultFoundTxt.setVisibility(View.VISIBLE);
+                    mainLayout.setVisibility(View.GONE);
+                    retryLayout.setVisibility(View.VISIBLE);
                 }
             }
 
             @Override
             public void onFailure(Call<ArrayList<SelfGuideStarterModel>> call, Throwable t) {
-                if (t instanceof IOException) {
-                    util.showToast(getResources().getString(R.string.check_network), getApplicationContext());
-
-                } else {
-                    // error due to mapping issues
-                }
-                sliderPlaceholderImage.setVisibility(View.VISIBLE);
                 animCircleIndicator.setVisibility(View.GONE);
-                noResultFoundTxt.setVisibility(View.VISIBLE);
+                mainLayout.setVisibility(View.GONE);
+                retryLayout.setVisibility(View.VISIBLE);
                 progressLoader.setVisibility(View.GONE);
             }
         });
@@ -521,14 +536,12 @@ public class SelfGuidedStartPageActivity extends AppCompatActivity implements
         @Override
         protected void onPostExecute(TourGuideStartPageEnglish tourGuideStartPageEnglish) {
             if (tourGuideStartPageEnglish != null) {
-                noResultFoundTxt.setVisibility(View.GONE);
+                retryLayout.setVisibility(View.GONE);
+                mainLayout.setVisibility(View.VISIBLE);
                 museumDesc.setText(tourGuideStartPageEnglish.getDescription());
-
-
             } else {
-
-                noResultFoundTxt.setVisibility(View.VISIBLE);
-
+                retryLayout.setVisibility(View.VISIBLE);
+                mainLayout.setVisibility(View.GONE);
             }
 
         }
@@ -554,12 +567,11 @@ public class SelfGuidedStartPageActivity extends AppCompatActivity implements
         @Override
         protected void onPostExecute(TourGuideStartPageArabic tourGuideStartPageArabic) {
             if (tourGuideStartPageArabic != null) {
-                noResultFoundTxt.setVisibility(View.GONE);
+                retryLayout.setVisibility(View.GONE);
+                mainLayout.setVisibility(View.VISIBLE);
                 museumDesc.setText(tourGuideStartPageArabic.getDescription());
             } else {
-
-                noResultFoundTxt.setVisibility(View.VISIBLE);
-
+                retryLayout.setVisibility(View.VISIBLE);
             }
 
         }
