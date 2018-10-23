@@ -19,6 +19,7 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
@@ -70,10 +71,11 @@ public class DiningActivity extends AppCompatActivity implements IPullZoom {
     ProgressBar progressBar;
     TextView noResultFoundTxt;
     SharedPreferences qmPreferences;
-    LinearLayout timingLayout, locationLayout, diningContent;
+    LinearLayout timingLayout, locationLayout, diningContent, retryLayout;
     private Integer diningTableRowCount;
     private ArrayList<DiningDetailModel> diningDetailModels = new ArrayList<>();
     private QMDatabase qmDatabase;
+    Button retryButton;
 
     @SuppressLint("ClickableViewAccessibility")
     @Override
@@ -91,6 +93,8 @@ public class DiningActivity extends AppCompatActivity implements IPullZoom {
         diningContent = (LinearLayout) findViewById(R.id.dining_content);
         progressBar = (ProgressBar) findViewById(R.id.progressBarLoading);
         noResultFoundTxt = (TextView) findViewById(R.id.noResultFoundTxt);
+        retryLayout = findViewById(R.id.retry_layout);
+        retryButton = findViewById(R.id.retry_btn);
         qmPreferences = PreferenceManager.getDefaultSharedPreferences(this);
         language = qmPreferences.getInt("AppLanguage", 1);
         qmDatabase = QMDatabase.getInstance(DiningActivity.this);
@@ -172,6 +176,27 @@ public class DiningActivity extends AppCompatActivity implements IPullZoom {
 
         zoomOutAnimation = AnimationUtils.loadAnimation(getApplicationContext(),
                 R.anim.zoom_out_more);
+
+        retryButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                getDiningDetailsFromAPI(id, language);
+                progressBar.setVisibility(View.VISIBLE);
+                retryLayout.setVisibility(View.GONE);
+            }
+        });
+
+        retryButton.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                switch (event.getAction()) {
+                    case MotionEvent.ACTION_DOWN:
+                        retryButton.startAnimation(zoomOutAnimation);
+                        break;
+                }
+                return false;
+            }
+        });
         toolbarClose.setOnTouchListener(new View.OnTouchListener() {
             @Override
             public boolean onTouch(View v, MotionEvent event) {
@@ -272,21 +297,15 @@ public class DiningActivity extends AppCompatActivity implements IPullZoom {
                     }
                 } else {
                     diningContent.setVisibility(View.INVISIBLE);
-                    noResultFoundTxt.setVisibility(View.VISIBLE);
+                    retryLayout.setVisibility(View.VISIBLE);
                 }
                 progressBar.setVisibility(View.GONE);
             }
 
             @Override
             public void onFailure(Call<ArrayList<DiningDetailModel>> call, Throwable t) {
-                if (t instanceof IOException) {
-                    util.showToast(getResources().getString(R.string.check_network), getApplicationContext());
-
-                } else {
-                    // error due to mapping issues
-                }
                 diningContent.setVisibility(View.INVISIBLE);
-                noResultFoundTxt.setVisibility(View.VISIBLE);
+                retryLayout.setVisibility(View.VISIBLE);
                 progressBar.setVisibility(View.GONE);
             }
         });
@@ -363,7 +382,7 @@ public class DiningActivity extends AppCompatActivity implements IPullZoom {
                     new CheckDiningDBRowExist(DiningActivity.this, language).execute();
             } else {
                 diningContent.setVisibility(View.INVISIBLE);
-                noResultFoundTxt.setVisibility(View.VISIBLE);
+                retryLayout.setVisibility(View.VISIBLE);
             }
         }
 
@@ -504,7 +523,7 @@ public class DiningActivity extends AppCompatActivity implements IPullZoom {
                         diningTableEnglishList.get(0).getLongitude());
             } else {
                 diningContent.setVisibility(View.INVISIBLE);
-                noResultFoundTxt.setVisibility(View.VISIBLE);
+                retryLayout.setVisibility(View.VISIBLE);
             }
         }
 

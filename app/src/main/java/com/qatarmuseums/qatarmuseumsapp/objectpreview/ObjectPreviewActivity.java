@@ -15,6 +15,7 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
@@ -67,6 +68,8 @@ public class ObjectPreviewActivity extends AppCompatActivity {
     ArtifactTableArabic artifactTableArabic;
     int artifactTableRowCount;
     private Convertor converters;
+    LinearLayout retryLayout;
+    Button retryButton;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -85,6 +88,8 @@ public class ObjectPreviewActivity extends AppCompatActivity {
         progressBar = (ProgressBar) findViewById(R.id.progressBarLoading);
         commonContentLayout = (LinearLayout) findViewById(R.id.main_content_layout);
         noResultFoundTxt = (TextView) findViewById(R.id.noResultFoundTxt);
+        retryLayout = findViewById(R.id.retry_layout);
+        retryButton = findViewById(R.id.retry_btn);
         qmPreferences = PreferenceManager.getDefaultSharedPreferences(this);
         language = qmPreferences.getInt("AppLanguage", 1);
         pager = (RtlViewPager) findViewById(R.id.pager);
@@ -100,6 +105,7 @@ public class ObjectPreviewActivity extends AppCompatActivity {
             getObjectPreviewDetailsFromAPI(tourId, language);
         else
             getObjectPreviewDetailsFromDB(tourId, language);
+
         pager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
             @Override
             public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
@@ -127,6 +133,27 @@ public class ObjectPreviewActivity extends AppCompatActivity {
             public void onClick(View view) {
                 finish();
 
+            }
+        });
+
+        retryButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                getObjectPreviewDetailsFromAPI(tourId, language);
+                progressBar.setVisibility(View.VISIBLE);
+                retryLayout.setVisibility(View.GONE);
+            }
+        });
+
+        retryButton.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                switch (event.getAction()) {
+                    case MotionEvent.ACTION_DOWN:
+                        retryButton.startAnimation(zoomOutAnimation);
+                        break;
+                }
+                return false;
             }
         });
         backBtn.setOnTouchListener(new View.OnTouchListener() {
@@ -245,21 +272,15 @@ public class ObjectPreviewActivity extends AppCompatActivity {
 
                 } else {
                     commonContentLayout.setVisibility(View.GONE);
-                    noResultFoundTxt.setVisibility(View.VISIBLE);
+                    retryLayout.setVisibility(View.VISIBLE);
                 }
                 progressBar.setVisibility(View.GONE);
             }
 
             @Override
             public void onFailure(Call<ArrayList<ArtifactDetails>> call, Throwable t) {
-                if (t instanceof IOException) {
-                    util.showToast(getResources().getString(R.string.check_network), getApplicationContext());
-
-                } else {
-                    // error due to mapping issues
-                }
                 commonContentLayout.setVisibility(View.GONE);
-                noResultFoundTxt.setVisibility(View.VISIBLE);
+                retryLayout.setVisibility(View.VISIBLE);
                 progressBar.setVisibility(View.GONE);
             }
         });
@@ -624,13 +645,13 @@ public class ObjectPreviewActivity extends AppCompatActivity {
                     setupAdapter();
                 } else {
                     commonContentLayout.setVisibility(View.GONE);
-                    noResultFoundTxt.setVisibility(View.VISIBLE);
+                    retryLayout.setVisibility(View.VISIBLE);
                 }
                 progressBar.setVisibility(View.GONE);
             } else {
                 progressBar.setVisibility(View.GONE);
                 commonContentLayout.setVisibility(View.GONE);
-                noResultFoundTxt.setVisibility(View.VISIBLE);
+                retryLayout.setVisibility(View.VISIBLE);
             }
 
 
@@ -689,13 +710,13 @@ public class ObjectPreviewActivity extends AppCompatActivity {
                     setupAdapter();
                 } else {
                     commonContentLayout.setVisibility(View.GONE);
-                    noResultFoundTxt.setVisibility(View.VISIBLE);
+                    retryLayout.setVisibility(View.VISIBLE);
                 }
                 progressBar.setVisibility(View.GONE);
             } else {
                 progressBar.setVisibility(View.GONE);
                 commonContentLayout.setVisibility(View.GONE);
-                noResultFoundTxt.setVisibility(View.VISIBLE);
+                retryLayout.setVisibility(View.VISIBLE);
             }
         }
 
