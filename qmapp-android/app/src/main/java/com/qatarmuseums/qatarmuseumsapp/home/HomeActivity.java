@@ -2,8 +2,6 @@ package com.qatarmuseums.qatarmuseumsapp.home;
 
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.content.res.Configuration;
-import android.content.res.Resources;
 import android.graphics.Color;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -13,11 +11,12 @@ import android.support.v4.view.GravityCompat;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.DisplayMetrics;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
+import android.widget.Button;
+import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.Toast;
@@ -37,9 +36,7 @@ import com.qatarmuseums.qatarmuseumsapp.webview.WebviewActivity;
 import java.io.IOException;
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
-import java.util.Locale;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -63,6 +60,9 @@ public class HomeActivity extends BaseActivity {
     int homePageTableRowCount;
     List<HomePageTableEnglish> homePageTableEnglishes;
     private Intent navigationIntent;
+    private LinearLayout retryLayout;
+    private Button retryButton;
+    private int appLanguage;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -73,6 +73,8 @@ public class HomeActivity extends BaseActivity {
         qmPreferences = PreferenceManager.getDefaultSharedPreferences(this);
         diningNavigation = (RelativeLayout) findViewById(R.id.dining_layout);
         noResultFoundLayout = (RelativeLayout) findViewById(R.id.no_result_layout);
+        retryLayout = findViewById(R.id.retry_layout);
+        retryButton = findViewById(R.id.retry_btn);
         giftShopNavigation = (RelativeLayout) findViewById(R.id.gift_shop_layout);
         culturePassNavigation = (RelativeLayout) findViewById(R.id.culture_pass_layout);
         moreNavigation = (RelativeLayout) findViewById(R.id.more_layout);
@@ -156,7 +158,7 @@ public class HomeActivity extends BaseActivity {
             public void onLongClick(View view, int position) {
             }
         }));
-        int appLanguage = qmPreferences.getInt("AppLanguage", 1);
+        appLanguage = qmPreferences.getInt("AppLanguage", 1);
         if (util.isNetworkAvailable(this)) {
             // fetch data from api
             getHomePageAPIData(appLanguage);
@@ -165,7 +167,25 @@ public class HomeActivity extends BaseActivity {
             getDataFromDataBase(appLanguage);
         }
 
-
+        retryButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                getHomePageAPIData(appLanguage);
+                progressBar.setVisibility(View.VISIBLE);
+                retryLayout.setVisibility(View.GONE);
+            }
+        });
+        retryButton.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                switch (event.getAction()) {
+                    case MotionEvent.ACTION_DOWN:
+                        retryButton.startAnimation(zoomOutAnimation);
+                        break;
+                }
+                return false;
+            }
+        });
         diningNavigation.setOnTouchListener(new View.OnTouchListener() {
             @Override
             public boolean onTouch(View v, MotionEvent event) {
@@ -259,22 +279,16 @@ public class HomeActivity extends BaseActivity {
                     }
                 } else {
                     recyclerView.setVisibility(View.GONE);
-                    noResultFoundLayout.setVisibility(View.VISIBLE);
+                    retryLayout.setVisibility(View.VISIBLE);
                 }
                 progressBar.setVisibility(View.GONE);
             }
 
             @Override
             public void onFailure(Call<ArrayList<HomeList>> call, Throwable t) {
-                if (t instanceof IOException) {
-                    util.showToast(getResources().getString(R.string.check_network), getApplicationContext());
-                } else {
-                    // due to mapping issues
-                }
                 recyclerView.setVisibility(View.GONE);
                 progressBar.setVisibility(View.GONE);
-                noResultFoundLayout.setVisibility(View.VISIBLE);
-
+                retryLayout.setVisibility(View.VISIBLE);
             }
         });
     }
@@ -343,7 +357,7 @@ public class HomeActivity extends BaseActivity {
                             homePageTableEnglish = new HomePageTableEnglish(Long.parseLong(homeLists.get(i).getId()),
                                     homeLists.get(i).getName(),
                                     homeLists.get(i).getTourguideAvailable().toString(),
-                                    homeLists.get(i).getImage(),1);
+                                    homeLists.get(i).getImage(), 1);
                             activityReference.get().qmDatabase.getHomePageTableDao().insertEnglishTable(homePageTableEnglish);
 
                         }
@@ -361,7 +375,7 @@ public class HomeActivity extends BaseActivity {
                             homePageTableArabic = new HomePageTableArabic(Long.parseLong(homeLists.get(i).getId()),
                                     homeLists.get(i).getName(),
                                     homeLists.get(i).getTourguideAvailable().toString(),
-                                    homeLists.get(i).getImage(),1);
+                                    homeLists.get(i).getImage(), 1);
                             activityReference.get().qmDatabase.getHomePageTableDao().insertArabicTable(homePageTableArabic);
 
                         }
@@ -396,7 +410,7 @@ public class HomeActivity extends BaseActivity {
                         homePageTableEnglish = new HomePageTableEnglish(Long.parseLong(homeLists.get(i).getId()),
                                 homeLists.get(i).getName(),
                                 homeLists.get(i).getTourguideAvailable().toString(),
-                                homeLists.get(i).getImage(),1);
+                                homeLists.get(i).getImage(), 1);
                         activityReference.get().qmDatabase.getHomePageTableDao().insertEnglishTable(homePageTableEnglish);
                     }
                 } else {
@@ -404,7 +418,7 @@ public class HomeActivity extends BaseActivity {
                         homePageTableArabic = new HomePageTableArabic(Long.parseLong(homeLists.get(i).getId()),
                                 homeLists.get(i).getName(),
                                 homeLists.get(i).getTourguideAvailable().toString(),
-                                homeLists.get(i).getImage(),1);
+                                homeLists.get(i).getImage(), 1);
                         activityReference.get().qmDatabase.getHomePageTableDao().insertArabicTable(homePageTableArabic);
 
                     }
@@ -491,7 +505,7 @@ public class HomeActivity extends BaseActivity {
             } else {
                 progressBar.setVisibility(View.GONE);
                 recyclerView.setVisibility(View.GONE);
-                noResultFoundLayout.setVisibility(View.VISIBLE);
+                retryLayout.setVisibility(View.VISIBLE);
             }
 
 
@@ -534,7 +548,7 @@ public class HomeActivity extends BaseActivity {
             } else {
                 progressBar.setVisibility(View.GONE);
                 recyclerView.setVisibility(View.GONE);
-                noResultFoundLayout.setVisibility(View.VISIBLE);
+                retryLayout.setVisibility(View.VISIBLE);
             }
         }
 

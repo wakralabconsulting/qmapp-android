@@ -13,7 +13,9 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
+import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.ScrollView;
 import android.widget.TextView;
@@ -59,6 +61,10 @@ public class CollectionDetailsActivity extends AppCompatActivity {
     ProgressBar progressBar;
     @BindView(R.id.no_result_layout)
     TextView noResultFoundLayout;
+    @BindView(R.id.retry_layout)
+    LinearLayout retryLayout;
+    @BindView(R.id.retry_btn)
+    Button retryButton;
 
     @BindView(R.id.details_layout)
     NestedScrollView detailLyout;
@@ -103,6 +109,26 @@ public class CollectionDetailsActivity extends AppCompatActivity {
             getMuseumCollectionDetailFromAPI();
         else
             getMuseumCollectionDetailFromDatabase();
+
+        retryButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                getMuseumCollectionDetailFromAPI();
+                progressBar.setVisibility(View.VISIBLE);
+                retryLayout.setVisibility(View.GONE);
+            }
+        });
+        retryButton.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                switch (event.getAction()) {
+                    case MotionEvent.ACTION_DOWN:
+                        retryButton.startAnimation(zoomOutAnimation);
+                        break;
+                }
+                return false;
+            }
+        });
         toolbarClose.setOnTouchListener(new View.OnTouchListener() {
             @Override
             public boolean onTouch(View v, MotionEvent event) {
@@ -176,21 +202,15 @@ public class CollectionDetailsActivity extends AppCompatActivity {
                     }
                 } else {
                     detailLyout.setVisibility(View.GONE);
-                    noResultFoundLayout.setVisibility(View.VISIBLE);
+                    retryLayout.setVisibility(View.VISIBLE);
                 }
                 progressBar.setVisibility(View.GONE);
             }
 
             @Override
             public void onFailure(Call<ArrayList<CollectionDetailsList>> call, Throwable t) {
-                if (t instanceof IOException) {
-                    util.showToast(getResources().getString(R.string.check_network), getApplicationContext());
-
-                } else {
-                    // error due to mapping issues
-                }
                 detailLyout.setVisibility(View.GONE);
-                noResultFoundLayout.setVisibility(View.VISIBLE);
+                retryLayout.setVisibility(View.VISIBLE);
                 progressBar.setVisibility(View.GONE);
             }
         });
@@ -437,7 +457,7 @@ public class CollectionDetailsActivity extends AppCompatActivity {
             } else {
                 progressBar.setVisibility(View.GONE);
                 detailLyout.setVisibility(View.GONE);
-                noResultFoundLayout.setVisibility(View.VISIBLE);
+                retryLayout.setVisibility(View.VISIBLE);
             }
         }
     }
@@ -481,7 +501,7 @@ public class CollectionDetailsActivity extends AppCompatActivity {
             } else {
                 progressBar.setVisibility(View.GONE);
                 detailLyout.setVisibility(View.GONE);
-                noResultFoundLayout.setVisibility(View.VISIBLE);
+                retryLayout.setVisibility(View.VISIBLE);
             }
         }
     }
