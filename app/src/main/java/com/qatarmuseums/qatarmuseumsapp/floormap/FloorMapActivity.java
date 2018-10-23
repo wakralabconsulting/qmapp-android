@@ -24,6 +24,9 @@ import android.support.v7.app.AppCompatActivity;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
@@ -183,11 +186,11 @@ public class FloorMapActivity extends AppCompatActivity implements OnMapReadyCal
     private boolean pickerInAboveState = false;
     ImageView qrCode;
     View bottomSheet;
-    LinearLayout popupShortlayout, popupLongLayout;
+    LinearLayout popupShortlayout, popupLongLayout, retryLayout;
     private Handler mHandler;
     private Runnable mRunnable;
 
-    private RelativeLayout levelPickerRelative;
+    private RelativeLayout levelPickerRelative, floorMapRootLayout;
     private RelativeLayout.LayoutParams params;
     private ImageView imageToZoom;
     private SharedPreferences qmPreferences;
@@ -231,13 +234,15 @@ public class FloorMapActivity extends AppCompatActivity implements OnMapReadyCal
     ArtifactTableArabic artifactTableArabic;
     int artifactTableRowCount;
     private Convertor converters;
-
+    Button retryButton;
+    private Animation zoomOutAnimation;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_floor_map);
         floormapLayout = findViewById(R.id.floor_map_activity);
+        floorMapRootLayout = findViewById(R.id.floor_map_root);
         levelPicker = (LinearLayout) findViewById(R.id.level_picker);
         level2 = (LinearLayout) findViewById(R.id.level_3);
         level1 = (LinearLayout) findViewById(R.id.level_2);
@@ -269,6 +274,8 @@ public class FloorMapActivity extends AppCompatActivity implements OnMapReadyCal
         numberPad = (ImageView) findViewById(R.id.number_pad);
         qrCode = (ImageView) findViewById(R.id.scanner);
         progressBar = findViewById(R.id.progress_bar_loading);
+        retryLayout = findViewById(R.id.retry_layout);
+        retryButton = findViewById(R.id.retry_btn);
         utils = new Util();
         qmDatabase = QMDatabase.getInstance(FloorMapActivity.this);
 
@@ -279,9 +286,12 @@ public class FloorMapActivity extends AppCompatActivity implements OnMapReadyCal
         artifactList = new ArrayList<ArtifactDetails>();
         tourId = getIntent().getStringExtra("TourId");
         if (getIntent().getParcelableArrayListExtra("RESPONSE") != null) {
-            artifactList.clear();
-            artifactList = getIntent().getParcelableArrayListExtra("RESPONSE");
-            addDatasToHashMap();
+            if (utils.isNetworkAvailable(this)) {
+                fetchComingData();
+            } else {
+                floorMapRootLayout.setVisibility(View.GONE);
+                retryLayout.setVisibility(View.VISIBLE);
+            }
         } else {
             if (new Util().isNetworkAvailable(this))
                 fetchArtifactsFromAPI();
@@ -403,8 +413,43 @@ public class FloorMapActivity extends AppCompatActivity implements OnMapReadyCal
                 mGroundOverlay.setImage(BitmapDescriptorFactory.fromResource(R.drawable.qm_level_1));
             }
         });
+        retryButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (getIntent().getParcelableArrayListExtra("RESPONSE") != null) {
+                    if (utils.isNetworkAvailable(FloorMapActivity.this)) {
+                        fetchComingData();
+                        checkForHighlight();
+                    }
+                } else
+                    fetchArtifactsFromAPI();
+            }
+        });
+
+        zoomOutAnimation = AnimationUtils.loadAnimation(getApplicationContext(),
+                R.anim.zoom_out);
+
+        retryButton.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                switch (event.getAction()) {
+                    case MotionEvent.ACTION_DOWN:
+                        retryButton.startAnimation(zoomOutAnimation);
+                        break;
+                }
+                return false;
+            }
+        });
         initialize_Controls();
         converters = new Convertor();
+    }
+
+    public void fetchComingData() {
+        artifactList.clear();
+        artifactList = getIntent().getParcelableArrayListExtra("RESPONSE");
+        addDatasToHashMap();
+        floorMapRootLayout.setVisibility(View.VISIBLE);
+        retryLayout.setVisibility(View.GONE);
     }
 
     private void initialize_Controls() {
@@ -586,6 +631,11 @@ public class FloorMapActivity extends AppCompatActivity implements OnMapReadyCal
                         addDatasToHashMap();
                         new RowCount(FloorMapActivity.this, language).execute();
                     }
+                    floorMapRootLayout.setVisibility(View.VISIBLE);
+                    retryLayout.setVisibility(View.GONE);
+                } else {
+                    floorMapRootLayout.setVisibility(View.GONE);
+                    retryLayout.setVisibility(View.VISIBLE);
                 }
                 progressBar.setVisibility(View.GONE);
             }
@@ -593,11 +643,13 @@ public class FloorMapActivity extends AppCompatActivity implements OnMapReadyCal
             @Override
             public void onFailure(Call<ArrayList<ArtifactDetails>> call, Throwable t) {
                 if (t instanceof IOException) {
-                    utils.showToast(getResources().getString(R.string.check_network), getApplicationContext());
+//                    utils.showToast(getResources().getString(R.string.check_network), getApplicationContext());
                 } else {
                     // error due to mapping issues
                 }
                 progressBar.setVisibility(View.GONE);
+                floorMapRootLayout.setVisibility(View.GONE);
+                retryLayout.setVisibility(View.VISIBLE);
             }
         });
     }
@@ -1382,9 +1434,8 @@ public class FloorMapActivity extends AppCompatActivity implements OnMapReadyCal
             selectedMarker = marker;
             selectedMarker.setIcon(BitmapDescriptorFactory.fromBitmap(resizeMapIcons(name, largeMapIconWidth, largeMapIconHeight)));
             mBottomSheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
-        } else {
-            snackbar = Snackbar
-                    .make(floormapLayout, R.string.coming_soon_txt, Snackbar.LENGTH_SHORT);
+        } else if(utils.isNetworkAvailable(this)){
+            snackbar = Snackbar.make(floormapLayout, R.string.coming_soon_txt, Snackbar.LENGTH_SHORT);
             View sbView = snackbar.getView();
             TextView textView = (TextView) sbView.findViewById(android.support.design.R.id.snackbar_text);
             textView.setTextColor(Color.BLACK);
@@ -1873,9 +1924,13 @@ public class FloorMapActivity extends AppCompatActivity implements OnMapReadyCal
                 }
                 addDatasToHashMap();
 
+                floorMapRootLayout.setVisibility(View.VISIBLE);
+                retryLayout.setVisibility(View.GONE);
                 progressBar.setVisibility(View.GONE);
             } else {
                 progressBar.setVisibility(View.GONE);
+                floorMapRootLayout.setVisibility(View.GONE);
+                retryLayout.setVisibility(View.VISIBLE);
             }
 
 
@@ -1930,8 +1985,12 @@ public class FloorMapActivity extends AppCompatActivity implements OnMapReadyCal
                 }
                 addDatasToHashMap();
                 progressBar.setVisibility(View.GONE);
+                floorMapRootLayout.setVisibility(View.VISIBLE);
+                retryLayout.setVisibility(View.GONE);
             } else {
                 progressBar.setVisibility(View.GONE);
+                floorMapRootLayout.setVisibility(View.GONE);
+                retryLayout.setVisibility(View.VISIBLE);
             }
         }
 

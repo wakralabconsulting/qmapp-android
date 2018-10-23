@@ -63,7 +63,7 @@
                 android:textColor="@color/black"
                 android:textSize="@dimen/font_size_15"
                 android:visibility="gone" />
-            
+
             <LinearLayout
                 android:id="@+id/timing_layout"
                 android:layout_width="match_parent"
@@ -214,6 +214,63 @@
             android:textColor="@android:color/black"
             android:textSize="@dimen/font_size_21"
             android:visibility="gone" />
+
+        <LinearLayout
+            android:id="@+id/retry_layout"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginTop="@dimen/margin_50"
+            android:gravity="center"
+            android:orientation="vertical"
+            android:padding="@dimen/padding_40"
+            android:visibility="gone">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:fontFamily="@font/din_next_lt_pro_bold"
+                android:text="@string/oops"
+                android:textAlignment="center"
+                android:textColor="@android:color/black"
+                android:textSize="@dimen/font_size_28" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/pading_15"
+                android:fontFamily="@font/din_next_lt_pro_light"
+                android:text="@string/there_is_no_internet"
+                android:textAlignment="center"
+                android:textColor="@android:color/black"
+                android:textSize="@dimen/font_size_18" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:fontFamily="@font/din_next_lt_pro_light"
+                android:text="@string/please_check_your_internet"
+                android:textAlignment="center"
+                android:textColor="@android:color/black"
+                android:textSize="@dimen/font_size_18" />
+
+            <Button
+                android:id="@+id/retry_btn"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_marginTop="@dimen/padding_25"
+                android:background="@drawable/round_corner_black"
+                android:fontFamily="@font/din_next_lt_pro_bold"
+                android:gravity="center"
+                android:paddingEnd="@dimen/pading_30"
+                android:paddingStart="@dimen/pading_30"
+                android:text="@string/try_again"
+                android:textAllCaps="false"
+                android:textColor="@color/white"
+                android:textSize="@dimen/settings_page_list_item_text_size" />
+
+        </LinearLayout>
+
     </FrameLayout>
 
 </android.support.v4.widget.NestedScrollView>
