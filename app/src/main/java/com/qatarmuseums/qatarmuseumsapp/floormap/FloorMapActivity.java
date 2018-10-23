@@ -642,11 +642,6 @@ public class FloorMapActivity extends AppCompatActivity implements OnMapReadyCal
 
             @Override
             public void onFailure(Call<ArrayList<ArtifactDetails>> call, Throwable t) {
-                if (t instanceof IOException) {
-//                    utils.showToast(getResources().getString(R.string.check_network), getApplicationContext());
-                } else {
-                    // error due to mapping issues
-                }
                 progressBar.setVisibility(View.GONE);
                 floorMapRootLayout.setVisibility(View.GONE);
                 retryLayout.setVisibility(View.VISIBLE);
