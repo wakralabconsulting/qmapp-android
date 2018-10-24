@@ -74,7 +74,7 @@ public class TourGuideActivity extends AppCompatActivity {
                             navigationIntent.putExtra("ID", tourGuideList.get(position).getMuseumId());
                             startActivity(navigationIntent);
                         } else {
-                            new Util().showComingSoonDialog(TourGuideActivity.this);
+                            new Util().showComingSoonDialog(TourGuideActivity.this, R.string.coming_soon_content_map);
                         }
                     }
 
