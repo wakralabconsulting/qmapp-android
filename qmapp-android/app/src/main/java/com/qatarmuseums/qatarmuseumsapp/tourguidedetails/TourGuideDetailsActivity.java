@@ -68,7 +68,8 @@ public class TourGuideDetailsActivity extends AppCompatActivity {
                     @Override
                     public void onClick(View view, int position) {
                         if (tourGuideList.get(position).getName().equals(getString(R.string.coming_soon_txt))) {
-                            new Util().showComingSoonDialog(TourGuideDetailsActivity.this);
+                            new Util().showComingSoonDialog(TourGuideDetailsActivity.this,
+                                    R.string.coming_soon_content_map);
                         } else {
                             navigationIntent = new Intent(TourGuideDetailsActivity.this,
                                     SelfGuidedStartPageActivity.class);
