@@ -1117,7 +1117,7 @@ public class EducationCalendarActivity extends AppCompatActivity {
             public void onClick(View view) {
                 //Do something
                 if (buttonText.equalsIgnoreCase(getResources().getString(R.string.register_now))) {
-                    new Util().showComingSoonDialog(EducationCalendarActivity.this);
+                    new Util().showComingSoonDialog(EducationCalendarActivity.this, R.string.coming_soon_content);
                     dialog.dismiss();
                 } else {
                     addToCalendar(educationEvents, position);
