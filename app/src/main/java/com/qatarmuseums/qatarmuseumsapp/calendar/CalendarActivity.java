@@ -489,7 +489,7 @@ public class CalendarActivity extends AppCompatActivity {
         dialogActionButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                new Util().showComingSoonDialog(CalendarActivity.this);
+                new Util().showComingSoonDialog(CalendarActivity.this, R.string.coming_soon_content);
 
             }
         });
