@@ -18,21 +18,22 @@ public class CustomDialogClass extends Dialog implements
     public Activity context;
     public Context mContext;
     public Dialog d;
-    public Button closeButton, no,calendarCloseButton;
+    public Button closeButton, no, calendarCloseButton;
     TextView dialogTitle, dialogContent;
-    String title,content,calendarContent;
+    String title, content, calendarContent;
 
-    public CustomDialogClass(Activity a,String title,String content) {
+    public CustomDialogClass(Activity a, String title, String content) {
         super(a);
         // TODO Auto-generated constructor stub
         this.context = a;
-        this.title=title;
-        this.content=content;
+        this.title = title;
+        this.content = content;
     }
-    public CustomDialogClass(Context c,String content){
+
+    public CustomDialogClass(Context c, String content) {
         super(c);
-        this.mContext=c;
-        this.calendarContent=content;
+        this.mContext = c;
+        this.calendarContent = content;
     }
 
 
@@ -44,16 +45,19 @@ public class CustomDialogClass extends Dialog implements
         closeButton = (Button) findViewById(R.id.close_btn);
         dialogTitle = (TextView) findViewById(R.id.dialog_tittle);
         dialogContent = (TextView) findViewById(R.id.dialog_content);
-        calendarCloseButton=(Button)findViewById(R.id.calendar_close_btn);
+        calendarCloseButton = (Button) findViewById(R.id.calendar_close_btn);
 
-        if(title == null){
+        if (title == null) {
             dialogTitle.setVisibility(View.GONE);
             dialogContent.setText(calendarContent);
             calendarCloseButton.setVisibility(View.VISIBLE);
             closeButton.setVisibility(View.GONE);
             calendarCloseButton.setText(mContext.getResources().getString(R.string.close));
-
-        }else{
+        } else if (title.equals("")) {
+            dialogTitle.setVisibility(View.GONE);
+            dialogContent.setText(content);
+            closeButton.setText(context.getResources().getString(R.string.ok));
+        } else {
             dialogTitle.setVisibility(View.VISIBLE);
             dialogTitle.setText(title);
             dialogContent.setText(content);

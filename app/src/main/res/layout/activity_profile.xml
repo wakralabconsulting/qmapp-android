@@ -1,0 +1,324 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    tools:context="com.qatarmuseums.qatarmuseumsapp.profile.ProfileActivity">
+
+    <android.support.design.widget.AppBarLayout
+        android:id="@+id/app_bar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:theme="@style/AppTheme.AppBarOverlay">
+
+        <android.support.v7.widget.Toolbar
+            android:id="@+id/common_toolbar"
+            android:layout_width="match_parent"
+            android:layout_height="?android:attr/actionBarSize"
+            android:background="@color/black"
+            android:theme="@style/AppTheme.PopupOverlay"
+            app:contentInsetEnd="0dp"
+            app:contentInsetStart="0dp">
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="horizontal">
+
+                <ImageView
+                    android:id="@+id/toolbar_back"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:layout_centerVertical="true"
+                    android:paddingEnd="20dp"
+                    android:paddingStart="20dp"
+                    android:src="@drawable/back_button" />
+
+                <TextView
+                    android:id="@+id/toolbar_title"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_marginEnd="50dp"
+                    android:layout_marginStart="50dp"
+                    android:fontFamily="@font/din_next_lt_pro_regular"
+                    android:gravity="center"
+                    android:text="@string/profile"
+                    android:textAllCaps="true"
+                    android:textColor="@android:color/white"
+                    android:textSize="@dimen/toolbar_title"
+                    android:textStyle="bold" />
+
+                <ImageView
+                    android:id="@+id/log_out"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:layout_alignParentEnd="true"
+                    android:layout_centerVertical="true"
+                    android:paddingEnd="20dp"
+                    android:paddingStart="20dp"
+                    android:src="@drawable/logout" />
+
+            </RelativeLayout>
+
+        </android.support.v7.widget.Toolbar>
+
+    </android.support.design.widget.AppBarLayout>
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="@dimen/padding_40"
+                android:layout_marginTop="@dimen/padding_40"
+                android:gravity="center"
+                android:orientation="vertical">
+
+                <FrameLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content">
+
+                    <LinearLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:paddingEnd="@dimen/padding_5"
+                        android:paddingStart="@dimen/padding_5">
+
+                        <ImageView
+                            android:id="@+id/profile_pic"
+                            android:layout_width="100dp"
+                            android:layout_height="100dp"
+                            android:background="@drawable/circular_bg"
+                            android:gravity="center"
+                            android:padding="1dp" />
+                    </LinearLayout>
+
+                    <ImageView
+                        android:id="@+id/profile_edit"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="end|bottom"
+                        android:src="@drawable/profile_edit"
+                        android:visibility="visible" />
+                </FrameLayout>
+
+                <TextView
+                    android:id="@+id/username_txt"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/pading_10"
+                    android:fontFamily="@font/din_next_lt_pro_light"
+                    android:gravity="center"
+                    android:text="User Name"
+                    android:textAllCaps="true"
+                    android:textColor="@color/black"
+                    android:textSize="@dimen/font_size_17" />
+
+
+            </LinearLayout>
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="@color/divider" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="@dimen/pading_30"
+                android:layout_marginStart="@dimen/pading_30"
+                android:orientation="vertical">
+
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:paddingBottom="@dimen/pading_15"
+                    android:paddingTop="@dimen/pading_15">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:fontFamily="@font/din_next_lt_pro_bold"
+                        android:text="@string/membership_number"
+                        android:textColor="@color/black"
+                        android:textSize="@dimen/font_size_14" />
+
+                    <TextView
+                        android:id="@+id/membership_number_txt"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentEnd="true"
+                        android:fontFamily="@font/din_next_lt_pro_light"
+                        android:text="00515"
+                        android:textColor="@color/black"
+                        android:textSize="@dimen/font_size_14" />
+                </RelativeLayout>
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:background="@color/divider" />
+
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:paddingBottom="@dimen/pading_15"
+                    android:paddingTop="@dimen/pading_15">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:fontFamily="@font/din_next_lt_pro_bold"
+                        android:text="@string/e_mail_address"
+                        android:textColor="@color/black"
+                        android:textSize="@dimen/font_size_14" />
+
+                    <TextView
+                        android:id="@+id/email_txt"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentEnd="true"
+                        android:fontFamily="@font/din_next_lt_pro_light"
+                        android:text="info@qm.com"
+                        android:textColor="@color/black"
+                        android:textSize="@dimen/font_size_14" />
+                </RelativeLayout>
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:background="@color/divider" />
+
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:paddingBottom="@dimen/pading_15"
+                    android:paddingTop="@dimen/pading_15">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:fontFamily="@font/din_next_lt_pro_bold"
+                        android:text="@string/date_of_birth"
+                        android:textColor="@color/black"
+                        android:textSize="@dimen/font_size_14" />
+
+                    <TextView
+                        android:id="@+id/date_of_birth_txt"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentEnd="true"
+                        android:fontFamily="@font/din_next_lt_pro_light"
+                        android:text="28 - 12 - 1986"
+                        android:textColor="@color/black"
+                        android:textSize="@dimen/font_size_14" />
+                </RelativeLayout>
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:background="@color/divider" />
+
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:paddingBottom="@dimen/pading_15"
+                    android:paddingTop="@dimen/pading_15">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:fontFamily="@font/din_next_lt_pro_bold"
+                        android:text="@string/country_of_residence"
+                        android:textColor="@color/black"
+                        android:textSize="@dimen/font_size_14" />
+
+                    <TextView
+                        android:id="@+id/residence_txt"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentEnd="true"
+                        android:fontFamily="@font/din_next_lt_pro_light"
+                        android:text="Qatar"
+                        android:textColor="@color/black"
+                        android:textSize="@dimen/font_size_14" />
+                </RelativeLayout>
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:background="@color/divider" />
+
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:paddingBottom="@dimen/pading_15"
+                    android:paddingTop="@dimen/pading_15">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:fontFamily="@font/din_next_lt_pro_bold"
+                        android:text="@string/nationality"
+                        android:textColor="@color/black"
+                        android:textSize="@dimen/font_size_14" />
+
+                    <TextView
+                        android:id="@+id/nationality_txt"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentEnd="true"
+                        android:fontFamily="@font/din_next_lt_pro_light"
+                        android:text="Palestine"
+                        android:textColor="@color/black"
+                        android:textSize="@dimen/font_size_14" />
+                </RelativeLayout>
+
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/padding_40"
+                android:gravity="center"
+                android:orientation="vertical">
+
+                <Button
+                    android:id="@+id/view_my_fav_btn"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="@dimen/pading_20"
+                    android:layout_marginEnd="@dimen/padding_30"
+                    android:layout_marginStart="@dimen/padding_30"
+                    android:background="@drawable/round_corner_black"
+                    android:fontFamily="@font/din_next_lt_pro_bold"
+                    android:text="@string/view_my_favourites"
+                    android:textColor="@color/white"
+                    android:visibility="gone" />
+
+                <Button
+                    android:id="@+id/view_my_card_btn"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="@dimen/margin_50"
+                    android:layout_marginEnd="@dimen/padding_30"
+                    android:layout_marginStart="@dimen/padding_30"
+                    android:background="@drawable/round_corner_black"
+                    android:fontFamily="@font/din_next_lt_pro_bold"
+                    android:text="@string/view_my_culture_pass_card"
+                    android:textColor="@color/white" />
+
+            </LinearLayout>
+        </LinearLayout>
+    </ScrollView>
+</LinearLayout>
