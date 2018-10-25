@@ -4,6 +4,7 @@ import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.app.Dialog;
 import android.content.Context;
+import android.content.Intent;
 import android.os.AsyncTask;
 import android.support.design.widget.TextInputLayout;
 import android.support.v7.app.AppCompatActivity;
@@ -28,6 +29,7 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.qatarmuseums.qatarmuseumsapp.R;
+import com.qatarmuseums.qatarmuseumsapp.profile.ProfileActivity;
 import com.qatarmuseums.qatarmuseumsapp.utils.Util;
 
 public class CulturePassActivity extends AppCompatActivity {
@@ -49,6 +51,7 @@ public class CulturePassActivity extends AppCompatActivity {
     };
     private TextInputLayout mPasswordViewLayout, mUsernameViewLayout;
     private TextView forgotPassword;
+    private int REQUEST_CODE = 123;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -260,9 +263,12 @@ public class CulturePassActivity extends AppCompatActivity {
         } else {
             // Show a progress spinner, and kick off a background task to
             // perform the user login attempt.
-            showProgress(true);
-            mAuthTask = new UserLoginTask(email, password);
-            mAuthTask.execute((Void) null);
+
+            // Commented for API
+//            showProgress(true);
+//            mAuthTask = new UserLoginTask(email, password);
+//            mAuthTask.execute((Void) null);
+            navigateToProfile();
         }
     }
 
@@ -330,7 +336,7 @@ public class CulturePassActivity extends AppCompatActivity {
             showProgress(false);
 
             if (success) {
-                loginDialog.dismiss();
+                navigateToProfile();
             } else {
                 mPasswordViewLayout.setError(getString(R.string.error_incorrect_credentials));
                 mPasswordView.requestFocus();
@@ -342,6 +348,24 @@ public class CulturePassActivity extends AppCompatActivity {
             mAuthTask = null;
             showProgress(false);
         }
+
     }
 
+    public void navigateToProfile() {
+        loginDialog.dismiss();
+        Intent navigationIntent = new Intent(CulturePassActivity.this, ProfileActivity.class);
+        startActivityForResult(navigationIntent, REQUEST_CODE);
+
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (requestCode == 123) {
+            if (resultCode == RESULT_OK) {
+                finish();
+            } else {
+                util.showNormalDialog(this, R.string.logout_success_message);
+            }
+        }
+    }
 }
