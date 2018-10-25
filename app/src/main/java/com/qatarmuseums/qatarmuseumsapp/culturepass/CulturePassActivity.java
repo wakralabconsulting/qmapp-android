@@ -13,6 +13,7 @@ import android.support.v7.widget.Toolbar;
 import android.text.Editable;
 import android.text.TextUtils;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
@@ -27,10 +28,18 @@ import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.qatarmuseums.qatarmuseumsapp.R;
+import com.qatarmuseums.qatarmuseumsapp.apicall.APIClient;
+import com.qatarmuseums.qatarmuseumsapp.apicall.APIInterface;
 import com.qatarmuseums.qatarmuseumsapp.profile.ProfileActivity;
+import com.qatarmuseums.qatarmuseumsapp.profile.ProfileDetails;
 import com.qatarmuseums.qatarmuseumsapp.utils.Util;
+
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 public class CulturePassActivity extends AppCompatActivity {
 
@@ -52,6 +61,8 @@ public class CulturePassActivity extends AppCompatActivity {
     private TextInputLayout mPasswordViewLayout, mUsernameViewLayout;
     private TextView forgotPassword;
     private int REQUEST_CODE = 123;
+    private String language;
+    private String username, password;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -119,6 +130,36 @@ public class CulturePassActivity extends AppCompatActivity {
             }
         });
 
+    }
+
+    public void performLogin(int appLanguage) {
+        if (appLanguage == 1) {
+            language = "en";
+        } else {
+            language = "ar";
+        }
+        APIInterface apiService = APIClient.getClient().create(APIInterface.class);
+        Call<ProfileDetails> call = apiService.generateToken(language, new LoginData(
+                username, password));
+        call.enqueue(new Callback<ProfileDetails>() {
+
+            @Override
+            public void onResponse(Call<ProfileDetails> call, Response<ProfileDetails> response) {
+                if (response.isSuccessful()) {
+                    if (response.body() != null) {
+                        Log.d("TOKEN : ", response.body().getToken());
+                        Toast.makeText(CulturePassActivity.this, "TOKEN : " +
+                                response.body().getToken(), Toast.LENGTH_SHORT).show();
+                    }
+                }
+            }
+
+            @Override
+            public void onFailure(Call<ProfileDetails> call, Throwable t) {
+                Toast.makeText(CulturePassActivity.this, "Failed", Toast.LENGTH_SHORT).show();
+            }
+
+        });
     }
 
     protected void showLoginDialog() {
@@ -240,13 +281,13 @@ public class CulturePassActivity extends AppCompatActivity {
         mPasswordViewLayout.setError(null);
 
         // Store values at the time of the login attempt.
-        String email = mUsernameView.getText().toString();
-        String password = mPasswordView.getText().toString();
+        username = mUsernameView.getText().toString();
+        password = mPasswordView.getText().toString();
 
         boolean cancel = false;
         View focusView = null;
 
-        if (TextUtils.isEmpty(email)) {
+        if (TextUtils.isEmpty(username)) {
             mUsernameViewLayout.setError(getString(R.string.error_username_required));
             focusView = mUsernameView;
             cancel = true;
