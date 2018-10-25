@@ -61,6 +61,15 @@ public class Util {
 
     }
 
+    public void showNormalDialog(Activity activity, int stringId) {
+        customDialog = new CustomDialogClass(activity
+                , ""
+                , activity.getResources().getString(stringId));
+        customDialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+        customDialog.show();
+
+    }
+
     public void showAlertDialog(Activity activity) {
         customDialog = new CustomDialogClass(activity
                 , activity.getResources().getString(R.string.alert_txt)
