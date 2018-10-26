@@ -29,6 +29,7 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.qatarmuseums.qatarmuseumsapp.R;
+import com.qatarmuseums.qatarmuseumsapp.createaccount.CreateAccountActivity;
 import com.qatarmuseums.qatarmuseumsapp.profile.ProfileActivity;
 import com.qatarmuseums.qatarmuseumsapp.utils.Util;
 
@@ -87,7 +88,8 @@ public class CulturePassActivity extends AppCompatActivity {
         becomeMember.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                util.showComingSoonDialog(CulturePassActivity.this, R.string.coming_soon_content);
+                Intent navigationIntent = new Intent(CulturePassActivity.this, CreateAccountActivity.class);
+                startActivity(navigationIntent);
             }
         });
         loginButton.setOnClickListener(new View.OnClickListener() {
