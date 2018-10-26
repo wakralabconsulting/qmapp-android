@@ -5,7 +5,8 @@ import android.animation.AnimatorListenerAdapter;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
-import android.os.AsyncTask;
+import android.content.SharedPreferences;
+import android.preference.PreferenceManager;
 import android.support.design.widget.TextInputLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -13,7 +14,6 @@ import android.support.v7.widget.Toolbar;
 import android.text.Editable;
 import android.text.TextUtils;
 import android.text.TextWatcher;
-import android.util.Log;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
@@ -28,11 +28,11 @@ import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.qatarmuseums.qatarmuseumsapp.R;
 import com.qatarmuseums.qatarmuseumsapp.apicall.APIClient;
 import com.qatarmuseums.qatarmuseumsapp.apicall.APIInterface;
+import com.qatarmuseums.qatarmuseumsapp.createaccount.CreateAccountActivity;
 import com.qatarmuseums.qatarmuseumsapp.profile.ProfileActivity;
 import com.qatarmuseums.qatarmuseumsapp.profile.ProfileDetails;
 import com.qatarmuseums.qatarmuseumsapp.utils.Util;
@@ -54,15 +54,17 @@ public class CulturePassActivity extends AppCompatActivity {
     private EditText mUsernameView, mPasswordView;
     private ProgressBar mProgressView;
     private FrameLayout mLoginFormView;
-    private UserLoginTask mAuthTask = null;
-    private static final String[] DUMMY_CREDENTIALS = new String[]{
-            "haithembahri:saliha", "foo:bar"
-    };
     private TextInputLayout mPasswordViewLayout, mUsernameViewLayout;
     private TextView forgotPassword;
     private int REQUEST_CODE = 123;
     private String language;
-    private String username, password;
+    private String qatar, museum;
+    private SharedPreferences qmPreferences;
+    private int appLanguage;
+    private ProfileDetails profileDetails;
+    private SharedPreferences.Editor editor;
+    private Intent navigationIntent;
+    private Boolean isLogout;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -73,6 +75,11 @@ public class CulturePassActivity extends AppCompatActivity {
         loginButton = findViewById(R.id.login_btn);
         setSupportActionBar(toolbar);
         util = new Util();
+        isLogout = getIntent().getBooleanExtra("IS_LOGOUT", false);
+        if (isLogout) {
+            util.showNormalDialog(this, R.string.logout_success_message);
+        }
+        profileDetails = new ProfileDetails();
         backArrow = findViewById(R.id.toolbar_back);
         backArrow.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -98,7 +105,8 @@ public class CulturePassActivity extends AppCompatActivity {
         becomeMember.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                util.showComingSoonDialog(CulturePassActivity.this, R.string.coming_soon_content);
+                Intent navigationIntent = new Intent(CulturePassActivity.this, CreateAccountActivity.class);
+                startActivity(navigationIntent);
             }
         });
         loginButton.setOnClickListener(new View.OnClickListener() {
@@ -129,34 +137,74 @@ public class CulturePassActivity extends AppCompatActivity {
                 return false;
             }
         });
+        qmPreferences = PreferenceManager.getDefaultSharedPreferences(this);
+        appLanguage = qmPreferences.getInt("AppLanguage", 1);
 
     }
 
-    public void performLogin(int appLanguage) {
-        if (appLanguage == 1) {
-            language = "en";
-        } else {
-            language = "ar";
-        }
-        APIInterface apiService = APIClient.getClient().create(APIInterface.class);
-        Call<ProfileDetails> call = apiService.generateToken(language, new LoginData(
-                username, password));
-        call.enqueue(new Callback<ProfileDetails>() {
 
+    public void performLogin() {
+
+        final APIInterface apiService = APIClient.getClientSecure().create(APIInterface.class);
+        Call<ProfileDetails> call = apiService.generateToken(new LoginData(qatar, museum));
+        call.enqueue(new Callback<ProfileDetails>() {
             @Override
             public void onResponse(Call<ProfileDetails> call, Response<ProfileDetails> response) {
                 if (response.isSuccessful()) {
                     if (response.body() != null) {
-                        Log.d("TOKEN : ", response.body().getToken());
-                        Toast.makeText(CulturePassActivity.this, "TOKEN : " +
-                                response.body().getToken(), Toast.LENGTH_SHORT).show();
+                        Call<ProfileDetails> callLogin = apiService.login(response.body().getToken(),
+                                new LoginData(qatar, museum));
+                        callLogin.enqueue(new Callback<ProfileDetails>() {
+                            @Override
+                            public void onResponse(Call<ProfileDetails> call, Response<ProfileDetails> response) {
+                                if (response.isSuccessful()) {
+                                    if (response.body() != null) {
+                                        profileDetails = response.body();
+                                        editor = qmPreferences.edit();
+                                        editor.putString("TOKEN", profileDetails.getToken());
+                                        editor.putString("QATAR", qatar);
+                                        editor.putString("MUSEUM", museum);
+                                        editor.putString("MEMBERSHIP_NUMBER", profileDetails.getUser().getuId());
+                                        editor.putString("EMAIL", profileDetails.getUser().getMail());
+                                        editor.putString("DOB", profileDetails.getUser().getDateOfBirth().getUnd().get(0).getValue());
+                                        editor.putString("RESIDENCE", profileDetails.getUser().getCountry().getUnd().get(0).getValue());
+                                        editor.putString("NATIONALITY", profileDetails.getUser().getNationality().getUnd().get(0).getValue());
+                                        editor.putString("IMAGE", profileDetails.getUser().getPicture());
+                                        editor.putString("NAME", profileDetails.getUser().getFirstName().getUnd().get(0).getValue() +
+                                                " " + profileDetails.getUser().getLastName().getUnd().get(0).getValue());
+                                        editor.commit();
+                                        navigateToProfile();
+                                    }
+                                } else {
+                                    if (response.code() == 401)
+                                        mPasswordViewLayout.setError(getString(R.string.error_incorrect_credentials));
+                                    else if (response.code() == 406)
+                                        mPasswordViewLayout.setError(getString(R.string.error_already_logged_in));
+                                    else
+                                        mPasswordViewLayout.setError(getString(R.string.error_unexpected));
+
+                                }
+                                showProgress(false);
+                            }
+
+                            @Override
+                            public void onFailure(Call<ProfileDetails> call, Throwable t) {
+                                util.showToast(getResources().getString(R.string.check_network),
+                                        CulturePassActivity.this);
+                                showProgress(false);
+
+                            }
+                        });
+
                     }
                 }
             }
 
             @Override
             public void onFailure(Call<ProfileDetails> call, Throwable t) {
-                Toast.makeText(CulturePassActivity.this, "Failed", Toast.LENGTH_SHORT).show();
+                util.showToast(getResources().getString(R.string.check_network),
+                        CulturePassActivity.this);
+                showProgress(false);
             }
 
         });
@@ -272,26 +320,22 @@ public class CulturePassActivity extends AppCompatActivity {
     }
 
     private void attemptLogin() {
-        if (mAuthTask != null) {
-            return;
-        }
-
         // Reset errors.
         mUsernameViewLayout.setError(null);
         mPasswordViewLayout.setError(null);
 
         // Store values at the time of the login attempt.
-        username = mUsernameView.getText().toString();
-        password = mPasswordView.getText().toString();
+        qatar = mUsernameView.getText().toString();
+        museum = mPasswordView.getText().toString();
 
         boolean cancel = false;
         View focusView = null;
 
-        if (TextUtils.isEmpty(username)) {
+        if (TextUtils.isEmpty(qatar)) {
             mUsernameViewLayout.setError(getString(R.string.error_username_required));
             focusView = mUsernameView;
             cancel = true;
-        } else if (TextUtils.isEmpty(password)) {
+        } else if (TextUtils.isEmpty(museum)) {
             mPasswordViewLayout.setError(getString(R.string.error_password_required));
             focusView = mPasswordView;
             cancel = true;
@@ -304,12 +348,8 @@ public class CulturePassActivity extends AppCompatActivity {
         } else {
             // Show a progress spinner, and kick off a background task to
             // perform the user login attempt.
-
-            // Commented for API
-//            showProgress(true);
-//            mAuthTask = new UserLoginTask(email, password);
-//            mAuthTask.execute((Void) null);
-            navigateToProfile();
+            showProgress(true);
+            performLogin();
         }
     }
 
@@ -340,63 +380,11 @@ public class CulturePassActivity extends AppCompatActivity {
 
     }
 
-    public class UserLoginTask extends AsyncTask<Void, Void, Boolean> {
-
-        private final String mEmail;
-        private final String mPassword;
-
-        UserLoginTask(String email, String password) {
-            mEmail = email;
-            mPassword = password;
-        }
-
-        @Override
-        protected Boolean doInBackground(Void... params) {
-            // TODO: attempt authentication against a network service.
-
-            try {
-                // Simulate network access.
-                Thread.sleep(2000);
-            } catch (InterruptedException e) {
-                return false;
-            }
-
-            for (String credential : DUMMY_CREDENTIALS) {
-                String[] pieces = credential.split(":");
-                if (pieces[0].equals(mEmail)) {
-                    // Account exists, return true if the password matches.
-                    return pieces[1].equals(mPassword);
-                }
-            }
-            return false;
-        }
-
-        @Override
-        protected void onPostExecute(final Boolean success) {
-            mAuthTask = null;
-            showProgress(false);
-
-            if (success) {
-                navigateToProfile();
-            } else {
-                mPasswordViewLayout.setError(getString(R.string.error_incorrect_credentials));
-                mPasswordView.requestFocus();
-            }
-        }
-
-        @Override
-        protected void onCancelled() {
-            mAuthTask = null;
-            showProgress(false);
-        }
-
-    }
-
     public void navigateToProfile() {
         loginDialog.dismiss();
-        Intent navigationIntent = new Intent(CulturePassActivity.this, ProfileActivity.class);
+        navigationIntent = new Intent(CulturePassActivity.this, ProfileActivity.class);
         startActivityForResult(navigationIntent, REQUEST_CODE);
-
+        finish();
     }
 
     @Override

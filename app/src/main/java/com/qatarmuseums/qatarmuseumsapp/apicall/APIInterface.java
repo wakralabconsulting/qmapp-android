@@ -14,6 +14,7 @@ import com.qatarmuseums.qatarmuseumsapp.museumcollectiondetails.CollectionDetail
 import com.qatarmuseums.qatarmuseumsapp.objectpreview.ObjectPreviewModel;
 import com.qatarmuseums.qatarmuseumsapp.park.ParkList;
 import com.qatarmuseums.qatarmuseumsapp.profile.ProfileDetails;
+import com.qatarmuseums.qatarmuseumsapp.profile.UserData;
 import com.qatarmuseums.qatarmuseumsapp.publicart.PublicArtModel;
 import com.qatarmuseums.qatarmuseumsapp.tourguidestartpage.SelfGuideStarterModel;
 
@@ -23,6 +24,7 @@ import retrofit2.Call;
 import retrofit2.http.Body;
 import retrofit2.http.GET;
 import retrofit2.http.Header;
+import retrofit2.http.Headers;
 import retrofit2.http.POST;
 import retrofit2.http.Path;
 import retrofit2.http.Query;
@@ -101,7 +103,18 @@ public interface APIInterface {
     @GET("{language}/mobile_api/collection_by_tour_guide.json")
     Call<ArrayList<ArtifactDetails>> getArtifactList(@Path("language") String language);
 
-    @POST("{language}/mobile_api/user/token.json")
-    Call<ProfileDetails> generateToken(@Path("language") String language, @Body LoginData loginData);
+    @Headers("Content-Type: application/json")
+    @POST("en/mobile_api/user/token.json")
+    Call<ProfileDetails> generateToken(@Body LoginData loginData);
+
+    @Headers("Content-Type: application/json")
+    @POST("en/mobile_api/user/login.json")
+    Call<ProfileDetails> login(@Header("X-CSRF-Token") String token,
+                               @Body LoginData loginData);
+
+    @Headers("Content-Type: application/json")
+    @POST("en/mobile_api/user/login.json")
+    Call<UserData> logout(@Header("X-CSRF-Token") String token,
+                          @Body LoginData loginData);
 
 }
