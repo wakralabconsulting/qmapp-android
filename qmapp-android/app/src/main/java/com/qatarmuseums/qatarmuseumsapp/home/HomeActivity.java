@@ -30,6 +30,8 @@ import com.qatarmuseums.qatarmuseumsapp.commonpage.CommonActivity;
 import com.qatarmuseums.qatarmuseumsapp.commonpage.RecyclerTouchListener;
 import com.qatarmuseums.qatarmuseumsapp.culturepass.CulturePassActivity;
 import com.qatarmuseums.qatarmuseumsapp.museum.MuseumActivity;
+import com.qatarmuseums.qatarmuseumsapp.profile.ProfileActivity;
+import com.qatarmuseums.qatarmuseumsapp.profile.ProfileDetails;
 import com.qatarmuseums.qatarmuseumsapp.utils.Util;
 import com.qatarmuseums.qatarmuseumsapp.webview.WebviewActivity;
 
@@ -63,6 +65,7 @@ public class HomeActivity extends BaseActivity {
     private LinearLayout retryLayout;
     private Button retryButton;
     private int appLanguage;
+    private String token;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -81,6 +84,9 @@ public class HomeActivity extends BaseActivity {
         recyclerView = (RecyclerView) findViewById(R.id.recycler_view);
         util = new Util();
         qmDatabase = QMDatabase.getInstance(HomeActivity.this);
+        qmPreferences = PreferenceManager.getDefaultSharedPreferences(this);
+        token = qmPreferences.getString("TOKEN", null);
+
         zoomOutAnimation = AnimationUtils.loadAnimation(getApplicationContext(),
                 R.anim.zoom_out);
         fadeOutAnimation = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.fade_out_animation);
@@ -120,7 +126,11 @@ public class HomeActivity extends BaseActivity {
         culturePassNavigation.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                navigation_intent = new Intent(HomeActivity.this, CulturePassActivity.class);
+                token = qmPreferences.getString("TOKEN", null);
+                if (token == null)
+                    navigation_intent = new Intent(HomeActivity.this, CulturePassActivity.class);
+                else
+                    navigation_intent = new Intent(HomeActivity.this, ProfileActivity.class);
                 startActivity(navigation_intent);
             }
         });

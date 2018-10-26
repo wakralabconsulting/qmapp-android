@@ -1,26 +1,26 @@
 package com.qatarmuseums.qatarmuseumsapp.culturepass;
 
 public class LoginData {
-    private String username, password;
+    private String name, pass;
 
     public LoginData(String username, String password) {
-        this.username = username;
-        this.password = password;
+        this.name = username;
+        this.pass = password;
     }
 
     public String getUsername() {
-        return username;
+        return name;
     }
 
     public void setUsername(String username) {
-        this.username = username;
+        this.name = username;
     }
 
     public String getPassword() {
-        return password;
+        return pass;
     }
 
     public void setPassword(String password) {
-        this.password = password;
+        this.pass = password;
     }
 }
