@@ -3,6 +3,7 @@ package com.qatarmuseums.qatarmuseumsapp.apicall;
 
 import com.qatarmuseums.qatarmuseumsapp.calendar.CalendarEvents;
 import com.qatarmuseums.qatarmuseumsapp.commonpage.CommonModel;
+import com.qatarmuseums.qatarmuseumsapp.culturepass.LoginData;
 import com.qatarmuseums.qatarmuseumsapp.dining.DiningDetailModel;
 import com.qatarmuseums.qatarmuseumsapp.education.EducationEvents;
 import com.qatarmuseums.qatarmuseumsapp.floormap.ArtifactDetails;
@@ -12,14 +13,19 @@ import com.qatarmuseums.qatarmuseumsapp.museumabout.MuseumAboutModel;
 import com.qatarmuseums.qatarmuseumsapp.museumcollectiondetails.CollectionDetailsList;
 import com.qatarmuseums.qatarmuseumsapp.objectpreview.ObjectPreviewModel;
 import com.qatarmuseums.qatarmuseumsapp.park.ParkList;
+import com.qatarmuseums.qatarmuseumsapp.profile.ProfileDetails;
+import com.qatarmuseums.qatarmuseumsapp.profile.UserData;
 import com.qatarmuseums.qatarmuseumsapp.publicart.PublicArtModel;
 import com.qatarmuseums.qatarmuseumsapp.tourguidestartpage.SelfGuideStarterModel;
 
 import java.util.ArrayList;
 
 import retrofit2.Call;
+import retrofit2.http.Body;
 import retrofit2.http.GET;
 import retrofit2.http.Header;
+import retrofit2.http.Headers;
+import retrofit2.http.POST;
 import retrofit2.http.Path;
 import retrofit2.http.Query;
 
@@ -58,13 +64,13 @@ public interface APIInterface {
 
     @GET("{language}/mobile_api/new_ws_educations.json")
     Call<ArrayList<CalendarEvents>> getCalendarDetails(@Path("language") String language,
-                                                                 @Query("institution") String institution,
-                                                                 @Query("age") String ageGroup,
-                                                                 @Query("programe") String programType,
-                                                                 @Query("field_eduprog_repeat_field_date_value[value][month]") String month,
-                                                                 @Query("field_eduprog_repeat_field_date_value[value][day]") String day,
-                                                                 @Query("field_eduprog_repeat_field_date_value[value][year]") String year,
-                                                                 @Query("cck_multiple_field_remove_fields") String cckValue);
+                                                       @Query("institution") String institution,
+                                                       @Query("age") String ageGroup,
+                                                       @Query("programe") String programType,
+                                                       @Query("field_eduprog_repeat_field_date_value[value][month]") String month,
+                                                       @Query("field_eduprog_repeat_field_date_value[value][day]") String day,
+                                                       @Query("field_eduprog_repeat_field_date_value[value][year]") String year,
+                                                       @Query("cck_multiple_field_remove_fields") String cckValue);
 
 
     @GET("{language}/mobile_api/museum-detail.json")
@@ -85,14 +91,30 @@ public interface APIInterface {
     @GET("{language}/mobile_api/collection_ws.json")
     Call<ArrayList<CollectionDetailsList>> getMuseumCollectionDetails(@Path("language") String language,
                                                                       @Query("category") String category);
+
     @GET("{language}/mobile_api/tour_guide_list_museums.json")
     Call<ArrayList<SelfGuideStarterModel>> getSelfGuideStarterPageDetails(@Path("language") String language,
                                                                           @Query("museum_id") String museum_id);
+
     @GET("{language}/mobile_api/collection_by_tour_guide.json")
     Call<ArrayList<ArtifactDetails>> getObjectPreviewDetails(@Path("language") String language,
-                                                                       @Query("tour_guide_id") String tourGuideId);
+                                                             @Query("tour_guide_id") String tourGuideId);
 
     @GET("{language}/mobile_api/collection_by_tour_guide.json")
     Call<ArrayList<ArtifactDetails>> getArtifactList(@Path("language") String language);
+
+    @Headers("Content-Type: application/json")
+    @POST("en/mobile_api/user/token.json")
+    Call<ProfileDetails> generateToken(@Body LoginData loginData);
+
+    @Headers("Content-Type: application/json")
+    @POST("en/mobile_api/user/login.json")
+    Call<ProfileDetails> login(@Header("X-CSRF-Token") String token,
+                               @Body LoginData loginData);
+
+    @Headers("Content-Type: application/json")
+    @POST("en/mobile_api/user/login.json")
+    Call<UserData> logout(@Header("X-CSRF-Token") String token,
+                          @Body LoginData loginData);
 
 }

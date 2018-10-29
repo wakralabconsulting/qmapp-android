@@ -2,6 +2,8 @@ package com.qatarmuseums.qatarmuseumsapp.profile;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.content.SharedPreferences;
+import android.preference.PreferenceManager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
@@ -9,13 +11,23 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
-import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.bumptech.glide.request.RequestOptions;
 import com.qatarmuseums.qatarmuseumsapp.R;
+import com.qatarmuseums.qatarmuseumsapp.apicall.APIClient;
+import com.qatarmuseums.qatarmuseumsapp.apicall.APIInterface;
+import com.qatarmuseums.qatarmuseumsapp.culturepass.CulturePassActivity;
+import com.qatarmuseums.qatarmuseumsapp.culturepass.LoginData;
 import com.qatarmuseums.qatarmuseumsapp.home.GlideApp;
+import com.qatarmuseums.qatarmuseumsapp.utils.Util;
+
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 public class ProfileActivity extends AppCompatActivity {
 
@@ -25,6 +37,11 @@ public class ProfileActivity extends AppCompatActivity {
     TextView usernameTxt, membershipNumberTxt, emailTxt, dobTxt, residenceTxt, nationalityTxt;
     ImageView profilePic, profileEdit;
     View myFavBtn, myCardBtn;
+    private SharedPreferences qmPreferences;
+    private String token, username, membershipNumber, email, dateOfBirth, residence, nationality,
+            imageURL, qatar, museum;
+    private SharedPreferences.Editor editor;
+    private ProgressBar logoutProgress;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -43,6 +60,7 @@ public class ProfileActivity extends AppCompatActivity {
         profileEdit = findViewById(R.id.profile_edit);
         myFavBtn = findViewById(R.id.view_my_fav_btn);
         myCardBtn = findViewById(R.id.view_my_card_btn);
+        logoutProgress = findViewById(R.id.logout_progress);
         zoomOutAnimation = AnimationUtils.loadAnimation(getApplicationContext(),
                 R.anim.zoom_out);
         iconZoomOutAnimation = AnimationUtils.loadAnimation(getApplicationContext(),
@@ -68,7 +86,7 @@ public class ProfileActivity extends AppCompatActivity {
         logOut.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                finish();
+                logOutAction();
             }
         });
         logOut.setOnTouchListener(new View.OnTouchListener() {
@@ -82,10 +100,29 @@ public class ProfileActivity extends AppCompatActivity {
                 return false;
             }
         });
-        GlideApp.with(this)
-                .load("https://www.qm.org.qa/sites/default/files/styles/content_image/public/images/body/faterh-al-modares1.jpg?itok=IsBmvNlb")
-                .apply(RequestOptions.circleCropTransform())
-                .into(profilePic);
+        qmPreferences = PreferenceManager.getDefaultSharedPreferences(this);
+        token = qmPreferences.getString("TOKEN", null);
+        qatar = qmPreferences.getString("QATAR", null);
+        museum = qmPreferences.getString("MUSEUM", null);
+        username = qmPreferences.getString("NAME", null);
+        membershipNumber = qmPreferences.getString("MEMBERSHIP_NUMBER", null);
+        email = qmPreferences.getString("EMAIL", null);
+        dateOfBirth = qmPreferences.getString("DOB", null);
+        residence = qmPreferences.getString("RESIDENCE", null);
+        nationality = qmPreferences.getString("NATIONALITY", null);
+        imageURL = qmPreferences.getString("IMAGE", null);
+        if (imageURL != null && !imageURL.equals("") && !imageURL.equals("0"))
+            GlideApp.with(this)
+                    .load(imageURL)
+                    .apply(RequestOptions.circleCropTransform())
+                    .into(profilePic);
+        usernameTxt.setText(username);
+        membershipNumberTxt.setText(membershipNumber);
+        emailTxt.setText(email);
+        dobTxt.setText(dateOfBirth);
+        residenceTxt.setText(residence);
+        nationalityTxt.setText(nationality);
+
         myCardBtn.setOnTouchListener(new View.OnTouchListener() {
             @Override
             public boolean onTouch(View v, MotionEvent event) {
@@ -108,6 +145,48 @@ public class ProfileActivity extends AppCompatActivity {
                 return false;
             }
         });
+
+    }
+
+    public void logOutAction() {
+        logoutProgress.setVisibility(View.VISIBLE);
+        APIInterface apiService = APIClient.getClientSecure().create(APIInterface.class);
+        Call<UserData> call = apiService.logout(token, new LoginData(qatar, museum));
+        call.enqueue(new Callback<UserData>() {
+            @Override
+            public void onResponse(Call<UserData> call, Response<UserData> response) {
+                if (response.isSuccessful()) {
+                    clearPreference();
+                } else {
+                    new Util().showToast(getResources().getString(R.string.error_logout), ProfileActivity.this);
+                }
+                logoutProgress.setVisibility(View.GONE);
+            }
+
+            @Override
+            public void onFailure(Call<UserData> call, Throwable t) {
+                new Util().showToast(getResources().getString(R.string.check_network), ProfileActivity.this);
+                logoutProgress.setVisibility(View.GONE);
+            }
+        });
+    }
+
+    public void clearPreference() {
+        qmPreferences = PreferenceManager.getDefaultSharedPreferences(this);
+        editor = qmPreferences.edit();
+        editor.putString("TOKEN", null);
+        editor.putString("MEMBERSHIP_NUMBER", null);
+        editor.putString("EMAIL", null);
+        editor.putString("DOB", null);
+        editor.putString("RESIDENCE", null);
+        editor.putString("NATIONALITY", null);
+        editor.putString("IMAGE", null);
+        editor.putString("NAME", null);
+        editor.commit();
+        Intent navigationIntent = new Intent(this, CulturePassActivity.class);
+        navigationIntent.putExtra("IS_LOGOUT", true);
+        startActivity(navigationIntent);
+        finish();
 
     }
 
