@@ -210,6 +210,8 @@
     <string name="error_password_required">حقل "كلمة المرور" ضروري.</string>
     <string name="error_username_required">حقل "اسم المستخدم أو عنوان البريد الإلكتروني" ضروري.</string>
     <string name="error_incorrect_credentials">عذرًا، لم يتم التعرف على اسم المستخدم أو كلمة السر. </string>
+    <string name="error_already_logged_in">Already logged in</string>
+    <string name="error_unexpected">Unexpected error</string>
     <!-- Strings related to Profile -->
     <string name="profile">Profile</string>
     <string name="membership_number">Membership Number:</string>
