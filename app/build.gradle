@@ -82,5 +82,12 @@ dependencies {
 //    google vision api
     implementation 'com.google.android.gms:play-services-vision:15.0.2'
 
+//    implementation 'com.google.firebase:firebase-messaging:15.0.2'
+    implementation 'com.google.firebase:firebase-messaging:17.3.4'
+
+
+
 }
 apply plugin: 'com.google.gms.google-services'
+com.google.gms.googleservices.GoogleServicesPlugin.config.disableVersionCheck = true
+
