@@ -3,9 +3,9 @@ package com.qatarmuseums.qatarmuseumsapp.profile;
 import android.app.Activity;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 import android.view.MotionEvent;
 import android.view.View;
@@ -14,20 +14,24 @@ import android.view.animation.AnimationUtils;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.bumptech.glide.request.RequestOptions;
 import com.qatarmuseums.qatarmuseumsapp.R;
 import com.qatarmuseums.qatarmuseumsapp.apicall.APIClient;
 import com.qatarmuseums.qatarmuseumsapp.apicall.APIInterface;
+import com.qatarmuseums.qatarmuseumsapp.culturepass.AddCookiesInterceptor;
 import com.qatarmuseums.qatarmuseumsapp.culturepass.CulturePassActivity;
-import com.qatarmuseums.qatarmuseumsapp.culturepass.LoginData;
+import com.qatarmuseums.qatarmuseumsapp.culturepass.ReceivedCookiesInterceptor;
 import com.qatarmuseums.qatarmuseumsapp.home.GlideApp;
 import com.qatarmuseums.qatarmuseumsapp.utils.Util;
 
+import okhttp3.OkHttpClient;
+import okhttp3.logging.HttpLoggingInterceptor;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
+import retrofit2.Retrofit;
+import retrofit2.converter.gson.GsonConverterFactory;
 
 public class ProfileActivity extends AppCompatActivity {
 
@@ -39,9 +43,12 @@ public class ProfileActivity extends AppCompatActivity {
     View myFavBtn, myCardBtn;
     private SharedPreferences qmPreferences;
     private String token, username, membershipNumber, email, dateOfBirth, residence, nationality,
-            imageURL, qatar, museum;
+            imageURL;
     private SharedPreferences.Editor editor;
     private ProgressBar logoutProgress;
+    private int appLanguage;
+    String language;
+    private Retrofit retrofit;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -101,9 +108,12 @@ public class ProfileActivity extends AppCompatActivity {
             }
         });
         qmPreferences = PreferenceManager.getDefaultSharedPreferences(this);
+        appLanguage = qmPreferences.getInt("AppLanguage", 1);
+        if (appLanguage == 1)
+            language = "en";
+        else
+            language = "ar";
         token = qmPreferences.getString("TOKEN", null);
-        qatar = qmPreferences.getString("QATAR", null);
-        museum = qmPreferences.getString("MUSEUM", null);
         username = qmPreferences.getString("NAME", null);
         membershipNumber = qmPreferences.getString("MEMBERSHIP_NUMBER", null);
         email = qmPreferences.getString("EMAIL", null);
@@ -150,15 +160,34 @@ public class ProfileActivity extends AppCompatActivity {
 
     public void logOutAction() {
         logoutProgress.setVisibility(View.VISIBLE);
-        APIInterface apiService = APIClient.getClientSecure().create(APIInterface.class);
-        Call<UserData> call = apiService.logout(token, new LoginData(qatar, museum));
+        token = qmPreferences.getString("TOKEN", null);
+        HttpLoggingInterceptor interceptor = new HttpLoggingInterceptor();
+        interceptor.setLevel(HttpLoggingInterceptor.Level.BODY);
+
+        OkHttpClient client;
+        OkHttpClient.Builder builder = new OkHttpClient.Builder();
+
+        builder.addInterceptor(interceptor);
+        builder.addInterceptor(new AddCookiesInterceptor(this));
+        builder.addInterceptor(new ReceivedCookiesInterceptor(this));
+        client = builder.build();
+
+        retrofit = new Retrofit.Builder()
+                .baseUrl(APIClient.apiBaseUrlSecure)
+                .addConverterFactory(GsonConverterFactory.create())
+                .client(client)
+                .build();
+
+        APIInterface apiService = retrofit.create(APIInterface.class);
+        Call<UserData> call = apiService.logout(language, token);
         call.enqueue(new Callback<UserData>() {
             @Override
             public void onResponse(Call<UserData> call, Response<UserData> response) {
                 if (response.isSuccessful()) {
                     clearPreference();
                 } else {
-                    new Util().showToast(getResources().getString(R.string.error_logout), ProfileActivity.this);
+                    new Util().showToast(getResources().getString(R.string.error_logout),
+                            ProfileActivity.this);
                 }
                 logoutProgress.setVisibility(View.GONE);
             }
@@ -174,7 +203,6 @@ public class ProfileActivity extends AppCompatActivity {
     public void clearPreference() {
         qmPreferences = PreferenceManager.getDefaultSharedPreferences(this);
         editor = qmPreferences.edit();
-        editor.putString("TOKEN", null);
         editor.putString("MEMBERSHIP_NUMBER", null);
         editor.putString("EMAIL", null);
         editor.putString("DOB", null);

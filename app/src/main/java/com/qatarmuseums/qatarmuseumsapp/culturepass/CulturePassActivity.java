@@ -6,10 +6,10 @@ import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.design.widget.TextInputLayout;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 import android.text.Editable;
 import android.text.TextUtils;
@@ -37,9 +37,13 @@ import com.qatarmuseums.qatarmuseumsapp.profile.ProfileActivity;
 import com.qatarmuseums.qatarmuseumsapp.profile.ProfileDetails;
 import com.qatarmuseums.qatarmuseumsapp.utils.Util;
 
+import okhttp3.OkHttpClient;
+import okhttp3.logging.HttpLoggingInterceptor;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
+import retrofit2.Retrofit;
+import retrofit2.converter.gson.GsonConverterFactory;
 
 public class CulturePassActivity extends AppCompatActivity {
 
@@ -65,6 +69,10 @@ public class CulturePassActivity extends AppCompatActivity {
     private SharedPreferences.Editor editor;
     private Intent navigationIntent;
     private Boolean isLogout;
+    private APIInterface apiService;
+    private String token;
+    private LoginData loginData;
+    private Retrofit retrofit;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -139,63 +147,40 @@ public class CulturePassActivity extends AppCompatActivity {
         });
         qmPreferences = PreferenceManager.getDefaultSharedPreferences(this);
         appLanguage = qmPreferences.getInt("AppLanguage", 1);
-
+        token = qmPreferences.getString("TOKEN", null);
+        if (appLanguage == 1)
+            language = "en";
+        else
+            language = "ar";
     }
 
 
-    public void performLogin() {
+    public void fetchToken() {
+        HttpLoggingInterceptor interceptor = new HttpLoggingInterceptor();
+        interceptor.setLevel(HttpLoggingInterceptor.Level.BODY);
 
-        final APIInterface apiService = APIClient.getClientSecure().create(APIInterface.class);
-        Call<ProfileDetails> call = apiService.generateToken(new LoginData(qatar, museum));
+        OkHttpClient client;
+        OkHttpClient.Builder builder = new OkHttpClient.Builder();
+
+        builder.addInterceptor(interceptor);
+        builder.addInterceptor(new AddCookiesInterceptor(this));
+        builder.addInterceptor(new ReceivedCookiesInterceptor(this));
+        client = builder.build();
+
+        retrofit = new Retrofit.Builder()
+                .baseUrl(APIClient.apiBaseUrlSecure)
+                .addConverterFactory(GsonConverterFactory.create())
+                .client(client)
+                .build();
+
+        apiService = retrofit.create(APIInterface.class);
+        Call<ProfileDetails> call = apiService.generateToken(language, loginData);
         call.enqueue(new Callback<ProfileDetails>() {
             @Override
-            public void onResponse(Call<ProfileDetails> call, Response<ProfileDetails> response) {
+            public void onResponse(Call<ProfileDetails> call, final Response<ProfileDetails> response) {
                 if (response.isSuccessful()) {
                     if (response.body() != null) {
-                        Call<ProfileDetails> callLogin = apiService.login(response.body().getToken(),
-                                new LoginData(qatar, museum));
-                        callLogin.enqueue(new Callback<ProfileDetails>() {
-                            @Override
-                            public void onResponse(Call<ProfileDetails> call, Response<ProfileDetails> response) {
-                                if (response.isSuccessful()) {
-                                    if (response.body() != null) {
-                                        profileDetails = response.body();
-                                        editor = qmPreferences.edit();
-                                        editor.putString("TOKEN", profileDetails.getToken());
-                                        editor.putString("QATAR", qatar);
-                                        editor.putString("MUSEUM", museum);
-                                        editor.putString("MEMBERSHIP_NUMBER", profileDetails.getUser().getuId());
-                                        editor.putString("EMAIL", profileDetails.getUser().getMail());
-                                        editor.putString("DOB", profileDetails.getUser().getDateOfBirth().getUnd().get(0).getValue());
-                                        editor.putString("RESIDENCE", profileDetails.getUser().getCountry().getUnd().get(0).getValue());
-                                        editor.putString("NATIONALITY", profileDetails.getUser().getNationality().getUnd().get(0).getValue());
-                                        editor.putString("IMAGE", profileDetails.getUser().getPicture());
-                                        editor.putString("NAME", profileDetails.getUser().getFirstName().getUnd().get(0).getValue() +
-                                                " " + profileDetails.getUser().getLastName().getUnd().get(0).getValue());
-                                        editor.commit();
-                                        navigateToProfile();
-                                    }
-                                } else {
-                                    if (response.code() == 401)
-                                        mPasswordViewLayout.setError(getString(R.string.error_incorrect_credentials));
-                                    else if (response.code() == 406)
-                                        mPasswordViewLayout.setError(getString(R.string.error_already_logged_in));
-                                    else
-                                        mPasswordViewLayout.setError(getString(R.string.error_unexpected));
-
-                                }
-                                showProgress(false);
-                            }
-
-                            @Override
-                            public void onFailure(Call<ProfileDetails> call, Throwable t) {
-                                util.showToast(getResources().getString(R.string.check_network),
-                                        CulturePassActivity.this);
-                                showProgress(false);
-
-                            }
-                        });
-
+                        performLogin(response.body().getToken());
                     }
                 }
             }
@@ -208,6 +193,69 @@ public class CulturePassActivity extends AppCompatActivity {
             }
 
         });
+    }
+
+    public void performLogin(String token) {
+        HttpLoggingInterceptor interceptor = new HttpLoggingInterceptor();
+        interceptor.setLevel(HttpLoggingInterceptor.Level.BODY);
+
+        OkHttpClient client;
+        OkHttpClient.Builder builder = new OkHttpClient.Builder();
+
+        builder.addInterceptor(interceptor);
+        builder.addInterceptor(new AddCookiesInterceptor(this));
+        builder.addInterceptor(new ReceivedCookiesInterceptor(this));
+        client = builder.build();
+
+        retrofit = new Retrofit.Builder()
+                .baseUrl(APIClient.apiBaseUrlSecure)
+                .addConverterFactory(GsonConverterFactory.create())
+                .client(client)
+                .build();
+
+        apiService = retrofit.create(APIInterface.class);
+
+        Call<ProfileDetails> callLogin = apiService.login(language, token, loginData);
+        callLogin.enqueue(new Callback<ProfileDetails>() {
+            @Override
+            public void onResponse(Call<ProfileDetails> call, Response<ProfileDetails> response) {
+                if (response.isSuccessful()) {
+                    if (response.body() != null) {
+                        profileDetails = response.body();
+                        editor = qmPreferences.edit();
+                        editor.putString("TOKEN", profileDetails.getToken());
+                        editor.putString("MEMBERSHIP_NUMBER", profileDetails.getUser().getuId());
+                        editor.putString("EMAIL", profileDetails.getUser().getMail());
+                        editor.putString("DOB", profileDetails.getUser().getDateOfBirth().getUnd().get(0).getValue());
+                        editor.putString("RESIDENCE", profileDetails.getUser().getCountry().getUnd().get(0).getValue());
+                        editor.putString("NATIONALITY", profileDetails.getUser().getNationality().getUnd().get(0).getValue());
+                        editor.putString("IMAGE", profileDetails.getUser().getPicture());
+                        editor.putString("NAME", profileDetails.getUser().getFirstName().getUnd().get(0).getValue() +
+                                " " + profileDetails.getUser().getLastName().getUnd().get(0).getValue());
+                        editor.commit();
+                        navigateToProfile();
+                    }
+                } else {
+                    if (response.code() == 401)
+                        mPasswordViewLayout.setError(getString(R.string.error_incorrect_credentials));
+                    else if (response.code() == 406)
+                        mPasswordViewLayout.setError(getString(R.string.error_already_logged_in));
+                    else
+                        mPasswordViewLayout.setError(getString(R.string.error_unexpected));
+
+                }
+                showProgress(false);
+            }
+
+            @Override
+            public void onFailure(Call<ProfileDetails> call, Throwable t) {
+                util.showToast(getResources().getString(R.string.check_network),
+                        CulturePassActivity.this);
+                showProgress(false);
+
+            }
+        });
+
     }
 
     protected void showLoginDialog() {
@@ -349,7 +397,12 @@ public class CulturePassActivity extends AppCompatActivity {
             // Show a progress spinner, and kick off a background task to
             // perform the user login attempt.
             showProgress(true);
-            performLogin();
+            token = qmPreferences.getString("TOKEN", null);
+            loginData = new LoginData(qatar, museum);
+            if (token != null) {
+                performLogin(token);
+            } else
+                fetchToken();
         }
     }
 
