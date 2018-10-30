@@ -31,11 +31,9 @@ import com.qatarmuseums.qatarmuseumsapp.commonpage.RecyclerTouchListener;
 import com.qatarmuseums.qatarmuseumsapp.culturepass.CulturePassActivity;
 import com.qatarmuseums.qatarmuseumsapp.museum.MuseumActivity;
 import com.qatarmuseums.qatarmuseumsapp.profile.ProfileActivity;
-import com.qatarmuseums.qatarmuseumsapp.profile.ProfileDetails;
 import com.qatarmuseums.qatarmuseumsapp.utils.Util;
 import com.qatarmuseums.qatarmuseumsapp.webview.WebviewActivity;
 
-import java.io.IOException;
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.List;
@@ -65,7 +63,7 @@ public class HomeActivity extends BaseActivity {
     private LinearLayout retryLayout;
     private Button retryButton;
     private int appLanguage;
-    private String token;
+    private String name;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -85,7 +83,7 @@ public class HomeActivity extends BaseActivity {
         util = new Util();
         qmDatabase = QMDatabase.getInstance(HomeActivity.this);
         qmPreferences = PreferenceManager.getDefaultSharedPreferences(this);
-        token = qmPreferences.getString("TOKEN", null);
+        name = qmPreferences.getString("NAME", null);
 
         zoomOutAnimation = AnimationUtils.loadAnimation(getApplicationContext(),
                 R.anim.zoom_out);
@@ -126,8 +124,8 @@ public class HomeActivity extends BaseActivity {
         culturePassNavigation.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                token = qmPreferences.getString("TOKEN", null);
-                if (token == null)
+                name = qmPreferences.getString("NAME", null);
+                if (name == null)
                     navigation_intent = new Intent(HomeActivity.this, CulturePassActivity.class);
                 else
                     navigation_intent = new Intent(HomeActivity.this, ProfileActivity.class);
