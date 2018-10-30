@@ -27,10 +27,8 @@ import com.qatarmuseums.qatarmuseumsapp.commonpage.CommonActivity;
 import com.qatarmuseums.qatarmuseumsapp.culturepass.CulturePassActivity;
 import com.qatarmuseums.qatarmuseumsapp.education.EducationActivity;
 import com.qatarmuseums.qatarmuseumsapp.notification.NotificationActivity;
-import com.qatarmuseums.qatarmuseumsapp.objectpreview.ObjectPreviewActivity;
 import com.qatarmuseums.qatarmuseumsapp.park.ParkActivity;
 import com.qatarmuseums.qatarmuseumsapp.profile.ProfileActivity;
-import com.qatarmuseums.qatarmuseumsapp.profile.ProfileDetails;
 import com.qatarmuseums.qatarmuseumsapp.settings.SettingsActivity;
 import com.qatarmuseums.qatarmuseumsapp.tourguide.TourGuideActivity;
 import com.qatarmuseums.qatarmuseumsapp.utils.Util;
@@ -133,7 +131,7 @@ public class BaseActivity extends AppCompatActivity
     private Intent navigation_intent;
     Util util;
     private SharedPreferences qmPreferences;
-    private String token;
+    private String name;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -200,7 +198,7 @@ public class BaseActivity extends AppCompatActivity
         toggle.syncState();
         navigationView.setBackgroundColor(Color.parseColor("#CC000000"));
         qmPreferences = PreferenceManager.getDefaultSharedPreferences(this);
-        token = qmPreferences.getString("TOKEN", null);
+        name = qmPreferences.getString("NAME", null);
     }
 
     @Override
@@ -244,8 +242,8 @@ public class BaseActivity extends AppCompatActivity
                 break;
             case R.id.topbar_profile:
                 topbarProfile.startAnimation(zoomOutAnimation);
-                token = qmPreferences.getString("TOKEN", null);
-                if (token == null)
+                name = qmPreferences.getString("NAME", null);
+                if (name == null)
                     navigation_intent = new Intent(this, CulturePassActivity.class);
                 else
                     navigation_intent = new Intent(this, ProfileActivity.class);
