@@ -11,7 +11,6 @@ import com.qatarmuseums.qatarmuseumsapp.heritage.HeritageOrExhibitionDetailModel
 import com.qatarmuseums.qatarmuseumsapp.home.HomeList;
 import com.qatarmuseums.qatarmuseumsapp.museumabout.MuseumAboutModel;
 import com.qatarmuseums.qatarmuseumsapp.museumcollectiondetails.CollectionDetailsList;
-import com.qatarmuseums.qatarmuseumsapp.objectpreview.ObjectPreviewModel;
 import com.qatarmuseums.qatarmuseumsapp.park.ParkList;
 import com.qatarmuseums.qatarmuseumsapp.profile.ProfileDetails;
 import com.qatarmuseums.qatarmuseumsapp.profile.UserData;
@@ -24,7 +23,6 @@ import retrofit2.Call;
 import retrofit2.http.Body;
 import retrofit2.http.GET;
 import retrofit2.http.Header;
-import retrofit2.http.Headers;
 import retrofit2.http.POST;
 import retrofit2.http.Path;
 import retrofit2.http.Query;
@@ -103,18 +101,14 @@ public interface APIInterface {
     @GET("{language}/mobile_api/collection_by_tour_guide.json")
     Call<ArrayList<ArtifactDetails>> getArtifactList(@Path("language") String language);
 
-    @Headers("Content-Type: application/json")
-    @POST("en/mobile_api/user/token.json")
-    Call<ProfileDetails> generateToken(@Body LoginData loginData);
+    @POST("{language}/mobile_api/user/token.json")
+    Call<ProfileDetails> generateToken(@Path("language") String language, @Body LoginData loginData);
 
-    @Headers("Content-Type: application/json")
-    @POST("en/mobile_api/user/login.json")
-    Call<ProfileDetails> login(@Header("X-CSRF-Token") String token,
+    @POST("{language}/mobile_api/user/login.json")
+    Call<ProfileDetails> login(@Path("language") String language, @Header("X-CSRF-Token") String token,
                                @Body LoginData loginData);
 
-    @Headers("Content-Type: application/json")
-    @POST("en/mobile_api/user/login.json")
-    Call<UserData> logout(@Header("X-CSRF-Token") String token,
-                          @Body LoginData loginData);
+    @POST("{language}/mobile_api/user/logout.json")
+    Call<UserData> logout(@Path("language") String language, @Header("X-CSRF-Token") String token);
 
 }
