@@ -10,6 +10,7 @@
     <color name="semi_transparent_for_common_popup">#CC000000</color>
     <color name="outer_ring_color">#b2c1ca</color>
     <color name="yellow">#f2e926</color>
+    <color name="yellow_audio">#F8C246</color>
     <color name="grey">#aa989898</color>
     <color name="recycler_background">#CCCCCC</color>
     <color name="number_pad_bg">#e6e6e5</color>
@@ -32,6 +33,8 @@
     <color name="object_preview_bg">#E9EFED</color>
     <color name="object_preview_data_bg">#F5F9F8</color>
     <color name="object_preview_line_color">#b3bdc2</color>
+    <color name="divider">#1d1f30</color>
+    <color name="confirm_password_box_color">#e6e7e8</color>
 
 
 

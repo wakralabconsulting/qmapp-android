@@ -13,32 +13,33 @@ public interface TourGuideStartPageDao {
     @Query("SELECT * FROM tourguidestartpagearabic")
     TourGuideStartPageArabic getAllTourGuideStartDataArabic();
 
-    @Query("SELECT COUNT(museum_entity) FROM tourguidestartpageenglish")
+    @Query("SELECT COUNT(nid) FROM tourguidestartpageenglish")
     int getNumberOfRowsEnglish();
 
-    @Query("SELECT COUNT(museum_entity) FROM tourguidestartpagearabic")
+    @Query("SELECT COUNT(nid) FROM tourguidestartpagearabic")
     int getNumberOfRowsArabic();
 
-    @Query("SELECT COUNT(museum_entity) FROM tourguidestartpageenglish WHERE museum_entity = :mEntityFromAPI")
-    int checkEnglishIdExist(String mEntityFromAPI);
+    @Query("SELECT COUNT(nid) FROM tourguidestartpageenglish WHERE nid = :mNid")
+    int checkEnglishIdExist(String mNid);
 
-    @Query("SELECT COUNT(museum_entity) FROM tourguidestartpagearabic WHERE museum_entity = :mEntityFromAPI")
-    int checkArabicIdExist(String mEntityFromAPI);
+    @Query("SELECT COUNT(nid) FROM tourguidestartpagearabic WHERE nid = :mNid")
+    int checkArabicIdExist(String mNid);
 
-    @Query("SELECT * FROM tourguidestartpageenglish WHERE museum_entity = :mEntityFromAPI")
-    TourGuideStartPageEnglish getTourGuideStartPageDataEnglish(String mEntityFromAPI);
+    @Query("SELECT * FROM tourguidestartpageenglish WHERE nid = :mNid")
+    TourGuideStartPageEnglish getTourGuideStartPageDataEnglish(String mNid);
 
-    @Query("SELECT * FROM tourguidestartpagearabic WHERE museum_entity = :mEntityFromAPI")
-    TourGuideStartPageArabic getTourGuideStartPageDataArabic(String mEntityFromAPI);
+    @Query("SELECT * FROM tourguidestartpagearabic WHERE nid = :mNid")
+    TourGuideStartPageArabic getTourGuideStartPageDataArabic(String mNid);
 
     @Query("UPDATE tourguidestartpageenglish SET title = :museumtitleFromApi," +
-            "description = :tourguidedescriptionFromApi WHERE museum_entity=:mEntityFromApi")
-    void updateTourGuideStartDataEnglish( String museumtitleFromApi, String tourguidedescriptionFromApi,
-                                       String mEntityFromApi);
+            "museum_entity = :museumEntry, description = :tourguidedescriptionFromApi WHERE nid=:mNid")
+    void updateTourGuideStartDataEnglish(String museumtitleFromApi, String tourguidedescriptionFromApi,
+                                         String museumEntry, String mNid);
+
     @Query("UPDATE tourguidestartpagearabic SET title = :museumtitleFromApi," +
-            "description = :tourguidedescriptionFromApi WHERE museum_entity=:mEntityFromApi")
-    void updateTourGuideStartDataArabic( String museumtitleFromApi, String tourguidedescriptionFromApi,
-                                       String mEntityFromApi);
+            "museum_entity = :museumEntry, description = :tourguidedescriptionFromApi WHERE nid=:mNid")
+    void updateTourGuideStartDataArabic(String museumtitleFromApi, String tourguidedescriptionFromApi,
+                                        String museumEntry, String mNid);
 
     @Insert
     void insert(TourGuideStartPageEnglish tourGuideStartPageEnglish);

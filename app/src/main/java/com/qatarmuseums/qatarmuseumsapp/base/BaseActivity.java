@@ -1,8 +1,10 @@
 package com.qatarmuseums.qatarmuseumsapp.base;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.annotation.Nullable;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
@@ -25,8 +27,8 @@ import com.qatarmuseums.qatarmuseumsapp.commonpage.CommonActivity;
 import com.qatarmuseums.qatarmuseumsapp.culturepass.CulturePassActivity;
 import com.qatarmuseums.qatarmuseumsapp.education.EducationActivity;
 import com.qatarmuseums.qatarmuseumsapp.notification.NotificationActivity;
-import com.qatarmuseums.qatarmuseumsapp.objectpreview.ObjectPreviewActivity;
 import com.qatarmuseums.qatarmuseumsapp.park.ParkActivity;
+import com.qatarmuseums.qatarmuseumsapp.profile.ProfileActivity;
 import com.qatarmuseums.qatarmuseumsapp.settings.SettingsActivity;
 import com.qatarmuseums.qatarmuseumsapp.tourguide.TourGuideActivity;
 import com.qatarmuseums.qatarmuseumsapp.utils.Util;
@@ -128,6 +130,8 @@ public class BaseActivity extends AppCompatActivity
     Animation fadeInAnimation, fadeOutAnimation, zoomOutAnimation;
     private Intent navigation_intent;
     Util util;
+    private SharedPreferences qmPreferences;
+    private String name;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -193,6 +197,8 @@ public class BaseActivity extends AppCompatActivity
         drawer.addDrawerListener(toggle);
         toggle.syncState();
         navigationView.setBackgroundColor(Color.parseColor("#CC000000"));
+        qmPreferences = PreferenceManager.getDefaultSharedPreferences(this);
+        name = qmPreferences.getString("NAME", null);
     }
 
     @Override
@@ -236,7 +242,11 @@ public class BaseActivity extends AppCompatActivity
                 break;
             case R.id.topbar_profile:
                 topbarProfile.startAnimation(zoomOutAnimation);
-                navigation_intent = new Intent(this, CulturePassActivity.class);
+                name = qmPreferences.getString("NAME", null);
+                if (name == null)
+                    navigation_intent = new Intent(this, CulturePassActivity.class);
+                else
+                    navigation_intent = new Intent(this, ProfileActivity.class);
                 startActivity(navigation_intent);
                 closeDrawer();
                 break;

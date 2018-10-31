@@ -8,10 +8,11 @@ public class TourGuideList {
     int image;
     String tourguideId;
 
-    public TourGuideList(String name, String tourId, int image) {
+    public TourGuideList(String name, String tourId, int image, String museumId) {
         this.name = name;
         this.image = image;
         this.tourId = tourId;
+        this.museumId = museumId;
     }
 
     public TourGuideList(String name, String museumId, String imageurl) {
@@ -35,4 +36,9 @@ public class TourGuideList {
     public String getMuseumId() {
         return museumId;
     }
+
+    public String getTourId() {
+        return tourId;
+    }
+
 }

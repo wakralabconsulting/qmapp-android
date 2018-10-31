@@ -91,6 +91,10 @@ public class EducationCalendarActivity extends AppCompatActivity {
     LinearLayout progress;
     @BindView(R.id.noResultFoundTxt)
     TextView noResultFoundTxt;
+    @BindView(R.id.retry_layout)
+    LinearLayout retryLayout;
+    @BindView(R.id.retry_btn)
+    Button retryButton;
     RecyclerView.LayoutManager layoutManager;
     ArrayList<EducationEvents> educationEvents = new ArrayList<>();
     Intent intent;
@@ -138,6 +142,25 @@ public class EducationCalendarActivity extends AppCompatActivity {
         qmDatabase = QMDatabase.getInstance(EducationCalendarActivity.this);
         zoomOutAnimation = AnimationUtils.loadAnimation(getApplicationContext(),
                 R.anim.zoom_out_more);
+        retryButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                getDataOnline();
+                progressBar.setVisibility(View.VISIBLE);
+                retryLayout.setVisibility(View.GONE);
+            }
+        });
+        retryButton.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                switch (event.getAction()) {
+                    case MotionEvent.ACTION_DOWN:
+                        retryButton.startAnimation(zoomOutAnimation);
+                        break;
+                }
+                return false;
+            }
+        });
         backArrow.setOnTouchListener(new View.OnTouchListener() {
             @Override
             public boolean onTouch(View v, MotionEvent event) {
@@ -194,19 +217,7 @@ public class EducationCalendarActivity extends AppCompatActivity {
         monthNumber = (String) DateFormat.format("M", today);
         year = (String) DateFormat.format("yyyy", today);
         if (util.isNetworkAvailable(EducationCalendarActivity.this)) {
-            if (isDateSelected) {
-                eventListView.setVisibility(View.GONE);
-                progress.setVisibility(View.VISIBLE);
-                day = (String) DateFormat.format("d", selectedDate);
-                monthNumber = (String) DateFormat.format("M", selectedDate);
-                year = (String) DateFormat.format("yyyy", selectedDate);
-                getEducationCalendarDataFromApi(institutionFilter, ageGroupFilter, programmeTypeFilter, monthNumber, day, year, selectedDate);
-            } else {
-                eventListView.setVisibility(View.GONE);
-                progress.setVisibility(View.VISIBLE);
-                getEducationCalendarDataFromApi(institutionFilter, ageGroupFilter, programmeTypeFilter, monthNumber, day, year, today.getTimeInMillis());
-                isDateSelected = false;
-            }
+            getDataOnline();
         } else {
             if (isDateSelected) {
                 getEducationCalendarEventsFromDatabase(selectedDate);
@@ -237,6 +248,8 @@ public class EducationCalendarActivity extends AppCompatActivity {
                     getEducationCalendarEventsFromDatabase(calendarInstance.getTimeInMillis());
                 }
                 eventListView.setVisibility(View.GONE);
+                noResultFoundTxt.setVisibility(View.GONE);
+                retryLayout.setVisibility(View.GONE);
                 progress.setVisibility(View.VISIBLE);
             }
 
@@ -297,7 +310,22 @@ public class EducationCalendarActivity extends AppCompatActivity {
                 return false;
             }
         });
+    }
 
+    public void getDataOnline() {
+        if (isDateSelected) {
+            eventListView.setVisibility(View.GONE);
+            progress.setVisibility(View.VISIBLE);
+            day = (String) DateFormat.format("d", selectedDate);
+            monthNumber = (String) DateFormat.format("M", selectedDate);
+            year = (String) DateFormat.format("yyyy", selectedDate);
+            getEducationCalendarDataFromApi(institutionFilter, ageGroupFilter, programmeTypeFilter, monthNumber, day, year, selectedDate);
+        } else {
+            eventListView.setVisibility(View.GONE);
+            progress.setVisibility(View.VISIBLE);
+            getEducationCalendarDataFromApi(institutionFilter, ageGroupFilter, programmeTypeFilter, monthNumber, day, year, today.getTimeInMillis());
+            isDateSelected = false;
+        }
     }
 
     private void getEducationCalendarEventsFromDatabase(long timeStamp) {
@@ -324,27 +352,21 @@ public class EducationCalendarActivity extends AppCompatActivity {
                 monthNumber = (String) DateFormat.format("M", selectedDate);
                 year = (String) DateFormat.format("yyyy", selectedDate);
                 getEducationCalendarDataFromApi(institutionFilter, ageGroupFilter, programmeTypeFilter, monthNumber, day, year, selectedDate);
-                eventListView.setVisibility(View.GONE);
-                progress.setVisibility(View.VISIBLE);
             } else {
                 getEducationCalendarDataFromApi(institutionFilter, ageGroupFilter, programmeTypeFilter, monthNumber, day, year, today.getTimeInMillis());
                 isDateSelected = false;
-                eventListView.setVisibility(View.GONE);
-                progress.setVisibility(View.VISIBLE);
             }
         } else {
             if (isDateSelected) {
                 getEducationCalendarEventsFromDatabase(selectedDate);
-                eventListView.setVisibility(View.GONE);
-                progress.setVisibility(View.VISIBLE);
             } else {
                 getEducationCalendarEventsFromDatabase(today.getTimeInMillis());
                 isDateSelected = false;
-                eventListView.setVisibility(View.GONE);
-                progress.setVisibility(View.VISIBLE);
             }
         }
-
+        eventListView.setVisibility(View.GONE);
+        retryLayout.setVisibility(View.GONE);
+        progress.setVisibility(View.VISIBLE);
     }
 
     private void getEducationCalendarDataFromApi(String institute, String ageGroup, String programmeType, final String month, final String day, final String year, final long timeStamp) {
@@ -363,8 +385,7 @@ public class EducationCalendarActivity extends AppCompatActivity {
             @Override
             public void onResponse(Call<ArrayList<EducationEvents>> call, Response<ArrayList<EducationEvents>> response) {
                 if (response.isSuccessful()) {
-                    if (response.body() != null) {
-
+                    if (response.body() != null && response.body().size() > 0) {
                         educationEvents.clear();
                         progress.setVisibility(View.GONE);
                         noResultFoundTxt.setVisibility(View.GONE);
@@ -381,6 +402,7 @@ public class EducationCalendarActivity extends AppCompatActivity {
                     } else {
                         progress.setVisibility(View.GONE);
                         eventListView.setVisibility(View.GONE);
+                        retryLayout.setVisibility(View.GONE);
                         noResultFoundTxt.setVisibility(View.VISIBLE);
                     }
                 }
@@ -388,14 +410,8 @@ public class EducationCalendarActivity extends AppCompatActivity {
 
             @Override
             public void onFailure(Call<ArrayList<EducationEvents>> call, Throwable t) {
-                if (t instanceof IOException) {
-                    util.showToast(getResources().getString(R.string.check_network), getApplicationContext());
-
-                } else {
-                    // error due to mapping issues
-                }
                 eventListView.setVisibility(View.GONE);
-                noResultFoundTxt.setVisibility(View.VISIBLE);
+                retryLayout.setVisibility(View.VISIBLE);
                 progress.setVisibility(View.GONE);
             }
         });
@@ -457,7 +473,7 @@ public class EducationCalendarActivity extends AppCompatActivity {
             } else {
                 progress.setVisibility(View.GONE);
                 eventListView.setVisibility(View.GONE);
-                noResultFoundTxt.setVisibility(View.VISIBLE);
+                retryLayout.setVisibility(View.VISIBLE);
             }
         }
 
@@ -653,7 +669,7 @@ public class EducationCalendarActivity extends AppCompatActivity {
         protected Boolean doInBackground(Void... voids) {
             if (educationEvents != null) {
                 if (language.equals("en")) {
-                    Convertor converters=new Convertor();
+                    Convertor converters = new Convertor();
                     ArrayList<String> fieldval = new ArrayList<String>();
                     fieldval = educationEvents.get(position).getField();
                     ArrayList<String> startDate = new ArrayList<String>();
@@ -685,7 +701,7 @@ public class EducationCalendarActivity extends AppCompatActivity {
                             insertEventsTableEnglish(educationalCalendarEventsTableEnglish);
 
                 } else {
-                    Convertor converters=new Convertor();
+                    Convertor converters = new Convertor();
                     ArrayList<String> fieldval = new ArrayList<String>();
                     fieldval = educationEvents.get(position).getField();
                     ArrayList<String> startDate = new ArrayList<String>();
@@ -754,7 +770,7 @@ public class EducationCalendarActivity extends AppCompatActivity {
         protected Boolean doInBackground(Void... voids) {
             if (educationEvents != null) {
                 if (language.equals("en")) {
-                    Convertor converters=new Convertor();
+                    Convertor converters = new Convertor();
                     for (int i = 0; i < educationEvents.size(); i++) {
                         ArrayList<String> fieldval = new ArrayList<String>();
                         fieldval = educationEvents.get(i).getField();
@@ -788,7 +804,7 @@ public class EducationCalendarActivity extends AppCompatActivity {
 
                     }
                 } else {
-                    Convertor converters=new Convertor();
+                    Convertor converters = new Convertor();
                     for (int i = 0; i < educationEvents.size(); i++) {
                         ArrayList<String> fieldval = new ArrayList<String>();
                         fieldval = educationEvents.get(i).getField();
@@ -850,7 +866,7 @@ public class EducationCalendarActivity extends AppCompatActivity {
             ArrayList<String> fieldval = new ArrayList<String>();
             ArrayList<String> startDate = new ArrayList<String>();
             ArrayList<String> endDate = new ArrayList<String>();
-            Convertor converters=new Convertor();
+            Convertor converters = new Convertor();
             if (educationalCalendarEventsTableEnglish.size() > 0) {
                 for (int i = 0; i < educationalCalendarEventsTableEnglish.size(); i++) {
                     startDate.add(0, educationalCalendarEventsTableEnglish.get(i).getEvent_start_time());
@@ -881,11 +897,11 @@ public class EducationCalendarActivity extends AppCompatActivity {
                 }
                 educationAdapter.notifyDataSetChanged();
                 eventListView.setVisibility(View.VISIBLE);
-                noResultFoundTxt.setVisibility(View.GONE);
+                retryLayout.setVisibility(View.GONE);
             } else {
                 progress.setVisibility(View.GONE);
                 eventListView.setVisibility(View.GONE);
-                noResultFoundTxt.setVisibility(View.VISIBLE);
+                retryLayout.setVisibility(View.VISIBLE);
             }
             progress.setVisibility(View.GONE);
         }
@@ -940,7 +956,7 @@ public class EducationCalendarActivity extends AppCompatActivity {
             ArrayList<String> fieldval = new ArrayList<String>();
             ArrayList<String> startDate = new ArrayList<String>();
             ArrayList<String> endDate = new ArrayList<String>();
-            Convertor converters=new Convertor();
+            Convertor converters = new Convertor();
             if (educationalCalendarEventsTableArabic.size() > 0) {
                 for (int i = 0; i < educationalCalendarEventsTableArabic.size(); i++) {
                     startDate.add(0, educationalCalendarEventsTableArabic.get(i).getEvent_start_time());
@@ -971,11 +987,11 @@ public class EducationCalendarActivity extends AppCompatActivity {
                 }
                 educationAdapter.notifyDataSetChanged();
                 eventListView.setVisibility(View.VISIBLE);
-                noResultFoundTxt.setVisibility(View.GONE);
+                retryLayout.setVisibility(View.GONE);
             } else {
                 progress.setVisibility(View.GONE);
                 eventListView.setVisibility(View.GONE);
-                noResultFoundTxt.setVisibility(View.VISIBLE);
+                retryLayout.setVisibility(View.VISIBLE);
             }
             progress.setVisibility(View.GONE);
         }
@@ -1101,7 +1117,7 @@ public class EducationCalendarActivity extends AppCompatActivity {
             public void onClick(View view) {
                 //Do something
                 if (buttonText.equalsIgnoreCase(getResources().getString(R.string.register_now))) {
-                    new Util().showComingSoonDialog(EducationCalendarActivity.this);
+                    new Util().showComingSoonDialog(EducationCalendarActivity.this, R.string.coming_soon_content);
                     dialog.dismiss();
                 } else {
                     addToCalendar(educationEvents, position);

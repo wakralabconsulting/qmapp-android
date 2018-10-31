@@ -1,10 +1,13 @@
 package com.qatarmuseums.qatarmuseumsapp.floormap;
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
 import com.google.gson.annotations.SerializedName;
 
 import java.util.ArrayList;
 
-public class ArtifactDetails {
+public class ArtifactDetails implements Parcelable {
     @SerializedName("Title")
     private String title;
     @SerializedName("Accession_Number")
@@ -46,11 +49,79 @@ public class ArtifactDetails {
     @SerializedName("sort_id")
     private String sortId;
     @SerializedName("Artist/Creator/Author")
-    private String ArtistCreatorAuthor;
+    private String artistCreatorAuthor;
     @SerializedName("Technique_&_Materials")
-    private String TechniqueMaterials;
+    private String techniqueMaterials;
     @SerializedName("Period/Style")
-    private String PeriodStyle;
+    private String periodStyle;
+
+    protected ArtifactDetails(Parcel in) {
+        title = in.readString();
+        accessionNumber = in.readString();
+        nid = in.readString();
+        curatorialDescription = in.readString();
+        dimensions = in.readString();
+        mainTitle = in.readString();
+        objectENGSummary = in.readString();
+        objectHistory = in.readString();
+        production = in.readString();
+        productionDates = in.readString();
+        image = in.readString();
+        tourGuideId = in.readString();
+        artifactNumber = in.readString();
+        artifactPosition = in.readString();
+        audioDescriptif = in.readString();
+        images = in.createStringArrayList();
+        audioFile = in.readString();
+        floorLevel = in.readString();
+        galleryNumber = in.readString();
+        sortId = in.readString();
+        artistCreatorAuthor = in.readString();
+        techniqueMaterials = in.readString();
+        periodStyle = in.readString();
+    }
+
+    public ArtifactDetails(long nid, String title, String accessionNumber, String tourGuideId, String mainTitle,
+                           String image, String artifactPosition, String audioFile, String audioDescriptif,
+                           String curatorialDescription, ArrayList<String> images, String floorLevel, String galleryNumber,
+                           String objectHistory, String production, String productionDates, String periodStyle,
+                           String artistCreatorAuthor, String techniqueMaterials, String artifactNumber,
+                           String dimensions, String sortId) {
+        this.nid = String.valueOf(nid);
+        this.title = title;
+        this.accessionNumber = accessionNumber;
+        this.tourGuideId = tourGuideId;
+        this.mainTitle = mainTitle;
+        this.image = image;
+        this.artifactPosition = artifactPosition;
+        this.audioFile = audioFile;
+        this.audioDescriptif = audioDescriptif;
+        this.curatorialDescription = curatorialDescription;
+        this.images = images;
+        this.floorLevel = floorLevel;
+        this.galleryNumber = galleryNumber;
+        this.objectHistory = objectHistory;
+        this.production = production;
+        this.productionDates = productionDates;
+        this.periodStyle = periodStyle;
+        this.artistCreatorAuthor = artistCreatorAuthor;
+        this.techniqueMaterials = techniqueMaterials;
+        this.artifactNumber = artifactNumber;
+        this.dimensions = dimensions;
+        this.sortId = String.valueOf(sortId);
+    }
+
+    public static final Creator<ArtifactDetails> CREATOR = new Creator<ArtifactDetails>() {
+        @Override
+        public ArtifactDetails createFromParcel(Parcel in) {
+            return new ArtifactDetails(in);
+        }
+
+        @Override
+        public ArtifactDetails[] newArray(int size) {
+            return new ArtifactDetails[size];
+        }
+    };
 
     public String getTitle() {
         return title;
@@ -213,26 +284,58 @@ public class ArtifactDetails {
     }
 
     public String getArtistCreatorAuthor() {
-        return ArtistCreatorAuthor;
+        return artistCreatorAuthor;
     }
 
     public void setArtistCreatorAuthor(String artistCreatorAuthor) {
-        ArtistCreatorAuthor = artistCreatorAuthor;
+        this.artistCreatorAuthor = artistCreatorAuthor;
     }
 
     public String getTechniqueMaterials() {
-        return TechniqueMaterials;
+        return techniqueMaterials;
     }
 
     public void setTechniqueMaterials(String techniqueMaterials) {
-        TechniqueMaterials = techniqueMaterials;
+        this.techniqueMaterials = techniqueMaterials;
     }
 
     public String getPeriodStyle() {
-        return PeriodStyle;
+        return periodStyle;
     }
 
     public void setPeriodStyle(String periodStyle) {
-        PeriodStyle = periodStyle;
+        this.periodStyle = periodStyle;
+    }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeString(title);
+        dest.writeString(accessionNumber);
+        dest.writeString(nid);
+        dest.writeString(curatorialDescription);
+        dest.writeString(dimensions);
+        dest.writeString(mainTitle);
+        dest.writeString(objectENGSummary);
+        dest.writeString(objectHistory);
+        dest.writeString(production);
+        dest.writeString(productionDates);
+        dest.writeString(image);
+        dest.writeString(tourGuideId);
+        dest.writeString(artifactNumber);
+        dest.writeString(artifactPosition);
+        dest.writeString(audioDescriptif);
+        dest.writeStringList(images);
+        dest.writeString(audioFile);
+        dest.writeString(floorLevel);
+        dest.writeString(galleryNumber);
+        dest.writeString(sortId);
+        dest.writeString(artistCreatorAuthor);
+        dest.writeString(techniqueMaterials);
+        dest.writeString(periodStyle);
     }
 }

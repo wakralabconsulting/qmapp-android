@@ -53,10 +53,19 @@ public class Util {
         return result;
     }
 
-    public void showComingSoonDialog(Activity activity) {
+    public void showComingSoonDialog(Activity activity, int stringId) {
         customDialog = new CustomDialogClass(activity
                 , activity.getResources().getString(R.string.coming_soon_txt)
-                , activity.getResources().getString(R.string.coming_soon_content));
+                , activity.getResources().getString(stringId));
+        customDialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+        customDialog.show();
+
+    }
+
+    public void showNormalDialog(Activity activity, int stringId) {
+        customDialog = new CustomDialogClass(activity
+                , ""
+                , activity.getResources().getString(stringId));
         customDialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
         customDialog.show();
 
