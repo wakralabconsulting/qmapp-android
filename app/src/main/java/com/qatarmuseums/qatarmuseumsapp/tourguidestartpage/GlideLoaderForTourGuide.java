@@ -22,7 +22,7 @@ public class GlideLoaderForTourGuide implements ImageLoader {
         if (res instanceof String){
             GlideApp.with(context)
                     .load((String) res)
-                    .centerInside()
+                    .centerCrop()
                     .into(targetView);
         }
     }
