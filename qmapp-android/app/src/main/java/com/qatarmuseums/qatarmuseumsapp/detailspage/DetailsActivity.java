@@ -1281,11 +1281,13 @@ public class DetailsActivity extends AppCompatActivity implements IPullZoom {
                         timingTitle.setText(R.string.museum_timings);
                         if (museumAboutModels.get(0).getImageList().size() > 0)
                             headerImage = museumAboutModels.get(0).getImageList().get(0);
-                        GlideApp.with(DetailsActivity.this)
-                                .load(headerImage)
-                                .centerCrop()
-                                .placeholder(R.drawable.placeholder)
-                                .into(headerImageView);
+                        if (!DetailsActivity.this.isFinishing()) {
+                            GlideApp.with(DetailsActivity.this)
+                                    .load(headerImage)
+                                    .centerCrop()
+                                    .placeholder(R.drawable.placeholder)
+                                    .into(headerImageView);
+                        }
                         first_description = "";
                         if (museumAboutModels.get(0).getDescriptionList().size() > 0)
                             first_description = museumAboutModels.get(0).getDescriptionList().get(0);
