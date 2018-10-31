@@ -16,13 +16,16 @@ public class TourGuideStartPageEnglish {
     private String museum_entity;
     @ColumnInfo()
     private String description;
+    @ColumnInfo()
+    private String images;
 
     public TourGuideStartPageEnglish(String title, @NonNull String nid, String museum_entity,
-                                     String description) {
+                                     String description, String images) {
         this.title = title;
         this.nid = nid;
         this.museum_entity = museum_entity;
         this.description = description;
+        this.images = images;
     }
 
     public String getTitle() {
@@ -40,5 +43,9 @@ public class TourGuideStartPageEnglish {
     @NonNull
     public String getNid() {
         return nid;
+    }
+
+    public String getImages() {
+        return images;
     }
 }

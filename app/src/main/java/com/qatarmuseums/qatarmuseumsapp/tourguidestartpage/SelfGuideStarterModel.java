@@ -35,6 +35,10 @@ public class SelfGuideStarterModel {
         return imageList;
     }
 
+    public String getFirstImage() {
+        return imageList.get(0);
+    }
+
     public String getMuseumsEntity() {
         return museumsEntity;
     }
