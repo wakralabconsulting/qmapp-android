@@ -103,7 +103,7 @@ public class JzvdStd extends Jzvd {
         videoCurrentTime = findViewById(R.id.video_current_time);
         replayTextView = findViewById(R.id.replay_text);
         clarity = findViewById(R.id.clarity);
-        mRetryBtn = findViewById(R.id.retry_btn);
+        mRetryBtn = findViewById(R.id.retry_button);
         mRetryLayout = findViewById(R.id.retry_layout);
 
         thumbImageView.setOnClickListener(this);
@@ -329,7 +329,7 @@ public class JzvdStd extends Jzvd {
             int offsetX = clarity.getMeasuredWidth() / 3;
             int offsetY = clarity.getMeasuredHeight() / 3;
             clarityPopWindow.update(clarity, -offsetX, -offsetY, Math.round(layout.getMeasuredWidth() * 2), layout.getMeasuredHeight());
-        } else if (i == R.id.retry_btn) {
+        } else if (i == R.id.retry_button) {
             if (jzDataSource.urlsMap.isEmpty() || jzDataSource.getCurrentUrl() == null) {
                 Toast.makeText(getContext(), getResources().getString(R.string.no_url), Toast.LENGTH_SHORT).show();
                 return;

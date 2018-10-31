@@ -132,7 +132,7 @@ public class MuseumActivity extends BaseActivity implements
                     lastCompleteVisibleItemPosition = ((LinearLayoutManager) recyclerView
                             .getLayoutManager()).findLastCompletelyVisibleItemPosition();
                     firstVisibleItemPosition = ((LinearLayoutManager) recyclerView
-                            .getLayoutManager()).findFirstVisibleItemPosition();
+                            .getLayoutManager()).findFirstCompletelyVisibleItemPosition();
 
                     if (appLanguage == english) {
                         if (firstVisibleItemPosition == 0) {
@@ -168,14 +168,19 @@ public class MuseumActivity extends BaseActivity implements
             scrollBarNextIconLayout.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    recyclerviewLayoutManager.scrollToPosition(5);
+                    if (museumId.equals("63") || museumId.equals("96"))
+                        recyclerviewLayoutManager.scrollToPosition(5);
+                    else {
+                        recyclerviewLayoutManager.smoothScrollToPosition(recyclerView, null, 4);
+                    }
 
                 }
             });
             scrollBarPreviousIconLayout.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    recyclerviewLayoutManager.scrollToPosition(0);
+
+                        recyclerviewLayoutManager.smoothScrollToPosition(recyclerView, null, 0);
 
                 }
             });
@@ -184,7 +189,7 @@ public class MuseumActivity extends BaseActivity implements
 
         getSliderImagesfromAPI();
     }
-
+    
     public void setSliderImages(ArrayList<String> sliderImageList) {
         ads = new ArrayList<>();
         for (int i = 0; i < sliderImageList.size(); i++) {

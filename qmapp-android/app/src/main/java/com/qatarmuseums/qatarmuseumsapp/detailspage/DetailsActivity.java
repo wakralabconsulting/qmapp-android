@@ -17,6 +17,7 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
+import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -76,12 +77,12 @@ public class DetailsActivity extends AppCompatActivity implements IPullZoom, OnM
     private Util util;
     private Animation zoomOutAnimation;
     private PullToZoomCoordinatorLayout coordinatorLayout;
-    private FrameLayout frameLayout;
+//    private FrameLayout frameLayout;
     private View zoomView;
     ArrayList<String> imageList = new ArrayList<String>();
     private AppBarLayout appBarLayout;
     private int headerOffSetSize, appLanguage;
-    private LinearLayout secondTitleLayout, timingLayout, contactLayout;
+    private LinearLayout secondTitleLayout, timingLayout, contactLayout, retryLayout;
     private String latitude, longitude, id;
     Intent intent;
     int language;
@@ -111,6 +112,8 @@ public class DetailsActivity extends AppCompatActivity implements IPullZoom, OnM
     ProgressBar progressBar;
     ImageView imagePlaceHolder;
     JzvdStd jzvdStd;
+    FrameLayout frameLayout;
+    Button retryButton;
 
 
     @SuppressLint("ClickableViewAccessibility")
@@ -133,7 +136,8 @@ public class DetailsActivity extends AppCompatActivity implements IPullZoom, OnM
         setSupportActionBar(toolbar);
         toolbarClose = (ImageView) findViewById(R.id.toolbar_close);
         headerImageView = (ImageView) findViewById(R.id.header_img);
-
+//        frameLayout = (FrameLayout) findViewById(R.id.fragment_frame_layout);
+//        frameLayout.setVisibility(View.GONE);
         title = (TextView) findViewById(R.id.main_title);
         subTitle = (TextView) findViewById(R.id.sub_title);
         shortDescription = (TextView) findViewById(R.id.short_description);
@@ -163,41 +167,17 @@ public class DetailsActivity extends AppCompatActivity implements IPullZoom, OnM
         contactLayout = (LinearLayout) findViewById(R.id.contact_layout);
         commonContentLayout = (LinearLayout) findViewById(R.id.common_content_layout);
         noResultFoundTxt = (TextView) findViewById(R.id.noResultFoundTxt);
-
+        retryLayout = (LinearLayout) findViewById(R.id.retry_layout);
+        retryButton = (Button) findViewById(R.id.retry_btn);
         util = new Util();
         title.setText(mainTitle);
-        if (comingFrom.equals(getString(R.string.sidemenu_exhibition_text))) {
-            if (util.isNetworkAvailable(DetailsActivity.this)) {
-                getHeritageOrExhibitionDetailsFromAPI(id, language, "Exhibition_detail_Page.json");
-            } else {
-                getExhibitionAPIDataFromDatabase(id, language);
-            }
-        } else if (comingFrom.equals(getString(R.string.sidemenu_heritage_text))) {
-            if (util.isNetworkAvailable(DetailsActivity.this)) {
-                getHeritageOrExhibitionDetailsFromAPI(id, language, "heritage_detail_Page.json");
-            } else {
-                getHeritageAPIDataFromDatabase(id, language);
-            }
-
-        } else if (comingFrom.equals(getString(R.string.sidemenu_public_arts_text))) {
-            if (util.isNetworkAvailable(DetailsActivity.this))
-                getPublicArtDetailsFromAPI(id, language);
-            else
-                getCommonListAPIDataFromDatabase(id, language);
-
-        } else if (comingFrom.equals(getString(R.string.museum_about))) {
-            if (util.isNetworkAvailable(DetailsActivity.this))
-                getMuseumAboutDetailsFromAPI(id, language);
-            else
-                getMuseumAboutDetailsFromDatabase(id, language);
-        }
+        getData();
         GlideApp.with(this)
                 .load(headerImage)
                 .centerCrop()
                 .placeholder(R.drawable.placeholder)
                 .into(headerImageView);
-
-
+        
         if (isFavourite)
             favIcon.setImageResource(R.drawable.heart_fill);
         else
@@ -222,6 +202,25 @@ public class DetailsActivity extends AppCompatActivity implements IPullZoom, OnM
 
         zoomOutAnimation = AnimationUtils.loadAnimation(getApplicationContext(),
                 R.anim.zoom_out_more);
+        retryButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                getData();
+                progressBar.setVisibility(View.VISIBLE);
+                retryLayout.setVisibility(View.GONE);
+            }
+        });
+        retryButton.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                switch (event.getAction()) {
+                    case MotionEvent.ACTION_DOWN:
+                        retryButton.startAnimation(zoomOutAnimation);
+                        break;
+                }
+                return false;
+            }
+        });
         toolbarClose.setOnTouchListener(new View.OnTouchListener() {
             @Override
             public boolean onTouch(View v, MotionEvent event) {
@@ -340,6 +339,33 @@ public class DetailsActivity extends AppCompatActivity implements IPullZoom, OnM
         super.onDestroy();
     }
 
+    public void getData() {
+        if (comingFrom.equals(getString(R.string.sidemenu_exhibition_text))) {
+            if (util.isNetworkAvailable(DetailsActivity.this)) {
+                getHeritageOrExhibitionDetailsFromAPI(id, language, "Exhibition_detail_Page.json");
+            } else {
+                getExhibitionAPIDataFromDatabase(id, language);
+            }
+        } else if (comingFrom.equals(getString(R.string.sidemenu_heritage_text))) {
+            if (util.isNetworkAvailable(DetailsActivity.this)) {
+                getHeritageOrExhibitionDetailsFromAPI(id, language, "heritage_detail_Page.json");
+            } else {
+                getHeritageAPIDataFromDatabase(id, language);
+            }
+
+        } else if (comingFrom.equals(getString(R.string.sidemenu_public_arts_text))) {
+            if (util.isNetworkAvailable(DetailsActivity.this))
+                getPublicArtDetailsFromAPI(id, language);
+            else
+                getCommonListAPIDataFromDatabase(id, language);
+
+        } else if (comingFrom.equals(getString(R.string.museum_about))) {
+            if (util.isNetworkAvailable(DetailsActivity.this))
+                getMuseumAboutDetailsFromAPI(id, language);
+            else
+                getMuseumAboutDetailsFromDatabase(id, language);
+        }
+    }
 
     private void getCommonListAPIDataFromDatabase(String id, int appLanguage) {
         if (appLanguage == 1) {
@@ -437,6 +463,7 @@ public class DetailsActivity extends AppCompatActivity implements IPullZoom, OnM
         if (shortDescription != null) {
 
             commonContentLayout.setVisibility(View.VISIBLE);
+            retryLayout.setVisibility(View.GONE);
             progressBar.setVisibility(View.GONE);
             this.title.setText(mainTitle);
             if (museumAboutStatus) {
@@ -504,7 +531,10 @@ public class DetailsActivity extends AppCompatActivity implements IPullZoom, OnM
         } else {
             progressBar.setVisibility(View.GONE);
             commonContentLayout.setVisibility(View.INVISIBLE);
-            noResultFoundTxt.setVisibility(View.VISIBLE);
+            if (util.isNetworkAvailable(this))
+                noResultFoundTxt.setVisibility(View.VISIBLE);
+            else
+                retryLayout.setVisibility(View.VISIBLE);
         }
 
     }
@@ -517,6 +547,7 @@ public class DetailsActivity extends AppCompatActivity implements IPullZoom, OnM
                                                        String longitudefromApi, String openingTime, String closingtime) {
         if (shortDescription != null) {
             commonContentLayout.setVisibility(View.VISIBLE);
+            retryLayout.setVisibility(View.GONE);
             progressBar.setVisibility(View.GONE);
             this.title.setText(mainTitle);
             latitude = latitudefromApi;
@@ -562,13 +593,17 @@ public class DetailsActivity extends AppCompatActivity implements IPullZoom, OnM
         } else {
             commonContentLayout.setVisibility(View.INVISIBLE);
             progressBar.setVisibility(View.GONE);
-            noResultFoundTxt.setVisibility(View.VISIBLE);
+            if (util.isNetworkAvailable(this))
+                noResultFoundTxt.setVisibility(View.VISIBLE);
+            else
+                retryLayout.setVisibility(View.VISIBLE);
         }
     }
 
     public void getHeritageOrExhibitionDetailsFromAPI(String id, int language,
                                                       final String pageName) {
         commonContentLayout.setVisibility(View.INVISIBLE);
+        retryLayout.setVisibility(View.GONE);
         progressBar.setVisibility(View.VISIBLE);
         final String appLanguage;
         if (language == 1) {
@@ -623,7 +658,7 @@ public class DetailsActivity extends AppCompatActivity implements IPullZoom, OnM
                     }
                 } else {
                     commonContentLayout.setVisibility(View.INVISIBLE);
-                    noResultFoundTxt.setVisibility(View.VISIBLE);
+                    retryLayout.setVisibility(View.VISIBLE);
                 }
                 progressBar.setVisibility(View.GONE);
 
@@ -631,14 +666,8 @@ public class DetailsActivity extends AppCompatActivity implements IPullZoom, OnM
 
             @Override
             public void onFailure(Call<ArrayList<HeritageOrExhibitionDetailModel>> call, Throwable t) {
-                if (t instanceof IOException) {
-                    util.showToast(getResources().getString(R.string.check_network), getApplicationContext());
-
-                } else {
-                    // error due to mapping issues
-                }
                 commonContentLayout.setVisibility(View.INVISIBLE);
-                noResultFoundTxt.setVisibility(View.VISIBLE);
+                retryLayout.setVisibility(View.VISIBLE);
                 progressBar.setVisibility(View.GONE);
             }
         });
@@ -843,7 +872,7 @@ public class DetailsActivity extends AppCompatActivity implements IPullZoom, OnM
             } else {
                 progressBar.setVisibility(View.GONE);
                 commonContentLayout.setVisibility(View.INVISIBLE);
-                noResultFoundTxt.setVisibility(View.VISIBLE);
+                retryLayout.setVisibility(View.VISIBLE);
             }
         }
 
@@ -887,7 +916,7 @@ public class DetailsActivity extends AppCompatActivity implements IPullZoom, OnM
             } else {
                 progressBar.setVisibility(View.GONE);
                 commonContentLayout.setVisibility(View.INVISIBLE);
-                noResultFoundTxt.setVisibility(View.VISIBLE);
+                retryLayout.setVisibility(View.VISIBLE);
             }
         }
 
@@ -1056,7 +1085,7 @@ public class DetailsActivity extends AppCompatActivity implements IPullZoom, OnM
             } else {
                 progressBar.setVisibility(View.GONE);
                 commonContentLayout.setVisibility(View.INVISIBLE);
-                noResultFoundTxt.setVisibility(View.VISIBLE);
+                retryLayout.setVisibility(View.VISIBLE);
             }
         }
 
@@ -1097,7 +1126,7 @@ public class DetailsActivity extends AppCompatActivity implements IPullZoom, OnM
             } else {
                 progressBar.setVisibility(View.GONE);
                 commonContentLayout.setVisibility(View.INVISIBLE);
-                noResultFoundTxt.setVisibility(View.VISIBLE);
+                retryLayout.setVisibility(View.VISIBLE);
             }
 
         }
@@ -1110,6 +1139,7 @@ public class DetailsActivity extends AppCompatActivity implements IPullZoom, OnM
 
     private void getPublicArtDetailsFromAPI(String id, int appLanguage) {
         commonContentLayout.setVisibility(View.INVISIBLE);
+        retryLayout.setVisibility(View.GONE);
         progressBar.setVisibility(View.VISIBLE);
         final String language;
         if (appLanguage == 1) {
@@ -1142,21 +1172,15 @@ public class DetailsActivity extends AppCompatActivity implements IPullZoom, OnM
                     }
                 } else {
                     commonContentLayout.setVisibility(View.INVISIBLE);
-                    noResultFoundTxt.setVisibility(View.VISIBLE);
+                    retryLayout.setVisibility(View.VISIBLE);
                 }
                 progressBar.setVisibility(View.GONE);
             }
 
             @Override
             public void onFailure(Call<ArrayList<PublicArtModel>> call, Throwable t) {
-                if (t instanceof IOException) {
-                    util.showToast(getResources().getString(R.string.check_network), getApplicationContext());
-
-                } else {
-                    // error due to mapping issues
-                }
                 commonContentLayout.setVisibility(View.INVISIBLE);
-                noResultFoundTxt.setVisibility(View.VISIBLE);
+                retryLayout.setVisibility(View.VISIBLE);
                 progressBar.setVisibility(View.GONE);
             }
         });
@@ -1329,7 +1353,7 @@ public class DetailsActivity extends AppCompatActivity implements IPullZoom, OnM
             } else {
                 progressBar.setVisibility(View.GONE);
                 commonContentLayout.setVisibility(View.INVISIBLE);
-                noResultFoundTxt.setVisibility(View.VISIBLE);
+                retryLayout.setVisibility(View.VISIBLE);
             }
         }
 
@@ -1374,7 +1398,7 @@ public class DetailsActivity extends AppCompatActivity implements IPullZoom, OnM
             } else {
                 progressBar.setVisibility(View.GONE);
                 commonContentLayout.setVisibility(View.INVISIBLE);
-                noResultFoundTxt.setVisibility(View.VISIBLE);
+                retryLayout.setVisibility(View.VISIBLE);
             }
         }
 
@@ -1386,6 +1410,7 @@ public class DetailsActivity extends AppCompatActivity implements IPullZoom, OnM
 
     public void getMuseumAboutDetailsFromAPI(String id, int appLanguage) {
         commonContentLayout.setVisibility(View.INVISIBLE);
+        retryLayout.setVisibility(View.GONE);
         progressBar.setVisibility(View.VISIBLE);
         final String language;
         if (appLanguage == 1) {
@@ -1443,21 +1468,15 @@ public class DetailsActivity extends AppCompatActivity implements IPullZoom, OnM
                     }
                 } else {
                     commonContentLayout.setVisibility(View.INVISIBLE);
-                    noResultFoundTxt.setVisibility(View.VISIBLE);
+                    retryLayout.setVisibility(View.VISIBLE);
                 }
                 progressBar.setVisibility(View.GONE);
             }
 
             @Override
             public void onFailure(Call<ArrayList<MuseumAboutModel>> call, Throwable t) {
-                if (t instanceof IOException) {
-                    util.showToast(getResources().getString(R.string.check_network), getApplicationContext());
-
-                } else {
-                    // error due to mapping issues
-                }
                 commonContentLayout.setVisibility(View.INVISIBLE);
-                noResultFoundTxt.setVisibility(View.VISIBLE);
+                retryLayout.setVisibility(View.VISIBLE);
                 progressBar.setVisibility(View.GONE);
             }
         });
@@ -1722,7 +1741,7 @@ public class DetailsActivity extends AppCompatActivity implements IPullZoom, OnM
         protected void onPostExecute(MuseumAboutTableEnglish museumAboutTableEnglish) {
             if (museumAboutTableEnglish != null) {
                 commonContentLayout.setVisibility(View.VISIBLE);
-                noResultFoundTxt.setVisibility(View.GONE);
+                retryLayout.setVisibility(View.GONE);
                 headerImage = museumAboutTableEnglish.getMuseum_image();
                 GlideApp.with(DetailsActivity.this)
                         .load(headerImage)
@@ -1746,7 +1765,7 @@ public class DetailsActivity extends AppCompatActivity implements IPullZoom, OnM
 
             } else {
                 commonContentLayout.setVisibility(View.INVISIBLE);
-                noResultFoundTxt.setVisibility(View.VISIBLE);
+                retryLayout.setVisibility(View.VISIBLE);
             }
             progressBar.setVisibility(View.GONE);
         }
@@ -1772,7 +1791,7 @@ public class DetailsActivity extends AppCompatActivity implements IPullZoom, OnM
         protected void onPostExecute(MuseumAboutTableArabic museumAboutTableArabic) {
             if (museumAboutTableArabic != null) {
                 commonContentLayout.setVisibility(View.VISIBLE);
-                noResultFoundTxt.setVisibility(View.GONE);
+                retryLayout.setVisibility(View.GONE);
                 headerImage = museumAboutTableArabic.getMuseum_image();
                 GlideApp.with(DetailsActivity.this)
                         .load(headerImage)
@@ -1793,7 +1812,7 @@ public class DetailsActivity extends AppCompatActivity implements IPullZoom, OnM
                         true, null);
             } else {
                 commonContentLayout.setVisibility(View.INVISIBLE);
-                noResultFoundTxt.setVisibility(View.VISIBLE);
+                retryLayout.setVisibility(View.VISIBLE);
             }
             progressBar.setVisibility(View.GONE);
         }

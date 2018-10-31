@@ -63,7 +63,8 @@
     <string name="education_short_description">Our numerous programmes are designed for families, university students and adults.\n\nFind out what\'s on offer and register ahead to secure your place.</string>
     <string name="education_long_description">All of our education programmes provide interactive opportunities. We hope that they create lasting memories and lead to the development of creative, compassionate and engaged individuals.\n\nFor school teachers and educators, we bring custom-made workshops, conferences and trainings to suit their needs. We also focus on working with children to encourage them to explore the world around them, engage with it, and express themselves through creative activities.\n\nAll of our activities align with Qatar Supreme Educational Council Professional Standards for Teachers and National Curriculum Standards.</string>
     <string name="discover_txt">Discover</string>
-    <string name="coming_soon_content">We are working hard to bring the details at the tip of your fingers.\n\nThe floor maps and object details for this museum will be available soon.\n\nStay Tuned.</string>
+    <string name="coming_soon_content_map">We are working hard to bring the details at the tip of your fingers.\n\nThe floor maps and object details for this museum will be available soon.\n\nStay Tuned.</string>
+    <string name="coming_soon_content">We are working hard to bring the details at the tip of your fingers.\n\nStay Tuned.</string>
     <string name="coming_soon_txt">Coming Soon</string>
     <string name="alert_txt">Alert</string>
     <string name="error_content">Please! Enter the Object Number.</string>
@@ -91,7 +92,7 @@
     <string name="museum_about">Museum About</string>
     <string name="museum">Museum</string>
     <string name="museum_timings">MUSEUM TIMINGS</string>
-    <string name="no_results_text">No results found</string>
+    <string name="no_results_text">Coming Soon</string>
     <string name="explore">Explore</string>
     <string name="level">Level</string>
     <string name="alberallo">Alberallo</string>
@@ -108,7 +109,7 @@ They exemplify the external influences and internal creativity that inspired thi
     <string name="not_a_member_yet"><u>Not A Member Yet?</u></string>
     <string name="become_a_member">BECOME A MEMBER</string>
     <string name="already_a_member"><u>Already A Member?</u></string>
-    <string name="log_in">LOG IN</string>
+    <string name="log_in">Log In</string>
     <string name="unable_to_fetch_details">Unable to fetch details</string>
     <string name="no_new_notification_yet">No notifications yet.</string>
     <string name="no_events">No Events</string>
@@ -168,8 +169,8 @@ They exemplify the external influences and internal creativity that inspired thi
     <string name="families">Families</string>
     <string name="special_needs">Special Needs</string>
     <string name="production_text">Production:</string>
-    <string name="production_dates">production dates:</string>
-    <string name="period_style">period/Style:</string>
+    <string name="production_dates">Production dates:</string>
+    <string name="period_style">Period/Style:</string>
     <string name="technique_materials">Technique and materials:</string>
     <string name="dimension">Dimensions:</string>
 
@@ -182,6 +183,51 @@ They exemplify the external influences and internal creativity that inspired thi
     <string name="research">Research</string>
     <string name="workshop">Workshop</string>
     <string name="object_history">Object History</string>
+    <string name="science_tour">Science Tour</string>
+    <string name="no_location_data">No Location Data</string>
+    <string name="increase_volume">Please Increase Volume</string>
+    <string name="highlight_tour">Highlights Tour</string>
+    <string name="loading">Loading...</string>
+    <string name="oops">Oops!</string>
+    <string name="there_is_no_internet">There is no Internet connection</string>
+    <string name="please_check_your_internet">Please check your Internet connection</string>
+    <string name="try_again">Try again</string>
+
+    <!-- Strings related to login -->
+    <string name="prompt_email">Username</string>
+    <string name="prompt_password">Password</string>
+    <string name="action_sign_in_short">Sign in</string>
+    <string name="forgot_password"><u>forgot password?</u></string>
+    <string name="culture_pass_login">Culture pass login</string>
+    <string name="error_password_required">Password field is required.</string>
+    <string name="error_username_required">Username or e-mail field is required.</string>
+    <string name="error_incorrect_credentials">Sorry, unrecognized username or password.</string>
+    <string name="error_already_logged_in">Already logged in</string>
+    <string name="error_unexpected">Unexpected error</string>
+    <!-- Strings related to Profile -->
+    <string name="profile">Profile</string>
+    <string name="membership_number">Membership Number:</string>
+    <string name="view_my_favourites">View my favourites</string>
+    <string name="view_my_culture_pass_card">View my culture pass card</string>
+    <string name="e_mail_address">E-Mail Address *:</string>
+    <string name="date_of_birth">Date of Birth:</string>
+    <string name="country_of_residence">Country of Residence *:</string>
+    <string name="nationality">Nationality *:</string>
+    <string name="logout_success_message">You have been successfully logged out!</string>
+    <string name="ok">OK</string>
+    <!-- Strings related to Create Account -->
+    <string name="create_your_account">Create your account</string>
+    <string name="username">Username *</string>
+    <string name="password">Password *</string>
+    <string name="confirm_password">Confirm Password *</string>
+    <string name="tell_us_more_about_you">Tell us more about you</string>
+    <string name="select_a_value">- Select A Value -</string>
+    <string name="title">Title *</string>
+    <string name="first_name">First Name *</string>
+    <string name="last_name">Last Name *</string>
+    <string name="mobile_number">Mobile Number *</string>
+    <string name="create_account">Create account</string>
+    <string name="error_logout">Error in logging out!</string>
 
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>

@@ -8,6 +8,7 @@ import retrofit2.converter.gson.GsonConverterFactory;
 public class APIClient {
     private static Retrofit retrofit = null;
     private static String apiBaseUrl = "http://www.qm.org.qa/";
+    public static String apiBaseUrlSecure = "https://www.qm.org.qa/";
     private static OkHttpClient client;
     private static String tempApiBaseUrl = "http://moushtarayatapp.com/xmltojson/";
 

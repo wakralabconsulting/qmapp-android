@@ -43,6 +43,7 @@
     <dimen name="padding_5dp">5dp</dimen>
     <dimen name="font_size_18">18sp</dimen>
     <dimen name="font_size_16">16sp</dimen>
+    <dimen name="font_size_17">17sp</dimen>
     <dimen name="font_size_15">15sp</dimen>
     <dimen name="common_popup_close_size">50dp</dimen>
     <dimen name="select_language_text_size">25sp</dimen>
@@ -65,4 +66,5 @@
     <dimen name="font_size_28">28sp</dimen>
     <dimen name="collection_detail_underline">30dp</dimen>
     <dimen name="font_size_40">40sp</dimen>
+    <dimen name="font_size_12">12sp</dimen>
 </resources>

@@ -3,6 +3,8 @@ package com.qatarmuseums.qatarmuseumsapp.webview;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.Typeface;
+import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
@@ -16,7 +18,9 @@ import android.webkit.WebResourceError;
 import android.webkit.WebResourceRequest;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
+import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
@@ -37,6 +41,10 @@ public class WebviewActivity extends AppCompatActivity {
     WebView webView;
     @BindView(R.id.webViewCloseBtn)
     ImageView webViewCloseBtn;
+    @BindView(R.id.retry_layout)
+    LinearLayout retryLayout;
+    @BindView(R.id.retry_btn)
+    Button retryButton;
 
     private String url, toolbarTittleText;
     Typeface mTypeFace;
@@ -66,24 +74,37 @@ public class WebviewActivity extends AppCompatActivity {
             public void onPageStarted(WebView view, String url, Bitmap favicon) {
                 super.onPageStarted(view, url, favicon);
                 webViewProgressBar.setVisibility(View.VISIBLE);
+                retryLayout.setVisibility(View.GONE);
             }
 
             @Override
             public boolean shouldOverrideUrlLoading(WebView view, WebResourceRequest request) {
-                webView.loadUrl(url);
-                return true;
+                if (Uri.parse(url).getHost().equals("www.qm.org.qa")) {
+                    return false;
+                } else {
+                    webView.loadUrl(url);
+                    return true;
+                }
             }
 
             @Override
             public void onPageFinished(WebView view, String url) {
                 super.onPageFinished(view, url);
                 webViewProgressBar.setVisibility(View.GONE);
+                if (view.getCertificate() != null)
+                    webView.setVisibility(View.VISIBLE);
             }
 
             @Override
             public void onReceivedError(WebView view, WebResourceRequest request, WebResourceError error) {
                 super.onReceivedError(view, request, error);
                 webViewProgressBar.setVisibility(View.GONE);
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                    if (error.getDescription().toString().contains("net::ERR_INTERNET_DISCONNECTED")) {
+                        webView.setVisibility(View.GONE);
+                        retryLayout.setVisibility(View.VISIBLE);
+                    }
+                }
             }
         });
         webView.clearCache(true);
@@ -112,6 +133,25 @@ public class WebviewActivity extends AppCompatActivity {
         });
         zoomOutAnimation = AnimationUtils.loadAnimation(getApplicationContext(),
                 R.anim.zoom_out_more);
+        retryButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                webView.loadUrl(url);
+                webViewProgressBar.setVisibility(View.VISIBLE);
+                retryLayout.setVisibility(View.GONE);
+            }
+        });
+        retryButton.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                switch (event.getAction()) {
+                    case MotionEvent.ACTION_DOWN:
+                        retryButton.startAnimation(zoomOutAnimation);
+                        break;
+                }
+                return false;
+            }
+        });
         webViewCloseBtn.setOnTouchListener(new View.OnTouchListener() {
             @Override
             public boolean onTouch(View v, MotionEvent event) {

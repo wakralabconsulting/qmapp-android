@@ -83,6 +83,10 @@ public class CalendarActivity extends AppCompatActivity {
     TextView toolbar_title;
     @BindView(R.id.no_events_txt)
     TextView noEventsTxt;
+    @BindView(R.id.retry_layout)
+    LinearLayout retryLayout;
+    @BindView(R.id.retry_btn)
+    Button retryButton;
     @BindView(R.id.progressBarLoading)
     ProgressBar progressBar;
     @BindView(R.id.progress)
@@ -130,6 +134,24 @@ public class CalendarActivity extends AppCompatActivity {
 
         zoomOutAnimation = AnimationUtils.loadAnimation(getApplicationContext(),
                 R.anim.zoom_out_more);
+        retryButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                getCalendarEventsFromAPI(monthNumber, day, year, today.getTimeInMillis());
+                retryLayout.setVisibility(View.GONE);
+            }
+        });
+        retryButton.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                switch (event.getAction()) {
+                    case MotionEvent.ACTION_DOWN:
+                        retryButton.startAnimation(zoomOutAnimation);
+                        break;
+                }
+                return false;
+            }
+        });
         backArrow.setOnTouchListener(new View.OnTouchListener() {
             @Override
             public boolean onTouch(View v, MotionEvent event) {
@@ -280,7 +302,6 @@ public class CalendarActivity extends AppCompatActivity {
             public void onResponse(Call<ArrayList<CalendarEvents>> call, Response<ArrayList<CalendarEvents>> response) {
                 if (response.isSuccessful()) {
                     if (response.body().size() > 0) {
-
                         noEventsTxt.setVisibility(View.GONE);
                         calendarEventList.addAll(response.body());
                         removeHtmlTags(calendarEventList);
@@ -296,22 +317,14 @@ public class CalendarActivity extends AppCompatActivity {
                         noEventsTxt.setText(R.string.no_events);
                     }
                 } else {
-                    noEventsTxt.setVisibility(View.VISIBLE);
-                    noEventsTxt.setText(R.string.no_events);
+                    retryLayout.setVisibility(View.VISIBLE);
                 }
                 progress.setVisibility(View.GONE);
-
             }
 
             @Override
             public void onFailure(Call<ArrayList<CalendarEvents>> call, Throwable t) {
-                if (t instanceof IOException) {
-                    new Util().showToast(getResources().getString(R.string.check_network), getApplicationContext());
-                } else {
-                    // error due to mapping issues
-                }
-                noEventsTxt.setVisibility(View.VISIBLE);
-                noEventsTxt.setText(R.string.no_events);
+                retryLayout.setVisibility(View.VISIBLE);
                 progress.setVisibility(View.GONE);
             }
         });
@@ -476,7 +489,7 @@ public class CalendarActivity extends AppCompatActivity {
         dialogActionButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                new Util().showComingSoonDialog(CalendarActivity.this);
+                new Util().showComingSoonDialog(CalendarActivity.this, R.string.coming_soon_content);
 
             }
         });
@@ -639,8 +652,8 @@ public class CalendarActivity extends AppCompatActivity {
                 new InsertDatabaseTask(CalendarActivity.this, calendarEventsTableEnglish,
                         calendarEventsTableArabic, language, timeStamp).execute();
             } else {
-                noEventsTxt.setVisibility(View.VISIBLE);
-                noEventsTxt.setText(R.string.no_events);
+                retryLayout.setVisibility(View.VISIBLE);
+                progress.setVisibility(View.GONE);
             }
         }
 
@@ -884,10 +897,9 @@ public class CalendarActivity extends AppCompatActivity {
                 }
                 calendarAdapter.notifyDataSetChanged();
                 eventListView.setVisibility(View.VISIBLE);
-                noEventsTxt.setVisibility(View.GONE);
+                retryLayout.setVisibility(View.GONE);
             } else {
-                noEventsTxt.setVisibility(View.VISIBLE);
-                noEventsTxt.setText(R.string.no_events);
+                retryLayout.setVisibility(View.VISIBLE);
             }
             progress.setVisibility(View.GONE);
         }
@@ -948,10 +960,9 @@ public class CalendarActivity extends AppCompatActivity {
                 }
                 calendarAdapter.notifyDataSetChanged();
                 eventListView.setVisibility(View.VISIBLE);
-                noEventsTxt.setVisibility(View.GONE);
+                retryLayout.setVisibility(View.GONE);
             } else {
-                noEventsTxt.setVisibility(View.VISIBLE);
-                noEventsTxt.setText(R.string.no_events);
+                retryLayout.setVisibility(View.VISIBLE);
             }
             progress.setVisibility(View.GONE);
         }

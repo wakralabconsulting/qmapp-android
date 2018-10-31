@@ -8,6 +8,7 @@
     android:orientation="vertical">
 
     <RelativeLayout
+        android:id="@+id/floor_map_root"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:background="@color/floor_map_background">
@@ -40,132 +41,152 @@
                 android:layout_width="@dimen/padding_35"
                 android:layout_height="@dimen/padding_35"
                 android:layout_alignParentEnd="true"
-                android:src="@drawable/number_pad" />
+                android:src="@drawable/number_pad"
+                android:visibility="gone" />
 
 
         </RelativeLayout>
 
-        <RelativeLayout
-            android:id="@+id/level_picker_relative"
-            android:layout_width="80dp"
+        <LinearLayout
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_alignParentBottom="true"
-            android:layout_alignParentEnd="true">
+            android:gravity="bottom"
+            android:orientation="vertical">
+
+            <RelativeLayout
+                android:id="@+id/level_picker_relative"
+                android:layout_width="80dp"
+                android:layout_height="wrap_content"
+                android:layout_gravity="end">
+
+                <LinearLayout
+                    android:id="@+id/level_picker"
+                    android:layout_width="40dp"
+                    android:layout_height="130dp"
+                    android:layout_marginBottom="@dimen/padding_35"
+                    android:layout_marginEnd="@dimen/padding_15"
+                    android:layout_marginStart="@dimen/padding_15"
+                    android:layout_marginTop="@dimen/padding_15"
+                    android:background="@color/white"
+                    android:elevation="@dimen/padding_5"
+                    android:gravity="end"
+                    android:orientation="vertical">
+
+                    <LinearLayout
+                        android:id="@+id/level_3"
+                        android:layout_width="match_parent"
+                        android:layout_height="0dp"
+                        android:layout_weight="1"
+                        android:background="@color/floor_map_buttonbg"
+                        android:gravity="center"
+                        android:orientation="vertical">
+
+                        <TextView
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:text="@string/level"
+                            android:textAlignment="center"
+                            android:textColor="@android:color/black"
+                            android:textSize="9sp"
+                            android:textStyle="bold" />
+
+                        <TextView
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:text="3"
+                            android:textAlignment="center"
+                            android:textColor="@android:color/black"
+                            android:textSize="13sp"
+                            android:textStyle="bold" />
+
+                    </LinearLayout>
+
+                    <View
+                        android:layout_width="match_parent"
+                        android:layout_height="@dimen/pading_1"
+                        android:background="@color/floor_map_background" />
+
+
+                    <LinearLayout
+                        android:id="@+id/level_2"
+                        android:layout_width="match_parent"
+                        android:layout_height="0dp"
+                        android:layout_weight="1"
+                        android:background="@color/floor_map_buttonbg"
+                        android:gravity="center"
+                        android:orientation="vertical">
+
+                        <TextView
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:text="@string/level"
+                            android:textAlignment="center"
+                            android:textColor="@android:color/black"
+                            android:textSize="9sp"
+                            android:textStyle="bold" />
+
+                        <TextView
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:text="2"
+                            android:textAlignment="center"
+                            android:textColor="@android:color/black"
+                            android:textSize="13sp"
+                            android:textStyle="bold" />
+
+                    </LinearLayout>
+
+                    <View
+                        android:layout_width="match_parent"
+                        android:layout_height="@dimen/pading_1"
+                        android:background="@color/floor_map_background" />
+
+                    <LinearLayout
+                        android:id="@+id/level_1"
+                        android:layout_width="match_parent"
+                        android:layout_height="0dp"
+                        android:layout_weight="1"
+                        android:background="@color/floor_map_buttonbg"
+                        android:gravity="center"
+                        android:orientation="vertical">
+
+                        <TextView
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:text="@string/level"
+                            android:textAlignment="center"
+                            android:textColor="@android:color/black"
+                            android:textSize="9sp"
+                            android:textStyle="bold" />
+
+                        <TextView
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:text="1"
+                            android:textAlignment="center"
+                            android:textColor="@android:color/black"
+                            android:textSize="13sp"
+                            android:textStyle="bold" />
+
+                    </LinearLayout>
+                </LinearLayout>
+            </RelativeLayout>
 
             <LinearLayout
-                android:id="@+id/level_picker"
-                android:layout_width="40dp"
-                android:layout_height="130dp"
-                android:layout_marginBottom="@dimen/padding_35"
-                android:layout_marginEnd="@dimen/padding_15"
-                android:layout_marginStart="@dimen/padding_15"
-                android:layout_marginTop="@dimen/padding_15"
-                android:background="@color/white"
-                android:elevation="@dimen/padding_5"
-                android:gravity="end"
-                android:orientation="vertical">
+                android:id="@+id/audio_control"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:orientation="horizontal"
+                android:paddingBottom="@dimen/pading_30"
+                android:paddingEnd="@dimen/pading_15"
+                android:paddingStart="@dimen/pading_15"
+                android:visibility="visible">
 
-                <LinearLayout
-                    android:id="@+id/level_3"
-                    android:layout_width="match_parent"
-                    android:layout_height="0dp"
-                    android:layout_weight="1"
-                    android:background="@color/floor_map_buttonbg"
-                    android:gravity="center"
-                    android:orientation="vertical">
-
-                    <TextView
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:text="@string/level"
-                        android:textAlignment="center"
-                        android:textColor="@android:color/black"
-                        android:textSize="9sp"
-                        android:textStyle="bold" />
-
-                    <TextView
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:text="3"
-                        android:textAlignment="center"
-                        android:textColor="@android:color/black"
-                        android:textSize="13sp"
-                        android:textStyle="bold" />
-
-                </LinearLayout>
-
-                <View
-                    android:layout_width="match_parent"
-                    android:layout_height="@dimen/pading_1"
-                    android:background="@color/floor_map_background" />
-
-
-                <LinearLayout
-                    android:id="@+id/level_2"
-                    android:layout_width="match_parent"
-                    android:layout_height="0dp"
-                    android:layout_weight="1"
-                    android:background="@color/floor_map_buttonbg"
-                    android:gravity="center"
-                    android:orientation="vertical">
-
-                    <TextView
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:text="@string/level"
-                        android:textAlignment="center"
-                        android:textColor="@android:color/black"
-                        android:textSize="9sp"
-                        android:textStyle="bold" />
-
-                    <TextView
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:text="2"
-                        android:textAlignment="center"
-                        android:textColor="@android:color/black"
-                        android:textSize="13sp"
-                        android:textStyle="bold" />
-
-                </LinearLayout>
-
-                <View
-                    android:layout_width="match_parent"
-                    android:layout_height="@dimen/pading_1"
-                    android:background="@color/floor_map_background" />
-
-                <LinearLayout
-                    android:id="@+id/level_1"
-                    android:layout_width="match_parent"
-                    android:layout_height="0dp"
-                    android:layout_weight="1"
-                    android:background="@color/floor_map_buttonbg"
-                    android:gravity="center"
-                    android:orientation="vertical">
-
-                    <TextView
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:text="@string/level"
-                        android:textAlignment="center"
-                        android:textColor="@android:color/black"
-                        android:textSize="9sp"
-                        android:textStyle="bold" />
-
-                    <TextView
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:text="1"
-                        android:textAlignment="center"
-                        android:textColor="@android:color/black"
-                        android:textSize="13sp"
-                        android:textStyle="bold" />
-
-                </LinearLayout>
             </LinearLayout>
-        </RelativeLayout>
 
-
+        </LinearLayout>
     </RelativeLayout>
 
     <View
@@ -175,8 +196,8 @@
         android:background="@drawable/shape_gradient_top_shadow"
         app:layout_anchor="@id/bottomSheetLayout" />
     <!-- Bottom Sheet Content -->
-    <include layout="@layout/floormap_bottomsheet" />
-
+    <include
+        layout="@layout/floormap_bottomsheet" />
 
     <ProgressBar
         android:id="@+id/progress_bar_loading"
@@ -186,5 +207,60 @@
         android:layout_gravity="center"
         android:visibility="gone" />
 
+    <LinearLayout
+        android:id="@+id/retry_layout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_above="@id/bottom_toolbar"
+        android:gravity="center"
+        android:orientation="vertical"
+        android:padding="@dimen/padding_40"
+        android:visibility="gone">
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:fontFamily="@font/din_next_lt_pro_bold"
+            android:text="@string/oops"
+            android:textAlignment="center"
+            android:textColor="@android:color/black"
+            android:textSize="@dimen/font_size_28" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/pading_15"
+            android:fontFamily="@font/din_next_lt_pro_light"
+            android:text="@string/there_is_no_internet"
+            android:textAlignment="center"
+            android:textColor="@android:color/black"
+            android:textSize="@dimen/font_size_18" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:fontFamily="@font/din_next_lt_pro_light"
+            android:text="@string/please_check_your_internet"
+            android:textAlignment="center"
+            android:textColor="@android:color/black"
+            android:textSize="@dimen/font_size_18" />
+
+        <Button
+            android:id="@+id/retry_btn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_marginTop="@dimen/padding_25"
+            android:background="@drawable/round_corner_black"
+            android:fontFamily="@font/din_next_lt_pro_bold"
+            android:gravity="center"
+            android:paddingEnd="@dimen/pading_30"
+            android:paddingStart="@dimen/pading_30"
+            android:text="@string/try_again"
+            android:textAllCaps="false"
+            android:textColor="@color/white"
+            android:textSize="@dimen/settings_page_list_item_text_size" />
+
+    </LinearLayout>
 
 </android.support.design.widget.CoordinatorLayout>

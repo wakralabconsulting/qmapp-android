@@ -14,6 +14,7 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
@@ -49,7 +50,7 @@ public class ParkActivity extends AppCompatActivity implements IPullZoom {
     SharedPreferences qmPreferences;
     ProgressBar progressBar;
     RelativeLayout noResultFoundLayout;
-    LinearLayout mainLayout;
+    LinearLayout mainLayout, retryLayout;
     QMDatabase qmDatabase;
     ParkTableEnglish parkTableEnglish;
     ParkTableArabic parkTableArabic;
@@ -59,6 +60,8 @@ public class ParkActivity extends AppCompatActivity implements IPullZoom {
     private View zoomView;
     private AppBarLayout appBarLayout;
     private int headerOffSetSize;
+    Button retryButton;
+    private int appLanguage;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -70,6 +73,8 @@ public class ParkActivity extends AppCompatActivity implements IPullZoom {
         qmDatabase = QMDatabase.getInstance(ParkActivity.this);
         progressBar = (ProgressBar) findViewById(R.id.progressBarLoading);
         noResultFoundLayout = (RelativeLayout) findViewById(R.id.no_result_layout);
+        retryLayout = findViewById(R.id.retry_layout);
+        retryButton = findViewById(R.id.retry_btn);
         mainLayout = (LinearLayout) findViewById(R.id.main_layout);
         toolbarClose = (ImageView) findViewById(R.id.toolbar_close);
         headerImageView = (ImageView) findViewById(R.id.header_img);
@@ -83,7 +88,7 @@ public class ParkActivity extends AppCompatActivity implements IPullZoom {
         recyclerView.setAdapter(mAdapter);
         recyclerView.setNestedScrollingEnabled(false);
         qmPreferences = PreferenceManager.getDefaultSharedPreferences(this);
-        int appLanguage = qmPreferences.getInt("AppLanguage", 1);
+        appLanguage = qmPreferences.getInt("AppLanguage", 1);
         if (utilObject.isNetworkAvailable(this)) {
             // fetch data from api
             getParkDetailsFromAPI(appLanguage);
@@ -109,6 +114,25 @@ public class ParkActivity extends AppCompatActivity implements IPullZoom {
         });
         zoomOutAnimation = AnimationUtils.loadAnimation(getApplicationContext(),
                 R.anim.zoom_out_more);
+        retryButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                getParkDetailsFromAPI(appLanguage);
+                progressBar.setVisibility(View.VISIBLE);
+                retryLayout.setVisibility(View.GONE);
+            }
+        });
+        retryButton.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                switch (event.getAction()) {
+                    case MotionEvent.ACTION_DOWN:
+                        retryButton.startAnimation(zoomOutAnimation);
+                        break;
+                }
+                return false;
+            }
+        });
         toolbarClose.setOnTouchListener(new View.OnTouchListener() {
             @Override
             public boolean onTouch(View v, MotionEvent event) {
@@ -161,6 +185,7 @@ public class ParkActivity extends AppCompatActivity implements IPullZoom {
     }
 
     public void getParkDetailsFromAPI(int lan) {
+        progressBar.setVisibility(View.VISIBLE);
         final String language;
         if (lan == 1) {
             language = "en";
@@ -175,6 +200,7 @@ public class ParkActivity extends AppCompatActivity implements IPullZoom {
             public void onResponse(Call<ArrayList<ParkList>> call, Response<ArrayList<ParkList>> response) {
                 if (response.isSuccessful()) {
                     if (response.body() != null) {
+                        mainLayout.setVisibility(View.VISIBLE);
                         recyclerView.setVisibility(View.VISIBLE);
                         parkLists.addAll(response.body());
                         GlideApp.with(ParkActivity.this)
@@ -190,21 +216,16 @@ public class ParkActivity extends AppCompatActivity implements IPullZoom {
                     }
                 } else {
                     mainLayout.setVisibility(View.GONE);
-                    noResultFoundLayout.setVisibility(View.VISIBLE);
+                    retryLayout.setVisibility(View.VISIBLE);
                 }
                 progressBar.setVisibility(View.GONE);
             }
 
             @Override
             public void onFailure(Call<ArrayList<ParkList>> call, Throwable t) {
-                if (t instanceof IOException) {
-                    utilObject.showToast(getResources().getString(R.string.check_network), getApplicationContext());
-                } else {
-                    // due to mapping issues
-                }
                 mainLayout.setVisibility(View.GONE);
                 progressBar.setVisibility(View.GONE);
-                noResultFoundLayout.setVisibility(View.VISIBLE);
+                retryLayout.setVisibility(View.VISIBLE);
             }
         });
     }
@@ -431,7 +452,7 @@ public class ParkActivity extends AppCompatActivity implements IPullZoom {
 
         @Override
         protected void onPostExecute(List<ParkTableEnglish> parkTableEnglishes) {
-            if (parkTableEnglishes.size()>0) {
+            if (parkTableEnglishes.size() > 0) {
                 parkLists.clear();
                 for (int i = 0; i < parkTableEnglishes.size(); i++) {
                     ParkList parkObject = new ParkList(parkTableEnglishes.get(i).getMainTitle(),
@@ -446,9 +467,9 @@ public class ParkActivity extends AppCompatActivity implements IPullZoom {
 
                 mAdapter.notifyDataSetChanged();
                 progressBar.setVisibility(View.GONE);
-            }else {
+            } else {
                 progressBar.setVisibility(View.GONE);
-                noResultFoundLayout.setVisibility(View.VISIBLE);
+                retryLayout.setVisibility(View.VISIBLE);
             }
 
 
@@ -473,7 +494,7 @@ public class ParkActivity extends AppCompatActivity implements IPullZoom {
 
         @Override
         protected void onPostExecute(List<ParkTableArabic> parkTableArabics) {
-            if (parkTableArabics.size()>0) {
+            if (parkTableArabics.size() > 0) {
                 parkLists.clear();
                 for (int i = 0; i < parkTableArabics.size(); i++) {
                     ParkList parkObject = new ParkList(parkTableArabics.get(i).getMainTitle(),
@@ -488,9 +509,9 @@ public class ParkActivity extends AppCompatActivity implements IPullZoom {
 
                 mAdapter.notifyDataSetChanged();
                 progressBar.setVisibility(View.GONE);
-            }else {
+            } else {
                 progressBar.setVisibility(View.GONE);
-                noResultFoundLayout.setVisibility(View.VISIBLE);
+                retryLayout.setVisibility(View.VISIBLE);
             }
 
 
