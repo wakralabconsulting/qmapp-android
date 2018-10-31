@@ -40,12 +40,6 @@ public class TourGuideDetailsAdapter extends RecyclerView.Adapter<TourGuideDetai
     public void onBindViewHolder(@NonNull MyViewHolder holder, int position) {
         SelfGuideStarterModel tgList = tourGuideList.get(position);
         holder.name.setText(tgList.getTitle());
-//        if (tgList.getTourguideAvailable().equalsIgnoreCase("true")){
-//            holder.headphoneIcon.setVisibility(View.VISIBLE);
-//            holder.headphoneIcon.setImageResource(R.drawable.floor_map_circle);
-//        } else {
-//            holder.headphoneIcon.setVisibility(View.GONE);
-//        }
         if (comingFrom.equals(mContext.getString(R.string.tourguide_sidemenu_title))) {
             GlideApp.with(mContext)
                     .load(tgList.getFirstImage())
