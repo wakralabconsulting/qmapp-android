@@ -29,6 +29,8 @@ public class MuseumAboutModel {
     private String subTitle;
     @SerializedName("opening_time")
     private String timingInfo;
+    @SerializedName("multimedia_video")
+    private ArrayList<String> videoInfo;
 
     public MuseumAboutModel() {
     }
@@ -37,7 +39,7 @@ public class MuseumAboutModel {
                             ArrayList<String> descriptionList, ArrayList<String> imageList,
                             String contactNumber, String contactEmail, String longitude,
                             String latitude, String tourGuideAvailability, String subTitle,
-                            String timingInfo) {
+                            String timingInfo,ArrayList<String> videoInfo) {
         this.name = name;
         this.museumId = museumId;
         this.tourGuideAvailable = tourGuideAvailable;
@@ -50,6 +52,7 @@ public class MuseumAboutModel {
         this.tourGuideAvailability = tourGuideAvailability;
         this.subTitle = subTitle;
         this.timingInfo = timingInfo;
+        this.videoInfo=videoInfo;
     }
 
 
@@ -99,6 +102,10 @@ public class MuseumAboutModel {
 
     public String getTimingInfo() {
         return timingInfo;
+    }
+
+    public ArrayList<String> getVideoInfo() {
+        return videoInfo;
     }
 }
 

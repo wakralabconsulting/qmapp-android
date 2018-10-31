@@ -1,8 +1,8 @@
 package com.qatarmuseums.qatarmuseumsapp.detailspage;
 
 import android.content.Intent;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.MotionEvent;
 import android.view.View;
@@ -26,7 +26,9 @@ public class LocationActivity extends AppCompatActivity implements OnMapReadyCal
     Animation zoomOutAnimation;
     SupportMapFragment mapFragment;
     private double latitude, longitude;
+    GoogleMap map;
     Intent intent;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -34,8 +36,8 @@ public class LocationActivity extends AppCompatActivity implements OnMapReadyCal
         toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         intent = getIntent();
-        latitude=Double.parseDouble(intent.getStringExtra("Latitude"));
-        longitude=Double.parseDouble(intent.getStringExtra("Longitude"));
+        latitude = Double.parseDouble(intent.getStringExtra("Latitude"));
+        longitude = Double.parseDouble(intent.getStringExtra("Longitude"));
         backBtn = findViewById(R.id.back_btn);
         mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map);
@@ -61,6 +63,7 @@ public class LocationActivity extends AppCompatActivity implements OnMapReadyCal
                 return false;
             }
         });
+
     }
 
     @Override
@@ -72,8 +75,6 @@ public class LocationActivity extends AppCompatActivity implements OnMapReadyCal
                 .position(new LatLng(latitude, longitude))
                 .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED)));
         googleMap.animateCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(latitude, longitude), 10));
-
-
-
+        map = googleMap;
     }
 }

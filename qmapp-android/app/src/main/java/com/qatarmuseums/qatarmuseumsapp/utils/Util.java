@@ -9,14 +9,15 @@ import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
+import android.net.Uri;
 import android.os.Build;
 import android.util.DisplayMetrics;
 import android.view.View;
 import android.widget.ImageView;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import com.qatarmuseums.qatarmuseumsapp.R;
+import com.qatarmuseums.qatarmuseumsapp.home.GlideApp;
 
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -93,6 +94,7 @@ public class Util {
             return false;
         }
 
+
     }
 
     public void setLocale(Context context, int language) {
@@ -122,6 +124,32 @@ public class Util {
         s = s.replaceAll("&amp;", "and");
         s = s.replaceAll("&nbsp;", " ");
         return Jsoup.clean(s, "", Whitelist.none(), new Document.OutputSettings().prettyPrint(false));
+    }
+
+    public static void setupItem(final View view, final LibraryObject libraryObject, Context mContext) {
+        final ImageView img = (ImageView) view.findViewById(R.id.img_item);
+        GlideApp.with(mContext)
+                .load(libraryObject.getRes())
+                .placeholder(R.drawable.placeholder)
+                .into(img);
+    }
+
+    public static class LibraryObject {
+
+        private String mRes;
+
+        public LibraryObject(final String res) {
+            mRes = res;
+        }
+
+
+        public String getRes() {
+            return mRes;
+        }
+
+        public void setRes(final String res) {
+            mRes = res;
+        }
     }
 
 }
