@@ -4,6 +4,7 @@ import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.Typeface;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
@@ -16,6 +17,7 @@ import android.view.animation.AnimationUtils;
 import android.webkit.WebChromeClient;
 import android.webkit.WebResourceError;
 import android.webkit.WebResourceRequest;
+import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import android.widget.Button;
@@ -25,6 +27,11 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.qatarmuseums.qatarmuseumsapp.R;
+
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
+
+import java.io.IOException;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -61,10 +68,44 @@ public class WebviewActivity extends AppCompatActivity {
             finish();
         }
 //        toolbarTitle.setText(getString(R.string.web_view_title));
-        setUpWebView();
-        webView.loadUrl(url);
+//        setUpWebView();
+//        webView.loadUrl(url);
+        new MyAsynTask().execute();
         setUpCloseButtonClickListener();
 
+    }
+
+    private class MyAsynTask extends AsyncTask<Void, Void, Document> {
+        @Override
+        protected Document doInBackground(Void... voids) {
+
+            Document document = null;
+            try {
+                document = Jsoup.connect(url).get();
+                document.getElementsByClass("region region-two-33-66-first").remove();
+                document.getElementsByClass("site-header").remove();
+                document.getElementsByClass("black").remove();
+
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            return document;
+        }
+
+        @Override
+        protected void onPostExecute(Document document) {
+            super.onPostExecute(document);
+            webView.loadDataWithBaseURL(url, document.toString(), "text/html", "utf-8", "");
+            webView.getSettings().setCacheMode(WebSettings.LOAD_CACHE_ELSE_NETWORK);
+
+            webView.setWebViewClient(new WebViewClient() {
+                @Override
+                public boolean shouldOverrideUrlLoading(WebView view, WebResourceRequest request) {
+                    view.loadUrl(url);
+                    return super.shouldOverrideUrlLoading(view, request);
+                }
+            });
+        }
     }
 
     public void setUpWebView() {

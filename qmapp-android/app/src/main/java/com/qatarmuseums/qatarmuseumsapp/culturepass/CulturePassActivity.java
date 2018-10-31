@@ -36,6 +36,7 @@ import com.qatarmuseums.qatarmuseumsapp.createaccount.CreateAccountActivity;
 import com.qatarmuseums.qatarmuseumsapp.profile.ProfileActivity;
 import com.qatarmuseums.qatarmuseumsapp.profile.ProfileDetails;
 import com.qatarmuseums.qatarmuseumsapp.utils.Util;
+import com.qatarmuseums.qatarmuseumsapp.webview.WebviewActivity;
 
 import okhttp3.OkHttpClient;
 import okhttp3.logging.HttpLoggingInterceptor;
@@ -113,7 +114,10 @@ public class CulturePassActivity extends AppCompatActivity {
         becomeMember.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent navigationIntent = new Intent(CulturePassActivity.this, CreateAccountActivity.class);
+                // Temporary
+//                 navigationIntent = new Intent(CulturePassActivity.this, CreateAccountActivity.class);
+                navigationIntent = new Intent(CulturePassActivity.this, WebviewActivity.class);
+                navigationIntent.putExtra("url", "http://www.qm.org.qa/en/user/register#user-register-form");
                 startActivity(navigationIntent);
             }
         });
