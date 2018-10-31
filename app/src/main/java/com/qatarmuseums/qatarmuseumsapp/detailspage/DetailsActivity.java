@@ -1,6 +1,7 @@
 package com.qatarmuseums.qatarmuseumsapp.detailspage;
 
 import android.annotation.SuppressLint;
+import android.content.ComponentName;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.net.Uri;
@@ -11,6 +12,7 @@ import android.support.design.widget.AppBarLayout;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.animation.Animation;
@@ -21,6 +23,15 @@ import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
+import com.google.android.gms.maps.CameraUpdateFactory;
+import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.MapView;
+import com.google.android.gms.maps.OnMapReadyCallback;
+import com.google.android.gms.maps.UiSettings;
+import com.google.android.gms.maps.model.BitmapDescriptorFactory;
+import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.MapStyleOptions;
+import com.google.android.gms.maps.model.MarkerOptions;
 import com.qatarmuseums.qatarmuseumsapp.QMDatabase;
 import com.qatarmuseums.qatarmuseumsapp.R;
 import com.qatarmuseums.qatarmuseumsapp.apicall.APIClient;
@@ -47,11 +58,13 @@ import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.List;
 
+import cn.jzvd.Jzvd;
+import cn.jzvd.JzvdStd;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
-public class DetailsActivity extends AppCompatActivity implements IPullZoom {
+public class DetailsActivity extends AppCompatActivity implements IPullZoom, OnMapReadyCallback {
 
     ImageView headerImageView, toolbarClose, favIcon, shareIcon;
     String headerImage;
@@ -59,11 +72,13 @@ public class DetailsActivity extends AppCompatActivity implements IPullZoom {
     boolean isFavourite;
     Toolbar toolbar;
     TextView title, subTitle, shortDescription, longDescription, secondTitle, secondTitleDescription,
-            timingTitle, timingDetails, locationDetails, mapDetails, contactDetails;
+            timingTitle, timingDetails, locationDetails, contactDetails;
     private Util util;
     private Animation zoomOutAnimation;
     private PullToZoomCoordinatorLayout coordinatorLayout;
+    private FrameLayout frameLayout;
     private View zoomView;
+    ArrayList<String> imageList = new ArrayList<String>();
     private AppBarLayout appBarLayout;
     private int headerOffSetSize, appLanguage;
     private LinearLayout secondTitleLayout, timingLayout, contactLayout;
@@ -78,7 +93,6 @@ public class DetailsActivity extends AppCompatActivity implements IPullZoom {
     int publicArtsTableRowCount, heritageTableRowCount,
             exhibitionRowCount, museumAboutRowCount;
     SharedPreferences qmPreferences;
-    ProgressBar progressBar;
     LinearLayout commonContentLayout;
     TextView noResultFoundTxt;
     ArrayList<PublicArtModel> publicArtModel = new ArrayList<>();
@@ -87,13 +101,24 @@ public class DetailsActivity extends AppCompatActivity implements IPullZoom {
     boolean fromMuseumAbout = false;
     String first_description;
     String long_description;
-    FrameLayout frameLayout;
+    int imageItemPosition;
+    MapView mapDetails;
+    private static final String MAP_VIEW_BUNDLE_KEY = "MapViewBundleKey";
+    private GoogleMap gmap, gvalue;
+    LinearLayout mapView;
+    ImageView mapImageView, direction;
+    int iconView = 0;
+    ProgressBar progressBar;
+    ImageView imagePlaceHolder;
+    JzvdStd jzvdStd;
+
 
     @SuppressLint("ClickableViewAccessibility")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_details);
+
         qmPreferences = PreferenceManager.getDefaultSharedPreferences(this);
         language = qmPreferences.getInt("AppLanguage", 1);
         progressBar = (ProgressBar) findViewById(R.id.progressBarLoading);
@@ -108,8 +133,7 @@ public class DetailsActivity extends AppCompatActivity implements IPullZoom {
         setSupportActionBar(toolbar);
         toolbarClose = (ImageView) findViewById(R.id.toolbar_close);
         headerImageView = (ImageView) findViewById(R.id.header_img);
-        frameLayout=(FrameLayout)findViewById(R.id.fragment_frame_layout);
-        frameLayout.setVisibility(View.GONE);
+
         title = (TextView) findViewById(R.id.main_title);
         subTitle = (TextView) findViewById(R.id.sub_title);
         shortDescription = (TextView) findViewById(R.id.short_description);
@@ -119,7 +143,18 @@ public class DetailsActivity extends AppCompatActivity implements IPullZoom {
         timingTitle = (TextView) findViewById(R.id.timing_title);
         timingDetails = (TextView) findViewById(R.id.timing_info);
         locationDetails = (TextView) findViewById(R.id.location_info);
-        mapDetails = (TextView) findViewById(R.id.map_info);
+        mapImageView = findViewById(R.id.map_view);
+        direction = findViewById(R.id.direction);
+        imagePlaceHolder = (ImageView) findViewById(R.id.video_place_holder);
+        jzvdStd = (JzvdStd) findViewById(R.id.videoplayer);
+        mapView = (LinearLayout) findViewById(R.id.map_layout);
+        mapDetails = (MapView) findViewById(R.id.map_info);
+        Bundle mapViewBundle = null;
+        if (savedInstanceState != null) {
+            mapViewBundle = savedInstanceState.getBundle(MAP_VIEW_BUNDLE_KEY);
+        }
+        mapDetails.onCreate(mapViewBundle);
+        mapDetails.getMapAsync(this);
         contactDetails = (TextView) findViewById(R.id.contact_info);
         favIcon = (ImageView) findViewById(R.id.favourite);
         shareIcon = (ImageView) findViewById(R.id.share);
@@ -128,6 +163,7 @@ public class DetailsActivity extends AppCompatActivity implements IPullZoom {
         contactLayout = (LinearLayout) findViewById(R.id.contact_layout);
         commonContentLayout = (LinearLayout) findViewById(R.id.common_content_layout);
         noResultFoundTxt = (TextView) findViewById(R.id.noResultFoundTxt);
+
         util = new Util();
         title.setText(mainTitle);
         if (comingFrom.equals(getString(R.string.sidemenu_exhibition_text))) {
@@ -162,19 +198,6 @@ public class DetailsActivity extends AppCompatActivity implements IPullZoom {
                 .into(headerImageView);
 
 
-        mapDetails.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (latitude != null) {
-                    Intent intent = new Intent(DetailsActivity.this, LocationActivity.class);
-                    intent.putExtra("Latitude",latitude);
-                    intent.putExtra("Longitude",longitude);
-                    startActivity(intent);
-                } else {
-                    util.showLocationAlertDialog(DetailsActivity.this);
-                }
-            }
-        });
         if (isFavourite)
             favIcon.setImageResource(R.drawable.heart_fill);
         else
@@ -232,7 +255,91 @@ public class DetailsActivity extends AppCompatActivity implements IPullZoom {
                 return false;
             }
         });
+
+        mapImageView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (iconView == 0) {
+                    iconView = 1;
+                    mapImageView.setImageResource(R.drawable.ic_map);
+                    gmap.setMapType(GoogleMap.MAP_TYPE_HYBRID);
+                    gmap.setMapStyle(MapStyleOptions.loadRawResourceStyle(DetailsActivity.this, R.raw.map_style));
+
+                    gmap.addMarker(new MarkerOptions()
+                            .position(new LatLng(Double.parseDouble(latitude), Double.parseDouble(longitude)))
+                            .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED)));
+                    gmap.animateCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(Double.parseDouble(latitude), Double.parseDouble(longitude)), 10));
+                } else {
+                    iconView = 0;
+                    mapImageView.setImageResource(R.drawable.ic_satellite);
+                    gmap.setMapType(GoogleMap.MAP_TYPE_NORMAL);
+                    gmap.setMapStyle(MapStyleOptions.loadRawResourceStyle(DetailsActivity.this, R.raw.map_style));
+
+                    gmap.addMarker(new MarkerOptions()
+                            .position(new LatLng(Double.parseDouble(latitude), Double.parseDouble(longitude)))
+                            .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED)));
+                    gmap.animateCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(Double.parseDouble(latitude), Double.parseDouble(longitude)), 10));
+                }
+            }
+        });
+
+        direction.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(android.content.Intent.ACTION_VIEW,
+                        Uri.parse("http://maps.google.com/maps?daddr=9.9917,76.3488&basemap=satellite"));
+                Log.d("googleurl", Uri.parse("http://maps.google.com/maps?daddr=9.9917,76.3488&basemap=satellite").toString());
+                if (intent.resolveActivity(getPackageManager()) != null) {
+                    startActivity(intent);
+                }
+            }
+        });
+
     }
+
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        Bundle mapViewBundle = outState.getBundle(MAP_VIEW_BUNDLE_KEY);
+        if (mapViewBundle == null) {
+            mapViewBundle = new Bundle();
+            outState.putBundle(MAP_VIEW_BUNDLE_KEY, mapViewBundle);
+        }
+
+        mapDetails.onSaveInstanceState(mapViewBundle);
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        mapDetails.onResume();
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        mapDetails.onStart();
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        mapDetails.onStop();
+    }
+
+    @Override
+    protected void onPause() {
+        mapDetails.onPause();
+        Jzvd.releaseAllVideos();
+        super.onPause();
+    }
+
+    @Override
+    protected void onDestroy() {
+        mapDetails.onDestroy();
+        super.onDestroy();
+    }
+
 
     private void getCommonListAPIDataFromDatabase(String id, int appLanguage) {
         if (appLanguage == 1) {
@@ -279,6 +386,7 @@ public class DetailsActivity extends AppCompatActivity implements IPullZoom {
     }
 
     private void initViews() {
+        frameLayout = (FrameLayout) findViewById(R.id.fragment_frame);
         coordinatorLayout = (PullToZoomCoordinatorLayout) findViewById(R.id.main_content);
         zoomView = findViewById(R.id.header_img);
         appBarLayout = (AppBarLayout) findViewById(R.id.app_bar);
@@ -295,6 +403,14 @@ public class DetailsActivity extends AppCompatActivity implements IPullZoom {
             @Override
             public void onClick(View view) {
 
+                Bundle bundle = new Bundle();
+                bundle.putStringArrayList("imageList", imageList);
+                HorizontalLayoutFragment fragment = new HorizontalLayoutFragment();
+                fragment.setArguments(bundle);
+                FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+                transaction.addToBackStack(null);
+                transaction.replace(R.id.fragment_frame, fragment);
+                transaction.commit();
             }
         });
     }
@@ -317,7 +433,7 @@ public class DetailsActivity extends AppCompatActivity implements IPullZoom {
     public void loadData(String subTitle, String shortDescription, String longDescription,
                          String secondTitle, String secondTitleDescription, String openingTime,
                          String closingTime, String locationInfo, String contactInfo, String latitudefromApi,
-                         String longitudefromApi, boolean museumAboutStatus) {
+                         String longitudefromApi, boolean museumAboutStatus, String videoFile) {
         if (shortDescription != null) {
 
             commonContentLayout.setVisibility(View.VISIBLE);
@@ -329,6 +445,28 @@ public class DetailsActivity extends AppCompatActivity implements IPullZoom {
             } else {
                 latitude = intent.getStringExtra("LATITUDE");
                 longitude = intent.getStringExtra("LONGITUDE");
+            }
+            gmap = gvalue;
+            gmap.setMinZoomPreference(12);
+            LatLng ny = new LatLng(Double.valueOf(latitude), Double.valueOf(longitude));
+            UiSettings uiSettings = gmap.getUiSettings();
+            uiSettings.setMyLocationButtonEnabled(true);
+            MarkerOptions markerOptions = new MarkerOptions();
+            markerOptions.position(ny);
+            gmap.addMarker(markerOptions);
+            gmap.moveCamera(CameraUpdateFactory.newLatLng(ny));
+            if (videoFile != null) {
+
+                String videoPath = videoFile;
+                Uri uri = Uri.parse(videoPath);
+                jzvdStd.setUp(videoFile, "", Jzvd.SCREEN_WINDOW_NORMAL);
+                jzvdStd.setVisibility(View.VISIBLE);
+                imagePlaceHolder.setVisibility(View.GONE);
+
+            } else {
+                imagePlaceHolder.setVisibility(View.VISIBLE);
+                jzvdStd.setVisibility(View.GONE);
+                imagePlaceHolder.setImageResource(R.drawable.placeholder_video);
             }
             if (subTitle != null) {
                 this.subTitle.setVisibility(View.VISIBLE);
@@ -370,6 +508,7 @@ public class DetailsActivity extends AppCompatActivity implements IPullZoom {
         }
 
     }
+
 
     public void loadDataForHeritageOrExhibitionDetails(String subTitle, String
             shortDescription, String longDescription,
@@ -518,6 +657,18 @@ public class DetailsActivity extends AppCompatActivity implements IPullZoom {
             models.get(i).setLongDescription(util.html2string(models.get(i).getLongDescription()));
         }
     }
+
+    public void getItemPosition(int value) {
+        int pos = value;
+    }
+
+    @Override
+    public void onMapReady(GoogleMap googleMap) {
+        gvalue = googleMap;
+        googleMap.getUiSettings().setMapToolbarEnabled(false);
+
+    }
+
 
     public class ExhibitionDetailRowCount extends AsyncTask<Void, Void, Integer> {
 
@@ -983,7 +1134,7 @@ public class DetailsActivity extends AppCompatActivity implements IPullZoom {
                                 publicArtModel.get(0).getShortDescription(),
                                 publicArtModel.get(0).getLongDescription(),
                                 null, null, null, null,
-                                null, null, latitude, longitude, fromMuseumAbout);
+                                null, null, latitude, longitude, fromMuseumAbout, null);
                         new PublicArtsRowCount(DetailsActivity.this, language).execute();
                     } else {
                         commonContentLayout.setVisibility(View.INVISIBLE);
@@ -1172,7 +1323,7 @@ public class DetailsActivity extends AppCompatActivity implements IPullZoom {
                             null, null, null,
                             null, null, null,
                             publicArtsTableEnglish.get(i).getLatitude(),
-                            publicArtsTableEnglish.get(i).getLongitude(), fromMuseumAbout);
+                            publicArtsTableEnglish.get(i).getLongitude(), fromMuseumAbout, null);
                 }
                 progressBar.setVisibility(View.GONE);
             } else {
@@ -1217,7 +1368,7 @@ public class DetailsActivity extends AppCompatActivity implements IPullZoom {
                             null, null, null,
                             null, null, null,
                             publicArtsTableArabic.get(i).getLatitude(),
-                            publicArtsTableArabic.get(i).getLongitude(), fromMuseumAbout);
+                            publicArtsTableArabic.get(i).getLongitude(), fromMuseumAbout, null);
                 }
                 progressBar.setVisibility(View.GONE);
             } else {
@@ -1255,6 +1406,9 @@ public class DetailsActivity extends AppCompatActivity implements IPullZoom {
                         timingTitle.setText(R.string.museum_timings);
                         if (museumAboutModels.get(0).getImageList().size() > 0)
                             headerImage = museumAboutModels.get(0).getImageList().get(0);
+                        for (int i = 0; i < museumAboutModels.get(0).getImageList().size(); i++) {
+                            imageList.add(i, museumAboutModels.get(0).getImageList().get(i));
+                        }
                         GlideApp.with(DetailsActivity.this)
                                 .load(headerImage)
                                 .centerCrop()
@@ -1271,12 +1425,16 @@ public class DetailsActivity extends AppCompatActivity implements IPullZoom {
                         }
 
                         fromMuseumAbout = true;
+                        String file = museumAboutModels.get(0).getVideoInfo().get(0);
                         loadData(null, first_description,
                                 null,
                                 museumAboutModels.get(0).getSubTitle(), long_description,
                                 museumAboutModels.get(0).getTimingInfo(), "",
-                                null, museumAboutModels.get(0).getContactEmail(), museumAboutModels.get(0).getLatitude(), museumAboutModels.get(0).getLongitude(),
-                                fromMuseumAbout);
+                                null,
+                                museumAboutModels.get(0).getContactEmail(),
+                                museumAboutModels.get(0).getLatitude(),
+                                museumAboutModels.get(0).getLongitude(),
+                                fromMuseumAbout, file);
                         new MuseumAboutRowCount(DetailsActivity.this, language).execute();
 
                     } else {
@@ -1584,7 +1742,7 @@ public class DetailsActivity extends AppCompatActivity implements IPullZoom {
                         null, museumAboutTableEnglish.getMuseum_contact_email(),
                         museumAboutTableEnglish.getMuseum_lattitude(),
                         museumAboutTableEnglish.getMuseum_longitude(),
-                        true);
+                        true, null);
 
             } else {
                 commonContentLayout.setVisibility(View.INVISIBLE);
@@ -1632,12 +1790,29 @@ public class DetailsActivity extends AppCompatActivity implements IPullZoom {
                         null, museumAboutTableArabic.getMuseum_contact_email(),
                         museumAboutTableArabic.getMuseum_lattitude(),
                         museumAboutTableArabic.getMuseum_longitude(),
-                        true);
+                        true, null);
             } else {
                 commonContentLayout.setVisibility(View.INVISIBLE);
                 noResultFoundTxt.setVisibility(View.VISIBLE);
             }
             progressBar.setVisibility(View.GONE);
         }
+    }
+
+    public void imageValue(int value) {
+        int pos = value;
+        Log.i("TAG", "This activity was clicked: " + pos);
+        onBackPressed();
+    }
+
+    @Override
+    public void onBackPressed() {
+//        if (youTubePlayerView.isFullScreen())
+//            youTubePlayerView.exitFullScreen();
+//        else
+        if (Jzvd.backPress()) {
+            return;
+        }
+        super.onBackPressed();
     }
 }
