@@ -1,12 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
-<com.qatarmuseums.qatarmuseumsapp.utils.PullToZoomCoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/main_content"
+    android:id="@+id/fragment_frame"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:fitsSystemWindows="true"
     tools:context="com.qatarmuseums.qatarmuseumsapp.detailspage.DetailsActivity">
+
+    <com.qatarmuseums.qatarmuseumsapp.utils.PullToZoomCoordinatorLayout
+        android:id="@+id/main_content"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
 
     <android.support.design.widget.AppBarLayout
         android:id="@+id/app_bar"
@@ -52,5 +57,6 @@
     </android.support.design.widget.AppBarLayout>
 
     <include layout="@layout/dining_details" />
+    </com.qatarmuseums.qatarmuseumsapp.utils.PullToZoomCoordinatorLayout>
 
-</com.qatarmuseums.qatarmuseumsapp.utils.PullToZoomCoordinatorLayout>
+</FrameLayout>
