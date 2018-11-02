@@ -1,5 +1,6 @@
 package com.qatarmuseums.qatarmuseumsapp.notification;
 
+import android.content.BroadcastReceiver;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.DefaultItemAnimator;
@@ -27,6 +28,7 @@ public class NotificationActivity extends AppCompatActivity {
     private View backArrow;
     private Animation zoomOutAnimation;
     private TextView emptyText;
+    private BroadcastReceiver mRegistrationBroadcastReceiver;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -63,6 +65,7 @@ public class NotificationActivity extends AppCompatActivity {
         });
 
         emptyText.setVisibility(View.VISIBLE);
+
 //        prepareNotificationData();
     }
 
