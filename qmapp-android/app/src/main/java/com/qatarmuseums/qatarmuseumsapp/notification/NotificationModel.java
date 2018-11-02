@@ -9,8 +9,8 @@ public class NotificationModel {
 
     }
 
-    public NotificationModel(String id, String title) {
-        this.id = id;
+    public NotificationModel( String title) {
+
         this.title = title;
     }
 

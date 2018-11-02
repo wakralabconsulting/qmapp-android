@@ -1,15 +1,18 @@
 package com.qatarmuseums.qatarmuseumsapp.base;
 
+import android.arch.lifecycle.ViewModelProviders;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.graphics.Color;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.annotation.Nullable;
 import android.support.design.widget.NavigationView;
+import android.support.v4.app.FragmentActivity;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
@@ -29,18 +32,25 @@ import android.widget.Toast;
 
 import com.google.firebase.messaging.FirebaseMessaging;
 import com.qatarmuseums.qatarmuseumsapp.Config;
+import com.qatarmuseums.qatarmuseumsapp.QMDatabase;
 import com.qatarmuseums.qatarmuseumsapp.calendar.CalendarActivity;
 import com.qatarmuseums.qatarmuseumsapp.R;
 import com.qatarmuseums.qatarmuseumsapp.commonpage.CommonActivity;
 import com.qatarmuseums.qatarmuseumsapp.culturepass.CulturePassActivity;
 import com.qatarmuseums.qatarmuseumsapp.education.EducationActivity;
+import com.qatarmuseums.qatarmuseumsapp.home.HomeActivity;
 import com.qatarmuseums.qatarmuseumsapp.notification.NotificationActivity;
+import com.qatarmuseums.qatarmuseumsapp.notification.NotificationTableArabic;
+import com.qatarmuseums.qatarmuseumsapp.notification.NotificationTableEnglish;
+import com.qatarmuseums.qatarmuseumsapp.notification.NotificationViewModel;
 import com.qatarmuseums.qatarmuseumsapp.park.ParkActivity;
 import com.qatarmuseums.qatarmuseumsapp.profile.ProfileActivity;
 import com.qatarmuseums.qatarmuseumsapp.settings.SettingsActivity;
 import com.qatarmuseums.qatarmuseumsapp.tourguide.TourGuideActivity;
 import com.qatarmuseums.qatarmuseumsapp.utils.Util;
 import com.qatarmuseums.qatarmuseumsapp.webview.WebviewActivity;
+
+import java.lang.ref.WeakReference;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -145,6 +155,13 @@ public class BaseActivity extends AppCompatActivity
     private SharedPreferences.Editor editor;
     private int badgeCount;
     private BroadcastReceiver mRegistrationBroadcastReceiver;
+    private NotificationViewModel notificationViewModel;
+    private String notificationMessage;
+    private QMDatabase qmDatabase;
+    NotificationTableEnglish notificationTableEnglish;
+    NotificationTableArabic notificationTableArabic;
+    private int appLanguage;
+    private String language;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -163,7 +180,7 @@ public class BaseActivity extends AppCompatActivity
         zoomOutAnimation = AnimationUtils.loadAnimation(getApplicationContext(),
                 R.anim.zoom_out_more);
 
-
+        qmDatabase = QMDatabase.getInstance(BaseActivity.this);
         topbarBack.setOnTouchListener(new View.OnTouchListener() {
             @Override
             public boolean onTouch(View v, MotionEvent event) {
@@ -213,6 +230,7 @@ public class BaseActivity extends AppCompatActivity
         qmPreferences = PreferenceManager.getDefaultSharedPreferences(this);
         name = qmPreferences.getString("NAME", null);
         badgeCount = qmPreferences.getInt("BADGE_COUNT", 0);
+        appLanguage = qmPreferences.getInt("AppLanguage", 1);
         if (badgeCount > 0)
             setBadge(badgeCount);
 
@@ -228,16 +246,21 @@ public class BaseActivity extends AppCompatActivity
                 } else if (intent.getAction().equals(Config.PUSH_NOTIFICATION)) {
                     // new push notification is received
 
-                    String message = intent.getStringExtra("ALERT");
+                    notificationMessage = intent.getStringExtra("ALERT");
+                    if (notificationMessage != null && !notificationMessage.equals("")) {
+                        if (appLanguage == 1)
+                            language = "en";
+                        else
+                            language = "ar";
 
-                    Toast.makeText(context, "MESSAGE : " + message, Toast.LENGTH_SHORT).show();
-
+                        new InsertDatabaseTask(BaseActivity.this, notificationTableEnglish,
+                                notificationTableArabic, language).execute();
+                    }
                     badgeCount = qmPreferences.getInt("BADGE_COUNT", 0);
                     badgeCount = badgeCount + 1;
                     editor = qmPreferences.edit();
                     editor.putInt("BADGE_COUNT", badgeCount);
                     editor.commit();
-
                     if (badgeCount > 0) {
                         setBadge(badgeCount);
                     }
@@ -253,11 +276,45 @@ public class BaseActivity extends AppCompatActivity
 
     }
 
+    public class InsertDatabaseTask extends AsyncTask<Void, Void, Boolean> {
+        private WeakReference<BaseActivity> activityReference;
+        private NotificationTableEnglish notificationTableEnglish;
+        private NotificationTableArabic notificationTableArabic;
+        String language;
+
+        InsertDatabaseTask(BaseActivity context, NotificationTableEnglish notificationTableEnglish,
+                           NotificationTableArabic notificationTableArabic, String lan) {
+            activityReference = new WeakReference<>(context);
+            this.notificationTableEnglish = notificationTableEnglish;
+            this.notificationTableArabic = notificationTableArabic;
+            language = lan;
+        }
+
+        @Override
+        protected Boolean doInBackground(Void... voids) {
+            if (notificationMessage != null) {
+                if (language.equals("en")) {
+                    notificationTableEnglish = new NotificationTableEnglish(notificationMessage);
+                    activityReference.get().qmDatabase.getNotificationDao().insertEnglishTable(notificationTableEnglish);
+                } else {
+                    notificationTableArabic = new NotificationTableArabic(notificationMessage);
+                    activityReference.get().qmDatabase.getNotificationDao().insertArabicTable(notificationTableArabic);
+
+                }
+            }
+            return true;
+        }
+
+        @Override
+        protected void onPostExecute(Boolean aBoolean) {
+
+        }
+
+    }
+
+
     public void setBadge(int badgeCount) {
         badgeCountTextView.setVisibility(View.VISIBLE);
-        if (badgeCount < 10) {
-            badgeCountTextView.setText(String.valueOf(" " + badgeCount + " "));
-        }
         badgeCountTextView.setText(String.valueOf(badgeCount));
 
     }

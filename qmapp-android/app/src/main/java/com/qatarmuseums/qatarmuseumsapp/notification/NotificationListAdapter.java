@@ -17,6 +17,7 @@ import android.widget.TextView;
 
 import com.qatarmuseums.qatarmuseumsapp.R;
 
+import java.util.Collections;
 import java.util.List;
 
 public class NotificationListAdapter extends RecyclerView.Adapter<NotificationListAdapter.MyViewHolder> {
@@ -47,23 +48,7 @@ public class NotificationListAdapter extends RecyclerView.Adapter<NotificationLi
                     return false;
                 }
             });
-            notificationHolder.setOnTouchListener(new View.OnTouchListener() {
-                @Override
-                public boolean onTouch(View v, MotionEvent event) {
-                    switch (event.getAction()) {
-                        case MotionEvent.ACTION_DOWN:
-                            nextIcon.startAnimation(zoomOutAnimation);
-                            break;
-                    }
-                    return false;
-                }
-            });
-            notificationHolder.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    bellIcon.setImageResource(R.drawable.notification_icon);
-                }
-            });
+
 
         }
 
@@ -71,6 +56,7 @@ public class NotificationListAdapter extends RecyclerView.Adapter<NotificationLi
 
     public void setData(List<NotificationModel> newData) {
         this.notificationModelList = newData;
+        Collections.reverse(notificationModelList);
         notifyDataSetChanged();
     }
 
