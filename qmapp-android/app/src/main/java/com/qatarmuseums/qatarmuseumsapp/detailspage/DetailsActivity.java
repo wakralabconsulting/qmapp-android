@@ -1492,11 +1492,14 @@ public class DetailsActivity extends AppCompatActivity implements IPullZoom, OnM
                         if(imageList.size()==0){
                             zoomView.setOnClickListener(null);
                         }
-                        GlideApp.with(DetailsActivity.this)
-                                .load(headerImage)
-                                .centerCrop()
-                                .placeholder(R.drawable.placeholder)
-                                .into(headerImageView);
+                        if (!DetailsActivity.this.isFinishing()) {
+                            GlideApp.with(DetailsActivity.this)
+                                    .load(headerImage)
+                                    .centerCrop()
+                                    .placeholder(R.drawable.placeholder)
+                                    .into(headerImageView);
+                        }
+
                         first_description = "";
                         if (museumAboutModels.get(0).getDescriptionList().size() > 0)
                             first_description = museumAboutModels.get(0).getDescriptionList().get(0);

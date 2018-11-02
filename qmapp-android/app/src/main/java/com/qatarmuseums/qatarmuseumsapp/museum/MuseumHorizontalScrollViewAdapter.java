@@ -62,8 +62,7 @@ public class MuseumHorizontalScrollViewAdapter extends RecyclerView.Adapter<Muse
                     navigationIntent.putExtra("ID", museumId);
                     mContext.startActivity(navigationIntent);
                 } else if (museumHScrollModelList.get(position).getTextName().equals(mContext.getResources().getString(R.string.sidemenu_tour_guide_text))) {
-                    if (museumId.equals("61") || museumId.equals("66") ||
-                            museumId.equals("635") || museumId.equals("638")) {
+                    if (museumId.equals("66") || museumId.equals("638")) {
                         util.showComingSoonDialog((Activity) mContext, R.string.coming_soon_content_map);
                     } else {
                         navigationIntent = new Intent(mContext, TourGuideDetailsActivity.class);

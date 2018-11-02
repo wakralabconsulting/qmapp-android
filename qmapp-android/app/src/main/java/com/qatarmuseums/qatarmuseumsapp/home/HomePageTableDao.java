@@ -30,15 +30,16 @@ public interface HomePageTableDao {
     int checkIdExistArabic(int idFromAPI);
 
     @Query("UPDATE homepagetableEnglish SET name = :nameFromApi," +
-            "tourguide_available = :tourGideFromApi,image = :imageFromApi " +
+            "tourguide_available = :tourGideFromApi,image = :imageFromApi, sortId = :sortIdFromAPI " +
             "WHERE qatarmuseum_id=:id")
     void updateHomePageEnglish(String nameFromApi, String tourGideFromApi,
-                               String imageFromApi,String id);
+                               String imageFromApi, Integer sortIdFromAPI, String id);
 
     @Query("UPDATE homepagetableArabic SET name=:arabicNameFromApi," +
-            "tourguide_available = :tourGideFromApi,image = :imageFromApi WHERE qatarmuseum_id=:id")
+            "tourguide_available = :tourGideFromApi,image = :imageFromApi, sortId = :sortIdFromAPI" +
+            " WHERE qatarmuseum_id=:id")
     void updateHomePageArabic(String arabicNameFromApi, String tourGideFromApi,
-                              String imageFromApi,String id);
+                              String imageFromApi, Integer sortIdFromAPI, String id);
 
 
     /*
@@ -47,6 +48,7 @@ public interface HomePageTableDao {
      */
     @Insert
     void insertEnglishTable(HomePageTableEnglish homePageTableEnglish);
+
     @Insert
     void insertArabicTable(HomePageTableArabic homePageTableArabic);
 
@@ -56,6 +58,7 @@ public interface HomePageTableDao {
      */
     @Update
     void updateEnglishTable(HomePageTableEnglish homePageTableEnglish);
+
     @Update
     void updateArabicTable(HomePageTableArabic homePageTableArabic);
 
