@@ -8,6 +8,7 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.design.widget.AppBarLayout;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.text.SpannableString;
@@ -15,6 +16,7 @@ import android.text.Spanned;
 import android.text.TextPaint;
 import android.text.style.ClickableSpan;
 import android.text.style.UnderlineSpan;
+import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.animation.Animation;
@@ -25,6 +27,15 @@ import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
+import com.google.android.gms.maps.CameraUpdateFactory;
+import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.MapView;
+import com.google.android.gms.maps.OnMapReadyCallback;
+import com.google.android.gms.maps.UiSettings;
+import com.google.android.gms.maps.model.BitmapDescriptorFactory;
+import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.MapStyleOptions;
+import com.google.android.gms.maps.model.MarkerOptions;
 import com.qatarmuseums.qatarmuseumsapp.QMDatabase;
 import com.qatarmuseums.qatarmuseumsapp.R;
 import com.qatarmuseums.qatarmuseumsapp.apicall.APIClient;
@@ -39,7 +50,6 @@ import com.qatarmuseums.qatarmuseumsapp.utils.PullToZoomCoordinatorLayout;
 import com.qatarmuseums.qatarmuseumsapp.utils.Util;
 import com.qatarmuseums.qatarmuseumsapp.webview.WebviewActivity;
 
-import java.io.IOException;
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.List;
@@ -48,7 +58,7 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
-public class DiningActivity extends AppCompatActivity implements IPullZoom {
+public class DiningActivity extends AppCompatActivity implements IPullZoom, OnMapReadyCallback {
 
     ImageView headerImageView, toolbarClose, favIcon, shareIcon;
     String headerImage;
@@ -56,7 +66,7 @@ public class DiningActivity extends AppCompatActivity implements IPullZoom {
     boolean isFavourite;
     Toolbar toolbar;
     TextView title, shortDescription, longDescription, timingDetails,
-            locationDetails, mapDetails;
+            locationDetails;
     private Util util;
     private Animation zoomOutAnimation;
     private PullToZoomCoordinatorLayout coordinatorLayout;
@@ -76,6 +86,13 @@ public class DiningActivity extends AppCompatActivity implements IPullZoom {
     private ArrayList<DiningDetailModel> diningDetailModels = new ArrayList<>();
     private QMDatabase qmDatabase;
     Button retryButton;
+    MapView mapDetails;
+    private static final String MAP_VIEW_BUNDLE_KEY = "MapViewBundleKey";
+    private GoogleMap gmap, gvalue;
+    LinearLayout mapView;
+    ImageView mapImageView, direction;
+    int iconView = 0;
+    ArrayList<String> imageList = new ArrayList<String>();
 
     @SuppressLint("ClickableViewAccessibility")
     @Override
@@ -106,7 +123,15 @@ public class DiningActivity extends AppCompatActivity implements IPullZoom {
         longDescription = (TextView) findViewById(R.id.long_description);
         timingDetails = (TextView) findViewById(R.id.timing_info);
         locationDetails = (TextView) findViewById(R.id.location_info);
-        mapDetails = (TextView) findViewById(R.id.map_info);
+        mapImageView = findViewById(R.id.map_view);
+        direction = findViewById(R.id.direction);
+        mapDetails = (MapView) findViewById(R.id.map_info);
+        Bundle mapViewBundle = null;
+        if (savedInstanceState != null) {
+            mapViewBundle = savedInstanceState.getBundle(MAP_VIEW_BUNDLE_KEY);
+        }
+        mapDetails.onCreate(mapViewBundle);
+        mapDetails.getMapAsync(this);
         favIcon = (ImageView) findViewById(R.id.favourite);
         shareIcon = (ImageView) findViewById(R.id.share);
         util = new Util();
@@ -140,18 +165,7 @@ public class DiningActivity extends AppCompatActivity implements IPullZoom {
         int length = ss.length();
         ss.setSpan(clickableSpan, length - 4, length, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
         ss.setSpan(new UnderlineSpan(), length - 4, length, 0);
-        mapDetails.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (latitude != null && !latitude.equals("")) {
-                    String geoUri = "http://maps.google.com/maps?q=loc:" + latitude + "," + longitude + " (" + mainTitle + ")";
-                    Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(geoUri));
-                    startActivity(intent);
-                } else {
-                    util.showLocationAlertDialog(DiningActivity.this);
-                }
-            }
-        });
+
         if (isFavourite)
             favIcon.setImageResource(R.drawable.heart_fill);
         else
@@ -230,6 +244,103 @@ public class DiningActivity extends AppCompatActivity implements IPullZoom {
                 return false;
             }
         });
+
+        mapImageView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (iconView == 0) {
+                    if (latitude == null || latitude.equals("")) {
+                        util.showLocationAlertDialog(DiningActivity.this);
+                    } else {
+                        gmap = gvalue;
+                        iconView = 1;
+                        mapImageView.setImageResource(R.drawable.ic_map);
+                        gmap.setMapType(GoogleMap.MAP_TYPE_HYBRID);
+                        gmap.setMapStyle(MapStyleOptions.loadRawResourceStyle(DiningActivity.this, R.raw.map_style));
+
+                        gmap.addMarker(new MarkerOptions()
+                                .position(new LatLng(Double.parseDouble(latitude), Double.parseDouble(longitude)))
+                                .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED)));
+                        gmap.animateCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(Double.parseDouble(latitude), Double.parseDouble(longitude)), 10));
+                    }
+                } else {
+                    if (latitude == null || latitude.equals("")) {
+                        util.showLocationAlertDialog(DiningActivity.this);
+                    } else {
+                        iconView = 0;
+                        mapImageView.setImageResource(R.drawable.ic_satellite);
+                        gmap = gvalue;
+                        gmap.setMapType(GoogleMap.MAP_TYPE_NORMAL);
+                        gmap.setMapStyle(MapStyleOptions.loadRawResourceStyle(DiningActivity.this, R.raw.map_style));
+
+                        gmap.addMarker(new MarkerOptions()
+                                .position(new LatLng(Double.parseDouble(latitude), Double.parseDouble(longitude)))
+                                .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED)));
+                        gmap.animateCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(Double.parseDouble(latitude), Double.parseDouble(longitude)), 10));
+                    }
+                }
+            }
+        });
+
+        direction.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (latitude == null || latitude.equals("")) {
+                    util.showLocationAlertDialog(DiningActivity.this);
+                } else {
+                    Intent intent = new Intent(android.content.Intent.ACTION_VIEW,
+                            Uri.parse("http://maps.google.com/maps?daddr=9.9917,76.3488&basemap=satellite"));
+                    Log.d("googleurl", Uri.parse("http://maps.google.com/maps?daddr=9.9917,76.3488&basemap=satellite").toString());
+                    if (intent.resolveActivity(getPackageManager()) != null) {
+                        startActivity(intent);
+                    }
+                }
+            }
+        });
+    }
+
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        Bundle mapViewBundle = outState.getBundle(MAP_VIEW_BUNDLE_KEY);
+        if (mapViewBundle == null) {
+            mapViewBundle = new Bundle();
+            outState.putBundle(MAP_VIEW_BUNDLE_KEY, mapViewBundle);
+        }
+
+        mapDetails.onSaveInstanceState(mapViewBundle);
+
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        mapDetails.onResume();
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        mapDetails.onStart();
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        mapDetails.onStop();
+    }
+
+    @Override
+    protected void onPause() {
+        mapDetails.onPause();
+//        Jzvd.releaseAllVideos();
+        super.onPause();
+    }
+
+    @Override
+    protected void onDestroy() {
+        mapDetails.onDestroy();
+        super.onDestroy();
     }
 
     private void initViews() {
@@ -245,6 +356,22 @@ public class DiningActivity extends AppCompatActivity implements IPullZoom {
                 headerOffSetSize = verticalOffset;
             }
         });
+
+        zoomView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+                Bundle bundle = new Bundle();
+                bundle.putStringArrayList("imageList", imageList);
+                HorizontalLayoutFragment fragment = new HorizontalLayoutFragment();
+                fragment.setArguments(bundle);
+                FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+                transaction.addToBackStack(null);
+                transaction.replace(R.id.fragment_frame, fragment);
+                transaction.commit();
+            }
+        });
+
     }
 
     @Override
@@ -283,6 +410,12 @@ public class DiningActivity extends AppCompatActivity implements IPullZoom {
                     if (response.body() != null && response.body().size() > 0) {
                         diningContent.setVisibility(View.VISIBLE);
                         diningDetailModels = response.body();
+                        for (int i = 0; i < diningDetailModels.get(0).getImages().size(); i++) {
+                            imageList.add(i, diningDetailModels.get(0).getImages().get(i));
+                        }
+                        if (imageList.size() == 0) {
+                            zoomView.setOnClickListener(null);
+                        }
                         loadData(diningDetailModels.get(0).getDescription(),
                                 diningDetailModels.get(0).getOpeningTime(),
                                 diningDetailModels.get(0).getClosingTime(),
@@ -341,6 +474,17 @@ public class DiningActivity extends AppCompatActivity implements IPullZoom {
             latitude = convertDegreetoDecimalMeasure(latitude);
             longitude = convertDegreetoDecimalMeasure(longitude);
         }
+        if (latitude != null && !latitude.equals("")) {
+            gmap = gvalue;
+            gmap.setMinZoomPreference(12);
+            LatLng ny = new LatLng(Double.valueOf(latitude), Double.valueOf(longitude));
+            UiSettings uiSettings = gmap.getUiSettings();
+            uiSettings.setMyLocationButtonEnabled(true);
+            MarkerOptions markerOptions = new MarkerOptions();
+            markerOptions.position(ny);
+            gmap.addMarker(markerOptions);
+            gmap.moveCamera(CameraUpdateFactory.newLatLng(ny));
+        }
     }
 
     private String convertDegreetoDecimalMeasure(String degreeValue) {
@@ -356,6 +500,12 @@ public class DiningActivity extends AppCompatActivity implements IPullZoom {
         String result;
         result = String.valueOf(degree + (min / 60) + (sec / 3600));
         return result;
+    }
+
+    @Override
+    public void onMapReady(GoogleMap googleMap) {
+        gvalue = googleMap;
+        googleMap.getUiSettings().setMapToolbarEnabled(false);
     }
 
     public class DiningRowCount extends AsyncTask<Void, Void, Integer> {

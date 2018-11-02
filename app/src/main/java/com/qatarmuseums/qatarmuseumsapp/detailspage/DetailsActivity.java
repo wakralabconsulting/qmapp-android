@@ -1,7 +1,6 @@
 package com.qatarmuseums.qatarmuseumsapp.detailspage;
 
 import android.annotation.SuppressLint;
-import android.content.ComponentName;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.net.Uri;
@@ -33,6 +32,7 @@ import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MapStyleOptions;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.qatarmuseums.qatarmuseumsapp.Convertor;
 import com.qatarmuseums.qatarmuseumsapp.QMDatabase;
 import com.qatarmuseums.qatarmuseumsapp.R;
 import com.qatarmuseums.qatarmuseumsapp.apicall.APIClient;
@@ -54,7 +54,6 @@ import com.qatarmuseums.qatarmuseumsapp.utils.PixelUtil;
 import com.qatarmuseums.qatarmuseumsapp.utils.PullToZoomCoordinatorLayout;
 import com.qatarmuseums.qatarmuseumsapp.utils.Util;
 
-import java.io.IOException;
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.List;
@@ -77,7 +76,7 @@ public class DetailsActivity extends AppCompatActivity implements IPullZoom, OnM
     private Util util;
     private Animation zoomOutAnimation;
     private PullToZoomCoordinatorLayout coordinatorLayout;
-//    private FrameLayout frameLayout;
+    //    private FrameLayout frameLayout;
     private View zoomView;
     ArrayList<String> imageList = new ArrayList<String>();
     private AppBarLayout appBarLayout;
@@ -136,8 +135,6 @@ public class DetailsActivity extends AppCompatActivity implements IPullZoom, OnM
         setSupportActionBar(toolbar);
         toolbarClose = (ImageView) findViewById(R.id.toolbar_close);
         headerImageView = (ImageView) findViewById(R.id.header_img);
-//        frameLayout = (FrameLayout) findViewById(R.id.fragment_frame_layout);
-//        frameLayout.setVisibility(View.GONE);
         title = (TextView) findViewById(R.id.main_title);
         subTitle = (TextView) findViewById(R.id.sub_title);
         shortDescription = (TextView) findViewById(R.id.short_description);
@@ -177,7 +174,7 @@ public class DetailsActivity extends AppCompatActivity implements IPullZoom, OnM
                 .centerCrop()
                 .placeholder(R.drawable.placeholder)
                 .into(headerImageView);
-        
+
         if (isFavourite)
             favIcon.setImageResource(R.drawable.heart_fill);
         else
@@ -259,25 +256,33 @@ public class DetailsActivity extends AppCompatActivity implements IPullZoom, OnM
             @Override
             public void onClick(View view) {
                 if (iconView == 0) {
-                    iconView = 1;
-                    mapImageView.setImageResource(R.drawable.ic_map);
-                    gmap.setMapType(GoogleMap.MAP_TYPE_HYBRID);
-                    gmap.setMapStyle(MapStyleOptions.loadRawResourceStyle(DetailsActivity.this, R.raw.map_style));
+                    if(latitude==null){
+                        util.showLocationAlertDialog(DetailsActivity.this);
+                    }else {
+                        iconView = 1;
+                        mapImageView.setImageResource(R.drawable.ic_map);
+                        gmap.setMapType(GoogleMap.MAP_TYPE_HYBRID);
+                        gmap.setMapStyle(MapStyleOptions.loadRawResourceStyle(DetailsActivity.this, R.raw.map_style));
 
-                    gmap.addMarker(new MarkerOptions()
-                            .position(new LatLng(Double.parseDouble(latitude), Double.parseDouble(longitude)))
-                            .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED)));
-                    gmap.animateCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(Double.parseDouble(latitude), Double.parseDouble(longitude)), 10));
+                        gmap.addMarker(new MarkerOptions()
+                                .position(new LatLng(Double.parseDouble(latitude), Double.parseDouble(longitude)))
+                                .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED)));
+                        gmap.animateCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(Double.parseDouble(latitude), Double.parseDouble(longitude)), 10));
+                    }
                 } else {
-                    iconView = 0;
-                    mapImageView.setImageResource(R.drawable.ic_satellite);
-                    gmap.setMapType(GoogleMap.MAP_TYPE_NORMAL);
-                    gmap.setMapStyle(MapStyleOptions.loadRawResourceStyle(DetailsActivity.this, R.raw.map_style));
+                    if (latitude == null) {
+                        util.showLocationAlertDialog(DetailsActivity.this);
+                    } else {
+                        iconView = 0;
+                        mapImageView.setImageResource(R.drawable.ic_satellite);
+                        gmap.setMapType(GoogleMap.MAP_TYPE_NORMAL);
+                        gmap.setMapStyle(MapStyleOptions.loadRawResourceStyle(DetailsActivity.this, R.raw.map_style));
 
-                    gmap.addMarker(new MarkerOptions()
-                            .position(new LatLng(Double.parseDouble(latitude), Double.parseDouble(longitude)))
-                            .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED)));
-                    gmap.animateCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(Double.parseDouble(latitude), Double.parseDouble(longitude)), 10));
+                        gmap.addMarker(new MarkerOptions()
+                                .position(new LatLng(Double.parseDouble(latitude), Double.parseDouble(longitude)))
+                                .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED)));
+                        gmap.animateCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(Double.parseDouble(latitude), Double.parseDouble(longitude)), 10));
+                    }
                 }
             }
         });
@@ -285,13 +290,16 @@ public class DetailsActivity extends AppCompatActivity implements IPullZoom, OnM
         direction.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                if (latitude == null) {
+                    util.showLocationAlertDialog(DetailsActivity.this);
+                } else {
                 Intent intent = new Intent(android.content.Intent.ACTION_VIEW,
                         Uri.parse("http://maps.google.com/maps?daddr=9.9917,76.3488&basemap=satellite"));
                 Log.d("googleurl", Uri.parse("http://maps.google.com/maps?daddr=9.9917,76.3488&basemap=satellite").toString());
                 if (intent.resolveActivity(getPackageManager()) != null) {
                     startActivity(intent);
                 }
-            }
+            }}
         });
 
     }
@@ -425,20 +433,22 @@ public class DetailsActivity extends AppCompatActivity implements IPullZoom, OnM
                 headerOffSetSize = verticalOffset;
             }
         });
-        zoomView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
 
-                Bundle bundle = new Bundle();
-                bundle.putStringArrayList("imageList", imageList);
-                HorizontalLayoutFragment fragment = new HorizontalLayoutFragment();
-                fragment.setArguments(bundle);
-                FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
-                transaction.addToBackStack(null);
-                transaction.replace(R.id.fragment_frame, fragment);
-                transaction.commit();
-            }
-        });
+            zoomView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+
+                    Bundle bundle = new Bundle();
+                    bundle.putStringArrayList("imageList", imageList);
+                    HorizontalLayoutFragment fragment = new HorizontalLayoutFragment();
+                    fragment.setArguments(bundle);
+                    FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+                    transaction.addToBackStack(null);
+                    transaction.replace(R.id.fragment_frame, fragment);
+                    transaction.commit();
+                }
+            });
+
     }
 
     @Override
@@ -473,15 +483,7 @@ public class DetailsActivity extends AppCompatActivity implements IPullZoom, OnM
                 latitude = intent.getStringExtra("LATITUDE");
                 longitude = intent.getStringExtra("LONGITUDE");
             }
-            gmap = gvalue;
-            gmap.setMinZoomPreference(12);
-            LatLng ny = new LatLng(Double.valueOf(latitude), Double.valueOf(longitude));
-            UiSettings uiSettings = gmap.getUiSettings();
-            uiSettings.setMyLocationButtonEnabled(true);
-            MarkerOptions markerOptions = new MarkerOptions();
-            markerOptions.position(ny);
-            gmap.addMarker(markerOptions);
-            gmap.moveCamera(CameraUpdateFactory.newLatLng(ny));
+
             if (videoFile != null) {
 
                 String videoPath = videoFile;
@@ -518,7 +520,8 @@ public class DetailsActivity extends AppCompatActivity implements IPullZoom, OnM
                 this.locationDetails.setVisibility(View.VISIBLE);
                 this.locationDetails.setText(locationInfo);
             }
-            if (contactInfo != null) {
+            if (contactInfo != null && !(contactInfo.isEmpty())) {
+
                 this.contactLayout.setVisibility(View.VISIBLE);
                 this.contactDetails.setText(contactInfo);
             }
@@ -527,6 +530,17 @@ public class DetailsActivity extends AppCompatActivity implements IPullZoom, OnM
                     latitude = convertDegreetoDecimalMeasure(latitude);
                     longitude = convertDegreetoDecimalMeasure(longitude);
                 }
+            }
+            if(latitude != null && !latitude.equals("")) {
+                gmap = gvalue;
+                gmap.setMinZoomPreference(12);
+                LatLng ny = new LatLng(Double.valueOf(latitude), Double.valueOf(longitude));
+                UiSettings uiSettings = gmap.getUiSettings();
+                uiSettings.setMyLocationButtonEnabled(true);
+                MarkerOptions markerOptions = new MarkerOptions();
+                markerOptions.position(ny);
+                gmap.addMarker(markerOptions);
+                gmap.moveCamera(CameraUpdateFactory.newLatLng(ny));
             }
         } else {
             progressBar.setVisibility(View.GONE);
@@ -544,7 +558,7 @@ public class DetailsActivity extends AppCompatActivity implements IPullZoom, OnM
             shortDescription, String longDescription,
                                                        String secondTitle, String secondTitleDescription, String timingInfo,
                                                        String locationInfo, String contactInfo, String latitudefromApi,
-                                                       String longitudefromApi, String openingTime, String closingtime) {
+                                                       String longitudefromApi, String openingTime, String closingtime, String videoFile) {
         if (shortDescription != null) {
             commonContentLayout.setVisibility(View.VISIBLE);
             retryLayout.setVisibility(View.GONE);
@@ -580,7 +594,21 @@ public class DetailsActivity extends AppCompatActivity implements IPullZoom, OnM
                 this.locationDetails.setVisibility(View.VISIBLE);
                 this.locationDetails.setText(locationInfo);
             }
-            if (contactInfo != null) {
+
+            if (videoFile != null) {
+
+                String videoPath = videoFile;
+                Uri uri = Uri.parse(videoPath);
+                jzvdStd.setUp(videoFile, "", Jzvd.SCREEN_WINDOW_NORMAL);
+                jzvdStd.setVisibility(View.VISIBLE);
+                imagePlaceHolder.setVisibility(View.GONE);
+
+            } else {
+                imagePlaceHolder.setVisibility(View.VISIBLE);
+                jzvdStd.setVisibility(View.GONE);
+                imagePlaceHolder.setImageResource(R.drawable.placeholder_video);
+            }
+            if (contactInfo != null && !(contactInfo.isEmpty())) {
                 this.contactLayout.setVisibility(View.VISIBLE);
                 this.contactDetails.setText(contactInfo);
             }
@@ -588,8 +616,21 @@ public class DetailsActivity extends AppCompatActivity implements IPullZoom, OnM
                 if (latitude.contains("°")) {
                     latitude = convertDegreetoDecimalMeasure(latitude);
                     longitude = convertDegreetoDecimalMeasure(longitude);
+
                 }
             }
+            if(latitude != null && !latitude.equals("")){
+                gmap = gvalue;
+                gmap.setMinZoomPreference(12);
+                LatLng ny = new LatLng(Double.valueOf(latitude), Double.valueOf(longitude));
+                UiSettings uiSettings = gmap.getUiSettings();
+                uiSettings.setMyLocationButtonEnabled(true);
+                MarkerOptions markerOptions = new MarkerOptions();
+                markerOptions.position(ny);
+                gmap.addMarker(markerOptions);
+                gmap.moveCamera(CameraUpdateFactory.newLatLng(ny));
+            }
+
         } else {
             commonContentLayout.setVisibility(View.INVISIBLE);
             progressBar.setVisibility(View.GONE);
@@ -624,6 +665,12 @@ public class DetailsActivity extends AppCompatActivity implements IPullZoom, OnM
                         commonContentLayout.setVisibility(View.VISIBLE);
                         heritageOrExhibitionDetailModel = response.body();
                         removeHtmlTags(heritageOrExhibitionDetailModel);
+                        for (int i = 0; i < heritageOrExhibitionDetailModel.get(0).getImage().size(); i++) {
+                            imageList.add(i, heritageOrExhibitionDetailModel.get(0).getImage().get(i));
+                        }
+                        if(imageList.size()==0){
+                            zoomView.setOnClickListener(null);
+                        }
                         if (pageName.equals("heritage_detail_Page.json")) {
                             loadDataForHeritageOrExhibitionDetails(
                                     null,
@@ -636,7 +683,7 @@ public class DetailsActivity extends AppCompatActivity implements IPullZoom, OnM
                                     null,
                                     heritageOrExhibitionDetailModel.get(0).getLatitude(),
                                     heritageOrExhibitionDetailModel.get(0).getLongitude(),
-                                    null, null);
+                                    null, null,null);
                             new HeritageRowCount(DetailsActivity.this, appLanguage).execute();
                         } else {
                             loadDataForHeritageOrExhibitionDetails(null,
@@ -648,7 +695,7 @@ public class DetailsActivity extends AppCompatActivity implements IPullZoom, OnM
                                     null, heritageOrExhibitionDetailModel.get(0).getLatitude(),
                                     heritageOrExhibitionDetailModel.get(0).getLongitude(),
                                     heritageOrExhibitionDetailModel.get(0).getStartDate(),
-                                    heritageOrExhibitionDetailModel.get(0).getEndDate());
+                                    heritageOrExhibitionDetailModel.get(0).getEndDate(),null);
                             new ExhibitionDetailRowCount(DetailsActivity.this, appLanguage).execute();
                         }
 
@@ -807,13 +854,14 @@ public class DetailsActivity extends AppCompatActivity implements IPullZoom, OnM
 
         @Override
         protected Void doInBackground(Void... voids) {
+            Convertor converters = new Convertor();
             if (language.equals("en")) {
                 // updateEnglishTable table with english name
 
                 activityReference.get().qmDatabase.getExhibitionTableDao().updateExhibitionDetailEnglish(
                         heritageOrExhibitionDetailModel.get(position).getStartDate(),
                         heritageOrExhibitionDetailModel.get(position).getEndDate(),
-                        heritageOrExhibitionDetailModel.get(position).getImage(),
+                        converters.fromArrayList(heritageOrExhibitionDetailModel.get(position).getImage()),
                         heritageOrExhibitionDetailModel.get(position).getLongDescription(),
                         heritageOrExhibitionDetailModel.get(position).getShortDescription(),
                         heritageOrExhibitionDetailModel.get(position).getLatitude(),
@@ -827,7 +875,7 @@ public class DetailsActivity extends AppCompatActivity implements IPullZoom, OnM
                 activityReference.get().qmDatabase.getExhibitionTableDao().updateExhibitionDetailArabic(
                         heritageOrExhibitionDetailModel.get(position).getStartDate(),
                         heritageOrExhibitionDetailModel.get(position).getEndDate(),
-                        heritageOrExhibitionDetailModel.get(position).getImage(),
+                        converters.fromArrayList(heritageOrExhibitionDetailModel.get(position).getImage()),
                         heritageOrExhibitionDetailModel.get(position).getLongDescription(),
                         heritageOrExhibitionDetailModel.get(position).getShortDescription(),
                         heritageOrExhibitionDetailModel.get(position).getLatitude(),
@@ -868,7 +916,7 @@ public class DetailsActivity extends AppCompatActivity implements IPullZoom, OnM
                         null, exhibitionListTableEnglish.get(0).getExhibition_latitude(),
                         exhibitionListTableEnglish.get(0).getExhibition_longitude(),
                         exhibitionListTableEnglish.get(0).getExhibition_start_date(),
-                        exhibitionListTableEnglish.get(0).getExhibition_end_date());
+                        exhibitionListTableEnglish.get(0).getExhibition_end_date(),null);
             } else {
                 progressBar.setVisibility(View.GONE);
                 commonContentLayout.setVisibility(View.INVISIBLE);
@@ -912,7 +960,7 @@ public class DetailsActivity extends AppCompatActivity implements IPullZoom, OnM
                         null, exhibitionListTableArabics.get(0).getExhibition_latitude(),
                         exhibitionListTableArabics.get(0).getExhibition_longitude(),
                         exhibitionListTableArabics.get(0).getExhibition_start_date(),
-                        exhibitionListTableArabics.get(0).getExhibition_end_date());
+                        exhibitionListTableArabics.get(0).getExhibition_end_date(),null);
             } else {
                 progressBar.setVisibility(View.GONE);
                 commonContentLayout.setVisibility(View.INVISIBLE);
@@ -1081,7 +1129,7 @@ public class DetailsActivity extends AppCompatActivity implements IPullZoom, OnM
                         null,
                         heritageListTableEnglish.get(0).getLocation(),
                         null, heritageListTableEnglish.get(0).getLatitude(),
-                        heritageListTableEnglish.get(0).getLongitude(), null, null);
+                        heritageListTableEnglish.get(0).getLongitude(), null, null,null);
             } else {
                 progressBar.setVisibility(View.GONE);
                 commonContentLayout.setVisibility(View.INVISIBLE);
@@ -1122,7 +1170,7 @@ public class DetailsActivity extends AppCompatActivity implements IPullZoom, OnM
                         null,
                         heritageListTableArabic.get(0).getLocation(),
                         null, heritageListTableArabic.get(0).getLatitude(),
-                        heritageListTableArabic.get(0).getLongitude(), null, null);
+                        heritageListTableArabic.get(0).getLongitude(), null, null,null);
             } else {
                 progressBar.setVisibility(View.GONE);
                 commonContentLayout.setVisibility(View.INVISIBLE);
@@ -1159,12 +1207,19 @@ public class DetailsActivity extends AppCompatActivity implements IPullZoom, OnM
                         commonContentLayout.setVisibility(View.VISIBLE);
                         publicArtModel = response.body();
                         removeHtmlTagsPublicArts(publicArtModel);
+                        for (int i = 0; i < publicArtModel.get(0).getImage().size(); i++) {
+                            imageList.add(i, publicArtModel.get(0).getImage().get(i));
+                        }
+                        if(imageList.size()==0){
+                            zoomView.setOnClickListener(null);
+                        }
                         fromMuseumAbout = false;
                         loadData(null,
                                 publicArtModel.get(0).getShortDescription(),
                                 publicArtModel.get(0).getLongDescription(),
                                 null, null, null, null,
-                                null, null, latitude, longitude, fromMuseumAbout, null);
+                                null, null, publicArtModel.get(0).getLatitude(),
+                                publicArtModel.get(0).getLatitude(), fromMuseumAbout, null);
                         new PublicArtsRowCount(DetailsActivity.this, language).execute();
                     } else {
                         commonContentLayout.setVisibility(View.INVISIBLE);
@@ -1434,6 +1489,9 @@ public class DetailsActivity extends AppCompatActivity implements IPullZoom, OnM
                         for (int i = 0; i < museumAboutModels.get(0).getImageList().size(); i++) {
                             imageList.add(i, museumAboutModels.get(0).getImageList().get(i));
                         }
+                        if(imageList.size()==0){
+                            zoomView.setOnClickListener(null);
+                        }
                         GlideApp.with(DetailsActivity.this)
                                 .load(headerImage)
                                 .centerCrop()
@@ -1450,7 +1508,12 @@ public class DetailsActivity extends AppCompatActivity implements IPullZoom, OnM
                         }
 
                         fromMuseumAbout = true;
-                        String file = museumAboutModels.get(0).getVideoInfo().get(0);
+                        String file;
+                        if (museumAboutModels.get(0).getVideoInfo().size() == 0) {
+                            file = null;
+                        } else {
+                            file = museumAboutModels.get(0).getVideoInfo().get(0);
+                        }
                         loadData(null, first_description,
                                 null,
                                 museumAboutModels.get(0).getSubTitle(), long_description,
@@ -1627,12 +1690,13 @@ public class DetailsActivity extends AppCompatActivity implements IPullZoom, OnM
         @Override
         protected Boolean doInBackground(Void... voids) {
             if (museumAboutModels != null) {
+                Convertor converters = new Convertor();
                 if (language.equals("en")) {
                     for (int i = 0; i < museumAboutModels.size(); i++) {
                         museumAboutTableEnglish = new MuseumAboutTableEnglish(museumAboutModels.get(i).getName(), Long.parseLong(museumAboutModels.get(i).getMuseumId()),
                                 museumAboutModels.get(i).getTourGuideAvailable(),
                                 first_description, long_description,
-                                museumAboutModels.get(i).getImageList().get(0),
+                                converters.fromArrayList(museumAboutModels.get(i).getImageList()),
                                 museumAboutModels.get(i).getContactNumber(), museumAboutModels.get(i).getContactEmail(),
                                 museumAboutModels.get(i).getLatitude(), museumAboutModels.get(i).getLongitude(),
                                 museumAboutModels.get(i).getTourGuideAvailability(),
@@ -1646,7 +1710,7 @@ public class DetailsActivity extends AppCompatActivity implements IPullZoom, OnM
                         museumAboutTableArabic = new MuseumAboutTableArabic(museumAboutModels.get(i).getName(), Long.parseLong(museumAboutModels.get(i).getMuseumId()),
                                 museumAboutModels.get(i).getTourGuideAvailable(),
                                 first_description, long_description,
-                                museumAboutModels.get(i).getImageList().get(0),
+                                converters.fromArrayList(museumAboutModels.get(i).getImageList()),
                                 museumAboutModels.get(i).getContactNumber(), museumAboutModels.get(i).getContactEmail(),
                                 museumAboutModels.get(i).getLatitude(), museumAboutModels.get(i).getLongitude(),
                                 museumAboutModels.get(i).getTourGuideAvailability(),
@@ -1690,15 +1754,18 @@ public class DetailsActivity extends AppCompatActivity implements IPullZoom, OnM
 
         @Override
         protected Void doInBackground(Void... voids) {
+            Convertor converters = new Convertor();
             if (language.equals("en")) {
                 // updateEnglishTable table with english name
                 activityReference.get().qmDatabase.getMuseumAboutDao().updateMuseumAboutDataEnglish(
                         museumAboutModels.get(position).getName(),
                         museumAboutModels.get(position).getTourGuideAvailable(),
                         first_description, long_description,
-                        museumAboutModels.get(position).getImageList().get(0),
-                        museumAboutModels.get(position).getContactNumber(), museumAboutModels.get(position).getContactEmail(),
-                        museumAboutModels.get(position).getLatitude(), museumAboutModels.get(position).getLongitude(),
+                        converters.fromArrayList(museumAboutModels.get(position).getImageList()),
+                        museumAboutModels.get(position).getContactNumber(),
+                        museumAboutModels.get(position).getContactEmail(),
+                        museumAboutModels.get(position).getLatitude(),
+                        museumAboutModels.get(position).getLongitude(),
                         museumAboutModels.get(position).getTourGuideAvailability(),
                         museumAboutModels.get(position).getSubTitle(),
                         museumAboutModels.get(position).getTimingInfo(),
@@ -1708,7 +1775,7 @@ public class DetailsActivity extends AppCompatActivity implements IPullZoom, OnM
                 activityReference.get().qmDatabase.getMuseumAboutDao().updateMuseumAboutDataArabic(museumAboutModels.get(position).getName(),
                         museumAboutModels.get(position).getTourGuideAvailable(),
                         first_description, long_description,
-                        museumAboutModels.get(position).getImageList().get(0),
+                        converters.fromArrayList(museumAboutModels.get(position).getImageList()),
                         museumAboutModels.get(position).getContactNumber(), museumAboutModels.get(position).getContactEmail(),
                         museumAboutModels.get(position).getLatitude(), museumAboutModels.get(position).getLongitude(),
                         museumAboutModels.get(position).getTourGuideAvailability(),
@@ -1743,6 +1810,7 @@ public class DetailsActivity extends AppCompatActivity implements IPullZoom, OnM
                 commonContentLayout.setVisibility(View.VISIBLE);
                 retryLayout.setVisibility(View.GONE);
                 headerImage = museumAboutTableEnglish.getMuseum_image();
+
                 GlideApp.with(DetailsActivity.this)
                         .load(headerImage)
                         .centerCrop()
@@ -1826,9 +1894,6 @@ public class DetailsActivity extends AppCompatActivity implements IPullZoom, OnM
 
     @Override
     public void onBackPressed() {
-//        if (youTubePlayerView.isFullScreen())
-//            youTubePlayerView.exitFullScreen();
-//        else
         if (Jzvd.backPress()) {
             return;
         }
