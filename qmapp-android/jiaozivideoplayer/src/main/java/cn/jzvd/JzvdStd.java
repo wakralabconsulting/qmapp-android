@@ -270,7 +270,7 @@ public class JzvdStd extends Jzvd {
                     return;
                 }
                 startVideo();
-                onEvent(JZUserActionStd.ON_CLICK_START_THUMB);//开始的事件应该在播放之后，此处特殊
+                onEvent(JZUserActionStd.ON_CLICK_START_THUMB);
             } else if (currentState == CURRENT_STATE_AUTO_COMPLETE) {
                 onClickUiToggle();
             }
@@ -294,7 +294,7 @@ public class JzvdStd extends Jzvd {
                     int index = (int) v.getTag();
                     changeUrl(index, getCurrentPositionWhenPlaying());
                     clarity.setText(jzDataSource.getCurrentKey().toString());
-                    for (int j = 0; j < layout.getChildCount(); j++) {//设置点击之后的颜色
+                    for (int j = 0; j < layout.getChildCount(); j++) {
                         if (j == jzDataSource.currentUrlIndex) {
                             ((TextView) layout.getChildAt(j)).setTextColor(Color.parseColor("#fff85959"));
                         } else {

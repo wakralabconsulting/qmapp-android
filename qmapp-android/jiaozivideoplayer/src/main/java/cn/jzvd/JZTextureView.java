@@ -58,12 +58,10 @@ public class JZTextureView extends TextureView {
                     parentWidth = parentHeight;
                     parentHeight = tempSize;
                 }
-                /**强制充满**/
                 videoHeight = videoWidth * parentHeight / parentWidth;
             }
         }
 
-        // 如果判断成立，则说明显示的TextureView和本身的位置是有90度的旋转的，所以需要交换宽高参数。
         if (viewRotation == 90 || viewRotation == 270) {
             int tempMeasureSpec = widthMeasureSpec;
             widthMeasureSpec = heightMeasureSpec;
@@ -130,7 +128,6 @@ public class JZTextureView extends TextureView {
         }
         if (parentWidth != 0 && parentHeight != 0 && videoWidth != 0 && videoHeight != 0) {
             if (Jzvd.VIDEO_IMAGE_DISPLAY_TYPE == Jzvd.VIDEO_IMAGE_DISPLAY_TYPE_ORIGINAL) {
-                /**原图**/
                 height = videoHeight;
                 width = videoWidth;
             } else if (Jzvd.VIDEO_IMAGE_DISPLAY_TYPE == Jzvd.VIDEO_IMAGE_DISPLAY_TYPE_FILL_SCROP) {
@@ -139,7 +136,6 @@ public class JZTextureView extends TextureView {
                     parentWidth = parentHeight;
                     parentHeight = tempSize;
                 }
-                /**充满剪切**/
                 if (((double) videoHeight / videoWidth) > ((double) parentHeight / parentWidth)) {
                     height = (int) (((double) parentWidth / (double) width * (double) height));
                     width = parentWidth;
