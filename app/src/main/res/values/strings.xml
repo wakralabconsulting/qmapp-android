@@ -229,7 +229,5 @@ They exemplify the external influences and internal creativity that inspired thi
     <string name="create_account">Create account</string>
     <string name="error_logout">Error in logging out!</string>
 
-    <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
 
 </resources>

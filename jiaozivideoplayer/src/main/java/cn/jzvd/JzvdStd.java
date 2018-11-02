@@ -29,10 +29,7 @@ import java.util.Date;
 import java.util.Timer;
 import java.util.TimerTask;
 
-/**
- * Created by Nathen
- * On 2016/04/18 16:15
- */
+
 public class JzvdStd extends Jzvd {
 
     protected static Timer DISMISS_CONTROL_VIEW_TIMER;
@@ -340,7 +337,7 @@ public class JzvdStd extends Jzvd {
                 showWifiDialog();
                 return;
             }
-            initTextureView();//和开始播放的代码重复
+            initTextureView();
             addTextureView();
             JZMediaManager.setDataSource(jzDataSource);
             onStatePreparing();

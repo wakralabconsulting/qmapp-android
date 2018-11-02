@@ -7,10 +7,7 @@ import android.view.Surface;
 import java.lang.reflect.Method;
 import java.util.Map;
 
-/**
- * Created by Nathen on 2017/11/8.
- * 实现系统的播放引擎
- */
+
 public class JZMediaSystem extends JZMediaInterface implements MediaPlayer.OnPreparedListener, MediaPlayer.OnCompletionListener, MediaPlayer.OnBufferingUpdateListener, MediaPlayer.OnSeekCompleteListener, MediaPlayer.OnErrorListener, MediaPlayer.OnInfoListener, MediaPlayer.OnVideoSizeChangedListener {
 
     public MediaPlayer mediaPlayer;
@@ -36,11 +33,9 @@ public class JZMediaSystem extends JZMediaInterface implements MediaPlayer.OnPre
             mediaPlayer.setOnVideoSizeChangedListener(JZMediaSystem.this);
             Class<MediaPlayer> clazz = MediaPlayer.class;
             Method method = clazz.getDeclaredMethod("setDataSource", String.class, Map.class);
-//            if (dataSourceObjects.length > 2) {
+
             method.invoke(mediaPlayer, jzDataSource.getCurrentUrl().toString(), jzDataSource.headerMap);
-//            } else {
-//                method.invoke(mediaPlayer, currentDataSource.toString(), null);
-//            }
+
             mediaPlayer.prepareAsync();
         } catch (Exception e) {
             e.printStackTrace();

@@ -31,9 +31,7 @@ import java.lang.reflect.Constructor;
 import java.util.Timer;
 import java.util.TimerTask;
 
-/**
- * Created by Nathen on 16/7/30.
- */
+
 public abstract class Jzvd extends FrameLayout implements View.OnClickListener, SeekBar.OnSeekBarChangeListener, View.OnTouchListener {
 
     public static final String TAG = "JZVD";
@@ -416,7 +414,6 @@ public abstract class Jzvd extends FrameLayout implements View.OnClickListener, 
         } else if (!isCurrentJZVD() && jzDataSource.containsTheUrl(JZMediaManager.getCurrentUrl())) {
             if (JzvdMgr.getCurrentJzvd() != null &&
                     JzvdMgr.getCurrentJzvd().currentScreen == Jzvd.SCREEN_WINDOW_TINY) {
-                //需要退出小窗退到我这里，我这里是第一层级
                 tmp_test_back = true;
             }
         } else if (!isCurrentJZVD() && !jzDataSource.containsTheUrl(JZMediaManager.getCurrentUrl())) {
@@ -444,7 +441,7 @@ public abstract class Jzvd extends FrameLayout implements View.OnClickListener, 
                     return;
                 }
                 startVideo();
-                onEvent(JZUserAction.ON_CLICK_START_ICON);//开始的事件应该在播放之后，此处特殊
+                onEvent(JZUserAction.ON_CLICK_START_ICON);
             } else if (currentState == CURRENT_STATE_PLAYING) {
                 onEvent(JZUserAction.ON_CLICK_PAUSE);
                 Log.d(TAG, "pauseVideo [" + this.hashCode() + "] ");
@@ -923,7 +920,7 @@ public abstract class Jzvd extends FrameLayout implements View.OnClickListener, 
 
     public long getCurrentPositionWhenPlaying() {
         long position = 0;
-        //TODO 这块的判断应该根据MediaPlayer来
+        //TODO MediaPlayer
         if (currentState == CURRENT_STATE_PLAYING ||
                 currentState == CURRENT_STATE_PAUSE) {
             try {
@@ -938,7 +935,7 @@ public abstract class Jzvd extends FrameLayout implements View.OnClickListener, 
 
     public long getDuration() {
         long duration = 0;
-        //TODO MediaPlayer 判空的问题
+        //TODO MediaPlayer
 //        if (JZMediaManager.instance().mediaPlayer == null) return duration;
         try {
             duration = JZMediaManager.getDuration();
@@ -983,7 +980,7 @@ public abstract class Jzvd extends FrameLayout implements View.OnClickListener, 
     @Override
     public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
         if (fromUser) {
-            //设置这个progres对应的时间，给textview
+            //progres,textview
             long duration = getDuration();
             currentTimeTextView.setText(JZUtils.stringForTime(progress * duration / 100));
         }
@@ -1075,13 +1072,11 @@ public abstract class Jzvd extends FrameLayout implements View.OnClickListener, 
         //1.清空全屏和小窗的jzvd
         currentState = JzvdMgr.getSecondFloor().currentState;
         clearFloatScreen();
-        //2.在本jzvd上播放
+        //2.jzvd
         setState(currentState);
 //        removeTextureView();
         addTextureView();
     }
-
-    //重力感应的时候调用的函数，
     public void autoFullscreen(float x) {
         if (isCurrentPlay()
                 && (currentState == CURRENT_STATE_PLAYING || currentState == CURRENT_STATE_PAUSE)
@@ -1152,11 +1147,10 @@ public abstract class Jzvd extends FrameLayout implements View.OnClickListener, 
 
     public static class JZAutoFullscreenListener implements SensorEventListener {
         @Override
-        public void onSensorChanged(SensorEvent event) {//可以得到传感器实时测量出来的变化值
+        public void onSensorChanged(SensorEvent event) {
             final float x = event.values[SensorManager.DATA_X];
             float y = event.values[SensorManager.DATA_Y];
             float z = event.values[SensorManager.DATA_Z];
-            //过滤掉用力过猛会有一个反向的大数值
             if (x < -12 || x > 12) {
                 if ((System.currentTimeMillis() - lastAutoFullscreenTime) > 2000) {
                     if (JzvdMgr.getCurrentJzvd() != null) {

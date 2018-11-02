@@ -39,27 +39,6 @@ public class HorizontalPagerAdapter extends PagerAdapter {
         this.activity = activity;
     }
 
-//                    {
-//                    new Util.LibraryObject(
-//                            R.drawable.collection_image2
-//                    ),
-//                    new Util.LibraryObject(
-//                            R.drawable.collection_image2
-//                    ),
-//                    new Util.LibraryObject(
-//                            R.drawable.museum_of_islamic_art
-//                    ),
-//                    new Util.LibraryObject(
-//                            R.drawable.science_tour
-//                    ),
-//                    new Util.LibraryObject(
-//                            R.drawable.coming_soon_1
-//                    ),
-//                    new Util.LibraryObject(
-//                            R.drawable.science_tour_object2
-//                    )
-//            };
-
 
     @Override
     public int getCount() {
