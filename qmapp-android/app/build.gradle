@@ -24,8 +24,9 @@ dependencies {
     implementation 'com.android.support:appcompat-v7:27.1.1'
     implementation 'com.android.support:design:27.1.1'
     implementation 'com.android.support.constraint:constraint-layout:1.1.2'
-    implementation 'com.google.android.gms:play-services-maps:15.0.1'
+    implementation 'com.google.android.gms:play-services-maps:16.0.0'
     implementation 'com.android.support:support-v4:27.1.1'
+    implementation 'com.google.firebase:firebase-messaging:17.3.4'
     testImplementation 'junit:junit:4.12'
     androidTestImplementation 'com.android.support.test:runner:1.0.2'
     androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.2'
@@ -33,7 +34,7 @@ dependencies {
     implementation 'com.jakewharton:butterknife:8.8.1'
     //slider
     //firebase
-    implementation 'com.google.firebase:firebase-core:16.0.0'
+    implementation 'com.google.firebase:firebase-core:16.0.4'
     implementation 'com.crashlytics.sdk.android:crashlytics:2.9.3'
     //recycler view gravity start
     implementation 'com.github.rubensousa:gravitysnaphelper:1.5'
@@ -74,6 +75,6 @@ dependencies {
     //gif view
     implementation 'pl.droidsonroids.gif:android-gif-drawable:1.2.15'
 //    google vision api
-    implementation 'com.google.android.gms:play-services-vision:15.0.2'
+    implementation 'com.google.android.gms:play-services-vision:17.0.2'
 }
 apply plugin: 'com.google.gms.google-services'

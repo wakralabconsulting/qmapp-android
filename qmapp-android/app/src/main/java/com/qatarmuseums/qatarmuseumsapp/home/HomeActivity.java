@@ -1,12 +1,16 @@
 package com.qatarmuseums.qatarmuseumsapp.home;
 
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
 import android.preference.PreferenceManager;
+import android.support.v4.content.LocalBroadcastManager;
 import android.support.v4.view.GravityCompat;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
@@ -21,6 +25,8 @@ import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.Toast;
 
+import com.google.firebase.messaging.FirebaseMessaging;
+import com.qatarmuseums.qatarmuseumsapp.Config;
 import com.qatarmuseums.qatarmuseumsapp.QMDatabase;
 import com.qatarmuseums.qatarmuseumsapp.R;
 import com.qatarmuseums.qatarmuseumsapp.apicall.APIClient;
@@ -65,6 +71,9 @@ public class HomeActivity extends BaseActivity {
     private Button retryButton;
     private int appLanguage;
     private String name;
+    private BroadcastReceiver mRegistrationBroadcastReceiver;
+    private SharedPreferences.Editor editor;
+    private int badgeCount;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -85,7 +94,9 @@ public class HomeActivity extends BaseActivity {
         qmDatabase = QMDatabase.getInstance(HomeActivity.this);
         qmPreferences = PreferenceManager.getDefaultSharedPreferences(this);
         name = qmPreferences.getString("NAME", null);
-
+        badgeCount = qmPreferences.getInt("BADGE_COUNT", 0);
+        if (badgeCount > 0)
+            setBadge(badgeCount);
         zoomOutAnimation = AnimationUtils.loadAnimation(getApplicationContext(),
                 R.anim.zoom_out);
         fadeOutAnimation = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.fade_out_animation);
@@ -237,6 +248,14 @@ public class HomeActivity extends BaseActivity {
                 return false;
             }
         });
+
+
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        LocalBroadcastManager.getInstance(this).unregisterReceiver(mRegistrationBroadcastReceiver);
     }
 
     @Override

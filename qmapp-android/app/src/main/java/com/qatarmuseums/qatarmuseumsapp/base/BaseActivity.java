@@ -1,12 +1,16 @@
 package com.qatarmuseums.qatarmuseumsapp.base;
 
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.annotation.Nullable;
 import android.support.design.widget.NavigationView;
+import android.support.v4.content.LocalBroadcastManager;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
@@ -20,7 +24,11 @@ import android.view.animation.AnimationUtils;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.TextView;
+import android.widget.Toast;
 
+import com.google.firebase.messaging.FirebaseMessaging;
+import com.qatarmuseums.qatarmuseumsapp.Config;
 import com.qatarmuseums.qatarmuseumsapp.calendar.CalendarActivity;
 import com.qatarmuseums.qatarmuseumsapp.R;
 import com.qatarmuseums.qatarmuseumsapp.commonpage.CommonActivity;
@@ -123,6 +131,8 @@ public class BaseActivity extends AppCompatActivity
     @Nullable
     @BindView(R.id.sidemenu_settings_layout)
     LinearLayout sidemenuSettingsLayout;
+    @BindView(R.id.badge_notification)
+    public TextView badgeCountTextView;
 
 
     private FrameLayout fullView;
@@ -132,6 +142,9 @@ public class BaseActivity extends AppCompatActivity
     Util util;
     private SharedPreferences qmPreferences;
     private String name;
+    private SharedPreferences.Editor editor;
+    private int badgeCount;
+    private BroadcastReceiver mRegistrationBroadcastReceiver;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -199,6 +212,55 @@ public class BaseActivity extends AppCompatActivity
         navigationView.setBackgroundColor(Color.parseColor("#CC000000"));
         qmPreferences = PreferenceManager.getDefaultSharedPreferences(this);
         name = qmPreferences.getString("NAME", null);
+        badgeCount = qmPreferences.getInt("BADGE_COUNT", 0);
+        if (badgeCount > 0)
+            setBadge(badgeCount);
+
+        mRegistrationBroadcastReceiver = new BroadcastReceiver() {
+            @Override
+            public void onReceive(Context context, Intent intent) {
+
+                if (intent.getAction().equals(Config.REGISTRATION_COMPLETE)) {
+                    FirebaseMessaging.getInstance().subscribeToTopic(Config.TOPIC_GLOBAL);
+
+//                    updateFirebaseRegid();
+
+                } else if (intent.getAction().equals(Config.PUSH_NOTIFICATION)) {
+                    // new push notification is received
+
+                    String message = intent.getStringExtra("ALERT");
+                    int badgeCountTemp = Integer.parseInt(intent.getStringExtra("BADGE"));
+
+                    Toast.makeText(context, "PUSH : " + message + " : " + badgeCountTemp, Toast.LENGTH_SHORT).show();
+
+                    badgeCount = qmPreferences.getInt("BADGE_COUNT", 0);
+                    badgeCount = badgeCount + badgeCountTemp;
+                    editor = qmPreferences.edit();
+                    editor.putInt("BADGE_COUNT", badgeCount);
+                    editor.commit();
+
+                    if (badgeCount > 0) {
+                        setBadge(badgeCount);
+                    }
+                }
+            }
+        };
+        LocalBroadcastManager.getInstance(this).registerReceiver(mRegistrationBroadcastReceiver,
+                new IntentFilter(Config.REGISTRATION_COMPLETE));
+
+        LocalBroadcastManager.getInstance(this).registerReceiver(mRegistrationBroadcastReceiver,
+                new IntentFilter(Config.PUSH_NOTIFICATION));
+
+
+    }
+
+    public void setBadge(int badgeCount) {
+        badgeCountTextView.setVisibility(View.VISIBLE);
+        if (badgeCount < 10) {
+            badgeCountTextView.setText(String.valueOf(" " + badgeCount + " "));
+        }
+        badgeCountTextView.setText(String.valueOf(badgeCount));
+
     }
 
     @Override
@@ -238,6 +300,10 @@ public class BaseActivity extends AppCompatActivity
                 topbarNotification.startAnimation(zoomOutAnimation);
                 navigation_intent = new Intent(this, NotificationActivity.class);
                 startActivity(navigation_intent);
+                editor = qmPreferences.edit();
+                editor.putInt("BADGE_COUNT", 0);
+                editor.commit();
+                badgeCountTextView.setVisibility(View.GONE);
                 closeDrawer();
                 break;
             case R.id.topbar_profile:
