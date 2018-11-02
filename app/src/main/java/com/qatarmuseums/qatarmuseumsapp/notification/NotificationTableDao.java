@@ -26,10 +26,10 @@ public interface NotificationTableDao {
     int getNumberOfRowsArabic();
 
     @Query("SELECT * FROM notificationTableEnglish")
-    LiveData<List<NotificationTableEnglish>> findAllEnglish();
+    LiveData<List<NotificationModel>> findAllEnglish();
 
     @Query("SELECT * FROM notificationTableArabic")
-    LiveData<List<NotificationTableArabic>> findAllArabic();
+    LiveData<List<NotificationModel>> findAllArabic();
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     void saveEnglish(NotificationTableEnglish notificationTableEnglish);

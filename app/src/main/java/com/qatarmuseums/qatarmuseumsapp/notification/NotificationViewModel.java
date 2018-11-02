@@ -23,19 +23,12 @@ public class NotificationViewModel extends AndroidViewModel {
 
     }
 
-    LiveData<List<NotificationTableEnglish>> getAllPostsEnglish() {
+    LiveData<List<NotificationModel>> getAllPostsEnglish() {
         return notificationDao.findAllEnglish();
     }
 
-    LiveData<List<NotificationTableArabic>> getAllPostsArabic() {
+    LiveData<List<NotificationModel>> getAllPostsArabic() {
         return notificationDao.findAllArabic();
     }
 
-    void saveEnglishNotification(NotificationTableEnglish notificationTableEnglish) {
-        executorService.execute(() -> notificationDao.saveEnglish(notificationTableEnglish));
-    }
-
-    void saveArabicNotification(NotificationTableArabic notificationTableArabic) {
-        executorService.execute(() -> notificationDao.saveEnglish(notificationTableArabic));
-    }
 }
