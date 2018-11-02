@@ -82,6 +82,17 @@ public class HorizontalPagerAdapter extends PagerAdapter {
         }
         setupItem(view, LIBRARIES[position], mContext);
         FrameLayout layout = view.findViewById(R.id.layout_frame);
+        view.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Log.i("TAG","This page was clicked"+position);
+                if(fragment!=null){
+                    fragment.getItemPosition(position);
+                }else {
+                    activity.getItemPosition(position);
+                }
+            }
+        });
         container.addView(view);
         return view;
     }

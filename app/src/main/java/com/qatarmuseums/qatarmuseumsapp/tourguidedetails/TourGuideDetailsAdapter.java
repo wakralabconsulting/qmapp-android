@@ -1,4 +1,4 @@
-package com.qatarmuseums.qatarmuseumsapp.tourguide;
+package com.qatarmuseums.qatarmuseumsapp.tourguidedetails;
 
 import android.content.Context;
 import android.support.annotation.NonNull;
@@ -12,16 +12,16 @@ import android.widget.TextView;
 import com.qatarmuseums.qatarmuseumsapp.R;
 import com.qatarmuseums.qatarmuseumsapp.home.GlideApp;
 import com.qatarmuseums.qatarmuseumsapp.home.HomeList;
+import com.qatarmuseums.qatarmuseumsapp.tourguidestartpage.SelfGuideStarterModel;
 
-import java.util.ArrayList;
 import java.util.List;
 
-public class TourGuideAdapter extends RecyclerView.Adapter<TourGuideAdapter.MyViewHolder> {
+public class TourGuideDetailsAdapter extends RecyclerView.Adapter<TourGuideDetailsAdapter.MyViewHolder> {
     private final Context mContext;
-    private List<HomeList> tourGuideList;
+    private List<SelfGuideStarterModel> tourGuideList;
     String comingFrom;
 
-    public TourGuideAdapter(Context context, List<HomeList> tourGuideList, String comingFrom) {
+    public TourGuideDetailsAdapter(Context context, List<SelfGuideStarterModel> tourGuideList, String comingFrom) {
         this.tourGuideList = tourGuideList;
         this.mContext = context;
         this.comingFrom = comingFrom;
@@ -38,28 +38,23 @@ public class TourGuideAdapter extends RecyclerView.Adapter<TourGuideAdapter.MyVi
 
     @Override
     public void onBindViewHolder(@NonNull MyViewHolder holder, int position) {
-        HomeList tgList = tourGuideList.get(position);
-        holder.name.setText(tgList.getName());
-        if (tgList.getTourguideAvailable().equalsIgnoreCase("true")){
-            holder.headphoneIcon.setVisibility(View.VISIBLE);
-            holder.headphoneIcon.setImageResource(R.drawable.floor_map_circle);
-        } else {
-            holder.headphoneIcon.setVisibility(View.GONE);
-        }
+        SelfGuideStarterModel tgList = tourGuideList.get(position);
+        holder.name.setText(tgList.getTitle());
         if (comingFrom.equals(mContext.getString(R.string.tourguide_sidemenu_title))) {
             GlideApp.with(mContext)
-                    .load(tgList.getImage())
+                    .load(tgList.getFirstImage())
                     .placeholder(R.drawable.placeholder)
                     .centerCrop()
                     .into(holder.imageView);
         } else {
             holder.headphoneIcon.setVisibility(View.VISIBLE);
             holder.headphoneIcon.setImageResource(R.drawable.audio_circle);
-            if(tgList.getName().equals(mContext.getString(R.string.coming_soon_txt)))
+            if(tgList.getTitle().equals(mContext.getString(R.string.coming_soon_txt)))
                 holder.headphoneIcon.setColorFilter(mContext.getResources().getColor(R.color.grey));
             GlideApp.with(mContext)
-                    .load(tgList.getImage())
+                    .load(tgList.getFirstImage())
                     .placeholder(R.drawable.placeholder)
+                    .centerCrop()
                     .into(holder.imageView);
         }
     }
