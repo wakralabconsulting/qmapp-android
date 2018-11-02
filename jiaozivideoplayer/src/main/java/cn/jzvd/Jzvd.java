@@ -1066,10 +1066,9 @@ public abstract class Jzvd extends FrameLayout implements View.OnClickListener, 
                 && JzvdMgr.getCurrentJzvd() == this;
     }
 
-    //退出全屏和小窗的方法
     public void playOnThisJzvd() {
         Log.i(TAG, "playOnThisJzvd " + " [" + this.hashCode() + "] ");
-        //1.清空全屏和小窗的jzvd
+        //1.zvd
         currentState = JzvdMgr.getSecondFloor().currentState;
         clearFloatScreen();
         //2.jzvd
@@ -1112,7 +1111,7 @@ public abstract class Jzvd extends FrameLayout implements View.OnClickListener, 
         JZMediaManager.instance().jzMediaInterface = mediaInterface;
     }
 
-    //TODO 是否有用
+    //TODO
     public void onSeekComplete() {
 
     }
