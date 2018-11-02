@@ -1,5 +1,6 @@
 package com.qatarmuseums.qatarmuseumsapp.notification;
 
+import android.arch.lifecycle.ViewModelProviders;
 import android.content.BroadcastReceiver;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
@@ -29,6 +30,7 @@ public class NotificationActivity extends AppCompatActivity {
     private Animation zoomOutAnimation;
     private TextView emptyText;
     private BroadcastReceiver mRegistrationBroadcastReceiver;
+    private NotificationViewModel notificationViewModel;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -66,6 +68,8 @@ public class NotificationActivity extends AppCompatActivity {
 
         emptyText.setVisibility(View.VISIBLE);
 
+        notificationViewModel = ViewModelProviders.of(this).get(NotificationViewModel.class);
+        notificationViewModel.getAllPostsEnglish().observe(this, posts -> mAdapter.setData(models));
 //        prepareNotificationData();
     }
 
@@ -73,21 +77,6 @@ public class NotificationActivity extends AppCompatActivity {
         NotificationModel model = new NotificationModel("1", "Check the new event at MIA!");
         models.add(model);
         model = new NotificationModel("2", "German Design Exhibition is now live! Check it out now.");
-        models.add(model);
-        model = new NotificationModel("3", "Check our new National Museum Teachers workshop here.");
-        models.add(model);
-        model = new NotificationModel("4", "Check the new event at Zubara Fort.");
-        models.add(model);
-        model = new NotificationModel("5", "Culture Pass Notification.");
-        models.add(model);
-        model = new NotificationModel("6", "Checkout new collections at MIA.");
-        models.add(model);
-        model = new NotificationModel("7", "Checkout new collections at MIA.");
-        models.add(model);
-        model = new NotificationModel("8", "Check the new event at Zubara Fort.");
-        models.add(model);
-        model = new NotificationModel("9", "Culture Pass Notification.");
-        models.add(model);
 
         // TO show recently added item first
         Collections.reverse(models);

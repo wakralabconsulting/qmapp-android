@@ -252,11 +252,7 @@ public class HomeActivity extends BaseActivity {
 
     }
 
-    @Override
-    public void onDestroy() {
-        super.onDestroy();
-        LocalBroadcastManager.getInstance(this).unregisterReceiver(mRegistrationBroadcastReceiver);
-    }
+
 
     @Override
     public void onBackPressed() {

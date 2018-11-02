@@ -69,6 +69,10 @@ public class NotificationListAdapter extends RecyclerView.Adapter<NotificationLi
 
     }
 
+    public void setData(List<NotificationModel> newData) {
+        this.notificationModelList = newData;
+        notifyDataSetChanged();
+    }
 
     public NotificationListAdapter(Context context, List<NotificationModel> notificationModelList) {
         this.notificationModelList = notificationModelList;
@@ -89,7 +93,7 @@ public class NotificationListAdapter extends RecyclerView.Adapter<NotificationLi
     @Override
     public void onBindViewHolder(@NonNull NotificationListAdapter.MyViewHolder holder, int position) {
         NotificationModel model = notificationModelList.get(position);
-        holder.information.setText(model.getInfo());
+        holder.information.setText(model.getTitle());
         if (position % 2 == 1) {
             holder.notificationHolder.setBackgroundColor(Color.parseColor("#FFFFFF"));
         } else {

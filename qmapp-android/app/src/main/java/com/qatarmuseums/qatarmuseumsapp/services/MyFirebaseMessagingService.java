@@ -83,9 +83,9 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
         Log.e(TAG, "push json: " + json.toString());
 
         try {
-//            JSONObject data = json.getJSONObject("app");
-            String message = json.getString("alert");
-            String badgeCount = json.getString("badge");
+            JSONObject data = json.getJSONObject("app");
+            String message = data.getString("alert");
+            String badgeCount = data.getString("badge");
             Log.e(TAG, "badge: " + badgeCount);
             Log.e(TAG, "message: " + message);
             if (!NotificationUtils.isAppIsInBackground(getApplicationContext())) {
