@@ -2,6 +2,8 @@ package com.qatarmuseums.qatarmuseumsapp.dining;
 
 import com.google.gson.annotations.SerializedName;
 
+import java.util.ArrayList;
+
 public class DiningDetailModel {
     @SerializedName("name")
     private String name;
@@ -23,13 +25,15 @@ public class DiningDetailModel {
     private String latitude;
     @SerializedName("Longitude")
     private String longitude;
+    @SerializedName("images")
+    private ArrayList<String> images;
     public DiningDetailModel() {
     }
     
     public DiningDetailModel(String name, String id, String location, String image,
                              String openingTime, String closingTime,
                              String description, String sortId,
-                             String latitude, String longitude) {
+                             String latitude, String longitude,ArrayList<String> images) {
         this.name = name;
         this.id = id;
         this.location = location;
@@ -40,6 +44,7 @@ public class DiningDetailModel {
         this.sortId = sortId;
         this.latitude = latitude;
         this.longitude = longitude;
+        this.images=images;
     }
 
     public String getLatitude() {
@@ -120,5 +125,13 @@ public class DiningDetailModel {
 
     public void setSortId(String sortId) {
         this.sortId = sortId;
+    }
+
+    public ArrayList<String> getImages() {
+        return images;
+    }
+
+    public void setImages(ArrayList<String> images) {
+        this.images = images;
     }
 }
