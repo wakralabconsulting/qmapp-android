@@ -229,12 +229,11 @@ public class BaseActivity extends AppCompatActivity
                     // new push notification is received
 
                     String message = intent.getStringExtra("ALERT");
-                    int badgeCountTemp = Integer.parseInt(intent.getStringExtra("BADGE"));
 
-                    Toast.makeText(context, "PUSH : " + message + " : " + badgeCountTemp, Toast.LENGTH_SHORT).show();
+                    Toast.makeText(context, "MESSAGE : " + message, Toast.LENGTH_SHORT).show();
 
                     badgeCount = qmPreferences.getInt("BADGE_COUNT", 0);
-                    badgeCount = badgeCount + badgeCountTemp;
+                    badgeCount = badgeCount + 1;
                     editor = qmPreferences.edit();
                     editor.putInt("BADGE_COUNT", badgeCount);
                     editor.commit();
@@ -261,6 +260,12 @@ public class BaseActivity extends AppCompatActivity
         }
         badgeCountTextView.setText(String.valueOf(badgeCount));
 
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        LocalBroadcastManager.getInstance(this).unregisterReceiver(mRegistrationBroadcastReceiver);
     }
 
     @Override
