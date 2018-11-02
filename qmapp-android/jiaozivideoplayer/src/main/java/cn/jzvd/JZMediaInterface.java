@@ -2,10 +2,6 @@ package cn.jzvd;
 
 import android.view.Surface;
 
-/**
- * Created by Nathen on 2017/11/7.
- * 自定义播放器
- */
 public abstract class JZMediaInterface {
 
     public JZDataSource jzDataSource;

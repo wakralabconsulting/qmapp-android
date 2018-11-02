@@ -138,18 +138,6 @@
                     android:textColor="@color/black"
                     android:textSize="@dimen/font_size_15" />
 
-                <!--<TextView-->
-                    <!--android:id="@+id/map_info"-->
-                    <!--android:layout_width="wrap_content"-->
-                    <!--android:layout_height="wrap_content"-->
-                    <!--android:layout_marginBottom="@dimen/text_margin"-->
-                    <!--android:layout_marginEnd="@dimen/text_margin"-->
-                    <!--android:layout_marginStart="@dimen/text_margin"-->
-                    <!--android:fontFamily="@font/din_next_lt_pro_regular"-->
-                    <!--android:text="@string/open_in_google_maps"-->
-                    <!--android:textAlignment="center"-->
-                    <!--android:textColor="@color/black"-->
-                    <!--android:textSize="@dimen/font_size_15" />-->
                 <LinearLayout
                     android:id="@+id/map_layout"
                     android:layout_width="match_parent"
@@ -173,14 +161,18 @@
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:src="@drawable/ic_satellite"
-                                android:padding="@dimen/padding_15"
+                                android:paddingBottom="@dimen/padding_20"
+                                android:paddingEnd="@dimen/padding_10"
+                                android:paddingStart="0dp"
                                 />
                             <ImageView
                                 android:id="@+id/direction"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:src="@drawable/ic_directions"
-                                android:padding="@dimen/padding_15"
+                                android:paddingBottom="@dimen/padding_20"
+                                android:paddingEnd="@dimen/padding_10"
+                                android:paddingStart="0dp"
                                 />
                         </LinearLayout>
                     </FrameLayout>

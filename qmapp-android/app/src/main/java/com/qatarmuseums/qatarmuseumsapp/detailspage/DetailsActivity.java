@@ -256,9 +256,9 @@ public class DetailsActivity extends AppCompatActivity implements IPullZoom, OnM
             @Override
             public void onClick(View view) {
                 if (iconView == 0) {
-                    if(latitude==null){
+                    if (latitude == null) {
                         util.showLocationAlertDialog(DetailsActivity.this);
-                    }else {
+                    } else {
                         iconView = 1;
                         mapImageView.setImageResource(R.drawable.ic_map);
                         gmap.setMapType(GoogleMap.MAP_TYPE_HYBRID);
@@ -293,13 +293,13 @@ public class DetailsActivity extends AppCompatActivity implements IPullZoom, OnM
                 if (latitude == null) {
                     util.showLocationAlertDialog(DetailsActivity.this);
                 } else {
-                Intent intent = new Intent(android.content.Intent.ACTION_VIEW,
-                        Uri.parse("http://maps.google.com/maps?daddr=9.9917,76.3488&basemap=satellite"));
-                Log.d("googleurl", Uri.parse("http://maps.google.com/maps?daddr=9.9917,76.3488&basemap=satellite").toString());
-                if (intent.resolveActivity(getPackageManager()) != null) {
-                    startActivity(intent);
+                    Intent intent = new Intent(android.content.Intent.ACTION_VIEW,
+                            Uri.parse("http://maps.google.com/maps?daddr=" + latitude + "," + longitude + "&basemap=satellite"));
+                    if (intent.resolveActivity(getPackageManager()) != null) {
+                        startActivity(intent);
+                    }
                 }
-            }}
+            }
         });
 
     }
@@ -434,20 +434,20 @@ public class DetailsActivity extends AppCompatActivity implements IPullZoom, OnM
             }
         });
 
-            zoomView.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
+        zoomView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
 
-                    Bundle bundle = new Bundle();
-                    bundle.putStringArrayList("imageList", imageList);
-                    HorizontalLayoutFragment fragment = new HorizontalLayoutFragment();
-                    fragment.setArguments(bundle);
-                    FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
-                    transaction.addToBackStack(null);
-                    transaction.replace(R.id.fragment_frame, fragment);
-                    transaction.commit();
-                }
-            });
+                Bundle bundle = new Bundle();
+                bundle.putStringArrayList("imageList", imageList);
+                HorizontalLayoutFragment fragment = new HorizontalLayoutFragment();
+                fragment.setArguments(bundle);
+                FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+                transaction.addToBackStack(null);
+                transaction.replace(R.id.fragment_frame, fragment);
+                transaction.commit();
+            }
+        });
 
     }
 
@@ -531,7 +531,7 @@ public class DetailsActivity extends AppCompatActivity implements IPullZoom, OnM
                     longitude = convertDegreetoDecimalMeasure(longitude);
                 }
             }
-            if(latitude != null && !latitude.equals("")) {
+            if (latitude != null && !latitude.equals("")) {
                 gmap = gvalue;
                 gmap.setMinZoomPreference(12);
                 LatLng ny = new LatLng(Double.valueOf(latitude), Double.valueOf(longitude));
@@ -619,7 +619,7 @@ public class DetailsActivity extends AppCompatActivity implements IPullZoom, OnM
 
                 }
             }
-            if(latitude != null && !latitude.equals("")){
+            if (latitude != null && !latitude.equals("")) {
                 gmap = gvalue;
                 gmap.setMinZoomPreference(12);
                 LatLng ny = new LatLng(Double.valueOf(latitude), Double.valueOf(longitude));
@@ -668,7 +668,7 @@ public class DetailsActivity extends AppCompatActivity implements IPullZoom, OnM
                         for (int i = 0; i < heritageOrExhibitionDetailModel.get(0).getImage().size(); i++) {
                             imageList.add(i, heritageOrExhibitionDetailModel.get(0).getImage().get(i));
                         }
-                        if(imageList.size()==0){
+                        if (imageList.size() == 0) {
                             zoomView.setOnClickListener(null);
                         }
                         if (pageName.equals("heritage_detail_Page.json")) {
@@ -683,7 +683,7 @@ public class DetailsActivity extends AppCompatActivity implements IPullZoom, OnM
                                     null,
                                     heritageOrExhibitionDetailModel.get(0).getLatitude(),
                                     heritageOrExhibitionDetailModel.get(0).getLongitude(),
-                                    null, null,null);
+                                    null, null, null);
                             new HeritageRowCount(DetailsActivity.this, appLanguage).execute();
                         } else {
                             loadDataForHeritageOrExhibitionDetails(null,
@@ -695,7 +695,7 @@ public class DetailsActivity extends AppCompatActivity implements IPullZoom, OnM
                                     null, heritageOrExhibitionDetailModel.get(0).getLatitude(),
                                     heritageOrExhibitionDetailModel.get(0).getLongitude(),
                                     heritageOrExhibitionDetailModel.get(0).getStartDate(),
-                                    heritageOrExhibitionDetailModel.get(0).getEndDate(),null);
+                                    heritageOrExhibitionDetailModel.get(0).getEndDate(), null);
                             new ExhibitionDetailRowCount(DetailsActivity.this, appLanguage).execute();
                         }
 
@@ -916,7 +916,7 @@ public class DetailsActivity extends AppCompatActivity implements IPullZoom, OnM
                         null, exhibitionListTableEnglish.get(0).getExhibition_latitude(),
                         exhibitionListTableEnglish.get(0).getExhibition_longitude(),
                         exhibitionListTableEnglish.get(0).getExhibition_start_date(),
-                        exhibitionListTableEnglish.get(0).getExhibition_end_date(),null);
+                        exhibitionListTableEnglish.get(0).getExhibition_end_date(), null);
             } else {
                 progressBar.setVisibility(View.GONE);
                 commonContentLayout.setVisibility(View.INVISIBLE);
@@ -960,7 +960,7 @@ public class DetailsActivity extends AppCompatActivity implements IPullZoom, OnM
                         null, exhibitionListTableArabics.get(0).getExhibition_latitude(),
                         exhibitionListTableArabics.get(0).getExhibition_longitude(),
                         exhibitionListTableArabics.get(0).getExhibition_start_date(),
-                        exhibitionListTableArabics.get(0).getExhibition_end_date(),null);
+                        exhibitionListTableArabics.get(0).getExhibition_end_date(), null);
             } else {
                 progressBar.setVisibility(View.GONE);
                 commonContentLayout.setVisibility(View.INVISIBLE);
@@ -1129,7 +1129,7 @@ public class DetailsActivity extends AppCompatActivity implements IPullZoom, OnM
                         null,
                         heritageListTableEnglish.get(0).getLocation(),
                         null, heritageListTableEnglish.get(0).getLatitude(),
-                        heritageListTableEnglish.get(0).getLongitude(), null, null,null);
+                        heritageListTableEnglish.get(0).getLongitude(), null, null, null);
             } else {
                 progressBar.setVisibility(View.GONE);
                 commonContentLayout.setVisibility(View.INVISIBLE);
@@ -1170,7 +1170,7 @@ public class DetailsActivity extends AppCompatActivity implements IPullZoom, OnM
                         null,
                         heritageListTableArabic.get(0).getLocation(),
                         null, heritageListTableArabic.get(0).getLatitude(),
-                        heritageListTableArabic.get(0).getLongitude(), null, null,null);
+                        heritageListTableArabic.get(0).getLongitude(), null, null, null);
             } else {
                 progressBar.setVisibility(View.GONE);
                 commonContentLayout.setVisibility(View.INVISIBLE);
@@ -1210,7 +1210,7 @@ public class DetailsActivity extends AppCompatActivity implements IPullZoom, OnM
                         for (int i = 0; i < publicArtModel.get(0).getImage().size(); i++) {
                             imageList.add(i, publicArtModel.get(0).getImage().get(i));
                         }
-                        if(imageList.size()==0){
+                        if (imageList.size() == 0) {
                             zoomView.setOnClickListener(null);
                         }
                         fromMuseumAbout = false;
@@ -1489,7 +1489,7 @@ public class DetailsActivity extends AppCompatActivity implements IPullZoom, OnM
                         for (int i = 0; i < museumAboutModels.get(0).getImageList().size(); i++) {
                             imageList.add(i, museumAboutModels.get(0).getImageList().get(i));
                         }
-                        if(imageList.size()==0){
+                        if (imageList.size() == 0) {
                             zoomView.setOnClickListener(null);
                         }
                         if (!DetailsActivity.this.isFinishing()) {

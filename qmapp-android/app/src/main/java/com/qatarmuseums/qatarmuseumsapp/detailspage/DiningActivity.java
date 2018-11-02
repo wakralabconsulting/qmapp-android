@@ -16,7 +16,6 @@ import android.text.Spanned;
 import android.text.TextPaint;
 import android.text.style.ClickableSpan;
 import android.text.style.UnderlineSpan;
-import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.animation.Animation;
@@ -289,8 +288,7 @@ public class DiningActivity extends AppCompatActivity implements IPullZoom, OnMa
                     util.showLocationAlertDialog(DiningActivity.this);
                 } else {
                     Intent intent = new Intent(android.content.Intent.ACTION_VIEW,
-                            Uri.parse("http://maps.google.com/maps?daddr=9.9917,76.3488&basemap=satellite"));
-                    Log.d("googleurl", Uri.parse("http://maps.google.com/maps?daddr=9.9917,76.3488&basemap=satellite").toString());
+                            Uri.parse("http://maps.google.com/maps?daddr=" + latitude + "," + longitude + "&basemap=satellite"));
                     if (intent.resolveActivity(getPackageManager()) != null) {
                         startActivity(intent);
                     }
@@ -333,7 +331,6 @@ public class DiningActivity extends AppCompatActivity implements IPullZoom, OnMa
     @Override
     protected void onPause() {
         mapDetails.onPause();
-//        Jzvd.releaseAllVideos();
         super.onPause();
     }
 

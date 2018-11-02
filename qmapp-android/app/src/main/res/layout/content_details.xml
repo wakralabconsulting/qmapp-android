@@ -232,14 +232,18 @@
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:src="@drawable/ic_satellite"
-                                android:padding="@dimen/padding_15"
+                                android:paddingBottom="@dimen/padding_20"
+                                android:paddingEnd="@dimen/padding_10"
+                                android:paddingStart="0dp"
                                 />
                             <ImageView
                                 android:id="@+id/direction"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:src="@drawable/ic_directions"
-                                android:padding="@dimen/padding_15"
+                                android:paddingBottom="@dimen/padding_20"
+                                android:paddingEnd="@dimen/padding_10"
+                                android:paddingStart="0dp"
                                 />
                         </LinearLayout>
                     </FrameLayout>
