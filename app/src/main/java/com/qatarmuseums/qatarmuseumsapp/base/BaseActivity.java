@@ -1,10 +1,6 @@
 package com.qatarmuseums.qatarmuseumsapp.base;
 
-import android.arch.lifecycle.ViewModelProviders;
-import android.content.BroadcastReceiver;
-import android.content.Context;
 import android.content.Intent;
-import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.os.AsyncTask;
@@ -12,7 +8,6 @@ import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.annotation.Nullable;
 import android.support.design.widget.NavigationView;
-import android.support.v4.app.FragmentActivity;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
@@ -28,17 +23,13 @@ import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
-import com.google.firebase.messaging.FirebaseMessaging;
-import com.qatarmuseums.qatarmuseumsapp.Config;
 import com.qatarmuseums.qatarmuseumsapp.QMDatabase;
-import com.qatarmuseums.qatarmuseumsapp.calendar.CalendarActivity;
 import com.qatarmuseums.qatarmuseumsapp.R;
+import com.qatarmuseums.qatarmuseumsapp.calendar.CalendarActivity;
 import com.qatarmuseums.qatarmuseumsapp.commonpage.CommonActivity;
 import com.qatarmuseums.qatarmuseumsapp.culturepass.CulturePassActivity;
 import com.qatarmuseums.qatarmuseumsapp.education.EducationActivity;
-import com.qatarmuseums.qatarmuseumsapp.home.HomeActivity;
 import com.qatarmuseums.qatarmuseumsapp.notification.NotificationActivity;
 import com.qatarmuseums.qatarmuseumsapp.notification.NotificationTableArabic;
 import com.qatarmuseums.qatarmuseumsapp.notification.NotificationTableEnglish;
@@ -154,7 +145,7 @@ public class BaseActivity extends AppCompatActivity
     private String name;
     private SharedPreferences.Editor editor;
     private int badgeCount;
-    private BroadcastReceiver mRegistrationBroadcastReceiver;
+
     private NotificationViewModel notificationViewModel;
     private String notificationMessage;
     private QMDatabase qmDatabase;
@@ -232,48 +223,16 @@ public class BaseActivity extends AppCompatActivity
         badgeCount = qmPreferences.getInt("BADGE_COUNT", 0);
         appLanguage = qmPreferences.getInt("AppLanguage", 1);
         if (badgeCount > 0)
-            setBadge(badgeCount);
-
-        mRegistrationBroadcastReceiver = new BroadcastReceiver() {
-            @Override
-            public void onReceive(Context context, Intent intent) {
-
-                if (intent.getAction().equals(Config.REGISTRATION_COMPLETE)) {
-                    FirebaseMessaging.getInstance().subscribeToTopic(Config.TOPIC_GLOBAL);
-
-//                    updateFirebaseRegid();
-
-                } else if (intent.getAction().equals(Config.PUSH_NOTIFICATION)) {
-                    // new push notification is received
-
-                    notificationMessage = intent.getStringExtra("ALERT");
-                    if (notificationMessage != null && !notificationMessage.equals("")) {
-                        if (appLanguage == 1)
-                            language = "en";
-                        else
-                            language = "ar";
-
-                        new InsertDatabaseTask(BaseActivity.this, notificationTableEnglish,
-                                notificationTableArabic, language).execute();
-                    }
-                    badgeCount = qmPreferences.getInt("BADGE_COUNT", 0);
-                    badgeCount = badgeCount + 1;
-                    editor = qmPreferences.edit();
-                    editor.putInt("BADGE_COUNT", badgeCount);
-                    editor.commit();
-                    if (badgeCount > 0) {
-                        setBadge(badgeCount);
-                    }
-                }
-            }
-        };
-        LocalBroadcastManager.getInstance(this).registerReceiver(mRegistrationBroadcastReceiver,
-                new IntentFilter(Config.REGISTRATION_COMPLETE));
-
-        LocalBroadcastManager.getInstance(this).registerReceiver(mRegistrationBroadcastReceiver,
-                new IntentFilter(Config.PUSH_NOTIFICATION));
+            setBadge();
 
 
+
+    }
+    public void insertNotificationRelatedDataToDataBase(String msg,String lan) {
+        notificationMessage =msg;
+        language = lan;
+        new InsertDatabaseTask(BaseActivity.this, notificationTableEnglish,
+                notificationTableArabic, language).execute();
     }
 
     public class InsertDatabaseTask extends AsyncTask<Void, Void, Boolean> {
@@ -313,16 +272,15 @@ public class BaseActivity extends AppCompatActivity
     }
 
 
-    public void setBadge(int badgeCount) {
+    public void setBadge() {
         badgeCountTextView.setVisibility(View.VISIBLE);
-        badgeCountTextView.setText(String.valueOf(badgeCount));
+        badgeCountTextView.setText(String.valueOf(qmPreferences.getInt("BADGE_COUNT", 0)));
 
     }
 
     @Override
     public void onDestroy() {
         super.onDestroy();
-        LocalBroadcastManager.getInstance(this).unregisterReceiver(mRegistrationBroadcastReceiver);
     }
 
     @Override
