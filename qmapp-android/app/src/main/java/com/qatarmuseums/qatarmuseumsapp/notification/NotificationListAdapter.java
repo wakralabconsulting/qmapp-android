@@ -2,7 +2,9 @@ package com.qatarmuseums.qatarmuseumsapp.notification;
 
 
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.graphics.Color;
+import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -25,6 +27,9 @@ public class NotificationListAdapter extends RecyclerView.Adapter<NotificationLi
     private final Context mContext;
     private List<NotificationModel> notificationModelList;
     private Animation zoomOutAnimation;
+    SharedPreferences qmPreferences;
+    private int badgeCount;
+    private SharedPreferences.Editor editor;
 
     public class MyViewHolder extends RecyclerView.ViewHolder {
         public TextView information;
@@ -55,9 +60,16 @@ public class NotificationListAdapter extends RecyclerView.Adapter<NotificationLi
     }
 
     public void setData(List<NotificationModel> newData) {
+        // All notifications are viewed so badgeCount set as zero
+        badgeCount = 0;
+        editor = qmPreferences.edit();
+        editor.putInt("BADGE_COUNT", badgeCount);
+        editor.commit();
+
         this.notificationModelList = newData;
         Collections.reverse(notificationModelList);
         notifyDataSetChanged();
+
     }
 
     public NotificationListAdapter(Context context, List<NotificationModel> notificationModelList) {
@@ -65,6 +77,7 @@ public class NotificationListAdapter extends RecyclerView.Adapter<NotificationLi
         this.mContext = context;
         zoomOutAnimation = AnimationUtils.loadAnimation(mContext.getApplicationContext(),
                 R.anim.zoom_out_more);
+        qmPreferences = PreferenceManager.getDefaultSharedPreferences(mContext);
     }
 
     @NonNull

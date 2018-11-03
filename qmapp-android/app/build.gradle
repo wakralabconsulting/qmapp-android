@@ -9,6 +9,7 @@ android {
         targetSdkVersion 27
         versionCode 1
         versionName "1.0"
+        multiDexEnabled  true
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
     }
     buildTypes {
@@ -84,6 +85,8 @@ dependencies {
     debugImplementation 'com.squareup.leakcanary:leakcanary-support-fragment:1.6.1'
     //gif view
     implementation 'pl.droidsonroids.gif:android-gif-drawable:1.2.15'
+    // for multiDex
+    implementation 'com.android.support:multidex:1.0.3'
 //    google vision api
     implementation 'com.google.android.gms:play-services-vision:17.0.2'
 }

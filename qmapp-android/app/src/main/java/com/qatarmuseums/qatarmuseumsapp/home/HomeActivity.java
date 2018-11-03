@@ -71,10 +71,11 @@ public class HomeActivity extends BaseActivity {
     private Button retryButton;
     private int appLanguage;
     private String name;
-    private BroadcastReceiver mRegistrationBroadcastReceiver;
     private SharedPreferences.Editor editor;
     private int badgeCount;
-
+    private BroadcastReceiver mRegistrationBroadcastReceiver;
+    private String notificationMessage;
+    private String language;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -96,7 +97,7 @@ public class HomeActivity extends BaseActivity {
         name = qmPreferences.getString("NAME", null);
         badgeCount = qmPreferences.getInt("BADGE_COUNT", 0);
         if (badgeCount > 0)
-            setBadge(badgeCount);
+            setBadge();
         zoomOutAnimation = AnimationUtils.loadAnimation(getApplicationContext(),
                 R.anim.zoom_out);
         fadeOutAnimation = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.fade_out_animation);
@@ -250,9 +251,55 @@ public class HomeActivity extends BaseActivity {
         });
 
 
+        mRegistrationBroadcastReceiver = new BroadcastReceiver() {
+            @Override
+            public void onReceive(Context context, Intent intent) {
+
+                if (intent.getAction().equals(Config.REGISTRATION_COMPLETE)) {
+                    FirebaseMessaging.getInstance().subscribeToTopic(Config.TOPIC_GLOBAL);
+
+//                    updateFirebaseRegid();
+
+                } else if (intent.getAction().equals(Config.PUSH_NOTIFICATION)) {
+                    // new push notification is received
+
+                    notificationMessage = intent.getStringExtra("ALERT");
+                    if (notificationMessage != null && !notificationMessage.equals("")) {
+                        if (appLanguage == 1)
+                            language = "en";
+                        else
+                            language = "ar";
+
+                        insertNotificationRelatedDataToDataBase(notificationMessage,language);
+
+
+                    }
+                    badgeCount = qmPreferences.getInt("BADGE_COUNT", 0);
+                    badgeCount = badgeCount + 1;
+                    editor = qmPreferences.edit();
+                    editor.putInt("BADGE_COUNT", badgeCount);
+                    editor.commit();
+                    if (badgeCount > 0) {
+                        setBadge();
+                    }
+                }
+            }
+        };
+        LocalBroadcastManager.getInstance(this).registerReceiver(mRegistrationBroadcastReceiver,
+                new IntentFilter(Config.REGISTRATION_COMPLETE));
+
+        LocalBroadcastManager.getInstance(this).registerReceiver(mRegistrationBroadcastReceiver,
+                new IntentFilter(Config.PUSH_NOTIFICATION));
+
+
+
     }
 
-
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        LocalBroadcastManager.getInstance(this).unregisterReceiver(mRegistrationBroadcastReceiver);
+    }
 
     @Override
     public void onBackPressed() {
