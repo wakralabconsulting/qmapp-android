@@ -41,12 +41,6 @@ public class ParkListAdapter extends RecyclerView.Adapter<ParkListAdapter.MyView
     LinearLayout mapView;
     int iconView = 0;
 
-//    @Override
-//    public void onMapReady(GoogleMap googleMap) {
-//        gvalue=googleMap;
-//        googleMap.getUiSettings().setMapToolbarEnabled(false);
-//    }
-
 
     public class MyViewHolder extends RecyclerView.ViewHolder implements OnMapReadyCallback {
         public TextView mainTitle, title, shortDescription, longDescription, timingInfo, timimgTitle;
@@ -122,9 +116,6 @@ public class ParkListAdapter extends RecyclerView.Adapter<ParkListAdapter.MyView
             if (parkList.getLatitude() != null) {
                 latitude = convertDegreetoDecimalMeasure(latitude);
                 longitude = convertDegreetoDecimalMeasure(longitude);
-            } else {
-//                latitude = "25.286106";
-//                longitude = "51.534817";
             }
             holder.title.setVisibility(View.GONE);
             holder.mainTitleLayout.setVisibility(View.VISIBLE);
