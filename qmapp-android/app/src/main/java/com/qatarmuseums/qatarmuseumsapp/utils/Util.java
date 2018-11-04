@@ -88,6 +88,14 @@ public class Util {
         customDialog.show();
 
     }
+    public void showLocationAlertDialog(Context context) {
+        customDialog = new CustomDialogClass(context
+                , context.getResources().getString(R.string.location_alert_txt)
+                , context.getResources().getString(R.string.location_error_content));
+        customDialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+        customDialog.show();
+
+    }
 
     public void showToast(String message, Context context) {
         Toast.makeText(context, message, Toast.LENGTH_SHORT).show();
