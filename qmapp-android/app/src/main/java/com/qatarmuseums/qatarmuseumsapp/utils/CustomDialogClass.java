@@ -30,9 +30,10 @@ public class CustomDialogClass extends Dialog implements
         this.content = content;
     }
 
-    public CustomDialogClass(Context c, String content) {
+    public CustomDialogClass(Context c,String title,String content) {
         super(c);
         this.mContext = c;
+        this.title = title;
         this.calendarContent = content;
     }
 
@@ -57,13 +58,20 @@ public class CustomDialogClass extends Dialog implements
             dialogTitle.setVisibility(View.GONE);
             dialogContent.setText(content);
             closeButton.setText(context.getResources().getString(R.string.ok));
-        } else {
+        } else if(content!=null){
             dialogTitle.setVisibility(View.VISIBLE);
             dialogTitle.setText(title);
             dialogContent.setText(content);
             calendarCloseButton.setVisibility(View.GONE);
             closeButton.setVisibility(View.VISIBLE);
             closeButton.setText(context.getResources().getString(R.string.close));
+        }else {
+            dialogTitle.setVisibility(View.VISIBLE);
+            dialogTitle.setText(title);
+            dialogContent.setText(calendarContent);
+            calendarCloseButton.setVisibility(View.GONE);
+            closeButton.setVisibility(View.VISIBLE);
+            closeButton.setText(mContext.getResources().getString(R.string.close));
         }
 
         closeButton.setOnClickListener(this);
