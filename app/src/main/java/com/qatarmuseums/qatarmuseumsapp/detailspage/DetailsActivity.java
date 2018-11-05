@@ -120,7 +120,6 @@ public class DetailsActivity extends AppCompatActivity implements IPullZoom, OnM
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_details);
-
         qmPreferences = PreferenceManager.getDefaultSharedPreferences(this);
         language = qmPreferences.getInt("AppLanguage", 1);
         progressBar = (ProgressBar) findViewById(R.id.progressBarLoading);
@@ -907,6 +906,13 @@ public class DetailsActivity extends AppCompatActivity implements IPullZoom, OnM
         @Override
         protected void onPostExecute(List<ExhibitionListTableEnglish> exhibitionListTableEnglish) {
             if (exhibitionListTableEnglish.size() > 0) {
+                Convertor convertor=new Convertor();
+                if(exhibitionListTableEnglish.get(0).getExhibition_latest_image().contains("[")) {
+                    ArrayList<String> list = convertor.fromString(exhibitionListTableEnglish.get(0).getExhibition_latest_image());
+                    for (int i = 0; i < list.size(); i++) {
+                        imageList.add(i, list.get(i));
+                    }
+                }
                 loadDataForHeritageOrExhibitionDetails(null,
                         exhibitionListTableEnglish.get(0).getExhibition_short_description(),
                         exhibitionListTableEnglish.get(0).getExhibition_long_description(),
@@ -951,6 +957,13 @@ public class DetailsActivity extends AppCompatActivity implements IPullZoom, OnM
         @Override
         protected void onPostExecute(List<ExhibitionListTableArabic> exhibitionListTableArabics) {
             if (exhibitionListTableArabics.size() > 0) {
+                Convertor convertor=new Convertor();
+                if(exhibitionListTableArabics.get(0).getExhibition_latest_image().contains("[")) {
+                    ArrayList<String> list = convertor.fromString(exhibitionListTableArabics.get(0).getExhibition_latest_image());
+                    for (int i = 0; i < list.size(); i++) {
+                        imageList.add(i, list.get(i));
+                    }
+                }
                 loadDataForHeritageOrExhibitionDetails(null,
                         exhibitionListTableArabics.get(0).getExhibition_short_description(),
                         exhibitionListTableArabics.get(0).getExhibition_long_description(),
@@ -1083,11 +1096,13 @@ public class DetailsActivity extends AppCompatActivity implements IPullZoom, OnM
 
         @Override
         protected Void doInBackground(Void... voids) {
+            Convertor convertor = new Convertor();
             if (language.equals("en")) {
                 // updateEnglishTable table with english name
                 activityReference.get().qmDatabase.getHeritageListTableDao().updateHeritageDetailEnglish(
                         latitude, longitude, heritageOrExhibitionDetailModel.get(position).getLongDescription()
                         , heritageOrExhibitionDetailModel.get(position).getShortDescription(),
+                        convertor.fromArrayList(heritageOrExhibitionDetailModel.get(position).getImage()),
                         heritageOrExhibitionDetailModel.get(position).getId()
                 );
 
@@ -1096,6 +1111,7 @@ public class DetailsActivity extends AppCompatActivity implements IPullZoom, OnM
                 activityReference.get().qmDatabase.getHeritageListTableDao().updateHeritageDetailArabic(
                         latitude, longitude, heritageOrExhibitionDetailModel.get(position).getLongDescription()
                         , heritageOrExhibitionDetailModel.get(position).getShortDescription(),
+                        convertor.fromArrayList(heritageOrExhibitionDetailModel.get(position).getImage()),
                         heritageOrExhibitionDetailModel.get(position).getId()
                 );
             }
@@ -1123,6 +1139,13 @@ public class DetailsActivity extends AppCompatActivity implements IPullZoom, OnM
         @Override
         protected void onPostExecute(List<HeritageListTableEnglish> heritageListTableEnglish) {
             if (heritageListTableEnglish.size() > 0) {
+                Convertor convertor=new Convertor();
+                if(heritageListTableEnglish.get(0).getHeritage_image().contains("[")) {
+                    ArrayList<String> list = convertor.fromString(heritageListTableEnglish.get(0).getHeritage_image());
+                    for (int i = 0; i < list.size(); i++) {
+                        imageList.add(i, list.get(i));
+                    }
+                }
                 loadDataForHeritageOrExhibitionDetails(null, heritageListTableEnglish.get(0).getHeritage_short_description(),
                         heritageListTableEnglish.get(0).getHeritage_long_description(),
                         null, null,
@@ -1164,6 +1187,13 @@ public class DetailsActivity extends AppCompatActivity implements IPullZoom, OnM
         protected void onPostExecute(List<HeritageListTableArabic> heritageListTableArabic) {
 
             if (heritageListTableArabic.size() > 0) {
+                Convertor convertor=new Convertor();
+                if(heritageListTableArabic.get(0).getHeritage_image().contains("[")) {
+                    ArrayList<String> list = convertor.fromString(heritageListTableArabic.get(0).getHeritage_image());
+                    for (int i = 0; i < list.size(); i++) {
+                        imageList.add(i, list.get(i));
+                    }
+                }
                 loadDataForHeritageOrExhibitionDetails(null, heritageListTableArabic.get(0).getHeritage_short_description(),
                         heritageListTableArabic.get(0).getHeritage_long_description(),
                         null, null,
@@ -1354,20 +1384,25 @@ public class DetailsActivity extends AppCompatActivity implements IPullZoom, OnM
 
         @Override
         protected Void doInBackground(Void... voids) {
+            Convertor converters = new Convertor();
             if (language.equals("en")) {
                 // updateEnglishTable table with english name
                 activityReference.get().qmDatabase.getPublicArtsTableDao().updatePublicArtsDetailEnglish(
                         publicArtModel.get(position).getName(),
                         latitude, longitude, publicArtModel.get(position).getShortDescription()
-                        , publicArtModel.get(position).getLongDescription(), publicArtModel.get(position).getId()
+                        , publicArtModel.get(position).getLongDescription(),
+                        converters.fromArrayList(publicArtModel.get(position).getImage()),
+                        publicArtModel.get(position).getId()
                 );
 
             } else {
                 // updateArabicTable table with arabic name
                 activityReference.get().qmDatabase.getPublicArtsTableDao().updatePublicArtsDetailArabic(
                         publicArtModel.get(position).getName(),
-                        latitude, longitude, publicArtModel.get(position).getShortDescription()
-                        , publicArtModel.get(position).getLongDescription(), publicArtModel.get(position).getId()
+                        latitude, longitude, publicArtModel.get(position).getShortDescription(),
+                        publicArtModel.get(position).getLongDescription(),
+                        converters.fromArrayList(publicArtModel.get(position).getImage()),
+                        publicArtModel.get(position).getId()
                 );
             }
             return null;
@@ -1394,6 +1429,14 @@ public class DetailsActivity extends AppCompatActivity implements IPullZoom, OnM
         @Override
         protected void onPostExecute(List<PublicArtsTableEnglish> publicArtsTableEnglish) {
             if (publicArtsTableEnglish.size() > 0) {
+                Convertor converters = new Convertor();
+                if(publicArtsTableEnglish.get(0).getPublic_arts_image().contains("[")) {
+                    ArrayList<String> list = converters.fromString(publicArtsTableEnglish.get(0).getPublic_arts_image());
+                    for (int l = 0; l < list.size(); l++) {
+                        imageList.add(l, list.get(l));
+                    }
+                }
+
                 for (int i = 0; i < publicArtsTableEnglish.size(); i++) {
                     fromMuseumAbout = false;
                     loadData(null,
@@ -1439,6 +1482,13 @@ public class DetailsActivity extends AppCompatActivity implements IPullZoom, OnM
         @Override
         protected void onPostExecute(List<PublicArtsTableArabic> publicArtsTableArabic) {
             if (publicArtsTableArabic.size() > 0) {
+                Convertor converters = new Convertor();
+                if(publicArtsTableArabic.get(0).getPublic_arts_image().contains("[")) {
+                    ArrayList<String> list = converters.fromString(publicArtsTableArabic.get(0).getPublic_arts_image());
+                    for (int l = 0; l < list.size(); l++) {
+                        imageList.add(l, list.get(l));
+                    }
+                }
                 for (int i = 0; i < publicArtsTableArabic.size(); i++) {
                     fromMuseumAbout = false;
                     loadData(null,
@@ -1810,12 +1860,18 @@ public class DetailsActivity extends AppCompatActivity implements IPullZoom, OnM
         @Override
         protected void onPostExecute(MuseumAboutTableEnglish museumAboutTableEnglish) {
             if (museumAboutTableEnglish != null) {
+                Convertor converters = new Convertor();
                 commonContentLayout.setVisibility(View.VISIBLE);
                 retryLayout.setVisibility(View.GONE);
-                headerImage = museumAboutTableEnglish.getMuseum_image();
+                if(museumAboutTableEnglish.getMuseum_image().contains("[")) {
+                    ArrayList<String> list = converters.fromString(museumAboutTableEnglish.getMuseum_image());
+                    for (int i = 0; i < list.size(); i++) {
+                        imageList.add(i, list.get(i));
+                    }
+                }
 
                 GlideApp.with(DetailsActivity.this)
-                        .load(headerImage)
+                        .load(imageList.get(0))
                         .centerCrop()
                         .placeholder(R.drawable.placeholder)
                         .into(headerImageView);
@@ -1861,11 +1917,17 @@ public class DetailsActivity extends AppCompatActivity implements IPullZoom, OnM
         @Override
         protected void onPostExecute(MuseumAboutTableArabic museumAboutTableArabic) {
             if (museumAboutTableArabic != null) {
+                Convertor converters = new Convertor();
                 commonContentLayout.setVisibility(View.VISIBLE);
                 retryLayout.setVisibility(View.GONE);
-                headerImage = museumAboutTableArabic.getMuseum_image();
+                if(museumAboutTableArabic.getMuseum_image().contains("[")) {
+                    ArrayList<String> list = converters.fromString(museumAboutTableArabic.getMuseum_image());
+                    for (int i = 0; i < list.size(); i++) {
+                        imageList.add(i, list.get(i));
+                    }
+                }
                 GlideApp.with(DetailsActivity.this)
-                        .load(headerImage)
+                        .load(imageList.get(0))
                         .centerCrop()
                         .placeholder(R.drawable.placeholder)
                         .into(headerImageView);
