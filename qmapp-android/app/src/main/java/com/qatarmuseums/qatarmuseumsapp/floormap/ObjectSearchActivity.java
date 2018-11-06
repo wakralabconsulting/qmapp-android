@@ -69,7 +69,6 @@ public class ObjectSearchActivity extends AppCompatActivity implements View.OnCl
         for (int i = 0; i < displayButtons.length; i++) {
             {
                 String textViewID = "display_number_" + (i);
-
                 int resID = getResources().getIdentifier(textViewID, "id", getPackageName());
                 displayButtons[i] = ((LinearLayout) findViewById(resID));
                 displayButtons[i].setOnClickListener(this);
@@ -86,7 +85,7 @@ public class ObjectSearchActivity extends AppCompatActivity implements View.OnCl
             @Override
             public void onClick(View view) {
                 if (numberPadDisplay.getText().toString() == "") {
-                    new Util().showAlertDialog(ObjectSearchActivity.this);
+                    util.showAlertDialog(ObjectSearchActivity.this);
                 } else {
                     getDetailsFromApi(display,language);
                 }
