@@ -23,6 +23,8 @@ public class UserData {
     private Model country;
     @SerializedName("field_nationality")
     private Model nationality;
+    @SerializedName("field_rsvp_attendance")
+    private Model rsvp;
 
     public String getuId() {
         return uId;
@@ -94,6 +96,14 @@ public class UserData {
 
     public void setNationality(Model nationality) {
         this.nationality = nationality;
+    }
+
+    public Model getRsvp() {
+        return rsvp;
+    }
+
+    public void setRsvp(Model rsvp) {
+        this.rsvp = rsvp;
     }
 
     public class Model {
