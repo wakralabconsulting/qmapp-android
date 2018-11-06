@@ -271,7 +271,6 @@ public class FloorMapActivity extends AppCompatActivity implements OnMapReadyCal
         bottomSheet = findViewById(R.id.bottomSheetLayout);
         numberPad = (ImageView) findViewById(R.id.number_pad);
         params = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.WRAP_CONTENT, RelativeLayout.LayoutParams.WRAP_CONTENT);
-        numberPad = (ImageView) findViewById(R.id.number_pad);
         qrCode = (ImageView) findViewById(R.id.scanner);
         progressBar = findViewById(R.id.progress_bar_loading);
         retryLayout = findViewById(R.id.retry_layout);
