@@ -2,6 +2,8 @@ package com.qatarmuseums.qatarmuseumsapp.objectpreview;
 
 import com.google.gson.annotations.SerializedName;
 
+import java.util.ArrayList;
+
 
 public class ObjectPreviewModel {
     @SerializedName("Title")
@@ -41,6 +43,16 @@ public class ObjectPreviewModel {
     private String periodStyle;
     @SerializedName("Technique_&_Materials")
     private String techniqueandMaterials;
+    @SerializedName("artifact_number")
+    private String artifactNumber;
+    @SerializedName("artifact_position")
+    private String artifactPosition;
+    @SerializedName("audio_descriptif")
+    private String audioDescription;
+    @SerializedName("audio_file")
+    private String audioFile;
+    @SerializedName("images")
+    private ArrayList<String> images;
 
     public ObjectPreviewModel(String title, String accessionNumber, String nId, String description,
                               String diam, String dimensions, String mainTitle,
@@ -153,5 +165,25 @@ public class ObjectPreviewModel {
 
     public String getTechniqueandMaterials() {
         return techniqueandMaterials;
+    }
+
+    public String getArtifactNumber() {
+        return artifactNumber;
+    }
+
+    public String getArtifactPosition() {
+        return artifactPosition;
+    }
+
+    public String getAudioDescription() {
+        return audioDescription;
+    }
+
+    public String getAudioFile() {
+        return audioFile;
+    }
+
+    public ArrayList<String> getImages() {
+        return images;
     }
 }

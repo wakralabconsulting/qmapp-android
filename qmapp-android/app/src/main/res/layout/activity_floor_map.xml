@@ -42,7 +42,7 @@
                 android:layout_height="@dimen/padding_35"
                 android:layout_alignParentEnd="true"
                 android:src="@drawable/number_pad"
-                android:visibility="gone" />
+                android:visibility="visible" />
 
 
         </RelativeLayout>
