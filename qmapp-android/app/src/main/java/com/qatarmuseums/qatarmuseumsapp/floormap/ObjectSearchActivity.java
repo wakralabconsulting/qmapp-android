@@ -52,6 +52,7 @@ public class ObjectSearchActivity extends AppCompatActivity implements View.OnCl
     SharedPreferences qmPreferences;
     int language;
     ArrayList<ArtifactDetails> artifactList = new ArrayList<>();
+    Util util;
 
 
     @Override
@@ -63,6 +64,7 @@ public class ObjectSearchActivity extends AppCompatActivity implements View.OnCl
         toolbar_title.setText(getResources().getString(R.string.object_search));
         qmPreferences = PreferenceManager.getDefaultSharedPreferences(this);
         language = qmPreferences.getInt("AppLanguage", 1);
+        util=new Util();
         displayButtons = new LinearLayout[10];
         for (int i = 0; i < displayButtons.length; i++) {
             {
@@ -86,10 +88,7 @@ public class ObjectSearchActivity extends AppCompatActivity implements View.OnCl
                 if (numberPadDisplay.getText().toString() == "") {
                     new Util().showAlertDialog(ObjectSearchActivity.this);
                 } else {
-
                     getDetailsFromApi(display,language);
-                    display = "";
-                    numberPadDisplay.setText("");
                 }
             }
         });
@@ -146,20 +145,30 @@ public class ObjectSearchActivity extends AppCompatActivity implements View.OnCl
             @Override
             public void onResponse(Call<ArrayList<ArtifactDetails>> call, Response<ArrayList<ArtifactDetails>> response) {
                 if (response.isSuccessful()) {
-                    if (response.body() != null && response.body().size() > 0) {
-                        artifactList = response.body();
-                        Intent intent = new Intent(ObjectSearchActivity.this, ObjectPreviewDetailsActivity.class);
-                        intent.putExtra("Title", artifactList.get(0).getTitle());
-                        intent.putExtra("Image", artifactList.get(0).getImage());
-                        intent.putExtra("Description", artifactList.get(0).getCuratorialDescription());
-                        intent.putExtra("History", artifactList.get(0).getObjectHistory());
-                        intent.putExtra("Summary", artifactList.get(0).getObjectENGSummary());
-                        intent.putExtra("Audio", artifactList.get(0).getAudioFile());
-                        intent.putStringArrayListExtra("Images", artifactList.get(0).getImages());
-                        startActivity(intent);
+                    if(response.body().size() > 0) {
+                        if (response.body() != null && response.body().size() > 0) {
+                            artifactList = response.body();
+                            Intent intent = new Intent(ObjectSearchActivity.this, ObjectPreviewDetailsActivity.class);
+                            intent.putExtra("Title", artifactList.get(0).getTitle());
+                            intent.putExtra("Image", artifactList.get(0).getImage());
+                            intent.putExtra("Description", artifactList.get(0).getCuratorialDescription());
+                            intent.putExtra("History", artifactList.get(0).getObjectHistory());
+                            intent.putExtra("Summary", artifactList.get(0).getObjectENGSummary());
+                            intent.putExtra("Audio", artifactList.get(0).getAudioFile());
+                            intent.putStringArrayListExtra("Images", artifactList.get(0).getImages());
+                            startActivity(intent);
+                            display = "";
+                            numberPadDisplay.setText("");
+                        }
+                    }else{
+                        util.showToast(getResources().getString(R.string.artifact_invalid),ObjectSearchActivity.this);
+                        display = "";
+                        numberPadDisplay.setText("");
                     }
                 }else{
-
+                    util.showToast(getResources().getString(R.string.artifact_invalid),ObjectSearchActivity.this);
+                    display = "";
+                    numberPadDisplay.setText("");
                 }
             }
 
