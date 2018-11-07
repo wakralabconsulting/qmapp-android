@@ -2,24 +2,37 @@ package com.qatarmuseums.qatarmuseumsapp.services;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
+import android.preference.PreferenceManager;
 import android.support.v4.content.LocalBroadcastManager;
+
 import android.util.Log;
 import android.widget.Toast;
 
 import com.google.firebase.messaging.FirebaseMessagingService;
 import com.google.firebase.messaging.RemoteMessage;
 import com.qatarmuseums.qatarmuseumsapp.Config;
+import com.qatarmuseums.qatarmuseumsapp.apicall.APIClient;
+import com.qatarmuseums.qatarmuseumsapp.apicall.APIInterface;
+import com.qatarmuseums.qatarmuseumsapp.culturepass.LoginData;
+import com.qatarmuseums.qatarmuseumsapp.culturepass.TokenForPushNotification;
 import com.qatarmuseums.qatarmuseumsapp.notification.NotificationActivity;
+import com.qatarmuseums.qatarmuseumsapp.profile.ProfileDetails;
 import com.qatarmuseums.qatarmuseumsapp.utils.NotificationUtils;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
+
 import static android.content.ContentValues.TAG;
 
 public class MyFirebaseMessagingService extends FirebaseMessagingService {
     private NotificationUtils notificationUtils;
-
+    private SharedPreferences qmPreferences;
+    int appLanguage;
     @Override
     public void onNewToken(String token) {
         Log.d(TAG, "Refreshed token: " + token);
@@ -124,12 +137,60 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
 
     private void sendRegistrationToServer(String token) {
         // TODO: Implement this method to send token to your app server.
-
+        String language;
+        qmPreferences = PreferenceManager.getDefaultSharedPreferences(this);
+        appLanguage = qmPreferences.getInt("AppLanguage", 1);
+        if (appLanguage == 1)
+            language = "en";
+        else
+            language = "ar";
+        getLoginToken(language,token);
 
     }
 
     private void handleNow(String s) {
         Log.d(TAG, "Short lived task is done.");
         Toast.makeText(this, "MESSAGE : " + s, Toast.LENGTH_SHORT).show();
+    }
+    private void getLoginToken(String lan,String firebaseToken){
+       LoginData loginData = new LoginData("","");
+        APIInterface apiService =
+                APIClient.getClient().create(APIInterface.class);
+        Call<ProfileDetails> call = apiService.generateToken(lan, loginData);
+        call.enqueue(new Callback<ProfileDetails>() {
+            @Override
+            public void onResponse(Call<ProfileDetails> call, Response<ProfileDetails> response) {
+                String loginToken;
+                if (response.isSuccessful()) {
+                    if (response.body() != null) {
+                       loginToken = response.body().getToken();
+                       sendFireBaseToken(loginToken,firebaseToken,lan);
+                    }
+                }
+            }
+
+            @Override
+            public void onFailure(Call<ProfileDetails> call, Throwable t) {
+
+            }
+        });
+    }
+
+    private void sendFireBaseToken(String loginToken,String firebaseToken,String lan){
+        TokenForPushNotification tokenForPushNotification = new TokenForPushNotification(firebaseToken,"android");
+        APIInterface apiService =
+                APIClient.getClient().create(APIInterface.class);
+        Call<Void> call = apiService.sendTokenToServer(lan,loginToken,tokenForPushNotification);
+        call.enqueue(new Callback<Void>() {
+            @Override
+            public void onResponse(Call<Void> call, Response<Void> response) {
+                // token send success
+            }
+
+            @Override
+            public void onFailure(Call<Void> call, Throwable t) {
+                //token send failed
+            }
+        });
     }
 }
