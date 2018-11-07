@@ -98,7 +98,7 @@
                             android:id="@+id/profile_pic"
                             android:layout_width="100dp"
                             android:layout_height="100dp"
-                            android:background="@drawable/circular_bg"
+                            android:src="@drawable/default_profile"
                             android:gravity="center"
                             android:padding="1dp" />
                     </LinearLayout>
@@ -326,6 +326,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="@dimen/padding_40"
                 android:gravity="center"
+                android:visibility="gone"
                 android:orientation="vertical">
 
                 <TextView

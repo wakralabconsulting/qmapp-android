@@ -37,6 +37,8 @@ import com.qatarmuseums.qatarmuseumsapp.profile.ProfileActivity;
 import com.qatarmuseums.qatarmuseumsapp.profile.ProfileDetails;
 import com.qatarmuseums.qatarmuseumsapp.utils.Util;
 
+import java.util.Locale;
+
 import okhttp3.OkHttpClient;
 import okhttp3.logging.HttpLoggingInterceptor;
 import retrofit2.Call;
@@ -224,7 +226,7 @@ public class CulturePassActivity extends AppCompatActivity {
                         profileDetails = response.body();
                         editor = qmPreferences.edit();
                         editor.putString("TOKEN", profileDetails.getToken());
-                        editor.putString("MEMBERSHIP_NUMBER", profileDetails.getUser().getuId());
+                        editor.putString("MEMBERSHIP_NUMBER", "00" + (Integer.parseInt(profileDetails.getUser().getuId()) + 6000));
                         editor.putString("EMAIL", profileDetails.getUser().getMail());
                         editor.putString("DOB", profileDetails.getUser().getDateOfBirth().getUnd().get(0).getValue());
                         editor.putString("RESIDENCE", profileDetails.getUser().getCountry().getUnd().get(0).getValue());
