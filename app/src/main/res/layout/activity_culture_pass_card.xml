@@ -1,0 +1,167 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".culturepasscard.CulturePassCardActivity">
+
+    <com.wajahatkarim3.easyflipview.EasyFlipView
+        android:id="@+id/flipView"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        app:flipDuration="400"
+        app:flipEnabled="true"
+        app:flipFrom="right"
+        app:flipOnTouch="false"
+        app:flipType="horizontal">
+
+
+        <FrameLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <ImageView
+                android:id="@+id/cardBack"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:gravity="center"
+                android:scaleType="fitXY"
+                android:src="@drawable/culturepass_back" />
+
+            <ImageView
+                android:id="@+id/closeBtnSecond"
+                android:layout_width="25dp"
+                android:layout_height="25dp"
+                android:layout_marginStart="@dimen/padding_10"
+                android:layout_marginTop="@dimen/padding_10"
+                android:src="@drawable/toolbar_close" />
+
+            <android.support.constraint.ConstraintLayout
+                android:layout_width="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:layout_height="match_parent">
+
+                <com.qatarmuseums.qatarmuseumsapp.customview.VerticleTextView
+                    android:id="@+id/membershipTxt"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="@dimen/pass_card_number_margin"
+                    android:fontFamily="@font/din_next_lt_pro_bold"
+                    android:text="5454545"
+                    android:textColor="@color/black"
+                    android:textSize="@dimen/font_size_18"
+                    android:textStyle="bold"
+                    app:layout_constraintLeft_toLeftOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    android:layout_marginRight="@dimen/pass_card_name_margin"
+                    android:layout_marginLeft="@dimen/pass_card_number_margin"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintRight_toLeftOf="@id/nameTxt" />
+
+                <com.qatarmuseums.qatarmuseumsapp.customview.VerticleTextView
+                    android:id="@+id/nameTxt"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="@dimen/pass_card_number_margin"
+                    android:text="sdfsdfdsfsdf"
+                    android:textAllCaps="true"
+                    android:textColor="@color/black"
+                    android:textSize="@dimen/font_size_18"
+                    android:textStyle="bold"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintLeft_toRightOf="@id/membershipTxt"
+                    app:layout_constraintRight_toRightOf="parent" />
+            </android.support.constraint.ConstraintLayout>
+
+            <Button
+                android:id="@+id/flipButtonSecond"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="bottom"
+                android:layout_marginBottom="@dimen/padding_30"
+                android:layout_marginEnd="@dimen/padding_30"
+                android:layout_marginStart="@dimen/padding_30"
+                android:background="@drawable/round_corner_black"
+                android:fontFamily="@font/din_next_lt_pro_bold"
+                android:text="@string/flip_button_txt"
+                android:textColor="@color/white"
+                android:textSize="17sp" />
+        </FrameLayout>
+
+
+        <FrameLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+
+            <ImageView
+                android:id="@+id/cardFront"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:gravity="center"
+                android:rotation="180"
+                android:scaleType="fitXY"
+                android:src="@drawable/culturepass_front" />
+
+            <ImageView
+                android:id="@+id/closeBtnFirst"
+                android:layout_width="25dp"
+                android:layout_height="25dp"
+                android:layout_marginStart="@dimen/padding_10"
+                android:layout_marginTop="@dimen/padding_10"
+                android:src="@drawable/toolbar_close" />
+
+            <android.support.constraint.ConstraintLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical|center_horizontal"
+                android:padding="@dimen/padding_10">
+
+                <com.qatarmuseums.qatarmuseumsapp.customview.VerticleTextView
+                    android:id="@+id/membershipTxtView"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:fontFamily="@font/din_next_lt_pro_bold"
+                    android:gravity="bottom"
+                    android:padding="@dimen/margin_10"
+                    android:textColor="@color/white"
+                    android:textSize="18sp"
+                    android:textStyle="bold"
+                    app:layout_constraintLeft_toLeftOf="parent"
+                    app:layout_constraintRight_toLeftOf="@id/barcodeImg" />
+
+                <ImageView
+                    android:id="@+id/barcodeImg"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/border_with_black"
+                    android:padding="@dimen/padding_20"
+                    android:rotation="90"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintRight_toRightOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+            </android.support.constraint.ConstraintLayout>
+
+            <Button
+                android:id="@+id/flipButtonFirst"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="bottom"
+                android:layout_marginBottom="@dimen/padding_30"
+                android:layout_marginEnd="@dimen/padding_30"
+                android:layout_marginStart="@dimen/padding_30"
+                android:background="@drawable/round_corner_black"
+                android:fontFamily="@font/din_next_lt_pro_bold"
+                android:text="@string/flip_button_txt"
+                android:textColor="@color/white"
+                android:textSize="17sp" />
+        </FrameLayout>
+
+
+    </com.wajahatkarim3.easyflipview.EasyFlipView>
+
+
+</RelativeLayout>

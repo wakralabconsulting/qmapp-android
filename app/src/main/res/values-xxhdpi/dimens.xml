@@ -1,0 +1,4 @@
+<resources>
+    <dimen name="pass_card_number_margin">10dp</dimen>
+    <dimen name="pass_card_name_margin">45dp</dimen>
+</resources>
