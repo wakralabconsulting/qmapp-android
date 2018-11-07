@@ -236,6 +236,7 @@
     <string name="mobile_number">رقم الجوال *</string>
     <string name="create_account">إنشاء حساب جديد</string>
     <string name="error_logout">Error in logging out!</string>
+    <!-- Strings related to RSVP -->
     <string name="greetings_title">Greetings</string>
     <string name="greetings_content">You have been invited for \nthe launch event of the\n National Museum of Qatar</string>
     <string name="accept_now">Accept Now</string>
@@ -246,5 +247,6 @@
     <string name="decline_content">Are you sure you want to\ndecline the Invitation?</string>
     <string name="profile_link"><u>Invitation for National Museum\nof Qatar Launch Event</u></string>
     <string name="artifact_invalid">Invalid Artifact Number</string>
-
+    <!-- Strings related to Culture pass card -->
+    <string name="flip_button_txt">اضغط لعرض الجهة الأخرى</string>
 </resources>
