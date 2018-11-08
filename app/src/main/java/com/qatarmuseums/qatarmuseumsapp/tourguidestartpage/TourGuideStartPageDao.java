@@ -4,14 +4,16 @@ import android.arch.persistence.room.Dao;
 import android.arch.persistence.room.Insert;
 import android.arch.persistence.room.Query;
 
+import java.util.List;
+
 @Dao
 public interface TourGuideStartPageDao {
 
-    @Query("SELECT * FROM tourguidestartpageenglish")
-    TourGuideStartPageEnglish getAllTourGuideStartDataEnglish();
+    @Query("SELECT * FROM tourguidestartpageenglish WHERE museum_entity = :museumID")
+    List<TourGuideStartPageEnglish> getTourGuideDetailsEnglish(String museumID);
 
-    @Query("SELECT * FROM tourguidestartpagearabic")
-    TourGuideStartPageArabic getAllTourGuideStartDataArabic();
+    @Query("SELECT * FROM tourguidestartpagearabic WHERE museum_entity = :museumID")
+    List<TourGuideStartPageArabic> getTourGuideDetailsArabic(String museumID);
 
     @Query("SELECT COUNT(nid) FROM tourguidestartpageenglish")
     int getNumberOfRowsEnglish();
@@ -32,14 +34,16 @@ public interface TourGuideStartPageDao {
     TourGuideStartPageArabic getTourGuideStartPageDataArabic(String mNid);
 
     @Query("UPDATE tourguidestartpageenglish SET title = :museumtitleFromApi," +
-            "museum_entity = :museumEntry, description = :tourguidedescriptionFromApi WHERE nid=:mNid")
+            "museum_entity = :museumEntry, description = :tourguidedescriptionFromApi," +
+            " images = :imagesFromApi WHERE nid=:mNid")
     void updateTourGuideStartDataEnglish(String museumtitleFromApi, String tourguidedescriptionFromApi,
-                                         String museumEntry, String mNid);
+                                         String museumEntry, String imagesFromApi, String mNid);
 
     @Query("UPDATE tourguidestartpagearabic SET title = :museumtitleFromApi," +
-            "museum_entity = :museumEntry, description = :tourguidedescriptionFromApi WHERE nid=:mNid")
+            "museum_entity = :museumEntry, description = :tourguidedescriptionFromApi," +
+            " images = :imagesFromApi WHERE nid=:mNid")
     void updateTourGuideStartDataArabic(String museumtitleFromApi, String tourguidedescriptionFromApi,
-                                        String museumEntry, String mNid);
+                                        String museumEntry, String imagesFromApi, String mNid);
 
     @Insert
     void insert(TourGuideStartPageEnglish tourGuideStartPageEnglish);

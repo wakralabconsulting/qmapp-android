@@ -98,6 +98,10 @@ public interface APIInterface {
     Call<ArrayList<ArtifactDetails>> getObjectPreviewDetails(@Path("language") String language,
                                                              @Query("tour_guide_id") String tourGuideId);
 
+    @GET("{language}/mobile_api/detail_of_collection_tourguide.json")
+    Call<ArrayList<ArtifactDetails>> getObjectSearchDetails(@Path("language") String language,
+                                                            @Query("artifact_number") String artifactId);
+
     @GET("{language}/mobile_api/collection_by_tour_guide.json")
     Call<ArrayList<ArtifactDetails>> getArtifactList(@Path("language") String language);
 

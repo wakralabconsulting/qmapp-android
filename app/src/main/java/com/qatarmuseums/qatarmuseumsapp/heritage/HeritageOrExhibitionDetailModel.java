@@ -2,6 +2,8 @@ package com.qatarmuseums.qatarmuseumsapp.heritage;
 
 import com.google.gson.annotations.SerializedName;
 
+import java.util.ArrayList;
+
 public class HeritageOrExhibitionDetailModel {
     @SerializedName("name")
     private String name;
@@ -9,8 +11,8 @@ public class HeritageOrExhibitionDetailModel {
     private String id;
     @SerializedName("Location")
     private String location;
-    @SerializedName("LATEST_IMAGE")
-    private String image;
+    @SerializedName("images")
+    private ArrayList<String> image;
     @SerializedName("Longitude")
     private String longitude;
     @SerializedName("Latitude")
@@ -28,7 +30,7 @@ public class HeritageOrExhibitionDetailModel {
     }
 
     public HeritageOrExhibitionDetailModel(String name, String id,
-                                           String location, String image,
+                                           String location, ArrayList<String> image,
                                            String longitude, String latitude,
                                            String shortDescription, String longDescription,
                                            String startDate, String endDate) {
@@ -68,11 +70,11 @@ public class HeritageOrExhibitionDetailModel {
         this.location = location;
     }
 
-    public String getImage() {
+    public ArrayList<String> getImage() {
         return image;
     }
 
-    public void setImage(String image) {
+    public void setImage(ArrayList image) {
         this.image = image;
     }
 
