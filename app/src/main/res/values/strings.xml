@@ -202,6 +202,7 @@ They exemplify the external influences and internal creativity that inspired thi
     <string name="error_password_required">Password field is required.</string>
     <string name="error_username_required">Username or e-mail field is required.</string>
     <string name="error_incorrect_credentials">Sorry, unrecognized username or password.</string>
+    <string name="error_incorrect_username">Sorry, unrecognized username or e-mail.</string>
     <string name="error_already_logged_in">Already logged in</string>
     <string name="error_unexpected">Unexpected error</string>
     <!-- Strings related to Profile -->
@@ -228,6 +229,7 @@ They exemplify the external influences and internal creativity that inspired thi
     <string name="mobile_number">Mobile Number *</string>
     <string name="create_account">Create account</string>
     <string name="error_logout">Error in logging out!</string>
+    <string name="password_reset_successful">New password link sent to your email</string>
     <!-- Strings related to RSVP -->
     <string name="greetings_title">Greetings</string>
     <string name="greetings_content">You have been invited for \nthe launch event of the\n National Museum of Qatar</string>
