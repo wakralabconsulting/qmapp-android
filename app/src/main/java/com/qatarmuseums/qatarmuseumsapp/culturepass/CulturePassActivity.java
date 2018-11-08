@@ -36,6 +36,7 @@ import com.qatarmuseums.qatarmuseumsapp.createaccount.CreateAccountActivity;
 import com.qatarmuseums.qatarmuseumsapp.profile.ProfileActivity;
 import com.qatarmuseums.qatarmuseumsapp.profile.ProfileDetails;
 import com.qatarmuseums.qatarmuseumsapp.utils.Util;
+import com.qatarmuseums.qatarmuseumsapp.webview.WebviewActivity;
 
 import java.util.Locale;
 
@@ -91,6 +92,13 @@ public class CulturePassActivity extends AppCompatActivity {
         }
         profileDetails = new ProfileDetails();
         backArrow = findViewById(R.id.toolbar_back);
+        qmPreferences = PreferenceManager.getDefaultSharedPreferences(this);
+        appLanguage = qmPreferences.getInt("AppLanguage", 1);
+        token = qmPreferences.getString("TOKEN", null);
+        if (appLanguage == 1)
+            language = "en";
+        else
+            language = "ar";
         backArrow.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -115,7 +123,11 @@ public class CulturePassActivity extends AppCompatActivity {
         becomeMember.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent navigationIntent = new Intent(CulturePassActivity.this, CreateAccountActivity.class);
+                // Temporary
+//                 navigationIntent = new Intent(CulturePassActivity.this, CreateAccountActivity.class);
+                navigationIntent = new Intent(CulturePassActivity.this, WebviewActivity.class);
+                navigationIntent.putExtra("url", "http://www.qm.org.qa/" + language +
+                        "/user/register#user-register-form");
                 startActivity(navigationIntent);
             }
         });
@@ -147,13 +159,7 @@ public class CulturePassActivity extends AppCompatActivity {
                 return false;
             }
         });
-        qmPreferences = PreferenceManager.getDefaultSharedPreferences(this);
-        appLanguage = qmPreferences.getInt("AppLanguage", 1);
-        token = qmPreferences.getString("TOKEN", null);
-        if (appLanguage == 1)
-            language = "en";
-        else
-            language = "ar";
+
     }
 
 

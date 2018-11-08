@@ -97,7 +97,7 @@ public class HomeActivity extends BaseActivity {
 
             @Override
             public void onAnimationEnd(Animation animation) {
-                closeDrawer();
+                clearAnimations();
             }
 
             @Override
@@ -243,6 +243,9 @@ public class HomeActivity extends BaseActivity {
     public void onBackPressed() {
         if (drawer.isDrawerOpen(GravityCompat.END)) {
             navigationView.startAnimation(fadeOutAnimation);
+            topbarSidemenu.setImageDrawable(getResources().getDrawable(R.drawable.side_menu_icon));
+            showToolBarOptions();
+            drawer.closeDrawer(GravityCompat.END, false);
             toolbar.setBackgroundColor(Color.parseColor("#000000"));
         } else {
             if (doubleBackToExitPressedOnce) {
