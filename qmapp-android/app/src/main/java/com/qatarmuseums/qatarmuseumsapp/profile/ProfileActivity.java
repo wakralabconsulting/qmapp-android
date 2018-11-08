@@ -7,6 +7,7 @@ import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.animation.Animation;
@@ -22,8 +23,18 @@ import com.qatarmuseums.qatarmuseumsapp.apicall.APIInterface;
 import com.qatarmuseums.qatarmuseumsapp.culturepass.AddCookiesInterceptor;
 import com.qatarmuseums.qatarmuseumsapp.culturepass.CulturePassActivity;
 import com.qatarmuseums.qatarmuseumsapp.culturepass.ReceivedCookiesInterceptor;
+import com.qatarmuseums.qatarmuseumsapp.culturepasscard.CulturePassCardActivity;
 import com.qatarmuseums.qatarmuseumsapp.home.GlideApp;
 import com.qatarmuseums.qatarmuseumsapp.utils.Util;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.HashMap;
 
 import okhttp3.OkHttpClient;
 import okhttp3.logging.HttpLoggingInterceptor;
@@ -33,7 +44,7 @@ import retrofit2.Response;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
-public class ProfileActivity extends AppCompatActivity {
+public class ProfileActivity extends AppCompatActivity implements View.OnClickListener {
 
     private Toolbar toolbar;
     private View backArrow, logOut;
@@ -49,6 +60,8 @@ public class ProfileActivity extends AppCompatActivity {
     private int appLanguage;
     String language;
     private Retrofit retrofit;
+    HashMap<String, String> country = new HashMap<>();
+    private InputStream is;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -121,18 +134,43 @@ public class ProfileActivity extends AppCompatActivity {
         residence = qmPreferences.getString("RESIDENCE", null);
         nationality = qmPreferences.getString("NATIONALITY", null);
         imageURL = qmPreferences.getString("IMAGE", null);
-        if (imageURL != null && !imageURL.equals("") && !imageURL.equals("0"))
+        if (imageURL != null && !imageURL.equals("") && !imageURL.equals("0")) {
+            profilePic.setBackground(getDrawable(R.drawable.circular_bg));
             GlideApp.with(this)
                     .load(imageURL)
                     .apply(RequestOptions.circleCropTransform())
                     .into(profilePic);
+        }
         usernameTxt.setText(username);
         membershipNumberTxt.setText(membershipNumber);
         emailTxt.setText(email);
         dobTxt.setText(dateOfBirth);
-        residenceTxt.setText(residence);
-        nationalityTxt.setText(nationality);
+        if (appLanguage == 1) {
+            try {
+                JSONArray m_jArry = new JSONArray(loadJSONFromAsset(language));
+                for (int i = 0; i < m_jArry.length(); i++) {
+                    JSONObject jo_inside = m_jArry.getJSONObject(i);
+                    String key = jo_inside.getString("alpha-2");
+                    String value = jo_inside.getString("name");
+                    country.put(key, value);
+                }
+                residenceTxt.setText(country.get(residence));
+                nationalityTxt.setText(country.get(nationality));
 
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        } else {
+            try {
+                JSONObject obj = new JSONObject(loadJSONFromAsset(language));
+                residenceTxt.setText(obj.getString(residence));
+                nationalityTxt.setText(obj.getString(nationality));
+
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        }
+        myCardBtn.setOnClickListener(this);
         myCardBtn.setOnTouchListener(new View.OnTouchListener() {
             @Override
             public boolean onTouch(View v, MotionEvent event) {
@@ -155,6 +193,7 @@ public class ProfileActivity extends AppCompatActivity {
                 return false;
             }
         });
+
 
     }
 
@@ -231,5 +270,30 @@ public class ProfileActivity extends AppCompatActivity {
         } else {
             getParent().setResult(Activity.RESULT_OK, intent);
         }
+    }
+
+    @Override
+    public void onClick(View view) {
+        switch (view.getId()) {
+            case R.id.view_my_card_btn:
+                CulturePassCardActivity.Companion.newIntent(this, membershipNumber, username, language);
+                break;
+        }
+    }
+
+    public String loadJSONFromAsset(String language) {
+        String json = null;
+        try {
+            is = this.getAssets().open("countries_" + language + ".json");
+            int size = is.available();
+            byte[] buffer = new byte[size];
+            is.read(buffer);
+            is.close();
+            json = new String(buffer, "UTF-8");
+        } catch (IOException ex) {
+            ex.printStackTrace();
+            return null;
+        }
+        return json;
     }
 }

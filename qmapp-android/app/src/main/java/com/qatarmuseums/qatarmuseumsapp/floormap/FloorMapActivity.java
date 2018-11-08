@@ -59,7 +59,6 @@ import com.qatarmuseums.qatarmuseumsapp.home.GlideApp;
 import com.qatarmuseums.qatarmuseumsapp.utils.CustomTimerTask;
 import com.qatarmuseums.qatarmuseumsapp.utils.Util;
 
-import java.io.IOException;
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -147,9 +146,10 @@ public class FloorMapActivity extends AppCompatActivity implements OnMapReadyCal
     LatLng L3_G16_WR5 = new LatLng(25.295444, 51.538955);
     LatLng L3_G17_8 = new LatLng(25.295504, 51.538880);
     LatLng L3_G17_9 = new LatLng(25.295490, 51.538850);
-    LatLng L3_G17_1 = new LatLng(25.295555, 51.538892);
-    LatLng L3_G17_2 = new LatLng(25.295557, 51.538906);
-    LatLng L3_G17_11 = new LatLng(25.295613, 51.538914);
+    LatLng L3_G18_1 = new LatLng(25.295555, 51.538892);
+    LatLng L3_G18_2 = new LatLng(25.295557, 51.538906);
+    LatLng L3_G18_3 = new LatLng(25.295567, 51.538920);
+    LatLng L3_G18_11 = new LatLng(25.295613, 51.538914);
 
     String markerTitle = "";
 
@@ -173,7 +173,7 @@ public class FloorMapActivity extends AppCompatActivity implements OnMapReadyCal
             l2_g3_sc14_2, l2_g4_sc3, l2_g4_sc5, l2_g5_sc11, l2_g5_sc5, l2_g7_sc4, l2_g7_sc8,
             l2_g7_sc13, l3_g10_podium9, l3_g10_podium14, l3_g10_wr2_1, l3_g10_wr2_2, l3_g11_14,
             l3_g12_11, l3_g12_12, l3_g12_17, l3_g12_wr5, l3_g13_2, l3_g13_15, l3_g14_13, l3_g14_7,
-            l3_g15_13, l3_g16_wr5, l3_g17_1, l3_g17_2, l3_g17_8, l3_g17_9, l3_g17_11;
+            l3_g15_13, l3_g16_wr5, l3_g18_1, l3_g18_3, l3_g17_8, l3_g17_9, l3_g18_11;
 
     private int selectedLevel = 2;
 
@@ -271,7 +271,6 @@ public class FloorMapActivity extends AppCompatActivity implements OnMapReadyCal
         bottomSheet = findViewById(R.id.bottomSheetLayout);
         numberPad = (ImageView) findViewById(R.id.number_pad);
         params = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.WRAP_CONTENT, RelativeLayout.LayoutParams.WRAP_CONTENT);
-        numberPad = (ImageView) findViewById(R.id.number_pad);
         qrCode = (ImageView) findViewById(R.id.scanner);
         progressBar = findViewById(R.id.progress_bar_loading);
         retryLayout = findViewById(R.id.retry_layout);
@@ -743,11 +742,11 @@ public class FloorMapActivity extends AppCompatActivity implements OnMapReadyCal
             l3_g14_13.setVisible(false);
             l3_g15_13.setVisible(false);
             l3_g16_wr5.setVisible(false);
-            l3_g17_1.setVisible(false);
-            l3_g17_2.setVisible(false);
+            l3_g18_1.setVisible(false);
+            l3_g18_3.setVisible(false);
             l3_g17_8.setVisible(false);
             l3_g17_9.setVisible(false);
-            l3_g17_11.setVisible(false);
+            l3_g18_11.setVisible(false);
         }
     }
 
@@ -1213,20 +1212,20 @@ public class FloorMapActivity extends AppCompatActivity implements OnMapReadyCal
                 .visible(false)
                 .icon(BitmapDescriptorFactory.fromBitmap(resizeMapIcons("default_map_marker", normalMapIconWidth, normalMapIconHeight))));
         markerHashMap.put("l3_g16_wr5", l3_g16_wr5);
-        l3_g17_1 = googleMap.addMarker(new MarkerOptions()
-                .position(L3_G17_1)
+        l3_g18_1 = googleMap.addMarker(new MarkerOptions()
+                .position(L3_G18_1)
                 .title("C.1570")
-                .snippet("l3_g17_1")
+                .snippet("l3_g18_1")
                 .visible(false)
                 .icon(BitmapDescriptorFactory.fromBitmap(resizeMapIcons("default_map_marker", normalMapIconWidth, normalMapIconHeight))));
-        markerHashMap.put("l3_g17_1", l3_g17_1);
-        l3_g17_2 = googleMap.addMarker(new MarkerOptions()
-                .position(L3_G17_2)
+        markerHashMap.put("l3_g18_1", l3_g18_1);
+        l3_g18_3 = googleMap.addMarker(new MarkerOptions()
+                .position(L3_G18_3)
                 .title("PO.265")
-                .snippet("l3_g17_2")
+                .snippet("l3_g18_3")
                 .visible(false)
                 .icon(BitmapDescriptorFactory.fromBitmap(resizeMapIcons("default_map_marker", normalMapIconWidth, normalMapIconHeight))));
-        markerHashMap.put("l3_g17_2", l3_g17_2);
+        markerHashMap.put("l3_g18_3", l3_g18_3);
         l3_g17_8 = googleMap.addMarker(new MarkerOptions()
                 .position(L3_G17_8)
                 .title("JE.180")
@@ -1241,13 +1240,13 @@ public class FloorMapActivity extends AppCompatActivity implements OnMapReadyCal
                 .visible(false)
                 .icon(BitmapDescriptorFactory.fromBitmap(resizeMapIcons("default_map_marker", normalMapIconWidth, normalMapIconHeight))));
         markerHashMap.put("l3_g17_9", l3_g17_9);
-        l3_g17_11 = googleMap.addMarker(new MarkerOptions()
-                .position(L3_G17_8)
+        l3_g18_11 = googleMap.addMarker(new MarkerOptions()
+                .position(L3_G18_11)
                 .title("AA.39")
-                .snippet("l3_g17_11")
+                .snippet("l3_g18_11")
                 .visible(false)
                 .icon(BitmapDescriptorFactory.fromBitmap(resizeMapIcons("default_map_marker", normalMapIconWidth, normalMapIconHeight))));
-        markerHashMap.put("l3_g17_11", l3_g17_11);
+        markerHashMap.put("l3_g18_11", l3_g18_11);
 
     }
 
@@ -1429,7 +1428,7 @@ public class FloorMapActivity extends AppCompatActivity implements OnMapReadyCal
             selectedMarker = marker;
             selectedMarker.setIcon(BitmapDescriptorFactory.fromBitmap(resizeMapIcons(name, largeMapIconWidth, largeMapIconHeight)));
             mBottomSheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
-        } else if(utils.isNetworkAvailable(this)){
+        } else if (utils.isNetworkAvailable(this)) {
             snackbar = Snackbar.make(floormapLayout, R.string.coming_soon_txt, Snackbar.LENGTH_SHORT);
             View sbView = snackbar.getView();
             TextView textView = (TextView) sbView.findViewById(android.support.design.R.id.snackbar_text);

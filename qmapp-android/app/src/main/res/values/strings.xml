@@ -228,5 +228,17 @@ They exemplify the external influences and internal creativity that inspired thi
     <string name="mobile_number">Mobile Number *</string>
     <string name="create_account">Create account</string>
     <string name="error_logout">Error in logging out!</string>
-
+    <!-- Strings related to RSVP -->
+    <string name="greetings_title">Greetings</string>
+    <string name="greetings_content">You have been invited for \nthe launch event of the\n National Museum of Qatar</string>
+    <string name="accept_now">Accept Now</string>
+    <string name="accept_later">Accept Later</string>
+    <string name="accept">Accept</string>
+    <string name="decline">Decline</string>
+    <string name="thankyou">Thank you for accepting the\ninvitation. You will receive\nfurther details on your\nemail. For any queries,\nplease contact Qatar\n Museums Authority via:\n info@qm.org.qa\n +974 4452 5555</string>
+    <string name="decline_content">Are you sure you want to\ndecline the Invitation?</string>
+    <string name="profile_link"><u>Invitation for National Museum\nof Qatar Launch Event</u></string>
+    <string name="artifact_invalid">Invalid Artifact Number</string>
+    <!-- Strings related to Culture pass card -->
+    <string name="flip_button_txt">TAP TO FLIP</string>
 </resources>

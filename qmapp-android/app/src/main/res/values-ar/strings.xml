@@ -89,7 +89,7 @@
     <string name="no_events">لا توجد فعاليات</string>
     <string name="open_settings">الإعدادات</string>
     <string name="permission_required">الإذن مطلوب</string>
-    <string name="runtime_permission">لإضافة الفعالية للتقويم، يجب السماح لتطبيق متحف قطر بالولوج لتقويم الجهاز. \n\nاضغط على الإعدادات>التصاريح، وقم بتفعيل التقويم</string>
+    <string name="runtime_permission">لإضافة فعاليات للتقويم، قم بالسماح لتطبيق متاحف قطر بالولوج للتقويم على جهازك. /n/n اضغط على الإعدادات > الصلاحيات، ثم قم بتفعيل التقويم</string>
     <string name="camera_runtime_permission">To scan QR Code, allow <b>Qatar Museum App</b> access to your device\'s Camera.\n\n Tap Settings > Permissions, and turn Camera on.</string>
     <string name="event_added">تم إضافة الفعالية للتقويم</string>
     <string name="local_event_institution">MIA</string>
@@ -112,8 +112,8 @@
     <string name="museum_about_text">عن</string>
     <string name="museum_collection_text">المجموعات</string>
     <string name="open_in_google_maps">أضغط هنا للعرض في خرائط جووجل</string>
-    <string name="alert_txt">Alert</string>
-    <string name="error_content">Please! Enter the Object Number.</string>
+    <string name="alert_txt">تنبيه</string>
+    <string name="error_content">رجاءاً! ادخل رقم القطعة</string>
     <string name="location_alert_txt">حدث خطأ ما</string>
     <string name="location_error_content">للأسف لقد تعذر فتح خرائط جوجل</string>
     <string name="object_search">بحث القطع</string>
@@ -121,8 +121,8 @@
     <string name="obj_text_two">بجانب</string>
     <string name="obj_text_three">لرؤية التفاصيل</string>
     <string name="or">أو</string>
-    <string name="use_qr_scanner"><u>Use the QR Scanner</u></string>
-    <string name="use_the_keypad"><u>Use the Keypad</u></string>
+    <string name="use_qr_scanner"><u>استخدم ماسح QR</u></string>
+    <string name="use_the_keypad"><u>استخدم لوحة المفاتيح</u></string>
 
     <string name="any">أي</string>
     <string name="years">التبادل الثقافي</string>
@@ -159,7 +159,7 @@
 
     <string name="start_tour">إبدأ الجولة</string>
     <string name="explore">تصفح</string>
-    <string name="level">Level</string>
+    <string name="level">المستوى</string>
     <string name="tourguide_sidemenu_title">المرشد</string>
     <string name="tourguide_sidemenu_title_desc">اغمر نفسك في تفاصيل القطعة التي اختيرت خصيصا لك من قبل خبرائنا. \n\n أهلا بك في متاحف قطر. يرججى اختيار المتحف لإستكشاف القطع المعروضة.</string>
     <string name="tourguide_title_desc">Welcome to Qatar Museum Premises. \n Explore the architrcture and the \nobjects on display. \n Scan the QR codes available on the \ngalleries for more information.</string>
@@ -187,53 +187,66 @@
     <string name="production_text">الانتاج:</string>
     <string name="production_dates">تاريخ الإنتاج:</string>
     <string name="period_style">الفترة/النمط:</string>
-    <string name="technique_materials">Technique and materials:</string>
-    <string name="dimension">Dimensions:</string>
+    <string name="technique_materials">التقنيات والمواد:</string>
+    <string name="dimension">الأبعاد:</string>
 
-    <string name="object_history">Object History</string>
+    <string name="object_history">تاريخ القطعة</string>
     <string name="science_tour">جولة علمية</string>
-    <string name="no_location_data">No Location Data</string>
-    <string name="increase_volume">Please Increase Volume</string>
-    <string name="highlight_tour">Highlights Tour</string>
-    <string name="loading">Loading...</string>
-    <string name="oops">Oops!</string>
-    <string name="there_is_no_internet">There is no Internet connection</string>
-    <string name="please_check_your_internet">Please check your Internet connection</string>
-    <string name="try_again">Try again</string>
+    <string name="no_location_data">لا توجد بيانات للموقع</string>
+    <string name="increase_volume">يرجى رفع الصوت</string>
+    <string name="highlight_tour">الجولة الاستطلاعية</string>
+    <string name="loading">جاري التحميل...</string>
+    <string name="oops">خطأ!</string>
+    <string name="there_is_no_internet">لا يوجد اتصال بالانترنت</string>
+    <string name="please_check_your_internet">الرجاء التحقق من اتصال الانترنت الخاص بك</string>
+    <string name="try_again">حاول مرة اخى</string>
 
     <!-- Strings related to login -->
     <string name="prompt_email">‏اسم المستخدم</string>
     <string name="prompt_password">كلمة المرور</string>
     <string name="action_sign_in_short">Sign in</string>
     <string name="forgot_password"><u>هل نسيت كلمة؟</u></string>
-    <string name="culture_pass_login">Culture pass login</string>
+    <string name="culture_pass_login">تسجيل الدخول لبطاقتك إلى الثقافة</string>
     <string name="error_password_required">حقل "كلمة المرور" ضروري.</string>
     <string name="error_username_required">حقل "اسم المستخدم أو عنوان البريد الإلكتروني" ضروري.</string>
     <string name="error_incorrect_credentials">عذرًا، لم يتم التعرف على اسم المستخدم أو كلمة السر. </string>
-    <string name="error_already_logged_in">Already logged in</string>
+    <string name="error_already_logged_in">تم تسجيل الدخول بالفعل</string>
     <string name="error_unexpected">Unexpected error</string>
     <!-- Strings related to Profile -->
-    <string name="profile">Profile</string>
-    <string name="membership_number">Membership Number:</string>
-    <string name="view_my_favourites">View my favourites</string>
-    <string name="view_my_culture_pass_card">View my culture pass card</string>
-    <string name="e_mail_address">E-Mail Address*:</string>
-    <string name="date_of_birth">Date of Birth:</string>
-    <string name="country_of_residence">Country of Residence*:</string>
-    <string name="nationality">Nationality*:</string>
+    <string name="profile">ملف شخصي</string>
+    <string name="membership_number">رقم العضوية:</string>
+    <string name="view_my_favourites">عرض المفضلة</string>
+    <string name="view_my_culture_pass_card">عرض بطاقة "بطاقتك إلى الثقافة"</string>
+    <string name="e_mail_address">البريد الإلكتروني*:</string>
+    <string name="date_of_birth">تاريخ الميلاد:</string>
+    <string name="country_of_residence">بلد الإقامة*:</string>
+    <string name="nationality">الجنسية*:</string>
     <string name="logout_success_message">You have been successfully logged out!</string>
-    <string name="ok">OK</string>
+    <string name="ok">تم</string>
     <!-- Strings related to Create Account -->
-    <string name="create_your_account">Create your account</string>
-    <string name="username">Username *</string>
-    <string name="password">Password *</string>
-    <string name="confirm_password">Confirm Password *</string>
-    <string name="tell_us_more_about_you">Tell us more about you</string>
-    <string name="select_a_value">- Select A Value -</string>
-    <string name="title">Title</string>
-    <string name="first_name">First Name *</string>
-    <string name="last_name">Last Name *</string>
-    <string name="mobile_number">Mobile Number *</string>
-    <string name="create_account">Create account</string>
-
+    <string name="create_your_account">إنشاء حساب جديد</string>
+    <string name="username">اسم المستخدم *</string>
+    <string name="password">كلمة المرور *</string>
+    <string name="confirm_password">تأكيد كلمة المرور *</string>
+    <string name="tell_us_more_about_you">اخبرنا بالمزيد عن نفسك</string>
+    <string name="select_a_value">-اختيار القيمة-</string>
+    <string name="title">اللقب</string>
+    <string name="first_name">الاسم الأول *</string>
+    <string name="last_name">اسم العائلة *</string>
+    <string name="mobile_number">رقم الجوال *</string>
+    <string name="create_account">إنشاء حساب جديد</string>
+    <string name="error_logout">Error in logging out!</string>
+    <!-- Strings related to RSVP -->
+    <string name="greetings_title">Greetings</string>
+    <string name="greetings_content">You have been invited for \nthe launch event of the\n National Museum of Qatar</string>
+    <string name="accept_now">Accept Now</string>
+    <string name="accept_later">Accept Later</string>
+    <string name="accept">Accept</string>
+    <string name="decline">Decline</string>
+    <string name="thankyou">Thank you for accepting the\ninvitation. You will receive\nfurther details on your\nemail. For any queries,\nplease contact Qatar\n Museums Authority via:\n info@qm.org.qa\n +974 4452 5555</string>
+    <string name="decline_content">Are you sure you want to\ndecline the Invitation?</string>
+    <string name="profile_link"><u>Invitation for National Museum\nof Qatar Launch Event</u></string>
+    <string name="artifact_invalid">Invalid Artifact Number</string>
+    <!-- Strings related to Culture pass card -->
+    <string name="flip_button_txt">اضغط لعرض الجهة الأخرى</string>
 </resources>

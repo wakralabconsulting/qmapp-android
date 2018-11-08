@@ -11,16 +11,17 @@ import android.widget.TextView;
 
 import com.qatarmuseums.qatarmuseumsapp.R;
 import com.qatarmuseums.qatarmuseumsapp.home.GlideApp;
+import com.qatarmuseums.qatarmuseumsapp.home.HomeList;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class TourGuideAdapter extends RecyclerView.Adapter<TourGuideAdapter.MyViewHolder> {
     private final Context mContext;
-    private List<TourGuideList> tourGuideList;
+    private List<HomeList> tourGuideList;
     String comingFrom;
 
-    public TourGuideAdapter(Context context, List<TourGuideList> tourGuideList, String comingFrom) {
+    public TourGuideAdapter(Context context, List<HomeList> tourGuideList, String comingFrom) {
         this.tourGuideList = tourGuideList;
         this.mContext = context;
         this.comingFrom = comingFrom;
@@ -37,19 +38,19 @@ public class TourGuideAdapter extends RecyclerView.Adapter<TourGuideAdapter.MyVi
 
     @Override
     public void onBindViewHolder(@NonNull MyViewHolder holder, int position) {
-        TourGuideList tgList = tourGuideList.get(position);
+        HomeList tgList = tourGuideList.get(position);
         holder.name.setText(tgList.getName());
-        if (tgList.getMuseumId() != null && tgList.getMuseumId().equals("63")) {
+        if (tgList.getTourguideAvailable().equalsIgnoreCase("true")){
             holder.headphoneIcon.setVisibility(View.VISIBLE);
             holder.headphoneIcon.setImageResource(R.drawable.floor_map_circle);
-
         } else {
             holder.headphoneIcon.setVisibility(View.GONE);
         }
         if (comingFrom.equals(mContext.getString(R.string.tourguide_sidemenu_title))) {
             GlideApp.with(mContext)
-                    .load(tgList.getImageurl())
+                    .load(tgList.getImage())
                     .placeholder(R.drawable.placeholder)
+                    .centerCrop()
                     .into(holder.imageView);
         } else {
             holder.headphoneIcon.setVisibility(View.VISIBLE);

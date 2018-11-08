@@ -1,7 +1,9 @@
 package com.qatarmuseums.qatarmuseumsapp.floormap;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.MotionEvent;
@@ -13,10 +15,18 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.qatarmuseums.qatarmuseumsapp.R;
+import com.qatarmuseums.qatarmuseumsapp.apicall.APIClient;
+import com.qatarmuseums.qatarmuseumsapp.apicall.APIInterface;
+import com.qatarmuseums.qatarmuseumsapp.objectpreview.ObjectPreviewDetailsActivity;
 import com.qatarmuseums.qatarmuseumsapp.utils.Util;
+
+import java.util.ArrayList;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 public class ObjectSearchActivity extends AppCompatActivity implements View.OnClickListener {
 
@@ -39,6 +49,10 @@ public class ObjectSearchActivity extends AppCompatActivity implements View.OnCl
     ImageView doneButton;
     LinearLayout[] displayButtons;
     String display = "";
+    SharedPreferences qmPreferences;
+    int language;
+    ArrayList<ArtifactDetails> artifactList = new ArrayList<>();
+    Util util;
 
 
     @Override
@@ -48,11 +62,13 @@ public class ObjectSearchActivity extends AppCompatActivity implements View.OnCl
         ButterKnife.bind(this);
         setSupportActionBar(toolbar);
         toolbar_title.setText(getResources().getString(R.string.object_search));
+        qmPreferences = PreferenceManager.getDefaultSharedPreferences(this);
+        language = qmPreferences.getInt("AppLanguage", 1);
+        util=new Util();
         displayButtons = new LinearLayout[10];
         for (int i = 0; i < displayButtons.length; i++) {
             {
                 String textViewID = "display_number_" + (i);
-
                 int resID = getResources().getIdentifier(textViewID, "id", getPackageName());
                 displayButtons[i] = ((LinearLayout) findViewById(resID));
                 displayButtons[i].setOnClickListener(this);
@@ -69,12 +85,9 @@ public class ObjectSearchActivity extends AppCompatActivity implements View.OnCl
             @Override
             public void onClick(View view) {
                 if (numberPadDisplay.getText().toString() == "") {
-                    new Util().showAlertDialog(ObjectSearchActivity.this);
+                    util.showAlertDialog(ObjectSearchActivity.this);
                 } else {
-                    Intent intent = new Intent(ObjectSearchActivity.this, FloorMapActivity.class);
-                    startActivity(intent);
-                    display = "";
-                    numberPadDisplay.setText("");
+                    getDetailsFromApi(display,language);
                 }
             }
         });
@@ -115,6 +128,54 @@ public class ObjectSearchActivity extends AppCompatActivity implements View.OnCl
             }
         });
 
+    }
+
+    private void getDetailsFromApi(String id, int applanguage) {
+        final String language;
+        if (applanguage == 1) {
+            language = "en";
+        } else {
+            language = "ar";
+        }
+        APIInterface apiService =
+                APIClient.getClient().create(APIInterface.class);
+        Call<ArrayList<ArtifactDetails>> call = apiService.getObjectSearchDetails(language, id);
+        call.enqueue(new Callback<ArrayList<ArtifactDetails>>() {
+            @Override
+            public void onResponse(Call<ArrayList<ArtifactDetails>> call, Response<ArrayList<ArtifactDetails>> response) {
+                if (response.isSuccessful()) {
+                    if(response.body().size() > 0) {
+                        if (response.body() != null && response.body().size() > 0) {
+                            artifactList = response.body();
+                            Intent intent = new Intent(ObjectSearchActivity.this, ObjectPreviewDetailsActivity.class);
+                            intent.putExtra("Title", artifactList.get(0).getTitle());
+                            intent.putExtra("Image", artifactList.get(0).getImage());
+                            intent.putExtra("Description", artifactList.get(0).getCuratorialDescription());
+                            intent.putExtra("History", artifactList.get(0).getObjectHistory());
+                            intent.putExtra("Summary", artifactList.get(0).getObjectENGSummary());
+                            intent.putExtra("Audio", artifactList.get(0).getAudioFile());
+                            intent.putStringArrayListExtra("Images", artifactList.get(0).getImages());
+                            startActivity(intent);
+                            display = "";
+                            numberPadDisplay.setText("");
+                        }
+                    }else{
+                        util.showToast(getResources().getString(R.string.artifact_invalid),ObjectSearchActivity.this);
+                        display = "";
+                        numberPadDisplay.setText("");
+                    }
+                }else{
+                    util.showToast(getResources().getString(R.string.artifact_invalid),ObjectSearchActivity.this);
+                    display = "";
+                    numberPadDisplay.setText("");
+                }
+            }
+
+            @Override
+            public void onFailure(Call<ArrayList<ArtifactDetails>> call, Throwable t) {
+
+            }
+        });
     }
 
     @Override
