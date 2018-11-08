@@ -86,7 +86,7 @@
     <string name="obj_text_one">Enter The Object Number</string>
     <string name="obj_text_two">next to</string>
     <string name="obj_text_three">to view the details</string>
-    <string name="gift_shop_url">http://www.qm.org.qa/en/gift-shops</string>
+    <string name="gift_shop_url">https://inq-online.com/</string>
     <string name="touch_again">Touch again to exit</string>
     <string name="map_navigation_api">http://maps.google.com/maps?q=loc:</string>
     <string name="museum_about">Museum About</string>
