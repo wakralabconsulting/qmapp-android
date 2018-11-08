@@ -23,10 +23,9 @@ public class ReceivedCookiesInterceptor implements Interceptor {
 
         if (!originalResponse.headers("Set-Cookie").isEmpty()) {
             HashSet<String> cookies = (HashSet<String>) PreferenceManager.getDefaultSharedPreferences(context).getStringSet("PREF_COOKIES", new HashSet<String>());
-
+            cookies.clear();
             for (String header : originalResponse.headers("Set-Cookie")) {
                 if (!header.contains("deleted")) {
-                    cookies.clear();
                     cookies.add(header);
                 }
             }
