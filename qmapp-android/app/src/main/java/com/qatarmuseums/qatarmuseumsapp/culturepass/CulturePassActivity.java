@@ -92,6 +92,13 @@ public class CulturePassActivity extends AppCompatActivity {
         }
         profileDetails = new ProfileDetails();
         backArrow = findViewById(R.id.toolbar_back);
+        qmPreferences = PreferenceManager.getDefaultSharedPreferences(this);
+        appLanguage = qmPreferences.getInt("AppLanguage", 1);
+        token = qmPreferences.getString("TOKEN", null);
+        if (appLanguage == 1)
+            language = "en";
+        else
+            language = "ar";
         backArrow.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -119,7 +126,8 @@ public class CulturePassActivity extends AppCompatActivity {
                 // Temporary
 //                 navigationIntent = new Intent(CulturePassActivity.this, CreateAccountActivity.class);
                 navigationIntent = new Intent(CulturePassActivity.this, WebviewActivity.class);
-                navigationIntent.putExtra("url", "http://www.qm.org.qa/en/user/register#user-register-form");
+                navigationIntent.putExtra("url", "http://www.qm.org.qa/" + language +
+                        "/user/register#user-register-form");
                 startActivity(navigationIntent);
             }
         });
@@ -151,13 +159,7 @@ public class CulturePassActivity extends AppCompatActivity {
                 return false;
             }
         });
-        qmPreferences = PreferenceManager.getDefaultSharedPreferences(this);
-        appLanguage = qmPreferences.getInt("AppLanguage", 1);
-        token = qmPreferences.getString("TOKEN", null);
-        if (appLanguage == 1)
-            language = "en";
-        else
-            language = "ar";
+
     }
 
 

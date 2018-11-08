@@ -56,7 +56,7 @@ public class BaseActivity extends AppCompatActivity
     ImageView topbarProfile;
     @Nullable
     @BindView(R.id.topbar_sidemenu)
-    ImageView topbarSidemenu;
+    public ImageView topbarSidemenu;
     @Nullable
     @BindView(R.id.drawer_layout)
     public DrawerLayout drawer;
@@ -175,7 +175,7 @@ public class BaseActivity extends AppCompatActivity
 
             @Override
             public void onAnimationEnd(Animation animation) {
-                closeDrawer();
+                clearAnimations();
             }
 
             @Override
@@ -231,14 +231,14 @@ public class BaseActivity extends AppCompatActivity
                 topbarCalander.startAnimation(zoomOutAnimation);
                 navigation_intent = new Intent(getApplicationContext(), CalendarActivity.class);
                 startActivity(navigation_intent);
-                closeDrawer();
+                clearAnimations();
                 break;
 
             case R.id.topbar_notification:
                 topbarNotification.startAnimation(zoomOutAnimation);
                 navigation_intent = new Intent(this, NotificationActivity.class);
                 startActivity(navigation_intent);
-                closeDrawer();
+                clearAnimations();
                 break;
             case R.id.topbar_profile:
                 topbarProfile.startAnimation(zoomOutAnimation);
@@ -248,7 +248,7 @@ public class BaseActivity extends AppCompatActivity
                 else
                     navigation_intent = new Intent(this, ProfileActivity.class);
                 startActivity(navigation_intent);
-                closeDrawer();
+                clearAnimations();
                 break;
 
             case R.id.topbar_sidemenu:
@@ -263,7 +263,7 @@ public class BaseActivity extends AppCompatActivity
                 navigation_intent = new Intent(this, CommonActivity.class);
                 navigation_intent.putExtra(getString(R.string.toolbar_title_key), getString(R.string.sidemenu_exhibition_text));
                 startActivity(navigation_intent);
-                closeDrawer();
+                clearAnimations();
                 break;
 
             case R.id.sidemenu_event_layout:
@@ -271,7 +271,7 @@ public class BaseActivity extends AppCompatActivity
                 touchListnerForLayout(sidemenuEventLayout);
                 navigation_intent = new Intent(getApplicationContext(), CalendarActivity.class);
                 startActivity(navigation_intent);
-                closeDrawer();
+                clearAnimations();
                 break;
 
             case R.id.sidemenu_education_layout:
@@ -280,7 +280,7 @@ public class BaseActivity extends AppCompatActivity
                 sidemenuEducationLayout.startAnimation(zoomOutAnimation);
                 navigation_intent = new Intent(this, EducationActivity.class);
                 startActivity(navigation_intent);
-                closeDrawer();
+                clearAnimations();
                 break;
 
             case R.id.sidemenu_tour_guide_layout:
@@ -289,7 +289,7 @@ public class BaseActivity extends AppCompatActivity
                 touchListnerForLayout(sidemenuTourGuideLayout);
                 navigation_intent = new Intent(this, TourGuideActivity.class);
                 startActivity(navigation_intent);
-                closeDrawer();
+                clearAnimations();
                 break;
             case R.id.sidemenu_heritage_layout:
             case R.id.sidemenu_heritage_icon:
@@ -297,7 +297,7 @@ public class BaseActivity extends AppCompatActivity
                 navigation_intent = new Intent(this, CommonActivity.class);
                 navigation_intent.putExtra(getString(R.string.toolbar_title_key), getString(R.string.sidemenu_heritage_text));
                 startActivity(navigation_intent);
-                closeDrawer();
+                clearAnimations();
                 break;
 
             case R.id.sidemenu_public_arts_layout:
@@ -306,7 +306,7 @@ public class BaseActivity extends AppCompatActivity
                 navigation_intent = new Intent(this, CommonActivity.class);
                 navigation_intent.putExtra(getString(R.string.toolbar_title_key), getString(R.string.sidemenu_public_arts_text));
                 startActivity(navigation_intent);
-                closeDrawer();
+                clearAnimations();
                 break;
 
             case R.id.sidemenu_dining_layout:
@@ -315,7 +315,7 @@ public class BaseActivity extends AppCompatActivity
                 navigation_intent = new Intent(this, CommonActivity.class);
                 navigation_intent.putExtra(getString(R.string.toolbar_title_key), getString(R.string.sidemenu_dining_text));
                 startActivity(navigation_intent);
-                closeDrawer();
+                clearAnimations();
                 break;
 
             case R.id.sidemenu_gift_shop_layout:
@@ -325,14 +325,14 @@ public class BaseActivity extends AppCompatActivity
                 navigation_intent = new Intent(BaseActivity.this, WebviewActivity.class);
                 navigation_intent.putExtra("url", getString(R.string.gift_shop_url));
                 startActivity(navigation_intent);
-                closeDrawer();
+                clearAnimations();
                 break;
             case R.id.sidemenu_park_layout:
             case R.id.sidemenu_park_icon:
                 touchListnerForLayout(sidemenuParkLayout);
                 navigation_intent = new Intent(BaseActivity.this, ParkActivity.class);
                 startActivity(navigation_intent);
-                closeDrawer();
+                clearAnimations();
                 break;
 
             case R.id.sidemenu_settings_layout:
@@ -340,7 +340,7 @@ public class BaseActivity extends AppCompatActivity
                 touchListnerForLayout(sidemenuSettingsLayout);
                 Intent settingsIntent = new Intent(this, SettingsActivity.class);
                 startActivity(settingsIntent);
-                closeDrawer();
+                clearAnimations();
                 break;
 
             default:
@@ -365,6 +365,8 @@ public class BaseActivity extends AppCompatActivity
         if (drawer.isDrawerOpen(Gravity.END)) {
             navigationView.startAnimation(fadeOutAnimation);
             showToolBarOptions();
+            topbarSidemenu.setImageDrawable(getResources().getDrawable(R.drawable.side_menu_icon));
+            drawer.closeDrawer(GravityCompat.END, false);
             toolbar.setBackgroundColor(Color.parseColor("#000000"));
 
         } else {
@@ -411,9 +413,7 @@ public class BaseActivity extends AppCompatActivity
         topbarBack.setVisibility(View.VISIBLE);
     }
 
-    public void closeDrawer() {
-        topbarSidemenu.setImageDrawable(getResources().getDrawable(R.drawable.side_menu_icon));
-        drawer.closeDrawer(GravityCompat.END, false);
+    public void clearAnimations() {
         sidemenuExibitionLayout.clearAnimation();
         sidemenuEventLayout.clearAnimation();
         sidemenuEducationLayout.clearAnimation();
@@ -424,7 +424,6 @@ public class BaseActivity extends AppCompatActivity
         sidemenuGiftShopLayout.clearAnimation();
         sidemenuParkLayout.clearAnimation();
         sidemenuSettingsLayout.clearAnimation();
-        showToolBarOptions();
     }
 
     public void touchListnerForLayout(final LinearLayout linearLayout) {
