@@ -242,6 +242,7 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
     public void clearPreference() {
         qmPreferences = PreferenceManager.getDefaultSharedPreferences(this);
         editor = qmPreferences.edit();
+        editor.putString("TOKEN", null);
         editor.putString("MEMBERSHIP_NUMBER", null);
         editor.putString("EMAIL", null);
         editor.putString("DOB", null);
