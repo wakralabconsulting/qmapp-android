@@ -115,4 +115,8 @@ public interface APIInterface {
     @POST("{language}/mobile_api/user/logout.json")
     Call<UserData> logout(@Path("language") String language, @Header("X-CSRF-Token") String token);
 
+    @POST("{language}/mobile_api/user/request_new_password.json")
+    Call<ArrayList<String>> forgotPassword(@Path("language") String language,
+                                           @Header("X-CSRF-Token") String token, @Body LoginData loginData);
+
 }
