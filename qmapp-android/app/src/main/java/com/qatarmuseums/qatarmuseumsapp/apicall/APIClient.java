@@ -26,6 +26,20 @@ public class APIClient {
 
         return retrofit;
     }
+    public static Retrofit getSecureClient() {
+
+        HttpLoggingInterceptor interceptor = new HttpLoggingInterceptor();
+        interceptor.setLevel(HttpLoggingInterceptor.Level.BODY);
+        client = new OkHttpClient.Builder().addInterceptor(interceptor).build();
+
+        retrofit = new Retrofit.Builder()
+                .baseUrl(apiBaseUrlSecure)
+                .addConverterFactory(GsonConverterFactory.create())
+                .client(client)
+                .build();
+
+        return retrofit;
+    }
 
     public static Retrofit getTempClient() {
 
