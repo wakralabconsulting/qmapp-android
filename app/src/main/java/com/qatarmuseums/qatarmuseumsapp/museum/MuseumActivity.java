@@ -1,11 +1,15 @@
 package com.qatarmuseums.qatarmuseumsapp.museum;
 
 
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.Intent;
 
+import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
+import android.support.v4.content.LocalBroadcastManager;
 import android.support.v4.view.ViewPager;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
@@ -20,6 +24,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.github.rubensousa.gravitysnaphelper.GravitySnapHelper;
+import com.qatarmuseums.qatarmuseumsapp.Config;
 import com.qatarmuseums.qatarmuseumsapp.R;
 import com.qatarmuseums.qatarmuseumsapp.apicall.APIClient;
 import com.qatarmuseums.qatarmuseumsapp.apicall.APIInterface;
@@ -75,6 +80,8 @@ public class MuseumActivity extends BaseActivity implements
     ArrayList<MuseumAboutModel> museumAboutModels = new ArrayList<>();
     private String language;
     private String museumId;
+    private BroadcastReceiver mNotificationBroadcastReceiver;
+    private int badgeCount;
 
 
     @Override
@@ -180,7 +187,7 @@ public class MuseumActivity extends BaseActivity implements
                 @Override
                 public void onClick(View view) {
 
-                        recyclerviewLayoutManager.smoothScrollToPosition(recyclerView, null, 0);
+                    recyclerviewLayoutManager.smoothScrollToPosition(recyclerView, null, 0);
 
                 }
             });
@@ -188,8 +195,20 @@ public class MuseumActivity extends BaseActivity implements
             prepareRecyclerViewData();
 
         getSliderImagesfromAPI();
+
+        mNotificationBroadcastReceiver = new BroadcastReceiver() {
+            @Override
+            public void onReceive(Context context, Intent intent) {
+                if (intent.getAction().equals(Config.PUSH_NOTIFICATION)) {
+                    badgeCount = qmPreferences.getInt("BADGE_COUNT", 0);
+                    if (badgeCount > 0) {
+                        setBadge(badgeCount);
+                    }
+                }
+            }
+        };
     }
-    
+
     public void setSliderImages(ArrayList<String> sliderImageList) {
         ads = new ArrayList<>();
         for (int i = 0; i < sliderImageList.size(); i++) {
@@ -372,6 +391,7 @@ public class MuseumActivity extends BaseActivity implements
         super.onPause();
         if (configuration != null)
             animCircleIndicator.stop();
+        LocalBroadcastManager.getInstance(this).unregisterReceiver(mNotificationBroadcastReceiver);
     }
 
     @Override
@@ -379,6 +399,10 @@ public class MuseumActivity extends BaseActivity implements
         super.onResume();
         if (configuration != null)
             animCircleIndicator.start();
+        updateBadge();
+        LocalBroadcastManager.getInstance(this).registerReceiver(mNotificationBroadcastReceiver,
+                new IntentFilter(Config.PUSH_NOTIFICATION));
+
     }
 
     public void getSliderImagesfromAPI() {

@@ -15,6 +15,22 @@
       },
       "oauth_client": [
         {
+          "client_id": "561740618834-1fi0rh0qq1nfbp29nrq710qlumgtebjc.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.qatarmuseums.qatarmuseumsapp",
+            "certificate_hash": "ed0ee1430eb1ee955f5312c815993bca0918dbad"
+          }
+        },
+        {
+          "client_id": "561740618834-urvb53ogkc8qhpq2geudaid2k9rblmqv.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.qatarmuseums.qatarmuseumsapp",
+            "certificate_hash": "842820bc48c49ecc21983bd306b7a7b6fe8861f8"
+          }
+        },
+        {
           "client_id": "561740618834-3r1nodiakjta46gr26eorba8rki26t6g.apps.googleusercontent.com",
           "client_type": 3
         }
@@ -29,8 +45,21 @@
           "status": 1
         },
         "appinvite_service": {
-          "status": 1,
-          "other_platform_oauth_client": []
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "561740618834-3r1nodiakjta46gr26eorba8rki26t6g.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "561740618834-0h11v1raeru81qc8fcff5ap0du2moemd.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.qatarmuseums.qatarmuseumsapp",
+                "app_store_id": "1435470257"
+              }
+            }
+          ]
         },
         "ads_service": {
           "status": 2

@@ -1,6 +1,7 @@
 package com.qatarmuseums.qatarmuseumsapp.utils;
 
 import android.app.Activity;
+import android.app.Dialog;
 import android.content.Context;
 import android.content.res.Configuration;
 import android.content.res.Resources;
@@ -9,10 +10,12 @@ import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
-import android.net.Uri;
 import android.os.Build;
 import android.util.DisplayMetrics;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.view.Window;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.Toast;
 
@@ -25,9 +28,15 @@ import org.jsoup.safety.Whitelist;
 
 import java.util.Locale;
 
+import static android.content.Context.LAYOUT_INFLATER_SERVICE;
+
 public class Util {
     private CustomDialogClass customDialog;
     private String lang;
+    private Dialog tokenDialog;
+    private LayoutInflater layoutInflater;
+    private View closeBtn;
+    private EditText mTokenView;
 
     public boolean checkImageResource(Context ctx, ImageView imageView,
                                       int imageResource) {
@@ -88,6 +97,7 @@ public class Util {
         customDialog.show();
 
     }
+
     public void showLocationAlertDialog(Context context) {
         customDialog = new CustomDialogClass(context
                 , context.getResources().getString(R.string.location_alert_txt)
