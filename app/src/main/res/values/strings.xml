@@ -86,7 +86,7 @@
     <string name="obj_text_one">Enter The Object Number</string>
     <string name="obj_text_two">next to</string>
     <string name="obj_text_three">to view the details</string>
-    <string name="gift_shop_url">http://www.qm.org.qa/en/gift-shops</string>
+    <string name="gift_shop_url">https://inq-online.com/</string>
     <string name="touch_again">Touch again to exit</string>
     <string name="map_navigation_api">http://maps.google.com/maps?q=loc:</string>
     <string name="museum_about">Museum About</string>
@@ -202,6 +202,7 @@ They exemplify the external influences and internal creativity that inspired thi
     <string name="error_password_required">Password field is required.</string>
     <string name="error_username_required">Username or e-mail field is required.</string>
     <string name="error_incorrect_credentials">Sorry, unrecognized username or password.</string>
+    <string name="error_incorrect_username">Sorry, unrecognized username or e-mail.</string>
     <string name="error_already_logged_in">Already logged in</string>
     <string name="error_unexpected">Unexpected error</string>
     <!-- Strings related to Profile -->
@@ -228,6 +229,18 @@ They exemplify the external influences and internal creativity that inspired thi
     <string name="mobile_number">Mobile Number *</string>
     <string name="create_account">Create account</string>
     <string name="error_logout">Error in logging out!</string>
-
-
+    <string name="password_reset_successful">New password link sent to your email</string>
+    <!-- Strings related to RSVP -->
+    <string name="greetings_title">Greetings</string>
+    <string name="greetings_content">You have been invited for \nthe launch event of the\n National Museum of Qatar</string>
+    <string name="accept_now">Accept Now</string>
+    <string name="accept_later">Accept Later</string>
+    <string name="accept">Accept</string>
+    <string name="decline">Decline</string>
+    <string name="thankyou">Thank you for accepting the\ninvitation. You will receive\nfurther details on your\nemail. For any queries,\nplease contact Qatar\n Museums Authority via:\n info@qm.org.qa\n +974 4452 5555</string>
+    <string name="decline_content">Are you sure you want to\ndecline the Invitation?</string>
+    <string name="profile_link"><u>Invitation for National Museum\nof Qatar Launch Event</u></string>
+    <string name="artifact_invalid">Invalid Artifact Number</string>
+    <!-- Strings related to Culture pass card -->
+    <string name="flip_button_txt">TAP TO FLIP</string>
 </resources>

@@ -117,7 +117,7 @@ public class HomeActivity extends BaseActivity {
 
             @Override
             public void onAnimationEnd(Animation animation) {
-                closeDrawer();
+                clearAnimations();
             }
 
             @Override
@@ -289,8 +289,6 @@ public class HomeActivity extends BaseActivity {
         LocalBroadcastManager.getInstance(this).registerReceiver(mRegistrationBroadcastReceiver,
                 new IntentFilter(Config.PUSH_NOTIFICATION));
 
-        // To test notification
-        fetchRefreshToken();
     }
 
     @Override
@@ -303,6 +301,9 @@ public class HomeActivity extends BaseActivity {
     public void onBackPressed() {
         if (drawer.isDrawerOpen(GravityCompat.END)) {
             navigationView.startAnimation(fadeOutAnimation);
+            topbarSidemenu.setImageDrawable(getResources().getDrawable(R.drawable.side_menu_icon));
+            showToolBarOptions();
+            drawer.closeDrawer(GravityCompat.END, false);
             toolbar.setBackgroundColor(Color.parseColor("#000000"));
         } else {
             if (doubleBackToExitPressedOnce) {
@@ -368,13 +369,6 @@ public class HomeActivity extends BaseActivity {
         }
         updateBadge();
     }
-
-    // To test notification
-    public void fetchRefreshToken() {
-        refreshToken = qmPreferences.getString("REFRESH_TOKEN", null);
-        util.showTokenDialog(this, refreshToken);
-    }
-
 
     public class RowCount extends AsyncTask<Void, Void, Integer> {
         private WeakReference<HomeActivity> activityReference;

@@ -210,6 +210,7 @@
     <string name="error_password_required">حقل "كلمة المرور" ضروري.</string>
     <string name="error_username_required">حقل "اسم المستخدم أو عنوان البريد الإلكتروني" ضروري.</string>
     <string name="error_incorrect_credentials">عذرًا، لم يتم التعرف على اسم المستخدم أو كلمة السر. </string>
+    <string name="error_incorrect_username">عذرًا، لم يتم التعرف على اسم المستخدم أو عنوان البريد الإلكتروني.</string>
     <string name="error_already_logged_in">تم تسجيل الدخول بالفعل</string>
     <string name="error_unexpected">Unexpected error</string>
     <!-- Strings related to Profile -->
@@ -221,7 +222,7 @@
     <string name="date_of_birth">تاريخ الميلاد:</string>
     <string name="country_of_residence">بلد الإقامة*:</string>
     <string name="nationality">الجنسية*:</string>
-    <string name="logout_success_message">You have been successfully logged out!</string>
+    <string name="logout_success_message">تم تسجيل الخروج بنجاح</string>
     <string name="ok">تم</string>
     <!-- Strings related to Create Account -->
     <string name="create_your_account">إنشاء حساب جديد</string>
@@ -235,5 +236,19 @@
     <string name="last_name">اسم العائلة *</string>
     <string name="mobile_number">رقم الجوال *</string>
     <string name="create_account">إنشاء حساب جديد</string>
-
+    <string name="error_logout">هناك مشكلة بتسجيل الخروج</string>
+    <string name="password_reset_successful">لقد تم إرسال الرمز السري الجديد الى بريدك الإلكتروني</string>
+    <!-- Strings related to RSVP -->
+    <string name="greetings_title">تهانينا</string>
+    <string name="greetings_content">لقد تمت دعوتك لحضول إفتتاح متحف قطر الوطني</string>
+    <string name="accept_now">قبول الدعوة</string>
+    <string name="accept_later">سأتخذ القرار لاحقا</string>
+    <string name="accept">قبول الدعوة</string>
+    <string name="decline">عدم الحضور</string>
+    <string name="thankyou">شكرا جزيلا لقبول الدعوة. لقد تم إرسال بريد إلكتروني بالتفاصيل. للإستفسار، يرجى التواصل عن طريق info@qm.org.qa أو 0097444525555</string>
+    <string name="decline_content">تأكيد عدم الحضور</string>
+    <string name="profile_link"><u>دعوة لحضور افتتاح متحف قطر الوطني</u></string>
+    <string name="artifact_invalid">Invalid Artifact Number</string>
+    <!-- Strings related to Culture pass card -->
+    <string name="flip_button_txt">اضغط لعرض الجهة الأخرى</string>
 </resources>

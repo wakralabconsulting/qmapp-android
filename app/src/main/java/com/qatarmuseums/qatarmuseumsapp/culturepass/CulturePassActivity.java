@@ -32,10 +32,12 @@ import android.widget.TextView;
 import com.qatarmuseums.qatarmuseumsapp.R;
 import com.qatarmuseums.qatarmuseumsapp.apicall.APIClient;
 import com.qatarmuseums.qatarmuseumsapp.apicall.APIInterface;
-import com.qatarmuseums.qatarmuseumsapp.createaccount.CreateAccountActivity;
 import com.qatarmuseums.qatarmuseumsapp.profile.ProfileActivity;
 import com.qatarmuseums.qatarmuseumsapp.profile.ProfileDetails;
 import com.qatarmuseums.qatarmuseumsapp.utils.Util;
+import com.qatarmuseums.qatarmuseumsapp.webview.WebviewActivity;
+
+import java.util.ArrayList;
 
 import okhttp3.OkHttpClient;
 import okhttp3.logging.HttpLoggingInterceptor;
@@ -89,6 +91,13 @@ public class CulturePassActivity extends AppCompatActivity {
         }
         profileDetails = new ProfileDetails();
         backArrow = findViewById(R.id.toolbar_back);
+        qmPreferences = PreferenceManager.getDefaultSharedPreferences(this);
+        appLanguage = qmPreferences.getInt("AppLanguage", 1);
+        token = qmPreferences.getString("TOKEN", null);
+        if (appLanguage == 1)
+            language = "en";
+        else
+            language = "ar";
         backArrow.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -113,7 +122,11 @@ public class CulturePassActivity extends AppCompatActivity {
         becomeMember.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent navigationIntent = new Intent(CulturePassActivity.this, CreateAccountActivity.class);
+                // Temporary
+//                 navigationIntent = new Intent(CulturePassActivity.this, CreateAccountActivity.class);
+                navigationIntent = new Intent(CulturePassActivity.this, WebviewActivity.class);
+                navigationIntent.putExtra("url", "http://www.qm.org.qa/" + language +
+                        "/user/register#user-register-form");
                 startActivity(navigationIntent);
             }
         });
@@ -145,13 +158,7 @@ public class CulturePassActivity extends AppCompatActivity {
                 return false;
             }
         });
-        qmPreferences = PreferenceManager.getDefaultSharedPreferences(this);
-        appLanguage = qmPreferences.getInt("AppLanguage", 1);
-        token = qmPreferences.getString("TOKEN", null);
-        if (appLanguage == 1)
-            language = "en";
-        else
-            language = "ar";
+
     }
 
 
@@ -224,7 +231,7 @@ public class CulturePassActivity extends AppCompatActivity {
                         profileDetails = response.body();
                         editor = qmPreferences.edit();
                         editor.putString("TOKEN", profileDetails.getToken());
-                        editor.putString("MEMBERSHIP_NUMBER", profileDetails.getUser().getuId());
+                        editor.putString("MEMBERSHIP_NUMBER", "00" + (Integer.parseInt(profileDetails.getUser().getuId()) + 6000));
                         editor.putString("EMAIL", profileDetails.getUser().getMail());
                         editor.putString("DOB", profileDetails.getUser().getDateOfBirth().getUnd().get(0).getValue());
                         editor.putString("RESIDENCE", profileDetails.getUser().getCountry().getUnd().get(0).getValue());
@@ -311,7 +318,8 @@ public class CulturePassActivity extends AppCompatActivity {
         forgotPassword.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                util.showComingSoonDialog(CulturePassActivity.this, R.string.coming_soon_content);
+                attemptForgotPassword();
+
             }
         });
         mUsernameView.addTextChangedListener(new TextWatcher() {
@@ -404,6 +412,82 @@ public class CulturePassActivity extends AppCompatActivity {
             } else
                 fetchToken();
         }
+    }
+
+    private void attemptForgotPassword() {
+        mUsernameViewLayout.setError(null);
+        mPasswordViewLayout.setError(null);
+        qatar = mUsernameView.getText().toString();
+        boolean cancel = false;
+        View focusView = null;
+
+        if (TextUtils.isEmpty(qatar)) {
+            mUsernameViewLayout.setError(getString(R.string.error_username_required));
+            focusView = mUsernameView;
+            cancel = true;
+        }
+        if (cancel) {
+            focusView.requestFocus();
+        } else {
+            showProgress(true);
+            loginData = new LoginData(qatar, "");
+            fetchTokenForPassword();
+        }
+    }
+
+    public void fetchTokenForPassword() {
+        apiService = APIClient.getSecureClient().create(APIInterface.class);
+        Call<ProfileDetails> call = apiService.generateToken(language, loginData);
+        call.enqueue(new Callback<ProfileDetails>() {
+            @Override
+            public void onResponse(Call<ProfileDetails> call, final Response<ProfileDetails> response) {
+                if (response.isSuccessful()) {
+                    if (response.body() != null) {
+                        forgotPasswordAction(response.body().getToken());
+                    }
+                }
+            }
+
+            @Override
+            public void onFailure(Call<ProfileDetails> call, Throwable t) {
+                util.showToast(getResources().getString(R.string.check_network),
+                        CulturePassActivity.this);
+                showProgress(false);
+            }
+
+        });
+    }
+
+    public void forgotPasswordAction(String token) {
+        apiService = APIClient.getSecureClient().create(APIInterface.class);
+        Call<ArrayList<String>> callLogin = apiService.forgotPassword(language, token, loginData);
+        callLogin.enqueue(new Callback<ArrayList<String>>() {
+            @Override
+            public void onResponse(Call<ArrayList<String>> call, Response<ArrayList<String>> response) {
+                if (response.isSuccessful()) {
+                    if (response.body() != null) {
+                        loginDialog.dismiss();
+                        util.showNormalDialog(CulturePassActivity.this, R.string.password_reset_successful);
+                    }
+                } else {
+                    if (response.code() == 406)
+                            mUsernameViewLayout.setError(getString(R.string.error_incorrect_username));
+                    else
+                        mUsernameViewLayout.setError(getString(R.string.error_unexpected));
+
+                }
+                showProgress(false);
+            }
+
+            @Override
+            public void onFailure(Call<ArrayList<String>> call, Throwable t) {
+                util.showToast(getResources().getString(R.string.check_network),
+                        CulturePassActivity.this);
+                showProgress(false);
+
+            }
+        });
+
     }
 
     /**
