@@ -4,6 +4,7 @@ package com.qatarmuseums.qatarmuseumsapp.apicall;
 import com.qatarmuseums.qatarmuseumsapp.calendar.CalendarEvents;
 import com.qatarmuseums.qatarmuseumsapp.commonpage.CommonModel;
 import com.qatarmuseums.qatarmuseumsapp.culturepass.LoginData;
+import com.qatarmuseums.qatarmuseumsapp.culturepass.TokenForPushNotification;
 import com.qatarmuseums.qatarmuseumsapp.dining.DiningDetailModel;
 import com.qatarmuseums.qatarmuseumsapp.education.EducationEvents;
 import com.qatarmuseums.qatarmuseumsapp.floormap.ArtifactDetails;
@@ -114,6 +115,11 @@ public interface APIInterface {
 
     @POST("{language}/mobile_api/user/logout.json")
     Call<UserData> logout(@Path("language") String language, @Header("X-CSRF-Token") String token);
+
+
+    @POST("{language}/mobile_api/push_notifications.json")
+    Call<Void> sendTokenToServer(@Path("language") String language, @Header("X-CSRF-Token") String token,
+                                 @Body TokenForPushNotification tokenForPushNotification);
 
     @POST("{language}/mobile_api/user/request_new_password.json")
     Call<ArrayList<String>> forgotPassword(@Path("language") String language,
