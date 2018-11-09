@@ -205,11 +205,13 @@ public class ParkActivity extends AppCompatActivity implements IPullZoom {
                         mainLayout.setVisibility(View.VISIBLE);
                         recyclerView.setVisibility(View.VISIBLE);
                         parkLists.addAll(response.body());
-                        GlideApp.with(ParkActivity.this)
-                                .load(parkLists.get(0).getImage())
-                                .centerCrop()
-                                .placeholder(R.drawable.placeholder)
-                                .into(headerImageView);
+                        if (!ParkActivity.this.isFinishing()) {
+                            GlideApp.with(ParkActivity.this)
+                                    .load(parkLists.get(0).getImage())
+                                    .centerCrop()
+                                    .placeholder(R.drawable.placeholder)
+                                    .into(headerImageView);
+                        }
                         mAdapter.notifyDataSetChanged();
                         new RowCount(ParkActivity.this, language).execute();
                     } else {

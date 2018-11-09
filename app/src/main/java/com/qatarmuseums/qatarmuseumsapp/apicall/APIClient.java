@@ -26,6 +26,7 @@ public class APIClient {
 
         return retrofit;
     }
+
     public static Retrofit getSecureClient() {
 
         HttpLoggingInterceptor interceptor = new HttpLoggingInterceptor();

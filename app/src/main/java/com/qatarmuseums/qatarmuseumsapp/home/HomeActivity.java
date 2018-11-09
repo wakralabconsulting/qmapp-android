@@ -1,26 +1,34 @@
 package com.qatarmuseums.qatarmuseumsapp.home;
 
+import android.app.Dialog;
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
 import android.preference.PreferenceManager;
+import android.support.v4.content.LocalBroadcastManager;
 import android.support.v4.view.GravityCompat;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.Toast;
 
+import com.qatarmuseums.qatarmuseumsapp.Config;
 import com.qatarmuseums.qatarmuseumsapp.QMDatabase;
 import com.qatarmuseums.qatarmuseumsapp.R;
 import com.qatarmuseums.qatarmuseumsapp.apicall.APIClient;
@@ -65,6 +73,16 @@ public class HomeActivity extends BaseActivity {
     private Button retryButton;
     private int appLanguage;
     private String name;
+    private SharedPreferences.Editor editor;
+    private int badgeCount;
+    private BroadcastReceiver mRegistrationBroadcastReceiver;
+    private String notificationMessage;
+    private String language;
+    private String refreshToken;
+    private Dialog tokenDialog;
+    private LayoutInflater layoutInflater;
+    private View closeBtn;
+    private EditText mTokenView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -85,7 +103,9 @@ public class HomeActivity extends BaseActivity {
         qmDatabase = QMDatabase.getInstance(HomeActivity.this);
         qmPreferences = PreferenceManager.getDefaultSharedPreferences(this);
         name = qmPreferences.getString("NAME", null);
-
+        badgeCount = qmPreferences.getInt("BADGE_COUNT", 0);
+        if (badgeCount > 0)
+            setBadge(badgeCount);
         zoomOutAnimation = AnimationUtils.loadAnimation(getApplicationContext(),
                 R.anim.zoom_out);
         fadeOutAnimation = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.fade_out_animation);
@@ -237,6 +257,44 @@ public class HomeActivity extends BaseActivity {
                 return false;
             }
         });
+
+
+        mRegistrationBroadcastReceiver = new BroadcastReceiver() {
+            @Override
+            public void onReceive(Context context, Intent intent) {
+
+                if (intent.getAction().equals(Config.PUSH_NOTIFICATION)) {
+                    // new push notification is received
+
+                    notificationMessage = intent.getStringExtra("ALERT");
+                    if (notificationMessage != null && !notificationMessage.equals("")) {
+                        if (appLanguage == 1)
+                            language = "en";
+                        else
+                            language = "ar";
+                        insertNotificationRelatedDataToDataBase(notificationMessage, language);
+                    }
+                    badgeCount = qmPreferences.getInt("BADGE_COUNT", 0);
+                    badgeCount = badgeCount + 1;
+                    editor = qmPreferences.edit();
+                    editor.putInt("BADGE_COUNT", badgeCount);
+                    editor.commit();
+                    if (badgeCount > 0) {
+                        setBadge(badgeCount);
+                    }
+                }
+            }
+        };
+
+        LocalBroadcastManager.getInstance(this).registerReceiver(mRegistrationBroadcastReceiver,
+                new IntentFilter(Config.PUSH_NOTIFICATION));
+
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        LocalBroadcastManager.getInstance(this).unregisterReceiver(mRegistrationBroadcastReceiver);
     }
 
     @Override
@@ -309,6 +367,7 @@ public class HomeActivity extends BaseActivity {
         if (retryLayout.getVisibility() == View.VISIBLE) {
             getDataFromDataBase(appLanguage);
         }
+        updateBadge();
     }
 
     public class RowCount extends AsyncTask<Void, Void, Integer> {
