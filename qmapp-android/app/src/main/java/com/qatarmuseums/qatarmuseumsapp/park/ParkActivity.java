@@ -62,6 +62,7 @@ public class ParkActivity extends AppCompatActivity implements IPullZoom {
     private int headerOffSetSize;
     Button retryButton;
     private int appLanguage;
+    private static final String MAP_VIEW_BUNDLE_KEY = "MapViewBundleKey";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -81,6 +82,7 @@ public class ParkActivity extends AppCompatActivity implements IPullZoom {
         recyclerView = (RecyclerView) findViewById(R.id.park_recycler_view);
         favIcon = (ImageView) findViewById(R.id.favourite);
         shareIcon = (ImageView) findViewById(R.id.share);
+
         mAdapter = new ParkListAdapter(this, parkLists);
         RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(getApplicationContext());
         recyclerView.setLayoutManager(mLayoutManager);

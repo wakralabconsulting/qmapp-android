@@ -62,7 +62,6 @@ public interface ExhibitionTableDao {
                                        String imageFromApi, String descriptionFromApi,
                                        String shortDescriptionFromApi, String latitudeFromApi, String longitudeFromApi,
                                        String id);
-
     @Query("UPDATE exhibitionlistarabic SET exhibition_start_date = :startDateFromApi," +
             "exhibition_end_date = :endDateFromApi,exhibition_location = :locationFromApi," +
             "museum_id = :museumIdFromApi WHERE exhibition_id=:id")

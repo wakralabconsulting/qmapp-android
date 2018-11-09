@@ -93,6 +93,23 @@ public class SelfGuidedStartPageActivity extends AppCompatActivity implements
         zoomOutAnimation = AnimationUtils.loadAnimation(getApplicationContext(),
                 R.anim.zoom_out);
 
+        backArrow.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                switch (event.getAction()) {
+                    case MotionEvent.ACTION_DOWN:
+                        backArrow.startAnimation(zoomOutAnimation);
+                        break;
+                }
+                return false;
+            }
+        });
+        backArrow.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                onBackPressed();
+            }
+        });
         intent = getIntent();
         startBtn.setOnClickListener(new View.OnClickListener() {
             @Override

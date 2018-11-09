@@ -98,29 +98,17 @@ public class Util {
 
     }
 
-    public void showToast(String message, Context context) {
-        Toast.makeText(context, message, Toast.LENGTH_SHORT).show();
+    public void showLocationAlertDialog(Context context) {
+        customDialog = new CustomDialogClass(context
+                , context.getResources().getString(R.string.location_alert_txt)
+                , context.getResources().getString(R.string.location_error_content));
+        customDialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+        customDialog.show();
+
     }
 
-    // To notification test
-    public void showTokenDialog(Context context, String token) {
-        tokenDialog = new Dialog(context, R.style.DialogNoAnimation);
-        tokenDialog.setCancelable(true);
-        tokenDialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
-        layoutInflater = (LayoutInflater) context.getSystemService(LAYOUT_INFLATER_SERVICE);
-        View view = layoutInflater.inflate(R.layout.token_popup, null);
-        tokenDialog.setContentView(view);
-        closeBtn = view.findViewById(R.id.close_dialog);
-
-        closeBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                tokenDialog.dismiss();
-            }
-        });
-        mTokenView = view.findViewById(R.id.token);
-        mTokenView.setText(token);
-        tokenDialog.show();
+    public void showToast(String message, Context context) {
+        Toast.makeText(context, message, Toast.LENGTH_SHORT).show();
     }
 
     public boolean isNetworkAvailable(Context context) {

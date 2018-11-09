@@ -32,16 +32,16 @@
                     android:layout_width="wrap_content"
                     android:layout_height="match_parent"
                     android:layout_centerVertical="true"
-                    android:paddingEnd="20dp"
                     android:paddingStart="20dp"
+                    android:paddingEnd="20dp"
                     android:src="@drawable/back_button" />
 
                 <TextView
                     android:id="@+id/toolbar_title"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:layout_marginEnd="50dp"
                     android:layout_marginStart="50dp"
+                    android:layout_marginEnd="50dp"
                     android:fontFamily="@font/din_next_lt_pro_regular"
                     android:gravity="center"
                     android:text="@string/profile"
@@ -56,8 +56,8 @@
                     android:layout_height="match_parent"
                     android:layout_alignParentEnd="true"
                     android:layout_centerVertical="true"
-                    android:paddingEnd="20dp"
                     android:paddingStart="20dp"
+                    android:paddingEnd="20dp"
                     android:src="@drawable/logout" />
 
             </RelativeLayout>
@@ -79,8 +79,8 @@
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="@dimen/padding_40"
                 android:layout_marginTop="@dimen/padding_40"
+                android:layout_marginBottom="@dimen/padding_40"
                 android:gravity="center"
                 android:orientation="vertical">
 
@@ -91,14 +91,14 @@
                     <LinearLayout
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:paddingEnd="@dimen/padding_5"
-                        android:paddingStart="@dimen/padding_5">
+                        android:paddingStart="@dimen/padding_5"
+                        android:paddingEnd="@dimen/padding_5">
 
                         <ImageView
                             android:id="@+id/profile_pic"
                             android:layout_width="100dp"
                             android:layout_height="100dp"
-                            android:background="@drawable/circular_bg"
+                            android:src="@drawable/default_profile"
                             android:gravity="center"
                             android:padding="1dp" />
                     </LinearLayout>
@@ -135,15 +135,15 @@
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginEnd="@dimen/pading_30"
                 android:layout_marginStart="@dimen/pading_30"
+                android:layout_marginEnd="@dimen/pading_30"
                 android:orientation="vertical">
 
                 <RelativeLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:paddingBottom="@dimen/pading_15"
-                    android:paddingTop="@dimen/pading_15">
+                    android:paddingTop="@dimen/pading_15"
+                    android:paddingBottom="@dimen/pading_15">
 
                     <TextView
                         android:layout_width="wrap_content"
@@ -172,8 +172,8 @@
                 <RelativeLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:paddingBottom="@dimen/pading_15"
-                    android:paddingTop="@dimen/pading_15">
+                    android:paddingTop="@dimen/pading_15"
+                    android:paddingBottom="@dimen/pading_15">
 
                     <TextView
                         android:layout_width="wrap_content"
@@ -202,8 +202,8 @@
                 <RelativeLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:paddingBottom="@dimen/pading_15"
-                    android:paddingTop="@dimen/pading_15">
+                    android:paddingTop="@dimen/pading_15"
+                    android:paddingBottom="@dimen/pading_15">
 
                     <TextView
                         android:layout_width="wrap_content"
@@ -232,8 +232,8 @@
                 <RelativeLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:paddingBottom="@dimen/pading_15"
-                    android:paddingTop="@dimen/pading_15">
+                    android:paddingTop="@dimen/pading_15"
+                    android:paddingBottom="@dimen/pading_15">
 
                     <TextView
                         android:layout_width="wrap_content"
@@ -262,8 +262,8 @@
                 <RelativeLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:paddingBottom="@dimen/pading_15"
-                    android:paddingTop="@dimen/pading_15">
+                    android:paddingTop="@dimen/pading_15"
+                    android:paddingBottom="@dimen/pading_15">
 
                     <TextView
                         android:layout_width="wrap_content"
@@ -298,9 +298,9 @@
                     android:id="@+id/view_my_fav_btn"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginBottom="@dimen/pading_20"
-                    android:layout_marginEnd="@dimen/padding_30"
                     android:layout_marginStart="@dimen/padding_30"
+                    android:layout_marginEnd="@dimen/padding_30"
+                    android:layout_marginBottom="@dimen/pading_20"
                     android:background="@drawable/round_corner_black"
                     android:fontFamily="@font/din_next_lt_pro_bold"
                     android:text="@string/view_my_favourites"
@@ -311,14 +311,64 @@
                     android:id="@+id/view_my_card_btn"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginBottom="@dimen/margin_50"
-                    android:layout_marginEnd="@dimen/padding_30"
                     android:layout_marginStart="@dimen/padding_30"
+                    android:layout_marginEnd="@dimen/padding_30"
+                    android:layout_marginBottom="@dimen/margin_50"
                     android:background="@drawable/round_corner_black"
                     android:fontFamily="@font/din_next_lt_pro_bold"
                     android:text="@string/view_my_culture_pass_card"
                     android:textColor="@color/white" />
 
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/padding_40"
+                android:gravity="center"
+                android:visibility="gone"
+                android:orientation="vertical">
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/profile_link" />
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/pading_10"
+                    android:gravity="center"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginEnd="@dimen/pading_10"
+                        android:fontFamily="@font/din_next_lt_pro_light"
+                        android:text="@string/accept"
+                        android:textAlignment="center"
+                        android:textColor="@color/black"
+                        android:textSize="@dimen/settings_text_size" />
+
+                    <android.support.v7.widget.SwitchCompat
+                        android:id="@+id/language_change_button"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:clickable="false"
+                        android:textAppearance="?android:attr/textAppearanceMedium" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="@dimen/pading_10"
+                        android:fontFamily="@font/din_next_lt_pro_light"
+                        android:text="@string/decline"
+                        android:textAlignment="center"
+                        android:textColor="@color/black"
+                        android:textSize="@dimen/settings_text_size" />
+
+
+                </LinearLayout>
             </LinearLayout>
         </LinearLayout>
     </ScrollView>

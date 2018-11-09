@@ -128,11 +128,6 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
             language = "ar";
         getLoginToken(language, token);
 
-        // To test notification
-        editor = qmPreferences.edit();
-        editor.putString("REFRESH_TOKEN", token);
-        editor.commit();
-
     }
 
     private void getLoginToken(String lan, String firebaseToken) {
