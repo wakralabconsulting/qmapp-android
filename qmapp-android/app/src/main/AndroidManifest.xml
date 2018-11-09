@@ -193,6 +193,13 @@
             android:name=".createaccount.CreateAccountActivity"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar" />
+
+        <service android:name=".services.MyFirebaseMessagingService">
+            <intent-filter>
+                <action android:name="com.google.firebase.MESSAGING_EVENT" />
+            </intent-filter>
+        </service>
+
         <activity
             android:name=".culturepasscard.CulturePassCardActivity"
             android:configChanges="orientation|keyboardHidden|screenSize"

@@ -3,6 +3,7 @@ package com.qatarmuseums.qatarmuseumsapp.base;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Color;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.annotation.Nullable;
@@ -20,19 +21,26 @@ import android.view.animation.AnimationUtils;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.TextView;
 
-import com.qatarmuseums.qatarmuseumsapp.calendar.CalendarActivity;
+import com.qatarmuseums.qatarmuseumsapp.QMDatabase;
 import com.qatarmuseums.qatarmuseumsapp.R;
+import com.qatarmuseums.qatarmuseumsapp.calendar.CalendarActivity;
 import com.qatarmuseums.qatarmuseumsapp.commonpage.CommonActivity;
 import com.qatarmuseums.qatarmuseumsapp.culturepass.CulturePassActivity;
 import com.qatarmuseums.qatarmuseumsapp.education.EducationActivity;
 import com.qatarmuseums.qatarmuseumsapp.notification.NotificationActivity;
+import com.qatarmuseums.qatarmuseumsapp.notification.NotificationTableArabic;
+import com.qatarmuseums.qatarmuseumsapp.notification.NotificationTableEnglish;
+import com.qatarmuseums.qatarmuseumsapp.notification.NotificationViewModel;
 import com.qatarmuseums.qatarmuseumsapp.park.ParkActivity;
 import com.qatarmuseums.qatarmuseumsapp.profile.ProfileActivity;
 import com.qatarmuseums.qatarmuseumsapp.settings.SettingsActivity;
 import com.qatarmuseums.qatarmuseumsapp.tourguide.TourGuideActivity;
 import com.qatarmuseums.qatarmuseumsapp.utils.Util;
 import com.qatarmuseums.qatarmuseumsapp.webview.WebviewActivity;
+
+import java.lang.ref.WeakReference;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -123,6 +131,8 @@ public class BaseActivity extends AppCompatActivity
     @Nullable
     @BindView(R.id.sidemenu_settings_layout)
     LinearLayout sidemenuSettingsLayout;
+    @BindView(R.id.badge_notification)
+    public TextView badgeCountTextView;
 
 
     private FrameLayout fullView;
@@ -132,6 +142,16 @@ public class BaseActivity extends AppCompatActivity
     Util util;
     private SharedPreferences qmPreferences;
     private String name;
+    private SharedPreferences.Editor editor;
+    private int badgeCount;
+
+    private NotificationViewModel notificationViewModel;
+    private String notificationMessage;
+    private QMDatabase qmDatabase;
+    NotificationTableEnglish notificationTableEnglish;
+    NotificationTableArabic notificationTableArabic;
+    private int appLanguage;
+    private String language;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -149,8 +169,7 @@ public class BaseActivity extends AppCompatActivity
         setOnclickListenerForButtons();
         zoomOutAnimation = AnimationUtils.loadAnimation(getApplicationContext(),
                 R.anim.zoom_out_more);
-
-
+        qmDatabase = QMDatabase.getInstance(BaseActivity.this);
         topbarBack.setOnTouchListener(new View.OnTouchListener() {
             @Override
             public boolean onTouch(View v, MotionEvent event) {
@@ -199,6 +218,76 @@ public class BaseActivity extends AppCompatActivity
         navigationView.setBackgroundColor(Color.parseColor("#CC000000"));
         qmPreferences = PreferenceManager.getDefaultSharedPreferences(this);
         name = qmPreferences.getString("NAME", null);
+        badgeCount = qmPreferences.getInt("BADGE_COUNT", 0);
+        appLanguage = qmPreferences.getInt("AppLanguage", 1);
+        if (badgeCount > 0)
+            setBadge(badgeCount);
+    }
+
+    public void insertNotificationRelatedDataToDataBase(String msg, String lan) {
+        notificationMessage = msg;
+        language = lan;
+        new InsertDatabaseTask(BaseActivity.this, notificationTableEnglish,
+                notificationTableArabic, language).execute();
+    }
+
+    public class InsertDatabaseTask extends AsyncTask<Void, Void, Boolean> {
+        private WeakReference<BaseActivity> activityReference;
+        private NotificationTableEnglish notificationTableEnglish;
+        private NotificationTableArabic notificationTableArabic;
+        String language;
+
+        InsertDatabaseTask(BaseActivity context, NotificationTableEnglish notificationTableEnglish,
+                           NotificationTableArabic notificationTableArabic, String lan) {
+            activityReference = new WeakReference<>(context);
+            this.notificationTableEnglish = notificationTableEnglish;
+            this.notificationTableArabic = notificationTableArabic;
+            language = lan;
+        }
+
+        @Override
+        protected Boolean doInBackground(Void... voids) {
+            if (notificationMessage != null) {
+                if (language.equals("en")) {
+                    notificationTableEnglish = new NotificationTableEnglish(notificationMessage);
+                    activityReference.get().qmDatabase.getNotificationDao().insertEnglishTable(notificationTableEnglish);
+                } else {
+                    notificationTableArabic = new NotificationTableArabic(notificationMessage);
+                    activityReference.get().qmDatabase.getNotificationDao().insertArabicTable(notificationTableArabic);
+
+                }
+            }
+            return true;
+        }
+
+        @Override
+        protected void onPostExecute(Boolean aBoolean) {
+
+        }
+
+    }
+
+    public void updateBadge() {
+        badgeCount = qmPreferences.getInt("BADGE_COUNT", 0);
+        if (badgeCount > 0)
+            setBadge(badgeCount);
+        else
+            badgeCountTextView.setVisibility(View.GONE);
+    }
+
+    public void setBadge(int badgeCount) {
+        badgeCountTextView.setVisibility(View.VISIBLE);
+        if (badgeCount < 10)
+            badgeCountTextView.setPadding(20, 5, 20, 5);
+        else
+            badgeCountTextView.setPadding(5, 5, 5, 5);
+        badgeCountTextView.setText(String.valueOf(badgeCount));
+
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
     }
 
     @Override
@@ -238,6 +327,10 @@ public class BaseActivity extends AppCompatActivity
                 topbarNotification.startAnimation(zoomOutAnimation);
                 navigation_intent = new Intent(this, NotificationActivity.class);
                 startActivity(navigation_intent);
+                editor = qmPreferences.edit();
+                editor.putInt("BADGE_COUNT", 0);
+                editor.commit();
+                badgeCountTextView.setVisibility(View.GONE);
                 clearAnimations();
                 break;
             case R.id.topbar_profile:

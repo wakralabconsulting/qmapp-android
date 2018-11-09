@@ -2,24 +2,16 @@ package com.qatarmuseums.qatarmuseumsapp.notification;
 
 
 public class NotificationModel {
-    private String info;
+    private String title;
     private String id;
 
     public NotificationModel() {
 
     }
 
-    public NotificationModel(String id, String info) {
-        this.id = id;
-        this.info = info;
-    }
+    public NotificationModel( String title) {
 
-    public String getInfo() {
-        return info;
-    }
-
-    public void setInfo(String info) {
-        this.info = info;
+        this.title = title;
     }
 
     public String getId() {
@@ -30,4 +22,11 @@ public class NotificationModel {
         this.id = id;
     }
 
+    public String getTitle() {
+        return title;
+    }
+
+    public void setTitle(String title) {
+        this.title = title;
+    }
 }

@@ -1,6 +1,11 @@
 package com.qatarmuseums.qatarmuseumsapp.notification;
 
+import android.arch.lifecycle.ViewModelProviders;
+import android.content.BroadcastReceiver;
+import android.content.SharedPreferences;
+import android.os.AsyncTask;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
@@ -12,8 +17,10 @@ import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.TextView;
 
+import com.qatarmuseums.qatarmuseumsapp.QMDatabase;
 import com.qatarmuseums.qatarmuseumsapp.R;
 
+import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -27,6 +34,11 @@ public class NotificationActivity extends AppCompatActivity {
     private View backArrow;
     private Animation zoomOutAnimation;
     private TextView emptyText;
+    private BroadcastReceiver mRegistrationBroadcastReceiver;
+    private NotificationViewModel notificationViewModel;
+    private QMDatabase qmDatabase;
+    private SharedPreferences qmPreferences;
+    private int appLanguage;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -61,34 +73,99 @@ public class NotificationActivity extends AppCompatActivity {
                 return false;
             }
         });
+        qmDatabase = QMDatabase.getInstance(NotificationActivity.this);
+        qmPreferences = PreferenceManager.getDefaultSharedPreferences(this);
+        appLanguage = qmPreferences.getInt("AppLanguage", 1);
 
-        emptyText.setVisibility(View.VISIBLE);
-//        prepareNotificationData();
+        notificationViewModel = ViewModelProviders.of(this).get(NotificationViewModel.class);
+        if (appLanguage == 1)
+            notificationViewModel.getAllPostsEnglish().observe(this, models -> mAdapter.setData(models));
+        else
+            notificationViewModel.getAllPostsArabic().observe(this, models -> mAdapter.setData(models));
+        getDataFromDataBase(appLanguage);
+
     }
 
-    private void prepareNotificationData() {
-        NotificationModel model = new NotificationModel("1", "Check the new event at MIA!");
-        models.add(model);
-        model = new NotificationModel("2", "German Design Exhibition is now live! Check it out now.");
-        models.add(model);
-        model = new NotificationModel("3", "Check our new National Museum Teachers workshop here.");
-        models.add(model);
-        model = new NotificationModel("4", "Check the new event at Zubara Fort.");
-        models.add(model);
-        model = new NotificationModel("5", "Culture Pass Notification.");
-        models.add(model);
-        model = new NotificationModel("6", "Checkout new collections at MIA.");
-        models.add(model);
-        model = new NotificationModel("7", "Checkout new collections at MIA.");
-        models.add(model);
-        model = new NotificationModel("8", "Check the new event at Zubara Fort.");
-        models.add(model);
-        model = new NotificationModel("9", "Culture Pass Notification.");
-        models.add(model);
-
-        // TO show recently added item first
-        Collections.reverse(models);
-
-        mAdapter.notifyDataSetChanged();
+    public void getDataFromDataBase(int language) {
+        if (language == 1)
+            new RetriveEnglishTableData(NotificationActivity.this, language).execute();
+        else
+            new RetriveArabicTableData(NotificationActivity.this, language).execute();
     }
+
+    public class RetriveEnglishTableData extends AsyncTask<Void, Void, List<NotificationTableEnglish>> {
+        private WeakReference<NotificationActivity> activityReference;
+        int language;
+
+        RetriveEnglishTableData(NotificationActivity context, int appLanguage) {
+            activityReference = new WeakReference<>(context);
+            language = appLanguage;
+        }
+
+        @Override
+        protected List<NotificationTableEnglish> doInBackground(Void... voids) {
+            return activityReference.get().qmDatabase.getNotificationDao().getAllDataFromEnglishTable();
+
+        }
+
+        @Override
+        protected void onPostExecute(List<NotificationTableEnglish> notificationTableEnglishes) {
+            if (notificationTableEnglishes.size() > 0) {
+                models.clear();
+                for (int i = 0; i < notificationTableEnglishes.size(); i++) {
+                    NotificationModel notificationModel = new NotificationModel(notificationTableEnglishes.get(i).getTitle());
+                    models.add(i, notificationModel);
+                }
+
+                Collections.reverse(models);
+                mAdapter.notifyDataSetChanged();
+                recyclerView.setVisibility(View.VISIBLE);
+            } else {
+                emptyText.setVisibility(View.VISIBLE);
+                recyclerView.setVisibility(View.GONE);
+            }
+        }
+    }
+
+    public class RetriveArabicTableData extends AsyncTask<Void, Void,
+            List<NotificationTableArabic>> {
+        private WeakReference<NotificationActivity> activityReference;
+        int language;
+
+        RetriveArabicTableData(NotificationActivity context, int appLanguage) {
+            activityReference = new WeakReference<>(context);
+            language = appLanguage;
+        }
+
+
+        @Override
+        protected List<NotificationTableArabic> doInBackground(Void... voids) {
+            return activityReference.get().qmDatabase.getNotificationDao().getAllDataFromArabicTable();
+
+        }
+
+        @Override
+        protected void onPostExecute(List<NotificationTableArabic> notificationTableArabics) {
+            if (notificationTableArabics.size() > 0) {
+                models.clear();
+                for (int i = 0; i < notificationTableArabics.size(); i++) {
+                    NotificationModel notificationModel = new NotificationModel(notificationTableArabics.get(i).getTitle());
+                    models.add(i, notificationModel);
+                }
+
+                Collections.reverse(models);
+                mAdapter.notifyDataSetChanged();
+//                progressBar.setVisibility(View.GONE);
+                recyclerView.setVisibility(View.VISIBLE);
+//                retryLayout.setVisibility(View.GONE);
+            } else {
+                emptyText.setVisibility(View.VISIBLE);
+//                progressBar.setVisibility(View.GONE);
+                recyclerView.setVisibility(View.GONE);
+//                retryLayout.setVisibility(View.VISIBLE);
+            }
+        }
+
+    }
+
 }
