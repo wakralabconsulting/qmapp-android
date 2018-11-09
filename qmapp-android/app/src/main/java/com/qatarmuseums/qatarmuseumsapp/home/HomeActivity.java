@@ -1,5 +1,6 @@
 package com.qatarmuseums.qatarmuseumsapp.home;
 
+import android.app.Dialog;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -15,17 +16,18 @@ import android.support.v4.view.GravityCompat;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.Toast;
 
-import com.google.firebase.messaging.FirebaseMessaging;
 import com.qatarmuseums.qatarmuseumsapp.Config;
 import com.qatarmuseums.qatarmuseumsapp.QMDatabase;
 import com.qatarmuseums.qatarmuseumsapp.R;
@@ -76,6 +78,12 @@ public class HomeActivity extends BaseActivity {
     private BroadcastReceiver mRegistrationBroadcastReceiver;
     private String notificationMessage;
     private String language;
+    private String refreshToken;
+    private Dialog tokenDialog;
+    private LayoutInflater layoutInflater;
+    private View closeBtn;
+    private EditText mTokenView;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -97,7 +105,7 @@ public class HomeActivity extends BaseActivity {
         name = qmPreferences.getString("NAME", null);
         badgeCount = qmPreferences.getInt("BADGE_COUNT", 0);
         if (badgeCount > 0)
-            setBadge();
+            setBadge(badgeCount);
         zoomOutAnimation = AnimationUtils.loadAnimation(getApplicationContext(),
                 R.anim.zoom_out);
         fadeOutAnimation = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.fade_out_animation);
@@ -255,12 +263,7 @@ public class HomeActivity extends BaseActivity {
             @Override
             public void onReceive(Context context, Intent intent) {
 
-                if (intent.getAction().equals(Config.REGISTRATION_COMPLETE)) {
-                    FirebaseMessaging.getInstance().subscribeToTopic(Config.TOPIC_GLOBAL);
-
-//                    updateFirebaseRegid();
-
-                } else if (intent.getAction().equals(Config.PUSH_NOTIFICATION)) {
+                if (intent.getAction().equals(Config.PUSH_NOTIFICATION)) {
                     // new push notification is received
 
                     notificationMessage = intent.getStringExtra("ALERT");
@@ -269,10 +272,7 @@ public class HomeActivity extends BaseActivity {
                             language = "en";
                         else
                             language = "ar";
-
-                        insertNotificationRelatedDataToDataBase(notificationMessage,language);
-
-
+                        insertNotificationRelatedDataToDataBase(notificationMessage, language);
                     }
                     badgeCount = qmPreferences.getInt("BADGE_COUNT", 0);
                     badgeCount = badgeCount + 1;
@@ -280,19 +280,17 @@ public class HomeActivity extends BaseActivity {
                     editor.putInt("BADGE_COUNT", badgeCount);
                     editor.commit();
                     if (badgeCount > 0) {
-                        setBadge();
+                        setBadge(badgeCount);
                     }
                 }
             }
         };
-        LocalBroadcastManager.getInstance(this).registerReceiver(mRegistrationBroadcastReceiver,
-                new IntentFilter(Config.REGISTRATION_COMPLETE));
 
         LocalBroadcastManager.getInstance(this).registerReceiver(mRegistrationBroadcastReceiver,
                 new IntentFilter(Config.PUSH_NOTIFICATION));
 
-
-
+        // To test notification
+        fetchRefreshToken();
     }
 
     @Override
@@ -368,7 +366,15 @@ public class HomeActivity extends BaseActivity {
         if (retryLayout.getVisibility() == View.VISIBLE) {
             getDataFromDataBase(appLanguage);
         }
+        updateBadge();
     }
+
+    // To test notification
+    public void fetchRefreshToken() {
+        refreshToken = qmPreferences.getString("REFRESH_TOKEN", null);
+        util.showTokenDialog(this, refreshToken);
+    }
+
 
     public class RowCount extends AsyncTask<Void, Void, Integer> {
         private WeakReference<HomeActivity> activityReference;

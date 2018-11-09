@@ -1,15 +1,15 @@
 package com.qatarmuseums.qatarmuseumsapp.culturepass;
 
 public class TokenForPushNotification {
-    private String pushNotificationToken, type;
+    private String token, type;
 
     public TokenForPushNotification(String token, String type) {
-        this.pushNotificationToken = token;
+        this.token = token;
         this.type = type;
     }
 
     public String getToken() {
-        return pushNotificationToken;
+        return token;
     }
 
     public String getType() {

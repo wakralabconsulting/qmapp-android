@@ -8,7 +8,6 @@ import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.annotation.Nullable;
 import android.support.design.widget.NavigationView;
-import android.support.v4.content.LocalBroadcastManager;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
@@ -170,7 +169,6 @@ public class BaseActivity extends AppCompatActivity
         setOnclickListenerForButtons();
         zoomOutAnimation = AnimationUtils.loadAnimation(getApplicationContext(),
                 R.anim.zoom_out_more);
-
         qmDatabase = QMDatabase.getInstance(BaseActivity.this);
         topbarBack.setOnTouchListener(new View.OnTouchListener() {
             @Override
@@ -223,13 +221,11 @@ public class BaseActivity extends AppCompatActivity
         badgeCount = qmPreferences.getInt("BADGE_COUNT", 0);
         appLanguage = qmPreferences.getInt("AppLanguage", 1);
         if (badgeCount > 0)
-            setBadge();
-
-
-
+            setBadge(badgeCount);
     }
-    public void insertNotificationRelatedDataToDataBase(String msg,String lan) {
-        notificationMessage =msg;
+
+    public void insertNotificationRelatedDataToDataBase(String msg, String lan) {
+        notificationMessage = msg;
         language = lan;
         new InsertDatabaseTask(BaseActivity.this, notificationTableEnglish,
                 notificationTableArabic, language).execute();
@@ -271,10 +267,21 @@ public class BaseActivity extends AppCompatActivity
 
     }
 
+    public void updateBadge() {
+        badgeCount = qmPreferences.getInt("BADGE_COUNT", 0);
+        if (badgeCount > 0)
+            setBadge(badgeCount);
+        else
+            badgeCountTextView.setVisibility(View.GONE);
+    }
 
-    public void setBadge() {
+    public void setBadge(int badgeCount) {
         badgeCountTextView.setVisibility(View.VISIBLE);
-        badgeCountTextView.setText(String.valueOf(qmPreferences.getInt("BADGE_COUNT", 0)));
+        if (badgeCount < 10)
+            badgeCountTextView.setPadding(20, 5, 20, 5);
+        else
+            badgeCountTextView.setPadding(5, 5, 5, 5);
+        badgeCountTextView.setText(String.valueOf(badgeCount));
 
     }
 

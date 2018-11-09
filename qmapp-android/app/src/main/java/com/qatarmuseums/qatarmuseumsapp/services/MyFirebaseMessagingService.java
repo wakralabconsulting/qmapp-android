@@ -5,9 +5,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
 import android.support.v4.content.LocalBroadcastManager;
-
 import android.util.Log;
-import android.widget.Toast;
 
 import com.google.firebase.messaging.FirebaseMessagingService;
 import com.google.firebase.messaging.RemoteMessage;
@@ -33,32 +31,22 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
     private NotificationUtils notificationUtils;
     private SharedPreferences qmPreferences;
     int appLanguage;
+    private SharedPreferences.Editor editor;
+
     @Override
     public void onNewToken(String token) {
         Log.d(TAG, "Refreshed token: " + token);
-
-        // If you want to send messages to this application instance or
-        // manage this apps subscriptions on the server side, send the
-        // Instance ID token to your app server.
         sendRegistrationToServer(token);
-
-        Intent registrationComplete = new Intent(Config.REGISTRATION_COMPLETE);
-        registrationComplete.putExtra("token", token);
-        LocalBroadcastManager.getInstance(this).sendBroadcast(registrationComplete);
-
     }
 
     @Override
     public void onMessageReceived(RemoteMessage remoteMessage) {
 
-        // TODO(developer): Handle FCM messages here.
-        // Not getting messages here? See why this may be: https://goo.gl/39bRNJ
         Log.d(TAG, "From: " + remoteMessage.getFrom());
 
         // Check if message contains a data payload.
         if (remoteMessage.getData().size() > 0) {
             Log.d(TAG, "Message data payload: " + remoteMessage.getData());
-//                handleNow(remoteMessage.getData().toString());
             try {
                 JSONObject json = new JSONObject(remoteMessage.getData().toString());
                 handleDataMessage(json);
@@ -98,14 +86,11 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
         try {
             JSONObject data = json.getJSONObject("app");
             String message = data.getString("alert");
-            String badgeCount = data.getString("badge");
-            Log.e(TAG, "badge: " + badgeCount);
             Log.e(TAG, "message: " + message);
             if (!NotificationUtils.isAppIsInBackground(getApplicationContext())) {
                 // app is in foreground, broadcast the push message
                 Intent pushNotification = new Intent(Config.PUSH_NOTIFICATION);
                 pushNotification.putExtra("ALERT", message);
-                pushNotification.putExtra("BADGE", badgeCount);
                 LocalBroadcastManager.getInstance(this).sendBroadcast(pushNotification);
 
                 // play notification sound
@@ -115,7 +100,6 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
                 // app is in background, show the notification in notification tray
                 Intent resultIntent = new Intent(getApplicationContext(), NotificationActivity.class);
                 resultIntent.putExtra("ALERT", message);
-                resultIntent.putExtra("BADGE", badgeCount);
                 showNotificationMessage(getApplicationContext(), message, message, resultIntent);
 
             }
@@ -131,12 +115,10 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
      */
     private void showNotificationMessage(Context context, String title, String message, Intent intent) {
         notificationUtils = new NotificationUtils(context);
-        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
         notificationUtils.showNotificationMessage(title, message, intent);
     }
 
     private void sendRegistrationToServer(String token) {
-        // TODO: Implement this method to send token to your app server.
         String language;
         qmPreferences = PreferenceManager.getDefaultSharedPreferences(this);
         appLanguage = qmPreferences.getInt("AppLanguage", 1);
@@ -144,18 +126,19 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
             language = "en";
         else
             language = "ar";
-        getLoginToken(language,token);
+        getLoginToken(language, token);
+
+        // To test notification
+        editor = qmPreferences.edit();
+        editor.putString("REFRESH_TOKEN", token);
+        editor.commit();
 
     }
 
-    private void handleNow(String s) {
-        Log.d(TAG, "Short lived task is done.");
-        Toast.makeText(this, "MESSAGE : " + s, Toast.LENGTH_SHORT).show();
-    }
-    private void getLoginToken(String lan,String firebaseToken){
-       LoginData loginData = new LoginData("","");
+    private void getLoginToken(String lan, String firebaseToken) {
+        LoginData loginData = new LoginData("", "");
         APIInterface apiService =
-                APIClient.getClient().create(APIInterface.class);
+                APIClient.getSecureClient().create(APIInterface.class);
         Call<ProfileDetails> call = apiService.generateToken(lan, loginData);
         call.enqueue(new Callback<ProfileDetails>() {
             @Override
@@ -163,8 +146,8 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
                 String loginToken;
                 if (response.isSuccessful()) {
                     if (response.body() != null) {
-                       loginToken = response.body().getToken();
-                       sendFireBaseToken(loginToken,firebaseToken,lan);
+                        loginToken = response.body().getToken();
+                        sendFireBaseToken(loginToken, firebaseToken, lan);
                     }
                 }
             }
@@ -176,11 +159,11 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
         });
     }
 
-    private void sendFireBaseToken(String loginToken,String firebaseToken,String lan){
-        TokenForPushNotification tokenForPushNotification = new TokenForPushNotification(firebaseToken,"android");
+    private void sendFireBaseToken(String loginToken, String firebaseToken, String lan) {
+        TokenForPushNotification tokenForPushNotification = new TokenForPushNotification(firebaseToken, "android");
         APIInterface apiService =
-                APIClient.getClient().create(APIInterface.class);
-        Call<Void> call = apiService.sendTokenToServer(lan,loginToken,tokenForPushNotification);
+                APIClient.getSecureClient().create(APIInterface.class);
+        Call<Void> call = apiService.sendTokenToServer(lan, loginToken, tokenForPushNotification);
         call.enqueue(new Callback<Void>() {
             @Override
             public void onResponse(Call<Void> call, Response<Void> response) {
