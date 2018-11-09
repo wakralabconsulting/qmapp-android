@@ -82,8 +82,6 @@ public class NotificationActivity extends AppCompatActivity {
             notificationViewModel.getAllPostsEnglish().observe(this, models -> mAdapter.setData(models));
         else
             notificationViewModel.getAllPostsArabic().observe(this, models -> mAdapter.setData(models));
-
-
         getDataFromDataBase(appLanguage);
 
     }
@@ -122,15 +120,10 @@ public class NotificationActivity extends AppCompatActivity {
                 Collections.reverse(models);
                 mAdapter.notifyDataSetChanged();
                 recyclerView.setVisibility(View.VISIBLE);
-//                retryLayout.setVisibility(View.GONE);
             } else {
                 emptyText.setVisibility(View.VISIBLE);
-//                progressBar.setVisibility(View.GONE);
                 recyclerView.setVisibility(View.GONE);
-//                retryLayout.setVisibility(View.VISIBLE);
             }
-
-
         }
     }
 

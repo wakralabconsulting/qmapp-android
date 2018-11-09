@@ -112,7 +112,8 @@ public interface APIInterface {
     @POST("{language}/mobile_api/user/logout.json")
     Call<UserData> logout(@Path("language") String language, @Header("X-CSRF-Token") String token);
 
-    @POST("{language}/mobile_api/push_notification.json")
-    Call<Void> sendTokenToServer(@Path("language") String language, @Header("X-CSRF-Token") String token, @Body TokenForPushNotification tokenForPushNotification);
+    @POST("{language}/mobile_api/push_notifications.json")
+    Call<Void> sendTokenToServer(@Path("language") String language, @Header("X-CSRF-Token") String token,
+                                 @Body TokenForPushNotification tokenForPushNotification);
 
 }

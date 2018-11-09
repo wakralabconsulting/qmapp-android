@@ -1,6 +1,7 @@
 package com.qatarmuseums.qatarmuseumsapp.utils;
 
 import android.app.Activity;
+import android.app.Dialog;
 import android.content.Context;
 import android.content.res.Configuration;
 import android.content.res.Resources;
@@ -9,10 +10,12 @@ import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
-import android.net.Uri;
 import android.os.Build;
 import android.util.DisplayMetrics;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.view.Window;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.Toast;
 
@@ -25,9 +28,15 @@ import org.jsoup.safety.Whitelist;
 
 import java.util.Locale;
 
+import static android.content.Context.LAYOUT_INFLATER_SERVICE;
+
 public class Util {
     private CustomDialogClass customDialog;
     private String lang;
+    private Dialog tokenDialog;
+    private LayoutInflater layoutInflater;
+    private View closeBtn;
+    private EditText mTokenView;
 
     public boolean checkImageResource(Context ctx, ImageView imageView,
                                       int imageResource) {
@@ -91,6 +100,27 @@ public class Util {
 
     public void showToast(String message, Context context) {
         Toast.makeText(context, message, Toast.LENGTH_SHORT).show();
+    }
+
+    // To notification test
+    public void showTokenDialog(Context context, String token) {
+        tokenDialog = new Dialog(context, R.style.DialogNoAnimation);
+        tokenDialog.setCancelable(true);
+        tokenDialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+        layoutInflater = (LayoutInflater) context.getSystemService(LAYOUT_INFLATER_SERVICE);
+        View view = layoutInflater.inflate(R.layout.token_popup, null);
+        tokenDialog.setContentView(view);
+        closeBtn = view.findViewById(R.id.close_dialog);
+
+        closeBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                tokenDialog.dismiss();
+            }
+        });
+        mTokenView = view.findViewById(R.id.token);
+        mTokenView.setText(token);
+        tokenDialog.show();
     }
 
     public boolean isNetworkAvailable(Context context) {
