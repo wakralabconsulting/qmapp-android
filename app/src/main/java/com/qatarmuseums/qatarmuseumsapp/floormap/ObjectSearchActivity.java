@@ -12,6 +12,8 @@ import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.ProgressBar;
+import android.widget.ScrollView;
 import android.widget.TextView;
 
 import com.qatarmuseums.qatarmuseumsapp.R;
@@ -47,6 +49,10 @@ public class ObjectSearchActivity extends AppCompatActivity implements View.OnCl
     ImageView displayClearButton;
     @BindView(R.id.done_button)
     ImageView doneButton;
+    @BindView(R.id.container)
+    ScrollView mainContainer;
+    @BindView(R.id.progressBarLoading)
+    ProgressBar progressBar;
     LinearLayout[] displayButtons;
     String display = "";
     SharedPreferences qmPreferences;
@@ -64,7 +70,7 @@ public class ObjectSearchActivity extends AppCompatActivity implements View.OnCl
         toolbar_title.setText(getResources().getString(R.string.object_search));
         qmPreferences = PreferenceManager.getDefaultSharedPreferences(this);
         language = qmPreferences.getInt("AppLanguage", 1);
-        util=new Util();
+        util = new Util();
         displayButtons = new LinearLayout[10];
         for (int i = 0; i < displayButtons.length; i++) {
             {
@@ -87,7 +93,7 @@ public class ObjectSearchActivity extends AppCompatActivity implements View.OnCl
                 if (numberPadDisplay.getText().toString() == "") {
                     util.showAlertDialog(ObjectSearchActivity.this);
                 } else {
-                    getDetailsFromApi(display,language);
+                    getDetailsFromApi(display, language);
                 }
             }
         });
@@ -115,7 +121,7 @@ public class ObjectSearchActivity extends AppCompatActivity implements View.OnCl
         qrScanner.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent imageIntent=new Intent(ObjectSearchActivity.this,BarCodeCaptureActivity.class);
+                Intent imageIntent = new Intent(ObjectSearchActivity.this, BarCodeCaptureActivity.class);
                 startActivity(imageIntent);
             }
         });
@@ -123,7 +129,7 @@ public class ObjectSearchActivity extends AppCompatActivity implements View.OnCl
         qrScannerLink.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent imageIntent=new Intent(ObjectSearchActivity.this,BarCodeCaptureActivity.class);
+                Intent imageIntent = new Intent(ObjectSearchActivity.this, BarCodeCaptureActivity.class);
                 startActivity(imageIntent);
             }
         });
@@ -131,6 +137,8 @@ public class ObjectSearchActivity extends AppCompatActivity implements View.OnCl
     }
 
     private void getDetailsFromApi(String id, int applanguage) {
+        progressBar.setVisibility(View.VISIBLE);
+        mainContainer.setVisibility(View.GONE);
         final String language;
         if (applanguage == 1) {
             language = "en";
@@ -144,7 +152,7 @@ public class ObjectSearchActivity extends AppCompatActivity implements View.OnCl
             @Override
             public void onResponse(Call<ArrayList<ArtifactDetails>> call, Response<ArrayList<ArtifactDetails>> response) {
                 if (response.isSuccessful()) {
-                    if(response.body().size() > 0) {
+                    if (response.body().size() > 0) {
                         if (response.body() != null && response.body().size() > 0) {
                             artifactList = response.body();
                             Intent intent = new Intent(ObjectSearchActivity.this, ObjectPreviewDetailsActivity.class);
@@ -159,21 +167,24 @@ public class ObjectSearchActivity extends AppCompatActivity implements View.OnCl
                             display = "";
                             numberPadDisplay.setText("");
                         }
-                    }else{
-                        util.showToast(getResources().getString(R.string.artifact_invalid),ObjectSearchActivity.this);
+                    } else {
+                        util.showToast(getResources().getString(R.string.artifact_invalid), ObjectSearchActivity.this);
                         display = "";
                         numberPadDisplay.setText("");
                     }
-                }else{
-                    util.showToast(getResources().getString(R.string.artifact_invalid),ObjectSearchActivity.this);
+                } else {
+                    util.showToast(getResources().getString(R.string.artifact_invalid), ObjectSearchActivity.this);
                     display = "";
                     numberPadDisplay.setText("");
                 }
+                progressBar.setVisibility(View.GONE);
+                mainContainer.setVisibility(View.VISIBLE);
             }
 
             @Override
             public void onFailure(Call<ArrayList<ArtifactDetails>> call, Throwable t) {
-
+                progressBar.setVisibility(View.GONE);
+                mainContainer.setVisibility(View.VISIBLE);
             }
         });
     }

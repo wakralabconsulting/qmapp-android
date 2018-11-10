@@ -4,7 +4,7 @@ import com.google.gson.annotations.SerializedName;
 
 import java.util.List;
 
-public class UserData {
+public class UserData extends ProfileDetails{
     @SerializedName("uid")
     private String uId;
     @SerializedName("picture")
@@ -18,13 +18,13 @@ public class UserData {
     @SerializedName("mail")
     private String mail;
     @SerializedName("field_date_of_birth")
-    private Model dateOfBirth;
+    private Object dateOfBirth;
     @SerializedName("field_location")
     private Model country;
     @SerializedName("field_nationality")
     private Model nationality;
     @SerializedName("field_rsvp_attendance")
-    private Model rsvpAttendance;
+    private Object rsvpAttendance;
 
 
     public String getuId() {
@@ -75,11 +75,11 @@ public class UserData {
         this.mail = mail;
     }
 
-    public Model getDateOfBirth() {
+    public Object getDateOfBirth() {
         return dateOfBirth;
     }
 
-    public void setDateOfBirth(Model dateOfBirth) {
+    public void setDateOfBirth(Object dateOfBirth) {
         this.dateOfBirth = dateOfBirth;
     }
 
@@ -99,14 +99,13 @@ public class UserData {
         this.nationality = nationality;
     }
 
-    public Model getRsvpAttendance() {
+    public Object getRsvpAttendance() {
         return rsvpAttendance;
     }
 
-    public void setRsvpAttendance(Model rsvpAttendance) {
+    public void setRsvpAttendance(Object rsvpAttendance) {
         this.rsvpAttendance = rsvpAttendance;
     }
-
     public class Model {
         @SerializedName("und")
         private List<Und> und;

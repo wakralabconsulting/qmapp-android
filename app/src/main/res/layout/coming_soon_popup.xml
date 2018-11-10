@@ -48,17 +48,6 @@
         android:textColor="@color/white"
         android:textSize="@dimen/settings_page_list_item_text_size" />
 
-    <Button
-        android:id="@+id/accept_later_btn"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_margin="@dimen/pading_25"
-        android:background="@drawable/rounded_corner_grey"
-        android:fontFamily="@font/din_next_lt_pro_bold"
-        android:textAllCaps="false"
-        android:visibility="gone"
-        android:textColor="@color/white"
-        android:textSize="@dimen/settings_page_list_item_text_size" />
 
     <Button
         android:id="@+id/calendar_close_btn"

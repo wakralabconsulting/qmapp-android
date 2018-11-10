@@ -43,14 +43,14 @@ public interface ArtifactTableDao {
             "galleryNumber = :galleryNumber, objectHistory = :objectHistory, production = :production, " +
             "productionDates = :productionDates, periodStyle = :periodStyle, artistCreatorAuthor = :artistCreatorAuthor, " +
             "techniqueMaterials = :techniqueMaterials, artifactNumber = :artifactNumber, " +
-            "dimensions = :dimensions, sortId = :sortId WHERE nid=:nid")
+            "dimensions = :dimensions, sortId = :sortId, thumbImage = :thumbImage  WHERE nid=:nid")
     void updateArtifactEnglish(String nid, String title, String accessionNumber, String tourGuideId,
                                String mainTitle, String image, String artifactPosition,
                                String audioFile, String audioDescription, String curatorialDescription,
                                String images, String floorLevel, String galleryNumber, String objectHistory,
                                String production, String productionDates, String periodStyle,
                                String artistCreatorAuthor, String techniqueMaterials,
-                               String artifactNumber, String dimensions, String sortId);
+                               String artifactNumber, String dimensions, String sortId, String thumbImage);
 
     @Query("UPDATE artifactTableArabic SET title = :title," +
             "accessionNumber = :accessionNumber, tourGuideId = :tourGuideId, mainTitle = :mainTitle, " +
@@ -60,14 +60,14 @@ public interface ArtifactTableDao {
             "galleryNumber = :galleryNumber, objectHistory = :objectHistory, production = :production, " +
             "productionDates = :productionDates, periodStyle = :periodStyle, artistCreatorAuthor = :artistCreatorAuthor, " +
             "techniqueMaterials = :techniqueMaterials, artifactNumber = :artifactNumber, " +
-            "dimensions = :dimensions, sortId = :sortId WHERE nid=:nid")
+            "dimensions = :dimensions, sortId = :sortId, thumbImage = :thumbImage WHERE nid=:nid")
     void updateArtifactArabic(String nid, String title, String accessionNumber, String tourGuideId,
                               String mainTitle, String image, String artifactPosition,
                               String audioFile, String audioDescription, String curatorialDescription,
                               String images, String floorLevel, String galleryNumber, String objectHistory,
                               String production, String productionDates, String periodStyle,
                               String artistCreatorAuthor, String techniqueMaterials,
-                              String artifactNumber, String dimensions, String sortId);
+                              String artifactNumber, String dimensions, String sortId, String thumbImage);
 
 
     /*

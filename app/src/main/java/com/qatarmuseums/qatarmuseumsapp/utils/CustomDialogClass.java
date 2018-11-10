@@ -4,7 +4,7 @@ import android.app.Activity;
 import android.app.Dialog;
 import android.content.Context;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
+import android.preference.PreferenceManager;
 import android.view.View;
 import android.view.Window;
 import android.widget.Button;
@@ -30,7 +30,7 @@ public class CustomDialogClass extends Dialog implements
         this.content = content;
     }
 
-    public CustomDialogClass(Context c,String title,String content) {
+    public CustomDialogClass(Context c, String title, String content) {
         super(c);
         this.mContext = c;
         this.title = title;
@@ -58,14 +58,19 @@ public class CustomDialogClass extends Dialog implements
             dialogTitle.setVisibility(View.GONE);
             dialogContent.setText(content);
             closeButton.setText(context.getResources().getString(R.string.ok));
-        } else if(content!=null){
+        }else if(title=="p"){
+            dialogTitle.setVisibility(View.GONE);
+            dialogContent.setText(content);
+            closeButton.setText(context.getResources().getString(R.string.close));
+        }
+        else if (content != null) {
             dialogTitle.setVisibility(View.VISIBLE);
             dialogTitle.setText(title);
             dialogContent.setText(content);
             calendarCloseButton.setVisibility(View.GONE);
             closeButton.setVisibility(View.VISIBLE);
             closeButton.setText(context.getResources().getString(R.string.close));
-        }else {
+        } else {
             dialogTitle.setVisibility(View.VISIBLE);
             dialogTitle.setText(title);
             dialogContent.setText(calendarContent);

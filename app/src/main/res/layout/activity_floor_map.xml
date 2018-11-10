@@ -196,16 +196,23 @@
         android:background="@drawable/shape_gradient_top_shadow"
         app:layout_anchor="@id/bottomSheetLayout" />
     <!-- Bottom Sheet Content -->
-    <include
-        layout="@layout/floormap_bottomsheet" />
+    <include layout="@layout/floormap_bottomsheet" />
 
-    <ProgressBar
+    <LinearLayout
         android:id="@+id/progress_bar_loading"
-        style="?android:attr/progressBarStyle"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:visibility="gone" />
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@id/audio_control"
+        android:background="#1F000000"
+        android:orientation="vertical"
+        android:visibility="gone">
+
+        <ProgressBar
+            style="?android:attr/progressBarStyle"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_gravity="center" />
+    </LinearLayout>
 
     <LinearLayout
         android:id="@+id/retry_layout"
