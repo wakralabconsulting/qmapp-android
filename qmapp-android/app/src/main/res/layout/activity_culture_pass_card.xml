@@ -26,6 +26,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:gravity="center"
+                android:rotation="180"
                 android:scaleType="fitXY"
                 android:src="@drawable/culturepass_back" />
 
@@ -39,40 +40,40 @@
 
             <android.support.constraint.ConstraintLayout
                 android:layout_width="wrap_content"
-                android:layout_gravity="center_horizontal"
-                android:layout_height="match_parent">
+                android:layout_height="match_parent"
+                android:layout_gravity="center_horizontal">
 
                 <com.qatarmuseums.qatarmuseumsapp.customview.VerticleTextView
                     android:id="@+id/membershipTxt"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginBottom="@dimen/pass_card_number_margin"
+                    android:layout_marginLeft="@dimen/pass_card_name_margin"
+                    android:layout_marginRight="@dimen/pass_card_number_margin"
+                    android:layout_marginTop="@dimen/pass_card_number_margin"
                     android:fontFamily="@font/din_next_lt_pro_bold"
-                    android:text="5454545"
+                    android:gravity="bottom"
                     android:textColor="@color/black"
                     android:textSize="@dimen/font_size_18"
                     android:textStyle="bold"
-                    app:layout_constraintLeft_toLeftOf="parent"
-                    app:layout_constraintTop_toTopOf="parent"
-                    android:layout_marginRight="@dimen/pass_card_name_margin"
-                    android:layout_marginLeft="@dimen/pass_card_number_margin"
                     app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintRight_toLeftOf="@id/nameTxt" />
+                    app:layout_constraintLeft_toRightOf="@id/nameTxt"
+                    app:layout_constraintRight_toRightOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
 
                 <com.qatarmuseums.qatarmuseumsapp.customview.VerticleTextView
                     android:id="@+id/nameTxt"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginBottom="@dimen/pass_card_number_margin"
-                    android:text="sdfsdfdsfsdf"
+                    android:layout_marginTop="@dimen/pass_card_number_margin"
+                    android:gravity="bottom"
                     android:textAllCaps="true"
                     android:textColor="@color/black"
                     android:textSize="@dimen/font_size_18"
                     android:textStyle="bold"
-                    app:layout_constraintTop_toTopOf="parent"
                     app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintLeft_toRightOf="@id/membershipTxt"
-                    app:layout_constraintRight_toRightOf="parent" />
+                    app:layout_constraintLeft_toLeftOf="parent"
+                    app:layout_constraintRight_toLeftOf="@id/membershipTxt"
+                    app:layout_constraintTop_toTopOf="parent" />
             </android.support.constraint.ConstraintLayout>
 
             <Button
@@ -80,7 +81,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_gravity="bottom"
-                android:layout_marginBottom="@dimen/padding_30"
+                android:layout_marginBottom="@dimen/padding_20"
                 android:layout_marginEnd="@dimen/padding_30"
                 android:layout_marginStart="@dimen/padding_30"
                 android:background="@drawable/round_corner_black"

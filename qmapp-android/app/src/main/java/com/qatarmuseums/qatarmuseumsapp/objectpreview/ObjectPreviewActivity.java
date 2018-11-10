@@ -33,7 +33,6 @@ import com.qatarmuseums.qatarmuseumsapp.floormap.ArtifactTableEnglish;
 import com.qatarmuseums.qatarmuseumsapp.floormap.FloorMapActivity;
 import com.qatarmuseums.qatarmuseumsapp.utils.Util;
 
-import java.io.IOException;
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.List;
@@ -386,7 +385,8 @@ public class ObjectPreviewActivity extends AppCompatActivity {
                                     artifactList.get(i).getTechniqueMaterials(),
                                     artifactList.get(i).getArtifactNumber(),
                                     artifactList.get(i).getDimensions(),
-                                    artifactList.get(i).getSortId());
+                                    artifactList.get(i).getSortId(),
+                                    artifactList.get(i).getThumbImage());
                             activityReference.get().qmDatabase.getArtifactTableDao().insertEnglishTable(artifactTableEnglish);
 
                         }
@@ -422,7 +422,8 @@ public class ObjectPreviewActivity extends AppCompatActivity {
                                     artifactList.get(i).getTechniqueMaterials(),
                                     artifactList.get(i).getArtifactNumber(),
                                     artifactList.get(i).getDimensions(),
-                                    artifactList.get(i).getSortId());
+                                    artifactList.get(i).getSortId(),
+                                    artifactList.get(i).getThumbImage());
                             activityReference.get().qmDatabase.getArtifactTableDao().insertArabicTable(artifactTableArabic);
 
                         }
@@ -475,7 +476,8 @@ public class ObjectPreviewActivity extends AppCompatActivity {
                                 artifactList.get(i).getTechniqueMaterials(),
                                 artifactList.get(i).getArtifactNumber(),
                                 artifactList.get(i).getDimensions(),
-                                artifactList.get(i).getSortId());
+                                artifactList.get(i).getSortId(),
+                                artifactList.get(i).getThumbImage());
                         activityReference.get().qmDatabase.getArtifactTableDao().insertEnglishTable(artifactTableEnglish);
                     }
                 } else {
@@ -501,7 +503,8 @@ public class ObjectPreviewActivity extends AppCompatActivity {
                                 artifactList.get(i).getTechniqueMaterials(),
                                 artifactList.get(i).getArtifactNumber(),
                                 artifactList.get(i).getDimensions(),
-                                artifactList.get(i).getSortId());
+                                artifactList.get(i).getSortId(),
+                                artifactList.get(i).getThumbImage());
                         activityReference.get().qmDatabase.getArtifactTableDao().insertArabicTable(artifactTableArabic);
 
                     }
@@ -554,7 +557,8 @@ public class ObjectPreviewActivity extends AppCompatActivity {
                         artifactList.get(position).getTechniqueMaterials(),
                         artifactList.get(position).getArtifactNumber(),
                         artifactList.get(position).getDimensions(),
-                        artifactList.get(position).getSortId()
+                        artifactList.get(position).getSortId(),
+                        artifactList.get(position).getThumbImage()
                 );
 
             } else {
@@ -581,7 +585,8 @@ public class ObjectPreviewActivity extends AppCompatActivity {
                         artifactList.get(position).getTechniqueMaterials(),
                         artifactList.get(position).getArtifactNumber(),
                         artifactList.get(position).getDimensions(),
-                        artifactList.get(position).getSortId()
+                        artifactList.get(position).getSortId(),
+                        artifactList.get(position).getThumbImage()
                 );
             }
 
@@ -638,7 +643,8 @@ public class ObjectPreviewActivity extends AppCompatActivity {
                             artifactDetailsList.get(i).getTechniqueMaterials(),
                             artifactDetailsList.get(i).getArtifactNumber(),
                             artifactDetailsList.get(i).getDimensions(),
-                            artifactDetailsList.get(i).getSortId());
+                            artifactDetailsList.get(i).getSortId(),
+                            artifactDetailsList.get(i).getThumbImage());
                     artifactList.add(i, artifactDetails);
                 }
                 if (artifactList.size() > 0) {
@@ -703,7 +709,8 @@ public class ObjectPreviewActivity extends AppCompatActivity {
                             artifactDetailsList.get(i).getTechniqueMaterials(),
                             artifactDetailsList.get(i).getArtifactNumber(),
                             artifactDetailsList.get(i).getDimensions(),
-                            artifactDetailsList.get(i).getSortId());
+                            artifactDetailsList.get(i).getSortId(),
+                            artifactDetailsList.get(i).getThumbImage());
                     artifactList.add(i, artifactDetails);
                 }
                 if (artifactList.size() > 0) {
