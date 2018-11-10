@@ -1,18 +1,23 @@
 package com.qatarmuseums.qatarmuseumsapp.profile;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
+import android.app.Dialog;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.SwitchCompat;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.Window;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
+import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
@@ -33,7 +38,6 @@ import org.json.JSONObject;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.ArrayList;
 import java.util.HashMap;
 
 import okhttp3.OkHttpClient;
@@ -54,7 +58,7 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
     View myFavBtn, myCardBtn;
     private SharedPreferences qmPreferences;
     private String token, username, membershipNumber, email, dateOfBirth, residence, nationality,
-            imageURL;
+            imageURL, rsvpAttendance, acceptStatus;
     private SharedPreferences.Editor editor;
     private ProgressBar logoutProgress;
     private int appLanguage;
@@ -62,7 +66,12 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
     private Retrofit retrofit;
     HashMap<String, String> country = new HashMap<>();
     private InputStream is;
+    private LinearLayout rsvpLayout;
+    private SwitchCompat acceptDeclineButton;
+    Util util;
+    String accepted = "0";
 
+    @SuppressLint("ClickableViewAccessibility")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -81,6 +90,9 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
         myFavBtn = findViewById(R.id.view_my_fav_btn);
         myCardBtn = findViewById(R.id.view_my_card_btn);
         logoutProgress = findViewById(R.id.logout_progress);
+        rsvpLayout = findViewById(R.id.rsvp_layout);
+        acceptDeclineButton = findViewById(R.id.accept_decline_button);
+        util = new Util();
         zoomOutAnimation = AnimationUtils.loadAnimation(getApplicationContext(),
                 R.anim.zoom_out);
         iconZoomOutAnimation = AnimationUtils.loadAnimation(getApplicationContext(),
@@ -134,6 +146,15 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
         residence = qmPreferences.getString("RESIDENCE", null);
         nationality = qmPreferences.getString("NATIONALITY", null);
         imageURL = qmPreferences.getString("IMAGE", null);
+        rsvpAttendance = qmPreferences.getString("RSVP", null);
+        if (rsvpAttendance.equals("1")) {
+            showDialog();
+            rsvpLayout.setVisibility(View.VISIBLE);
+        } else {
+            rsvpLayout.setVisibility(View.GONE);
+        }
+
+
         if (imageURL != null && !imageURL.equals("") && !imageURL.equals("0")) {
             profilePic.setBackground(getDrawable(R.drawable.circular_bg));
             GlideApp.with(this)
@@ -193,8 +214,106 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
                 return false;
             }
         });
+        acceptDeclineButton.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                if (accepted .equals("0")) {
+                    accepted = "1";
+                    util.showCulturalPassAlertDialog(ProfileActivity.this);
+                    acceptDeclineButton.setChecked(false);
+                } else {
+                    accepted = "0";
+                    showDeclineDialog();
+                }
+                return false;
+            }
+        });
 
+    }
 
+    protected void showDialog() {
+
+        final Dialog dialog = new Dialog(this, R.style.DialogNoAnimation);
+        dialog.setCancelable(true);
+        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+
+        View view = getLayoutInflater().inflate(R.layout.vip_pop_up, null);
+        dialog.setContentView(view);
+        View line = (View) view.findViewById(R.id.view);
+        Button acceptBtn = (Button) view.findViewById(R.id.acceptbtn);
+        Button acceptLaterBtn = (Button) view.findViewById(R.id.accept_later_btn);
+        TextView dialogTitle = (TextView) view.findViewById(R.id.dialog_tittle);
+        TextView dialogContent = (TextView) view.findViewById(R.id.dialog_content);
+        view.setVisibility(View.VISIBLE);
+        dialogTitle.setVisibility(View.VISIBLE);
+        dialogTitle.setText(getResources().getString(R.string.greetings_title));
+        acceptBtn.setText(getResources().getString(R.string.accept));
+        acceptLaterBtn.setText(getResources().getString(R.string.accept_later));
+        dialogContent.setText(getResources().getString(R.string.greetings_content));
+
+        acceptBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                //Do something
+                accepted = "1";
+                acceptDeclineButton.setChecked(false);
+                dialog.dismiss();
+                util.showCulturalPassAlertDialog(ProfileActivity.this);
+
+            }
+        });
+        acceptLaterBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                accepted = "0";
+                acceptDeclineButton.setChecked(true);
+                dialog.dismiss();
+            }
+        });
+
+        dialog.show();
+    }
+
+    protected void showDeclineDialog() {
+
+        final Dialog dialog = new Dialog(this, R.style.DialogNoAnimation);
+        dialog.setCancelable(true);
+        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+
+        View view = getLayoutInflater().inflate(R.layout.vip_pop_up, null);
+        dialog.setContentView(view);
+
+        View line = (View) view.findViewById(R.id.view);
+        Button yes = (Button) view.findViewById(R.id.acceptbtn);
+        Button no = (Button) view.findViewById(R.id.accept_later_btn);
+        TextView dialogTitle = (TextView) view.findViewById(R.id.dialog_tittle);
+        TextView dialogContent = (TextView) view.findViewById(R.id.dialog_content);
+        line.setVisibility(View.GONE);
+        dialogTitle.setVisibility(View.GONE);
+        yes.setText(getResources().getString(R.string.yes));
+        no.setText(getResources().getString(R.string.no));
+        dialogContent.setText(getResources().getString(R.string.decline_content));
+
+        yes.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                //Do something
+                dialog.dismiss();
+                accepted = "0";
+                acceptDeclineButton.setChecked(true);
+            }
+        });
+        no.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                accepted = "1";
+                util.showCulturalPassAlertDialog(ProfileActivity.this);
+                acceptDeclineButton.setChecked(false);
+                dialog.dismiss();
+            }
+        });
+
+        dialog.show();
     }
 
     public void logOutAction() {

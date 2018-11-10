@@ -161,7 +161,7 @@
     <string name="explore">تصفح</string>
     <string name="level">المستوى</string>
     <string name="tourguide_sidemenu_title">المرشد</string>
-    <string name="tourguide_sidemenu_title_desc">اغمر نفسك في تفاصيل القطعة التي اختيرت خصيصا لك من قبل خبرائنا. \n\n أهلا بك في متاحف قطر. يرججى اختيار المتحف لإستكشاف القطع المعروضة.</string>
+    <string name="tourguide_sidemenu_title_desc">اأهلا بك في متاحف قطر\n اغمر نفسك في تفاصيل القطع التي اختيرت خصيصا لك من قبل خبرائنا</string>
     <string name="tourguide_title_desc">Welcome to Qatar Museum Premises. \n Explore the architrcture and the \nobjects on display. \n Scan the QR codes available on the \ngalleries for more information.</string>
     <!--////////////////////// check-->
     <string name="sidemenu_text">Sidemenu</string>
@@ -249,6 +249,8 @@
     <string name="decline_content">تأكيد عدم الحضور</string>
     <string name="profile_link"><u>دعوة لحضور افتتاح متحف قطر الوطني</u></string>
     <string name="artifact_invalid">Invalid Artifact Number</string>
+    <string name="yes">Yes</string>
+    <string name="no">No</string>
     <!-- Strings related to Culture pass card -->
     <string name="flip_button_txt">اضغط لعرض الجهة الأخرى</string>
 </resources>

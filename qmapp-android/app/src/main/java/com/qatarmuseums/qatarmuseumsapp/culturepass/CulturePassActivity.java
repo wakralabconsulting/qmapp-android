@@ -29,9 +29,13 @@ import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.google.gson.internal.LinkedTreeMap;
 import com.qatarmuseums.qatarmuseumsapp.R;
 import com.qatarmuseums.qatarmuseumsapp.apicall.APIClient;
 import com.qatarmuseums.qatarmuseumsapp.apicall.APIInterface;
+import com.qatarmuseums.qatarmuseumsapp.apicall.UserResponseDeserializer;
 import com.qatarmuseums.qatarmuseumsapp.profile.ProfileActivity;
 import com.qatarmuseums.qatarmuseumsapp.profile.ProfileDetails;
 import com.qatarmuseums.qatarmuseumsapp.utils.Util;
@@ -213,10 +217,11 @@ public class CulturePassActivity extends AppCompatActivity {
         builder.addInterceptor(new AddCookiesInterceptor(this));
         builder.addInterceptor(new ReceivedCookiesInterceptor(this));
         client = builder.build();
+        Gson userDeserializer = new GsonBuilder().setLenient().registerTypeAdapter(ProfileDetails.class, new UserResponseDeserializer()).create();
 
         retrofit = new Retrofit.Builder()
                 .baseUrl(APIClient.apiBaseUrlSecure)
-                .addConverterFactory(GsonConverterFactory.create())
+                .addConverterFactory(GsonConverterFactory.create(userDeserializer))
                 .client(client)
                 .build();
 
@@ -233,7 +238,12 @@ public class CulturePassActivity extends AppCompatActivity {
                         editor.putString("TOKEN", profileDetails.getToken());
                         editor.putString("MEMBERSHIP_NUMBER", "00" + (Integer.parseInt(profileDetails.getUser().getuId()) + 6000));
                         editor.putString("EMAIL", profileDetails.getUser().getMail());
-                        editor.putString("DOB", profileDetails.getUser().getDateOfBirth().getUnd().get(0).getValue());
+                        if (!(response.body().getUser().getDateOfBirth() instanceof ArrayList))
+                            editor.putString("DOB", ((LinkedTreeMap) ((ArrayList) ((LinkedTreeMap)
+                                    response.body().getUser().getDateOfBirth()).get("und")).get(0)).get("value").toString());
+                        if(!(response.body().getUser().getRsvpAttendance() instanceof ArrayList))
+                            editor.putString("RSVP", ((LinkedTreeMap) ((ArrayList) ((LinkedTreeMap)
+                                    response.body().getUser().getRsvpAttendance()).get("und")).get(0)).get("value").toString());
                         editor.putString("RESIDENCE", profileDetails.getUser().getCountry().getUnd().get(0).getValue());
                         editor.putString("NATIONALITY", profileDetails.getUser().getNationality().getUnd().get(0).getValue());
                         editor.putString("IMAGE", profileDetails.getUser().getPicture());
@@ -471,7 +481,7 @@ public class CulturePassActivity extends AppCompatActivity {
                     }
                 } else {
                     if (response.code() == 406)
-                            mUsernameViewLayout.setError(getString(R.string.error_incorrect_username));
+                        mUsernameViewLayout.setError(getString(R.string.error_incorrect_username));
                     else
                         mUsernameViewLayout.setError(getString(R.string.error_unexpected));
 

@@ -54,6 +54,8 @@ public class ArtifactDetails implements Parcelable {
     private String techniqueMaterials;
     @SerializedName("Period/Style")
     private String periodStyle;
+    @SerializedName("thumb_Image")
+    private String thumbImage;
 
     protected ArtifactDetails(Parcel in) {
         title = in.readString();
@@ -79,6 +81,7 @@ public class ArtifactDetails implements Parcelable {
         artistCreatorAuthor = in.readString();
         techniqueMaterials = in.readString();
         periodStyle = in.readString();
+        thumbImage = in.readString();
     }
 
     public ArtifactDetails(long nid, String title, String accessionNumber, String tourGuideId, String mainTitle,
@@ -86,7 +89,7 @@ public class ArtifactDetails implements Parcelable {
                            String curatorialDescription, ArrayList<String> images, String floorLevel, String galleryNumber,
                            String objectHistory, String production, String productionDates, String periodStyle,
                            String artistCreatorAuthor, String techniqueMaterials, String artifactNumber,
-                           String dimensions, String sortId) {
+                           String dimensions, String sortId, String thumbImage) {
         this.nid = String.valueOf(nid);
         this.title = title;
         this.accessionNumber = accessionNumber;
@@ -109,6 +112,7 @@ public class ArtifactDetails implements Parcelable {
         this.artifactNumber = artifactNumber;
         this.dimensions = dimensions;
         this.sortId = String.valueOf(sortId);
+        this.thumbImage = thumbImage;
     }
 
     public static final Creator<ArtifactDetails> CREATOR = new Creator<ArtifactDetails>() {
@@ -307,6 +311,14 @@ public class ArtifactDetails implements Parcelable {
         this.periodStyle = periodStyle;
     }
 
+    public String getThumbImage() {
+        return thumbImage;
+    }
+
+    public void setThumbImage(String thumbImage) {
+        this.thumbImage = thumbImage;
+    }
+
     @Override
     public int describeContents() {
         return 0;
@@ -337,5 +349,6 @@ public class ArtifactDetails implements Parcelable {
         dest.writeString(artistCreatorAuthor);
         dest.writeString(techniqueMaterials);
         dest.writeString(periodStyle);
+        dest.writeString(thumbImage);
     }
 }

@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#99000000"
+    android:gravity="center">
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/padding_40"
+        android:layout_marginEnd="@dimen/pading_25"
+        android:gravity="center"
+        android:orientation="vertical">
+
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_marginBottom="@dimen/pading_10"
+            android:layout_marginEnd="@dimen/pading_20"
+            android:layout_marginStart="@dimen/pading_10"
+            android:layout_marginTop="@dimen/pading_20"
+            android:background="@drawable/round_corner_white"
+            android:gravity="center"
+            android:orientation="vertical"
+            android:paddingEnd="@dimen/pading_10"
+            android:paddingStart="@dimen/pading_10">
+
+
+            <TextView
+                android:id="@+id/dialog_tittle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/pading_25"
+                android:fontFamily="@font/din_next_lt_pro_bold"
+                android:textAlignment="center"
+                android:textAllCaps="true"
+                android:textColor="@color/black"
+                android:textSize="@dimen/settings_page_list_item_text_size" />
+
+            <View
+                android:id="@+id/view"
+                android:layout_width="30dp"
+                android:layout_height="@dimen/pading_5"
+                android:layout_marginTop="@dimen/pading_20"
+                android:background="@color/black" />
+
+            <TextView
+                android:id="@+id/dialog_content"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="@dimen/margin_50"
+                android:layout_marginTop="@dimen/pading_25"
+                android:paddingEnd="@dimen/pading_5"
+                android:paddingStart="@dimen/pading_5"
+                android:textAlignment="center"
+                android:textSize="@dimen/settings_text_size" />
+
+
+            <Button
+                android:id="@+id/acceptbtn"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="@dimen/pading_15"
+                android:background="@drawable/round_corner_black"
+                android:fontFamily="@font/din_next_lt_pro_bold"
+                android:textAllCaps="false"
+                android:textColor="@color/white"
+                android:textSize="@dimen/settings_page_list_item_text_size" />
+            <Button
+                android:id="@+id/accept_later_btn"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="@dimen/pading_15"
+                android:background="@drawable/rounded_corner_grey"
+                android:fontFamily="@font/din_next_lt_pro_bold"
+                android:textAllCaps="false"
+                android:textColor="@color/white"
+                android:textSize="@dimen/settings_page_list_item_text_size" />
+
+        </LinearLayout>
+
+
+    </FrameLayout>
+
+
+</LinearLayout>
