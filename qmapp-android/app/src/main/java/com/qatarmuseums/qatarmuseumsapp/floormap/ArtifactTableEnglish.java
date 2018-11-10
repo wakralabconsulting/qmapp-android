@@ -55,6 +55,8 @@ public class ArtifactTableEnglish {
     private String dimensions;
     @ColumnInfo()
     private String sortId;
+    @ColumnInfo()
+    private String thumbImage;
 
 
     public ArtifactTableEnglish(long nid, String title, String accessionNumber, String tourGuideId,
@@ -63,7 +65,7 @@ public class ArtifactTableEnglish {
                                 String floorLevel, String galleryNumber, String objectHistory,
                                 String production, String productionDates, String periodStyle,
                                 String artistCreatorAuthor, String techniqueMaterials, String artifactNumber,
-                                String dimensions, String sortId) {
+                                String dimensions, String sortId, String thumbImage) {
         this.nid = nid;
         this.title = title;
         this.accessionNumber = accessionNumber;
@@ -86,6 +88,7 @@ public class ArtifactTableEnglish {
         this.artifactNumber = artifactNumber;
         this.dimensions = dimensions;
         this.sortId = sortId;
+        this.thumbImage = thumbImage;
     }
 
     @NonNull
@@ -271,5 +274,13 @@ public class ArtifactTableEnglish {
 
     public void setSortId(String sortId) {
         this.sortId = sortId;
+    }
+
+    public String getThumbImage() {
+        return thumbImage;
+    }
+
+    public void setThumbImage(String thumbImage) {
+        this.thumbImage = thumbImage;
     }
 }

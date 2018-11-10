@@ -16,6 +16,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.design.widget.BottomSheetBehavior;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.Snackbar;
@@ -29,12 +30,13 @@ import android.view.animation.AnimationUtils;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.SeekBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.bumptech.glide.request.target.SimpleTarget;
+import com.bumptech.glide.request.transition.Transition;
 import com.github.chrisbanes.photoview.PhotoView;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -56,7 +58,6 @@ import com.qatarmuseums.qatarmuseumsapp.R;
 import com.qatarmuseums.qatarmuseumsapp.apicall.APIClient;
 import com.qatarmuseums.qatarmuseumsapp.apicall.APIInterface;
 import com.qatarmuseums.qatarmuseumsapp.home.GlideApp;
-import com.qatarmuseums.qatarmuseumsapp.utils.CustomTimerTask;
 import com.qatarmuseums.qatarmuseumsapp.utils.Util;
 
 import java.lang.ref.WeakReference;
@@ -64,7 +65,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Timer;
 
 import io.fabric.sdk.android.services.concurrency.AsyncTask;
 import retrofit2.Call;
@@ -181,7 +181,6 @@ public class FloorMapActivity extends AppCompatActivity implements OnMapReadyCal
     BottomSheetBehavior mBottomSheetBehavior;
     TextView viewDetails, popupTitle, popupProduction, popupProductionDate, popupPeriodStyle,
             noDataTxt, maiTtitle, shortDescription, image1Description, historyTitle, historyDescription, image2Description;
-    String name;
     ImageView numberPad, popupImage, image1, image2, image3, image4;
     private boolean pickerInAboveState = false;
     ImageView qrCode;
@@ -197,7 +196,7 @@ public class FloorMapActivity extends AppCompatActivity implements OnMapReadyCal
     private int appLanguage;
     private APIInterface apiService;
     private String language;
-    ProgressBar progressBar;
+    LinearLayout progressBar;
     private HashMap<String, ArtifactDetails> artifactDetailsMap;
     private HashMap<String, Marker> markerHashMap;
     private Util utils;
@@ -206,8 +205,6 @@ public class FloorMapActivity extends AppCompatActivity implements OnMapReadyCal
     private Snackbar snackbar;
     private String artifactPosition, floorLevel;
     private ArrayList<ArtifactDetails> artifactList;
-    private Timer timer;
-    private CustomTimerTask timerTask;
 
     private SeekBar seekBar;
     private MediaPlayer mediaPlayer;
@@ -223,7 +220,6 @@ public class FloorMapActivity extends AppCompatActivity implements OnMapReadyCal
         }
     };
     private LinearLayout audioLayout, audioLayoutDetails;
-    private String key;
     private Iterator<String> myVeryOwnIterator;
     private boolean playPause;
     private ProgressDialog progressDialog;
@@ -236,6 +232,7 @@ public class FloorMapActivity extends AppCompatActivity implements OnMapReadyCal
     private Convertor converters;
     Button retryButton;
     private Animation zoomOutAnimation;
+    private ImageView mMarkerImageView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -297,26 +294,15 @@ public class FloorMapActivity extends AppCompatActivity implements OnMapReadyCal
             else
                 fetchArtifactsFromDB(appLanguage);
         }
-        numberPad.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intent numberPadIntent = new Intent(FloorMapActivity.this, ObjectSearchActivity.class);
-                startActivity(numberPadIntent);
-            }
+        numberPad.setOnClickListener(view -> {
+            Intent numberPadIntent = new Intent(FloorMapActivity.this, ObjectSearchActivity.class);
+            startActivity(numberPadIntent);
         });
-        imageToZoom.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                openDialogForZoomingImage();
-            }
-        });
+        imageToZoom.setOnClickListener(view -> openDialogForZoomingImage());
 
-        qrCode.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intent qrCodeIntent = new Intent(FloorMapActivity.this, BarCodeCaptureActivity.class);
-                startActivity(qrCodeIntent);
-            }
+        qrCode.setOnClickListener(view -> {
+            Intent qrCodeIntent = new Intent(FloorMapActivity.this, BarCodeCaptureActivity.class);
+            startActivity(qrCodeIntent);
         });
 
 
@@ -412,32 +398,29 @@ public class FloorMapActivity extends AppCompatActivity implements OnMapReadyCal
                 mGroundOverlay.setImage(BitmapDescriptorFactory.fromResource(R.drawable.qm_level_1));
             }
         });
-        retryButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (getIntent().getParcelableArrayListExtra("RESPONSE") != null) {
-                    if (utils.isNetworkAvailable(FloorMapActivity.this)) {
-                        fetchComingData();
-                        checkForHighlight();
-                    }
-                } else
-                    fetchArtifactsFromAPI();
-            }
+        retryButton.setOnClickListener(v -> {
+            if (getIntent().getParcelableArrayListExtra("RESPONSE") != null) {
+                if (utils.isNetworkAvailable(FloorMapActivity.this)) {
+                    fetchComingData();
+                    checkForHighlight();
+                }
+            } else
+                fetchArtifactsFromAPI();
         });
 
         zoomOutAnimation = AnimationUtils.loadAnimation(getApplicationContext(),
                 R.anim.zoom_out);
 
-        retryButton.setOnTouchListener(new View.OnTouchListener() {
-            @Override
-            public boolean onTouch(View v, MotionEvent event) {
-                switch (event.getAction()) {
-                    case MotionEvent.ACTION_DOWN:
-                        retryButton.startAnimation(zoomOutAnimation);
-                        break;
-                }
-                return false;
+        retryButton.setOnTouchListener((v, event) -> {
+            switch (event.getAction()) {
+                case MotionEvent.ACTION_DOWN:
+                    retryButton.startAnimation(zoomOutAnimation);
+                    break;
             }
+            return false;
+        });
+        progressBar.setOnClickListener(v -> {
+
         });
         initialize_Controls();
         converters = new Convertor();
@@ -461,8 +444,6 @@ public class FloorMapActivity extends AppCompatActivity implements OnMapReadyCal
         seekBar = new SeekBar(this);
         LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
         seekBar.setLayoutParams(lp);
-//        seekBar.getProgressDrawable().setColorFilter(getResources().getColor(R.color.yellow_audio), PorterDuff.Mode.SRC_ATOP);
-//        seekBar.getThumb().setColorFilter(getResources().getColor(R.color.white), PorterDuff.Mode.SRC_ATOP);
         seekBar.setOnSeekBarChangeListener(this);
 
         audioLayout.addView(btn_play);
@@ -470,31 +451,28 @@ public class FloorMapActivity extends AppCompatActivity implements OnMapReadyCal
 
         audioURL = groundFloorAudioURL;
 
-        btn_play.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (utils.isNetworkAvailable(getApplicationContext())) {
-                    if (!playPause) {
-                        btn_play.setImageDrawable(getDrawable(R.drawable.pause_black));
-                        if (initialStage) {
-                            new Player().execute(audioURL);
-                        } else {
-                            if (!mediaPlayer.isPlaying()) {
-                                playAudio();
-                                updateSeekProgress();
-                            }
-                        }
-                        playPause = true;
+        btn_play.setOnClickListener(v -> {
+            if (utils.isNetworkAvailable(getApplicationContext())) {
+                if (!playPause) {
+                    btn_play.setImageDrawable(getDrawable(R.drawable.pause_black));
+                    if (initialStage) {
+                        new Player().execute(audioURL);
                     } else {
-                        btn_play.setImageDrawable(getDrawable(R.drawable.play_black));
-                        if (mediaPlayer.isPlaying()) {
-                            pauseAudio();
+                        if (!mediaPlayer.isPlaying()) {
+                            playAudio();
+                            updateSeekProgress();
                         }
-                        playPause = false;
                     }
+                    playPause = true;
                 } else {
-                    Toast.makeText(FloorMapActivity.this, R.string.check_network, Toast.LENGTH_SHORT).show();
+                    btn_play.setImageDrawable(getDrawable(R.drawable.play_black));
+                    if (mediaPlayer.isPlaying()) {
+                        pauseAudio();
+                    }
+                    playPause = false;
                 }
+            } else {
+                Toast.makeText(FloorMapActivity.this, R.string.check_network, Toast.LENGTH_SHORT).show();
             }
         });
         mediaPlayer = new MediaPlayer();
@@ -797,7 +775,6 @@ public class FloorMapActivity extends AppCompatActivity implements OnMapReadyCal
                     markerTitle = marker.getTitle();
                     if (selectedMarker != null) {
                         mBottomSheetBehavior.setState(BottomSheetBehavior.STATE_HIDDEN);
-                        selectedMarker.setIcon(BitmapDescriptorFactory.fromBitmap(resizeMapIcons(name, normalMapIconWidth, normalMapIconHeight)));
                         selectedMarker = null;
                     }
                     historyTitle.setVisibility(View.GONE);
@@ -829,21 +806,21 @@ public class FloorMapActivity extends AppCompatActivity implements OnMapReadyCal
                 .title("SI.5")
                 .snippet("l2_g1_sc3")
                 .visible(false)
-                .icon(BitmapDescriptorFactory.fromBitmap(resizeMapIcons("si_5", normalMapIconWidth, normalMapIconHeight))));
+                .icon(BitmapDescriptorFactory.fromBitmap(resizeMapIcons("default_map_marker", normalMapIconWidth, normalMapIconHeight))));
         markerHashMap.put("l2_g1_sc3", l2_g1_sc3);
         l2_g3_sc13 = googleMap.addMarker(new MarkerOptions()
                 .position(L2_G3_SC13)
                 .title("MW.634")
                 .snippet("l2_g3_sc13")
                 .visible(false)
-                .icon(BitmapDescriptorFactory.fromBitmap(resizeMapIcons("mw_634", normalMapIconWidth, normalMapIconHeight))));
+                .icon(BitmapDescriptorFactory.fromBitmap(resizeMapIcons("default_map_marker", normalMapIconWidth, normalMapIconHeight))));
         markerHashMap.put("l2_g3_sc13", l2_g3_sc13);
         l2_g5_sc6 = googleMap.addMarker(new MarkerOptions()
                 .position(L2_G5_SC6)
                 .title("MW.56")
                 .visible(false)
                 .snippet("l2_g5_sc6")
-                .icon(BitmapDescriptorFactory.fromBitmap(resizeMapIcons("mw_56", normalMapIconWidth, normalMapIconHeight))));
+                .icon(BitmapDescriptorFactory.fromBitmap(resizeMapIcons("default_map_marker", normalMapIconWidth, normalMapIconHeight))));
         markerHashMap.put("l2_g5_sc6", l2_g5_sc6);
 
         l2_g8 = googleMap.addMarker(new MarkerOptions()
@@ -851,70 +828,70 @@ public class FloorMapActivity extends AppCompatActivity implements OnMapReadyCal
                 .title("MS.523")
                 .snippet("l2_g8")
                 .visible(false)
-                .icon(BitmapDescriptorFactory.fromBitmap(resizeMapIcons("ms_523", normalMapIconWidth, normalMapIconHeight))));
+                .icon(BitmapDescriptorFactory.fromBitmap(resizeMapIcons("default_map_marker", normalMapIconWidth, normalMapIconHeight))));
         markerHashMap.put("l2_g8", l2_g8);
         l2_g8_sc1 = googleMap.addMarker(new MarkerOptions()
                 .position(L2_G8_SC1)
                 .title("MW.548")
                 .snippet("l2_g8_sc1")
                 .visible(false)
-                .icon(BitmapDescriptorFactory.fromBitmap(resizeMapIcons("mw_548", normalMapIconWidth, normalMapIconHeight))));
+                .icon(BitmapDescriptorFactory.fromBitmap(resizeMapIcons("default_map_marker", normalMapIconWidth, normalMapIconHeight))));
         markerHashMap.put("l2_g8_sc1", l2_g8_sc1);
         l2_g8_sc4_1 = googleMap.addMarker(new MarkerOptions()
                 .position(L2_G8_SC4_1)
                 .title("MS.650")
                 .snippet("l2_g8_sc4_1")
                 .visible(false)
-                .icon(BitmapDescriptorFactory.fromBitmap(resizeMapIcons("ms_650", normalMapIconWidth, normalMapIconHeight))));
+                .icon(BitmapDescriptorFactory.fromBitmap(resizeMapIcons("default_map_marker", normalMapIconWidth, normalMapIconHeight))));
         markerHashMap.put("l2_g8_sc4_1", l2_g8_sc4_1);
         l2_g8_sc4_2 = googleMap.addMarker(new MarkerOptions()
                 .position(L2_G8_SC4_2)
                 .title("MS.688")
                 .snippet("l2_g8_sc4_2")
                 .visible(false)
-                .icon(BitmapDescriptorFactory.fromBitmap(resizeMapIcons("ms_688", normalMapIconWidth, normalMapIconHeight))));
+                .icon(BitmapDescriptorFactory.fromBitmap(resizeMapIcons("default_map_marker", normalMapIconWidth, normalMapIconHeight))));
         markerHashMap.put("l2_g8_sc4_2", l2_g8_sc4_2);
         l2_g8_sc5 = googleMap.addMarker(new MarkerOptions()
                 .position(L2_G8_SC5)
                 .title("MW.361.2007")
                 .snippet("l2_g8_sc5")
                 .visible(false)
-                .icon(BitmapDescriptorFactory.fromBitmap(resizeMapIcons("mw_361_2007", normalMapIconWidth, normalMapIconHeight))));
+                .icon(BitmapDescriptorFactory.fromBitmap(resizeMapIcons("default_map_marker", normalMapIconWidth, normalMapIconHeight))));
         markerHashMap.put("l2_g8_sc5", l2_g8_sc5);
         l2_g8_sc6_1 = googleMap.addMarker(new MarkerOptions()
                 .position(L2_G8_SC6_1)
                 .title("MS.709.2010-1")
                 .snippet("l2_g8_sc6_1")
                 .visible(false)
-                .icon(BitmapDescriptorFactory.fromBitmap(resizeMapIcons("ms_709_2010_1", normalMapIconWidth, normalMapIconHeight))));
+                .icon(BitmapDescriptorFactory.fromBitmap(resizeMapIcons("default_map_marker", normalMapIconWidth, normalMapIconHeight))));
         markerHashMap.put("l2_g8_sc6_1", l2_g8_sc6_1);
         l2_g8_sc6_2 = googleMap.addMarker(new MarkerOptions()
                 .position(L2_G8_SC6_2)
                 .title("MS.709.2010-2")
                 .snippet("l2_g8_sc6_2")
                 .visible(false)
-                .icon(BitmapDescriptorFactory.fromBitmap(resizeMapIcons("ms_709_2010_2", normalMapIconWidth, normalMapIconHeight))));
+                .icon(BitmapDescriptorFactory.fromBitmap(resizeMapIcons("default_map_marker", normalMapIconWidth, normalMapIconHeight))));
         markerHashMap.put("l2_g8_sc6_2", l2_g8_sc6_2);
         l2_g9_sc5_1 = googleMap.addMarker(new MarkerOptions()
                 .position(L2_G9_SC5_1)
                 .title("MW.340")
                 .snippet("l2_g9_sc5_1")
                 .visible(false)
-                .icon(BitmapDescriptorFactory.fromBitmap(resizeMapIcons("mw_340", normalMapIconWidth, normalMapIconHeight))));
+                .icon(BitmapDescriptorFactory.fromBitmap(resizeMapIcons("default_map_marker", normalMapIconWidth, normalMapIconHeight))));
         markerHashMap.put("l2_g9_sc5_1", l2_g9_sc5_1);
         l2_g9_sc5_2 = googleMap.addMarker(new MarkerOptions()
                 .position(L2_G9_SC5_2)
                 .title("MS.794")
                 .snippet("l2_g9_sc5_2")
                 .visible(false)
-                .icon(BitmapDescriptorFactory.fromBitmap(resizeMapIcons("ms_794", normalMapIconWidth, normalMapIconHeight))));
+                .icon(BitmapDescriptorFactory.fromBitmap(resizeMapIcons("default_map_marker", normalMapIconWidth, normalMapIconHeight))));
         markerHashMap.put("l2_g9_sc5_2", l2_g9_sc5_2);
         l2_g9_sc7 = googleMap.addMarker(new MarkerOptions()
                 .position(L2_G9_SC7)
                 .title("MW.146")
                 .snippet("l2_g9_sc7")
                 .visible(false)
-                .icon(BitmapDescriptorFactory.fromBitmap(resizeMapIcons("mw_146", normalMapIconWidth, normalMapIconHeight))));
+                .icon(BitmapDescriptorFactory.fromBitmap(resizeMapIcons("default_map_marker", normalMapIconWidth, normalMapIconHeight))));
         markerHashMap.put("l2_g9_sc7", l2_g9_sc7);
 
         l3_g10_sc1_1 = googleMap.addMarker(new MarkerOptions()
@@ -922,7 +899,7 @@ public class FloorMapActivity extends AppCompatActivity implements OnMapReadyCal
                 .title("PO.297")
                 .snippet("l3_g10_sc1_1")
                 .visible(false)
-                .icon(BitmapDescriptorFactory.fromBitmap(resizeMapIcons("po_297", normalMapIconWidth, normalMapIconHeight))));
+                .icon(BitmapDescriptorFactory.fromBitmap(resizeMapIcons("default_map_marker", normalMapIconWidth, normalMapIconHeight))));
         markerHashMap.put("l3_g10_sc1_1", l3_g10_sc1_1);
         l3_g10_sc1_2 = googleMap.addMarker(new MarkerOptions()
                 .position(L3_G10_SC1_2)
@@ -936,28 +913,28 @@ public class FloorMapActivity extends AppCompatActivity implements OnMapReadyCal
                 .title("MS.647.A.59")
                 .snippet("l3_g11_wr15")
                 .visible(false)
-                .icon(BitmapDescriptorFactory.fromBitmap(resizeMapIcons("ms_647_a_59", normalMapIconWidth, normalMapIconHeight))));
+                .icon(BitmapDescriptorFactory.fromBitmap(resizeMapIcons("default_map_marker", normalMapIconWidth, normalMapIconHeight))));
         markerHashMap.put("l3_g11_wr15", l3_g11_wr15);
         l3_g13_5 = googleMap.addMarker(new MarkerOptions()
                 .position(L3_G13_5)
                 .title("GL.322")
                 .snippet("l3_g13_5")
                 .visible(false)
-                .icon(BitmapDescriptorFactory.fromBitmap(resizeMapIcons("gl_322", normalMapIconWidth, normalMapIconHeight))));
+                .icon(BitmapDescriptorFactory.fromBitmap(resizeMapIcons("default_map_marker", normalMapIconWidth, normalMapIconHeight))));
         markerHashMap.put("l3_g13_5", l3_g13_5);
         l3_g13_7 = googleMap.addMarker(new MarkerOptions()
                 .position(L3_G13_7)
                 .title("HS.32")
                 .snippet("l3_g13_7")
                 .visible(false)
-                .icon(BitmapDescriptorFactory.fromBitmap(resizeMapIcons("hs_32", normalMapIconWidth, normalMapIconHeight))));
+                .icon(BitmapDescriptorFactory.fromBitmap(resizeMapIcons("default_map_marker", normalMapIconWidth, normalMapIconHeight))));
         markerHashMap.put("l3_g13_7", l3_g13_7);
         l3_g17_3 = googleMap.addMarker(new MarkerOptions()
                 .position(L3_G17_3)
                 .title("IV.61")
                 .snippet("l3_g17_3")
                 .visible(false)
-                .icon(BitmapDescriptorFactory.fromBitmap(resizeMapIcons("iv_61", normalMapIconWidth, normalMapIconHeight))));
+                .icon(BitmapDescriptorFactory.fromBitmap(resizeMapIcons("default_map_marker", normalMapIconWidth, normalMapIconHeight))));
         markerHashMap.put("l3_g17_3", l3_g17_3);
 
     }
@@ -975,7 +952,7 @@ public class FloorMapActivity extends AppCompatActivity implements OnMapReadyCal
                 .title("SI.5")
                 .snippet("l2_g1_sc3")
                 .visible(false)
-                .icon(BitmapDescriptorFactory.fromBitmap(resizeMapIcons("si_5", normalMapIconWidth, normalMapIconHeight))));
+                .icon(BitmapDescriptorFactory.fromBitmap(resizeMapIcons("default_map_marker", normalMapIconWidth, normalMapIconHeight))));
         markerHashMap.put("l2_g1_sc3", l2_g1_sc3);
         l2_g1_sc13 = googleMap.addMarker(new MarkerOptions()
                 .position(L2_G1_SC13)
@@ -1253,9 +1230,23 @@ public class FloorMapActivity extends AppCompatActivity implements OnMapReadyCal
     public void showCorrespondingMarkers(String level) {
         myVeryOwnIterator = artifactDetailsMap.keySet().iterator();
         while (myVeryOwnIterator.hasNext()) {
-            key = myVeryOwnIterator.next();
+            String key = myVeryOwnIterator.next();
             if (key.contains(level) && markerHashMap.get(key) != null) {
+
                 markerHashMap.get(key).setVisible(true);
+                GlideApp.with(getApplicationContext())
+                        .asBitmap()
+                        .placeholder(R.drawable.default_map_marker)
+                        .centerCrop()
+                        .load(artifactDetailsMap.get(key).getThumbImage())
+                        .into(new SimpleTarget<Bitmap>() {
+                            @Override
+                            public void onResourceReady(@NonNull Bitmap resource,
+                                                        @Nullable Transition<? super Bitmap> transition) {
+                                markerHashMap.get(key).setIcon(BitmapDescriptorFactory.fromBitmap(resizeMapIcons(resource)));
+                            }
+                        });
+
             }
         }
     }
@@ -1284,17 +1275,10 @@ public class FloorMapActivity extends AppCompatActivity implements OnMapReadyCal
     }
 
     public void markerClick(Marker marker) {
-        if (timer != null) {
-            timer.cancel();
-            timerTask.cancel();
-        }
         if (artifactPosition != null) {
             googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(marker.getPosition(), 21));
             artifactPosition = null;
         }
-        timer = new Timer();
-        timerTask = new CustomTimerTask(this, marker);
-        timer.scheduleAtFixedRate(timerTask, 10, 2000);
         artifactDetails = artifactDetailsMap.get(marker.getSnippet());
         if (artifactDetails != null) {
             noDataTxt.setVisibility(View.GONE);
@@ -1357,76 +1341,11 @@ public class FloorMapActivity extends AppCompatActivity implements OnMapReadyCal
             popupLongLayout.setVisibility(View.GONE);
         }
 
-        String temp = marker.getTitle();
-        switch (temp) {
-            case "SI.5":
-                name = "si_5";
-                break;
-            case "MW.634":
-                name = "mw_634";
-                break;
-            case "MW.56":
-                name = "mw_56";
-                break;
-            case "MW.548":
-                name = "mw_548";
-                break;
-            case "MS.523":
-                name = "ms_523";
-                break;
-            case "MS.709.2010-1":
-                name = "ms_709_2010_1";
-                break;
-            case "MS.709.2010-2":
-                name = "ms_709_2010_2";
-                break;
-            case "MW.361.2007":
-                name = "mw_361_2007";
-                break;
-
-            case "MS.650":
-                name = "ms_650";
-                break;
-            case "MS.688":
-                name = "ms_688";
-                break;
-            case "MW.146":
-                name = "mw_146";
-                break;
-            case "MW.340":
-                name = "mw_340";
-                break;
-            case "MS.794":
-                name = "ms_794";
-                break;
-            case "MS.647.A.59":
-                name = "ms_647_a_59";
-                break;
-            case "HS.32":
-                name = "hs_32";
-                break;
-            case "GL.322":
-                name = "gl_322";
-                break;
-            case "IV.61":
-                name = "iv_61";
-                break;
-            case "PO.297":
-                name = "po_297";
-                break;
-            case "PO.308":
-                name = "po_308";
-                break;
-            default:
-                name = "default_map_marker";
-                break;
-        }
         googleMap.animateCamera(CameraUpdateFactory.newLatLng(marker.getPosition()));
         if (noDataTxt.getVisibility() != View.VISIBLE) {
             if (snackbar != null && snackbar.isShown())
                 snackbar.dismiss();
             selectedMarker = marker;
-            selectedMarker.setIcon(BitmapDescriptorFactory.fromBitmap(resizeMapIcons(name, largeMapIconWidth, largeMapIconHeight)));
             mBottomSheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
         } else if (utils.isNetworkAvailable(this)) {
             snackbar = Snackbar.make(floormapLayout, R.string.coming_soon_txt, Snackbar.LENGTH_SHORT);
@@ -1468,15 +1387,10 @@ public class FloorMapActivity extends AppCompatActivity implements OnMapReadyCal
 
     @Override
     public void onBackPressed() {
-        if (timer != null) {
-            timer.cancel();
-            timerTask.cancel();
-        }
         stopAudio();
         if (mBottomSheetBehavior.getState() != BottomSheetBehavior.STATE_HIDDEN) {
             showAudioControllerGroundFloor();
             mBottomSheetBehavior.setState(BottomSheetBehavior.STATE_HIDDEN);
-            selectedMarker.setIcon(BitmapDescriptorFactory.fromBitmap(resizeMapIcons(name, normalMapIconWidth, normalMapIconHeight)));
             selectedMarker = null;
         } else
             super.onBackPressed();
@@ -1486,6 +1400,13 @@ public class FloorMapActivity extends AppCompatActivity implements OnMapReadyCal
     public Bitmap resizeMapIcons(String iconName, int width, int height) {
         Bitmap imageBitmap = BitmapFactory.decodeResource(getResources(), getResources().getIdentifier(iconName, "drawable", getPackageName()));
         Bitmap resizedBitmap = Bitmap.createScaledBitmap(imageBitmap, width, height, false);
+        return resizedBitmap;
+    }
+
+    public Bitmap resizeMapIcons(Bitmap bitmap) {
+        int originalWidth = bitmap.getWidth();
+        int originalHeight = bitmap.getHeight();
+        Bitmap resizedBitmap = Bitmap.createScaledBitmap(bitmap, (originalWidth * 3), (originalHeight * 3), false);
         return resizedBitmap;
     }
 
@@ -1508,7 +1429,6 @@ public class FloorMapActivity extends AppCompatActivity implements OnMapReadyCal
 
                     if (!outRect.contains((int) event.getRawX(), (int) event.getRawY())) {
                         mBottomSheetBehavior.setState(BottomSheetBehavior.STATE_HIDDEN);
-                        selectedMarker.setIcon(BitmapDescriptorFactory.fromBitmap(resizeMapIcons(name, normalMapIconWidth, normalMapIconHeight)));
                         selectedMarker = null;
                         if (audioLayout.getChildCount() == 0)
                             showAudioControllerGroundFloor();
@@ -1518,10 +1438,6 @@ public class FloorMapActivity extends AppCompatActivity implements OnMapReadyCal
                 }
 
 
-            }
-            if (timer != null) {
-                timer.cancel();
-                timerTask.cancel();
             }
         }
 
@@ -1554,7 +1470,6 @@ public class FloorMapActivity extends AppCompatActivity implements OnMapReadyCal
             public void run() {
                 if (selectedMarker != null) {
                     if (mBottomSheetBehavior.getState() == BottomSheetBehavior.STATE_HIDDEN) {
-                        selectedMarker.setIcon(BitmapDescriptorFactory.fromBitmap(resizeMapIcons(name, normalMapIconWidth, normalMapIconHeight)));
                         selectedMarker.hideInfoWindow();
                         selectedMarker = null;
                     }
@@ -1663,7 +1578,8 @@ public class FloorMapActivity extends AppCompatActivity implements OnMapReadyCal
                                     artifactList.get(i).getTechniqueMaterials(),
                                     artifactList.get(i).getArtifactNumber(),
                                     artifactList.get(i).getDimensions(),
-                                    artifactList.get(i).getSortId());
+                                    artifactList.get(i).getSortId(),
+                                    artifactList.get(i).getThumbImage());
                             activityReference.get().qmDatabase.getArtifactTableDao().insertEnglishTable(artifactTableEnglish);
 
                         }
@@ -1699,7 +1615,8 @@ public class FloorMapActivity extends AppCompatActivity implements OnMapReadyCal
                                     artifactList.get(i).getTechniqueMaterials(),
                                     artifactList.get(i).getArtifactNumber(),
                                     artifactList.get(i).getDimensions(),
-                                    artifactList.get(i).getSortId());
+                                    artifactList.get(i).getSortId(),
+                                    artifactList.get(i).getThumbImage());
                             activityReference.get().qmDatabase.getArtifactTableDao().insertArabicTable(artifactTableArabic);
 
                         }
@@ -1752,7 +1669,8 @@ public class FloorMapActivity extends AppCompatActivity implements OnMapReadyCal
                                 artifactList.get(i).getTechniqueMaterials(),
                                 artifactList.get(i).getArtifactNumber(),
                                 artifactList.get(i).getDimensions(),
-                                artifactList.get(i).getSortId());
+                                artifactList.get(i).getSortId(),
+                                artifactList.get(i).getThumbImage());
                         activityReference.get().qmDatabase.getArtifactTableDao().insertEnglishTable(artifactTableEnglish);
                     }
                 } else {
@@ -1778,7 +1696,8 @@ public class FloorMapActivity extends AppCompatActivity implements OnMapReadyCal
                                 artifactList.get(i).getTechniqueMaterials(),
                                 artifactList.get(i).getArtifactNumber(),
                                 artifactList.get(i).getDimensions(),
-                                artifactList.get(i).getSortId());
+                                artifactList.get(i).getSortId(),
+                                artifactList.get(i).getThumbImage());
                         activityReference.get().qmDatabase.getArtifactTableDao().insertArabicTable(artifactTableArabic);
 
                     }
@@ -1831,7 +1750,8 @@ public class FloorMapActivity extends AppCompatActivity implements OnMapReadyCal
                         artifactList.get(position).getTechniqueMaterials(),
                         artifactList.get(position).getArtifactNumber(),
                         artifactList.get(position).getDimensions(),
-                        artifactList.get(position).getSortId()
+                        artifactList.get(position).getSortId(),
+                        artifactList.get(position).getThumbImage()
                 );
 
             } else {
@@ -1858,7 +1778,8 @@ public class FloorMapActivity extends AppCompatActivity implements OnMapReadyCal
                         artifactList.get(position).getTechniqueMaterials(),
                         artifactList.get(position).getArtifactNumber(),
                         artifactList.get(position).getDimensions(),
-                        artifactList.get(position).getSortId()
+                        artifactList.get(position).getSortId(),
+                        artifactList.get(position).getThumbImage()
                 );
             }
 
@@ -1913,7 +1834,8 @@ public class FloorMapActivity extends AppCompatActivity implements OnMapReadyCal
                             artifactDetailsList.get(i).getTechniqueMaterials(),
                             artifactDetailsList.get(i).getArtifactNumber(),
                             artifactDetailsList.get(i).getDimensions(),
-                            artifactDetailsList.get(i).getSortId());
+                            artifactDetailsList.get(i).getSortId(),
+                            artifactDetailsList.get(i).getThumbImage());
                     artifactList.add(i, artifactDetails);
                 }
                 addDatasToHashMap();
@@ -1974,7 +1896,8 @@ public class FloorMapActivity extends AppCompatActivity implements OnMapReadyCal
                             artifactDetailsList.get(i).getTechniqueMaterials(),
                             artifactDetailsList.get(i).getArtifactNumber(),
                             artifactDetailsList.get(i).getDimensions(),
-                            artifactDetailsList.get(i).getSortId());
+                            artifactDetailsList.get(i).getSortId(),
+                            artifactDetailsList.get(i).getThumbImage());
                     artifactList.add(i, artifactDetails);
                 }
                 addDatasToHashMap();

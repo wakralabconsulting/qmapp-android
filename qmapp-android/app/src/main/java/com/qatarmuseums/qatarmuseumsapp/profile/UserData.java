@@ -4,7 +4,7 @@ import com.google.gson.annotations.SerializedName;
 
 import java.util.List;
 
-public class UserData {
+public class UserData extends ProfileDetails{
     @SerializedName("uid")
     private String uId;
     @SerializedName("picture")
@@ -18,7 +18,7 @@ public class UserData {
     @SerializedName("mail")
     private String mail;
     @SerializedName("field_date_of_birth")
-    private Model dateOfBirth;
+    private Object dateOfBirth;
     @SerializedName("field_location")
     private Model country;
     @SerializedName("field_nationality")
@@ -72,11 +72,11 @@ public class UserData {
         this.mail = mail;
     }
 
-    public Model getDateOfBirth() {
+    public Object getDateOfBirth() {
         return dateOfBirth;
     }
 
-    public void setDateOfBirth(Model dateOfBirth) {
+    public void setDateOfBirth(Object dateOfBirth) {
         this.dateOfBirth = dateOfBirth;
     }
 
@@ -95,6 +95,8 @@ public class UserData {
     public void setNationality(Model nationality) {
         this.nationality = nationality;
     }
+
+
 
     public class Model {
         @SerializedName("und")
