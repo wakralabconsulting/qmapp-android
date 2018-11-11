@@ -18,7 +18,6 @@ import android.view.animation.AnimationUtils;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.bumptech.glide.request.RequestOptions;
@@ -38,7 +37,9 @@ import org.json.JSONObject;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 
 import okhttp3.OkHttpClient;
 import okhttp3.logging.HttpLoggingInterceptor;
@@ -60,7 +61,7 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
     private String token, username, membershipNumber, email, dateOfBirth, residence, nationality,
             imageURL, rsvpAttendance, acceptStatus;
     private SharedPreferences.Editor editor;
-    private ProgressBar logoutProgress;
+    private LinearLayout progressBar;
     private int appLanguage;
     String language;
     private Retrofit retrofit;
@@ -69,7 +70,9 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
     private LinearLayout rsvpLayout;
     private SwitchCompat acceptDeclineButton;
     Util util;
-    String accepted = "0";
+    String accepted;
+    private String uid;
+    private List<Und> unds = new ArrayList<>();
 
     @SuppressLint("ClickableViewAccessibility")
     @Override
@@ -89,7 +92,7 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
         profileEdit = findViewById(R.id.profile_edit);
         myFavBtn = findViewById(R.id.view_my_fav_btn);
         myCardBtn = findViewById(R.id.view_my_card_btn);
-        logoutProgress = findViewById(R.id.logout_progress);
+        progressBar = findViewById(R.id.logout_progress);
         rsvpLayout = findViewById(R.id.rsvp_layout);
         acceptDeclineButton = findViewById(R.id.accept_decline_button);
         util = new Util();
@@ -147,14 +150,18 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
         nationality = qmPreferences.getString("NATIONALITY", null);
         imageURL = qmPreferences.getString("IMAGE", null);
         rsvpAttendance = qmPreferences.getString("RSVP", null);
-        if (rsvpAttendance.equals("1")) {
-            showDialog();
+        uid = qmPreferences.getString("UID", null);
+        accepted = qmPreferences.getString("ACCEPTED", "0");
+        if (rsvpAttendance != null) {
             rsvpLayout.setVisibility(View.VISIBLE);
-        } else {
+        } else
             rsvpLayout.setVisibility(View.GONE);
-        }
-
-
+        if (accepted.equals("0"))
+            acceptDeclineButton.setChecked(true);
+        else
+            acceptDeclineButton.setChecked(false);
+        if (getIntent().getStringExtra("RSVP") != null)
+            showGreetingsDialog();
         if (imageURL != null && !imageURL.equals("") && !imageURL.equals("0")) {
             profilePic.setBackground(getDrawable(R.drawable.circular_bg));
             GlideApp.with(this)
@@ -217,10 +224,9 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
         acceptDeclineButton.setOnTouchListener(new View.OnTouchListener() {
             @Override
             public boolean onTouch(View v, MotionEvent event) {
-                if (accepted .equals("0")) {
+                if (accepted.equals("0")) {
                     accepted = "1";
-                    util.showCulturalPassAlertDialog(ProfileActivity.this);
-                    acceptDeclineButton.setChecked(false);
+                    invitationAction(accepted);
                 } else {
                     accepted = "0";
                     showDeclineDialog();
@@ -228,10 +234,15 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
                 return false;
             }
         });
+        progressBar.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
 
+            }
+        });
     }
 
-    protected void showDialog() {
+    protected void showGreetingsDialog() {
 
         final Dialog dialog = new Dialog(this, R.style.DialogNoAnimation);
         dialog.setCancelable(true);
@@ -254,11 +265,9 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
         acceptBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                //Do something
                 accepted = "1";
-                acceptDeclineButton.setChecked(false);
+                invitationAction(accepted);
                 dialog.dismiss();
-                util.showCulturalPassAlertDialog(ProfileActivity.this);
 
             }
         });
@@ -300,14 +309,13 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
                 //Do something
                 dialog.dismiss();
                 accepted = "0";
-                acceptDeclineButton.setChecked(true);
+                invitationAction(accepted);
             }
         });
         no.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 accepted = "1";
-                util.showCulturalPassAlertDialog(ProfileActivity.this);
                 acceptDeclineButton.setChecked(false);
                 dialog.dismiss();
             }
@@ -316,8 +324,61 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
         dialog.show();
     }
 
+    public void invitationAction(String value) {
+        progressBar.setVisibility(View.VISIBLE);
+        token = qmPreferences.getString("TOKEN", null);
+        HttpLoggingInterceptor interceptor = new HttpLoggingInterceptor();
+        interceptor.setLevel(HttpLoggingInterceptor.Level.BODY);
+
+        OkHttpClient client;
+        OkHttpClient.Builder builder = new OkHttpClient.Builder();
+
+        builder.addInterceptor(interceptor);
+        builder.addInterceptor(new AddCookiesInterceptor(this));
+        builder.addInterceptor(new ReceivedCookiesInterceptor(this));
+        client = builder.build();
+
+        retrofit = new Retrofit.Builder()
+                .baseUrl(APIClient.apiBaseUrlSecure)
+                .addConverterFactory(GsonConverterFactory.create())
+                .client(client)
+                .build();
+
+        APIInterface apiService = retrofit.create(APIInterface.class);
+        if (unds != null)
+            unds.clear();
+        unds.add(new Und(value));
+        Call<UserData> call = apiService.setRSVP(language, uid, token, new RsvpData(new Model(unds)));
+        call.enqueue(new Callback<UserData>() {
+            @Override
+            public void onResponse(Call<UserData> call, Response<UserData> response) {
+                if (response.isSuccessful()) {
+                    if (value.equals("0")) {
+                        acceptDeclineButton.setChecked(true);
+                    } else {
+                        acceptDeclineButton.setChecked(false);
+                        util.showCulturalPassAlertDialog(ProfileActivity.this);
+                    }
+                    editor = qmPreferences.edit();
+                    editor.putString("ACCEPTED", value);
+                    editor.commit();
+                } else {
+                    new Util().showToast(getResources().getString(R.string.error_unexpected),
+                            ProfileActivity.this);
+                }
+                progressBar.setVisibility(View.GONE);
+            }
+
+            @Override
+            public void onFailure(Call<UserData> call, Throwable t) {
+                new Util().showToast(getResources().getString(R.string.check_network), ProfileActivity.this);
+                progressBar.setVisibility(View.GONE);
+            }
+        });
+    }
+
     public void logOutAction() {
-        logoutProgress.setVisibility(View.VISIBLE);
+        progressBar.setVisibility(View.VISIBLE);
         token = qmPreferences.getString("TOKEN", null);
         HttpLoggingInterceptor interceptor = new HttpLoggingInterceptor();
         interceptor.setLevel(HttpLoggingInterceptor.Level.BODY);
@@ -347,13 +408,13 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
                     new Util().showToast(getResources().getString(R.string.error_logout),
                             ProfileActivity.this);
                 }
-                logoutProgress.setVisibility(View.GONE);
+                progressBar.setVisibility(View.GONE);
             }
 
             @Override
             public void onFailure(Call<UserData> call, Throwable t) {
                 new Util().showToast(getResources().getString(R.string.check_network), ProfileActivity.this);
-                logoutProgress.setVisibility(View.GONE);
+                progressBar.setVisibility(View.GONE);
             }
         });
     }
@@ -369,6 +430,8 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
         editor.putString("NATIONALITY", null);
         editor.putString("IMAGE", null);
         editor.putString("NAME", null);
+        editor.putString("RSVP", null);
+        editor.putString("ACCEPTED", "0");
         editor.commit();
         Intent navigationIntent = new Intent(this, CulturePassActivity.class);
         navigationIntent.putExtra("IS_LOGOUT", true);
