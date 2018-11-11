@@ -123,15 +123,10 @@ public class TourGuideActivity extends AppCompatActivity {
                     }
                 }));
 
-        backButton.setOnTouchListener(new View.OnTouchListener() {
+        backButton.setOnClickListener(new View.OnClickListener() {
             @Override
-            public boolean onTouch(View v, MotionEvent event) {
-                switch (event.getAction()) {
-                    case MotionEvent.ACTION_DOWN:
-                        backButton.startAnimation(zoomOutAnimation);
-                        break;
-                }
-                return false;
+            public void onClick(View v) {
+                onBackPressed();
             }
         });
         zoomOutAnimation = AnimationUtils.loadAnimation(getApplicationContext(),
