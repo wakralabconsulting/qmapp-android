@@ -32,16 +32,16 @@
                     android:layout_width="wrap_content"
                     android:layout_height="match_parent"
                     android:layout_centerVertical="true"
-                    android:paddingStart="20dp"
                     android:paddingEnd="20dp"
+                    android:paddingStart="20dp"
                     android:src="@drawable/back_button" />
 
                 <TextView
                     android:id="@+id/toolbar_title"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:layout_marginStart="50dp"
                     android:layout_marginEnd="50dp"
+                    android:layout_marginStart="50dp"
                     android:fontFamily="@font/din_next_lt_pro_regular"
                     android:gravity="center"
                     android:text="@string/profile"
@@ -56,8 +56,8 @@
                     android:layout_height="match_parent"
                     android:layout_alignParentEnd="true"
                     android:layout_centerVertical="true"
-                    android:paddingStart="20dp"
                     android:paddingEnd="20dp"
+                    android:paddingStart="20dp"
                     android:src="@drawable/logout" />
 
             </RelativeLayout>
@@ -79,8 +79,8 @@
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/padding_40"
                 android:layout_marginBottom="@dimen/padding_40"
+                android:layout_marginTop="@dimen/padding_40"
                 android:gravity="center"
                 android:orientation="vertical">
 
@@ -91,8 +91,8 @@
                     <LinearLayout
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:paddingStart="@dimen/padding_5"
-                        android:paddingEnd="@dimen/padding_5">
+                        android:paddingEnd="@dimen/padding_5"
+                        android:paddingStart="@dimen/padding_5">
 
                         <ImageView
                             android:id="@+id/profile_pic"
@@ -135,15 +135,15 @@
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="@dimen/pading_30"
                 android:layout_marginEnd="@dimen/pading_30"
+                android:layout_marginStart="@dimen/pading_30"
                 android:orientation="vertical">
 
                 <RelativeLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:paddingTop="@dimen/pading_15"
-                    android:paddingBottom="@dimen/pading_15">
+                    android:paddingBottom="@dimen/pading_15"
+                    android:paddingTop="@dimen/pading_15">
 
                     <TextView
                         android:layout_width="wrap_content"
@@ -172,8 +172,8 @@
                 <RelativeLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:paddingTop="@dimen/pading_15"
-                    android:paddingBottom="@dimen/pading_15">
+                    android:paddingBottom="@dimen/pading_15"
+                    android:paddingTop="@dimen/pading_15">
 
                     <TextView
                         android:layout_width="wrap_content"
@@ -202,8 +202,8 @@
                 <RelativeLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:paddingTop="@dimen/pading_15"
-                    android:paddingBottom="@dimen/pading_15">
+                    android:paddingBottom="@dimen/pading_15"
+                    android:paddingTop="@dimen/pading_15">
 
                     <TextView
                         android:layout_width="wrap_content"
@@ -232,8 +232,8 @@
                 <RelativeLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:paddingTop="@dimen/pading_15"
-                    android:paddingBottom="@dimen/pading_15">
+                    android:paddingBottom="@dimen/pading_15"
+                    android:paddingTop="@dimen/pading_15">
 
                     <TextView
                         android:layout_width="wrap_content"
@@ -262,8 +262,8 @@
                 <RelativeLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:paddingTop="@dimen/pading_15"
-                    android:paddingBottom="@dimen/pading_15">
+                    android:paddingBottom="@dimen/pading_15"
+                    android:paddingTop="@dimen/pading_15">
 
                     <TextView
                         android:layout_width="wrap_content"
@@ -298,9 +298,9 @@
                     android:id="@+id/view_my_fav_btn"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginStart="@dimen/padding_30"
-                    android:layout_marginEnd="@dimen/padding_30"
                     android:layout_marginBottom="@dimen/pading_20"
+                    android:layout_marginEnd="@dimen/padding_30"
+                    android:layout_marginStart="@dimen/padding_30"
                     android:background="@drawable/round_corner_black"
                     android:fontFamily="@font/din_next_lt_pro_bold"
                     android:text="@string/view_my_favourites"
@@ -311,9 +311,9 @@
                     android:id="@+id/view_my_card_btn"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginStart="@dimen/padding_30"
-                    android:layout_marginEnd="@dimen/padding_30"
                     android:layout_marginBottom="@dimen/margin_50"
+                    android:layout_marginEnd="@dimen/padding_30"
+                    android:layout_marginStart="@dimen/padding_30"
                     android:background="@drawable/round_corner_black"
                     android:fontFamily="@font/din_next_lt_pro_bold"
                     android:text="@string/view_my_culture_pass_card"
@@ -328,7 +328,7 @@
                 android:layout_marginBottom="@dimen/padding_30"
                 android:gravity="center"
                 android:orientation="vertical"
-                android:visibility="gone">
+                android:visibility="visible">
 
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -373,6 +373,7 @@
                         android:id="@+id/accept_decline_button"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
+                        android:checked="true"
                         android:clickable="false"
                         android:textAppearance="?android:attr/textAppearanceMedium" />
 
@@ -393,12 +394,17 @@
         </LinearLayout>
     </ScrollView>
 
-    <ProgressBar
+    <LinearLayout
         android:id="@+id/logout_progress"
-        style="?android:attr/progressBarStyleLarge"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_centerInParent="true"
-        android:visibility="gone" />
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:gravity="center"
+        android:visibility="gone">
 
+        <ProgressBar
+            style="?android:attr/progressBarStyleLarge"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true" />
+    </LinearLayout>
 </RelativeLayout>
