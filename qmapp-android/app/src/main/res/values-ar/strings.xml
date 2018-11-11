@@ -249,6 +249,8 @@
     <string name="decline_content">تأكيد عدم الحضور</string>
     <string name="profile_link"><u>دعوة لحضور افتتاح متحف قطر الوطني</u></string>
     <string name="artifact_invalid">Invalid Artifact Number</string>
+    <string name="yes">Yes</string>
+    <string name="no">No</string>
     <!-- Strings related to Culture pass card -->
     <string name="flip_button_txt">اضغط لعرض الجهة الأخرى</string>
 </resources>

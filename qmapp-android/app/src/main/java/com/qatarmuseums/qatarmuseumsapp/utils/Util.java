@@ -89,6 +89,15 @@ public class Util {
 
     }
 
+    public void showCulturalPassAlertDialog(Activity activity) {
+        customDialog = new CustomDialogClass(activity
+                , "p"
+                , activity.getResources().getString(R.string.thankyou));
+        customDialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+        customDialog.show();
+
+    }
+
     public void showLocationAlertDialog(Activity activity) {
         customDialog = new CustomDialogClass(activity
                 , activity.getResources().getString(R.string.location_alert_txt)

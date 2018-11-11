@@ -35,9 +35,9 @@ import com.google.gson.internal.LinkedTreeMap;
 import com.qatarmuseums.qatarmuseumsapp.R;
 import com.qatarmuseums.qatarmuseumsapp.apicall.APIClient;
 import com.qatarmuseums.qatarmuseumsapp.apicall.APIInterface;
-import com.qatarmuseums.qatarmuseumsapp.apicall.UserResponseDeserializer;
 import com.qatarmuseums.qatarmuseumsapp.profile.ProfileActivity;
 import com.qatarmuseums.qatarmuseumsapp.profile.ProfileDetails;
+import com.qatarmuseums.qatarmuseumsapp.profile.UserData;
 import com.qatarmuseums.qatarmuseumsapp.utils.Util;
 import com.qatarmuseums.qatarmuseumsapp.webview.WebviewActivity;
 
@@ -79,6 +79,7 @@ public class CulturePassActivity extends AppCompatActivity {
     private String token;
     private LoginData loginData;
     private Retrofit retrofit;
+    private String RSVP = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -209,16 +210,13 @@ public class CulturePassActivity extends AppCompatActivity {
     public void performLogin(String token) {
         HttpLoggingInterceptor interceptor = new HttpLoggingInterceptor();
         interceptor.setLevel(HttpLoggingInterceptor.Level.BODY);
-
         OkHttpClient client;
         OkHttpClient.Builder builder = new OkHttpClient.Builder();
-
         builder.addInterceptor(interceptor);
         builder.addInterceptor(new AddCookiesInterceptor(this));
         builder.addInterceptor(new ReceivedCookiesInterceptor(this));
         client = builder.build();
         Gson userDeserializer = new GsonBuilder().setLenient().registerTypeAdapter(ProfileDetails.class, new UserResponseDeserializer()).create();
-
         retrofit = new Retrofit.Builder()
                 .baseUrl(APIClient.apiBaseUrlSecure)
                 .addConverterFactory(GsonConverterFactory.create(userDeserializer))
@@ -234,8 +232,10 @@ public class CulturePassActivity extends AppCompatActivity {
                 if (response.isSuccessful()) {
                     if (response.body() != null) {
                         profileDetails = response.body();
+                        checkRSVP(profileDetails.getUser().getuId(), profileDetails.getToken());
                         editor = qmPreferences.edit();
                         editor.putString("TOKEN", profileDetails.getToken());
+                        editor.putString("UID", profileDetails.getUser().getuId());
                         editor.putString("MEMBERSHIP_NUMBER", "00" + (Integer.parseInt(profileDetails.getUser().getuId()) + 6000));
                         editor.putString("EMAIL", profileDetails.getUser().getMail());
                         if (!(response.body().getUser().getDateOfBirth() instanceof ArrayList))
@@ -247,7 +247,6 @@ public class CulturePassActivity extends AppCompatActivity {
                         editor.putString("NAME", profileDetails.getUser().getFirstName().getUnd().get(0).getValue() +
                                 " " + profileDetails.getUser().getLastName().getUnd().get(0).getValue());
                         editor.commit();
-                        navigateToProfile();
                     }
                 } else {
                     if (response.code() == 401)
@@ -256,9 +255,7 @@ public class CulturePassActivity extends AppCompatActivity {
                         mPasswordViewLayout.setError(getString(R.string.error_already_logged_in));
                     else
                         mPasswordViewLayout.setError(getString(R.string.error_unexpected));
-
                 }
-                showProgress(false);
             }
 
             @Override
@@ -270,6 +267,51 @@ public class CulturePassActivity extends AppCompatActivity {
             }
         });
 
+    }
+
+    public void checkRSVP(String uid, String token) {
+        HttpLoggingInterceptor interceptor = new HttpLoggingInterceptor();
+        interceptor.setLevel(HttpLoggingInterceptor.Level.BODY);
+
+        OkHttpClient client;
+        OkHttpClient.Builder builder = new OkHttpClient.Builder();
+
+        builder.addInterceptor(interceptor);
+        builder.addInterceptor(new AddCookiesInterceptor(this));
+        client = builder.build();
+
+        retrofit = new Retrofit.Builder()
+                .baseUrl(APIClient.apiBaseUrlSecure)
+                .addConverterFactory(GsonConverterFactory.create())
+                .client(client)
+                .build();
+
+        APIInterface apiService = retrofit.create(APIInterface.class);
+        Call<UserData> call = apiService.getRSVP(language, uid, token);
+        call.enqueue(new Callback<UserData>() {
+            @Override
+            public void onResponse(Call<UserData> call, Response<UserData> response) {
+                if (response.isSuccessful()) {
+                    if (response.body() != null) {
+                        if (response.body().getRsvpAttendance() != null) {
+                            RSVP = ((LinkedTreeMap) ((ArrayList) ((LinkedTreeMap)
+                                    response.body().getRsvpAttendance()).get("und")).get(0)).get("value").toString();
+                            editor = qmPreferences.edit();
+                            editor.putString("RSVP", RSVP);
+                            editor.commit();
+                        }
+                    }
+                    navigateToProfile(RSVP);
+                }
+                showProgress(false);
+            }
+
+            @Override
+            public void onFailure(Call<UserData> call, Throwable t) {
+                new Util().showToast(getResources().getString(R.string.check_network), CulturePassActivity.this);
+                showProgress(false);
+            }
+        });
     }
 
     protected void showLoginDialog() {
@@ -524,9 +566,10 @@ public class CulturePassActivity extends AppCompatActivity {
 
     }
 
-    public void navigateToProfile() {
+    public void navigateToProfile(String RSVP) {
         loginDialog.dismiss();
         navigationIntent = new Intent(CulturePassActivity.this, ProfileActivity.class);
+        navigationIntent.putExtra("RSVP", RSVP);
         startActivityForResult(navigationIntent, REQUEST_CODE);
         finish();
     }
