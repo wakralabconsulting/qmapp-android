@@ -79,7 +79,8 @@ public class WebviewActivity extends AppCompatActivity {
 
             @Override
             public boolean shouldOverrideUrlLoading(WebView view, WebResourceRequest request) {
-                if (Uri.parse(url).getHost().equals("www.qm.org.qa")) {
+                if (Uri.parse(url).getHost().equals("www.qm.org.qa")||
+                        Uri.parse(url).getHost().equals("inq-online.com")) {
                     return false;
                 } else {
                     webView.loadUrl(url);

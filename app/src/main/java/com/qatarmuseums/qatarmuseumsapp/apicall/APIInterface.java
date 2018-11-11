@@ -14,6 +14,7 @@ import com.qatarmuseums.qatarmuseumsapp.museumabout.MuseumAboutModel;
 import com.qatarmuseums.qatarmuseumsapp.museumcollectiondetails.CollectionDetailsList;
 import com.qatarmuseums.qatarmuseumsapp.park.ParkList;
 import com.qatarmuseums.qatarmuseumsapp.profile.ProfileDetails;
+import com.qatarmuseums.qatarmuseumsapp.profile.RsvpData;
 import com.qatarmuseums.qatarmuseumsapp.profile.UserData;
 import com.qatarmuseums.qatarmuseumsapp.publicart.PublicArtModel;
 import com.qatarmuseums.qatarmuseumsapp.tourguidestartpage.SelfGuideStarterModel;
@@ -25,6 +26,7 @@ import retrofit2.http.Body;
 import retrofit2.http.GET;
 import retrofit2.http.Header;
 import retrofit2.http.POST;
+import retrofit2.http.PUT;
 import retrofit2.http.Path;
 import retrofit2.http.Query;
 
@@ -124,5 +126,13 @@ public interface APIInterface {
     @POST("{language}/mobile_api/user/request_new_password.json")
     Call<ArrayList<String>> forgotPassword(@Path("language") String language,
                                            @Header("X-CSRF-Token") String token, @Body LoginData loginData);
+
+    @GET("{language}/mobile_api/user/{uid}.json")
+    Call<UserData> getRSVP(@Path("language") String language, @Path("uid") String uid,
+                           @Header("X-CSRF-Token") String token);
+
+    @PUT("{language}/mobile_api/user/{uid}.json")
+    Call<UserData> setRSVP(@Path("language") String language, @Path("uid") String uid,
+                           @Header("X-CSRF-Token") String token, @Body RsvpData rsvpData);
 
 }

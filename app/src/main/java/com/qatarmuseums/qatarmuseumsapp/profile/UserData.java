@@ -2,9 +2,7 @@ package com.qatarmuseums.qatarmuseumsapp.profile;
 
 import com.google.gson.annotations.SerializedName;
 
-import java.util.List;
-
-public class UserData extends ProfileDetails{
+public class UserData extends ProfileDetails {
     @SerializedName("uid")
     private String uId;
     @SerializedName("picture")
@@ -23,6 +21,9 @@ public class UserData extends ProfileDetails{
     private Model country;
     @SerializedName("field_nationality")
     private Model nationality;
+    @SerializedName("field_rsvp_attendance")
+    private Object rsvpAttendance;
+
 
     public String getuId() {
         return uId;
@@ -96,31 +97,13 @@ public class UserData extends ProfileDetails{
         this.nationality = nationality;
     }
 
-
-
-    public class Model {
-        @SerializedName("und")
-        private List<Und> und;
-
-        public List<Und> getUnd() {
-            return und;
-        }
-
-        public void setUnd(List<Und> und) {
-            this.und = und;
-        }
+    public Object getRsvpAttendance() {
+        return rsvpAttendance;
     }
 
-    public class Und {
-        @SerializedName(value = "value", alternate = {"iso2"})
-        private String value;
-
-        public String getValue() {
-            return value;
-        }
-
-        public void setValue(String value) {
-            this.value = value;
-        }
+    public void setRsvpAttendance(Object rsvpAttendance) {
+        this.rsvpAttendance = rsvpAttendance;
     }
+
+
 }

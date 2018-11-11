@@ -241,6 +241,8 @@ They exemplify the external influences and internal creativity that inspired thi
     <string name="decline_content">Are you sure you want to\ndecline the Invitation?</string>
     <string name="profile_link"><u>Invitation for National Museum\nof Qatar Launch Event</u></string>
     <string name="artifact_invalid">Invalid Artifact Number</string>
+    <string name="yes">Yes</string>
+    <string name="no">No</string>
     <!-- Strings related to Culture pass card -->
     <string name="flip_button_txt">TAP TO FLIP</string>
 </resources>
