@@ -245,4 +245,8 @@ They exemplify the external influences and internal creativity that inspired thi
     <string name="no">No</string>
     <!-- Strings related to Culture pass card -->
     <string name="flip_button_txt">TAP TO FLIP</string>
+    <!-- Strings related to Object preview -->
+    <string name="gallery_label">, Gallery </string>
+    <string name="floor_label">Floor </string>
+
 </resources>

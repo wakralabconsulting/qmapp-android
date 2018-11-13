@@ -253,4 +253,7 @@
     <string name="no">No</string>
     <!-- Strings related to Culture pass card -->
     <string name="flip_button_txt">اضغط لعرض الجهة الأخرى</string>
+    <!-- Strings related to Object preview -->
+    <string name="gallery_label">, Gallery </string>
+    <string name="floor_label">Floor </string>
 </resources>
