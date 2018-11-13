@@ -1,43 +1,30 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/object_preview_bg"
-    android:gravity="center"
     android:orientation="vertical"
     android:paddingEnd="@dimen/padding_10"
     android:paddingStart="@dimen/padding_10"
     android:weightSum="6">
 
     <LinearLayout
+        android:id="@+id/header_layout"
         android:layout_width="match_parent"
-        android:layout_height="0dp"
+        android:layout_height="match_parent"
         android:layout_gravity="center"
-        android:layout_weight="1"
         android:gravity="center"
         android:orientation="vertical">
 
-        <TextView
-            android:id="@+id/main_title"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/text_margin"
-            android:fontFamily="@font/din_next_lt_pro_bold"
-            android:text="@string/alberallo"
-            android:textColor="@color/black"
-            android:textSize="@dimen/font_size_18" />
 
         <TextView
-            android:id="@+id/acession_number"
+            android:id="@+id/floor_gallery"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/padding_3"
+            android:layout_marginTop="@dimen/font_size_16"
             android:fontFamily="@font/din_next_lt_pro_regular"
-            android:text="PO.297"
             android:textColor="@color/black"
             android:textSize="@dimen/font_size_18" />
-
 
         <LinearLayout
             android:layout_width="25dp"
@@ -46,217 +33,198 @@
             android:layout_marginTop="@dimen/padding_10"
             android:background="@color/black" />
 
-
-    </LinearLayout>
-
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="2.5"
-        android:background="@drawable/round_corner_object_preview"
-        android:orientation="vertical">
-
-        <ImageView
-            android:id="@+id/main_image"
+        <ScrollView
+            android:id="@+id/details_popup_long"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:padding="@dimen/padding_20"
-            android:src="@drawable/science_tour_object2" />
-
-    </LinearLayout>
-
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="2.5"
-        android:background="@color/object_preview_data_bg"
-        android:orientation="vertical">
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:background="@color/white"
+            android:gravity="center"
             android:orientation="vertical"
-            android:padding="@dimen/padding_10">
+            app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
             <LinearLayout
-                android:id="@+id/layout1"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal">
+                android:gravity="center"
+                android:orientation="vertical">
 
-                <TextView
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:text="@string/production_text"
-                    android:textColor="@color/black"
-                    android:textSize="@dimen/font_size_14"
-                    android:textStyle="bold" />
 
-                <TextView
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:text="Syria(Damascus)"
-                    android:id="@+id/production_text"
-                    android:textColor="@color/black"
-                    android:textSize="@dimen/font_size_14"
-                    android:textStyle="normal" />
-
-            </LinearLayout>
-
-            <LinearLayout
-                android:id="@+id/layout2"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_below="@+id/layout1"
-                android:layout_marginTop="@dimen/padding_5"
-                android:orientation="horizontal">
-
-                <TextView
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:text="@string/production_dates"
-                    android:textColor="@color/black"
-                    android:textSize="@dimen/font_size_14"
-                    android:textStyle="bold" />
-
-                <TextView
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:id="@+id/production_date_text"
-                    android:text="1400 - 1425 CE"
-                    android:textColor="@color/black"
-                    android:textSize="@dimen/font_size_14"
-                    android:textStyle="normal" />
-
-            </LinearLayout>
-
-            <LinearLayout
-                android:id="@+id/layout3"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_below="@+id/layout2"
-                android:layout_marginTop="@dimen/padding_5"
-                android:orientation="horizontal">
-
-                <TextView
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:text="@string/period_style"
-                    android:textColor="@color/black"
-                    android:textSize="@dimen/font_size_14"
-                    android:textStyle="bold" />
-
-                <TextView
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:id="@+id/period_style"
-                    android:text="Mamluk"
-                    android:textColor="@color/black"
-                    android:textSize="@dimen/font_size_14"
-                    android:textStyle="normal" />
-
-            </LinearLayout>
-
-            <LinearLayout
-                android:id="@+id/layout4"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_below="@+id/layout2"
-                android:layout_marginTop="@dimen/padding_5"
-                android:orientation="horizontal">
-
-                <TextView
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:text="@string/technique_materials"
-                    android:textColor="@color/black"
-                    android:textSize="@dimen/font_size_14"
-                    android:textStyle="bold" />
-
-                <TextView
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:id="@+id/technique_material"
-                    android:text="Underglaze Painting: Fritware, Pigment, Glaze"
-                    android:textColor="@color/black"
-                    android:textSize="@dimen/font_size_14"
-                    android:textStyle="normal" />
-
-            </LinearLayout>
-
-            <LinearLayout
-                android:id="@+id/layout5"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_below="@+id/layout2"
-                android:layout_marginTop="@dimen/padding_5"
-                android:orientation="horizontal">
-
-                <TextView
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:text="@string/dimension"
-                    android:textColor="@color/black"
-                    android:textSize="@dimen/font_size_14"
-                    android:textStyle="bold" />
-
-                <TextView
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:id="@+id/dimension_text"
-                    android:text="Height:30 cm - Diam:17cm"
-                    android:textColor="@color/black"
-                    android:textSize="@dimen/font_size_14"
-                    android:textStyle="normal" />
-
-            </LinearLayout>
-
-            <RelativeLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/padding_3"
-                android:visibility="gone">
+                <ImageView
+                    android:id="@+id/image_to_zoom"
+                    android:layout_width="match_parent"
+                    android:layout_height="300dp"
+                    android:visibility="visible" />
 
                 <LinearLayout
-                    android:id="@+id/image_play"
-                    android:layout_width="wrap_content"
-                    android:layout_height="match_parent"
-                    android:layout_alignParentStart="true">
+                    android:id="@+id/audio_control"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:orientation="horizontal"
+                    android:paddingBottom="@dimen/padding_5"
+                    android:paddingEnd="@dimen/pading_25"
+                    android:paddingStart="@dimen/pading_25"
+                    android:paddingTop="@dimen/pading_10"
+                    android:visibility="gone">
 
                     <ImageView
+                        android:id="@+id/play_button"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:src="@drawable/play_white" />
-                </LinearLayout>
-
-                <LinearLayout
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_centerInParent="true"
-                    android:layout_centerVertical="true">
+                        android:gravity="center"
+                        android:src="@drawable/play_black" />
 
                     <SeekBar
+                        android:id="@+id/seek_bar"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
+                        android:gravity="center" />
 
-                        />
                 </LinearLayout>
 
+                <TextView
+                    android:id="@+id/title"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/padding_10"
+                    android:fontFamily="@font/din_next_lt_pro_bold"
+                    android:paddingEnd="@dimen/padding_25"
+                    android:paddingStart="@dimen/padding_25"
+                    android:textAlignment="textStart"
+                    android:textColor="@color/black"
+                    android:textSize="@dimen/font_size_18"
+                    android:textStyle="bold" />
 
-            </RelativeLayout>
+                <TextView
+                    android:id="@+id/acession_number"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/padding_3"
+                    android:fontFamily="@font/din_next_lt_pro_regular"
+                    android:paddingEnd="@dimen/padding_25"
+                    android:paddingStart="@dimen/padding_25"
+                    android:textColor="@color/black"
+                    android:textSize="@dimen/font_size_18" />
 
-        </LinearLayout>
+                <TextView
+                    android:id="@+id/short_description"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="@dimen/padding_10"
+                    android:layout_marginTop="@dimen/padding_10"
+                    android:fontFamily="@font/din_next_lt_pro_regular"
+                    android:paddingEnd="@dimen/padding_25"
+                    android:paddingStart="@dimen/padding_25"
+                    android:textAlignment="textStart"
+                    android:textColor="@color/black"
+                    android:textSize="@dimen/font_size_15" />
 
+                <ImageView
+                    android:id="@+id/image_1"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="@dimen/padding_10"
+                    android:paddingEnd="@dimen/padding_25"
+                    android:paddingStart="@dimen/padding_25"
+                    android:scaleType="fitCenter"
+                    android:src="@drawable/science_tour_object2"
+                    android:visibility="gone" />
+
+                <ImageView
+                    android:id="@+id/image_2"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="@dimen/padding_10"
+                    android:paddingEnd="@dimen/padding_25"
+                    android:paddingStart="@dimen/padding_25"
+                    android:scaleType="fitCenter"
+                    android:src="@drawable/science_tour_object2"
+                    android:visibility="gone" />
+
+                <ImageView
+                    android:id="@+id/image_3"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="@dimen/padding_10"
+                    android:paddingEnd="@dimen/padding_25"
+                    android:paddingStart="@dimen/padding_25"
+                    android:scaleType="fitCenter"
+                    android:src="@drawable/science_tour_object2"
+                    android:visibility="gone" />
+
+                <TextView
+                    android:id="@+id/image_desc1"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:fontFamily="@font/din_regular"
+                    android:paddingEnd="@dimen/padding_25"
+                    android:paddingStart="@dimen/padding_25"
+                    android:text="@string/floormap_imagdesc1"
+                    android:textAlignment="textStart"
+                    android:textColor="@color/black"
+                    android:textSize="@dimen/font_size_16"
+                    android:visibility="gone" />
+
+                <TextView
+                    android:id="@+id/history_title"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/padding_10"
+                    android:fontFamily="@font/din_regular"
+                    android:paddingEnd="@dimen/padding_25"
+                    android:paddingStart="@dimen/padding_25"
+                    android:text="@string/object_history"
+                    android:textAlignment="textStart"
+                    android:textColor="@color/black"
+                    android:textSize="@dimen/font_size_18"
+                    android:textStyle="bold"
+                    android:visibility="gone" />
+
+                <TextView
+                    android:id="@+id/history_description"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/padding_10"
+                    android:fontFamily="@font/din_next_lt_pro_regular"
+                    android:paddingEnd="@dimen/padding_25"
+                    android:paddingStart="@dimen/padding_25"
+                    android:text="@string/floormap_detail2"
+                    android:textAlignment="textStart"
+                    android:textColor="@color/black"
+                    android:textSize="@dimen/font_size_15"
+                    android:visibility="gone" />
+
+                <ImageView
+                    android:id="@+id/image_4"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="@dimen/padding_3"
+                    android:paddingEnd="@dimen/padding_25"
+                    android:paddingStart="@dimen/padding_25"
+                    android:paddingTop="@dimen/pading_10"
+                    android:scaleType="fitCenter"
+                    android:src="@drawable/science_tour_object2"
+                    android:visibility="gone" />
+
+                <TextView
+                    android:id="@+id/image_desc2"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="@dimen/padding_20"
+                    android:fontFamily="@font/din_regular"
+                    android:paddingEnd="@dimen/padding_25"
+                    android:paddingStart="@dimen/padding_25"
+                    android:text="@string/floormap_imagdesc2"
+                    android:textAlignment="textStart"
+                    android:textColor="@color/black"
+                    android:textSize="@dimen/font_size_16"
+                    android:visibility="gone" />
+
+
+            </LinearLayout>
+
+
+        </ScrollView>
 
     </LinearLayout>
 
