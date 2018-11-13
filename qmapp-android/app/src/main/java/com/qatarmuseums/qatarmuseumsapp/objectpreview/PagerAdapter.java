@@ -28,12 +28,15 @@ class PagerAdapter extends FragmentPagerAdapter {
     @Override
     public Fragment getItem(int position) {
         return pageFragment.newInstance(position, position == getCount(),
-                objectPreviewModels.get(position).getMainTitle(), objectPreviewModels.get(position).getAccessionNumber(),
-                objectPreviewModels.get(position).getImage(), objectPreviewModels.get(position).getProduction(),
-                objectPreviewModels.get(position).getProductionDates(), objectPreviewModels.get(position).getPeriodStyle(),
-                objectPreviewModels.get(position).getTechniqueMaterials(), objectPreviewModels.get(position).getDimensions(),
-                objectPreviewModels.get(position).getCuratorialDescription(), objectPreviewModels.get(position).getObjectHistory(),
-                objectPreviewModels.get(position).getObjectENGSummary(), objectPreviewModels.get(position).getImages(),
+                objectPreviewModels.get(position).getGalleryNumber(),
+                objectPreviewModels.get(position).getFloorLevel(),
+                objectPreviewModels.get(position).getImage(),
+                objectPreviewModels.get(position).getMainTitle(),
+                objectPreviewModels.get(position).getAccessionNumber(),
+                objectPreviewModels.get(position).getCuratorialDescription(),
+                objectPreviewModels.get(position).getObjectHistory(),
+                objectPreviewModels.get(position).getObjectENGSummary(),
+                objectPreviewModels.get(position).getImages(),
                 objectPreviewModels.get(position).getAudioFile());
     }
 
