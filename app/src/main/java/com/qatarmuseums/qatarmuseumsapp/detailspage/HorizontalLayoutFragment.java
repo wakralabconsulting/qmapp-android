@@ -17,7 +17,8 @@ import java.util.ArrayList;
 
 
 public class HorizontalLayoutFragment extends Fragment {
-    ArrayList<String> images= new ArrayList<>();
+    ArrayList<String> images = new ArrayList<>();
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -28,7 +29,7 @@ public class HorizontalLayoutFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
 
-        images=getArguments().getStringArrayList("imageList");
+        images = getArguments().getStringArrayList("imageList");
         // Inflate the layout for this fragment
         return inflater.inflate(R.layout.fragment_horizontal_layout, container, false);
     }
@@ -40,12 +41,15 @@ public class HorizontalLayoutFragment extends Fragment {
         FrameLayout frameLayout = (FrameLayout) view.findViewById(R.id.layout_frame);
         final HorizontalInfiniteCycleViewPager horizontalInfiniteCycleViewPager =
                 (HorizontalInfiniteCycleViewPager) view.findViewById(R.id.hicvp);
-        horizontalInfiniteCycleViewPager.setAdapter(new HorizontalPagerAdapter(getContext(), HorizontalLayoutFragment.this,images));
+        horizontalInfiniteCycleViewPager.setAdapter(new HorizontalPagerAdapter(getContext(), HorizontalLayoutFragment.this, images));
     }
 
     public void getItemPosition(int value) {
         int pos = value;
-        ((DetailsActivity) getActivity()).imageValue(pos);
+        if (getActivity() instanceof DetailsActivity)
+            ((DetailsActivity) getActivity()).imageValue(pos);
+        else
+            ((DiningActivity) getActivity()).imageValue(pos);
     }
 
     @Override

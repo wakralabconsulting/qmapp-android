@@ -45,6 +45,7 @@ import com.qatarmuseums.qatarmuseumsapp.commonpagedatabase.PublicArtsTableArabic
 import com.qatarmuseums.qatarmuseumsapp.commonpagedatabase.PublicArtsTableEnglish;
 import com.qatarmuseums.qatarmuseumsapp.heritage.HeritageOrExhibitionDetailModel;
 import com.qatarmuseums.qatarmuseumsapp.home.GlideApp;
+import com.qatarmuseums.qatarmuseumsapp.museum.GlideLoaderForMuseum;
 import com.qatarmuseums.qatarmuseumsapp.museumabout.MuseumAboutModel;
 import com.qatarmuseums.qatarmuseumsapp.museumabout.MuseumAboutTableArabic;
 import com.qatarmuseums.qatarmuseumsapp.museumabout.MuseumAboutTableEnglish;
@@ -60,9 +61,15 @@ import java.util.List;
 
 import cn.jzvd.Jzvd;
 import cn.jzvd.JzvdStd;
+import cn.lightsky.infiniteindicator.IndicatorConfiguration;
+import cn.lightsky.infiniteindicator.InfiniteIndicator;
+import cn.lightsky.infiniteindicator.Page;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
+
+import static cn.lightsky.infiniteindicator.IndicatorConfiguration.LEFT;
+import static cn.lightsky.infiniteindicator.IndicatorConfiguration.RIGHT;
 
 public class DetailsActivity extends AppCompatActivity implements IPullZoom, OnMapReadyCallback {
 
@@ -113,6 +120,10 @@ public class DetailsActivity extends AppCompatActivity implements IPullZoom, OnM
     JzvdStd jzvdStd;
     FrameLayout frameLayout;
     Button retryButton;
+    private InfiniteIndicator circleIndicator;
+    private ArrayList ads;
+    private GlideLoaderForMuseum glideLoader;
+    private IndicatorConfiguration configuration;
 
 
     @SuppressLint("ClickableViewAccessibility")
@@ -165,6 +176,7 @@ public class DetailsActivity extends AppCompatActivity implements IPullZoom, OnM
         noResultFoundTxt = (TextView) findViewById(R.id.noResultFoundTxt);
         retryLayout = (LinearLayout) findViewById(R.id.retry_layout);
         retryButton = (Button) findViewById(R.id.retry_btn);
+        circleIndicator = (InfiniteIndicator) findViewById(R.id.carousel_indicator);
         util = new Util();
         title.setText(mainTitle);
         getData();
@@ -179,124 +191,95 @@ public class DetailsActivity extends AppCompatActivity implements IPullZoom, OnM
         else
             favIcon.setImageResource(R.drawable.heart_empty);
 
-        toolbarClose.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                onBackPressed();
-            }
-        });
-        favIcon.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (util.checkImageResource(DetailsActivity.this, favIcon, R.drawable.heart_fill)) {
-                    favIcon.setImageResource(R.drawable.heart_empty);
-                } else
-                    favIcon.setImageResource(R.drawable.heart_fill);
-            }
+        toolbarClose.setOnClickListener(v -> onBackPressed());
+        favIcon.setOnClickListener(v -> {
+            if (util.checkImageResource(DetailsActivity.this, favIcon, R.drawable.heart_fill)) {
+                favIcon.setImageResource(R.drawable.heart_empty);
+            } else
+                favIcon.setImageResource(R.drawable.heart_fill);
         });
         initViews();
 
         zoomOutAnimation = AnimationUtils.loadAnimation(getApplicationContext(),
                 R.anim.zoom_out_more);
-        retryButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                getData();
-                progressBar.setVisibility(View.VISIBLE);
-                retryLayout.setVisibility(View.GONE);
-            }
+        retryButton.setOnClickListener(v -> {
+            getData();
+            progressBar.setVisibility(View.VISIBLE);
+            retryLayout.setVisibility(View.GONE);
         });
-        retryButton.setOnTouchListener(new View.OnTouchListener() {
-            @Override
-            public boolean onTouch(View v, MotionEvent event) {
-                switch (event.getAction()) {
-                    case MotionEvent.ACTION_DOWN:
-                        retryButton.startAnimation(zoomOutAnimation);
-                        break;
-                }
-                return false;
+        retryButton.setOnTouchListener((v, event) -> {
+            switch (event.getAction()) {
+                case MotionEvent.ACTION_DOWN:
+                    retryButton.startAnimation(zoomOutAnimation);
+                    break;
             }
+            return false;
         });
-        toolbarClose.setOnTouchListener(new View.OnTouchListener() {
-            @Override
-            public boolean onTouch(View v, MotionEvent event) {
-                switch (event.getAction()) {
-                    case MotionEvent.ACTION_DOWN:
-                        toolbarClose.startAnimation(zoomOutAnimation);
-                        break;
-                }
-                return false;
+        toolbarClose.setOnTouchListener((v, event) -> {
+            switch (event.getAction()) {
+                case MotionEvent.ACTION_DOWN:
+                    toolbarClose.startAnimation(zoomOutAnimation);
+                    break;
             }
+            return false;
         });
-        favIcon.setOnTouchListener(new View.OnTouchListener() {
-            @Override
-            public boolean onTouch(View v, MotionEvent event) {
-                switch (event.getAction()) {
-                    case MotionEvent.ACTION_DOWN:
-                        favIcon.startAnimation(zoomOutAnimation);
-                        break;
-                }
-                return false;
+        favIcon.setOnTouchListener((v, event) -> {
+            switch (event.getAction()) {
+                case MotionEvent.ACTION_DOWN:
+                    favIcon.startAnimation(zoomOutAnimation);
+                    break;
             }
+            return false;
         });
-        shareIcon.setOnTouchListener(new View.OnTouchListener() {
-            @Override
-            public boolean onTouch(View v, MotionEvent event) {
-                switch (event.getAction()) {
-                    case MotionEvent.ACTION_DOWN:
-                        shareIcon.startAnimation(zoomOutAnimation);
-                        break;
-                }
-                return false;
+        shareIcon.setOnTouchListener((v, event) -> {
+            switch (event.getAction()) {
+                case MotionEvent.ACTION_DOWN:
+                    shareIcon.startAnimation(zoomOutAnimation);
+                    break;
             }
+            return false;
         });
 
-        mapImageView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                if (iconView == 0) {
-                    if (latitude == null) {
-                        util.showLocationAlertDialog(DetailsActivity.this);
-                    } else {
-                        iconView = 1;
-                        mapImageView.setImageResource(R.drawable.ic_map);
-                        gmap.setMapType(GoogleMap.MAP_TYPE_HYBRID);
-                        gmap.setMapStyle(MapStyleOptions.loadRawResourceStyle(DetailsActivity.this, R.raw.map_style));
-
-                        gmap.addMarker(new MarkerOptions()
-                                .position(new LatLng(Double.parseDouble(latitude), Double.parseDouble(longitude)))
-                                .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED)));
-                        gmap.animateCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(Double.parseDouble(latitude), Double.parseDouble(longitude)), 10));
-                    }
-                } else {
-                    if (latitude == null) {
-                        util.showLocationAlertDialog(DetailsActivity.this);
-                    } else {
-                        iconView = 0;
-                        mapImageView.setImageResource(R.drawable.ic_satellite);
-                        gmap.setMapType(GoogleMap.MAP_TYPE_NORMAL);
-                        gmap.setMapStyle(MapStyleOptions.loadRawResourceStyle(DetailsActivity.this, R.raw.map_style));
-
-                        gmap.addMarker(new MarkerOptions()
-                                .position(new LatLng(Double.parseDouble(latitude), Double.parseDouble(longitude)))
-                                .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED)));
-                        gmap.animateCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(Double.parseDouble(latitude), Double.parseDouble(longitude)), 10));
-                    }
-                }
-            }
-        });
-
-        direction.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
+        mapImageView.setOnClickListener(view -> {
+            if (iconView == 0) {
                 if (latitude == null) {
                     util.showLocationAlertDialog(DetailsActivity.this);
                 } else {
-                    Intent intent = new Intent(android.content.Intent.ACTION_VIEW,
-                            Uri.parse("http://maps.google.com/maps?daddr=" + latitude + "," + longitude + "&basemap=satellite"));
-                    if (intent.resolveActivity(getPackageManager()) != null) {
-                        startActivity(intent);
-                    }
+                    iconView = 1;
+                    mapImageView.setImageResource(R.drawable.ic_map);
+                    gmap.setMapType(GoogleMap.MAP_TYPE_HYBRID);
+                    gmap.setMapStyle(MapStyleOptions.loadRawResourceStyle(DetailsActivity.this, R.raw.map_style));
+
+                    gmap.addMarker(new MarkerOptions()
+                            .position(new LatLng(Double.parseDouble(latitude), Double.parseDouble(longitude)))
+                            .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED)));
+                    gmap.animateCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(Double.parseDouble(latitude), Double.parseDouble(longitude)), 10));
+                }
+            } else {
+                if (latitude == null) {
+                    util.showLocationAlertDialog(DetailsActivity.this);
+                } else {
+                    iconView = 0;
+                    mapImageView.setImageResource(R.drawable.ic_satellite);
+                    gmap.setMapType(GoogleMap.MAP_TYPE_NORMAL);
+                    gmap.setMapStyle(MapStyleOptions.loadRawResourceStyle(DetailsActivity.this, R.raw.map_style));
+
+                    gmap.addMarker(new MarkerOptions()
+                            .position(new LatLng(Double.parseDouble(latitude), Double.parseDouble(longitude)))
+                            .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED)));
+                    gmap.animateCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(Double.parseDouble(latitude), Double.parseDouble(longitude)), 10));
+                }
+            }
+        });
+
+        direction.setOnClickListener(view -> {
+            if (latitude == null) {
+                util.showLocationAlertDialog(DetailsActivity.this);
+            } else {
+                Intent intent = new Intent(Intent.ACTION_VIEW,
+                        Uri.parse("http://maps.google.com/maps?daddr=" + latitude + "," + longitude + "&basemap=satellite"));
+                if (intent.resolveActivity(getPackageManager()) != null) {
+                    startActivity(intent);
                 }
             }
         });
@@ -432,22 +415,17 @@ public class DetailsActivity extends AppCompatActivity implements IPullZoom, OnM
                 headerOffSetSize = verticalOffset;
             }
         });
+    }
 
-        zoomView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-
-                Bundle bundle = new Bundle();
-                bundle.putStringArrayList("imageList", imageList);
-                HorizontalLayoutFragment fragment = new HorizontalLayoutFragment();
-                fragment.setArguments(bundle);
-                FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
-                transaction.addToBackStack(null);
-                transaction.replace(R.id.fragment_frame, fragment);
-                transaction.commit();
-            }
-        });
-
+    public void showCarouselView() {
+        Bundle bundle = new Bundle();
+        bundle.putStringArrayList("imageList", imageList);
+        HorizontalLayoutFragment fragment = new HorizontalLayoutFragment();
+        fragment.setArguments(bundle);
+        FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+        transaction.addToBackStack(null);
+        transaction.replace(R.id.fragment_frame, fragment);
+        transaction.commit();
     }
 
     @Override
@@ -667,9 +645,11 @@ public class DetailsActivity extends AppCompatActivity implements IPullZoom, OnM
                         for (int i = 0; i < heritageOrExhibitionDetailModel.get(0).getImage().size(); i++) {
                             imageList.add(i, heritageOrExhibitionDetailModel.get(0).getImage().get(i));
                         }
-                        if (imageList.size() == 0) {
-                            zoomView.setOnClickListener(null);
+                        if (imageList.size() > 0) {
+                            zoomView.setOnClickListener(view -> showCarouselView());
+                            showIndicator(language);
                         }
+
                         if (pageName.equals("heritage_detail_Page.json")) {
                             loadDataForHeritageOrExhibitionDetails(
                                     null,
@@ -717,6 +697,31 @@ public class DetailsActivity extends AppCompatActivity implements IPullZoom, OnM
                 progressBar.setVisibility(View.GONE);
             }
         });
+    }
+
+    public void showIndicator(int language) {
+        circleIndicator.setVisibility(View.VISIBLE);
+        ads = new ArrayList<>();
+        for (int i = 0; i < 3; i++) {
+            ads.add(new Page("", imageList.get(0),
+                    null));
+        }
+        glideLoader = new GlideLoaderForMuseum();
+        if (language == 1)
+            configuration = new IndicatorConfiguration.Builder()
+                    .imageLoader(glideLoader)
+                    .direction(LEFT)
+                    .position(IndicatorConfiguration.IndicatorPosition.Center)
+                    .build();
+        else
+            configuration = new IndicatorConfiguration.Builder()
+                    .imageLoader(glideLoader)
+                    .direction(RIGHT)
+                    .position(IndicatorConfiguration.IndicatorPosition.Center)
+                    .build();
+        circleIndicator.init(configuration);
+        circleIndicator.notifyDataChange(ads);
+        circleIndicator.stop();
     }
 
     public void removeHtmlTags(ArrayList<HeritageOrExhibitionDetailModel> models) {
@@ -906,8 +911,8 @@ public class DetailsActivity extends AppCompatActivity implements IPullZoom, OnM
         @Override
         protected void onPostExecute(List<ExhibitionListTableEnglish> exhibitionListTableEnglish) {
             if (exhibitionListTableEnglish.size() > 0) {
-                Convertor convertor=new Convertor();
-                if(exhibitionListTableEnglish.get(0).getExhibition_latest_image().contains("[")) {
+                Convertor convertor = new Convertor();
+                if (exhibitionListTableEnglish.get(0).getExhibition_latest_image().contains("[")) {
                     ArrayList<String> list = convertor.fromString(exhibitionListTableEnglish.get(0).getExhibition_latest_image());
                     for (int i = 0; i < list.size(); i++) {
                         imageList.add(i, list.get(i));
@@ -957,8 +962,8 @@ public class DetailsActivity extends AppCompatActivity implements IPullZoom, OnM
         @Override
         protected void onPostExecute(List<ExhibitionListTableArabic> exhibitionListTableArabics) {
             if (exhibitionListTableArabics.size() > 0) {
-                Convertor convertor=new Convertor();
-                if(exhibitionListTableArabics.get(0).getExhibition_latest_image().contains("[")) {
+                Convertor convertor = new Convertor();
+                if (exhibitionListTableArabics.get(0).getExhibition_latest_image().contains("[")) {
                     ArrayList<String> list = convertor.fromString(exhibitionListTableArabics.get(0).getExhibition_latest_image());
                     for (int i = 0; i < list.size(); i++) {
                         imageList.add(i, list.get(i));
@@ -1139,8 +1144,8 @@ public class DetailsActivity extends AppCompatActivity implements IPullZoom, OnM
         @Override
         protected void onPostExecute(List<HeritageListTableEnglish> heritageListTableEnglish) {
             if (heritageListTableEnglish.size() > 0) {
-                Convertor convertor=new Convertor();
-                if(heritageListTableEnglish.get(0).getHeritage_image().contains("[")) {
+                Convertor convertor = new Convertor();
+                if (heritageListTableEnglish.get(0).getHeritage_image().contains("[")) {
                     ArrayList<String> list = convertor.fromString(heritageListTableEnglish.get(0).getHeritage_image());
                     for (int i = 0; i < list.size(); i++) {
                         imageList.add(i, list.get(i));
@@ -1187,8 +1192,8 @@ public class DetailsActivity extends AppCompatActivity implements IPullZoom, OnM
         protected void onPostExecute(List<HeritageListTableArabic> heritageListTableArabic) {
 
             if (heritageListTableArabic.size() > 0) {
-                Convertor convertor=new Convertor();
-                if(heritageListTableArabic.get(0).getHeritage_image().contains("[")) {
+                Convertor convertor = new Convertor();
+                if (heritageListTableArabic.get(0).getHeritage_image().contains("[")) {
                     ArrayList<String> list = convertor.fromString(heritageListTableArabic.get(0).getHeritage_image());
                     for (int i = 0; i < list.size(); i++) {
                         imageList.add(i, list.get(i));
@@ -1240,9 +1245,11 @@ public class DetailsActivity extends AppCompatActivity implements IPullZoom, OnM
                         for (int i = 0; i < publicArtModel.get(0).getImage().size(); i++) {
                             imageList.add(i, publicArtModel.get(0).getImage().get(i));
                         }
-                        if (imageList.size() == 0) {
-                            zoomView.setOnClickListener(null);
+                        if (imageList.size() > 0) {
+                            zoomView.setOnClickListener(view -> showCarouselView());
+                            showIndicator(appLanguage);
                         }
+
                         fromMuseumAbout = false;
                         loadData(null,
                                 publicArtModel.get(0).getShortDescription(),
@@ -1430,7 +1437,7 @@ public class DetailsActivity extends AppCompatActivity implements IPullZoom, OnM
         protected void onPostExecute(List<PublicArtsTableEnglish> publicArtsTableEnglish) {
             if (publicArtsTableEnglish.size() > 0) {
                 Convertor converters = new Convertor();
-                if(publicArtsTableEnglish.get(0).getPublic_arts_image().contains("[")) {
+                if (publicArtsTableEnglish.get(0).getPublic_arts_image().contains("[")) {
                     ArrayList<String> list = converters.fromString(publicArtsTableEnglish.get(0).getPublic_arts_image());
                     for (int l = 0; l < list.size(); l++) {
                         imageList.add(l, list.get(l));
@@ -1483,7 +1490,7 @@ public class DetailsActivity extends AppCompatActivity implements IPullZoom, OnM
         protected void onPostExecute(List<PublicArtsTableArabic> publicArtsTableArabic) {
             if (publicArtsTableArabic.size() > 0) {
                 Convertor converters = new Convertor();
-                if(publicArtsTableArabic.get(0).getPublic_arts_image().contains("[")) {
+                if (publicArtsTableArabic.get(0).getPublic_arts_image().contains("[")) {
                     ArrayList<String> list = converters.fromString(publicArtsTableArabic.get(0).getPublic_arts_image());
                     for (int l = 0; l < list.size(); l++) {
                         imageList.add(l, list.get(l));
@@ -1539,9 +1546,11 @@ public class DetailsActivity extends AppCompatActivity implements IPullZoom, OnM
                         for (int i = 0; i < museumAboutModels.get(0).getImageList().size(); i++) {
                             imageList.add(i, museumAboutModels.get(0).getImageList().get(i));
                         }
-                        if (imageList.size() == 0) {
-                            zoomView.setOnClickListener(null);
+                        if (imageList.size() > 0) {
+                            zoomView.setOnClickListener(view -> showCarouselView());
+                            showIndicator(appLanguage);
                         }
+
                         if (!DetailsActivity.this.isFinishing()) {
                             GlideApp.with(DetailsActivity.this)
                                     .load(headerImage)
@@ -1863,7 +1872,7 @@ public class DetailsActivity extends AppCompatActivity implements IPullZoom, OnM
                 Convertor converters = new Convertor();
                 commonContentLayout.setVisibility(View.VISIBLE);
                 retryLayout.setVisibility(View.GONE);
-                if(museumAboutTableEnglish.getMuseum_image().contains("[")) {
+                if (museumAboutTableEnglish.getMuseum_image().contains("[")) {
                     ArrayList<String> list = converters.fromString(museumAboutTableEnglish.getMuseum_image());
                     for (int i = 0; i < list.size(); i++) {
                         imageList.add(i, list.get(i));
@@ -1920,7 +1929,7 @@ public class DetailsActivity extends AppCompatActivity implements IPullZoom, OnM
                 Convertor converters = new Convertor();
                 commonContentLayout.setVisibility(View.VISIBLE);
                 retryLayout.setVisibility(View.GONE);
-                if(museumAboutTableArabic.getMuseum_image().contains("[")) {
+                if (museumAboutTableArabic.getMuseum_image().contains("[")) {
                     ArrayList<String> list = converters.fromString(museumAboutTableArabic.getMuseum_image());
                     for (int i = 0; i < list.size(); i++) {
                         imageList.add(i, list.get(i));
