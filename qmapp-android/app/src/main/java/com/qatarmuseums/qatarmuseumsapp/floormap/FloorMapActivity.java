@@ -210,6 +210,8 @@ public class FloorMapActivity extends AppCompatActivity implements OnMapReadyCal
     private MediaPlayer mediaPlayer;
     private int lengthOfAudio;
     final String groundFloorAudioURL = "http://www.qm.org.qa/sites/default/files/floors.mp3";
+    final String firstFloorAudioURL = "http://www.qm.org.qa/sites/default/files/floor2.mp3";
+    final String secondFloorAudioURL = "http://www.qm.org.qa/sites/default/files/floor3.mp3";
     String audioURL;
     private ImageView btn_play;
     private final Handler handler = new Handler();
@@ -354,49 +356,40 @@ public class FloorMapActivity extends AppCompatActivity implements OnMapReadyCal
         });
 
 
-        level2.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                audioLayout.setVisibility(View.GONE);
-                pauseAudio();
-                selectedLevel = 2;
-                position = googleMap.getCameraPosition();
-                showLevel3();
-                hideLevel2();
-                level2.setBackgroundColor(getResources().getColor(R.color.white));
-                level1.setBackgroundColor(getResources().getColor(R.color.floor_map_buttonbg));
-                levelG.setBackgroundColor(getResources().getColor(R.color.floor_map_buttonbg));
-                mGroundOverlay.setImage(BitmapDescriptorFactory.fromResource(R.drawable.qm_level_3));
-            }
+        level2.setOnClickListener(v -> {
+            stopAudio();
+            audioURL = secondFloorAudioURL;
+            selectedLevel = 2;
+            position = googleMap.getCameraPosition();
+            showLevel3();
+            hideLevel2();
+            level2.setBackgroundColor(getResources().getColor(R.color.white));
+            level1.setBackgroundColor(getResources().getColor(R.color.floor_map_buttonbg));
+            levelG.setBackgroundColor(getResources().getColor(R.color.floor_map_buttonbg));
+            mGroundOverlay.setImage(BitmapDescriptorFactory.fromResource(R.drawable.qm_level_3));
         });
-        level1.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                audioLayout.setVisibility(View.GONE);
-                pauseAudio();
-                selectedLevel = 1;
-                position = googleMap.getCameraPosition();
-                showLevel2();
-                hideLevel3();
-                level2.setBackgroundColor(getResources().getColor(R.color.floor_map_buttonbg));
-                level1.setBackgroundColor(getResources().getColor(R.color.white));
-                levelG.setBackgroundColor(getResources().getColor(R.color.floor_map_buttonbg));
-                mGroundOverlay.setImage(BitmapDescriptorFactory.fromResource(R.drawable.qm_level_2));
-            }
+        level1.setOnClickListener(v -> {
+            stopAudio();
+            audioURL = firstFloorAudioURL;
+            selectedLevel = 1;
+            position = googleMap.getCameraPosition();
+            showLevel2();
+            hideLevel3();
+            level2.setBackgroundColor(getResources().getColor(R.color.floor_map_buttonbg));
+            level1.setBackgroundColor(getResources().getColor(R.color.white));
+            levelG.setBackgroundColor(getResources().getColor(R.color.floor_map_buttonbg));
+            mGroundOverlay.setImage(BitmapDescriptorFactory.fromResource(R.drawable.qm_level_2));
         });
-        levelG.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                audioLayout.setVisibility(View.VISIBLE);
-                selectedLevel = 0;
-                hideLevel2();
-                hideLevel3();
-                showAudioControllerGroundFloor();
-                level2.setBackgroundColor(getResources().getColor(R.color.floor_map_buttonbg));
-                level1.setBackgroundColor(getResources().getColor(R.color.floor_map_buttonbg));
-                levelG.setBackgroundColor(getResources().getColor(R.color.white));
-                mGroundOverlay.setImage(BitmapDescriptorFactory.fromResource(R.drawable.qm_level_1));
-            }
+        levelG.setOnClickListener(v -> {
+            selectedLevel = 0;
+            stopAudio();
+            hideLevel2();
+            hideLevel3();
+            showAudioControllerFloorMap(groundFloorAudioURL);
+            level2.setBackgroundColor(getResources().getColor(R.color.floor_map_buttonbg));
+            level1.setBackgroundColor(getResources().getColor(R.color.floor_map_buttonbg));
+            levelG.setBackgroundColor(getResources().getColor(R.color.white));
+            mGroundOverlay.setImage(BitmapDescriptorFactory.fromResource(R.drawable.qm_level_1));
         });
         retryButton.setOnClickListener(v -> {
             if (getIntent().getParcelableArrayListExtra("RESPONSE") != null) {
@@ -1230,9 +1223,9 @@ public class FloorMapActivity extends AppCompatActivity implements OnMapReadyCal
     public void showCorrespondingMarkers(String level) {
         myVeryOwnIterator = artifactDetailsMap.keySet().iterator();
         while (myVeryOwnIterator.hasNext()) {
-            String key = myVeryOwnIterator.next();
-            if (key.contains(level) && markerHashMap.get(key) != null) {
-
+            final String key = myVeryOwnIterator.next();
+            if (key.contains(level) && markerHashMap.get(key) != null &&
+                    !artifactDetailsMap.get(key).getThumbImage().equals("")) {
                 markerHashMap.get(key).setVisible(true);
                 GlideApp.with(getApplicationContext())
                         .asBitmap()
@@ -1262,7 +1255,7 @@ public class FloorMapActivity extends AppCompatActivity implements OnMapReadyCal
         stopAudio();
     }
 
-    public void showAudioControllerGroundFloor() {
+    public void showAudioControllerFloorMap(String audio) {
         audioLayoutDetails.removeView(btn_play);
         audioLayoutDetails.removeView(seekBar);
         audioLayoutDetails.setPadding(0, 0, 0, 0);
@@ -1271,7 +1264,7 @@ public class FloorMapActivity extends AppCompatActivity implements OnMapReadyCal
         audioLayout.addView(btn_play);
         audioLayout.addView(seekBar);
         stopAudio();
-        audioURL = groundFloorAudioURL;
+        audioURL = audio;
     }
 
     public void markerClick(Marker marker) {
@@ -1389,7 +1382,12 @@ public class FloorMapActivity extends AppCompatActivity implements OnMapReadyCal
     public void onBackPressed() {
         stopAudio();
         if (mBottomSheetBehavior.getState() != BottomSheetBehavior.STATE_HIDDEN) {
-            showAudioControllerGroundFloor();
+            if (selectedLevel == 0)
+                showAudioControllerFloorMap(groundFloorAudioURL);
+            else if (selectedLevel == 1)
+                showAudioControllerFloorMap(firstFloorAudioURL);
+            else
+                showAudioControllerFloorMap(secondFloorAudioURL);
             mBottomSheetBehavior.setState(BottomSheetBehavior.STATE_HIDDEN);
             selectedMarker = null;
         } else
@@ -1430,8 +1428,14 @@ public class FloorMapActivity extends AppCompatActivity implements OnMapReadyCal
                     if (!outRect.contains((int) event.getRawX(), (int) event.getRawY())) {
                         mBottomSheetBehavior.setState(BottomSheetBehavior.STATE_HIDDEN);
                         selectedMarker = null;
-                        if (audioLayout.getChildCount() == 0)
-                            showAudioControllerGroundFloor();
+                        if (audioLayout.getChildCount() == 0) {
+                            if (selectedLevel == 0)
+                                showAudioControllerFloorMap(groundFloorAudioURL);
+                            else if (selectedLevel == 1)
+                                showAudioControllerFloorMap(firstFloorAudioURL);
+                            else
+                                showAudioControllerFloorMap(secondFloorAudioURL);
+                        }
                         stopAudio();
                     }
                     checkMarkerStatus();
