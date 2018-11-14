@@ -16,6 +16,7 @@ import android.text.Spanned;
 import android.text.TextPaint;
 import android.text.style.ClickableSpan;
 import android.text.style.UnderlineSpan;
+import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.animation.Animation;
@@ -43,6 +44,7 @@ import com.qatarmuseums.qatarmuseumsapp.commonpagedatabase.DiningTableArabic;
 import com.qatarmuseums.qatarmuseumsapp.commonpagedatabase.DiningTableEnglish;
 import com.qatarmuseums.qatarmuseumsapp.dining.DiningDetailModel;
 import com.qatarmuseums.qatarmuseumsapp.home.GlideApp;
+import com.qatarmuseums.qatarmuseumsapp.museum.GlideLoaderForMuseum;
 import com.qatarmuseums.qatarmuseumsapp.utils.IPullZoom;
 import com.qatarmuseums.qatarmuseumsapp.utils.PixelUtil;
 import com.qatarmuseums.qatarmuseumsapp.utils.PullToZoomCoordinatorLayout;
@@ -53,9 +55,15 @@ import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.List;
 
+import cn.lightsky.infiniteindicator.IndicatorConfiguration;
+import cn.lightsky.infiniteindicator.InfiniteIndicator;
+import cn.lightsky.infiniteindicator.Page;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
+
+import static cn.lightsky.infiniteindicator.IndicatorConfiguration.LEFT;
+import static cn.lightsky.infiniteindicator.IndicatorConfiguration.RIGHT;
 
 public class DiningActivity extends AppCompatActivity implements IPullZoom, OnMapReadyCallback {
 
@@ -92,6 +100,10 @@ public class DiningActivity extends AppCompatActivity implements IPullZoom, OnMa
     ImageView mapImageView, direction;
     int iconView = 0;
     ArrayList<String> imageList = new ArrayList<String>();
+    private InfiniteIndicator circleIndicator;
+    private ArrayList ads;
+    private GlideLoaderForMuseum glideLoader;
+    private IndicatorConfiguration configuration;
 
     @SuppressLint("ClickableViewAccessibility")
     @Override
@@ -133,6 +145,7 @@ public class DiningActivity extends AppCompatActivity implements IPullZoom, OnMa
         mapDetails.getMapAsync(this);
         favIcon = (ImageView) findViewById(R.id.favourite);
         shareIcon = (ImageView) findViewById(R.id.share);
+        circleIndicator = (InfiniteIndicator) findViewById(R.id.carousel_indicator);
         util = new Util();
         GlideApp.with(this)
                 .load(headerImage)
@@ -310,6 +323,12 @@ public class DiningActivity extends AppCompatActivity implements IPullZoom, OnMa
 
     }
 
+    public void imageValue(int value) {
+        int pos = value;
+        Log.i("TAG", "This activity was clicked: " + pos);
+        onBackPressed();
+    }
+
     @Override
     protected void onResume() {
         super.onResume();
@@ -353,22 +372,17 @@ public class DiningActivity extends AppCompatActivity implements IPullZoom, OnMa
                 headerOffSetSize = verticalOffset;
             }
         });
+    }
 
-        zoomView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-
-                Bundle bundle = new Bundle();
-                bundle.putStringArrayList("imageList", imageList);
-                HorizontalLayoutFragment fragment = new HorizontalLayoutFragment();
-                fragment.setArguments(bundle);
-                FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
-                transaction.addToBackStack(null);
-                transaction.replace(R.id.fragment_frame, fragment);
-                transaction.commit();
-            }
-        });
-
+    public void showCarouselView() {
+        Bundle bundle = new Bundle();
+        bundle.putStringArrayList("imageList", imageList);
+        HorizontalLayoutFragment fragment = new HorizontalLayoutFragment();
+        fragment.setArguments(bundle);
+        FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+        transaction.addToBackStack(null);
+        transaction.replace(R.id.fragment_frame, fragment);
+        transaction.commit();
     }
 
     @Override
@@ -386,6 +400,30 @@ public class DiningActivity extends AppCompatActivity implements IPullZoom, OnMa
 
     }
 
+    public void showIndicator(int language) {
+        circleIndicator.setVisibility(View.VISIBLE);
+        ads = new ArrayList<>();
+        for (int i = 0; i < 3; i++) {
+            ads.add(new Page("", imageList.get(i),
+                    null));
+        }
+        glideLoader = new GlideLoaderForMuseum();
+        if (language == 1)
+            configuration = new IndicatorConfiguration.Builder()
+                    .imageLoader(glideLoader)
+                    .direction(LEFT)
+                    .position(IndicatorConfiguration.IndicatorPosition.Center)
+                    .build();
+        else
+            configuration = new IndicatorConfiguration.Builder()
+                    .imageLoader(glideLoader)
+                    .direction(RIGHT)
+                    .position(IndicatorConfiguration.IndicatorPosition.Center)
+                    .build();
+        circleIndicator.init(configuration);
+        circleIndicator.notifyDataChange(ads);
+        circleIndicator.stop();
+    }
 
     public void getDiningDetailsFromAPI(String id, int language) {
         progressBar.setVisibility(View.VISIBLE);
@@ -410,8 +448,9 @@ public class DiningActivity extends AppCompatActivity implements IPullZoom, OnMa
                         for (int i = 0; i < diningDetailModels.get(0).getImages().size(); i++) {
                             imageList.add(i, diningDetailModels.get(0).getImages().get(i));
                         }
-                        if (imageList.size() == 0) {
-                            zoomView.setOnClickListener(null);
+                        if (imageList.size() > 0) {
+                            zoomView.setOnClickListener(view -> showCarouselView());
+                            showIndicator(language);
                         }
                         loadData(diningDetailModels.get(0).getDescription(),
                                 diningDetailModels.get(0).getOpeningTime(),
