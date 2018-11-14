@@ -405,7 +405,7 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
                 if (response.isSuccessful()) {
                     clearPreference();
                 } else {
-                    new Util().showToast(getResources().getString(R.string.error_logout),
+                    util.showToast(getResources().getString(R.string.error_logout),
                             ProfileActivity.this);
                 }
                 progressBar.setVisibility(View.GONE);
@@ -413,7 +413,10 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
 
             @Override
             public void onFailure(Call<UserData> call, Throwable t) {
-                new Util().showToast(getResources().getString(R.string.check_network), ProfileActivity.this);
+                if (t.getMessage().contains("timeout"))
+                    util.showToast(t.getMessage(), ProfileActivity.this);
+                else
+                    util.showToast(getResources().getString(R.string.check_network), ProfileActivity.this);
                 progressBar.setVisibility(View.GONE);
             }
         });
