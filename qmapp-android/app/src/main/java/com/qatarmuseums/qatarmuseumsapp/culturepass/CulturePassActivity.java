@@ -256,12 +256,16 @@ public class CulturePassActivity extends AppCompatActivity {
                     else
                         mPasswordViewLayout.setError(getString(R.string.error_unexpected));
                 }
+                showProgress(false);
             }
 
             @Override
             public void onFailure(Call<ProfileDetails> call, Throwable t) {
-                util.showToast(getResources().getString(R.string.check_network),
-                        CulturePassActivity.this);
+                if (t.getMessage().contains("timeout"))
+                    util.showToast(t.getMessage(), CulturePassActivity.this);
+                else
+                    util.showToast(getResources().getString(R.string.check_network),
+                            CulturePassActivity.this);
                 showProgress(false);
 
             }
