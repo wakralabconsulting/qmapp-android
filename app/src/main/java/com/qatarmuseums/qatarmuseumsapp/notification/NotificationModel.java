@@ -3,23 +3,19 @@ package com.qatarmuseums.qatarmuseumsapp.notification;
 
 public class NotificationModel {
     private String title;
-    private String id;
+    private String number;
 
-    public NotificationModel() {
-
-    }
-
-    public NotificationModel( String title) {
+    public NotificationModel(String title) {
 
         this.title = title;
     }
 
-    public String getId() {
-        return id;
+    public String getNumber() {
+        return number;
     }
 
-    public void setId(String id) {
-        this.id = id;
+    public void setNumber(String number) {
+        this.number = number;
     }
 
     public String getTitle() {
