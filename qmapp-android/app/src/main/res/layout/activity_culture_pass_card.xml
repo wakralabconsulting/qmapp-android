@@ -16,7 +16,6 @@
         app:flipOnTouch="false"
         app:flipType="horizontal">
 
-
         <FrameLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent">
@@ -27,7 +26,6 @@
                 android:layout_height="match_parent"
                 android:gravity="center"
                 android:rotation="180"
-                android:scaleType="fitXY"
                 android:src="@drawable/culturepass_back" />
 
             <ImageView
@@ -103,7 +101,6 @@
                 android:layout_height="match_parent"
                 android:gravity="center"
                 android:rotation="180"
-                android:scaleType="fitXY"
                 android:src="@drawable/culturepass_front" />
 
             <ImageView
