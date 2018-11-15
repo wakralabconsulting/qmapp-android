@@ -100,40 +100,26 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
                 R.anim.zoom_out);
         iconZoomOutAnimation = AnimationUtils.loadAnimation(getApplicationContext(),
                 R.anim.zoom_out_more);
-        backArrow.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                setResultOkSoIntermediateActivityWontBeShown();
-                onBackPressed();
-            }
+        backArrow.setOnClickListener(v -> {
+            setResultOkSoIntermediateActivityWontBeShown();
+            onBackPressed();
         });
-        backArrow.setOnTouchListener(new View.OnTouchListener() {
-            @Override
-            public boolean onTouch(View v, MotionEvent event) {
-                switch (event.getAction()) {
-                    case MotionEvent.ACTION_DOWN:
-                        backArrow.startAnimation(iconZoomOutAnimation);
-                        break;
-                }
-                return false;
+        backArrow.setOnTouchListener((v, event) -> {
+            switch (event.getAction()) {
+                case MotionEvent.ACTION_DOWN:
+                    backArrow.startAnimation(iconZoomOutAnimation);
+                    break;
             }
+            return false;
         });
-        logOut.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                logOutAction();
+        logOut.setOnClickListener(v -> logOutAction());
+        logOut.setOnTouchListener((v, event) -> {
+            switch (event.getAction()) {
+                case MotionEvent.ACTION_DOWN:
+                    logOut.startAnimation(iconZoomOutAnimation);
+                    break;
             }
-        });
-        logOut.setOnTouchListener(new View.OnTouchListener() {
-            @Override
-            public boolean onTouch(View v, MotionEvent event) {
-                switch (event.getAction()) {
-                    case MotionEvent.ACTION_DOWN:
-                        logOut.startAnimation(iconZoomOutAnimation);
-                        break;
-                }
-                return false;
-            }
+            return false;
         });
         qmPreferences = PreferenceManager.getDefaultSharedPreferences(this);
         appLanguage = qmPreferences.getInt("AppLanguage", 1);
@@ -199,46 +185,33 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
             }
         }
         myCardBtn.setOnClickListener(this);
-        myCardBtn.setOnTouchListener(new View.OnTouchListener() {
-            @Override
-            public boolean onTouch(View v, MotionEvent event) {
-                switch (event.getAction()) {
-                    case MotionEvent.ACTION_DOWN:
-                        myCardBtn.startAnimation(zoomOutAnimation);
-                        break;
-                }
-                return false;
+        myCardBtn.setOnTouchListener((v, event) -> {
+            switch (event.getAction()) {
+                case MotionEvent.ACTION_DOWN:
+                    myCardBtn.startAnimation(zoomOutAnimation);
+                    break;
             }
+            return false;
         });
-        myFavBtn.setOnTouchListener(new View.OnTouchListener() {
-            @Override
-            public boolean onTouch(View v, MotionEvent event) {
-                switch (event.getAction()) {
-                    case MotionEvent.ACTION_DOWN:
-                        myFavBtn.startAnimation(zoomOutAnimation);
-                        break;
-                }
-                return false;
+        myFavBtn.setOnTouchListener((v, event) -> {
+            switch (event.getAction()) {
+                case MotionEvent.ACTION_DOWN:
+                    myFavBtn.startAnimation(zoomOutAnimation);
+                    break;
             }
+            return false;
         });
-        acceptDeclineButton.setOnTouchListener(new View.OnTouchListener() {
-            @Override
-            public boolean onTouch(View v, MotionEvent event) {
-                if (accepted.equals("0")) {
-                    accepted = "1";
-                    invitationAction(accepted);
-                } else {
-                    accepted = "0";
-                    showDeclineDialog();
-                }
-                return false;
+        acceptDeclineButton.setOnTouchListener((v, event) -> {
+            if (accepted.equals("0")) {
+                accepted = "1";
+                invitationAction(accepted);
+            } else {
+                accepted = "0";
+                showDeclineDialog();
             }
+            return false;
         });
-        progressBar.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-
-            }
+        progressBar.setOnClickListener(v -> {
         });
     }
 
@@ -262,22 +235,16 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
         acceptLaterBtn.setText(getResources().getString(R.string.accept_later));
         dialogContent.setText(getResources().getString(R.string.greetings_content));
 
-        acceptBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                accepted = "1";
-                invitationAction(accepted);
-                dialog.dismiss();
+        acceptBtn.setOnClickListener(view1 -> {
+            accepted = "1";
+            invitationAction(accepted);
+            dialog.dismiss();
 
-            }
         });
-        acceptLaterBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                accepted = "0";
-                acceptDeclineButton.setChecked(true);
-                dialog.dismiss();
-            }
+        acceptLaterBtn.setOnClickListener(v -> {
+            accepted = "0";
+            acceptDeclineButton.setChecked(true);
+            dialog.dismiss();
         });
 
         dialog.show();
@@ -312,13 +279,10 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
                 invitationAction(accepted);
             }
         });
-        no.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                accepted = "1";
-                acceptDeclineButton.setChecked(false);
-                dialog.dismiss();
-            }
+        no.setOnClickListener(v -> {
+            accepted = "1";
+            acceptDeclineButton.setChecked(false);
+            dialog.dismiss();
         });
 
         dialog.show();
@@ -348,6 +312,9 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
         if (unds != null)
             unds.clear();
         unds.add(new Und(value));
+
+        language = "en";  //Temporary
+
         Call<UserData> call = apiService.setRSVP(language, uid, token, new RsvpData(new Model(unds)));
         call.enqueue(new Callback<UserData>() {
             @Override
