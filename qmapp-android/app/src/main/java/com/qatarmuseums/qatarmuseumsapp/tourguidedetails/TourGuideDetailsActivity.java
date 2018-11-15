@@ -28,10 +28,10 @@ import com.qatarmuseums.qatarmuseumsapp.R;
 import com.qatarmuseums.qatarmuseumsapp.apicall.APIClient;
 import com.qatarmuseums.qatarmuseumsapp.apicall.APIInterface;
 import com.qatarmuseums.qatarmuseumsapp.commonpage.RecyclerTouchListener;
+import com.qatarmuseums.qatarmuseumsapp.floormap.FloorMapActivity;
 import com.qatarmuseums.qatarmuseumsapp.tourguide.TourGuideList;
 import com.qatarmuseums.qatarmuseumsapp.tourguidestartpage.SelfGuideStarterModel;
 import com.qatarmuseums.qatarmuseumsapp.tourguidestartpage.SelfGuidedStartPageActivity;
-import com.qatarmuseums.qatarmuseumsapp.tourguidestartpage.TourGuideStartPageActivity;
 import com.qatarmuseums.qatarmuseumsapp.tourguidestartpage.TourGuideStartPageArabic;
 import com.qatarmuseums.qatarmuseumsapp.tourguidestartpage.TourGuideStartPageEnglish;
 import com.qatarmuseums.qatarmuseumsapp.utils.Util;
@@ -51,7 +51,7 @@ public class TourGuideDetailsActivity extends AppCompatActivity {
     RecyclerView recyclerView;
     Intent intent;
     ImageView backButton;
-    private Animation zoomOutAnimation;
+    private Animation zoomOutAnimation, exploreZoomOutAnimation;
     private TourGuideDetailsAdapter mAdapter;
     private ArrayList<SelfGuideStarterModel> tourGuideList = new ArrayList<>();
     TourGuideList tourguideObject;
@@ -127,57 +127,63 @@ public class TourGuideDetailsActivity extends AppCompatActivity {
 
         if (museumId.equals("63") || museumId.equals("96")) {
             tourguideMainTitle.setText(getString(R.string.mia_tour_guide));
-            tourguideMainDesc.setText(getString(R.string.tourguide_title_desc));
+            tourguideMainDesc.setText(getString(R.string.tourguide_sidemenu_title_desc));
             tourguideSubTitle.setText(getString(R.string.tourguide_title));
             tourguideSubDesc.setText(getString(R.string.tourguide_subtitle_desc));
             tourGuideList.clear();
-//            prepareMiaTourGuideData();
         }
-        backButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                onBackPressed();
-            }
-        });
+        backButton.setOnClickListener(v -> onBackPressed());
         zoomOutAnimation = AnimationUtils.loadAnimation(getApplicationContext(),
                 R.anim.zoom_out_more);
-        retryButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                getTourGuideDetailsPageAPIData(appLanguage);
-                progressBar.setVisibility(View.VISIBLE);
-                retryLayout.setVisibility(View.GONE);
-            }
-        });
-        retryButton.setOnTouchListener(new View.OnTouchListener() {
-            @Override
-            public boolean onTouch(View v, MotionEvent event) {
-                switch (event.getAction()) {
-                    case MotionEvent.ACTION_DOWN:
-                        retryButton.startAnimation(zoomOutAnimation);
-                        break;
-                }
-                return false;
-            }
+        exploreZoomOutAnimation = AnimationUtils.loadAnimation(getApplicationContext(),
+                R.anim.zoom_out);
+        retryButton.setOnClickListener(v -> {
+            getTourGuideDetailsPageAPIData(appLanguage);
+            progressBar.setVisibility(View.VISIBLE);
+            retryLayout.setVisibility(View.GONE);
         });
 
-        backButton.setOnTouchListener(new View.OnTouchListener() {
-            @Override
-            public boolean onTouch(View v, MotionEvent event) {
-                switch (event.getAction()) {
-                    case MotionEvent.ACTION_DOWN:
-                        backButton.startAnimation(zoomOutAnimation);
-                        break;
-                }
-                return false;
+        exploreLayout.setOnTouchListener((v, event) -> {
+            switch (event.getAction()) {
+                case MotionEvent.ACTION_DOWN:
+                    exploreLayout.startAnimation(exploreZoomOutAnimation);
+                    break;
             }
+            return false;
         });
 
-        exploreLayout.setOnClickListener(new View.OnClickListener() {
+        retryButton.setOnTouchListener((v, event) -> {
+            switch (event.getAction()) {
+                case MotionEvent.ACTION_DOWN:
+                    retryButton.startAnimation(zoomOutAnimation);
+                    break;
+            }
+            return false;
+        });
+
+        backButton.setOnTouchListener((v, event) -> {
+            switch (event.getAction()) {
+                case MotionEvent.ACTION_DOWN:
+                    backButton.startAnimation(zoomOutAnimation);
+                    break;
+            }
+            return false;
+        });
+        exploreZoomOutAnimation.setAnimationListener(new Animation.AnimationListener() {
             @Override
-            public void onClick(View view) {
-                Intent i = new Intent(TourGuideDetailsActivity.this, TourGuideStartPageActivity.class);
+            public void onAnimationStart(Animation animation) {
+
+            }
+
+            @Override
+            public void onAnimationEnd(Animation animation) {
+                Intent i = new Intent(TourGuideDetailsActivity.this, FloorMapActivity.class);
                 startActivity(i);
+            }
+
+            @Override
+            public void onAnimationRepeat(Animation animation) {
+
             }
         });
         converters = new Convertor();

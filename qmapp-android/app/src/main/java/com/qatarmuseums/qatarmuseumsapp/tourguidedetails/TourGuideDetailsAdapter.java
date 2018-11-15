@@ -11,7 +11,6 @@ import android.widget.TextView;
 
 import com.qatarmuseums.qatarmuseumsapp.R;
 import com.qatarmuseums.qatarmuseumsapp.home.GlideApp;
-import com.qatarmuseums.qatarmuseumsapp.home.HomeList;
 import com.qatarmuseums.qatarmuseumsapp.tourguidestartpage.SelfGuideStarterModel;
 
 import java.util.List;
@@ -49,7 +48,11 @@ public class TourGuideDetailsAdapter extends RecyclerView.Adapter<TourGuideDetai
         } else {
             holder.headphoneIcon.setVisibility(View.VISIBLE);
             holder.headphoneIcon.setImageResource(R.drawable.audio_circle);
-            if(tgList.getTitle().equals(mContext.getString(R.string.coming_soon_txt)))
+
+            if (tgList.getNid().equals("12216") || tgList.getNid().equals("12226")) // Temporary
+                holder.headphoneIcon.setVisibility(View.GONE);
+
+            if (tgList.getTitle().equals(mContext.getString(R.string.coming_soon_txt)))
                 holder.headphoneIcon.setColorFilter(mContext.getResources().getColor(R.color.grey));
             GlideApp.with(mContext)
                     .load(tgList.getFirstImage())

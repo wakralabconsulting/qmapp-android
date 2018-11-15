@@ -67,7 +67,7 @@
     <string name="programme_type">نوع البرنامج -</string>
     <string name="clear">أغلق</string>
     <string name="filter">بحث</string>
-    <string name="gift_shop_url">http://www.qm.org.qa/en/gift-shops</string>
+    <string name="gift_shop_url">https://inq-online.com/</string>
     <string name="touch_again">اضغط مرة أخرى للخروج</string>
     <string name="map_navigation_api">http://maps.google.com/maps?q=loc:</string>
     <string name="museum_about">عن المتحف</string>
@@ -161,7 +161,7 @@
     <string name="explore">تصفح</string>
     <string name="level">المستوى</string>
     <string name="tourguide_sidemenu_title">المرشد</string>
-    <string name="tourguide_sidemenu_title_desc">اأهلا بك في متاحف قطر\n اغمر نفسك في تفاصيل القطع التي اختيرت خصيصا لك من قبل خبرائنا</string>
+    <string name="tourguide_sidemenu_title_desc">اغمر نفسك في تفاصيل القطع التي اختيرت خصيصا لك من قبل خبرائنا</string>
     <string name="tourguide_title_desc">Welcome to Qatar Museum Premises. \n Explore the architrcture and the \nobjects on display. \n Scan the QR codes available on the \ngalleries for more information.</string>
     <!--////////////////////// check-->
     <string name="sidemenu_text">Sidemenu</string>
@@ -254,6 +254,6 @@
     <!-- Strings related to Culture pass card -->
     <string name="flip_button_txt">اضغط لعرض الجهة الأخرى</string>
     <!-- Strings related to Object preview -->
-    <string name="gallery_label">, Gallery </string>
-    <string name="floor_label">Floor </string>
+    <string name="gallery_label">, المعرض </string>
+    <string name="floor_label">المستوى </string>
 </resources>
