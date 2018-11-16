@@ -67,7 +67,7 @@
         android:layout_below="@id/app_bar"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:fontFamily="@font/din_next_lt_pro_regular"
+        android:fontFamily="@font/din_next_lt_pro_bold"
         android:text="@string/no_new_notification_yet"
         android:textAlignment="center"
         android:gravity="center"
