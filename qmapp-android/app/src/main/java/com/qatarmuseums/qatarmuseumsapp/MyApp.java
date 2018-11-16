@@ -1,9 +1,13 @@
 package com.qatarmuseums.qatarmuseumsapp;
 
+import android.annotation.SuppressLint;
 import android.app.Application;
+import android.app.NotificationChannel;
+import android.app.NotificationManager;
 import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.content.res.Resources;
+import android.os.Build;
 import android.preference.PreferenceManager;
 import android.util.DisplayMetrics;
 
@@ -41,12 +45,21 @@ public class MyApp extends Application {
             conf.locale = myLocale;
             res.updateConfiguration(conf, dm);
         } else {
-                // no need to do anything app open in english
+            // no need to do anything app open in english
         }
-
-
+        createNotificationChannel();
     }
 
-
-
+    private void createNotificationChannel() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            CharSequence name = getString(R.string.notification_channel);
+            String description = getString(R.string.notification_channel_description);
+            int importance = NotificationManager.IMPORTANCE_DEFAULT;
+            @SuppressLint("WrongConstant")
+            NotificationChannel channel = new NotificationChannel(Config.CHANNEL_ID, name, importance);
+            channel.setDescription(description);
+            NotificationManager notificationManager = getSystemService(NotificationManager.class);
+            notificationManager.createNotificationChannel(channel);
+        }
+    }
 }

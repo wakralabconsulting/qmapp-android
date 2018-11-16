@@ -38,6 +38,7 @@ import com.qatarmuseums.qatarmuseumsapp.commonpage.CommonActivity;
 import com.qatarmuseums.qatarmuseumsapp.commonpage.RecyclerTouchListener;
 import com.qatarmuseums.qatarmuseumsapp.culturepass.CulturePassActivity;
 import com.qatarmuseums.qatarmuseumsapp.museum.MuseumActivity;
+import com.qatarmuseums.qatarmuseumsapp.notification.NotificationActivity;
 import com.qatarmuseums.qatarmuseumsapp.profile.ProfileActivity;
 import com.qatarmuseums.qatarmuseumsapp.utils.Util;
 import com.qatarmuseums.qatarmuseumsapp.webview.WebviewActivity;
@@ -76,7 +77,7 @@ public class HomeActivity extends BaseActivity {
     private SharedPreferences.Editor editor;
     private int badgeCount;
     private BroadcastReceiver mRegistrationBroadcastReceiver;
-    private String notificationMessage;
+    private String notificationMessage, message;
     private String language;
     private String refreshToken;
     private Dialog tokenDialog;
@@ -100,6 +101,7 @@ public class HomeActivity extends BaseActivity {
         moreNavigation = (RelativeLayout) findViewById(R.id.more_layout);
         recyclerView = (RecyclerView) findViewById(R.id.recycler_view);
         util = new Util();
+
         qmDatabase = QMDatabase.getInstance(HomeActivity.this);
         qmPreferences = PreferenceManager.getDefaultSharedPreferences(this);
         name = qmPreferences.getString("NAME", null);
@@ -267,13 +269,8 @@ public class HomeActivity extends BaseActivity {
                     // new push notification is received
 
                     notificationMessage = intent.getStringExtra("ALERT");
-                    if (notificationMessage != null && !notificationMessage.equals("")) {
-                        if (appLanguage == 1)
-                            language = "en";
-                        else
-                            language = "ar";
-                        insertNotificationRelatedDataToDataBase(notificationMessage, language);
-                    }
+                    if (notificationMessage != null && !notificationMessage.equals(""))
+                        updateNotificationDB(notificationMessage);
                     badgeCount = qmPreferences.getInt("BADGE_COUNT", 0);
                     badgeCount = badgeCount + 1;
                     editor = qmPreferences.edit();
@@ -288,6 +285,31 @@ public class HomeActivity extends BaseActivity {
 
         LocalBroadcastManager.getInstance(this).registerReceiver(mRegistrationBroadcastReceiver,
                 new IntentFilter(Config.PUSH_NOTIFICATION));
+
+        checkForNotification(getIntent());
+    }
+
+    public void checkForNotification(Intent intent) {
+        message = intent.getStringExtra("MESSAGE");
+        if (message != null && !message.equals("")) {
+            updateNotificationDB(message);
+            navigation_intent = new Intent(this, NotificationActivity.class);
+            startActivity(navigation_intent);
+        }
+    }
+
+    @Override
+    protected void onNewIntent(Intent intent) {
+        super.onNewIntent(intent);
+        checkForNotification(intent);
+    }
+
+    public void updateNotificationDB(String message) {
+        if (appLanguage == 1)
+            language = "en";
+        else
+            language = "ar";
+        insertNotificationRelatedDataToDataBase(message, language);
 
     }
 
