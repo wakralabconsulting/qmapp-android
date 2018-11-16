@@ -276,7 +276,8 @@ public class BaseActivity extends AppCompatActivity
     }
 
     public void setBadge(int badgeCount) {
-        badgeCountTextView.setVisibility(View.VISIBLE);
+        if (topbarNotification.getVisibility() == View.VISIBLE)
+            badgeCountTextView.setVisibility(View.VISIBLE);
         if (badgeCount < 10)
             badgeCountTextView.setPadding(20, 5, 20, 5);
         else
@@ -445,12 +446,14 @@ public class BaseActivity extends AppCompatActivity
     public void showToolBarOptions() {
         topbarCalander.setVisibility(View.VISIBLE);
         topbarNotification.setVisibility(View.VISIBLE);
+        updateBadge();
         topbarProfile.setVisibility(View.VISIBLE);
     }
 
     public void hideToolBarOptions() {
         topbarCalander.setVisibility(View.INVISIBLE);
         topbarNotification.setVisibility(View.INVISIBLE);
+        badgeCountTextView.setVisibility(View.INVISIBLE);
         topbarProfile.setVisibility(View.INVISIBLE);
     }
 

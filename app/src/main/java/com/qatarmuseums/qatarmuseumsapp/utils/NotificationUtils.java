@@ -15,6 +15,7 @@ import android.media.RingtoneManager;
 import android.net.Uri;
 import android.os.Build;
 import android.support.v4.app.NotificationCompat;
+import android.support.v4.app.NotificationManagerCompat;
 import android.text.Html;
 import android.text.TextUtils;
 import android.util.Patterns;
@@ -53,17 +54,15 @@ public class NotificationUtils {
         // notification icon
         final int icon = R.mipmap.ic_launcher;
 
-        intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
         final PendingIntent resultPendingIntent =
                 PendingIntent.getActivity(
                         mContext,
-                        1,
+                        0,
                         intent,
                         PendingIntent.FLAG_UPDATE_CURRENT
                 );
 
-        final NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(
-                mContext);
+        NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(mContext, Config.CHANNEL_ID);
 
         final Uri alarmSound = Uri.parse(ContentResolver.SCHEME_ANDROID_RESOURCE
                 + "://" + mContext.getPackageName() + "/raw/notification");
@@ -82,7 +81,6 @@ public class NotificationUtils {
             }
         } else {
             showSmallNotification(mBuilder, icon, title, message, resultPendingIntent, alarmSound);
-            playNotificationSound();
         }
     }
 
@@ -95,7 +93,8 @@ public class NotificationUtils {
         inboxStyle.addLine(message);
 
         Notification notification;
-        notification = mBuilder.setSmallIcon(icon).setTicker(title).setWhen(0)
+        notification = mBuilder.setSmallIcon(icon)
+                .setTicker(title).setWhen(0)
                 .setAutoCancel(true)
                 .setContentTitle(title)
                 .setContentIntent(resultPendingIntent)
@@ -106,7 +105,7 @@ public class NotificationUtils {
                 .setContentText(message)
                 .build();
 
-        NotificationManager notificationManager = (NotificationManager) mContext.getSystemService(Context.NOTIFICATION_SERVICE);
+        NotificationManagerCompat notificationManager = NotificationManagerCompat.from(mContext);
         notificationManager.notify(Config.NOTIFICATION_ID, notification);
     }
 
