@@ -134,7 +134,7 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
     private void getLoginToken(String lan, String firebaseToken) {
         LoginData loginData = new LoginData("", "");
         APIInterface apiService =
-                APIClient.getSecureClient().create(APIInterface.class);
+                APIClient.getClient().create(APIInterface.class);
         Call<ProfileDetails> call = apiService.generateToken(lan, loginData);
         call.enqueue(new Callback<ProfileDetails>() {
             @Override
@@ -158,7 +158,7 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
     private void sendFireBaseToken(String loginToken, String firebaseToken, String lan) {
         TokenForPushNotification tokenForPushNotification = new TokenForPushNotification(firebaseToken, "android");
         APIInterface apiService =
-                APIClient.getSecureClient().create(APIInterface.class);
+                APIClient.getClient().create(APIInterface.class);
         Call<Void> call = apiService.sendTokenToServer(lan, loginToken, tokenForPushNotification);
         call.enqueue(new Callback<Void>() {
             @Override

@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">Qatar Museums</string>
+    <string name="app_name">Culture Pass</string>
     <string name="web_view_title">Qatar Museums</string>
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>
@@ -250,6 +250,6 @@ They exemplify the external influences and internal creativity that inspired thi
     <string name="floor_label">Floor </string>
     <!-- Strings related to Notification -->
     <string name="notification_channel">Miscellaneous</string>
-    <string name="notification_channel_description">Notifications related to Qatar Museums </string>
+    <string name="notification_channel_description">Notifications related to Culture Pass </string>
 
 </resources>
