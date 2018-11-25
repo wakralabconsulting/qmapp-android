@@ -180,7 +180,7 @@ public class CulturePassActivity extends AppCompatActivity {
         client = builder.build();
 
         retrofit = new Retrofit.Builder()
-                .baseUrl(APIClient.apiBaseUrlSecure)
+                .baseUrl(APIClient.apiBaseUrl)
                 .addConverterFactory(GsonConverterFactory.create())
                 .client(client)
                 .build();
@@ -218,7 +218,7 @@ public class CulturePassActivity extends AppCompatActivity {
         client = builder.build();
         Gson userDeserializer = new GsonBuilder().setLenient().registerTypeAdapter(ProfileDetails.class, new UserResponseDeserializer()).create();
         retrofit = new Retrofit.Builder()
-                .baseUrl(APIClient.apiBaseUrlSecure)
+                .baseUrl(APIClient.apiBaseUrl)
                 .addConverterFactory(GsonConverterFactory.create(userDeserializer))
                 .client(client)
                 .build();
@@ -285,7 +285,7 @@ public class CulturePassActivity extends AppCompatActivity {
         client = builder.build();
 
         retrofit = new Retrofit.Builder()
-                .baseUrl(APIClient.apiBaseUrlSecure)
+                .baseUrl(APIClient.apiBaseUrl)
                 .addConverterFactory(GsonConverterFactory.create())
                 .client(client)
                 .build();
@@ -489,7 +489,7 @@ public class CulturePassActivity extends AppCompatActivity {
     }
 
     public void fetchTokenForPassword() {
-        apiService = APIClient.getSecureClient().create(APIInterface.class);
+        apiService = APIClient.getClient().create(APIInterface.class);
         Call<ProfileDetails> call = apiService.generateToken(language, loginData);
         call.enqueue(new Callback<ProfileDetails>() {
             @Override
@@ -512,7 +512,7 @@ public class CulturePassActivity extends AppCompatActivity {
     }
 
     public void forgotPasswordAction(String token) {
-        apiService = APIClient.getSecureClient().create(APIInterface.class);
+        apiService = APIClient.getClient().create(APIInterface.class);
         Call<ArrayList<String>> callLogin = apiService.forgotPassword(language, token, loginData);
         callLogin.enqueue(new Callback<ArrayList<String>>() {
             @Override

@@ -303,7 +303,7 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
         client = builder.build();
 
         retrofit = new Retrofit.Builder()
-                .baseUrl(APIClient.apiBaseUrlSecure)
+                .baseUrl(APIClient.apiBaseUrl)
                 .addConverterFactory(GsonConverterFactory.create())
                 .client(client)
                 .build();
@@ -359,7 +359,7 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
         client = builder.build();
 
         retrofit = new Retrofit.Builder()
-                .baseUrl(APIClient.apiBaseUrlSecure)
+                .baseUrl(APIClient.apiBaseUrl)
                 .addConverterFactory(GsonConverterFactory.create())
                 .client(client)
                 .build();

@@ -97,7 +97,6 @@ public class NotificationUtils {
             notification = mBuilder.setSmallIcon(icon)
                     .setTicker(title).setWhen(0)
                     .setAutoCancel(true)
-                    .setContentTitle(title)
                     .setContentIntent(resultPendingIntent)
                     .setSound(alarmSound)
                     .setStyle(inboxStyle)
@@ -110,7 +109,6 @@ public class NotificationUtils {
             notification = mBuilder.setSmallIcon(icon)
                     .setTicker(title).setWhen(0)
                     .setAutoCancel(true)
-                    .setContentTitle(title)
                     .setContentIntent(resultPendingIntent)
                     .setSound(alarmSound)
                     .setStyle(inboxStyle)
@@ -131,7 +129,6 @@ public class NotificationUtils {
         Notification notification;
         notification = mBuilder.setSmallIcon(icon).setTicker(title).setWhen(0)
                 .setAutoCancel(true)
-                .setContentTitle(title)
                 .setContentIntent(resultPendingIntent)
                 .setSound(alarmSound)
                 .setStyle(bigPictureStyle)
