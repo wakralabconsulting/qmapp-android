@@ -509,6 +509,14 @@ public class BaseActivity extends AppCompatActivity
         topbarBack.setVisibility(View.VISIBLE);
     }
 
+    public void setToolbarForMuseumLaunchy() {
+        topbarSidemenu.setVisibility(View.INVISIBLE);
+        topbarProfile.setVisibility(View.INVISIBLE);
+        topbarCalander.setVisibility(View.INVISIBLE);
+        topbarNotification.setVisibility(View.INVISIBLE);
+        topbarBack.setVisibility(View.VISIBLE);
+    }
+
     public void clearAnimations() {
         sidemenuExibitionLayout.clearAnimation();
         sidemenuEventLayout.clearAnimation();

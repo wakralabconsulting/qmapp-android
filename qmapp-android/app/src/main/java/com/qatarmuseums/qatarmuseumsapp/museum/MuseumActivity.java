@@ -89,13 +89,16 @@ public class MuseumActivity extends BaseActivity implements
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_museum);
         ButterKnife.bind(this);
-        setToolbarForMuseumActivity();
         util = new Util();
         qmPreferences = PreferenceManager.getDefaultSharedPreferences(this);
         appLanguage = qmPreferences.getInt("AppLanguage", 1);
         intent = getIntent();
         sliderImageTitle.setText(intent.getStringExtra("MUSEUMTITLE"));
         museumId = intent.getStringExtra("MUSEUM_ID");
+        if(museumId.equals("88")) // Temporary waiting for API
+            setToolbarForMuseumLaunchy();
+        else
+            setToolbarForMuseumActivity();
         animCircleIndicator = (InfiniteIndicator) findViewById(R.id.main_indicator_default_circle);
         sliderPlaceholderImage = (ImageView) findViewById(R.id.ads_place_holder);
 
@@ -191,7 +194,9 @@ public class MuseumActivity extends BaseActivity implements
 
                 }
             });
-        } else
+        } else if (museumId.equals("88"))  // Temporary waiting for API
+            prepareRecyclerViewDataForLaunch();
+        else
             prepareRecyclerViewData();
 
         getSliderImagesfromAPI();
@@ -257,6 +262,26 @@ public class MuseumActivity extends BaseActivity implements
 
         model = new MuseumHScrollModel(this,
                 getResources().getString(R.string.sidemenu_dining_text), R.drawable.dining);
+        museumHScrollModelList.add(model);
+        museumHorizontalScrollViewAdapter.notifyDataSetChanged();
+    }
+
+    public void prepareRecyclerViewDataForLaunch() {
+        museumHScrollModelList.clear();
+        MuseumHScrollModel model = new MuseumHScrollModel(this,
+                getResources().getString(R.string.museum_about_event), R.drawable.about_launch);
+        museumHScrollModelList.add(model);
+
+        model = new MuseumHScrollModel(this,
+                getResources().getString(R.string.museum_tours), R.drawable.tours_launch);
+        museumHScrollModelList.add(model);
+
+        model = new MuseumHScrollModel(this,
+                getResources().getString(R.string.museum_travel), R.drawable.travel_launch);
+        museumHScrollModelList.add(model);
+
+        model = new MuseumHScrollModel(this,
+                getResources().getString(R.string.museum_discussion), R.drawable.discussion_launch);
         museumHScrollModelList.add(model);
         museumHorizontalScrollViewAdapter.notifyDataSetChanged();
     }

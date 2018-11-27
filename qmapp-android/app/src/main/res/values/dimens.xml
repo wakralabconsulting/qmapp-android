@@ -67,4 +67,5 @@
     <dimen name="collection_detail_underline">30dp</dimen>
     <dimen name="font_size_40">40sp</dimen>
     <dimen name="font_size_12">12sp</dimen>
+    <dimen name="font_size_30">30sp</dimen>
 </resources>

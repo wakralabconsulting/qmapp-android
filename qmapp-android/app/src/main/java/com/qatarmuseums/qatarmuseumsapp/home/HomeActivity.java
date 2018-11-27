@@ -11,11 +11,13 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
 import android.preference.PreferenceManager;
+import android.support.design.widget.AppBarLayout;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v4.view.GravityCompat;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
@@ -23,10 +25,14 @@ import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.FrameLayout;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
+import android.widget.TextView;
 import android.widget.Toast;
+
 
 import com.qatarmuseums.qatarmuseumsapp.Config;
 import com.qatarmuseums.qatarmuseumsapp.QMDatabase;
@@ -40,6 +46,9 @@ import com.qatarmuseums.qatarmuseumsapp.culturepass.CulturePassActivity;
 import com.qatarmuseums.qatarmuseumsapp.museum.MuseumActivity;
 import com.qatarmuseums.qatarmuseumsapp.notification.NotificationActivity;
 import com.qatarmuseums.qatarmuseumsapp.profile.ProfileActivity;
+import com.qatarmuseums.qatarmuseumsapp.utils.IPullZoom;
+import com.qatarmuseums.qatarmuseumsapp.utils.PixelUtil;
+import com.qatarmuseums.qatarmuseumsapp.utils.PullToZoomCoordinatorLayout;
 import com.qatarmuseums.qatarmuseumsapp.utils.Util;
 import com.qatarmuseums.qatarmuseumsapp.webview.WebviewActivity;
 
@@ -52,7 +61,7 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
-public class HomeActivity extends BaseActivity {
+public class HomeActivity extends BaseActivity implements IPullZoom {
     RelativeLayout diningNavigation, giftShopNavigation, culturePassNavigation, moreNavigation;
     Animation zoomOutAnimation, fadeOutAnimation;
     private RecyclerView recyclerView;
@@ -84,6 +93,13 @@ public class HomeActivity extends BaseActivity {
     private LayoutInflater layoutInflater;
     private View closeBtn;
     private EditText mTokenView;
+    private int headerOffSetSize;
+    private RelativeLayout frameLayout;
+    private PullToZoomCoordinatorLayout coordinatorLayout;
+    private View zoomView;
+    private AppBarLayout bannerLayout;
+    private ImageView headerImageView;
+    private TextView bannerText;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -100,6 +116,8 @@ public class HomeActivity extends BaseActivity {
         culturePassNavigation = (RelativeLayout) findViewById(R.id.culture_pass_layout);
         moreNavigation = (RelativeLayout) findViewById(R.id.more_layout);
         recyclerView = (RecyclerView) findViewById(R.id.recycler_view);
+        headerImageView = (ImageView) findViewById(R.id.header_img);
+
         util = new Util();
 
         qmDatabase = QMDatabase.getInstance(HomeActivity.this);
@@ -127,40 +145,26 @@ public class HomeActivity extends BaseActivity {
 
             }
         });
-        diningNavigation.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                navigation_intent = new Intent(HomeActivity.this, CommonActivity.class);
-                navigation_intent.putExtra(getString(R.string.toolbar_title_key), getString(R.string.sidemenu_dining_text));
-                startActivity(navigation_intent);
-            }
+        diningNavigation.setOnClickListener(v -> {
+            navigation_intent = new Intent(HomeActivity.this, CommonActivity.class);
+            navigation_intent.putExtra(getString(R.string.toolbar_title_key), getString(R.string.sidemenu_dining_text));
+            startActivity(navigation_intent);
         });
-        giftShopNavigation.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                navigation_intent = new Intent(HomeActivity.this, WebviewActivity.class);
-                navigation_intent.putExtra("url", getString(R.string.gift_shop_url));
-                startActivity(navigation_intent);
+        giftShopNavigation.setOnClickListener(v -> {
+            navigation_intent = new Intent(HomeActivity.this, WebviewActivity.class);
+            navigation_intent.putExtra("url", getString(R.string.gift_shop_url));
+            startActivity(navigation_intent);
 
-            }
         });
-        culturePassNavigation.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                name = qmPreferences.getString("NAME", null);
-                if (name == null)
-                    navigation_intent = new Intent(HomeActivity.this, CulturePassActivity.class);
-                else
-                    navigation_intent = new Intent(HomeActivity.this, ProfileActivity.class);
-                startActivity(navigation_intent);
-            }
+        culturePassNavigation.setOnClickListener(v -> {
+            name = qmPreferences.getString("NAME", null);
+            if (name == null)
+                navigation_intent = new Intent(HomeActivity.this, CulturePassActivity.class);
+            else
+                navigation_intent = new Intent(HomeActivity.this, ProfileActivity.class);
+            startActivity(navigation_intent);
         });
-        moreNavigation.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                handlingDrawer();
-            }
-        });
+        moreNavigation.setOnClickListener(v -> handlingDrawer());
 
         mAdapter = new HomeListAdapter(this, homeLists);
         RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(getApplicationContext());
@@ -196,68 +200,50 @@ public class HomeActivity extends BaseActivity {
             getDataFromDataBase(appLanguage);
         }
 
-        retryButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                getHomePageAPIData(appLanguage);
-                progressBar.setVisibility(View.VISIBLE);
-                retryLayout.setVisibility(View.GONE);
-            }
+        retryButton.setOnClickListener(v -> {
+            getHomePageAPIData(appLanguage);
+            progressBar.setVisibility(View.VISIBLE);
+            retryLayout.setVisibility(View.GONE);
         });
-        retryButton.setOnTouchListener(new View.OnTouchListener() {
-            @Override
-            public boolean onTouch(View v, MotionEvent event) {
-                switch (event.getAction()) {
-                    case MotionEvent.ACTION_DOWN:
-                        retryButton.startAnimation(zoomOutAnimation);
-                        break;
-                }
-                return false;
+        retryButton.setOnTouchListener((v, event) -> {
+            switch (event.getAction()) {
+                case MotionEvent.ACTION_DOWN:
+                    retryButton.startAnimation(zoomOutAnimation);
+                    break;
             }
+            return false;
         });
-        diningNavigation.setOnTouchListener(new View.OnTouchListener() {
-            @Override
-            public boolean onTouch(View v, MotionEvent event) {
-                switch (event.getAction()) {
-                    case MotionEvent.ACTION_DOWN:
-                        diningNavigation.startAnimation(zoomOutAnimation);
-                        break;
-                }
-                return false;
+        diningNavigation.setOnTouchListener((v, event) -> {
+            switch (event.getAction()) {
+                case MotionEvent.ACTION_DOWN:
+                    diningNavigation.startAnimation(zoomOutAnimation);
+                    break;
             }
+            return false;
         });
-        giftShopNavigation.setOnTouchListener(new View.OnTouchListener() {
-            @Override
-            public boolean onTouch(View v, MotionEvent event) {
-                switch (event.getAction()) {
-                    case MotionEvent.ACTION_DOWN:
-                        giftShopNavigation.startAnimation(zoomOutAnimation);
-                        break;
-                }
-                return false;
+        giftShopNavigation.setOnTouchListener((v, event) -> {
+            switch (event.getAction()) {
+                case MotionEvent.ACTION_DOWN:
+                    giftShopNavigation.startAnimation(zoomOutAnimation);
+                    break;
             }
+            return false;
         });
-        culturePassNavigation.setOnTouchListener(new View.OnTouchListener() {
-            @Override
-            public boolean onTouch(View v, MotionEvent event) {
-                switch (event.getAction()) {
-                    case MotionEvent.ACTION_DOWN:
-                        culturePassNavigation.startAnimation(zoomOutAnimation);
-                        break;
-                }
-                return false;
+        culturePassNavigation.setOnTouchListener((v, event) -> {
+            switch (event.getAction()) {
+                case MotionEvent.ACTION_DOWN:
+                    culturePassNavigation.startAnimation(zoomOutAnimation);
+                    break;
             }
+            return false;
         });
-        moreNavigation.setOnTouchListener(new View.OnTouchListener() {
-            @Override
-            public boolean onTouch(View v, MotionEvent event) {
-                switch (event.getAction()) {
-                    case MotionEvent.ACTION_DOWN:
-                        moreNavigation.startAnimation(zoomOutAnimation);
-                        break;
-                }
-                return false;
+        moreNavigation.setOnTouchListener((v, event) -> {
+            switch (event.getAction()) {
+                case MotionEvent.ACTION_DOWN:
+                    moreNavigation.startAnimation(zoomOutAnimation);
+                    break;
             }
+            return false;
         });
 
 
@@ -287,6 +273,36 @@ public class HomeActivity extends BaseActivity {
                 new IntentFilter(Config.PUSH_NOTIFICATION));
 
         checkForNotification(getIntent());
+        boolean ifTrue = true;
+        if (ifTrue) {
+            GlideApp.with(this)
+                    .load("https://www.qm.org.qa/sites/default/files/styles/gallery_large/public/images/gallery/old_palaceinnewmuseum.jpg")
+                    .centerCrop()
+                    .placeholder(R.drawable.placeholder_header)
+                    .into(headerImageView);
+            initViews();
+        }
+    }
+
+    private void initViews() {
+        frameLayout = (RelativeLayout) findViewById(R.id.fragment_frame);
+        coordinatorLayout = (PullToZoomCoordinatorLayout) findViewById(R.id.main_content);
+        zoomView = findViewById(R.id.header_img);
+        bannerText = findViewById(R.id.banner_text);
+        bannerText.setText(R.string.launch_event);
+        zoomView.setOnClickListener(v -> navigateToLaunchPage());
+        bannerLayout = (AppBarLayout) findViewById(R.id.banner);
+        bannerLayout.setVisibility(View.VISIBLE);
+        coordinatorLayout.setPullZoom(zoomView, PixelUtil.dp2px(this, 120),
+                PixelUtil.dp2px(this, 170), this);
+        bannerLayout.addOnOffsetChangedListener((appBarLayout, verticalOffset) -> headerOffSetSize = verticalOffset);
+    }
+
+    public void navigateToLaunchPage() {
+        navigationIntent = new Intent(HomeActivity.this, MuseumActivity.class);
+        navigationIntent.putExtra("MUSEUMTITLE", bannerText.getText());
+        navigationIntent.putExtra("MUSEUM_ID", "88"); // Temporary waiting for API
+        startActivity(navigationIntent);
     }
 
     public void checkForNotification(Intent intent) {
@@ -390,6 +406,21 @@ public class HomeActivity extends BaseActivity {
             getDataFromDataBase(appLanguage);
         }
         updateBadge();
+    }
+
+    @Override
+    public boolean isReadyForPullStart() {
+        return headerOffSetSize == 0;
+    }
+
+    @Override
+    public void onPullZooming(int newScrollValue) {
+
+    }
+
+    @Override
+    public void onPullZoomEnd() {
+
     }
 
     public class RowCount extends AsyncTask<Void, Void, Integer> {

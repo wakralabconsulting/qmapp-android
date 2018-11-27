@@ -50,6 +50,8 @@ public class MuseumHorizontalScrollViewAdapter extends RecyclerView.Adapter<Muse
     public void onBindViewHolder(@NonNull MyViewHolder holder, final int position) {
 
         museumHScrollModel = museumHScrollModelList.get(position);
+        if (museumId.equals("88"))
+            holder.museumHscrollItemText.setLines(2);
         holder.museumHscrollItemText.setText(museumHScrollModel.getTextName());
         holder.museumHscrollItemImage.setImageResource(museumHScrollModel.getResId());
         holder.itemLayout.setOnClickListener(new View.OnClickListener() {
@@ -87,7 +89,8 @@ public class MuseumHorizontalScrollViewAdapter extends RecyclerView.Adapter<Muse
                     navigationIntent.putExtra(mContext.getString(R.string.toolbar_title_key), mContext.getString(R.string.sidemenu_dining_text));
                     navigationIntent.putExtra("ID", museumId);
                     mContext.startActivity(navigationIntent);
-                }
+                } else
+                    util.showComingSoonDialog((Activity) mContext, R.string.coming_soon_content);
             }
         });
 
