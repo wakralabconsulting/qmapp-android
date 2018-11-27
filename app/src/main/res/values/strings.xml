@@ -251,5 +251,11 @@ They exemplify the external influences and internal creativity that inspired thi
     <!-- Strings related to Notification -->
     <string name="notification_channel">Miscellaneous</string>
     <string name="notification_channel_description">Notifications related to Culture Pass </string>
+    <string name="launch_event">National Museum of Qatar Launch Event</string>
+    <!-- Strings related to Museum Launch -->
+    <string name="museum_about_event">About Event</string>
+    <string name="museum_tours">Tours</string>
+    <string name="museum_travel">Travel Arrangements</string>
+    <string name="museum_discussion">Panel Discussion</string>
 
 </resources>
