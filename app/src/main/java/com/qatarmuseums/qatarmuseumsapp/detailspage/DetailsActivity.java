@@ -124,6 +124,8 @@ public class DetailsActivity extends AppCompatActivity implements IPullZoom, OnM
     private ArrayList ads;
     private GlideLoaderForMuseum glideLoader;
     private IndicatorConfiguration configuration;
+    private LinearLayout eventDateLayout;
+    private TextView eventDateTxt;
 
 
     @SuppressLint("ClickableViewAccessibility")
@@ -177,6 +179,9 @@ public class DetailsActivity extends AppCompatActivity implements IPullZoom, OnM
         retryLayout = (LinearLayout) findViewById(R.id.retry_layout);
         retryButton = (Button) findViewById(R.id.retry_btn);
         circleIndicator = (InfiniteIndicator) findViewById(R.id.carousel_indicator);
+        eventDateLayout = findViewById(R.id.event_date_layout);
+        eventDateTxt = findViewById(R.id.event_date);
+
         util = new Util();
         title.setText(mainTitle);
         getData();
@@ -354,6 +359,9 @@ public class DetailsActivity extends AppCompatActivity implements IPullZoom, OnM
                 getMuseumAboutDetailsFromAPI(id, language);
             else
                 getMuseumAboutDetailsFromDatabase(id, language);
+        } else if (comingFrom.equals(getString(R.string.museum_about_launch))) {
+            eventDateLayout.setVisibility(View.VISIBLE);
+            // Perform API Call for Launch event about
         }
     }
 

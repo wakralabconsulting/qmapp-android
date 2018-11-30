@@ -321,6 +321,7 @@
 
             </LinearLayout>
 
+            <!--RSVP Hide from profile-->
             <LinearLayout
                 android:id="@+id/rsvp_layout"
                 android:layout_width="match_parent"
@@ -328,7 +329,7 @@
                 android:layout_marginBottom="@dimen/padding_30"
                 android:gravity="center"
                 android:orientation="vertical"
-                android:visibility="visible">
+                android:visibility="gone">
 
                 <LinearLayout
                     android:layout_width="match_parent"

@@ -137,17 +137,19 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
         imageURL = qmPreferences.getString("IMAGE", null);
         rsvpAttendance = qmPreferences.getString("RSVP", null);
         uid = qmPreferences.getString("UID", null);
-        accepted = qmPreferences.getString("ACCEPTED", "0");
-        if (rsvpAttendance != null) {
-            rsvpLayout.setVisibility(View.VISIBLE);
-        } else
-            rsvpLayout.setVisibility(View.GONE);
-        if (accepted.equals("0"))
-            acceptDeclineButton.setChecked(true);
-        else
-            acceptDeclineButton.setChecked(false);
-        if (getIntent().getStringExtra("RSVP") != null)
-            showGreetingsDialog();
+
+        // RSVP is hiding from profile page
+//        accepted = qmPreferences.getString("ACCEPTED", "0");
+//        if (rsvpAttendance != null) {
+//            rsvpLayout.setVisibility(View.VISIBLE);
+//        } else
+//            rsvpLayout.setVisibility(View.GONE);
+//        if (accepted.equals("0"))
+//            acceptDeclineButton.setChecked(true);
+//        else
+//            acceptDeclineButton.setChecked(false);
+//        if (getIntent().getStringExtra("RSVP") != null)
+//            showGreetingsDialog();
         if (imageURL != null && !imageURL.equals("") && !imageURL.equals("0")) {
             profilePic.setBackground(getDrawable(R.drawable.circular_bg));
             GlideApp.with(this)
@@ -201,16 +203,16 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
             }
             return false;
         });
-        acceptDeclineButton.setOnTouchListener((v, event) -> {
-            if (accepted.equals("0")) {
-                accepted = "1";
-                invitationAction(accepted);
-            } else {
-                accepted = "0";
-                showDeclineDialog();
-            }
-            return false;
-        });
+//        acceptDeclineButton.setOnTouchListener((v, event) -> {
+//            if (accepted.equals("0")) {
+//                accepted = "1";
+//                invitationAction(accepted);
+//            } else {
+//                accepted = "0";
+//                showDeclineDialog();
+//            }
+//            return false;
+//        });
         progressBar.setOnClickListener(v -> {
         });
     }

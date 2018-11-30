@@ -255,8 +255,9 @@ public class CulturePassActivity extends AppCompatActivity {
                         mPasswordViewLayout.setError(getString(R.string.error_already_logged_in));
                     else
                         mPasswordViewLayout.setError(getString(R.string.error_unexpected));
+                    showProgress(false);
                 }
-                showProgress(false);
+
             }
 
             @Override
@@ -307,7 +308,6 @@ public class CulturePassActivity extends AppCompatActivity {
                     }
                     navigateToProfile(RSVP);
                 }
-                showProgress(false);
             }
 
             @Override

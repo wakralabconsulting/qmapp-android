@@ -135,4 +135,6 @@ public interface APIInterface {
     Call<UserData> setRSVP(@Path("language") String language, @Path("uid") String uid,
                            @Header("X-CSRF-Token") String token, @Body RsvpData rsvpData);
 
+    @GET("{language}/mobile_api/nmoq_banner_banner.json")
+    Call<ArrayList<HomeList>> getBannerDetails(@Path("language") String language);
 }
