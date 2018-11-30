@@ -95,7 +95,7 @@ public class MuseumActivity extends BaseActivity implements
         intent = getIntent();
         sliderImageTitle.setText(intent.getStringExtra("MUSEUMTITLE"));
         museumId = intent.getStringExtra("MUSEUM_ID");
-        if(museumId.equals("88")) // Temporary waiting for API
+        if(museumId.equals("13376")) // Temporary waiting for API
             setToolbarForMuseumLaunchy();
         else
             setToolbarForMuseumActivity();
@@ -194,7 +194,7 @@ public class MuseumActivity extends BaseActivity implements
 
                 }
             });
-        } else if (museumId.equals("88"))  // Temporary waiting for API
+        } else if (museumId.equals("13376"))  // Temporary waiting for API
             prepareRecyclerViewDataForLaunch();
         else
             prepareRecyclerViewData();
@@ -269,7 +269,7 @@ public class MuseumActivity extends BaseActivity implements
     public void prepareRecyclerViewDataForLaunch() {
         museumHScrollModelList.clear();
         MuseumHScrollModel model = new MuseumHScrollModel(this,
-                getResources().getString(R.string.museum_about_event), R.drawable.about_launch);
+                getResources().getString(R.string.museum_about_launch), R.drawable.about_launch);
         museumHScrollModelList.add(model);
 
         model = new MuseumHScrollModel(this,

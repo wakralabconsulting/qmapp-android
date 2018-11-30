@@ -89,6 +89,13 @@ public class MuseumHorizontalScrollViewAdapter extends RecyclerView.Adapter<Muse
                     navigationIntent.putExtra(mContext.getString(R.string.toolbar_title_key), mContext.getString(R.string.sidemenu_dining_text));
                     navigationIntent.putExtra("ID", museumId);
                     mContext.startActivity(navigationIntent);
+//                } else if (museumHScrollModelList.get(position).getTextName()  // Temporary waiting for API
+//                        .equals(mContext.getResources().getString(R.string.museum_about_launch))) {
+//                    navigationIntent = new Intent(mContext, DetailsActivity.class);
+//                    navigationIntent.putExtra("MAIN_TITLE", title);
+//                    navigationIntent.putExtra("COMING_FROM", mContext.getString(R.string.museum_about_launch));
+//                    navigationIntent.putExtra("ID", museumId);
+//                    mContext.startActivity(navigationIntent);
                 } else
                     util.showComingSoonDialog((Activity) mContext, R.string.coming_soon_content);
             }

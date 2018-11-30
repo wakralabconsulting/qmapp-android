@@ -6,11 +6,11 @@ import android.support.annotation.NonNull;
 import com.google.gson.annotations.SerializedName;
 
 public class HomeList implements Comparable<HomeList> {
-    @SerializedName("name")
+    @SerializedName(value = "name", alternate = {"Banner_title"})
     private String name;
-    @SerializedName("id")
+    @SerializedName(value = "id", alternate = {"full_content_ID"})
     private String id;
-    @SerializedName("image")
+    @SerializedName(value = "image", alternate = {"banner_link"})
     private String image;
     @SerializedName("tourguide_available")
     private String tourguideAvailable;
