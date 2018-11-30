@@ -3,6 +3,7 @@ package com.qatarmuseums.qatarmuseumsapp.home;
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.app.Dialog;
+import android.arch.persistence.room.Update;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -85,6 +86,7 @@ public class HomeActivity extends BaseActivity {
     private RecyclerView recyclerView;
     private HomeListAdapter mAdapter;
     private ArrayList<HomeList> homeLists = new ArrayList<>();
+    private ArrayList<HomeList> bannerLists = new ArrayList<>();
     private Intent navigation_intent;
     Util util;
     RelativeLayout noResultFoundLayout;
@@ -94,7 +96,9 @@ public class HomeActivity extends BaseActivity {
     QMDatabase qmDatabase;
     HomePageTableEnglish homePageTableEnglish;
     HomePageTableArabic homePageTableArabic;
-    int homePageTableRowCount;
+    HomePageBannerTableEnglish homePageBannerTableEnglish;
+    HomePageBannerTableArabic homePageBannerTableArabic;
+    int homePageTableRowCount, homePageBannerTableRowCount;
     private Intent navigationIntent;
     private LinearLayout retryLayout;
     private Button retryButton;
@@ -245,6 +249,11 @@ public class HomeActivity extends BaseActivity {
             getHomePageAPIData(appLanguage);
             progressBar.setVisibility(View.VISIBLE);
             retryLayout.setVisibility(View.GONE);
+            RSVP = qmPreferences.getString("RSVP", null);
+            if (RSVP != null) {
+                if (bannerLayout.getVisibility() != View.VISIBLE)
+                    showBanner();
+            }
         });
         retryButton.setOnTouchListener((v, event) -> {
             switch (event.getAction()) {
@@ -433,13 +442,9 @@ public class HomeActivity extends BaseActivity {
             public void onResponse(Call<ArrayList<HomeList>> call, Response<ArrayList<HomeList>> response) {
                 if (response.isSuccessful()) {
                     if (response.body() != null) {
-                        if (!HomeActivity.this.isFinishing())
-                            GlideApp.with(HomeActivity.this)
-                                    .load(response.body().get(0).getImage())
-                                    .centerCrop()
-                                    .placeholder(R.drawable.placeholder_header)
-                                    .into(headerImageView);
-                        bannerText.setText(response.body().get(0).getName());
+                        bannerLists.addAll(response.body());
+                        addBannerData(bannerLists);
+                        new RowCountBanner(HomeActivity.this, language).execute();
                     }
                 }
             }
@@ -467,8 +472,22 @@ public class HomeActivity extends BaseActivity {
     }
 
     public void showBanner() {
-        getBannerAPIData(appLanguage);
+        if (util.isNetworkAvailable(this))
+            getBannerAPIData(appLanguage);
+        else
+            getBannerDataFromDataBase(appLanguage);
         bannerLayout.setVisibility(View.VISIBLE);
+    }
+
+    public void addBannerData(List<HomeList> bannerLists) {
+        if (!HomeActivity.this.isFinishing())
+            GlideApp.with(HomeActivity.this)
+                    .load(bannerLists.get(0).getImage())
+                    .centerCrop()
+                    .placeholder(R.drawable.placeholder_header)
+                    .into(headerImageView);
+        bannerText.setText(bannerLists.get(0).getName());
+
     }
 
     public void fetchToken() {
@@ -607,9 +626,9 @@ public class HomeActivity extends BaseActivity {
                             editor = qmPreferences.edit();
                             editor.putString("RSVP", RSVP);
                             editor.commit();
+                            showBanner();
                         }
                     }
-                    showBanner();
                     showProgress(false);
                     loginDialog.dismiss();
                 }
@@ -860,6 +879,184 @@ public class HomeActivity extends BaseActivity {
 
     }
 
+
+    public class RowCountBanner extends AsyncTask<Void, Void, Integer> {
+        private WeakReference<HomeActivity> activityReference;
+        String language;
+
+        RowCountBanner(HomeActivity context, String apiLanguage) {
+            activityReference = new WeakReference<>(context);
+            language = apiLanguage;
+        }
+
+        @Override
+        protected Integer doInBackground(Void... voids) {
+            if (language.equals("en"))
+                return activityReference.get().qmDatabase.getHomePageBannerTableDao().getNumberOfBannerRowsEnglish();
+            else
+                return activityReference.get().qmDatabase.getHomePageBannerTableDao().getNumberOfBannerRowsArabic();
+
+        }
+
+        @Override
+        protected void onPostExecute(Integer integer) {
+            homePageBannerTableRowCount = integer;
+            if (homePageBannerTableRowCount > 0) {
+                //updateEnglishTable or add row to database
+                new UpdateHomePageBannerTable(HomeActivity.this, language).execute();
+
+            } else {
+                //create databse
+                new InsertBannerDatabaseTask(HomeActivity.this, homePageBannerTableEnglish,
+                        homePageBannerTableArabic, language).execute();
+
+            }
+
+        }
+    }
+
+    public class UpdateHomePageBannerTable extends AsyncTask<Void, Void, Void> {
+        private WeakReference<HomeActivity> activityReference;
+        String language;
+
+        UpdateHomePageBannerTable(HomeActivity context, String apiLanguage) {
+            activityReference = new WeakReference<>(context);
+            language = apiLanguage;
+        }
+
+        @Override
+        protected Void doInBackground(Void... voids) {
+            if (language.equals("en")) {
+                // updateEnglishTable table with english name
+                activityReference.get().qmDatabase.getHomePageBannerTableDao().updateHomePageBannerEnglish(
+                        bannerLists.get(0).getName(),
+                        bannerLists.get(0).getImage(),
+                        bannerLists.get(0).getId()
+                );
+
+            } else {
+                // updateEnglishTable table with arabic name
+                activityReference.get().qmDatabase.getHomePageBannerTableDao().updateHomePageBannerArabic(
+                        bannerLists.get(0).getName(),
+                        bannerLists.get(0).getImage(),
+                        bannerLists.get(0).getId()
+                );
+            }
+
+            return null;
+        }
+
+    }
+
+    public class InsertBannerDatabaseTask extends AsyncTask<Void, Void, Boolean> {
+        private WeakReference<HomeActivity> activityReference;
+        private HomePageBannerTableEnglish homePageBannerTableEnglish;
+        private HomePageBannerTableArabic homePageBannerTableArabic;
+        String language;
+
+        InsertBannerDatabaseTask(HomeActivity context, HomePageBannerTableEnglish homePageBannerTableEnglish,
+                                 HomePageBannerTableArabic homePageBannerTableArabic, String lan) {
+            activityReference = new WeakReference<>(context);
+            this.homePageBannerTableEnglish = homePageBannerTableEnglish;
+            this.homePageBannerTableArabic = homePageBannerTableArabic;
+            language = lan;
+        }
+
+        @Override
+        protected Boolean doInBackground(Void... voids) {
+            if (bannerLists != null) {
+                if (language.equals("en")) {
+                    homePageBannerTableEnglish = new HomePageBannerTableEnglish(
+                            Long.parseLong(bannerLists.get(0).getId()),
+                            bannerLists.get(0).getName(),
+                            bannerLists.get(0).getImage());
+                    activityReference.get().qmDatabase.getHomePageBannerTableDao()
+                            .insertEnglishBannerTable(homePageBannerTableEnglish);
+
+                } else {
+                    homePageBannerTableArabic = new HomePageBannerTableArabic(
+                            Long.parseLong(bannerLists.get(0).getId()),
+                            bannerLists.get(0).getName(),
+                            bannerLists.get(0).getImage());
+                    activityReference.get().qmDatabase.getHomePageBannerTableDao()
+                            .insertArabicBannerTable(homePageBannerTableArabic);
+                }
+            }
+            return true;
+        }
+    }
+
+    public class RetriveEnglishBannerTableData extends AsyncTask<Void, Void, List<HomePageBannerTableEnglish>> {
+        private WeakReference<HomeActivity> activityReference;
+        int language;
+
+        RetriveEnglishBannerTableData(HomeActivity context, int appLanguage) {
+            activityReference = new WeakReference<>(context);
+            language = appLanguage;
+        }
+
+        @Override
+        protected List<HomePageBannerTableEnglish> doInBackground(Void... voids) {
+            return activityReference.get().qmDatabase.getHomePageBannerTableDao().getAllDataFromHomePageBannerEnglishTable();
+
+        }
+
+        @Override
+        protected void onPostExecute(List<HomePageBannerTableEnglish> homePageBannerTableEnglishes) {
+            if (homePageBannerTableEnglishes.size() > 0) {
+                bannerLists.clear();
+                HomeList exhibitonObject = new HomeList(homePageBannerTableEnglishes.get(0).getName()
+                        , String.valueOf(homePageBannerTableEnglishes.get(0).getQatarmuseum_id()),
+                        homePageBannerTableEnglishes.get(0).getImage());
+                bannerLists.add(exhibitonObject);
+                addBannerData(bannerLists);
+                bannerLayout.setVisibility(View.VISIBLE);
+            } else {
+                bannerLayout.setVisibility(View.GONE);
+            }
+        }
+    }
+
+    public class RetriveArabicBannerTableData extends AsyncTask<Void, Void,
+            List<HomePageBannerTableArabic>> {
+        private WeakReference<HomeActivity> activityReference;
+        int language;
+
+        RetriveArabicBannerTableData(HomeActivity context, int appLanguage) {
+            activityReference = new WeakReference<>(context);
+            language = appLanguage;
+        }
+
+
+        @Override
+        protected List<HomePageBannerTableArabic> doInBackground(Void... voids) {
+            return activityReference.get().qmDatabase.getHomePageBannerTableDao().getAllDataFromHomePageBannerArabicTable();
+
+        }
+
+        @Override
+        protected void onPostExecute(List<HomePageBannerTableArabic> homePageBannerTableArabics) {
+            if (homePageBannerTableArabics.size() > 0) {
+                bannerLists.clear();
+                HomeList exhibitonObject = new HomeList(homePageBannerTableArabics.get(0).getName()
+                        , String.valueOf(homePageBannerTableArabics.get(0).getQatarmuseum_id()),
+                        homePageBannerTableArabics.get(0).getImage());
+                bannerLists.add(exhibitonObject);
+                addBannerData(bannerLists);
+                bannerLayout.setVisibility(View.VISIBLE);
+            } else {
+                bannerLayout.setVisibility(View.GONE);
+            }
+        }
+
+    }
+
+    public void getBannerDataFromDataBase(int language) {
+        if (language == 1)
+            new RetriveEnglishBannerTableData(HomeActivity.this, language).execute();
+        else
+            new RetriveArabicBannerTableData(HomeActivity.this, language).execute();
+    }
 
     public class RowCount extends AsyncTask<Void, Void, Integer> {
         private WeakReference<HomeActivity> activityReference;

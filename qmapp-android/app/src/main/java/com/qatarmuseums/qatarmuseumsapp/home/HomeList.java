@@ -29,6 +29,12 @@ public class HomeList implements Comparable<HomeList> {
         this.sortId = sortId;
     }
 
+    public HomeList(String name, String id, String image) {
+        this.name = name;
+        this.id = id;
+        this.image = image;
+    }
+
     public String getName() {
         return name;
     }
