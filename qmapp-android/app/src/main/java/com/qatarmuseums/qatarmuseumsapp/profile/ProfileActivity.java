@@ -5,6 +5,7 @@ import android.app.Activity;
 import android.app.Dialog;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.v7.app.AppCompatActivity;
@@ -21,6 +22,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.bumptech.glide.request.RequestOptions;
+import com.qatarmuseums.qatarmuseumsapp.QMDatabase;
 import com.qatarmuseums.qatarmuseumsapp.R;
 import com.qatarmuseums.qatarmuseumsapp.apicall.APIClient;
 import com.qatarmuseums.qatarmuseumsapp.apicall.APIInterface;
@@ -29,6 +31,7 @@ import com.qatarmuseums.qatarmuseumsapp.culturepass.CulturePassActivity;
 import com.qatarmuseums.qatarmuseumsapp.culturepass.ReceivedCookiesInterceptor;
 import com.qatarmuseums.qatarmuseumsapp.culturepasscard.CulturePassCardActivity;
 import com.qatarmuseums.qatarmuseumsapp.home.GlideApp;
+import com.qatarmuseums.qatarmuseumsapp.home.HomeActivity;
 import com.qatarmuseums.qatarmuseumsapp.utils.Util;
 
 import org.json.JSONArray;
@@ -37,6 +40,7 @@ import org.json.JSONObject;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -73,6 +77,7 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
     String accepted;
     private String uid;
     private List<Und> unds = new ArrayList<>();
+    private QMDatabase qmDatabase;
 
     @SuppressLint("ClickableViewAccessibility")
     @Override
@@ -137,7 +142,7 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
         imageURL = qmPreferences.getString("IMAGE", null);
         rsvpAttendance = qmPreferences.getString("RSVP", null);
         uid = qmPreferences.getString("UID", null);
-
+        qmDatabase = QMDatabase.getInstance(ProfileActivity.this);
         // RSVP is hiding from profile page
 //        accepted = qmPreferences.getString("ACCEPTED", "0");
 //        if (rsvpAttendance != null) {
@@ -392,6 +397,7 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
     }
 
     public void clearPreference() {
+        new DeleteBannerTableEnglish(ProfileActivity.this).execute();
         qmPreferences = PreferenceManager.getDefaultSharedPreferences(this);
         editor = qmPreferences.edit();
         editor.putString("TOKEN", null);
@@ -409,6 +415,40 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
         navigationIntent.putExtra("IS_LOGOUT", true);
         startActivity(navigationIntent);
         finish();
+
+    }
+
+    public class DeleteBannerTableEnglish extends AsyncTask<Void, Void, Void> {
+        private WeakReference<ProfileActivity> activityReference;
+
+        DeleteBannerTableEnglish(ProfileActivity context) {
+            activityReference = new WeakReference<>(context);
+        }
+
+        @Override
+        protected Void doInBackground(Void... voids) {
+            activityReference.get().qmDatabase.getHomePageBannerTableDao().nukeBannerTableEnglish();
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(Void aVoid) {
+            new DeleteBannerTableArabic(ProfileActivity.this).execute();
+        }
+    }
+
+    public class DeleteBannerTableArabic extends AsyncTask<Void, Void, Void> {
+        private WeakReference<ProfileActivity> activityReference;
+
+        DeleteBannerTableArabic(ProfileActivity context) {
+            activityReference = new WeakReference<>(context);
+        }
+
+        @Override
+        protected Void doInBackground(Void... voids) {
+            activityReference.get().qmDatabase.getHomePageBannerTableDao().nukeBannerTableArabic();
+            return null;
+        }
 
     }
 

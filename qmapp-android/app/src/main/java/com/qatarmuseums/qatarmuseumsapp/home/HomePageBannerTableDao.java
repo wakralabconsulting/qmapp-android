@@ -4,6 +4,7 @@ import android.arch.persistence.room.Dao;
 import android.arch.persistence.room.Delete;
 import android.arch.persistence.room.Insert;
 import android.arch.persistence.room.Query;
+import android.arch.persistence.room.Transaction;
 import android.arch.persistence.room.Update;
 
 import java.util.List;
@@ -60,6 +61,12 @@ public interface HomePageBannerTableDao {
      * deleteEnglishTable the object from database
      * @param note, object to be deleted
      */
+    @Query("DELETE FROM homepagebannertableEnglish")
+    void nukeBannerTableEnglish();
+
+    @Query("DELETE FROM homepagebannertableArabic")
+    void nukeBannerTableArabic();
+
     @Delete
     void deleteEnglishBannerTable(HomePageBannerTableEnglish homePageBannerTableEnglish);
 
