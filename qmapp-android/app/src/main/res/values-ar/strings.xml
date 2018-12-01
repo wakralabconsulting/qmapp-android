@@ -256,4 +256,5 @@
     <!-- Strings related to Object preview -->
     <string name="gallery_label">, المعرض </string>
     <string name="floor_label">المستوى </string>
+    <string name="download_brochure_for_more_information"><u>Download Brochure for More Information</u></string>
 </resources>
