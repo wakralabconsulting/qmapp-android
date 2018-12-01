@@ -205,7 +205,8 @@ public class HomeActivity extends BaseActivity {
         recyclerView.setItemAnimator(new DefaultItemAnimator());
         recyclerView.setAdapter(mAdapter);
 
-        recyclerView.addOnItemTouchListener(new RecyclerTouchListener(getApplicationContext(), recyclerView, new RecyclerTouchListener.ClickListener() {
+        recyclerView.addOnItemTouchListener(new RecyclerTouchListener(getApplicationContext(),
+                recyclerView, new RecyclerTouchListener.ClickListener() {
 
             @Override
             public void onClick(View view, int position) {
@@ -328,7 +329,7 @@ public class HomeActivity extends BaseActivity {
     public void navigateToLaunchPage() {
         navigationIntent = new Intent(HomeActivity.this, MuseumActivity.class);
         navigationIntent.putExtra("MUSEUMTITLE", bannerText.getText());
-        navigationIntent.putExtra("MUSEUM_ID", "13376"); // Temporary waiting for API
+        navigationIntent.putExtra("MUSEUM_ID", bannerLists.get(0).getId());
         startActivity(navigationIntent);
     }
 

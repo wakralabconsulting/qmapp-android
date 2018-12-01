@@ -258,5 +258,6 @@ They exemplify the external influences and internal creativity that inspired thi
     <string name="museum_travel">Travel Arrangements</string>
     <string name="museum_discussion">Panel Discussion</string>
     <string name="event_date">Event Date</string>
+    <string name="download_brochure_for_more_information"><u>Download Brochure for More Information</u></string>
 
 </resources>

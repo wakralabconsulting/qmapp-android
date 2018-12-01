@@ -137,4 +137,9 @@ public interface APIInterface {
 
     @GET("{language}/mobile_api/nmoq_banner_banner.json")
     Call<ArrayList<HomeList>> getBannerDetails(@Path("language") String language);
+
+    @GET("{language}/mobile_api/nmoq_about_page.json")
+    Call<ArrayList<MuseumAboutModel>> getLaunchMuseumAboutDetails(@Path("language") String language,
+                                                            @Query("nid") String nid);
+
 }

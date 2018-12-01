@@ -122,13 +122,41 @@
                         android:textColor="@color/black"
                         android:textSize="@dimen/font_size_15" />
                 </LinearLayout>
+
+                <LinearLayout
+                    android:id="@+id/download_layout"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:orientation="vertical"
+                    android:visibility="gone">
+
+                    <ImageView
+                        android:id="@+id/download_button"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:scaleX="0.75"
+                        android:scaleY="0.75"
+                        android:src="@drawable/download_icon" />
+
+                    <TextView
+                        android:id="@+id/download_text"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_margin="@dimen/text_margin"
+                        android:fontFamily="@font/din_next_lt_pro_regular"
+                        android:text="@string/download_brochure_for_more_information"
+                        android:textAlignment="center"
+                        android:textColor="@color/black"
+                        android:textSize="@dimen/font_size_14" />
+
+                </LinearLayout>
             </LinearLayout>
 
             <LinearLayout
                 android:id="@+id/event_date_layout"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="@dimen/text_margin"
                 android:layout_marginEnd="@dimen/text_margin"
                 android:layout_marginStart="@dimen/text_margin"
                 android:background="@drawable/round_corner_white_details_page"
@@ -215,10 +243,12 @@
                 </LinearLayout>
 
                 <LinearLayout
+                    android:id="@+id/video_layout"
                     android:layout_width="match_parent"
                     android:layout_height="200dp"
                     android:layout_marginBottom="@dimen/padding_15"
-                    android:orientation="vertical">
+                    android:orientation="vertical"
+                    android:visibility="visible">
 
                     <cn.jzvd.JzvdStd
                         android:id="@+id/videoplayer"
@@ -237,6 +267,7 @@
                     android:id="@+id/location_title"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/text_margin"
                     android:fontFamily="@font/din_next_lt_pro_bold"
                     android:text="@string/location_title"
                     android:textColor="@color/black"
@@ -412,7 +443,7 @@
             android:visibility="gone" />
 
         <LinearLayout
-            android:id="@+id/retry_layout"
+            android:id="@+id/retry_layout_about"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_above="@id/bottom_toolbar"
