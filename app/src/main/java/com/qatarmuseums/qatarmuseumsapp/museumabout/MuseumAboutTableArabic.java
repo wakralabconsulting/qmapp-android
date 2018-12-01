@@ -38,13 +38,15 @@ public class MuseumAboutTableArabic {
     private String museum_subtitle;
     @ColumnInfo()
     private String museum_opening_time;
+    @ColumnInfo()
+    private String event_date;
 
     public MuseumAboutTableArabic(String museum_name, @NonNull long museum_id, String tourguide_available,
-                                  String short_description,String long_description, String museum_image,
+                                  String short_description, String long_description, String museum_image,
                                   String museum_contact_number, String museum_contact_email,
                                   String museum_lattitude, String museum_longitude,
                                   String tourguide_availability, String museum_subtitle,
-                                  String museum_opening_time) {
+                                  String museum_opening_time, String event_date) {
         this.museum_name = museum_name;
         this.museum_id = museum_id;
         this.tourguide_available = tourguide_available;
@@ -58,6 +60,7 @@ public class MuseumAboutTableArabic {
         this.tourguide_availability = tourguide_availability;
         this.museum_subtitle = museum_subtitle;
         this.museum_opening_time = museum_opening_time;
+        this.event_date = event_date;
     }
 
 
@@ -112,5 +115,9 @@ public class MuseumAboutTableArabic {
 
     public String getMuseum_opening_time() {
         return museum_opening_time;
+    }
+
+    public String getEvent_date() {
+        return event_date;
     }
 }
