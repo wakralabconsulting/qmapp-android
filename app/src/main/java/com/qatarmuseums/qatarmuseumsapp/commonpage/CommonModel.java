@@ -38,6 +38,12 @@ public class CommonModel {
     @SerializedName("category")
     private long category;
 
+    @SerializedName("NMoq_event_Date")
+    private String eventDate;
+    @SerializedName("day")
+    private String eventDay;
+
+    private Boolean isTour;
 
     public CommonModel() {
 
@@ -93,6 +99,16 @@ public class CommonModel {
         this.openingTime = openingTime;
         this.closingTime = closingTime;
         this.description = description;
+    }
+
+    public CommonModel(String id, String eventDay, String eventDate, String name,
+                       String image, boolean isTour) {
+        this.id = id;
+        this.name = name;
+        this.image = image;
+        this.eventDay = eventDay;
+        this.eventDate = eventDate;
+        this.isTour = isTour;
     }
 
     public String getName() {
@@ -243,4 +259,17 @@ public class CommonModel {
     public long getCategory() {
         return category;
     }
+
+    public String getEventDate() {
+        return eventDate;
+    }
+
+    public String getEventDay() {
+        return eventDay;
+    }
+
+    public Boolean getIsTour() {
+        return isTour;
+    }
 }
+

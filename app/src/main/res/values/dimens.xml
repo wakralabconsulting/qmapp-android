@@ -68,4 +68,5 @@
     <dimen name="font_size_40">40sp</dimen>
     <dimen name="font_size_12">12sp</dimen>
     <dimen name="font_size_30">30sp</dimen>
+    <dimen name="font_size_38">38sp</dimen>
 </resources>

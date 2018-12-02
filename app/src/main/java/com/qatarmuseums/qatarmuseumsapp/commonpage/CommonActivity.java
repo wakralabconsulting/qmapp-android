@@ -205,12 +205,33 @@ public class CommonActivity extends AppCompatActivity {
             else
                 getCommonListDataFromDatabase("getDiningList.json");
         } else if (toolbarTitle.equals(getString(R.string.museum_collection_text))) {
-
             if (util.isNetworkAvailable(CommonActivity.this))
                 getMuseumCollectionListFromAPI();
             else
                 getMuseumCollectionListFromDatabase();
+        } else if (toolbarTitle.equals(getString(R.string.museum_tours))) {
+            getTourData();
         }
+    }
+
+    public void getTourData() {
+        recyclerView.setVisibility(View.VISIBLE);
+        CommonModel model = new CommonModel("13381", "Day 01", "28 March 2019", "Art & Culture",
+                "https://www.qm.org.qa/sites/default/files/styles/content_image/public/images/body/dsc_2081.jpg", true);
+        models.add(model);
+        model = new CommonModel("13382", "Day 02", "29 March 2019", "Sports",
+                "https://www.qm.org.qa/sites/default/files/styles/content_image/public/images/body/8-2-2013wheels_and_heels_2013-84.jpg", true);
+        models.add(model);
+         model = new CommonModel("13383", "Day 03", "30 March 2019", "Architecture",
+                "https://www.qm.org.qa/sites/default/files/styles/content_image/public/images/body/12-2-2013qtel_sport_day_work_-81_-_copy_0.jpg", true);
+        models.add(model);
+         model = new CommonModel("13384", "Day 04", "1 April 2019", "Fashion",
+                "https://www.qm.org.qa/sites/default/files/styles/content_image/public/images/body/lusail_multipurpose_hall-graffiti_150112dsc_6001.jpg", true);
+        models.add(model);
+         model = new CommonModel("13385", "Day 05", "2 April 2019", "Nature",
+                "https://www.qm.org.qa/sites/default/files/styles/content_image/public/images/body/le-puy-en-velay-luc_olivier.jpg", true);
+        models.add(model);
+        mAdapter.notifyDataSetChanged();
     }
 
     public void getCommonListDataFromDatabase(String apiParts) {
