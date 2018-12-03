@@ -74,7 +74,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="@dimen/pading_15"
-                android:background="@drawable/rounded_corner_grey"
+                android:background="@drawable/round_corner_black"
                 android:fontFamily="@font/din_next_lt_pro_bold"
                 android:textAllCaps="false"
                 android:textColor="@color/white"

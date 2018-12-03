@@ -38,6 +38,7 @@ import com.qatarmuseums.qatarmuseumsapp.detailspage.DiningActivity;
 import com.qatarmuseums.qatarmuseumsapp.museum.MuseumCollectionListTableArabic;
 import com.qatarmuseums.qatarmuseumsapp.museum.MuseumCollectionListTableEnglish;
 import com.qatarmuseums.qatarmuseumsapp.museumcollectiondetails.CollectionDetailsActivity;
+import com.qatarmuseums.qatarmuseumsapp.tourdetails.TourDetailsActivity;
 import com.qatarmuseums.qatarmuseumsapp.utils.Util;
 
 import java.io.IOException;
@@ -118,7 +119,9 @@ public class CommonActivity extends AppCompatActivity {
                 else if (toolbarTitle.equals(getString(R.string.museum_collection_text)))
                     navigationIntent = new Intent(CommonActivity.this,
                             CollectionDetailsActivity.class);
-
+                else if (toolbarTitle.equals(getString(R.string.museum_tours)))
+                    navigationIntent = new Intent(CommonActivity.this,
+                            TourDetailsActivity.class);
                 else
                     navigationIntent = new Intent(CommonActivity.this, DetailsActivity.class);
                 navigationIntent.putExtra("HEADER_IMAGE", models.get(position).getImage());
@@ -222,13 +225,13 @@ public class CommonActivity extends AppCompatActivity {
         model = new CommonModel("13382", "Day 02", "29 March 2019", "Sports",
                 "https://www.qm.org.qa/sites/default/files/styles/content_image/public/images/body/8-2-2013wheels_and_heels_2013-84.jpg", true);
         models.add(model);
-         model = new CommonModel("13383", "Day 03", "30 March 2019", "Architecture",
+        model = new CommonModel("13383", "Day 03", "30 March 2019", "Architecture",
                 "https://www.qm.org.qa/sites/default/files/styles/content_image/public/images/body/12-2-2013qtel_sport_day_work_-81_-_copy_0.jpg", true);
         models.add(model);
-         model = new CommonModel("13384", "Day 04", "1 April 2019", "Fashion",
+        model = new CommonModel("13384", "Day 04", "1 April 2019", "Fashion",
                 "https://www.qm.org.qa/sites/default/files/styles/content_image/public/images/body/lusail_multipurpose_hall-graffiti_150112dsc_6001.jpg", true);
         models.add(model);
-         model = new CommonModel("13385", "Day 05", "2 April 2019", "Nature",
+        model = new CommonModel("13385", "Day 05", "2 April 2019", "Nature",
                 "https://www.qm.org.qa/sites/default/files/styles/content_image/public/images/body/le-puy-en-velay-luc_olivier.jpg", true);
         models.add(model);
         mAdapter.notifyDataSetChanged();
