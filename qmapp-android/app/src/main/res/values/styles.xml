@@ -45,4 +45,9 @@
         <item name="windowNoTitle">true</item>
     </style>
 
+    <style name="ColorSwitchStyle" parent="Theme.AppCompat.Light">
+        <item name="colorControlActivated">@color/colorAccent</item>
+        <item name="colorSwitchThumbNormal">@color/settings_switch_on_color</item>
+        <item name="android:colorForeground">@color/settings_switch_on_color</item>
+    </style>
 </resources>

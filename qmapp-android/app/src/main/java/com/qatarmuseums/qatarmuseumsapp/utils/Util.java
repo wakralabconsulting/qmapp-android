@@ -91,8 +91,8 @@ public class Util {
 
     public void showCulturalPassAlertDialog(Activity activity) {
         customDialog = new CustomDialogClass(activity
-                , "p"
-                , activity.getResources().getString(R.string.thankyou));
+                , ""
+                , activity.getResources().getString(R.string.thankyou_interest));
         customDialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
         customDialog.show();
 
