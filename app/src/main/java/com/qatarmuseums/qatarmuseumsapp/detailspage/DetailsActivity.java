@@ -1,6 +1,7 @@
 package com.qatarmuseums.qatarmuseumsapp.detailspage;
 
 import android.annotation.SuppressLint;
+import android.app.Dialog;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.net.Uri;
@@ -10,10 +11,12 @@ import android.preference.PreferenceManager;
 import android.support.design.widget.AppBarLayout;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.SwitchCompat;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.Window;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.Button;
@@ -129,6 +132,9 @@ public class DetailsActivity extends AppCompatActivity implements IPullZoom, OnM
     private TextView eventDateTxt;
     private TextView downloadText;
     private View downloadButton;
+    private LinearLayout interestLayout;
+    private SwitchCompat interestToggle;
+    private Boolean interested = false;
 
 
     @SuppressLint("ClickableViewAccessibility")
@@ -188,6 +194,8 @@ public class DetailsActivity extends AppCompatActivity implements IPullZoom, OnM
         downloadLayout = findViewById(R.id.download_layout);
         downloadText = findViewById(R.id.download_text);
         downloadButton = findViewById(R.id.download_button);
+        interestLayout = findViewById(R.id.interest_layout);
+        interestToggle = findViewById(R.id.interest_toggle_button);
 
         util = new Util();
         title.setText(mainTitle);
@@ -313,7 +321,52 @@ public class DetailsActivity extends AppCompatActivity implements IPullZoom, OnM
         });
         downloadButton.setOnClickListener(v -> downloadAction());
         downloadText.setOnClickListener(v -> downloadAction());
+
+        interestToggle.setOnTouchListener((v, event) ->
+        {
+            if (!interested) {
+                interested = true;
+                interestToggle.setChecked(false);
+                util.showCulturalPassAlertDialog(DetailsActivity.this);
+            } else {
+                showDeclineDialog();
+            }
+            return false;
+        });
     }
+
+    protected void showDeclineDialog() {
+
+        final Dialog dialog = new Dialog(this, R.style.DialogNoAnimation);
+        dialog.setCancelable(true);
+        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+
+        View view = getLayoutInflater().inflate(R.layout.vip_pop_up, null);
+        dialog.setContentView(view);
+
+        View line = (View) view.findViewById(R.id.view);
+        Button yes = (Button) view.findViewById(R.id.acceptbtn);
+        Button no = (Button) view.findViewById(R.id.accept_later_btn);
+        TextView dialogTitle = (TextView) view.findViewById(R.id.dialog_tittle);
+        TextView dialogContent = (TextView) view.findViewById(R.id.dialog_content);
+        line.setVisibility(View.GONE);
+        dialogTitle.setVisibility(View.GONE);
+        yes.setText(getResources().getString(R.string.yes));
+        no.setText(getResources().getString(R.string.no));
+        dialogContent.setText(getResources().getString(R.string.decline_content_tour));
+
+        yes.setOnClickListener(view1 -> {
+            dialog.dismiss();
+            interestToggle.setChecked(true);
+            interested = false;
+        });
+        no.setOnClickListener(v -> {
+            dialog.dismiss();
+        });
+
+        dialog.show();
+    }
+
 
     private void downloadAction() {
         util.showComingSoonDialog(this, R.string.coming_soon_content);
@@ -392,7 +445,20 @@ public class DetailsActivity extends AppCompatActivity implements IPullZoom, OnM
                 getMuseumAboutDetailsFromAPI(id, language, true);
             else
                 getMuseumAboutDetailsFromDatabase(id, language, true);
+        } else if (comingFrom.equals(getString(R.string.museum_tours))) {
+            getTourInDetails();
         }
+    }
+
+    private void getTourInDetails() {
+        interestLayout.setVisibility(View.VISIBLE);
+        videoLayout.setVisibility(View.GONE);
+        timingTitle.setText(R.string.date);
+        loadData(null,
+                "This tour has been designed for introducing you to the exquisite art & culture of Qatar",
+                null, null, null, "28 March 2019",
+                null, null, "+974 4452 5555\ninfo@qm.org.qa", null,
+                null, false, null);
     }
 
     private void getCommonListAPIDataFromDatabase(String id, int appLanguage) {
@@ -486,7 +552,6 @@ public class DetailsActivity extends AppCompatActivity implements IPullZoom, OnM
                          String closingTime, String locationInfo, String contactInfo, String latitudefromApi,
                          String longitudefromApi, boolean museumAboutStatus, String videoFile) {
         if (shortDescription != null) {
-
             commonContentLayout.setVisibility(View.VISIBLE);
             retryLayout.setVisibility(View.GONE);
             progressBar.setVisibility(View.GONE);
@@ -498,7 +563,6 @@ public class DetailsActivity extends AppCompatActivity implements IPullZoom, OnM
                 latitude = intent.getStringExtra("LATITUDE");
                 longitude = intent.getStringExtra("LONGITUDE");
             }
-
             if (videoFile != null) {
 
                 String videoPath = videoFile;
@@ -506,7 +570,6 @@ public class DetailsActivity extends AppCompatActivity implements IPullZoom, OnM
                 jzvdStd.setUp(videoFile, "", Jzvd.SCREEN_WINDOW_NORMAL);
                 jzvdStd.setVisibility(View.VISIBLE);
                 imagePlaceHolder.setVisibility(View.GONE);
-
             } else {
                 imagePlaceHolder.setVisibility(View.VISIBLE);
                 jzvdStd.setVisibility(View.GONE);
@@ -517,13 +580,17 @@ public class DetailsActivity extends AppCompatActivity implements IPullZoom, OnM
                 this.subTitle.setText(subTitle);
             }
             this.shortDescription.setText(shortDescription);
-            this.longDescription.setText(longDescription);
+            if (longDescription != null)
+                this.longDescription.setText(longDescription);
             if (secondTitle != null) {
                 this.secondTitleLayout.setVisibility(View.VISIBLE);
                 this.secondTitle.setText(secondTitle);
                 this.secondTitleDescription.setText(secondTitleDescription);
             }
-            timingTitle.setText(R.string.museum_timings);
+            if (comingFrom.equals(getString(R.string.museum_tours)))
+                timingTitle.setText(R.string.date);
+            else
+                timingTitle.setText(R.string.museum_timings);
             if (openingTime != null) {
                 this.timingLayout.setVisibility(View.VISIBLE);
                 String time = /* getResources().getString(R.string.everyday_from) +" " + */

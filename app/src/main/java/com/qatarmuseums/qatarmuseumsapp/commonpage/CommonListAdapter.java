@@ -11,6 +11,8 @@ import android.view.ViewGroup;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.qatarmuseums.qatarmuseumsapp.R;
@@ -29,8 +31,10 @@ public class CommonListAdapter extends RecyclerView.Adapter<CommonListAdapter.My
     Util util;
 
     public class MyViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
-        public TextView name, dateDetails, locationDetails, statusTag;
+        public TextView name, dateDetails, locationDetails, statusTag, tourDayTxt, tourDateTxt, tourTitleTxt;
         public ImageView imageView, favIcon;
+        public RelativeLayout commonTitleLayout, tourTitleLayout;
+
         private WeakReference<RecyclerTouchListener.ItemClickListener> listenerRef;
 
         public MyViewHolder(View view, RecyclerTouchListener.ItemClickListener listener) {
@@ -40,19 +44,23 @@ public class CommonListAdapter extends RecyclerView.Adapter<CommonListAdapter.My
             name = (TextView) view.findViewById(R.id.name_text);
             favIcon = (ImageView) view.findViewById(R.id.favourite);
             statusTag = (TextView) view.findViewById(R.id.open_close_tag);
+            commonTitleLayout = view.findViewById(R.id.common_title_layout);
+            tourTitleLayout = view.findViewById(R.id.tour_title_layout);
+            tourDayTxt = view.findViewById(R.id.tour_day_text);
+            tourDateTxt = view.findViewById(R.id.tour_date_text);
+            tourTitleTxt = view.findViewById(R.id.tour_title_text);
+
             view.setOnClickListener(this);
             favIcon.setOnClickListener(this);
-            favIcon.setOnTouchListener(new View.OnTouchListener() {
-                @Override
-                public boolean onTouch(View v, MotionEvent event) {
-                    switch (event.getAction()) {
-                        case MotionEvent.ACTION_DOWN:
-                            favIcon.startAnimation(zoomOutAnimation);
-                            break;
-                    }
-                    return false;
+            favIcon.setOnTouchListener((v, event) -> {
+                switch (event.getAction()) {
+                    case MotionEvent.ACTION_DOWN:
+                        favIcon.startAnimation(zoomOutAnimation);
+                        break;
                 }
+                return false;
             });
+
 
         }
 
@@ -81,6 +89,8 @@ public class CommonListAdapter extends RecyclerView.Adapter<CommonListAdapter.My
         zoomOutAnimation = AnimationUtils.loadAnimation(mContext.getApplicationContext(),
                 R.anim.zoom_out_more);
         util = new Util();
+
+
     }
 
     @NonNull
@@ -95,7 +105,14 @@ public class CommonListAdapter extends RecyclerView.Adapter<CommonListAdapter.My
     @Override
     public void onBindViewHolder(@NonNull CommonListAdapter.MyViewHolder holder, int position) {
         CommonModel model = commonModelList.get(position);
-        holder.name.setText(model.getName());
+        if (model.getIsTour() != null) {
+            holder.commonTitleLayout.setVisibility(View.GONE);
+            holder.tourTitleLayout.setVisibility(View.VISIBLE);
+            holder.tourDayTxt.setText(model.getEventDay());
+            holder.tourDateTxt.setText(model.getEventDate());
+            holder.tourTitleTxt.setText(model.getName());
+        } else
+            holder.name.setText(model.getName());
 
         if (model.getIsfavourite() != null) {
             holder.favIcon.setVisibility(View.VISIBLE);
