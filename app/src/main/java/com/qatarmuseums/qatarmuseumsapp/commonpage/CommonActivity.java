@@ -10,8 +10,10 @@ import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.ViewTreeObserver;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.Button;
@@ -109,7 +111,17 @@ public class CommonActivity extends AppCompatActivity {
         id = intent.getStringExtra("ID");
         toolbar_title.setText(toolbarTitle);
         recyclerView = (RecyclerView) findViewById(R.id.common_recycler_view);
-
+        final ViewTreeObserver observer = recyclerView.getViewTreeObserver();
+        observer.addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
+            @Override
+            public void onGlobalLayout() {
+                Log.d("Row_Height", String.valueOf(recyclerView.getHeight()));
+                recyclerView.getViewTreeObserver().removeOnGlobalLayoutListener(this);
+                if (toolbarTitle.equals(getString(R.string.museum_travel))) {
+                    getTravelData(recyclerView.getHeight() / 2);
+                }
+            }
+        });
         mAdapter = new CommonListAdapter(this, models, new RecyclerTouchListener.ItemClickListener() {
             @Override
             public void onPositionClicked(int position) {
@@ -124,7 +136,11 @@ public class CommonActivity extends AppCompatActivity {
                             TourDetailsActivity.class);
                 else
                     navigationIntent = new Intent(CommonActivity.this, DetailsActivity.class);
-                navigationIntent.putExtra("HEADER_IMAGE", models.get(position).getImage());
+
+                if (toolbarTitle.equals(getString(R.string.museum_travel)))
+                    navigationIntent.putExtra("HEADER_IMAGE", models.get(position).getImageDrawable());
+                else
+                    navigationIntent.putExtra("HEADER_IMAGE", models.get(position).getImage());
                 navigationIntent.putExtra("MAIN_TITLE", models.get(position).getName());
                 navigationIntent.putExtra("LONG_DESC", models.get(position).getDescription());
                 navigationIntent.putExtra("ID", models.get(position).getId());
@@ -215,6 +231,20 @@ public class CommonActivity extends AppCompatActivity {
         } else if (toolbarTitle.equals(getString(R.string.museum_tours))) {
             getTourData();
         }
+    }
+
+    private void getTravelData(int rowHeight) {
+        recyclerView.setVisibility(View.VISIBLE);
+        CommonModel model = new CommonModel("Qatar Airways",
+                R.drawable.qatar_airways_bg,
+                "14481", true, rowHeight);
+        models.add(model);
+        model = new CommonModel("Katara Hospitality",
+                R.drawable.katara_bg,
+                "14482", true, rowHeight);
+        models.add(model);
+        mAdapter.notifyDataSetChanged();
+
     }
 
     public void getTourData() {
