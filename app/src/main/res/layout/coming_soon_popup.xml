@@ -13,9 +13,9 @@
         android:layout_marginTop="@dimen/pading_25"
         android:fontFamily="@font/din_next_lt_pro_bold"
         android:textAlignment="center"
-        android:visibility="visible"
         android:textColor="@color/black"
-        android:textSize="@dimen/select_language_text_size" />
+        android:textSize="@dimen/select_language_text_size"
+        android:visibility="visible" />
 
     <View
         android:layout_width="match_parent"
@@ -28,11 +28,11 @@
         android:id="@+id/dialog_content"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginEnd="@dimen/padding_25"
+        android:layout_marginStart="@dimen/padding_25"
         android:layout_marginTop="@dimen/pading_25"
-        android:layout_marginEnd="@dimen/pading_15"
-        android:layout_marginStart="@dimen/pading_15"
-        android:textColor="@color/black"
         android:textAlignment="center"
+        android:textColor="@color/black"
         android:textSize="@dimen/settings_text_size" />
 
 
@@ -44,9 +44,9 @@
         android:background="@drawable/round_corner_black"
         android:fontFamily="@font/din_next_lt_pro_bold"
         android:textAllCaps="false"
-        android:visibility="visible"
         android:textColor="@color/white"
-        android:textSize="@dimen/settings_page_list_item_text_size" />
+        android:textSize="@dimen/settings_page_list_item_text_size"
+        android:visibility="visible" />
 
 
     <Button
@@ -57,8 +57,8 @@
         android:background="@drawable/round_corner_black"
         android:fontFamily="@font/din_next_lt_pro_bold"
         android:textAllCaps="false"
-        android:visibility="gone"
         android:textColor="@color/white"
-        android:textSize="@dimen/settings_page_list_item_text_size" />
+        android:textSize="@dimen/settings_page_list_item_text_size"
+        android:visibility="gone" />
 
 </LinearLayout>

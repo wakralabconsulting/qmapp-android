@@ -44,7 +44,7 @@
                     android:id="@+id/main_title"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:fontFamily="@font/din_regular"
+                    android:fontFamily="@font/din_next_lt_pro_bold"
                     android:textAlignment="center"
                     android:textAllCaps="true"
                     android:textColor="@color/black"
@@ -151,6 +151,46 @@
                         android:textSize="@dimen/font_size_14" />
 
                 </LinearLayout>
+
+                <LinearLayout
+                    android:id="@+id/interest_layout"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:orientation="horizontal"
+                    android:visibility="gone">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_margin="@dimen/text_margin"
+                        android:fontFamily="@font/din_next_lt_pro_light"
+                        android:text="@string/interested"
+                        android:textAlignment="center"
+                        android:textColor="@color/black"
+                        android:textSize="@dimen/font_size_16" />
+
+                    <android.support.v7.widget.SwitchCompat
+                        android:id="@+id/interest_toggle_button"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:checked="true"
+
+                        android:clickable="false"
+                        android:textAppearance="?android:attr/textAppearanceMedium"
+                        android:theme="@style/ColorSwitchStyle" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_margin="@dimen/text_margin"
+                        android:fontFamily="@font/din_next_lt_pro_light"
+                        android:text="@string/not_interested"
+                        android:textAlignment="center"
+                        android:textColor="@color/black"
+                        android:textSize="@dimen/font_size_16" />
+
+                </LinearLayout>
             </LinearLayout>
 
             <LinearLayout
@@ -219,6 +259,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:fontFamily="@font/din_next_lt_pro_bold"
+                        android:textAllCaps="true"
                         android:textColor="@color/black"
                         android:textSize="@dimen/font_size_18" />
 

@@ -257,4 +257,7 @@
     <string name="gallery_label">, المعرض </string>
     <string name="floor_label">المستوى </string>
     <string name="download_brochure_for_more_information"><u>Download Brochure for More Information</u></string>
+    <string name="interested">Interested</string>
+    <string name="not_interested">Not Interested</string>
+    <string name="date">Date</string>
 </resources>
