@@ -260,4 +260,6 @@
     <string name="interested">Interested</string>
     <string name="not_interested">Not Interested</string>
     <string name="date">Date</string>
+    <string name="offer_code">OFFER CODE</string>
+    <string name="claim_offer">Claim Offer</string>
 </resources>

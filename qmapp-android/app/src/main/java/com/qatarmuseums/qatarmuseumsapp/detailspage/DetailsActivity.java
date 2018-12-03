@@ -135,6 +135,10 @@ public class DetailsActivity extends AppCompatActivity implements IPullZoom, OnM
     private LinearLayout interestLayout;
     private SwitchCompat interestToggle;
     private Boolean interested = false;
+    private LinearLayout locationLayout;
+    private LinearLayout offerLayout;
+    private int headerImageDrawable;
+    private View claimButton;
 
 
     @SuppressLint("ClickableViewAccessibility")
@@ -146,9 +150,14 @@ public class DetailsActivity extends AppCompatActivity implements IPullZoom, OnM
         language = qmPreferences.getInt("AppLanguage", 1);
         progressBar = (ProgressBar) findViewById(R.id.progressBarLoading);
         intent = getIntent();
-        headerImage = intent.getStringExtra("HEADER_IMAGE");
         mainTitle = intent.getStringExtra("MAIN_TITLE");
         comingFrom = intent.getStringExtra("COMING_FROM");
+        if (comingFrom.equals(getString(R.string.museum_travel)))
+            headerImageDrawable = intent.getIntExtra("HEADER_IMAGE", 0);
+        else
+            headerImage = intent.getStringExtra("HEADER_IMAGE");
+
+
         id = intent.getStringExtra("ID");
         isFavourite = intent.getBooleanExtra("IS_FAVOURITE", false);
         qmDatabase = QMDatabase.getInstance(DetailsActivity.this);
@@ -196,16 +205,28 @@ public class DetailsActivity extends AppCompatActivity implements IPullZoom, OnM
         downloadButton = findViewById(R.id.download_button);
         interestLayout = findViewById(R.id.interest_layout);
         interestToggle = findViewById(R.id.interest_toggle_button);
+        locationLayout = findViewById(R.id.location_layout);
+        offerLayout = findViewById(R.id.offer_layout);
+        claimButton = findViewById(R.id.claim_offer_button);
 
         util = new Util();
         title.setText(mainTitle);
         getData();
-        GlideApp.with(this)
-                .load(headerImage)
-                .centerCrop()
-                .placeholder(R.drawable.placeholder)
-                .into(headerImageView);
-
+        if (comingFrom.equals(getString(R.string.museum_travel))) {
+            title.setAllCaps(false);
+            title.setTextSize(33);
+            GlideApp.with(this)
+                    .load(headerImageDrawable)
+                    .centerCrop()
+                    .placeholder(R.drawable.placeholder)
+                    .into(headerImageView);
+        } else {
+            GlideApp.with(this)
+                    .load(headerImage)
+                    .centerCrop()
+                    .placeholder(R.drawable.placeholder)
+                    .into(headerImageView);
+        }
         if (isFavourite)
             favIcon.setImageResource(R.drawable.heart_fill);
         else
@@ -267,6 +288,14 @@ public class DetailsActivity extends AppCompatActivity implements IPullZoom, OnM
             }
             return false;
         });
+        claimButton.setOnTouchListener((v, event) -> {
+            switch (event.getAction()) {
+                case MotionEvent.ACTION_DOWN:
+                    claimButton.startAnimation(zoomOutAnimation);
+                    break;
+            }
+            return false;
+        });
         downloadButton.setOnTouchListener((v, event) -> {
             switch (event.getAction()) {
                 case MotionEvent.ACTION_DOWN:
@@ -275,6 +304,8 @@ public class DetailsActivity extends AppCompatActivity implements IPullZoom, OnM
             }
             return false;
         });
+        claimButton.setOnClickListener(v ->
+                util.showComingSoonDialog(DetailsActivity.this, R.string.coming_soon_content));
 
         mapImageView.setOnClickListener(view -> {
             if (iconView == 0) {
@@ -447,7 +478,21 @@ public class DetailsActivity extends AppCompatActivity implements IPullZoom, OnM
                 getMuseumAboutDetailsFromDatabase(id, language, true);
         } else if (comingFrom.equals(getString(R.string.museum_tours))) {
             getTourInDetails();
+        } else if (comingFrom.equals(getString(R.string.museum_travel))) {
+            getTravelsDetails();
         }
+    }
+
+    private void getTravelsDetails() {
+        videoLayout.setVisibility(View.GONE);
+        locationLayout.setVisibility(View.GONE);
+        offerLayout.setVisibility(View.VISIBLE);
+        loadData(null,
+                "We have arranged for exclusive discounts for you. Just click on ‘Claim Offers’ button and use the code provided below.\n",
+                null, null, null, null,
+                null, null, "+974 4452 5555\ninfo@qm.org.qa", null,
+                null, false, null);
+
     }
 
     private void getTourInDetails() {
@@ -580,8 +625,12 @@ public class DetailsActivity extends AppCompatActivity implements IPullZoom, OnM
                 this.subTitle.setText(subTitle);
             }
             this.shortDescription.setText(shortDescription);
-            if (longDescription != null)
+            if (longDescription != null) {
                 this.longDescription.setText(longDescription);
+            } else {
+                this.longDescription.setVisibility(View.GONE);
+
+            }
             if (secondTitle != null) {
                 this.secondTitleLayout.setVisibility(View.VISIBLE);
                 this.secondTitle.setText(secondTitle);
@@ -613,7 +662,7 @@ public class DetailsActivity extends AppCompatActivity implements IPullZoom, OnM
                     longitude = convertDegreetoDecimalMeasure(longitude);
                 }
             }
-            if (latitude != null && !latitude.equals("")) {
+            if (latitude != null && !latitude.equals("") && gvalue != null) {
                 gmap = gvalue;
                 gmap.setMinZoomPreference(12);
                 LatLng ny = new LatLng(Double.valueOf(latitude), Double.valueOf(longitude));
