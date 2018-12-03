@@ -4,6 +4,7 @@ package com.qatarmuseums.qatarmuseumsapp.commonpage;
 import android.content.Context;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
@@ -33,7 +34,7 @@ public class CommonListAdapter extends RecyclerView.Adapter<CommonListAdapter.My
     public class MyViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
         public TextView name, dateDetails, locationDetails, statusTag, tourDayTxt, tourDateTxt, tourTitleTxt;
         public ImageView imageView, favIcon;
-        public RelativeLayout commonTitleLayout, tourTitleLayout;
+        public RelativeLayout commonTitleLayout, tourTitleLayout, recyclerRowItem;
 
         private WeakReference<RecyclerTouchListener.ItemClickListener> listenerRef;
 
@@ -49,6 +50,7 @@ public class CommonListAdapter extends RecyclerView.Adapter<CommonListAdapter.My
             tourDayTxt = view.findViewById(R.id.tour_day_text);
             tourDateTxt = view.findViewById(R.id.tour_date_text);
             tourTitleTxt = view.findViewById(R.id.tour_title_text);
+            recyclerRowItem = view.findViewById(R.id.row_item);
 
             view.setOnClickListener(this);
             favIcon.setOnClickListener(this);
@@ -111,6 +113,13 @@ public class CommonListAdapter extends RecyclerView.Adapter<CommonListAdapter.My
             holder.tourDayTxt.setText(model.getEventDay());
             holder.tourDateTxt.setText(model.getEventDate());
             holder.tourTitleTxt.setText(model.getName());
+        } else if (model.getIsTravel() != null) {
+            holder.name.setText(model.getName());
+            holder.name.setTextSize(33);
+            holder.name.setAllCaps(false);
+            ViewGroup.LayoutParams params = holder.recyclerRowItem.getLayoutParams();
+            params.height = model.getRowHeight();
+            holder.recyclerRowItem.setLayoutParams(params);
         } else
             holder.name.setText(model.getName());
 
@@ -132,11 +141,18 @@ public class CommonListAdapter extends RecyclerView.Adapter<CommonListAdapter.My
                 holder.statusTag.setBackgroundResource(R.drawable.round_corner_grey);
             }
         }
-        GlideApp.with(mContext)
-                .load(model.getImage())
-                .centerCrop()
-                .placeholder(R.drawable.placeholder)
-                .into(holder.imageView);
+        if (model.getIsTravel() != null)
+            GlideApp.with(mContext)
+                    .load(model.getImageDrawable())
+                    .centerCrop()
+                    .placeholder(R.drawable.placeholder_portrait)
+                    .into(holder.imageView);
+        else
+            GlideApp.with(mContext)
+                    .load(model.getImage())
+                    .centerCrop()
+                    .placeholder(R.drawable.placeholder)
+                    .into(holder.imageView);
     }
 
     @Override

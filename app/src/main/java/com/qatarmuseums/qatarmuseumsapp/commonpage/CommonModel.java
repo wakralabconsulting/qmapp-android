@@ -44,6 +44,9 @@ public class CommonModel {
     private String eventDay;
 
     private Boolean isTour;
+    private Boolean isTravel;
+    int rowHeight;
+    int imageDrawable;
 
     public CommonModel() {
 
@@ -80,12 +83,19 @@ public class CommonModel {
         this.museumId = museumId;
     }
 
-    public CommonModel(String name, String image, String museumReferance
-    ) {
+    public CommonModel(String name, String image, String museumReferance) {
         this.name = name;
         this.image = image;
         this.museumReferance = museumReferance;
 
+    }
+
+    public CommonModel(String name, int image, String museumReferance, boolean isTravel, int rowHeight) {
+        this.name = name;
+        this.imageDrawable = image;
+        this.museumReferance = museumReferance;
+        this.isTravel = isTravel;
+        this.rowHeight = rowHeight;
     }
 
     public CommonModel(String name, String id, String location, String image,
@@ -270,6 +280,18 @@ public class CommonModel {
 
     public Boolean getIsTour() {
         return isTour;
+    }
+
+    public Boolean getIsTravel() {
+        return isTravel;
+    }
+
+    public int getRowHeight() {
+        return rowHeight;
+    }
+
+    public int getImageDrawable() {
+        return imageDrawable;
     }
 }
 
