@@ -4,10 +4,13 @@ import android.annotation.SuppressLint;
 import android.app.Dialog;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.Outline;
 import android.net.Uri;
 import android.os.AsyncTask;
+import android.os.Build;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
+import android.support.annotation.RequiresApi;
 import android.support.design.widget.AppBarLayout;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
@@ -16,6 +19,7 @@ import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.ViewOutlineProvider;
 import android.view.Window;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
@@ -130,7 +134,7 @@ public class DetailsActivity extends AppCompatActivity implements IPullZoom, OnM
     private IndicatorConfiguration configuration;
     private LinearLayout eventDateLayout;
     private TextView eventDateTxt;
-    private TextView downloadText;
+    private TextView downloadText, speakerName, speakerInfo, locationTitle;
     private View downloadButton;
     private LinearLayout interestLayout;
     private SwitchCompat interestToggle;
@@ -139,6 +143,9 @@ public class DetailsActivity extends AppCompatActivity implements IPullZoom, OnM
     private LinearLayout offerLayout;
     private int headerImageDrawable;
     private View claimButton;
+    private LinearLayout speakerLayout;
+    private ImageView speakerImage;
+    private float curveRadius = 30F;
 
 
     @SuppressLint("ClickableViewAccessibility")
@@ -208,13 +215,32 @@ public class DetailsActivity extends AppCompatActivity implements IPullZoom, OnM
         locationLayout = findViewById(R.id.location_layout);
         offerLayout = findViewById(R.id.offer_layout);
         claimButton = findViewById(R.id.claim_offer_button);
+        speakerLayout = findViewById(R.id.speaker_layout);
+        speakerImage = findViewById(R.id.speaker_img);
+        speakerName = findViewById(R.id.name_of_the_speaker);
+        speakerInfo = findViewById(R.id.information_of_the_speaker);
+        locationTitle = findViewById(R.id.location_title);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
 
+            speakerImage.setOutlineProvider(new ViewOutlineProvider() {
+                @Override
+                public void getOutline(View view, Outline outline) {
+                    outline.setRoundRect(0, 0, view.getWidth(),
+                            (int) (view.getHeight() + curveRadius), curveRadius);
+                }
+            });
+
+            speakerImage.setClipToOutline(true);
+        }
         util = new Util();
         title.setText(mainTitle);
         getData();
-        if (comingFrom.equals(getString(R.string.museum_travel))) {
+        if (comingFrom.equals(getString(R.string.museum_discussion)) ||
+                comingFrom.equals(getString(R.string.museum_travel))) {
             title.setAllCaps(false);
             title.setTextSize(33);
+        }
+        if (comingFrom.equals(getString(R.string.museum_travel))) {
             GlideApp.with(this)
                     .load(headerImageDrawable)
                     .centerCrop()
@@ -480,7 +506,30 @@ public class DetailsActivity extends AppCompatActivity implements IPullZoom, OnM
             getTourInDetails();
         } else if (comingFrom.equals(getString(R.string.museum_travel))) {
             getTravelsDetails();
+        } else if (comingFrom.equals(getString(R.string.museum_discussion))) {
+            getPanelDiscussionDetails();
         }
+    }
+
+    private void getPanelDiscussionDetails() {
+        interestLayout.setVisibility(View.VISIBLE);
+        videoLayout.setVisibility(View.GONE);
+        speakerLayout.setVisibility(View.VISIBLE);
+        GlideApp.with(this)
+                .load("https://www.qm.org.qa/sites/default/files/styles/content_image/public/images/body/mansour-body.jpg")
+                .centerCrop()
+                .placeholder(R.drawable.placeholder)
+                .into(speakerImage);
+        speakerName.setText("Name of the Speaker");
+        speakerInfo.setText("Information of the Speaker .Information of the Speaker . Information of the Speaker . Information of the Speaker . ");
+        timingTitle.setText(R.string.date);
+        locationTitle.setText(R.string.venue);
+        loadData(null,
+                "This discussion is going to be about the grandeur and originality of Qatari Songs. The speakers will also demonstrate the various songs and the musical instruments used to create the songs.",
+                null, null, null, "28 March 2019",
+                null, null, "+974 4452 5555\ninfo@qm.org.qa", null,
+                null, false, null);
+
     }
 
     private void getTravelsDetails() {
@@ -636,7 +685,8 @@ public class DetailsActivity extends AppCompatActivity implements IPullZoom, OnM
                 this.secondTitle.setText(secondTitle);
                 this.secondTitleDescription.setText(secondTitleDescription);
             }
-            if (comingFrom.equals(getString(R.string.museum_tours)))
+            if (comingFrom.equals(getString(R.string.museum_tours)) ||
+                    comingFrom.equals(getString(R.string.museum_discussion)))
                 timingTitle.setText(R.string.date);
             else
                 timingTitle.setText(R.string.museum_timings);
