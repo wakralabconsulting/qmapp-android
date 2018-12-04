@@ -230,7 +230,39 @@ public class CommonActivity extends AppCompatActivity {
                 getMuseumCollectionListFromDatabase();
         } else if (toolbarTitle.equals(getString(R.string.museum_tours))) {
             getTourData();
+        } else if (toolbarTitle.equals(getString(R.string.museum_discussion))) {
+            getPanelDiscussionData();
         }
+    }
+
+    private void getPanelDiscussionData() {
+        recyclerView.setVisibility(View.VISIBLE);
+        CommonModel model = new CommonModel("15581", "Day 01", "28 March 2019",
+                "Qatari Songs",
+                "https://www.qm.org.qa/sites/default/files/styles/content_image/public/images/body/dsc_2081.jpg",
+                true);
+        models.add(model);
+        model = new CommonModel("15582", "Day 02", "29 March 2019",
+                "Artist Encounters",
+                "https://www.qm.org.qa/sites/default/files/styles/content_image/public/images/body/8-2-2013wheels_and_heels_2013-84.jpg",
+                true);
+        models.add(model);
+        model = new CommonModel("15583", "Day 03", "30 March 2019",
+                "QatART Art & Craft",
+                "https://www.qm.org.qa/sites/default/files/styles/content_image/public/images/body/12-2-2013qtel_sport_day_work_-81_-_copy_0.jpg",
+                true);
+        models.add(model);
+        model = new CommonModel("15584", "Day 04", "1 April 2019",
+                "Join Art & Calligraphy",
+                "https://www.qm.org.qa/sites/default/files/styles/content_image/public/images/body/lusail_multipurpose_hall-graffiti_150112dsc_6001.jpg",
+                true);
+        models.add(model);
+        model = new CommonModel("15585", "Day 05", "2 April 2019",
+                "Marbling Art",
+                "https://www.qm.org.qa/sites/default/files/styles/content_image/public/images/body/le-puy-en-velay-luc_olivier.jpg",
+                true);
+        models.add(model);
+        mAdapter.notifyDataSetChanged();
     }
 
     private void getTravelData(int rowHeight) {
