@@ -194,6 +194,56 @@
             </LinearLayout>
 
             <LinearLayout
+                android:id="@+id/speaker_layout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="@dimen/text_margin"
+                android:layout_marginStart="@dimen/text_margin"
+                android:background="@drawable/round_corner_white_details_page"
+                android:gravity="center_horizontal"
+                android:orientation="vertical"
+                android:visibility="gone">
+
+                <ImageView
+                    android:id="@+id/speaker_img"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/placeholder"
+                    android:contentDescription="@string/app_name"
+                    android:scaleType="centerCrop" />
+
+                <TextView
+                    android:id="@+id/name_of_the_speaker"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/padding_25"
+                    android:fontFamily="@font/din_next_lt_pro_bold"
+                    android:textAlignment="center"
+                    android:textAllCaps="true"
+                    android:textColor="@color/black"
+                    android:textSize="@dimen/font_size_30"
+                    android:textStyle="bold" />
+
+                <LinearLayout
+                    android:layout_width="25dp"
+                    android:layout_height="2dp"
+                    android:layout_marginTop="@dimen/pading_10"
+                    android:background="@color/black" />
+
+                <TextView
+                    android:id="@+id/information_of_the_speaker"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="@dimen/text_margin"
+                    android:fontFamily="@font/din_next_lt_pro_regular"
+                    android:padding="@dimen/padding_25"
+                    android:textAlignment="center"
+                    android:textColor="@color/black"
+                    android:textSize="@dimen/font_size_15" />
+
+            </LinearLayout>
+
+            <LinearLayout
                 android:id="@+id/event_date_layout"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -251,7 +301,9 @@
                     android:layout_marginTop="@dimen/text_margin"
                     android:gravity="center"
                     android:orientation="vertical"
-                    android:padding="@dimen/padding_25"
+                    android:paddingEnd="@dimen/padding_25"
+                    android:paddingStart="@dimen/padding_25"
+                    android:paddingTop="@dimen/padding_25"
                     android:visibility="gone">
 
                     <TextView
@@ -319,6 +371,7 @@
                         android:layout_marginTop="@dimen/text_margin"
                         android:fontFamily="@font/din_next_lt_pro_bold"
                         android:text="@string/location_title"
+                        android:textAllCaps="true"
                         android:textColor="@color/black"
                         android:textSize="@dimen/font_size_18" />
 
