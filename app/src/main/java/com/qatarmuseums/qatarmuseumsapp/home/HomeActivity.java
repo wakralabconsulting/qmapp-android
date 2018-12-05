@@ -330,6 +330,7 @@ public class HomeActivity extends BaseActivity {
         navigationIntent = new Intent(HomeActivity.this, MuseumActivity.class);
         navigationIntent.putExtra("MUSEUMTITLE", bannerText.getText());
         navigationIntent.putExtra("MUSEUM_ID", bannerLists.get(0).getId());
+        navigationIntent.putExtra("IS_BANNER", true);
         startActivity(navigationIntent);
     }
 

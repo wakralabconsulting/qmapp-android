@@ -107,7 +107,7 @@ public class CommonListAdapter extends RecyclerView.Adapter<CommonListAdapter.My
     @Override
     public void onBindViewHolder(@NonNull CommonListAdapter.MyViewHolder holder, int position) {
         CommonModel model = commonModelList.get(position);
-        if (model.getIsTour() != null) {
+        if (model.getEventDate() != null) {
             holder.commonTitleLayout.setVisibility(View.GONE);
             holder.tourTitleLayout.setVisibility(View.VISIBLE);
             holder.tourDayTxt.setText(model.getEventDay());
@@ -146,6 +146,12 @@ public class CommonListAdapter extends RecyclerView.Adapter<CommonListAdapter.My
                     .load(model.getImageDrawable())
                     .centerCrop()
                     .placeholder(R.drawable.placeholder_portrait)
+                    .into(holder.imageView);
+        else if (model.getEventDate() != null)
+            GlideApp.with(mContext)
+                    .load(model.getImages().get(0))
+                    .centerCrop()
+                    .placeholder(R.drawable.placeholder)
                     .into(holder.imageView);
         else
             GlideApp.with(mContext)

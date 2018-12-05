@@ -229,7 +229,7 @@ public class CommonActivity extends AppCompatActivity {
             else
                 getMuseumCollectionListFromDatabase();
         } else if (toolbarTitle.equals(getString(R.string.museum_tours))) {
-            getTourData();
+            getTourListFromAPI();
         } else if (toolbarTitle.equals(getString(R.string.museum_discussion))) {
             getPanelDiscussionData();
         }
@@ -297,6 +297,48 @@ public class CommonActivity extends AppCompatActivity {
                 "https://www.qm.org.qa/sites/default/files/styles/content_image/public/images/body/le-puy-en-velay-luc_olivier.jpg", true);
         models.add(model);
         mAdapter.notifyDataSetChanged();
+    }
+
+    private void getTourListFromAPI() {
+        progressBar.setVisibility(View.VISIBLE);
+        final String language;
+        if (appLanguage == 1) {
+            language = "en";
+        } else {
+            language = "ar";
+        }
+        APIInterface apiService =
+                APIClient.getClient().create(APIInterface.class);
+
+        Call<ArrayList<CommonModel>> call = apiService.getTourList(language);
+        call.enqueue(new Callback<ArrayList<CommonModel>>() {
+            @Override
+            public void onResponse(Call<ArrayList<CommonModel>> call, Response<ArrayList<CommonModel>> response) {
+                if (response.isSuccessful()) {
+                    if (response.body() != null && response.body().size() > 0) {
+                        recyclerView.setVisibility(View.VISIBLE);
+                        models.addAll(response.body());
+                        removeHtmlTags(models);
+                        mAdapter.notifyDataSetChanged();
+                        new MuseumCollectionRowCount(CommonActivity.this, language).execute();
+                    } else {
+                        recyclerView.setVisibility(View.GONE);
+                        noResultFoundLayout.setVisibility(View.VISIBLE);
+                    }
+                } else {
+                    recyclerView.setVisibility(View.GONE);
+                    retryLayout.setVisibility(View.VISIBLE);
+                }
+                progressBar.setVisibility(View.GONE);
+            }
+
+            @Override
+            public void onFailure(Call<ArrayList<CommonModel>> call, Throwable t) {
+                recyclerView.setVisibility(View.GONE);
+                retryLayout.setVisibility(View.VISIBLE);
+                progressBar.setVisibility(View.GONE);
+            }
+        });
     }
 
     public void getCommonListDataFromDatabase(String apiParts) {

@@ -141,5 +141,7 @@ public interface APIInterface {
     @GET("{language}/mobile_api/nmoq_about_page.json")
     Call<ArrayList<MuseumAboutModel>> getLaunchMuseumAboutDetails(@Path("language") String language,
                                                             @Query("nid") String nid);
+    @GET("{language}/mobile_api/nmoq_list_day.json")
+    Call<ArrayList<CommonModel>> getTourList(@Path("language") String language);
 
 }

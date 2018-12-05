@@ -3,8 +3,10 @@ package com.qatarmuseums.qatarmuseumsapp.commonpage;
 
 import com.google.gson.annotations.SerializedName;
 
+import java.util.ArrayList;
+
 public class CommonModel {
-    @SerializedName(value = "name", alternate = {"Name", "الاسم"})
+    @SerializedName(value = "name", alternate = {"Name", "subtitle"})
     private String name;
     @SerializedName("ID")
     private String id;
@@ -40,8 +42,10 @@ public class CommonModel {
 
     @SerializedName("NMoq_event_Date")
     private String eventDate;
-    @SerializedName("day")
+    @SerializedName("Title")
     private String eventDay;
+    @SerializedName("Images")
+    private ArrayList<String> images;
 
     private Boolean isTour;
     private Boolean isTravel;
@@ -292,6 +296,10 @@ public class CommonModel {
 
     public int getImageDrawable() {
         return imageDrawable;
+    }
+
+    public ArrayList<String> getImages() {
+        return images;
     }
 }
 
