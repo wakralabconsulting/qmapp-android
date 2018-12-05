@@ -4,13 +4,13 @@ package com.qatarmuseums.qatarmuseumsapp.commonpage;
 import com.google.gson.annotations.SerializedName;
 
 public class CommonModel {
-    @SerializedName(value = "name", alternate = {"Name", "الاسم"})
+    @SerializedName(value = "name", alternate = {"Name", "Title"})
     private String name;
-    @SerializedName("ID")
+    @SerializedName(value = "ID", alternate = {"full_content_ID"})
     private String id;
     @SerializedName("Location")
     private String location;
-    @SerializedName(value = "LATEST_IMAGE", alternate = {"image", "latest_image", "image_path"})
+    @SerializedName(value = "LATEST_IMAGE", alternate = {"image", "latest_image", "image_path", "banner_link"})
     private String image;
     @SerializedName("start_Date")
     private String startDate;
@@ -29,7 +29,7 @@ public class CommonModel {
     private String openingTime;
     @SerializedName("close_time")
     private String closingTime;
-    @SerializedName(value = "Description", alternate = {"collection_description"})
+    @SerializedName(value = "Description", alternate = {"collection_description", "Introduction_Text"})
     private String description;
     @SerializedName("Museums_reference")
     private String museumReferance;
@@ -42,6 +42,14 @@ public class CommonModel {
     private String eventDate;
     @SerializedName("day")
     private String eventDay;
+    @SerializedName("email")
+    private String email;
+    @SerializedName("contact_number")
+    private String contactnumber;
+    @SerializedName("Promotional_code")
+    private String promotionalCode;
+    @SerializedName("claim_offer")
+    private String claimOffer;
 
     private Boolean isTour;
     private Boolean isTravel;
@@ -90,10 +98,17 @@ public class CommonModel {
 
     }
 
-    public CommonModel(String name, int image, String museumReferance, boolean isTravel, int rowHeight) {
+    public CommonModel(String name, String image, String description, String email, String contactnumber,
+                       String promotionalCode, String claimOffer, String contentId,
+                       boolean isTravel, int rowHeight) {
         this.name = name;
-        this.imageDrawable = image;
-        this.museumReferance = museumReferance;
+        this.image = image;
+        this.description = description;
+        this.email = email;
+        this.contactnumber = contactnumber;
+        this.promotionalCode = promotionalCode;
+        this.claimOffer = claimOffer;
+        this.id = contentId;
         this.isTravel = isTravel;
         this.rowHeight = rowHeight;
     }
@@ -292,6 +307,22 @@ public class CommonModel {
 
     public int getImageDrawable() {
         return imageDrawable;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public String getContactnumber() {
+        return contactnumber;
+    }
+
+    public String getPromotionalCode() {
+        return promotionalCode;
+    }
+
+    public String getClaimOffer() {
+        return claimOffer;
     }
 }
 

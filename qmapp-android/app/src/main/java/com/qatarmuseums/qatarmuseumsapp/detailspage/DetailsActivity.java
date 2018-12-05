@@ -10,7 +10,6 @@ import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
-import android.support.annotation.RequiresApi;
 import android.support.design.widget.AppBarLayout;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
@@ -61,6 +60,7 @@ import com.qatarmuseums.qatarmuseumsapp.utils.IPullZoom;
 import com.qatarmuseums.qatarmuseumsapp.utils.PixelUtil;
 import com.qatarmuseums.qatarmuseumsapp.utils.PullToZoomCoordinatorLayout;
 import com.qatarmuseums.qatarmuseumsapp.utils.Util;
+import com.qatarmuseums.qatarmuseumsapp.webview.WebviewActivity;
 
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
@@ -141,11 +141,16 @@ public class DetailsActivity extends AppCompatActivity implements IPullZoom, OnM
     private Boolean interested = false;
     private LinearLayout locationLayout;
     private LinearLayout offerLayout;
-    private int headerImageDrawable;
     private View claimButton;
     private LinearLayout speakerLayout;
     private ImageView speakerImage;
     private float curveRadius = 30F;
+    private String description;
+    private String contactInfo;
+    private String promotionCode;
+    private TextView offerCode;
+    private String claimOfferURL;
+    private Intent navigation_intent;
 
 
     @SuppressLint("ClickableViewAccessibility")
@@ -159,12 +164,11 @@ public class DetailsActivity extends AppCompatActivity implements IPullZoom, OnM
         intent = getIntent();
         mainTitle = intent.getStringExtra("MAIN_TITLE");
         comingFrom = intent.getStringExtra("COMING_FROM");
-        if (comingFrom.equals(getString(R.string.museum_travel)))
-            headerImageDrawable = intent.getIntExtra("HEADER_IMAGE", 0);
-        else
-            headerImage = intent.getStringExtra("HEADER_IMAGE");
-
-
+        headerImage = intent.getStringExtra("HEADER_IMAGE");
+        description = intent.getStringExtra("LONG_DESC");
+        promotionCode = intent.getStringExtra("PROMOTION_CODE");
+        claimOfferURL = intent.getStringExtra("CLAIM_OFFER");
+        contactInfo = intent.getStringExtra("CONTACT");
         id = intent.getStringExtra("ID");
         isFavourite = intent.getBooleanExtra("IS_FAVOURITE", false);
         qmDatabase = QMDatabase.getInstance(DetailsActivity.this);
@@ -214,6 +218,7 @@ public class DetailsActivity extends AppCompatActivity implements IPullZoom, OnM
         interestToggle = findViewById(R.id.interest_toggle_button);
         locationLayout = findViewById(R.id.location_layout);
         offerLayout = findViewById(R.id.offer_layout);
+        offerCode = findViewById(R.id.offer_code);
         claimButton = findViewById(R.id.claim_offer_button);
         speakerLayout = findViewById(R.id.speaker_layout);
         speakerImage = findViewById(R.id.speaker_img);
@@ -240,41 +245,47 @@ public class DetailsActivity extends AppCompatActivity implements IPullZoom, OnM
             title.setAllCaps(false);
             title.setTextSize(33);
         }
-        if (comingFrom.equals(getString(R.string.museum_travel))) {
-            GlideApp.with(this)
-                    .load(headerImageDrawable)
-                    .centerCrop()
-                    .placeholder(R.drawable.placeholder)
-                    .into(headerImageView);
-        } else {
-            GlideApp.with(this)
-                    .load(headerImage)
-                    .centerCrop()
-                    .placeholder(R.drawable.placeholder)
-                    .into(headerImageView);
-        }
+
+        GlideApp.with(this)
+                .load(headerImage)
+                .centerCrop()
+                .placeholder(R.drawable.placeholder)
+                .into(headerImageView);
+
         if (isFavourite)
             favIcon.setImageResource(R.drawable.heart_fill);
         else
             favIcon.setImageResource(R.drawable.heart_empty);
 
-        toolbarClose.setOnClickListener(v -> onBackPressed());
-        favIcon.setOnClickListener(v -> {
+        toolbarClose.setOnClickListener(v ->
+
+                onBackPressed());
+        favIcon.setOnClickListener(v ->
+
+        {
             if (util.checkImageResource(DetailsActivity.this, favIcon, R.drawable.heart_fill)) {
                 favIcon.setImageResource(R.drawable.heart_empty);
             } else
                 favIcon.setImageResource(R.drawable.heart_fill);
         });
+
         initViews();
 
-        zoomOutAnimation = AnimationUtils.loadAnimation(getApplicationContext(),
+        zoomOutAnimation = AnimationUtils.loadAnimation(
+
+                getApplicationContext(),
+
                 R.anim.zoom_out_more);
-        retryButton.setOnClickListener(v -> {
+        retryButton.setOnClickListener(v ->
+
+        {
             getData();
             progressBar.setVisibility(View.VISIBLE);
             retryLayout.setVisibility(View.GONE);
         });
-        retryButton.setOnTouchListener((v, event) -> {
+        retryButton.setOnTouchListener((v, event) ->
+
+        {
             switch (event.getAction()) {
                 case MotionEvent.ACTION_DOWN:
                     retryButton.startAnimation(zoomOutAnimation);
@@ -282,7 +293,9 @@ public class DetailsActivity extends AppCompatActivity implements IPullZoom, OnM
             }
             return false;
         });
-        toolbarClose.setOnTouchListener((v, event) -> {
+        toolbarClose.setOnTouchListener((v, event) ->
+
+        {
             switch (event.getAction()) {
                 case MotionEvent.ACTION_DOWN:
                     toolbarClose.startAnimation(zoomOutAnimation);
@@ -290,7 +303,9 @@ public class DetailsActivity extends AppCompatActivity implements IPullZoom, OnM
             }
             return false;
         });
-        favIcon.setOnTouchListener((v, event) -> {
+        favIcon.setOnTouchListener((v, event) ->
+
+        {
             switch (event.getAction()) {
                 case MotionEvent.ACTION_DOWN:
                     favIcon.startAnimation(zoomOutAnimation);
@@ -298,7 +313,9 @@ public class DetailsActivity extends AppCompatActivity implements IPullZoom, OnM
             }
             return false;
         });
-        shareIcon.setOnTouchListener((v, event) -> {
+        shareIcon.setOnTouchListener((v, event) ->
+
+        {
             switch (event.getAction()) {
                 case MotionEvent.ACTION_DOWN:
                     shareIcon.startAnimation(zoomOutAnimation);
@@ -306,7 +323,9 @@ public class DetailsActivity extends AppCompatActivity implements IPullZoom, OnM
             }
             return false;
         });
-        downloadText.setOnTouchListener((v, event) -> {
+        downloadText.setOnTouchListener((v, event) ->
+
+        {
             switch (event.getAction()) {
                 case MotionEvent.ACTION_DOWN:
                     downloadButton.startAnimation(zoomOutAnimation);
@@ -330,9 +349,14 @@ public class DetailsActivity extends AppCompatActivity implements IPullZoom, OnM
             }
             return false;
         });
-        claimButton.setOnClickListener(v ->
-                util.showComingSoonDialog(DetailsActivity.this, R.string.coming_soon_content));
-
+        claimButton.setOnClickListener(v -> {
+            if (!claimOfferURL.equals("")) {
+                navigation_intent = new Intent(DetailsActivity.this, WebviewActivity.class);
+                navigation_intent.putExtra("url", claimOfferURL);
+                startActivity(navigation_intent);
+            } else
+                util.showComingSoonDialog(DetailsActivity.this, R.string.coming_soon_content);
+        });
         mapImageView.setOnClickListener(view -> {
             if (iconView == 0) {
                 if (latitude == null) {
@@ -365,7 +389,9 @@ public class DetailsActivity extends AppCompatActivity implements IPullZoom, OnM
             }
         });
 
-        direction.setOnClickListener(view -> {
+        direction.setOnClickListener(view ->
+
+        {
             if (latitude == null) {
                 util.showLocationAlertDialog(DetailsActivity.this);
             } else {
@@ -376,10 +402,15 @@ public class DetailsActivity extends AppCompatActivity implements IPullZoom, OnM
                 }
             }
         });
-        downloadButton.setOnClickListener(v -> downloadAction());
-        downloadText.setOnClickListener(v -> downloadAction());
+        downloadButton.setOnClickListener(v ->
+
+                downloadAction());
+        downloadText.setOnClickListener(v ->
+
+                downloadAction());
 
         interestToggle.setOnTouchListener((v, event) ->
+
         {
             if (!interested) {
                 interested = true;
@@ -536,12 +567,10 @@ public class DetailsActivity extends AppCompatActivity implements IPullZoom, OnM
         videoLayout.setVisibility(View.GONE);
         locationLayout.setVisibility(View.GONE);
         offerLayout.setVisibility(View.VISIBLE);
-        loadData(null,
-                "We have arranged for exclusive discounts for you. Just click on ‘Claim Offers’ button and use the code provided below.\n",
+        offerCode.setText(promotionCode);
+        loadData(null, description, null, null,
                 null, null, null, null,
-                null, null, "+974 4452 5555\ninfo@qm.org.qa", null,
-                null, false, null);
-
+                contactInfo, null, null, false, null);
     }
 
     private void getTourInDetails() {
@@ -2232,6 +2261,7 @@ public class DetailsActivity extends AppCompatActivity implements IPullZoom, OnM
             }
             progressBar.setVisibility(View.GONE);
         }
+
     }
 
     public void imageValue(int value) {
