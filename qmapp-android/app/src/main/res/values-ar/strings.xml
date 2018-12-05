@@ -212,7 +212,7 @@
     <string name="error_incorrect_credentials">عذرًا، لم يتم التعرف على اسم المستخدم أو كلمة السر. </string>
     <string name="error_incorrect_username">عذرًا، لم يتم التعرف على اسم المستخدم أو عنوان البريد الإلكتروني.</string>
     <string name="error_already_logged_in">تم تسجيل الدخول بالفعل</string>
-    <string name="error_unexpected">Unexpected error</string>
+    <string name="error_unexpected">خطأ غير متوقع</string>
     <!-- Strings related to Profile -->
     <string name="profile">ملف شخصي</string>
     <string name="membership_number">رقم العضوية:</string>
@@ -249,8 +249,8 @@
     <string name="decline_content">تأكيد عدم الحضور</string>
     <string name="profile_link"><u>دعوة لحضور افتتاح متحف قطر الوطني</u></string>
     <string name="artifact_invalid">Invalid Artifact Number</string>
-    <string name="yes">Yes</string>
-    <string name="no">No</string>
+    <string name="yes">نعم</string>
+    <string name="no">لا</string>
     <!-- Strings related to Culture pass card -->
     <string name="flip_button_txt">اضغط لعرض الجهة الأخرى</string>
     <!-- Strings related to Object preview -->
@@ -263,4 +263,13 @@
     <string name="offer_code">OFFER CODE</string>
     <string name="claim_offer">Claim Offer</string>
     <string name="venue">Venue</string>
+    <string name="thankyou_interest">Thank you for showing interest in the tour. We will make necessary arrangements for it during your visit. You will receive further details on your email. For any queries, please contact Qatar Museums Authority via:\ninfo@qm.org.qa\n+974 4452 5555</string>
+    <string name="decline_content_tour">Are you sure you want to cancel the request to make your tour arrangements?</string>
+    <string name="event_date">Event Date</string>
+    <!-- Strings related to Museum Launch -->
+    <string name="museum_about_launch">About Event</string>
+    <string name="museum_tours">Tours</string>
+    <string name="museum_travel">Travel Arrangements</string>
+    <string name="museum_discussion">Panel Discussion</string>
+
 </resources>

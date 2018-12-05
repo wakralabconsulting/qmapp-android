@@ -82,6 +82,7 @@ public class MuseumActivity extends BaseActivity implements
     private String museumId;
     private BroadcastReceiver mNotificationBroadcastReceiver;
     private int badgeCount;
+    private boolean isBanner;
 
 
     @Override
@@ -95,7 +96,8 @@ public class MuseumActivity extends BaseActivity implements
         intent = getIntent();
         sliderImageTitle.setText(intent.getStringExtra("MUSEUMTITLE"));
         museumId = intent.getStringExtra("MUSEUM_ID");
-        if(museumId.equals("13376")) // Temporary waiting for API
+        isBanner = intent.getBooleanExtra("IS_BANNER", false);
+        if (isBanner)
             setToolbarForMuseumLaunchy();
         else
             setToolbarForMuseumActivity();
@@ -194,7 +196,7 @@ public class MuseumActivity extends BaseActivity implements
 
                 }
             });
-        } else if (museumId.equals("13376"))  // Temporary waiting for API
+        } else if (isBanner)
             prepareRecyclerViewDataForLaunch();
         else
             prepareRecyclerViewData();
@@ -433,12 +435,16 @@ public class MuseumActivity extends BaseActivity implements
     public void getSliderImagesfromAPI() {
         APIInterface apiService =
                 APIClient.getClient().create(APIInterface.class);
+        Call<ArrayList<MuseumAboutModel>> call;
         if (appLanguage == english) {
             language = "en";
         } else {
             language = "ar";
         }
-        Call<ArrayList<MuseumAboutModel>> call = apiService.getMuseumAboutDetails(language, museumId);
+        if (isBanner)
+            call = apiService.getLaunchMuseumAboutDetails(language, museumId);
+        else
+            call = apiService.getMuseumAboutDetails(language, museumId);
         call.enqueue(new Callback<ArrayList<MuseumAboutModel>>() {
             @Override
             public void onResponse(Call<ArrayList<MuseumAboutModel>> call, Response<ArrayList<MuseumAboutModel>> response) {
