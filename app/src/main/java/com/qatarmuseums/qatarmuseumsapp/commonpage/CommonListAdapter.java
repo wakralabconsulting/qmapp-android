@@ -143,7 +143,7 @@ public class CommonListAdapter extends RecyclerView.Adapter<CommonListAdapter.My
         }
         if (model.getIsTravel() != null)
             GlideApp.with(mContext)
-                    .load(model.getImageDrawable())
+                    .load(model.getImage())
                     .centerCrop()
                     .placeholder(R.drawable.placeholder_portrait)
                     .into(holder.imageView);
