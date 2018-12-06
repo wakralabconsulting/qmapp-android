@@ -10,7 +10,6 @@ import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewTreeObserver;
@@ -23,6 +22,7 @@ import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.qatarmuseums.qatarmuseumsapp.Convertor;
 import com.qatarmuseums.qatarmuseumsapp.QMDatabase;
 import com.qatarmuseums.qatarmuseumsapp.R;
 import com.qatarmuseums.qatarmuseumsapp.apicall.APIClient;
@@ -35,15 +35,17 @@ import com.qatarmuseums.qatarmuseumsapp.commonpagedatabase.HeritageListTableArab
 import com.qatarmuseums.qatarmuseumsapp.commonpagedatabase.HeritageListTableEnglish;
 import com.qatarmuseums.qatarmuseumsapp.commonpagedatabase.PublicArtsTableArabic;
 import com.qatarmuseums.qatarmuseumsapp.commonpagedatabase.PublicArtsTableEnglish;
+import com.qatarmuseums.qatarmuseumsapp.commonpagedatabase.TourListTableArabic;
+import com.qatarmuseums.qatarmuseumsapp.commonpagedatabase.TourListTableEnglish;
+import com.qatarmuseums.qatarmuseumsapp.commonpagedatabase.TravelDetailsTableArabic;
+import com.qatarmuseums.qatarmuseumsapp.commonpagedatabase.TravelDetailsTableEnglish;
 import com.qatarmuseums.qatarmuseumsapp.detailspage.DetailsActivity;
 import com.qatarmuseums.qatarmuseumsapp.detailspage.DiningActivity;
 import com.qatarmuseums.qatarmuseumsapp.museum.MuseumCollectionListTableArabic;
 import com.qatarmuseums.qatarmuseumsapp.museum.MuseumCollectionListTableEnglish;
 import com.qatarmuseums.qatarmuseumsapp.museumcollectiondetails.CollectionDetailsActivity;
-import com.qatarmuseums.qatarmuseumsapp.tourdetails.TourDetailsActivity;
 import com.qatarmuseums.qatarmuseumsapp.utils.Util;
 
-import java.io.IOException;
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.List;
@@ -78,6 +80,10 @@ public class CommonActivity extends AppCompatActivity {
     int exhibitionTableRowCount;
     DiningTableEnglish diningTableEnglish;
     DiningTableArabic diningTableArabic;
+    TravelDetailsTableEnglish travelDetailsTableEnglish;
+    TravelDetailsTableArabic travelDetailsTableArabic;
+    TourListTableEnglish tourListTableEnglish;
+    TourListTableArabic tourListTableArabic;
     RelativeLayout noResultFoundLayout;
     int publicArtsTableRowCount;
     int heritageTableRowCount, museumCollectionListRowCount;
@@ -89,6 +95,8 @@ public class CommonActivity extends AppCompatActivity {
     private Call<ArrayList<CommonModel>> call;
     LinearLayout retryLayout;
     Button retryButton;
+    private Integer travelTableRowCount;
+    private Convertor convertor;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -111,17 +119,7 @@ public class CommonActivity extends AppCompatActivity {
         id = intent.getStringExtra("ID");
         toolbar_title.setText(toolbarTitle);
         recyclerView = (RecyclerView) findViewById(R.id.common_recycler_view);
-        final ViewTreeObserver observer = recyclerView.getViewTreeObserver();
-        observer.addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
-            @Override
-            public void onGlobalLayout() {
-                Log.d("Row_Height", String.valueOf(recyclerView.getHeight()));
-                recyclerView.getViewTreeObserver().removeOnGlobalLayoutListener(this);
-                if (toolbarTitle.equals(getString(R.string.museum_travel))) {
-                    getTravelData(recyclerView.getHeight() / 2);
-                }
-            }
-        });
+
         mAdapter = new CommonListAdapter(this, models, new RecyclerTouchListener.ItemClickListener() {
             @Override
             public void onPositionClicked(int position) {
@@ -131,14 +129,14 @@ public class CommonActivity extends AppCompatActivity {
                 else if (toolbarTitle.equals(getString(R.string.museum_collection_text)))
                     navigationIntent = new Intent(CommonActivity.this,
                             CollectionDetailsActivity.class);
-                else if (toolbarTitle.equals(getString(R.string.museum_tours)))
-                    navigationIntent = new Intent(CommonActivity.this,
-                            TourDetailsActivity.class);
+//                else if (toolbarTitle.equals(getString(R.string.museum_tours)))
+//                    navigationIntent = new Intent(CommonActivity.this,
+//                            TourDetailsActivity.class);
                 else
                     navigationIntent = new Intent(CommonActivity.this, DetailsActivity.class);
-
-                if (toolbarTitle.equals(getString(R.string.museum_travel)))
-                    navigationIntent.putExtra("HEADER_IMAGE", models.get(position).getImageDrawable());
+                if (toolbarTitle.equals(getString(R.string.museum_tours)) ||
+                        toolbarTitle.equals(getString(R.string.museum_discussion)))
+                    navigationIntent.putExtra("HEADER_IMAGE", models.get(position).getImages().get(0));
                 else
                     navigationIntent.putExtra("HEADER_IMAGE", models.get(position).getImage());
                 navigationIntent.putExtra("MAIN_TITLE", models.get(position).getName());
@@ -149,6 +147,10 @@ public class CommonActivity extends AppCompatActivity {
                 navigationIntent.putExtra("LONGITUDE", models.get(position).getLongitude());
                 navigationIntent.putExtra("LATITUDE", models.get(position).getLatitude());
                 navigationIntent.putExtra("PUBLIC_ARTS_ID", models.get(position).getId());
+                navigationIntent.putExtra("PROMOTION_CODE", models.get(position).getPromotionalCode());
+                navigationIntent.putExtra("CLAIM_OFFER", models.get(position).getClaimOffer());
+                navigationIntent.putExtra("CONTACT", models.get(position).getContactnumber() +
+                        "\n" + models.get(position).getEmail());
                 startActivity(navigationIntent);
 
             }
@@ -159,45 +161,40 @@ public class CommonActivity extends AppCompatActivity {
         recyclerView.setItemAnimator(new DefaultItemAnimator());
         recyclerView.setAdapter(mAdapter);
 
-        backArrow.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                onBackPressed();
-            }
-        });
+        backArrow.setOnClickListener(v -> onBackPressed());
         zoomOutAnimation = AnimationUtils.loadAnimation(getApplicationContext(),
                 R.anim.zoom_out_more);
-        retryButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                getData();
-                progressBar.setVisibility(View.VISIBLE);
-                retryLayout.setVisibility(View.GONE);
-            }
+        retryButton.setOnClickListener(v -> {
+            getData();
+            progressBar.setVisibility(View.VISIBLE);
+            retryLayout.setVisibility(View.GONE);
         });
-        retryButton.setOnTouchListener(new View.OnTouchListener() {
-            @Override
-            public boolean onTouch(View v, MotionEvent event) {
-                switch (event.getAction()) {
-                    case MotionEvent.ACTION_DOWN:
-                        retryButton.startAnimation(zoomOutAnimation);
-                        break;
-                }
-                return false;
+        retryButton.setOnTouchListener((v, event) -> {
+            switch (event.getAction()) {
+                case MotionEvent.ACTION_DOWN:
+                    retryButton.startAnimation(zoomOutAnimation);
+                    break;
             }
+            return false;
         });
-        backArrow.setOnTouchListener(new View.OnTouchListener() {
-            @Override
-            public boolean onTouch(View v, MotionEvent event) {
-                switch (event.getAction()) {
-                    case MotionEvent.ACTION_DOWN:
-                        backArrow.startAnimation(zoomOutAnimation);
-                        break;
-                }
-                return false;
+        backArrow.setOnTouchListener((v, event) -> {
+            switch (event.getAction()) {
+                case MotionEvent.ACTION_DOWN:
+                    backArrow.startAnimation(zoomOutAnimation);
+                    break;
             }
+            return false;
         });
         getData();
+        convertor = new Convertor();
+    }
+
+    private void getTravelDataFromDataBase(int rowHeight) {
+        if (appLanguage == 1) {
+            new RetriveEnglishTravelData(CommonActivity.this, appLanguage, rowHeight).execute();
+        } else {
+            new RetriveArabicTravelData(CommonActivity.this, appLanguage, rowHeight).execute();
+        }
     }
 
     public void getData() {
@@ -229,74 +226,26 @@ public class CommonActivity extends AppCompatActivity {
             else
                 getMuseumCollectionListFromDatabase();
         } else if (toolbarTitle.equals(getString(R.string.museum_tours))) {
-            getTourListFromAPI();
+            if (util.isNetworkAvailable(CommonActivity.this))
+                getTourListFromAPI();
+            else
+                getCommonListDataFromDatabase("nmoq_list_day.json");
+        } else if (toolbarTitle.equals(getString(R.string.museum_travel))) {
+            recyclerView.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
+                @Override
+                public void onGlobalLayout() {
+                    recyclerView.getViewTreeObserver().removeOnGlobalLayoutListener(this);
+                    if (toolbarTitle.equals(getString(R.string.museum_travel))) {
+                        if (util.isNetworkAvailable(CommonActivity.this))
+                            getTravelDataFromAPI(recyclerView.getHeight() / 2);
+                        else
+                            getTravelDataFromDataBase(recyclerView.getHeight() / 2);
+                    }
+                }
+            });
         } else if (toolbarTitle.equals(getString(R.string.museum_discussion))) {
-            getPanelDiscussionData();
+            getSpecialEventFromAPI();
         }
-    }
-
-    private void getPanelDiscussionData() {
-        recyclerView.setVisibility(View.VISIBLE);
-        CommonModel model = new CommonModel("15581", "Day 01", "28 March 2019",
-                "Qatari Songs",
-                "https://www.qm.org.qa/sites/default/files/styles/content_image/public/images/body/dsc_2081.jpg",
-                true);
-        models.add(model);
-        model = new CommonModel("15582", "Day 02", "29 March 2019",
-                "Artist Encounters",
-                "https://www.qm.org.qa/sites/default/files/styles/content_image/public/images/body/8-2-2013wheels_and_heels_2013-84.jpg",
-                true);
-        models.add(model);
-        model = new CommonModel("15583", "Day 03", "30 March 2019",
-                "QatART Art & Craft",
-                "https://www.qm.org.qa/sites/default/files/styles/content_image/public/images/body/12-2-2013qtel_sport_day_work_-81_-_copy_0.jpg",
-                true);
-        models.add(model);
-        model = new CommonModel("15584", "Day 04", "1 April 2019",
-                "Join Art & Calligraphy",
-                "https://www.qm.org.qa/sites/default/files/styles/content_image/public/images/body/lusail_multipurpose_hall-graffiti_150112dsc_6001.jpg",
-                true);
-        models.add(model);
-        model = new CommonModel("15585", "Day 05", "2 April 2019",
-                "Marbling Art",
-                "https://www.qm.org.qa/sites/default/files/styles/content_image/public/images/body/le-puy-en-velay-luc_olivier.jpg",
-                true);
-        models.add(model);
-        mAdapter.notifyDataSetChanged();
-    }
-
-    private void getTravelData(int rowHeight) {
-        recyclerView.setVisibility(View.VISIBLE);
-        CommonModel model = new CommonModel("Qatar Airways",
-                R.drawable.qatar_airways_bg,
-                "14481", true, rowHeight);
-        models.add(model);
-        model = new CommonModel("Katara Hospitality",
-                R.drawable.katara_bg,
-                "14482", true, rowHeight);
-        models.add(model);
-        mAdapter.notifyDataSetChanged();
-
-    }
-
-    public void getTourData() {
-        recyclerView.setVisibility(View.VISIBLE);
-        CommonModel model = new CommonModel("13381", "Day 01", "28 March 2019", "Art & Culture",
-                "https://www.qm.org.qa/sites/default/files/styles/content_image/public/images/body/dsc_2081.jpg", true);
-        models.add(model);
-        model = new CommonModel("13382", "Day 02", "29 March 2019", "Sports",
-                "https://www.qm.org.qa/sites/default/files/styles/content_image/public/images/body/8-2-2013wheels_and_heels_2013-84.jpg", true);
-        models.add(model);
-        model = new CommonModel("13383", "Day 03", "30 March 2019", "Architecture",
-                "https://www.qm.org.qa/sites/default/files/styles/content_image/public/images/body/12-2-2013qtel_sport_day_work_-81_-_copy_0.jpg", true);
-        models.add(model);
-        model = new CommonModel("13384", "Day 04", "1 April 2019", "Fashion",
-                "https://www.qm.org.qa/sites/default/files/styles/content_image/public/images/body/lusail_multipurpose_hall-graffiti_150112dsc_6001.jpg", true);
-        models.add(model);
-        model = new CommonModel("13385", "Day 05", "2 April 2019", "Nature",
-                "https://www.qm.org.qa/sites/default/files/styles/content_image/public/images/body/le-puy-en-velay-luc_olivier.jpg", true);
-        models.add(model);
-        mAdapter.notifyDataSetChanged();
     }
 
     private void getTourListFromAPI() {
@@ -307,9 +256,7 @@ public class CommonActivity extends AppCompatActivity {
         } else {
             language = "ar";
         }
-        APIInterface apiService =
-                APIClient.getClient().create(APIInterface.class);
-
+        APIInterface apiService = APIClient.getClient().create(APIInterface.class);
         Call<ArrayList<CommonModel>> call = apiService.getTourList(language);
         call.enqueue(new Callback<ArrayList<CommonModel>>() {
             @Override
@@ -320,7 +267,95 @@ public class CommonActivity extends AppCompatActivity {
                         models.addAll(response.body());
                         removeHtmlTags(models);
                         mAdapter.notifyDataSetChanged();
-                        new MuseumCollectionRowCount(CommonActivity.this, language).execute();
+                        new TourRowCount(CommonActivity.this, language).execute();
+                    } else {
+                        recyclerView.setVisibility(View.GONE);
+                        noResultFoundLayout.setVisibility(View.VISIBLE);
+                    }
+                } else {
+                    recyclerView.setVisibility(View.GONE);
+                    retryLayout.setVisibility(View.VISIBLE);
+                }
+                progressBar.setVisibility(View.GONE);
+            }
+
+            @Override
+            public void onFailure(Call<ArrayList<CommonModel>> call, Throwable t) {
+                recyclerView.setVisibility(View.GONE);
+                retryLayout.setVisibility(View.VISIBLE);
+                progressBar.setVisibility(View.GONE);
+            }
+        });
+    }
+
+    private void getSpecialEventFromAPI() {
+        progressBar.setVisibility(View.VISIBLE);
+        final String language;
+        if (appLanguage == 1) {
+            language = "en";
+        } else {
+            language = "ar";
+        }
+        APIInterface apiService = APIClient.getClient().create(APIInterface.class);
+        Call<ArrayList<CommonModel>> call = apiService.getSpecialEvents(language);
+        call.enqueue(new Callback<ArrayList<CommonModel>>() {
+            @Override
+            public void onResponse(Call<ArrayList<CommonModel>> call, Response<ArrayList<CommonModel>> response) {
+                if (response.isSuccessful()) {
+                    if (response.body() != null && response.body().size() > 0) {
+                        recyclerView.setVisibility(View.VISIBLE);
+                        models.addAll(response.body());
+                        removeHtmlTags(models);
+                        mAdapter.notifyDataSetChanged();
+                    } else {
+                        recyclerView.setVisibility(View.GONE);
+                        noResultFoundLayout.setVisibility(View.VISIBLE);
+                    }
+                } else {
+                    recyclerView.setVisibility(View.GONE);
+                    retryLayout.setVisibility(View.VISIBLE);
+                }
+                progressBar.setVisibility(View.GONE);
+            }
+
+            @Override
+            public void onFailure(Call<ArrayList<CommonModel>> call, Throwable t) {
+                recyclerView.setVisibility(View.GONE);
+                retryLayout.setVisibility(View.VISIBLE);
+                progressBar.setVisibility(View.GONE);
+            }
+        });
+    }
+
+    private void getTravelDataFromAPI(int rowHeight) {
+        progressBar.setVisibility(View.VISIBLE);
+        final String language;
+        if (appLanguage == 1) {
+            language = "en";
+        } else {
+            language = "ar";
+        }
+        APIInterface apiService = APIClient.getClient().create(APIInterface.class);
+        Call<ArrayList<CommonModel>> call = apiService.getTravelData(language);
+        call.enqueue(new Callback<ArrayList<CommonModel>>() {
+            @Override
+            public void onResponse(Call<ArrayList<CommonModel>> call, Response<ArrayList<CommonModel>> response) {
+                if (response.isSuccessful()) {
+                    if (response.body() != null && response.body().size() > 0) {
+                        recyclerView.setVisibility(View.VISIBLE);
+                        for (int i = 0; i < response.body().size(); i++)
+                            models.add(new CommonModel(response.body().get(i).getName(),
+                                    response.body().get(i).getImage(),
+                                    response.body().get(i).getDescription(),
+                                    response.body().get(i).getEmail(),
+                                    response.body().get(i).getContactnumber(),
+                                    response.body().get(i).getPromotionalCode(),
+                                    response.body().get(i).getClaimOffer(),
+                                    response.body().get(i).getId(),
+                                    true, rowHeight));
+                        removeHtmlTags(models);
+                        mAdapter.notifyDataSetChanged();
+                        new TravelRowCount(CommonActivity.this, language).execute();
                     } else {
                         recyclerView.setVisibility(View.GONE);
                         noResultFoundLayout.setVisibility(View.VISIBLE);
@@ -370,9 +405,14 @@ public class CommonActivity extends AppCompatActivity {
             else
                 language = "ar";
             new DiningRowCount(CommonActivity.this, language).execute();
+        } else if (apiParts.equals("nmoq_list_day.json")) {
+            if (appLanguage == 1) {
+                new RetriveEnglishTourData(CommonActivity.this, appLanguage).execute();
+            } else {
+                new RetriveArabicTourData(CommonActivity.this, appLanguage).execute();
+            }
         }
     }
-
 
     private void getMuseumCollectionListFromAPI() {
         progressBar.setVisibility(View.VISIBLE);
@@ -419,6 +459,7 @@ public class CommonActivity extends AppCompatActivity {
     public void removeHtmlTags(ArrayList<CommonModel> models) {
         for (int i = 0; i < models.size(); i++) {
             models.get(i).setName(util.html2string(models.get(i).getName()));
+            models.get(i).setDescription(util.html2string(models.get(i).getDescription()));
             models.get(i).setStartDate(util.html2string(models.get(i).getStartDate()));
             models.get(i).setEndDate(util.html2string(models.get(i).getEndDate()));
         }
@@ -479,6 +520,598 @@ public class CommonActivity extends AppCompatActivity {
             }
         });
 
+    }
+
+
+    public class TourRowCount extends AsyncTask<Void, Void, Integer> {
+
+        private WeakReference<CommonActivity> activityReference;
+        String language;
+
+        TourRowCount(CommonActivity context, String apiLanguage) {
+            activityReference = new WeakReference<>(context);
+            language = apiLanguage;
+        }
+
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+        }
+
+        @Override
+        protected void onPostExecute(Integer integer) {
+            Integer tourTableRowCount = integer;
+            if (tourTableRowCount > 0) {
+                new CheckTourDBRowExist(CommonActivity.this, language).execute();
+            } else {
+                new InsertTourDataToDataBase(CommonActivity.this, tourListTableEnglish,
+                        tourListTableArabic, language).execute();
+            }
+        }
+
+        @Override
+        protected Integer doInBackground(Void... voids) {
+            if (language.equals("en"))
+                return activityReference.get().qmDatabase.getTourListTaleDao().getNumberOfRowsEnglish();
+            else
+                return activityReference.get().qmDatabase.getTourListTaleDao().getNumberOfRowsArabic();
+        }
+    }
+
+    public class CheckTourDBRowExist extends AsyncTask<Void, Void, Void> {
+        private WeakReference<CommonActivity> activityReference;
+        private TourListTableEnglish tourListTableEnglish;
+        private TourListTableArabic tourListTableArabic;
+        String language;
+
+        CheckTourDBRowExist(CommonActivity context, String apiLanguage) {
+            activityReference = new WeakReference<>(context);
+            language = apiLanguage;
+        }
+
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+        }
+
+        @Override
+        protected void onPostExecute(Void aVoid) {
+            super.onPostExecute(aVoid);
+        }
+
+        @Override
+        protected Void doInBackground(Void... voids) {
+            if (models.size() > 0) {
+                if (language.equals("en")) {
+                    for (int i = 0; i < models.size(); i++) {
+                        int n = activityReference.get().qmDatabase.getTourListTaleDao().checkEnglishIdExist(
+                                Integer.parseInt(models.get(i).getId()));
+                        if (n > 0) {
+                            new UpdateTourTable(CommonActivity.this, language, i).execute();
+                        } else {
+                            tourListTableEnglish = new TourListTableEnglish(models.get(i).getId(),
+                                    models.get(i).getEventDay(),
+                                    models.get(i).getEventDate(),
+                                    models.get(i).getName(),
+                                    convertor.fromArrayList(models.get(i).getImages()),
+                                    models.get(i).getSortId(),
+                                    models.get(i).getDescription());
+                            activityReference.get().qmDatabase.getTourListTaleDao().insert(tourListTableEnglish);
+                        }
+                    }
+                } else {
+                    for (int i = 0; i < models.size(); i++) {
+                        int n = activityReference.get().qmDatabase.getTourListTaleDao().checkArabicIdExist(
+                                Integer.parseInt(models.get(i).getId()));
+                        if (n > 0) {
+                            new UpdateTourTable(CommonActivity.this, language, i).execute();
+
+                        } else {
+                            tourListTableArabic = new TourListTableArabic(models.get(i).getId(),
+                                    models.get(i).getEventDay(),
+                                    models.get(i).getEventDate(),
+                                    models.get(i).getName(),
+                                    convertor.fromArrayList(models.get(i).getImages()),
+                                    models.get(i).getSortId(),
+                                    models.get(i).getDescription());
+                            activityReference.get().qmDatabase.getTourListTaleDao().insert(tourListTableArabic);
+
+                        }
+                    }
+                }
+
+            }
+            return null;
+        }
+    }
+
+    public class UpdateTourTable extends AsyncTask<Void, Void, Void> {
+        private WeakReference<CommonActivity> activityReference;
+        String language;
+        int i;
+
+        UpdateTourTable(CommonActivity context, String apiLanguage, int i) {
+            activityReference = new WeakReference<>(context);
+            language = apiLanguage;
+            this.i = i;
+        }
+
+        @Override
+        protected Void doInBackground(Void... voids) {
+            if (language.equals("en")) {
+                activityReference.get().qmDatabase.getTourListTaleDao().updateTourlistenglish(
+                        models.get(i).getEventDay(),
+                        models.get(i).getEventDate(),
+                        models.get(i).getName(),
+                        convertor.fromArrayList(models.get(i).getImages()),
+                        models.get(i).getSortId(),
+                        models.get(i).getDescription(),
+                        models.get(i).getId()
+                );
+
+            } else {
+                activityReference.get().qmDatabase.getTravelDetailsTableDao().updateTraveldetailsarabic(
+                        models.get(i).getEventDay(),
+                        models.get(i).getEventDate(),
+                        models.get(i).getName(),
+                        convertor.fromArrayList(models.get(i).getImages()),
+                        models.get(i).getSortId(),
+                        models.get(i).getDescription(),
+                        models.get(i).getId()
+                );
+            }
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(Void aVoid) {
+        }
+    }
+
+    public class InsertTourDataToDataBase extends AsyncTask<Void, Void, Boolean> {
+        private WeakReference<CommonActivity> activityReference;
+        private TourListTableEnglish tourListTableEnglish;
+        private TourListTableArabic tourListTableArabic;
+        String language;
+
+        InsertTourDataToDataBase(CommonActivity context, TourListTableEnglish tourListTableEnglish,
+                                 TourListTableArabic tourListTableArabic, String apiLanguage) {
+            activityReference = new WeakReference<>(context);
+            this.tourListTableEnglish = tourListTableEnglish;
+            this.tourListTableArabic = tourListTableArabic;
+            this.language = apiLanguage;
+        }
+
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+        }
+
+        @Override
+        protected void onPostExecute(Boolean aBoolean) {
+            super.onPostExecute(aBoolean);
+        }
+
+        @Override
+        protected Boolean doInBackground(Void... voids) {
+            if (models != null) {
+                if (language.equals("en")) {
+                    for (int i = 0; i < models.size(); i++) {
+                        tourListTableEnglish = new TourListTableEnglish(models.get(i).getId(),
+                                models.get(i).getEventDay(),
+                                models.get(i).getEventDate(),
+                                models.get(i).getName(),
+                                convertor.fromArrayList(models.get(i).getImages()),
+                                models.get(i).getSortId(),
+                                models.get(i).getDescription());
+                        activityReference.get().qmDatabase.getTourListTaleDao().insert(tourListTableEnglish);
+                    }
+                } else {
+                    for (int i = 0; i < models.size(); i++) {
+                        tourListTableArabic = new TourListTableArabic(models.get(i).getId(),
+                                models.get(i).getEventDay(),
+                                models.get(i).getEventDate(),
+                                models.get(i).getName(),
+                                convertor.fromArrayList(models.get(i).getImages()),
+                                models.get(i).getSortId(),
+                                models.get(i).getDescription());
+                        activityReference.get().qmDatabase.getTourListTaleDao().insert(tourListTableArabic);
+                    }
+                }
+
+            }
+            return true;
+        }
+    }
+
+    public class RetriveEnglishTourData extends AsyncTask<Void, Void, List<TourListTableEnglish>> {
+        private WeakReference<CommonActivity> activityReference;
+        int language;
+
+        RetriveEnglishTourData(CommonActivity context, int appLanguage) {
+            activityReference = new WeakReference<>(context);
+            language = appLanguage;
+        }
+
+        @Override
+        protected void onPreExecute() {
+            progressBar.setVisibility(View.VISIBLE);
+        }
+
+        @Override
+        protected void onPostExecute(List<TourListTableEnglish> tourListTableEnglishes) {
+            models.clear();
+            if (tourListTableEnglishes.size() > 0) {
+                for (int i = 0; i < tourListTableEnglishes.size(); i++) {
+                    CommonModel commonModel = new CommonModel(
+                            tourListTableEnglishes.get(i).getTourNid(),
+                            tourListTableEnglishes.get(i).getTourDay(),
+                            tourListTableEnglishes.get(i).getTourEventDate(),
+                            tourListTableEnglishes.get(i).getTourSubtitle(),
+                            convertor.fromString(tourListTableEnglishes.get(i).getTourImages()),
+                            true);
+                    models.add(i, commonModel);
+                }
+                mAdapter.notifyDataSetChanged();
+                progressBar.setVisibility(View.GONE);
+            } else {
+                progressBar.setVisibility(View.GONE);
+                recyclerView.setVisibility(View.GONE);
+                retryLayout.setVisibility(View.VISIBLE);
+            }
+        }
+
+        @Override
+        protected List<TourListTableEnglish> doInBackground(Void... voids) {
+            return activityReference.get().qmDatabase.getTourListTaleDao().getAllEnglish();
+        }
+    }
+
+    public class RetriveArabicTourData extends AsyncTask<Void, Void, List<TourListTableArabic>> {
+        private WeakReference<CommonActivity> activityReference;
+        int language, rowHeight;
+
+        RetriveArabicTourData(CommonActivity context, int appLanguage) {
+            activityReference = new WeakReference<>(context);
+            language = appLanguage;
+        }
+
+        @Override
+        protected void onPreExecute() {
+            progressBar.setVisibility(View.VISIBLE);
+        }
+
+        @Override
+        protected void onPostExecute(List<TourListTableArabic> tourListTableArabics) {
+            models.clear();
+            if (tourListTableArabics.size() > 0) {
+                for (int i = 0; i < tourListTableArabics.size(); i++) {
+                    CommonModel commonModel = new CommonModel(
+                            tourListTableArabics.get(i).getTourNid(),
+                            tourListTableArabics.get(i).getTourDay(),
+                            tourListTableArabics.get(i).getTourEventDate(),
+                            tourListTableArabics.get(i).getTourSubtitle(),
+                            convertor.fromString(tourListTableArabics.get(i).getTourImages()),
+                            true);
+                    models.add(i, commonModel);
+
+                }
+                mAdapter.notifyDataSetChanged();
+                progressBar.setVisibility(View.GONE);
+            } else {
+                progressBar.setVisibility(View.GONE);
+                recyclerView.setVisibility(View.GONE);
+                retryLayout.setVisibility(View.VISIBLE);
+            }
+        }
+
+        @Override
+        protected List<TourListTableArabic> doInBackground(Void... voids) {
+            return activityReference.get().qmDatabase.getTourListTaleDao().getAllArabic();
+        }
+    }
+
+    public class TravelRowCount extends AsyncTask<Void, Void, Integer> {
+
+        private WeakReference<CommonActivity> activityReference;
+        String language;
+        String travelID;
+
+        TravelRowCount(CommonActivity context, String apiLanguage) {
+            activityReference = new WeakReference<>(context);
+            language = apiLanguage;
+        }
+
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+        }
+
+        @Override
+        protected void onPostExecute(Integer integer) {
+            travelTableRowCount = integer;
+            if (travelTableRowCount > 0) {
+                new CheckTravelDBRowExist(CommonActivity.this, language).execute();
+            } else {
+                new InsertTravelDataToDataBase(CommonActivity.this, travelDetailsTableEnglish,
+                        travelDetailsTableArabic, language).execute();
+            }
+        }
+
+        @Override
+        protected Integer doInBackground(Void... voids) {
+            if (language.equals("en"))
+                return activityReference.get().qmDatabase.getTravelDetailsTableDao().getNumberOfRowsEnglish();
+            else
+                return activityReference.get().qmDatabase.getTravelDetailsTableDao().getNumberOfRowsArabic();
+
+        }
+    }
+
+    public class CheckTravelDBRowExist extends AsyncTask<Void, Void, Void> {
+        private WeakReference<CommonActivity> activityReference;
+        private TravelDetailsTableEnglish travelDetailsTableEnglish;
+        private TravelDetailsTableArabic travelDetailsTableArabic;
+        String language;
+
+        CheckTravelDBRowExist(CommonActivity context, String apiLanguage) {
+            activityReference = new WeakReference<>(context);
+            language = apiLanguage;
+        }
+
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+        }
+
+        @Override
+        protected void onPostExecute(Void aVoid) {
+            super.onPostExecute(aVoid);
+        }
+
+        @Override
+        protected Void doInBackground(Void... voids) {
+
+            if (models.size() > 0) {
+                if (language.equals("en")) {
+                    for (int i = 0; i < models.size(); i++) {
+                        int n = activityReference.get().qmDatabase.getTravelDetailsTableDao().checkEnglishIdExist(
+                                Integer.parseInt(models.get(i).getId()));
+                        if (n > 0) {
+                            new UpdateTravelTable(CommonActivity.this, language, i).execute();
+
+                        } else {
+                            travelDetailsTableEnglish = new TravelDetailsTableEnglish(models.get(i).getId(),
+                                    models.get(i).getName(),
+                                    models.get(i).getImage(),
+                                    models.get(i).getDescription(),
+                                    models.get(i).getEmail(),
+                                    models.get(i).getContactnumber(),
+                                    models.get(i).getPromotionalCode());
+                            activityReference.get().qmDatabase.getTravelDetailsTableDao().insert(travelDetailsTableEnglish);
+
+                        }
+                    }
+                } else {
+                    for (int i = 0; i < models.size(); i++) {
+                        int n = activityReference.get().qmDatabase.getTravelDetailsTableDao().checkArabicIdExist(
+                                Integer.parseInt(models.get(i).getId()));
+                        if (n > 0) {
+                            //updateEnglishTable same id
+                            new UpdateTravelTable(CommonActivity.this, language, i).execute();
+
+                        } else {
+                            //create row with corresponding id
+                            travelDetailsTableArabic = new TravelDetailsTableArabic(models.get(i).getId(),
+                                    models.get(i).getName(),
+                                    models.get(i).getImage(),
+                                    models.get(i).getDescription(),
+                                    models.get(i).getEmail(),
+                                    models.get(i).getContactnumber(),
+                                    models.get(i).getPromotionalCode());
+                            activityReference.get().qmDatabase.getTravelDetailsTableDao().insert(travelDetailsTableArabic);
+
+                        }
+                    }
+                }
+
+            }
+            return null;
+        }
+    }
+
+    public class UpdateTravelTable extends AsyncTask<Void, Void, Void> {
+        private WeakReference<CommonActivity> activityReference;
+        String language;
+        int position;
+
+        UpdateTravelTable(CommonActivity context, String apiLanguage, int p) {
+            activityReference = new WeakReference<>(context);
+            language = apiLanguage;
+            position = p;
+        }
+
+        @Override
+        protected Void doInBackground(Void... voids) {
+            if (language.equals("en")) {
+                // updateEnglishTable table with english name
+                activityReference.get().qmDatabase.getTravelDetailsTableDao().updateTraveldetailsenglish(
+                        models.get(position).getName(),
+                        models.get(position).getImage(),
+                        models.get(position).getDescription(),
+                        models.get(position).getPromotionalCode(),
+                        models.get(position).getContactnumber(),
+                        models.get(position).getEmail(),
+                        models.get(position).getId()
+                );
+
+            } else {
+                // updateArabicTable table with arabic name
+                activityReference.get().qmDatabase.getTravelDetailsTableDao().updateTraveldetailsarabic(
+                        models.get(position).getName(),
+                        models.get(position).getImage(),
+                        models.get(position).getDescription(),
+                        models.get(position).getPromotionalCode(),
+                        models.get(position).getContactnumber(),
+                        models.get(position).getEmail(),
+                        models.get(position).getId()
+                );
+            }
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(Void aVoid) {
+        }
+    }
+
+    public class InsertTravelDataToDataBase extends AsyncTask<Void, Void, Boolean> {
+        private WeakReference<CommonActivity> activityReference;
+        private TravelDetailsTableEnglish travelDetailsTableEnglish;
+        private TravelDetailsTableArabic travelDetailsTableArabic;
+        String language;
+
+        InsertTravelDataToDataBase(CommonActivity context, TravelDetailsTableEnglish travelDetailsTableEnglish,
+                                   TravelDetailsTableArabic travelDetailsTableArabic, String apiLanguage) {
+            activityReference = new WeakReference<>(context);
+            this.travelDetailsTableEnglish = travelDetailsTableEnglish;
+            this.travelDetailsTableArabic = travelDetailsTableArabic;
+            this.language = apiLanguage;
+        }
+
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+        }
+
+        @Override
+        protected void onPostExecute(Boolean aBoolean) {
+            super.onPostExecute(aBoolean);
+        }
+
+        @Override
+        protected Boolean doInBackground(Void... voids) {
+            if (models != null) {
+                if (language.equals("en")) {
+                    for (int i = 0; i < models.size(); i++) {
+                        travelDetailsTableEnglish = new TravelDetailsTableEnglish(models.get(i).getId(),
+                                models.get(i).getName(),
+                                models.get(i).getImage(),
+                                models.get(i).getDescription(),
+                                models.get(i).getEmail(),
+                                models.get(i).getContactnumber(),
+                                models.get(i).getPromotionalCode());
+                        activityReference.get().qmDatabase.getTravelDetailsTableDao().insert(travelDetailsTableEnglish);
+                    }
+                } else {
+                    for (int i = 0; i < models.size(); i++) {
+                        travelDetailsTableArabic = new TravelDetailsTableArabic(models.get(i).getId(),
+                                models.get(i).getName(),
+                                models.get(i).getImage(),
+                                models.get(i).getDescription(),
+                                models.get(i).getEmail(),
+                                models.get(i).getContactnumber(),
+                                models.get(i).getPromotionalCode());
+                        activityReference.get().qmDatabase.getTravelDetailsTableDao().insert(travelDetailsTableArabic);
+                    }
+                }
+
+            }
+            return true;
+        }
+    }
+
+    public class RetriveEnglishTravelData extends AsyncTask<Void, Void, List<TravelDetailsTableEnglish>> {
+        private WeakReference<CommonActivity> activityReference;
+        int language, rowHeight;
+
+        RetriveEnglishTravelData(CommonActivity context, int appLanguage, int rowHeight) {
+            activityReference = new WeakReference<>(context);
+            language = appLanguage;
+            this.rowHeight = rowHeight;
+        }
+
+        @Override
+        protected void onPreExecute() {
+            progressBar.setVisibility(View.VISIBLE);
+        }
+
+        @Override
+        protected void onPostExecute(List<TravelDetailsTableEnglish> travelDetailsTableEnglishe) {
+            models.clear();
+            if (travelDetailsTableEnglishe.size() > 0) {
+                for (int i = 0; i < travelDetailsTableEnglishe.size(); i++) {
+                    CommonModel commonModel = new CommonModel(travelDetailsTableEnglishe.get(i).getTravel_name(),
+                            travelDetailsTableEnglishe.get(i).getTravel_image(),
+                            travelDetailsTableEnglishe.get(i).getTravel_description(),
+                            travelDetailsTableEnglishe.get(i).getTravel_email(),
+                            travelDetailsTableEnglishe.get(i).getContact_number(),
+                            travelDetailsTableEnglishe.get(i).getPromotional_code(),
+                            "",
+                            travelDetailsTableEnglishe.get(i).getContent_ID(),
+                            true, rowHeight);
+                    models.add(i, commonModel);
+                }
+                mAdapter.notifyDataSetChanged();
+                progressBar.setVisibility(View.GONE);
+            } else {
+                progressBar.setVisibility(View.GONE);
+                recyclerView.setVisibility(View.GONE);
+                retryLayout.setVisibility(View.VISIBLE);
+            }
+        }
+
+        @Override
+        protected List<TravelDetailsTableEnglish> doInBackground(Void... voids) {
+            return activityReference.get().qmDatabase.getTravelDetailsTableDao().getAllEnglish();
+        }
+    }
+
+    public class RetriveArabicTravelData extends AsyncTask<Void, Void, List<TravelDetailsTableArabic>> {
+        private WeakReference<CommonActivity> activityReference;
+        int language, rowHeight;
+
+        RetriveArabicTravelData(CommonActivity context, int appLanguage, int rowHeight) {
+            activityReference = new WeakReference<>(context);
+            language = appLanguage;
+            this.rowHeight = rowHeight;
+        }
+
+        @Override
+        protected void onPreExecute() {
+            progressBar.setVisibility(View.VISIBLE);
+        }
+
+        @Override
+        protected void onPostExecute(List<TravelDetailsTableArabic> travelDetailsTableArabic) {
+            models.clear();
+            if (travelDetailsTableArabic.size() > 0) {
+                for (int i = 0; i < travelDetailsTableArabic.size(); i++) {
+                    CommonModel commonModel = new CommonModel(travelDetailsTableArabic.get(i).getTravel_name(),
+                            travelDetailsTableArabic.get(i).getTravel_image(),
+                            travelDetailsTableArabic.get(i).getTravel_description(),
+                            travelDetailsTableArabic.get(i).getTravel_email(),
+                            travelDetailsTableArabic.get(i).getContact_number(),
+                            travelDetailsTableArabic.get(i).getPromotional_code(),
+                            "",
+                            travelDetailsTableArabic.get(i).getContent_ID(),
+                            true, rowHeight);
+                    models.add(i, commonModel);
+
+                }
+                mAdapter.notifyDataSetChanged();
+                progressBar.setVisibility(View.GONE);
+            } else {
+                progressBar.setVisibility(View.GONE);
+                recyclerView.setVisibility(View.GONE);
+                retryLayout.setVisibility(View.VISIBLE);
+            }
+        }
+
+        @Override
+        protected List<TravelDetailsTableArabic> doInBackground(Void... voids) {
+            return activityReference.get().qmDatabase.getTravelDetailsTableDao().getAllArabic();
+        }
     }
 
     public class DiningRowCount extends AsyncTask<Void, Void, Integer> {

@@ -3,7 +3,6 @@ package com.qatarmuseums.qatarmuseumsapp.home;
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.app.Dialog;
-import android.arch.persistence.room.Update;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -1007,10 +1006,10 @@ public class HomeActivity extends BaseActivity {
         protected void onPostExecute(List<HomePageBannerTableEnglish> homePageBannerTableEnglishes) {
             if (homePageBannerTableEnglishes.size() > 0) {
                 bannerLists.clear();
-                HomeList exhibitonObject = new HomeList(homePageBannerTableEnglishes.get(0).getName()
+                HomeList bannerList = new HomeList(homePageBannerTableEnglishes.get(0).getName()
                         , String.valueOf(homePageBannerTableEnglishes.get(0).getQatarmuseum_id()),
                         homePageBannerTableEnglishes.get(0).getImage());
-                bannerLists.add(exhibitonObject);
+                bannerLists.add(bannerList);
                 addBannerData(bannerLists);
                 bannerLayout.setVisibility(View.VISIBLE);
             } else {
@@ -1040,10 +1039,10 @@ public class HomeActivity extends BaseActivity {
         protected void onPostExecute(List<HomePageBannerTableArabic> homePageBannerTableArabics) {
             if (homePageBannerTableArabics.size() > 0) {
                 bannerLists.clear();
-                HomeList exhibitonObject = new HomeList(homePageBannerTableArabics.get(0).getName()
+                HomeList bannerList = new HomeList(homePageBannerTableArabics.get(0).getName()
                         , String.valueOf(homePageBannerTableArabics.get(0).getQatarmuseum_id()),
                         homePageBannerTableArabics.get(0).getImage());
-                bannerLists.add(exhibitonObject);
+                bannerLists.add(bannerList);
                 addBannerData(bannerLists);
                 bannerLayout.setVisibility(View.VISIBLE);
             } else {
