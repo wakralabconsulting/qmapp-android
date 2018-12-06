@@ -4,7 +4,6 @@ package com.qatarmuseums.qatarmuseumsapp.commonpage;
 import android.content.Context;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
@@ -12,7 +11,6 @@ import android.view.ViewGroup;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
@@ -107,7 +105,7 @@ public class CommonListAdapter extends RecyclerView.Adapter<CommonListAdapter.My
     @Override
     public void onBindViewHolder(@NonNull CommonListAdapter.MyViewHolder holder, int position) {
         CommonModel model = commonModelList.get(position);
-        if (model.getIsTour() != null) {
+        if (model.getEventDate() != null) {
             holder.commonTitleLayout.setVisibility(View.GONE);
             holder.tourTitleLayout.setVisibility(View.VISIBLE);
             holder.tourDayTxt.setText(model.getEventDay());
@@ -146,6 +144,12 @@ public class CommonListAdapter extends RecyclerView.Adapter<CommonListAdapter.My
                     .load(model.getImage())
                     .centerCrop()
                     .placeholder(R.drawable.placeholder_portrait)
+                    .into(holder.imageView);
+        else if (model.getEventDate() != null)
+            GlideApp.with(mContext)
+                    .load(model.getImages().get(0))
+                    .centerCrop()
+                    .placeholder(R.drawable.placeholder)
                     .into(holder.imageView);
         else
             GlideApp.with(mContext)
