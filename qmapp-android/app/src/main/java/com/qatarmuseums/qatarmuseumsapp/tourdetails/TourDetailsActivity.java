@@ -109,18 +109,18 @@ public class TourDetailsActivity extends AppCompatActivity {
         title.setText(mainTitle);
         title.setAllCaps(false);
         title.setTextSize(33);
-        getTourData();
+//        getTourData();
     }
 
-    public void getTourData() {
-        recyclerView.setVisibility(View.VISIBLE);
-        CommonModel model = new CommonModel("10", "8 AM", "11 AM", "Day Tour",
-                "https://www.qm.org.qa/sites/default/files/styles/content_image/public/images/body/qiff-800.jpg", true);
-        models.add(model);
-        model = new CommonModel("11", "6 PM", "10 PM", "Evening Tour",
-                "https://www.qm.org.qa/sites/default/files/styles/content_image/public/images/body/luc-tuymans-blog-3.jpg", true);
-        models.add(model);
-        mAdapter.notifyDataSetChanged();
-    }
+//    public void getTourData() {
+//        recyclerView.setVisibility(View.VISIBLE);
+//        CommonModel model = new CommonModel("10", "8 AM", "11 AM", "Day Tour",
+//                "https://www.qm.org.qa/sites/default/files/styles/content_image/public/images/body/qiff-800.jpg", true);
+//        models.add(model);
+//        model = new CommonModel("11", "6 PM", "10 PM", "Evening Tour",
+//                "https://www.qm.org.qa/sites/default/files/styles/content_image/public/images/body/luc-tuymans-blog-3.jpg", true);
+//        models.add(model);
+//        mAdapter.notifyDataSetChanged();
+//    }
 
 }

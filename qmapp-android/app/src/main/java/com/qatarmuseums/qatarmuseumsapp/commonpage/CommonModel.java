@@ -3,10 +3,13 @@ package com.qatarmuseums.qatarmuseumsapp.commonpage;
 
 import com.google.gson.annotations.SerializedName;
 
+import java.util.ArrayList;
+
 public class CommonModel {
-    @SerializedName(value = "name", alternate = {"Name", "Title"})
+
+    @SerializedName(value = "name", alternate = {"Name", "Title", "subtitle"})
     private String name;
-    @SerializedName(value = "ID", alternate = {"full_content_ID"})
+    @SerializedName(value = "ID", alternate = {"full_content_ID", "nid"})
     private String id;
     @SerializedName("Location")
     private String location;
@@ -40,8 +43,10 @@ public class CommonModel {
 
     @SerializedName("NMoq_event_Date")
     private String eventDate;
-    @SerializedName("day")
+    @SerializedName("Day")
     private String eventDay;
+    @SerializedName("Images")
+    private ArrayList<String> images;
     @SerializedName("email")
     private String email;
     @SerializedName("contact_number")
@@ -54,7 +59,6 @@ public class CommonModel {
     private Boolean isTour;
     private Boolean isTravel;
     int rowHeight;
-    int imageDrawable;
 
     public CommonModel() {
 
@@ -127,10 +131,10 @@ public class CommonModel {
     }
 
     public CommonModel(String id, String eventDay, String eventDate, String name,
-                       String image, boolean isTour) {
+                       ArrayList<String> images, boolean isTour) {
         this.id = id;
         this.name = name;
-        this.image = image;
+        this.images = images;
         this.eventDay = eventDay;
         this.eventDate = eventDate;
         this.isTour = isTour;
@@ -305,8 +309,8 @@ public class CommonModel {
         return rowHeight;
     }
 
-    public int getImageDrawable() {
-        return imageDrawable;
+    public ArrayList<String> getImages() {
+        return images;
     }
 
     public String getEmail() {
