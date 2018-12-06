@@ -473,11 +473,13 @@ public class HomeActivity extends BaseActivity {
     }
 
     public void showBanner() {
-        if (util.isNetworkAvailable(this))
-            getBannerAPIData(appLanguage);
-        else
-            getBannerDataFromDataBase(appLanguage);
-        bannerLayout.setVisibility(View.VISIBLE);
+        if (appLanguage == 1) {
+            if (util.isNetworkAvailable(this))
+                getBannerAPIData(appLanguage);
+            else
+                getBannerDataFromDataBase(appLanguage);
+            bannerLayout.setVisibility(View.VISIBLE);
+        }
     }
 
     public void addBannerData(List<HomeList> bannerLists) {
