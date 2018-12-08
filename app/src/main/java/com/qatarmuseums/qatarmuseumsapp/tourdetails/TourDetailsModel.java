@@ -30,7 +30,24 @@ public class TourDetailsModel {
     @SerializedName("registered")
     private String tourRegistered;
 
-    public TourDetailsModel() {
+    public TourDetailsModel(String tour_title, ArrayList<String> tour_images,
+                            String tour_date, String tour_id,
+                            String tour_contact_email, String tour_contact_phone,
+                            String tour_latitude,
+                            String tour_longtitude,
+                            String tour_sort_id, String tour_body,
+                            String tour_registered) {
+        this.tourTitle = tour_title;
+        this.tourImage = tour_images;
+        this.tourDate = tour_date;
+        this.tourContactEmail = tour_contact_email;
+        this.tourContactPhone = tour_contact_phone;
+        this.tourLatitude = tour_latitude;
+        this.tourLongtitude = tour_longtitude;
+        this.tourSortId = tour_sort_id;
+        this.tourBody = tour_body;
+        this.tourRegistered = tour_registered;
+        this.tourEventId = tour_id;
     }
 
     public String getTourTitle() {
