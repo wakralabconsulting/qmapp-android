@@ -188,4 +188,24 @@ public class Util {
         }
     }
 
+    public String convertDegreeToDecimalMeasure(String degreeValue) {
+
+        String value = degreeValue.trim();
+        String[] latParts = value.split("°");
+        float degree = Float.parseFloat(latParts[0]);
+        if (degree == 0.0) {
+            return null;
+        }
+        value = latParts[1].trim();
+        latParts = value.split("'");
+        float min = Float.parseFloat(latParts[0]);
+        value = latParts[1].trim();
+        latParts = value.split("\"");
+        float sec = Float.parseFloat(latParts[0]);
+        String result;
+        result = String.valueOf(degree + (min / 60) + (sec / 3600));
+        return result;
+
+    }
+
 }

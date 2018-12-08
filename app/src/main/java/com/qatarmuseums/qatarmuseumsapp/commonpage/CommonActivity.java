@@ -44,6 +44,7 @@ import com.qatarmuseums.qatarmuseumsapp.detailspage.DiningActivity;
 import com.qatarmuseums.qatarmuseumsapp.museum.MuseumCollectionListTableArabic;
 import com.qatarmuseums.qatarmuseumsapp.museum.MuseumCollectionListTableEnglish;
 import com.qatarmuseums.qatarmuseumsapp.museumcollectiondetails.CollectionDetailsActivity;
+import com.qatarmuseums.qatarmuseumsapp.tourdetails.TourDetailsActivity;
 import com.qatarmuseums.qatarmuseumsapp.utils.Util;
 
 import java.lang.ref.WeakReference;
@@ -129,9 +130,9 @@ public class CommonActivity extends AppCompatActivity {
                 else if (toolbarTitle.equals(getString(R.string.museum_collection_text)))
                     navigationIntent = new Intent(CommonActivity.this,
                             CollectionDetailsActivity.class);
-//                else if (toolbarTitle.equals(getString(R.string.museum_tours)))
-//                    navigationIntent = new Intent(CommonActivity.this,
-//                            TourDetailsActivity.class);
+                else if (toolbarTitle.equals(getString(R.string.museum_tours)))
+                    navigationIntent = new Intent(CommonActivity.this,
+                            TourDetailsActivity.class);
                 else
                     navigationIntent = new Intent(CommonActivity.this, DetailsActivity.class);
                 if (toolbarTitle.equals(getString(R.string.museum_tours)) ||
