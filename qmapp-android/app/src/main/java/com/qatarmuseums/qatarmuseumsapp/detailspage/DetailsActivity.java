@@ -389,9 +389,7 @@ public class DetailsActivity extends AppCompatActivity implements IPullZoom, OnM
             }
         });
 
-        direction.setOnClickListener(view ->
-
-        {
+        direction.setOnClickListener(view -> {
             if (latitude == null) {
                 util.showLocationAlertDialog(DetailsActivity.this);
             } else {

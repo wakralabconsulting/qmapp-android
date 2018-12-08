@@ -17,6 +17,7 @@ import com.qatarmuseums.qatarmuseumsapp.profile.ProfileDetails;
 import com.qatarmuseums.qatarmuseumsapp.profile.RsvpData;
 import com.qatarmuseums.qatarmuseumsapp.profile.UserData;
 import com.qatarmuseums.qatarmuseumsapp.publicart.PublicArtModel;
+import com.qatarmuseums.qatarmuseumsapp.tourdetails.TourDetailsModel;
 import com.qatarmuseums.qatarmuseumsapp.tourguidestartpage.SelfGuideStarterModel;
 
 import java.util.ArrayList;
@@ -150,5 +151,9 @@ public interface APIInterface {
 
     @GET("{language}/mobile_api/nmoq_special_event.json")
     Call<ArrayList<CommonModel>> getSpecialEvents(@Path("language") String language);
+
+    @GET("{language}/mobile_api/list_tour_per_day.json")
+    Call<ArrayList<TourDetailsModel>> getTourDetails(@Path("language") String language,
+                                                     @Query("event_id") String evetId);
 
 }
