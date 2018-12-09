@@ -1,4 +1,4 @@
-package com.qatarmuseums.qatarmuseumsapp.tourdetails;
+package com.qatarmuseums.qatarmuseumsapp.toursecondarylist;
 
 
 import android.content.Context;
@@ -22,7 +22,7 @@ import com.qatarmuseums.qatarmuseumsapp.utils.Util;
 import java.lang.ref.WeakReference;
 import java.util.List;
 
-public class TourListAdapter extends RecyclerView.Adapter<TourListAdapter.MyViewHolder> {
+public class TourSecondaryListAdapter extends RecyclerView.Adapter<TourSecondaryListAdapter.MyViewHolder> {
 
     private final Context mContext;
     private final RecyclerTouchListener.ItemClickListener listener;
@@ -58,7 +58,7 @@ public class TourListAdapter extends RecyclerView.Adapter<TourListAdapter.MyView
         }
     }
 
-    public TourListAdapter(Context context, List<CommonModel> commonModelList, RecyclerTouchListener.ItemClickListener listener) {
+    public TourSecondaryListAdapter(Context context, List<CommonModel> commonModelList, RecyclerTouchListener.ItemClickListener listener) {
         this.commonModelList = commonModelList;
         this.mContext = context;
         this.listener = listener;
@@ -71,7 +71,7 @@ public class TourListAdapter extends RecyclerView.Adapter<TourListAdapter.MyView
 
     @NonNull
     @Override
-    public TourListAdapter.MyViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+    public TourSecondaryListAdapter.MyViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View itemView = LayoutInflater.from(parent.getContext())
                 .inflate(R.layout.common_list_row, parent, false);
 
@@ -79,7 +79,7 @@ public class TourListAdapter extends RecyclerView.Adapter<TourListAdapter.MyView
     }
 
     @Override
-    public void onBindViewHolder(@NonNull TourListAdapter.MyViewHolder holder, int position) {
+    public void onBindViewHolder(@NonNull TourSecondaryListAdapter.MyViewHolder holder, int position) {
         CommonModel model = commonModelList.get(position);
         holder.commonTitleLayout.setVisibility(View.GONE);
         holder.tourTitleLayout.setVisibility(View.VISIBLE);

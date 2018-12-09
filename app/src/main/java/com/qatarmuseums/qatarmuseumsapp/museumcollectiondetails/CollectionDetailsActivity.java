@@ -110,13 +110,10 @@ public class CollectionDetailsActivity extends AppCompatActivity {
         else
             getMuseumCollectionDetailFromDatabase();
 
-        retryButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                getMuseumCollectionDetailFromAPI();
-                progressBar.setVisibility(View.VISIBLE);
-                retryLayout.setVisibility(View.GONE);
-            }
+        retryButton.setOnClickListener(v -> {
+            getMuseumCollectionDetailFromAPI();
+            progressBar.setVisibility(View.VISIBLE);
+            retryLayout.setVisibility(View.GONE);
         });
         retryButton.setOnTouchListener(new View.OnTouchListener() {
             @Override

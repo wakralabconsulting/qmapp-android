@@ -2,10 +2,10 @@ package com.qatarmuseums.qatarmuseumsapp.tourdetails;
 
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.os.AsyncTask;
+import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
-import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
@@ -19,76 +19,85 @@ import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
+import com.qatarmuseums.qatarmuseumsapp.Convertor;
+import com.qatarmuseums.qatarmuseumsapp.QMDatabase;
 import com.qatarmuseums.qatarmuseumsapp.R;
-import com.qatarmuseums.qatarmuseumsapp.commonpage.CommonModel;
-import com.qatarmuseums.qatarmuseumsapp.commonpage.RecyclerTouchListener;
-import com.qatarmuseums.qatarmuseumsapp.detailspage.DetailsActivity;
+import com.qatarmuseums.qatarmuseumsapp.apicall.APIClient;
+import com.qatarmuseums.qatarmuseumsapp.apicall.APIInterface;
+import com.qatarmuseums.qatarmuseumsapp.utils.Util;
 
+import java.lang.ref.WeakReference;
 import java.util.ArrayList;
+import java.util.List;
+
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 public class TourDetailsActivity extends AppCompatActivity {
 
     private SharedPreferences qmPreferences;
-    private int language;
     private ProgressBar progressBar;
     private Intent intent;
-    private String mainTitle;
+    private String mainTitle, comingFrom, headerImage, description, contactInfo, id;
     private Toolbar toolbar;
-    private TextView title;
-    private TextView shortDescription;
-    private ImageView toolbarBack;
-    private Animation zoomOutAnimation;
-    private Button retryButton;
+    private ImageView toolbarClose;
     private LinearLayout retryLayout;
+    private TextView noResultFoundTxt;
+    private Button retryButton;
+    private Util util;
+    private Animation zoomOutAnimation;
     private RecyclerView recyclerView;
-    private TourListAdapter mAdapter;
-    private Intent navigationIntent;
-    private ArrayList<CommonModel> models = new ArrayList<>();
-    private String comingFrom;
+    private TourDetailsAdapter mAdapter;
+    private ArrayList<TourDetailsModel> tourDetailsList = new ArrayList<>();
+    private int appLanguage;
+    private QMDatabase qmDatabase;
+    TourDetailsTableEnglish tourDetailsTableEnglish;
+    TourDetailsTableArabic tourDetailsTableArabic;
+    private String language;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_tour_details);
         qmPreferences = PreferenceManager.getDefaultSharedPreferences(this);
-        language = qmPreferences.getInt("AppLanguage", 1);
+        appLanguage = qmPreferences.getInt("AppLanguage", 1);
         progressBar = (ProgressBar) findViewById(R.id.progressBarLoading);
         intent = getIntent();
         mainTitle = intent.getStringExtra("MAIN_TITLE");
         comingFrom = intent.getStringExtra("COMING_FROM");
+        headerImage = intent.getStringExtra("HEADER_IMAGE");
+        description = intent.getStringExtra("LONG_DESC");
+        contactInfo = intent.getStringExtra("CONTACT");
+        id = intent.getStringExtra("ID");
         toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-        toolbarBack = (ImageView) findViewById(R.id.toolbar_back);
-        title = (TextView) findViewById(R.id.main_title);
-        shortDescription = (TextView) findViewById(R.id.short_description);
-        retryLayout = (LinearLayout) findViewById(R.id.retry_layout_about);
+        toolbarClose = (ImageView) findViewById(R.id.toolbar_close);
+        noResultFoundTxt = (TextView) findViewById(R.id.no_result_view);
+        retryLayout = (LinearLayout) findViewById(R.id.retry_layout);
         retryButton = (Button) findViewById(R.id.retry_btn);
-        recyclerView = (RecyclerView) findViewById(R.id.tour_recycler_view);
-        mAdapter = new TourListAdapter(this, models, position -> {
-            navigationIntent = new Intent(TourDetailsActivity.this, DetailsActivity.class);
-            navigationIntent.putExtra("HEADER_IMAGE", models.get(position).getImage());
-            navigationIntent.putExtra("MAIN_TITLE", models.get(position).getName());
-            navigationIntent.putExtra("LONG_DESC", models.get(position).getDescription());
-            navigationIntent.putExtra("ID", models.get(position).getId());
-            navigationIntent.putExtra("COMING_FROM", comingFrom);
-            navigationIntent.putExtra("IS_FAVOURITE", models.get(position).getIsfavourite());
-            navigationIntent.putExtra("LONGITUDE", models.get(position).getLongitude());
-            navigationIntent.putExtra("LATITUDE", models.get(position).getLatitude());
-            navigationIntent.putExtra("PUBLIC_ARTS_ID", models.get(position).getId());
-            startActivity(navigationIntent);
-        });
-        RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(getApplicationContext());
-        recyclerView.setLayoutManager(mLayoutManager);
-        recyclerView.setItemAnimator(new DefaultItemAnimator());
+        recyclerView = (RecyclerView) findViewById(R.id.tour_details_recycler_view);
+        qmDatabase = QMDatabase.getInstance(TourDetailsActivity.this);
+        mAdapter = new TourDetailsAdapter(this, tourDetailsList);
+        RecyclerView.LayoutManager layoutManager =
+                new LinearLayoutManager(getApplicationContext());
+        recyclerView.setLayoutManager(layoutManager);
+        recyclerView.setNestedScrollingEnabled(false);
         recyclerView.setAdapter(mAdapter);
+        recyclerView.setFocusable(false);
+        util = new Util();
+        toolbarClose.setOnClickListener(v ->
+                onBackPressed());
 
-        zoomOutAnimation = AnimationUtils.loadAnimation(getApplicationContext(),
+        zoomOutAnimation = AnimationUtils.loadAnimation(
+                getApplicationContext(),
                 R.anim.zoom_out_more);
         retryButton.setOnClickListener(v -> {
             progressBar.setVisibility(View.VISIBLE);
             retryLayout.setVisibility(View.GONE);
+            getTourDetailFromAPI(language);
+
         });
-        toolbarBack.setOnClickListener(v -> onBackPressed());
         retryButton.setOnTouchListener((v, event) -> {
             switch (event.getAction()) {
                 case MotionEvent.ACTION_DOWN:
@@ -97,30 +106,353 @@ public class TourDetailsActivity extends AppCompatActivity {
             }
             return false;
         });
-        toolbarBack.setOnTouchListener((v, event) -> {
+        toolbarClose.setOnTouchListener((v, event) -> {
             switch (event.getAction()) {
                 case MotionEvent.ACTION_DOWN:
-                    toolbarBack.startAnimation(zoomOutAnimation);
+                    toolbarClose.startAnimation(zoomOutAnimation);
                     break;
             }
             return false;
         });
-
-        title.setText(mainTitle);
-        title.setAllCaps(false);
-        title.setTextSize(33);
-//        getTourData();
+        if (appLanguage == 1) {
+            language = "en";
+        } else {
+            language = "ar";
+        }
+        if (util.isNetworkAvailable(this))
+            getTourDetailFromAPI(language);
+        else
+            getTourDetailsFromDatabase(id, language);
     }
 
-//    public void getTourData() {
-//        recyclerView.setVisibility(View.VISIBLE);
-//        CommonModel model = new CommonModel("10", "8 AM", "11 AM", "Day Tour",
-//                "https://www.qm.org.qa/sites/default/files/styles/content_image/public/images/body/qiff-800.jpg", true);
-//        models.add(model);
-//        model = new CommonModel("11", "6 PM", "10 PM", "Evening Tour",
-//                "https://www.qm.org.qa/sites/default/files/styles/content_image/public/images/body/luc-tuymans-blog-3.jpg", true);
-//        models.add(model);
-//        mAdapter.notifyDataSetChanged();
-//    }
+    public void getTourDetailFromAPI(String language) {
+        progressBar.setVisibility(View.VISIBLE);
+        APIInterface apiService =
+                APIClient.getClient().create(APIInterface.class);
+        Call<ArrayList<TourDetailsModel>> call = apiService.getTourDetails(language, id);
+        call.enqueue(new Callback<ArrayList<TourDetailsModel>>() {
+            @Override
+            public void onResponse(Call<ArrayList<TourDetailsModel>> call, Response<ArrayList<TourDetailsModel>> response) {
+                if (response.isSuccessful()) {
+                    if (response.body() != null && response.body().size() > 0) {
+                        recyclerView.setVisibility(View.VISIBLE);
+                        tourDetailsList.addAll(response.body());
+                        removeHtmlTags(tourDetailsList);
+                        mAdapter.notifyDataSetChanged();
+                        new TourDetailsRowCount(TourDetailsActivity.this, language, id).execute();
+                    } else {
+                        recyclerView.setVisibility(View.GONE);
+                        noResultFoundTxt.setVisibility(View.VISIBLE);
+                    }
+                } else {
+                    recyclerView.setVisibility(View.GONE);
+                    retryLayout.setVisibility(View.VISIBLE);
+                }
+                progressBar.setVisibility(View.GONE);
+            }
+
+            @Override
+            public void onFailure(Call<ArrayList<TourDetailsModel>> call, Throwable t) {
+                recyclerView.setVisibility(View.GONE);
+                retryLayout.setVisibility(View.VISIBLE);
+                progressBar.setVisibility(View.GONE);
+            }
+        });
+
+    }
+
+    public void getTourDetailsFromDatabase(String id, String language) {
+        if (language.equals("en")) {
+            progressBar.setVisibility(View.VISIBLE);
+            new RetriveTourDetailsEnglish(TourDetailsActivity.this, id).execute();
+        } else {
+            new RetriveTourDetailsArabic(TourDetailsActivity.this, id).execute();
+        }
+    }
+
+    public class TourDetailsRowCount extends AsyncTask<Void, Void, Integer> {
+
+        private WeakReference<TourDetailsActivity> activityReference;
+        String language, tourId;
+
+
+        TourDetailsRowCount(TourDetailsActivity context, String apiLanguage, String tourId) {
+            activityReference = new WeakReference<>(context);
+            language = apiLanguage;
+            this.tourId = tourId;
+        }
+
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+        }
+
+        @Override
+        protected void onPostExecute(Integer integer) {
+            int tourDetailsRowCount = integer;
+            if (tourDetailsRowCount > 0) {
+                //updateEnglishTable or add row to database
+                new CheckTourDetailsRowExist(TourDetailsActivity.this, language, tourId).execute();
+            } else {
+                //create databse
+                new InsertDatabaseTask(TourDetailsActivity.this, tourDetailsTableEnglish,
+                        tourDetailsTableArabic, language, tourId).execute();
+
+            }
+        }
+
+        @Override
+        protected Integer doInBackground(Void... voids) {
+            if (language.equals("en")) {
+                return activityReference.get().qmDatabase.getTourDetailsTaleDao().getNumberOfRowsEnglish();
+            } else {
+                return activityReference.get().qmDatabase.getTourDetailsTaleDao().getNumberOfRowsArabic();
+            }
+        }
+    }
+
+    public void removeHtmlTags(ArrayList<TourDetailsModel> models) {
+        for (int i = 0; i < models.size(); i++) {
+            models.get(i).setTourTitle(util.html2string(models.get(i).getTourTitle()));
+            models.get(i).setTourDate(util.html2string(models.get(i).getTourDate()));
+            models.get(i).setTourBody(util.html2string(models.get(i).getTourBody()));
+
+        }
+    }
+
+    public class CheckTourDetailsRowExist extends AsyncTask<Void, Void, Void> {
+        private WeakReference<TourDetailsActivity> activityReference;
+        String language, tourId;
+
+        CheckTourDetailsRowExist(TourDetailsActivity context, String apiLanguage, String tourId) {
+            activityReference = new WeakReference<>(context);
+            language = apiLanguage;
+            this.tourId = tourId;
+        }
+
+        @Override
+        protected Void doInBackground(Void... voids) {
+            if (tourDetailsList.size() > 0) {
+                if (language.equals("en")) {
+                    int n = activityReference.get().qmDatabase.getTourDetailsTaleDao().checkEnglishIdExist(
+                            tourId);
+                    if (n > 0) {
+                        new DeleteEventsTableRow(TourDetailsActivity.this, language,
+                                tourId).execute();
+                    } else {
+                        new InsertDatabaseTask(TourDetailsActivity.this, tourDetailsTableEnglish,
+                                tourDetailsTableArabic, language, tourId).execute();
+                    }
+                } else {
+                    int n = activityReference.get().qmDatabase.getTourDetailsTaleDao().checkArabicIdExist(
+                            tourId);
+                    if (n > 0) {
+                        new DeleteEventsTableRow(TourDetailsActivity.this, language,
+                                tourId).execute();
+                    } else {
+                        new InsertDatabaseTask(TourDetailsActivity.this, tourDetailsTableEnglish,
+                                tourDetailsTableArabic, language, tourId).execute();
+                    }
+                }
+            }
+            return null;
+        }
+
+
+    }
+
+    public class InsertDatabaseTask extends AsyncTask<Void, Void, Boolean> {
+        private WeakReference<TourDetailsActivity> activityReference;
+        private TourDetailsTableEnglish tourDetailsTableEnglish;
+        private TourDetailsTableArabic tourDetailsTableArabic;
+        String language;
+        String tourId;
+
+        InsertDatabaseTask(TourDetailsActivity context, TourDetailsTableEnglish tourDetailsTableEnglish,
+                           TourDetailsTableArabic tourDetailsTableArabic, String lan, String tourId) {
+            activityReference = new WeakReference<>(context);
+            this.tourDetailsTableEnglish = tourDetailsTableEnglish;
+            this.tourDetailsTableArabic = tourDetailsTableArabic;
+            language = lan;
+            this.tourId = tourId;
+        }
+
+        @Override
+        protected Boolean doInBackground(Void... voids) {
+            if (tourDetailsList != null) {
+                if (language.equals("en")) {
+                    for (int i = 0; i < tourDetailsList.size(); i++) {
+                        Convertor converters = new Convertor();
+                        tourDetailsTableEnglish = new TourDetailsTableEnglish(
+                                tourDetailsList.get(i).getTourTitle(),
+                                converters.fromArrayList(tourDetailsList.get(i).getTourImage()),
+                                tourDetailsList.get(i).getTourDate(),
+                                tourDetailsList.get(i).getTourEventId(),
+                                tourDetailsList.get(i).getTourContactEmail(),
+                                tourDetailsList.get(i).getTourContactPhone(),
+                                tourDetailsList.get(i).getTourLatitude(),
+                                tourDetailsList.get(i).getTourLongtitude(),
+                                tourDetailsList.get(i).getTourSortId(),
+                                tourDetailsList.get(i).getTourBody(),
+                                tourDetailsList.get(i).getTourRegistered()
+
+                        );
+                        activityReference.get().qmDatabase.getTourDetailsTaleDao().
+                                insert(tourDetailsTableEnglish);
+
+                    }
+                } else {
+                    for (int i = 0; i < tourDetailsList.size(); i++) {
+
+                        Convertor converters = new Convertor();
+                        tourDetailsTableArabic = new TourDetailsTableArabic(
+                                tourDetailsList.get(i).getTourTitle(),
+                                converters.fromArrayList(tourDetailsList.get(i).getTourImage()),
+                                tourDetailsList.get(i).getTourDate(),
+                                tourDetailsList.get(i).getTourEventId(),
+                                tourDetailsList.get(i).getTourContactEmail(),
+                                tourDetailsList.get(i).getTourContactPhone(),
+                                tourDetailsList.get(i).getTourLatitude(),
+                                tourDetailsList.get(i).getTourLongtitude(),
+                                tourDetailsList.get(i).getTourSortId(),
+                                tourDetailsList.get(i).getTourBody(),
+                                tourDetailsList.get(i).getTourRegistered()
+                        );
+                        activityReference.get().qmDatabase.getTourDetailsTaleDao().
+                                insert(tourDetailsTableArabic);
+
+                    }
+                }
+            }
+            return true;
+        }
+    }
+
+    public class DeleteEventsTableRow extends AsyncTask<Void, Void, Void> {
+        private WeakReference<TourDetailsActivity> activityReference;
+        String language, tourId;
+
+        DeleteEventsTableRow(TourDetailsActivity context, String apiLanguage, String tourId) {
+            activityReference = new WeakReference<>(context);
+            language = apiLanguage;
+            this.tourId = tourId;
+        }
+
+        @Override
+        protected Void doInBackground(Void... voids) {
+            if (language.equals("en")) {
+                activityReference.get().qmDatabase.getTourDetailsTaleDao().deleteEnglishTourDetailsWithId(
+                        tourId
+                );
+
+            } else {
+                activityReference.get().qmDatabase.getTourDetailsTaleDao().deleteArabicTourDetailsWithId(
+                        tourId
+                );
+            }
+
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(Void aVoid) {
+            new InsertDatabaseTask(TourDetailsActivity.this, tourDetailsTableEnglish,
+                    tourDetailsTableArabic, language, tourId).execute();
+
+        }
+    }
+
+    public class RetriveTourDetailsEnglish extends AsyncTask<Void, Void, List<TourDetailsTableEnglish>> {
+        private WeakReference<TourDetailsActivity> activityReference;
+        String tourId;
+
+        RetriveTourDetailsEnglish(TourDetailsActivity context, String tourId) {
+            activityReference = new WeakReference<>(context);
+            this.tourId = tourId;
+        }
+
+        @Override
+        protected List<TourDetailsTableEnglish> doInBackground(Void... voids) {
+            return activityReference.get().qmDatabase.getTourDetailsTaleDao().getTourDetailsWithIdEnglish(tourId);
+        }
+
+        @Override
+        protected void onPostExecute(List<TourDetailsTableEnglish> tourDetailsTableEnglishList) {
+            tourDetailsList.clear();
+            Convertor converters = new Convertor();
+            if (tourDetailsTableEnglishList.size() > 0) {
+                for (int i = 0; i < tourDetailsTableEnglishList.size(); i++) {
+                    TourDetailsModel calendarEvents = new TourDetailsModel(
+                            tourDetailsTableEnglishList.get(i).getTour_title(),
+                            converters.fromString(tourDetailsTableEnglishList.get(i).getTour_images()),
+                            tourDetailsTableEnglishList.get(i).getTour_date(),
+                            tourDetailsTableEnglishList.get(i).getTour_id(),
+                            tourDetailsTableEnglishList.get(i).getTour_contact_email(),
+                            tourDetailsTableEnglishList.get(i).getTour_contact_phone(),
+                            tourDetailsTableEnglishList.get(i).getTour_latitude(),
+                            tourDetailsTableEnglishList.get(i).getTour_longtitude(),
+                            tourDetailsTableEnglishList.get(i).getTour_sort_id(),
+                            tourDetailsTableEnglishList.get(i).getTour_body(),
+                            tourDetailsTableEnglishList.get(i).getTour_registered()
+                    );
+                    tourDetailsList.add(i, calendarEvents);
+                }
+                mAdapter.notifyDataSetChanged();
+                recyclerView.setVisibility(View.VISIBLE);
+                retryLayout.setVisibility(View.GONE);
+            } else {
+                recyclerView.setVisibility(View.GONE);
+                retryLayout.setVisibility(View.VISIBLE);
+            }
+            progressBar.setVisibility(View.GONE);
+        }
+    }
+
+    public class RetriveTourDetailsArabic extends AsyncTask<Void, Void, List<TourDetailsTableArabic>> {
+        private WeakReference<TourDetailsActivity> activityReference;
+        String tourId;
+
+        RetriveTourDetailsArabic(TourDetailsActivity context, String tourId) {
+            activityReference = new WeakReference<>(context);
+            this.tourId = tourId;
+        }
+
+        @Override
+        protected List<TourDetailsTableArabic> doInBackground(Void... voids) {
+            return activityReference.get().qmDatabase.getTourDetailsTaleDao().getTourDetailsWithIdArabic(tourId);
+
+        }
+
+        @Override
+        protected void onPostExecute(List<TourDetailsTableArabic> tourDetailsTableArabicList) {
+            tourDetailsList.clear();
+            Convertor converters = new Convertor();
+            if (tourDetailsTableArabicList.size() > 0) {
+                for (int i = 0; i < tourDetailsTableArabicList.size(); i++) {
+                    TourDetailsModel calendarEvents = new TourDetailsModel(
+                            tourDetailsTableArabicList.get(i).getTour_title(),
+                            converters.fromString(tourDetailsTableArabicList.get(i).getTour_images()),
+                            tourDetailsTableArabicList.get(i).getTour_date(),
+                            tourDetailsTableArabicList.get(i).getTour_id(),
+                            tourDetailsTableArabicList.get(i).getTour_contact_email(),
+                            tourDetailsTableArabicList.get(i).getTour_contact_phone(),
+                            tourDetailsTableArabicList.get(i).getTour_latitude(),
+                            tourDetailsTableArabicList.get(i).getTour_longtitude(),
+                            tourDetailsTableArabicList.get(i).getTour_sort_id(),
+                            tourDetailsTableArabicList.get(i).getTour_body(),
+                            tourDetailsTableArabicList.get(i).getTour_registered()
+                    );
+                    tourDetailsList.add(i, calendarEvents);
+                }
+                mAdapter.notifyDataSetChanged();
+                recyclerView.setVisibility(View.VISIBLE);
+                retryLayout.setVisibility(View.GONE);
+            } else {
+                recyclerView.setVisibility(View.GONE);
+                retryLayout.setVisibility(View.VISIBLE);
+            }
+            progressBar.setVisibility(View.GONE);
+        }
+    }
 
 }
