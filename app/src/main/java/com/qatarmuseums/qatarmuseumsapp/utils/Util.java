@@ -14,7 +14,6 @@ import android.os.Build;
 import android.util.DisplayMetrics;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.view.Window;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.Toast;
@@ -27,8 +26,6 @@ import org.jsoup.nodes.Document;
 import org.jsoup.safety.Whitelist;
 
 import java.util.Locale;
-
-import static android.content.Context.LAYOUT_INFLATER_SERVICE;
 
 public class Util {
     private CustomDialogClass customDialog;

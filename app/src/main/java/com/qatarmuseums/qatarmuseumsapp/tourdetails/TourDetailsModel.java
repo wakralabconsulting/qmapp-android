@@ -29,6 +29,12 @@ public class TourDetailsModel {
     private String tourSortId;
     @SerializedName("registered")
     private String tourRegistered;
+    @SerializedName("moderator_name")
+    private String tourSpeakerName;
+    @SerializedName("description_for_moderator")
+    private String tourSpeakerInfo;
+    @SerializedName("nid")
+    private String nId;
 
     public TourDetailsModel(String tour_title, ArrayList<String> tour_images,
                             String tour_date, String tour_id,
@@ -144,5 +150,29 @@ public class TourDetailsModel {
 
     public void setTourRegistered(String tourRegistered) {
         this.tourRegistered = tourRegistered;
+    }
+
+    public String getTourSpeakerName() {
+        return tourSpeakerName;
+    }
+
+    public void setTourSpeakerName(String tourSpeakerName) {
+        this.tourSpeakerName = tourSpeakerName;
+    }
+
+    public String getTourSpeakerInfo() {
+        return tourSpeakerInfo;
+    }
+
+    public void setTourSpeakerInfo(String tourSpeakerInfo) {
+        this.tourSpeakerInfo = tourSpeakerInfo;
+    }
+
+    public String getnId() {
+        return nId;
+    }
+
+    public void setnId(String nId) {
+        this.nId = nId;
     }
 }

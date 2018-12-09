@@ -136,6 +136,15 @@ public class TourDetailsAdapter extends RecyclerView.Adapter<TourDetailsAdapter.
 //            }
             return false;
         });
+        if (model.getTourSpeakerName() != null && model.getTourSpeakerName().equals("")) {
+            holder.speakerLayout.setVisibility(View.VISIBLE);
+            if (model.getTourImage().size() > 1)
+                GlideApp.with(mContext)
+                        .load(model.getTourImage().get(1))
+                        .into(holder.speakerImage);
+            holder.speakerName.setText(model.getTourSpeakerName());
+            holder.speakerInfo.setText(model.getTourSpeakerInfo());
+        }
     }
 
     private void showDeclineDialog(SwitchCompat interestToggle, int position) {
@@ -185,9 +194,9 @@ public class TourDetailsAdapter extends RecyclerView.Adapter<TourDetailsAdapter.
 
     public class MyViewHolder extends RecyclerView.ViewHolder implements OnMapReadyCallback {
         public TextView mainTitle, subTitle, shortDescription, longDescription, dateDetails,
-                locationDetails, contactDetails;
-        public ImageView tourImage, mapImageView, direction;
-        LinearLayout locationLayout, contactLayout, mapViewLayout;
+                locationDetails, contactDetails, speakerName, speakerInfo;
+        public ImageView tourImage, mapImageView, direction, speakerImage;
+        LinearLayout locationLayout, contactLayout, mapViewLayout, speakerLayout;
         SwitchCompat interestToggle;
         MapView mapView;
         GoogleMap mMap;
@@ -198,18 +207,6 @@ public class TourDetailsAdapter extends RecyclerView.Adapter<TourDetailsAdapter.
         public MyViewHolder(View view) {
             super(view);
             tourImage = (ImageView) view.findViewById(R.id.tour_img);
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-
-                tourImage.setOutlineProvider(new ViewOutlineProvider() {
-                    @Override
-                    public void getOutline(View view, Outline outline) {
-                        outline.setRoundRect(0, 0, view.getWidth(),
-                                (int) (view.getHeight() + curveRadius), curveRadius);
-                    }
-                });
-
-                tourImage.setClipToOutline(true);
-            }
             mainTitle = (TextView) view.findViewById(R.id.main_title);
             shortDescription = (TextView) view.findViewById(R.id.short_description);
             longDescription = (TextView) view.findViewById(R.id.long_description);
@@ -223,6 +220,30 @@ public class TourDetailsAdapter extends RecyclerView.Adapter<TourDetailsAdapter.
             contactLayout = (LinearLayout) view.findViewById(R.id.contact_layout);
             interestToggle = view.findViewById(R.id.interest_toggle_button);
             locationLayout = view.findViewById(R.id.location_layout);
+            speakerLayout = view.findViewById(R.id.speaker_layout);
+            speakerImage = view.findViewById(R.id.speaker_img);
+            speakerName = view.findViewById(R.id.name_of_the_speaker);
+            speakerInfo = view.findViewById(R.id.information_of_the_speaker);
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                tourImage.setOutlineProvider(new ViewOutlineProvider() {
+                    @Override
+                    public void getOutline(View view, Outline outline) {
+                        outline.setRoundRect(0, 0, view.getWidth(),
+                                (int) (view.getHeight() + curveRadius), curveRadius);
+                    }
+                });
+
+                tourImage.setClipToOutline(true);
+
+                speakerImage.setOutlineProvider(new ViewOutlineProvider() {
+                    @Override
+                    public void getOutline(View view, Outline outline) {
+                        outline.setRoundRect(0, 0, view.getWidth(),
+                                (int) (view.getHeight() + curveRadius), curveRadius);
+                    }
+                });
+                speakerImage.setClipToOutline(true);
+            }
 
 
         }

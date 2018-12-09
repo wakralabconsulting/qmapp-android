@@ -14,9 +14,9 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.qatarmuseums.qatarmuseumsapp.R;
-import com.qatarmuseums.qatarmuseumsapp.commonpage.CommonModel;
 import com.qatarmuseums.qatarmuseumsapp.commonpage.RecyclerTouchListener;
 import com.qatarmuseums.qatarmuseumsapp.home.GlideApp;
+import com.qatarmuseums.qatarmuseumsapp.tourdetails.TourDetailsModel;
 import com.qatarmuseums.qatarmuseumsapp.utils.Util;
 
 import java.lang.ref.WeakReference;
@@ -26,7 +26,7 @@ public class TourSecondaryListAdapter extends RecyclerView.Adapter<TourSecondary
 
     private final Context mContext;
     private final RecyclerTouchListener.ItemClickListener listener;
-    private List<CommonModel> commonModelList;
+    private List<TourDetailsModel> commonModelList;
     private Animation zoomOutAnimation;
     Util util;
 
@@ -58,7 +58,7 @@ public class TourSecondaryListAdapter extends RecyclerView.Adapter<TourSecondary
         }
     }
 
-    public TourSecondaryListAdapter(Context context, List<CommonModel> commonModelList, RecyclerTouchListener.ItemClickListener listener) {
+    public TourSecondaryListAdapter(Context context, List<TourDetailsModel> commonModelList, RecyclerTouchListener.ItemClickListener listener) {
         this.commonModelList = commonModelList;
         this.mContext = context;
         this.listener = listener;
@@ -80,17 +80,11 @@ public class TourSecondaryListAdapter extends RecyclerView.Adapter<TourSecondary
 
     @Override
     public void onBindViewHolder(@NonNull TourSecondaryListAdapter.MyViewHolder holder, int position) {
-        CommonModel model = commonModelList.get(position);
-        holder.commonTitleLayout.setVisibility(View.GONE);
-        holder.tourTitleLayout.setVisibility(View.VISIBLE);
-        holder.tourDayTxt.setText(model.getEventDay());
-        holder.tourDayTxt.setTextSize(22);
-        holder.tourDateTxt.setTextSize(22);
-        holder.tourDateTxt.setText(model.getEventDate());
-        holder.tourTitleTxt.setText(model.getName());
+        TourDetailsModel model = commonModelList.get(position);
+        holder.name.setText(model.getTourTitle());
 
         GlideApp.with(mContext)
-                .load(model.getImage())
+                .load(model.getTourImage().get(0))
                 .centerCrop()
                 .placeholder(R.drawable.placeholder)
                 .into(holder.imageView);

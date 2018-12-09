@@ -56,6 +56,9 @@ import com.qatarmuseums.qatarmuseumsapp.museumabout.MuseumAboutModel;
 import com.qatarmuseums.qatarmuseumsapp.museumabout.MuseumAboutTableArabic;
 import com.qatarmuseums.qatarmuseumsapp.museumabout.MuseumAboutTableEnglish;
 import com.qatarmuseums.qatarmuseumsapp.publicart.PublicArtModel;
+import com.qatarmuseums.qatarmuseumsapp.tourdetails.TourDetailsModel;
+import com.qatarmuseums.qatarmuseumsapp.tourdetails.TourDetailsTableArabic;
+import com.qatarmuseums.qatarmuseumsapp.tourdetails.TourDetailsTableEnglish;
 import com.qatarmuseums.qatarmuseumsapp.utils.IPullZoom;
 import com.qatarmuseums.qatarmuseumsapp.utils.PixelUtil;
 import com.qatarmuseums.qatarmuseumsapp.utils.PullToZoomCoordinatorLayout;
@@ -151,7 +154,11 @@ public class DetailsActivity extends AppCompatActivity implements IPullZoom, OnM
     private TextView offerCode;
     private String claimOfferURL;
     private Intent navigation_intent;
-
+    private ArrayList<TourDetailsModel> tourDetailsList = new ArrayList<>();
+    private String register, registered;
+    private String eventDate;
+    TourDetailsTableEnglish tourDetailsTableEnglish;
+    TourDetailsTableArabic tourDetailsTableArabic;
 
     @SuppressLint("ClickableViewAccessibility")
     @Override
@@ -171,6 +178,15 @@ public class DetailsActivity extends AppCompatActivity implements IPullZoom, OnM
         contactInfo = intent.getStringExtra("CONTACT");
         id = intent.getStringExtra("ID");
         isFavourite = intent.getBooleanExtra("IS_FAVOURITE", false);
+        if (comingFrom.equals(getString(R.string.museum_tours))) {
+            description = intent.getStringExtra("DESCRIPTION");
+            eventDate = intent.getStringExtra("DATE");
+            contactInfo = intent.getStringExtra("CONTACT");
+            register = intent.getStringExtra("REGISTER");
+            registered = intent.getStringExtra("REGISTERED");
+            latitude = intent.getStringExtra("LATITUDE");
+            longitude = intent.getStringExtra("LONGITUDE");
+        }
         qmDatabase = QMDatabase.getInstance(DetailsActivity.this);
         toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -226,7 +242,6 @@ public class DetailsActivity extends AppCompatActivity implements IPullZoom, OnM
         speakerInfo = findViewById(R.id.information_of_the_speaker);
         locationTitle = findViewById(R.id.location_title);
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-
             speakerImage.setOutlineProvider(new ViewOutlineProvider() {
                 @Override
                 public void getOutline(View view, Outline outline) {
@@ -234,7 +249,6 @@ public class DetailsActivity extends AppCompatActivity implements IPullZoom, OnM
                             (int) (view.getHeight() + curveRadius), curveRadius);
                 }
             });
-
             speakerImage.setClipToOutline(true);
         }
         util = new Util();
@@ -359,7 +373,7 @@ public class DetailsActivity extends AppCompatActivity implements IPullZoom, OnM
         });
         mapImageView.setOnClickListener(view -> {
             if (iconView == 0) {
-                if (latitude == null) {
+                if (latitude == null || latitude.equals("")) {
                     util.showLocationAlertDialog(DetailsActivity.this);
                 } else {
                     iconView = 1;
@@ -373,7 +387,7 @@ public class DetailsActivity extends AppCompatActivity implements IPullZoom, OnM
                     gmap.animateCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(Double.parseDouble(latitude), Double.parseDouble(longitude)), 10));
                 }
             } else {
-                if (latitude == null) {
+                if (latitude == null || latitude.equals("")) {
                     util.showLocationAlertDialog(DetailsActivity.this);
                 } else {
                     iconView = 0;
@@ -390,7 +404,7 @@ public class DetailsActivity extends AppCompatActivity implements IPullZoom, OnM
         });
 
         direction.setOnClickListener(view -> {
-            if (latitude == null) {
+            if (latitude == null || latitude.equals("")) {
                 util.showLocationAlertDialog(DetailsActivity.this);
             } else {
                 Intent intent = new Intent(Intent.ACTION_VIEW,
@@ -407,16 +421,16 @@ public class DetailsActivity extends AppCompatActivity implements IPullZoom, OnM
 
                 downloadAction());
 
-        interestToggle.setOnTouchListener((v, event) ->
+        interestToggle.setOnTouchListener((v, event) -> {
+            util.showComingSoonDialog(DetailsActivity.this, R.string.coming_soon_content);
 
-        {
-            if (!interested) {
-                interested = true;
-                interestToggle.setChecked(false);
-                util.showCulturalPassAlertDialog(DetailsActivity.this);
-            } else {
-                showDeclineDialog();
-            }
+//            if (!interested) {
+//                interested = true;
+//                interestToggle.setChecked(false);
+//                util.showCulturalPassAlertDialog(DetailsActivity.this);
+//            } else {
+//                showDeclineDialog();
+//            }
             return false;
         });
     }
@@ -514,7 +528,6 @@ public class DetailsActivity extends AppCompatActivity implements IPullZoom, OnM
             } else {
                 getHeritageAPIDataFromDatabase(id, language);
             }
-
         } else if (comingFrom.equals(getString(R.string.sidemenu_public_arts_text))) {
             if (util.isNetworkAvailable(DetailsActivity.this))
                 getPublicArtDetailsFromAPI(id, language);
@@ -534,28 +547,85 @@ public class DetailsActivity extends AppCompatActivity implements IPullZoom, OnM
         } else if (comingFrom.equals(getString(R.string.museum_travel))) {
             getTravelsDetails();
         } else if (comingFrom.equals(getString(R.string.museum_discussion))) {
-            getPanelDiscussionDetails();
+            if (util.isNetworkAvailable(DetailsActivity.this))
+                getSpecialEventDetailFromAPI(id, language);
+            else
+                getTourDetailsFromDatabase(id);
+        } else if (comingFrom.equals(getString(R.string.museum_tours))) {
+            setTourDetailsData();
         }
     }
 
-    private void getPanelDiscussionDetails() {
+    public void setTourDetailsData() {
+        commonContentLayout.setVisibility(View.VISIBLE);
         interestLayout.setVisibility(View.VISIBLE);
         videoLayout.setVisibility(View.GONE);
-        speakerLayout.setVisibility(View.VISIBLE);
-        GlideApp.with(this)
-                .load("https://www.qm.org.qa/sites/default/files/styles/content_image/public/images/body/mansour-body.jpg")
-                .centerCrop()
-                .placeholder(R.drawable.placeholder)
-                .into(speakerImage);
-        speakerName.setText("Name of the Speaker");
-        speakerInfo.setText("Information of the Speaker .Information of the Speaker . Information of the Speaker . Information of the Speaker . ");
         timingTitle.setText(R.string.date);
-        locationTitle.setText(R.string.venue);
-        loadData(null,
-                "This discussion is going to be about the grandeur and originality of Qatari Songs. The speakers will also demonstrate the various songs and the musical instruments used to create the songs.",
-                null, null, null, "28 March 2019",
-                null, null, "+974 4452 5555\ninfo@qm.org.qa", null,
-                null, false, null);
+        loadData(null, description,
+                null, null, null,
+                eventDate, null, null, contactInfo, latitude, longitude,
+                true, null);
+    }
+
+    public void getSpecialEventDetailFromAPI(String id, int appLanguage) {
+        progressBar.setVisibility(View.VISIBLE);
+        final String language;
+        if (appLanguage == 1) {
+            language = "en";
+        } else {
+            language = "ar";
+        }
+        APIInterface apiService = APIClient.getClient().create(APIInterface.class);
+        Call<ArrayList<TourDetailsModel>> call = apiService.getTourDetails(language, id);
+        call.enqueue(new Callback<ArrayList<TourDetailsModel>>() {
+            @Override
+            public void onResponse(Call<ArrayList<TourDetailsModel>> call, Response<ArrayList<TourDetailsModel>> response) {
+                if (response.isSuccessful()) {
+                    if (response.body() != null && response.body().size() > 0) {
+                        commonContentLayout.setVisibility(View.VISIBLE);
+                        interestLayout.setVisibility(View.VISIBLE);
+                        videoLayout.setVisibility(View.GONE);
+                        speakerLayout.setVisibility(View.VISIBLE);
+                        tourDetailsList.addAll(response.body());
+                        removeTourDetailsHtmlTags(tourDetailsList);
+                        if (tourDetailsList.get(0).getTourImage().size() > 1)
+                            GlideApp.with(DetailsActivity.this)
+                                    .load(tourDetailsList.get(0).getTourImage().get(1))
+                                    .centerCrop()
+                                    .placeholder(R.drawable.placeholder)
+                                    .into(speakerImage);
+                        speakerName.setText(tourDetailsList.get(0).getTourSpeakerName());
+                        speakerInfo.setText(tourDetailsList.get(0).getTourSpeakerInfo());
+                        timingTitle.setText(R.string.date);
+                        locationTitle.setText(R.string.venue);
+                        loadData(null,
+                                tourDetailsList.get(0).getTourBody(),
+                                null, null, null,
+                                tourDetailsList.get(0).getTourDate(),
+                                null, null,
+                                tourDetailsList.get(0).getTourContactPhone() + "\n" +
+                                        tourDetailsList.get(0).getTourContactEmail(),
+                                tourDetailsList.get(0).getTourLatitude(),
+                                tourDetailsList.get(0).getTourLongtitude(), true, null);
+                        new SpecialEventDetailsRowCount(DetailsActivity.this, id).execute();
+                    } else {
+                        commonContentLayout.setVisibility(View.GONE);
+                        noResultFoundTxt.setVisibility(View.VISIBLE);
+                    }
+                } else {
+                    commonContentLayout.setVisibility(View.GONE);
+                    retryLayout.setVisibility(View.VISIBLE);
+                }
+                progressBar.setVisibility(View.GONE);
+            }
+
+            @Override
+            public void onFailure(Call<ArrayList<TourDetailsModel>> call, Throwable t) {
+                commonContentLayout.setVisibility(View.GONE);
+                retryLayout.setVisibility(View.VISIBLE);
+                progressBar.setVisibility(View.GONE);
+            }
+        });
 
     }
 
@@ -569,15 +639,192 @@ public class DetailsActivity extends AppCompatActivity implements IPullZoom, OnM
                 contactInfo, null, null, false, null);
     }
 
-    private void getTourInDetails() {
-        interestLayout.setVisibility(View.VISIBLE);
-        videoLayout.setVisibility(View.GONE);
-        timingTitle.setText(R.string.date);
-        loadData(null,
-                "This tour has been designed for introducing you to the exquisite art & culture of Qatar",
-                null, null, null, "28 March 2019",
-                null, null, "+974 4452 5555\ninfo@qm.org.qa", null,
-                null, false, null);
+    public void getTourDetailsFromDatabase(String id) {
+        progressBar.setVisibility(View.VISIBLE);
+        new RetriveTourDetailsEnglish(DetailsActivity.this, id).execute();
+    }
+
+    public class SpecialEventDetailsRowCount extends AsyncTask<Void, Void, Integer> {
+
+        private WeakReference<DetailsActivity> activityReference;
+        String language, tourId;
+
+
+        SpecialEventDetailsRowCount(DetailsActivity context, String tourId) {
+            activityReference = new WeakReference<>(context);
+            this.tourId = tourId;
+        }
+
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+        }
+
+        @Override
+        protected void onPostExecute(Integer integer) {
+            int tourDetailsRowCount = integer;
+            if (tourDetailsRowCount > 0) {
+                new CheckTourDetailsRowExist(DetailsActivity.this, tourId).execute();
+            } else {
+                new InsertDatabaseTask(DetailsActivity.this, tourDetailsTableEnglish,
+                        tourDetailsTableArabic, tourId).execute();
+            }
+        }
+
+        @Override
+        protected Integer doInBackground(Void... voids) {
+            return activityReference.get().qmDatabase.getTourDetailsTaleDao().getNumberOfRowsEnglish();
+        }
+    }
+
+    public class CheckTourDetailsRowExist extends AsyncTask<Void, Void, Void> {
+        private WeakReference<DetailsActivity> activityReference;
+        String tourId;
+
+        CheckTourDetailsRowExist(DetailsActivity context, String tourId) {
+            activityReference = new WeakReference<>(context);
+
+            this.tourId = tourId;
+        }
+
+        @Override
+        protected Void doInBackground(Void... voids) {
+            if (tourDetailsList.size() > 0) {
+                int n = activityReference.get().qmDatabase.getTourDetailsTaleDao().checkEnglishIdExist(
+                        tourId);
+                if (n > 0) {
+                    new DeleteEventsTableRow(DetailsActivity.this,
+                            tourId).execute();
+                } else {
+                    new InsertDatabaseTask(DetailsActivity.this, tourDetailsTableEnglish,
+                            tourDetailsTableArabic, tourId).execute();
+                }
+
+            }
+            return null;
+        }
+
+
+    }
+
+    public class InsertDatabaseTask extends AsyncTask<Void, Void, Boolean> {
+        private WeakReference<DetailsActivity> activityReference;
+        private TourDetailsTableEnglish tourDetailsTableEnglish;
+        private TourDetailsTableArabic tourDetailsTableArabic;
+        String language;
+        String tourId;
+
+        InsertDatabaseTask(DetailsActivity context, TourDetailsTableEnglish tourDetailsTableEnglish,
+                           TourDetailsTableArabic tourDetailsTableArabic, String tourId) {
+            activityReference = new WeakReference<>(context);
+            this.tourDetailsTableEnglish = tourDetailsTableEnglish;
+            this.tourDetailsTableArabic = tourDetailsTableArabic;
+
+            this.tourId = tourId;
+        }
+
+        @Override
+        protected Boolean doInBackground(Void... voids) {
+            if (tourDetailsList != null) {
+                for (int i = 0; i < tourDetailsList.size(); i++) {
+                    Convertor converters = new Convertor();
+                    tourDetailsTableEnglish = new TourDetailsTableEnglish(
+                            tourDetailsList.get(i).getTourTitle(),
+                            converters.fromArrayList(tourDetailsList.get(i).getTourImage()),
+                            tourDetailsList.get(i).getTourDate(),
+                            tourDetailsList.get(i).getTourEventId(),
+                            tourDetailsList.get(i).getTourContactEmail(),
+                            tourDetailsList.get(i).getTourContactPhone(),
+                            tourDetailsList.get(i).getTourLatitude(),
+                            tourDetailsList.get(i).getTourLongtitude(),
+                            tourDetailsList.get(i).getTourSortId(),
+                            tourDetailsList.get(i).getTourBody(),
+                            tourDetailsList.get(i).getTourRegistered(),
+                            tourDetailsList.get(i).getTourSpeakerName(),
+                            tourDetailsList.get(i).getTourSpeakerInfo()
+                    );
+                    activityReference.get().qmDatabase.getTourDetailsTaleDao().
+                            insert(tourDetailsTableEnglish);
+                }
+            }
+            return true;
+        }
+    }
+
+    public class DeleteEventsTableRow extends AsyncTask<Void, Void, Void> {
+        private WeakReference<DetailsActivity> activityReference;
+        String language, tourId;
+
+        DeleteEventsTableRow(DetailsActivity context, String tourId) {
+            activityReference = new WeakReference<>(context);
+            this.tourId = tourId;
+        }
+
+        @Override
+        protected Void doInBackground(Void... voids) {
+            activityReference.get().qmDatabase.getTourDetailsTaleDao().
+                    deleteEnglishTourDetailsWithId(tourId);
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(Void aVoid) {
+            new InsertDatabaseTask(DetailsActivity.this, tourDetailsTableEnglish,
+                    tourDetailsTableArabic, tourId).execute();
+
+        }
+    }
+
+    public class RetriveTourDetailsEnglish extends AsyncTask<Void, Void, List<TourDetailsTableEnglish>> {
+        private WeakReference<DetailsActivity> activityReference;
+        String tourId;
+
+        RetriveTourDetailsEnglish(DetailsActivity context, String tourId) {
+            activityReference = new WeakReference<>(context);
+            this.tourId = tourId;
+        }
+
+        @Override
+        protected List<TourDetailsTableEnglish> doInBackground(Void... voids) {
+            return activityReference.get().qmDatabase.getTourDetailsTaleDao().getTourDetailsWithIdEnglish(tourId);
+        }
+
+        @Override
+        protected void onPostExecute(List<TourDetailsTableEnglish> tourDetailsTableEnglishList) {
+            tourDetailsList.clear();
+            Convertor converters = new Convertor();
+            if (tourDetailsTableEnglishList.size() > 0) {
+                interestLayout.setVisibility(View.VISIBLE);
+                videoLayout.setVisibility(View.GONE);
+                speakerLayout.setVisibility(View.VISIBLE);
+                if (tourDetailsTableEnglishList.size() > 1)
+                    GlideApp.with(DetailsActivity.this)
+                            .load(converters.fromString(tourDetailsTableEnglishList.get(0).getTour_images()).get(1))
+                            .centerCrop()
+                            .placeholder(R.drawable.placeholder)
+                            .into(speakerImage);
+                speakerName.setText(tourDetailsTableEnglishList.get(0).getModerator_name());
+                speakerInfo.setText(tourDetailsTableEnglishList.get(0).getDescription_for_moderator());
+                timingTitle.setText(R.string.date);
+                locationTitle.setText(R.string.venue);
+                loadData(null,
+                        tourDetailsTableEnglishList.get(0).getTour_body(),
+                        null, null, null,
+                        tourDetailsTableEnglishList.get(0).getTour_date(),
+                        null, null,
+                        tourDetailsTableEnglishList.get(0).getTour_contact_phone() + "\n" +
+                                tourDetailsTableEnglishList.get(0).getTour_contact_email(),
+                        tourDetailsTableEnglishList.get(0).getTour_latitude(),
+                        tourDetailsTableEnglishList.get(0).getTour_longtitude(), true, null);
+
+                commonContentLayout.setVisibility(View.VISIBLE);
+                retryLayout.setVisibility(View.GONE);
+            } else {
+                commonContentLayout.setVisibility(View.GONE);
+                retryLayout.setVisibility(View.VISIBLE);
+            }
+            progressBar.setVisibility(View.GONE);
+        }
     }
 
     private void getCommonListAPIDataFromDatabase(String id, int appLanguage) {
@@ -605,7 +852,6 @@ public class DetailsActivity extends AppCompatActivity implements IPullZoom, OnM
     }
 
     private String convertDegreetoDecimalMeasure(String degreeValue) {
-
         String value = degreeValue.trim();
         String[] latParts = value.split("°");
         float degree = Float.parseFloat(latParts[0]);
@@ -621,7 +867,6 @@ public class DetailsActivity extends AppCompatActivity implements IPullZoom, OnM
         String result;
         result = String.valueOf(degree + (min / 60) + (sec / 3600));
         return result;
-
     }
 
     private void initViews() {
@@ -726,8 +971,7 @@ public class DetailsActivity extends AppCompatActivity implements IPullZoom, OnM
                 this.locationDetails.setVisibility(View.VISIBLE);
                 this.locationDetails.setText(locationInfo);
             }
-            if (contactInfo != null && !(contactInfo.isEmpty())) {
-
+            if (contactInfo != null && !(contactInfo.isEmpty()) && !contactInfo.equals("\n")) {
                 this.contactLayout.setVisibility(View.VISIBLE);
                 this.contactDetails.setText(contactInfo);
             }
@@ -953,6 +1197,15 @@ public class DetailsActivity extends AppCompatActivity implements IPullZoom, OnM
         circleIndicator.stop();
     }
 
+    public void removeTourDetailsHtmlTags(ArrayList<TourDetailsModel> models) {
+        for (int i = 0; i < models.size(); i++) {
+            models.get(i).setTourTitle(util.html2string(models.get(i).getTourTitle()));
+            models.get(i).setTourDate(util.html2string(models.get(i).getTourDate()));
+            models.get(i).setTourBody(util.html2string(models.get(i).getTourBody()));
+
+        }
+    }
+
     public void removeHtmlTags(ArrayList<HeritageOrExhibitionDetailModel> models) {
         for (int i = 0; i < models.size(); i++) {
             models.get(i).setStartDate(util.html2string(models.get(i).getStartDate()));
@@ -975,7 +1228,17 @@ public class DetailsActivity extends AppCompatActivity implements IPullZoom, OnM
     public void onMapReady(GoogleMap googleMap) {
         gvalue = googleMap;
         googleMap.getUiSettings().setMapToolbarEnabled(false);
-
+        if (latitude != null && !latitude.equals("")) {
+            gmap = gvalue;
+            gmap.setMinZoomPreference(12);
+            LatLng ny = new LatLng(Double.valueOf(latitude), Double.valueOf(longitude));
+            UiSettings uiSettings = gmap.getUiSettings();
+            uiSettings.setMyLocationButtonEnabled(true);
+            MarkerOptions markerOptions = new MarkerOptions();
+            markerOptions.position(ny);
+            gmap.addMarker(markerOptions);
+            gmap.moveCamera(CameraUpdateFactory.newLatLng(ny));
+        }
     }
 
 

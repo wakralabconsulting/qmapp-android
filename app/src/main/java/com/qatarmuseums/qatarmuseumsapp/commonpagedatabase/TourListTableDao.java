@@ -29,11 +29,8 @@ public interface TourListTableDao {
     @Query("SELECT COUNT(tourNid) FROM tourlistarabic WHERE tourNid = :idFromAPI")
     int checkArabicIdExist(int idFromAPI);
 
-    @Query("SELECT * FROM tourlistenglish WHERE tourNid = :idFromAPI")
-    List<TourListTableEnglish> getTourListEnglish(int idFromAPI);
-
-    @Query("SELECT * FROM tourlistarabic WHERE tourNid = :idFromAPI")
-    List<TourListTableArabic> getTourListArabic(int idFromAPI);
+    @Query("SELECT * FROM tourlistenglish WHERE isTour = :isTourFromAPI")
+    List<TourListTableEnglish> getTourListEnglish(int isTourFromAPI);
 
     @Query("UPDATE tourlistenglish SET tourDay = :tourDayFromApi," +
             "tourEventDate = :tourEventDateFromApi," +
