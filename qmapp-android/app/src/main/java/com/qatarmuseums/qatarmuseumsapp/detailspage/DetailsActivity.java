@@ -389,9 +389,7 @@ public class DetailsActivity extends AppCompatActivity implements IPullZoom, OnM
             }
         });
 
-        direction.setOnClickListener(view ->
-
-        {
+        direction.setOnClickListener(view -> {
             if (latitude == null) {
                 util.showLocationAlertDialog(DetailsActivity.this);
             } else {
@@ -533,8 +531,6 @@ public class DetailsActivity extends AppCompatActivity implements IPullZoom, OnM
                 getMuseumAboutDetailsFromAPI(id, language, true);
             else
                 getMuseumAboutDetailsFromDatabase(id, language, true);
-        } else if (comingFrom.equals(getString(R.string.museum_tours))) {
-            getTourInDetails();
         } else if (comingFrom.equals(getString(R.string.museum_travel))) {
             getTravelsDetails();
         } else if (comingFrom.equals(getString(R.string.museum_discussion))) {
