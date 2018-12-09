@@ -2038,7 +2038,8 @@ public class CommonActivity extends AppCompatActivity {
                                     null,
                                     null,
                                     null,
-                                    models.get(i).getMuseumId());
+                                    models.get(i).getMuseumId(),
+                                    models.get(i).getExhibitionStatus());
                             activityReference.get().qmDatabase.getExhibitionTableDao().insert(exhibitionListTableEnglish);
 
                         }
@@ -2063,7 +2064,8 @@ public class CommonActivity extends AppCompatActivity {
                                     null,
                                     null,
                                     null,
-                                    models.get(i).getMuseumId());
+                                    models.get(i).getMuseumId(),
+                                    models.get(i).getExhibitionStatus());
                             activityReference.get().qmDatabase.getExhibitionTableDao().insert(exhibitionListTableArabic);
 
                         }
@@ -2114,7 +2116,8 @@ public class CommonActivity extends AppCompatActivity {
                                 null,
                                 null,
                                 null,
-                                models.get(i).getMuseumId());
+                                models.get(i).getMuseumId(),
+                                models.get(i).getExhibitionStatus());
                         activityReference.get().qmDatabase.getExhibitionTableDao().insert(exhibitionListTableEnglish);
                     }
                 } else {
@@ -2129,7 +2132,8 @@ public class CommonActivity extends AppCompatActivity {
                                 null,
                                 null,
                                 null,
-                                models.get(i).getMuseumId());
+                                models.get(i).getMuseumId(),
+                                models.get(i).getExhibitionStatus());
                         activityReference.get().qmDatabase.getExhibitionTableDao().insert(exhibitionListTableArabic);
                     }
                 }
@@ -2217,7 +2221,7 @@ public class CommonActivity extends AppCompatActivity {
                             exhibitionListTableEnglish.get(i).getExhibition_end_date(),
                             exhibitionListTableEnglish.get(i).getExhibition_location(),
                             exhibitionListTableEnglish.get(i).getExhibition_latest_image(),
-                            null);
+                            exhibitionListTableEnglish.get(i).getExhibition_status());
 
                     models.add(i, commonModel);
 
@@ -2272,7 +2276,7 @@ public class CommonActivity extends AppCompatActivity {
                             exhibitionListTableArabic.get(i).getExhibition_end_date(),
                             exhibitionListTableArabic.get(i).getExhibition_location(),
                             exhibitionListTableArabic.get(i).getExhibition_latest_image(),
-                            null);
+                            exhibitionListTableArabic.get(i).getExhibition_status());
                     models.add(i, commonModel);
                 }
                 mAdapter.notifyDataSetChanged();
