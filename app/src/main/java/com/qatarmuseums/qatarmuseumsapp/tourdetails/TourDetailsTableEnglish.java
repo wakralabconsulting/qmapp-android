@@ -33,7 +33,10 @@ public class TourDetailsTableEnglish {
     private String tour_body;
     @ColumnInfo()
     private String tour_registered;
-
+    @ColumnInfo()
+    private String moderator_name;
+    @ColumnInfo()
+    private String description_for_moderator;
 
     public TourDetailsTableEnglish(String tour_title, String tour_images,
                                    String tour_date, String tour_id,
@@ -41,7 +44,8 @@ public class TourDetailsTableEnglish {
                                    String tour_latitude,
                                    String tour_longtitude,
                                    String tour_sort_id, String tour_body,
-                                   String tour_registered) {
+                                   String tour_registered,
+                                   String moderator_name, String description_for_moderator) {
         this.tour_title = tour_title;
         this.tour_images = tour_images;
         this.tour_date = tour_date;
@@ -53,6 +57,8 @@ public class TourDetailsTableEnglish {
         this.tour_body = tour_body;
         this.tour_registered = tour_registered;
         this.tour_id = tour_id;
+        this.moderator_name = moderator_name;
+        this.description_for_moderator = description_for_moderator;
     }
 
     @NonNull
@@ -150,5 +156,21 @@ public class TourDetailsTableEnglish {
 
     public void setTour_registered(String tour_registered) {
         this.tour_registered = tour_registered;
+    }
+
+    public String getModerator_name() {
+        return moderator_name;
+    }
+
+    public void setModerator_name(String moderator_name) {
+        this.moderator_name = moderator_name;
+    }
+
+    public String getDescription_for_moderator() {
+        return description_for_moderator;
+    }
+
+    public void setDescription_for_moderator(String description_for_moderator) {
+        this.description_for_moderator = description_for_moderator;
     }
 }

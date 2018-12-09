@@ -39,7 +39,7 @@ public class TourDetailsActivity extends AppCompatActivity {
     private SharedPreferences qmPreferences;
     private ProgressBar progressBar;
     private Intent intent;
-    private String mainTitle, comingFrom, headerImage, description, contactInfo, id;
+    private String mainTitle, comingFrom, id;
     private Toolbar toolbar;
     private ImageView toolbarClose;
     private LinearLayout retryLayout;
@@ -66,9 +66,6 @@ public class TourDetailsActivity extends AppCompatActivity {
         intent = getIntent();
         mainTitle = intent.getStringExtra("MAIN_TITLE");
         comingFrom = intent.getStringExtra("COMING_FROM");
-        headerImage = intent.getStringExtra("HEADER_IMAGE");
-        description = intent.getStringExtra("LONG_DESC");
-        contactInfo = intent.getStringExtra("CONTACT");
         id = intent.getStringExtra("ID");
         toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -294,7 +291,9 @@ public class TourDetailsActivity extends AppCompatActivity {
                                 tourDetailsList.get(i).getTourLongtitude(),
                                 tourDetailsList.get(i).getTourSortId(),
                                 tourDetailsList.get(i).getTourBody(),
-                                tourDetailsList.get(i).getTourRegistered()
+                                tourDetailsList.get(i).getTourRegistered(),
+                                tourDetailsList.get(i).getTourSpeakerName(),
+                                tourDetailsList.get(i).getTourSpeakerInfo()
 
                         );
                         activityReference.get().qmDatabase.getTourDetailsTaleDao().
