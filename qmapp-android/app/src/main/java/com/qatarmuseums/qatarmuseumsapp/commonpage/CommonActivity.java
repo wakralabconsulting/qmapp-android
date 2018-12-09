@@ -44,7 +44,7 @@ import com.qatarmuseums.qatarmuseumsapp.detailspage.DiningActivity;
 import com.qatarmuseums.qatarmuseumsapp.museum.MuseumCollectionListTableArabic;
 import com.qatarmuseums.qatarmuseumsapp.museum.MuseumCollectionListTableEnglish;
 import com.qatarmuseums.qatarmuseumsapp.museumcollectiondetails.CollectionDetailsActivity;
-import com.qatarmuseums.qatarmuseumsapp.tourdetails.TourDetailsActivity;
+import com.qatarmuseums.qatarmuseumsapp.toursecondarylist.TourSecondaryListActivity;
 import com.qatarmuseums.qatarmuseumsapp.utils.Util;
 
 import java.lang.ref.WeakReference;
@@ -132,7 +132,7 @@ public class CommonActivity extends AppCompatActivity {
                             CollectionDetailsActivity.class);
                 else if (toolbarTitle.equals(getString(R.string.museum_tours)))
                     navigationIntent = new Intent(CommonActivity.this,
-                            TourDetailsActivity.class);
+                            TourSecondaryListActivity.class);
                 else
                     navigationIntent = new Intent(CommonActivity.this, DetailsActivity.class);
                 if (toolbarTitle.equals(getString(R.string.museum_tours)) ||
@@ -230,7 +230,8 @@ public class CommonActivity extends AppCompatActivity {
             if (util.isNetworkAvailable(CommonActivity.this))
                 getTourListFromAPI();
             else
-                getCommonListDataFromDatabase("nmoq_list_day.json");
+                new RetriveEnglishTourData(CommonActivity.this, appLanguage, 1).execute();
+
         } else if (toolbarTitle.equals(getString(R.string.museum_travel))) {
             recyclerView.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
                 @Override
@@ -245,7 +246,11 @@ public class CommonActivity extends AppCompatActivity {
                 }
             });
         } else if (toolbarTitle.equals(getString(R.string.museum_discussion))) {
-            getSpecialEventFromAPI();
+            if (util.isNetworkAvailable(CommonActivity.this))
+                getSpecialEventFromAPI();
+            else
+                new RetriveEnglishTourData(CommonActivity.this, appLanguage, 0).execute();
+
         }
     }
 
@@ -268,7 +273,7 @@ public class CommonActivity extends AppCompatActivity {
                         models.addAll(response.body());
                         removeHtmlTags(models);
                         mAdapter.notifyDataSetChanged();
-                        new TourRowCount(CommonActivity.this, language).execute();
+                        new TourRowCount(CommonActivity.this, language, 1).execute();
                     } else {
                         recyclerView.setVisibility(View.GONE);
                         noResultFoundLayout.setVisibility(View.VISIBLE);
@@ -308,6 +313,7 @@ public class CommonActivity extends AppCompatActivity {
                         models.addAll(response.body());
                         removeHtmlTags(models);
                         mAdapter.notifyDataSetChanged();
+                        new TourRowCount(CommonActivity.this, language, 0).execute();
                     } else {
                         recyclerView.setVisibility(View.GONE);
                         noResultFoundLayout.setVisibility(View.VISIBLE);
@@ -406,12 +412,6 @@ public class CommonActivity extends AppCompatActivity {
             else
                 language = "ar";
             new DiningRowCount(CommonActivity.this, language).execute();
-        } else if (apiParts.equals("nmoq_list_day.json")) {
-            if (appLanguage == 1) {
-                new RetriveEnglishTourData(CommonActivity.this, appLanguage).execute();
-            } else {
-                new RetriveArabicTourData(CommonActivity.this, appLanguage).execute();
-            }
         }
     }
 
@@ -528,10 +528,12 @@ public class CommonActivity extends AppCompatActivity {
 
         private WeakReference<CommonActivity> activityReference;
         String language;
+        int isTour;
 
-        TourRowCount(CommonActivity context, String apiLanguage) {
+        TourRowCount(CommonActivity context, String apiLanguage, int isTour) {
             activityReference = new WeakReference<>(context);
             language = apiLanguage;
+            this.isTour = isTour;
         }
 
         @Override
@@ -543,10 +545,10 @@ public class CommonActivity extends AppCompatActivity {
         protected void onPostExecute(Integer integer) {
             Integer tourTableRowCount = integer;
             if (tourTableRowCount > 0) {
-                new CheckTourDBRowExist(CommonActivity.this, language).execute();
+                new CheckTourDBRowExist(CommonActivity.this, language, isTour).execute();
             } else {
                 new InsertTourDataToDataBase(CommonActivity.this, tourListTableEnglish,
-                        tourListTableArabic, language).execute();
+                        tourListTableArabic, language, isTour).execute();
             }
         }
 
@@ -564,10 +566,12 @@ public class CommonActivity extends AppCompatActivity {
         private TourListTableEnglish tourListTableEnglish;
         private TourListTableArabic tourListTableArabic;
         String language;
+        int isTour;
 
-        CheckTourDBRowExist(CommonActivity context, String apiLanguage) {
+        CheckTourDBRowExist(CommonActivity context, String apiLanguage, int isTour) {
             activityReference = new WeakReference<>(context);
             language = apiLanguage;
+            this.isTour = isTour;
         }
 
         @Override
@@ -583,44 +587,22 @@ public class CommonActivity extends AppCompatActivity {
         @Override
         protected Void doInBackground(Void... voids) {
             if (models.size() > 0) {
-                if (language.equals("en")) {
-                    for (int i = 0; i < models.size(); i++) {
-                        int n = activityReference.get().qmDatabase.getTourListTaleDao().checkEnglishIdExist(
-                                Integer.parseInt(models.get(i).getId()));
-                        if (n > 0) {
-                            new UpdateTourTable(CommonActivity.this, language, i).execute();
-                        } else {
-                            tourListTableEnglish = new TourListTableEnglish(models.get(i).getId(),
-                                    models.get(i).getEventDay(),
-                                    models.get(i).getEventDate(),
-                                    models.get(i).getName(),
-                                    convertor.fromArrayList(models.get(i).getImages()),
-                                    models.get(i).getSortId(),
-                                    models.get(i).getDescription());
-                            activityReference.get().qmDatabase.getTourListTaleDao().insert(tourListTableEnglish);
-                        }
-                    }
-                } else {
-                    for (int i = 0; i < models.size(); i++) {
-                        int n = activityReference.get().qmDatabase.getTourListTaleDao().checkArabicIdExist(
-                                Integer.parseInt(models.get(i).getId()));
-                        if (n > 0) {
-                            new UpdateTourTable(CommonActivity.this, language, i).execute();
-
-                        } else {
-                            tourListTableArabic = new TourListTableArabic(models.get(i).getId(),
-                                    models.get(i).getEventDay(),
-                                    models.get(i).getEventDate(),
-                                    models.get(i).getName(),
-                                    convertor.fromArrayList(models.get(i).getImages()),
-                                    models.get(i).getSortId(),
-                                    models.get(i).getDescription());
-                            activityReference.get().qmDatabase.getTourListTaleDao().insert(tourListTableArabic);
-
-                        }
+                for (int i = 0; i < models.size(); i++) {
+                    int n = activityReference.get().qmDatabase.getTourListTaleDao().checkEnglishIdExist(
+                            Integer.parseInt(models.get(i).getId()));
+                    if (n > 0) {
+                        new UpdateTourTable(CommonActivity.this, language, i).execute();
+                    } else {
+                        tourListTableEnglish = new TourListTableEnglish(models.get(i).getId(),
+                                models.get(i).getEventDay(),
+                                models.get(i).getEventDate(),
+                                models.get(i).getName(),
+                                convertor.fromArrayList(models.get(i).getImages()),
+                                models.get(i).getSortId(),
+                                models.get(i).getDescription(), isTour);
+                        activityReference.get().qmDatabase.getTourListTaleDao().insert(tourListTableEnglish);
                     }
                 }
-
             }
             return null;
         }
@@ -674,13 +656,16 @@ public class CommonActivity extends AppCompatActivity {
         private TourListTableEnglish tourListTableEnglish;
         private TourListTableArabic tourListTableArabic;
         String language;
+        int isTour;
 
         InsertTourDataToDataBase(CommonActivity context, TourListTableEnglish tourListTableEnglish,
-                                 TourListTableArabic tourListTableArabic, String apiLanguage) {
+                                 TourListTableArabic tourListTableArabic, String apiLanguage,
+                                 int isTour) {
             activityReference = new WeakReference<>(context);
             this.tourListTableEnglish = tourListTableEnglish;
             this.tourListTableArabic = tourListTableArabic;
             this.language = apiLanguage;
+            this.isTour = isTour;
         }
 
         @Override
@@ -696,30 +681,16 @@ public class CommonActivity extends AppCompatActivity {
         @Override
         protected Boolean doInBackground(Void... voids) {
             if (models != null) {
-                if (language.equals("en")) {
-                    for (int i = 0; i < models.size(); i++) {
-                        tourListTableEnglish = new TourListTableEnglish(models.get(i).getId(),
-                                models.get(i).getEventDay(),
-                                models.get(i).getEventDate(),
-                                models.get(i).getName(),
-                                convertor.fromArrayList(models.get(i).getImages()),
-                                models.get(i).getSortId(),
-                                models.get(i).getDescription());
-                        activityReference.get().qmDatabase.getTourListTaleDao().insert(tourListTableEnglish);
-                    }
-                } else {
-                    for (int i = 0; i < models.size(); i++) {
-                        tourListTableArabic = new TourListTableArabic(models.get(i).getId(),
-                                models.get(i).getEventDay(),
-                                models.get(i).getEventDate(),
-                                models.get(i).getName(),
-                                convertor.fromArrayList(models.get(i).getImages()),
-                                models.get(i).getSortId(),
-                                models.get(i).getDescription());
-                        activityReference.get().qmDatabase.getTourListTaleDao().insert(tourListTableArabic);
-                    }
+                for (int i = 0; i < models.size(); i++) {
+                    tourListTableEnglish = new TourListTableEnglish(models.get(i).getId(),
+                            models.get(i).getEventDay(),
+                            models.get(i).getEventDate(),
+                            models.get(i).getName(),
+                            convertor.fromArrayList(models.get(i).getImages()),
+                            models.get(i).getSortId(),
+                            models.get(i).getDescription(), isTour);
+                    activityReference.get().qmDatabase.getTourListTaleDao().insert(tourListTableEnglish);
                 }
-
             }
             return true;
         }
@@ -728,10 +699,12 @@ public class CommonActivity extends AppCompatActivity {
     public class RetriveEnglishTourData extends AsyncTask<Void, Void, List<TourListTableEnglish>> {
         private WeakReference<CommonActivity> activityReference;
         int language;
+        int isTour;
 
-        RetriveEnglishTourData(CommonActivity context, int appLanguage) {
+        RetriveEnglishTourData(CommonActivity context, int appLanguage, int isTour) {
             activityReference = new WeakReference<>(context);
             language = appLanguage;
+            this.isTour = isTour;
         }
 
         @Override
@@ -749,8 +722,7 @@ public class CommonActivity extends AppCompatActivity {
                             tourListTableEnglishes.get(i).getTourDay(),
                             tourListTableEnglishes.get(i).getTourEventDate(),
                             tourListTableEnglishes.get(i).getTourSubtitle(),
-                            convertor.fromString(tourListTableEnglishes.get(i).getTourImages()),
-                            true);
+                            convertor.fromString(tourListTableEnglishes.get(i).getTourImages()));
                     models.add(i, commonModel);
                 }
                 mAdapter.notifyDataSetChanged();
@@ -764,7 +736,10 @@ public class CommonActivity extends AppCompatActivity {
 
         @Override
         protected List<TourListTableEnglish> doInBackground(Void... voids) {
-            return activityReference.get().qmDatabase.getTourListTaleDao().getAllEnglish();
+            if (isTour == 1)
+                return activityReference.get().qmDatabase.getTourListTaleDao().getTourListEnglish(1);
+            else
+                return activityReference.get().qmDatabase.getTourListTaleDao().getTourListEnglish(0);
         }
     }
 
@@ -792,8 +767,7 @@ public class CommonActivity extends AppCompatActivity {
                             tourListTableArabics.get(i).getTourDay(),
                             tourListTableArabics.get(i).getTourEventDate(),
                             tourListTableArabics.get(i).getTourSubtitle(),
-                            convertor.fromString(tourListTableArabics.get(i).getTourImages()),
-                            true);
+                            convertor.fromString(tourListTableArabics.get(i).getTourImages()));
                     models.add(i, commonModel);
 
                 }
