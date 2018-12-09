@@ -55,6 +55,12 @@ public class CommonModel {
     private String promotionalCode;
     @SerializedName("claim_offer")
     private String claimOffer;
+    @SerializedName("moderator_name")
+    private String moderatorName;
+    @SerializedName("description_for_moderator")
+    private String descriptionForModerator;
+    @SerializedName("Status")
+    private String exhibitionStatus;
 
     private Boolean isTour;
     private Boolean isTravel;
@@ -66,14 +72,14 @@ public class CommonModel {
 
 
     public CommonModel(String id, String name, String startDate,
-                       String endDate, String location, String image, Boolean isOpen) {
+                       String endDate, String location, String image, String exhibitionStatus) {
         this.id = id;
         this.name = name;
         this.startDate = startDate;
         this.endDate = endDate;
         this.location = location;
         this.image = image;
-        this.isOpen = isOpen;
+        this.exhibitionStatus = exhibitionStatus;
 
     }
 
@@ -131,13 +137,12 @@ public class CommonModel {
     }
 
     public CommonModel(String id, String eventDay, String eventDate, String name,
-                       ArrayList<String> images, boolean isTour) {
+                       ArrayList<String> images) {
         this.id = id;
         this.name = name;
         this.images = images;
         this.eventDay = eventDay;
         this.eventDate = eventDate;
-        this.isTour = isTour;
     }
 
     public String getName() {
@@ -327,6 +332,26 @@ public class CommonModel {
 
     public String getClaimOffer() {
         return claimOffer;
+    }
+
+    public String getModeratorName() {
+        return moderatorName;
+    }
+
+    public String getDescriptionForModerator() {
+        return descriptionForModerator;
+    }
+
+    public void setModeratorName(String moderatorName) {
+        this.moderatorName = moderatorName;
+    }
+
+    public void setDescriptionForModerator(String descriptionForModerator) {
+        this.descriptionForModerator = descriptionForModerator;
+    }
+
+    public String getExhibitionStatus() {
+        return exhibitionStatus;
     }
 }
 

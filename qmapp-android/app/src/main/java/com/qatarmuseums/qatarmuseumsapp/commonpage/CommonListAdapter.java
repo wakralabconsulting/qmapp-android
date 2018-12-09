@@ -30,7 +30,8 @@ public class CommonListAdapter extends RecyclerView.Adapter<CommonListAdapter.My
     Util util;
 
     public class MyViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
-        public TextView name, dateDetails, locationDetails, statusTag, tourDayTxt, tourDateTxt, tourTitleTxt;
+        public TextView name, dateDetails, locationDetails, statusTag, tourDayTxt, tourDateTxt,
+                tourTitleTxt, dateAndTime;
         public ImageView imageView, favIcon;
         public RelativeLayout commonTitleLayout, tourTitleLayout, recyclerRowItem;
 
@@ -41,6 +42,7 @@ public class CommonListAdapter extends RecyclerView.Adapter<CommonListAdapter.My
             listenerRef = new WeakReference<>(listener);
             imageView = (ImageView) view.findViewById(R.id.common_image_view);
             name = (TextView) view.findViewById(R.id.name_text);
+            dateAndTime = (TextView) view.findViewById(R.id.date_and_time);
             favIcon = (ImageView) view.findViewById(R.id.favourite);
             statusTag = (TextView) view.findViewById(R.id.open_close_tag);
             commonTitleLayout = view.findViewById(R.id.common_title_layout);
@@ -128,16 +130,18 @@ public class CommonListAdapter extends RecyclerView.Adapter<CommonListAdapter.My
             else
                 holder.favIcon.setImageResource(R.drawable.heart_empty);
         }
-        if (model.getStatusTag() != null) {
+        if (model.getExhibitionStatus() != null) {
             holder.statusTag.setVisibility(View.VISIBLE);
-            if (model.getStatusTag()) {
-                holder.statusTag.setText(R.string.new_open);
+            holder.statusTag.setText(model.getExhibitionStatus());
+            if (model.getExhibitionStatus().equalsIgnoreCase("Now open") || model.getExhibitionStatus().equalsIgnoreCase("مفتوح")) {
                 holder.statusTag.setBackgroundResource(R.drawable.round_corner_yellow);
             } else {
-
-                holder.statusTag.setText(R.string.closed);
                 holder.statusTag.setBackgroundResource(R.drawable.round_corner_grey);
             }
+        }
+        if (model.getStartDate() != null) {
+            holder.dateAndTime.setVisibility(View.VISIBLE);
+            holder.dateAndTime.setText(model.getStartDate() + " - " + model.getEndDate());
         }
         if (model.getIsTravel() != null)
             GlideApp.with(mContext)

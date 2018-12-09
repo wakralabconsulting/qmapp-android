@@ -23,6 +23,8 @@ public class TourListTableEnglish {
     private String tourSortId;
     @ColumnInfo()
     private String tourDescription;
+    @ColumnInfo()
+    private int isTour;
 
     public TourListTableEnglish(@NonNull String tourNid,
                                 String tourDay,
@@ -30,7 +32,8 @@ public class TourListTableEnglish {
                                 String tourSubtitle,
                                 String tourImages,
                                 String tourSortId,
-                                String tourDescription) {
+                                String tourDescription,
+                                int isTour) {
         this.tourNid = tourNid;
         this.tourDay = tourDay;
         this.tourEventDate = tourEventDate;
@@ -38,6 +41,7 @@ public class TourListTableEnglish {
         this.tourImages = tourImages;
         this.tourSortId = tourSortId;
         this.tourDescription = tourDescription;
+        this.isTour = isTour;
     }
 
     @NonNull
@@ -95,5 +99,13 @@ public class TourListTableEnglish {
 
     public void setTourDescription(String tourDescription) {
         this.tourDescription = tourDescription;
+    }
+
+    public int isTour() {
+        return isTour;
+    }
+
+    public void setTour(int tour) {
+        isTour = tour;
     }
 }
