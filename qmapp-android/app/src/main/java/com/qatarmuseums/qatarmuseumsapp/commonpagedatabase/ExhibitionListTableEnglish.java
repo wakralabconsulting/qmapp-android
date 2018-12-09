@@ -34,6 +34,8 @@ public class ExhibitionListTableEnglish {
     private String exhibition_latitude;
     @ColumnInfo()
     private String exhibition_longitude;
+    @ColumnInfo()
+    private String exhibition_status;
 
 
     public ExhibitionListTableEnglish(@NonNull long exhibition_id, String exhibition_name,
@@ -42,7 +44,7 @@ public class ExhibitionListTableEnglish {
                                       String exhibition_short_description,
                                       String exhibition_long_description,
                                       String exhibition_latitude, String exhibition_longitude,
-                                      String museum_id) {
+                                      String museum_id, String exhibition_status) {
         this.exhibition_id = exhibition_id;
         this.exhibition_name = exhibition_name;
         this.exhibition_latest_image = exhibition_latest_image;
@@ -54,6 +56,7 @@ public class ExhibitionListTableEnglish {
         this.exhibition_latitude = exhibition_latitude;
         this.exhibition_longitude = exhibition_longitude;
         this.museum_id = museum_id;
+        this.exhibition_status = exhibition_status;
     }
 
     @NonNull
@@ -143,5 +146,13 @@ public class ExhibitionListTableEnglish {
 
     public void setMuseum_id(String museum_id) {
         this.museum_id = museum_id;
+    }
+
+    public String getExhibition_status() {
+        return exhibition_status;
+    }
+
+    public void setExhibition_status(String exhibition_status) {
+        this.exhibition_status = exhibition_status;
     }
 }

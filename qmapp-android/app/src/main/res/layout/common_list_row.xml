@@ -60,6 +60,17 @@
             android:textSize="@dimen/home_list_item_name"
             android:textStyle="bold" />
 
+        <TextView
+            android:id="@+id/date_and_time"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/name_text"
+            android:layout_toStartOf="@id/headphone_icon"
+            android:fontFamily="@font/din_regular"
+            android:textColor="@android:color/white"
+            android:textSize="@dimen/font_size_16"
+            android:visibility="gone" />
+
 
     </RelativeLayout>
 

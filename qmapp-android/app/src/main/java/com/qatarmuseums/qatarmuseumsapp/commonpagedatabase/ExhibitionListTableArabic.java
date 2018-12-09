@@ -34,13 +34,15 @@ public class ExhibitionListTableArabic {
     private String exhibition_longitude;
     @ColumnInfo()
     private String exhibition_long_description;
+    @ColumnInfo()
+    private String exhibition_status;
 
     public ExhibitionListTableArabic(@NonNull long exhibition_id, String exhibition_name,
                                      String exhibition_latest_image, String exhibition_start_date,
                                      String exhibition_end_date, String exhibition_location,
                                      String exhibition_short_description, String exhibition_latitude,
                                      String exhibition_longitude, String exhibition_long_description,
-                                     String museum_id) {
+                                     String museum_id, String exhibition_status) {
         this.exhibition_id = exhibition_id;
         this.exhibition_name = exhibition_name;
         this.exhibition_latest_image = exhibition_latest_image;
@@ -52,6 +54,7 @@ public class ExhibitionListTableArabic {
         this.exhibition_longitude = exhibition_longitude;
         this.exhibition_long_description = exhibition_long_description;
         this.museum_id = museum_id;
+        this.exhibition_status = exhibition_status;
     }
 
     @NonNull
@@ -141,5 +144,13 @@ public class ExhibitionListTableArabic {
 
     public void setMuseum_id(String museum_id) {
         this.museum_id = museum_id;
+    }
+
+    public String getExhibition_status() {
+        return exhibition_status;
+    }
+
+    public void setExhibition_status(String exhibition_status) {
+        this.exhibition_status = exhibition_status;
     }
 }
