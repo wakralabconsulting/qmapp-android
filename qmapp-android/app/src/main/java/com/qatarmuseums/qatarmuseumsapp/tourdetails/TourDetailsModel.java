@@ -1,10 +1,13 @@
 package com.qatarmuseums.qatarmuseumsapp.tourdetails;
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
 import com.google.gson.annotations.SerializedName;
 
 import java.util.ArrayList;
 
-public class TourDetailsModel {
+public class TourDetailsModel implements Parcelable {
     @SerializedName("Title")
     private String tourTitle;
     @SerializedName("Body")
@@ -55,6 +58,36 @@ public class TourDetailsModel {
         this.tourRegistered = tour_registered;
         this.tourEventId = tour_id;
     }
+
+    protected TourDetailsModel(Parcel in) {
+        tourTitle = in.readString();
+        tourBody = in.readString();
+        tourImage = in.createStringArrayList();
+        tourDate = in.readString();
+        tourEventId = in.readString();
+        tourRegister = in.readString();
+        tourContactEmail = in.readString();
+        tourContactPhone = in.readString();
+        tourLongtitude = in.readString();
+        tourLatitude = in.readString();
+        tourSortId = in.readString();
+        tourRegistered = in.readString();
+        tourSpeakerName = in.readString();
+        tourSpeakerInfo = in.readString();
+        nId = in.readString();
+    }
+
+    public static final Creator<TourDetailsModel> CREATOR = new Creator<TourDetailsModel>() {
+        @Override
+        public TourDetailsModel createFromParcel(Parcel in) {
+            return new TourDetailsModel(in);
+        }
+
+        @Override
+        public TourDetailsModel[] newArray(int size) {
+            return new TourDetailsModel[size];
+        }
+    };
 
     public String getTourTitle() {
         return tourTitle;
@@ -174,5 +207,29 @@ public class TourDetailsModel {
 
     public void setnId(String nId) {
         this.nId = nId;
+    }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeString(tourTitle);
+        dest.writeString(tourBody);
+        dest.writeStringList(tourImage);
+        dest.writeString(tourDate);
+        dest.writeString(tourEventId);
+        dest.writeString(tourRegister);
+        dest.writeString(tourContactEmail);
+        dest.writeString(tourContactPhone);
+        dest.writeString(tourLongtitude);
+        dest.writeString(tourLatitude);
+        dest.writeString(tourSortId);
+        dest.writeString(tourRegistered);
+        dest.writeString(tourSpeakerName);
+        dest.writeString(tourSpeakerInfo);
+        dest.writeString(nId);
     }
 }

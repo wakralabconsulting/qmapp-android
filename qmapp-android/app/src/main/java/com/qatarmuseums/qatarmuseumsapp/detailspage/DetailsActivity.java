@@ -49,8 +49,10 @@ import com.qatarmuseums.qatarmuseumsapp.commonpagedatabase.HeritageListTableArab
 import com.qatarmuseums.qatarmuseumsapp.commonpagedatabase.HeritageListTableEnglish;
 import com.qatarmuseums.qatarmuseumsapp.commonpagedatabase.PublicArtsTableArabic;
 import com.qatarmuseums.qatarmuseumsapp.commonpagedatabase.PublicArtsTableEnglish;
+import com.qatarmuseums.qatarmuseumsapp.culturepass.UserRegistrationDetailsTable;
 import com.qatarmuseums.qatarmuseumsapp.heritage.HeritageOrExhibitionDetailModel;
 import com.qatarmuseums.qatarmuseumsapp.home.GlideApp;
+import com.qatarmuseums.qatarmuseumsapp.home.UserRegistrationModel;
 import com.qatarmuseums.qatarmuseumsapp.museum.GlideLoaderForMuseum;
 import com.qatarmuseums.qatarmuseumsapp.museumabout.MuseumAboutModel;
 import com.qatarmuseums.qatarmuseumsapp.museumabout.MuseumAboutTableArabic;
@@ -156,7 +158,7 @@ public class DetailsActivity extends AppCompatActivity implements IPullZoom, OnM
     private Intent navigation_intent;
     private ArrayList<TourDetailsModel> tourDetailsList = new ArrayList<>();
     private String register, registered;
-    private String eventDate;
+    private String eventDate, nid;
     TourDetailsTableEnglish tourDetailsTableEnglish;
     TourDetailsTableArabic tourDetailsTableArabic;
 
@@ -186,6 +188,8 @@ public class DetailsActivity extends AppCompatActivity implements IPullZoom, OnM
             registered = intent.getStringExtra("REGISTERED");
             latitude = intent.getStringExtra("LATITUDE");
             longitude = intent.getStringExtra("LONGITUDE");
+            nid = intent.getStringExtra("NID");
+            tourDetailsList = intent.getParcelableArrayListExtra("RESPONSE");
         }
         qmDatabase = QMDatabase.getInstance(DetailsActivity.this);
         toolbar = (Toolbar) findViewById(R.id.toolbar);
@@ -422,15 +426,12 @@ public class DetailsActivity extends AppCompatActivity implements IPullZoom, OnM
                 downloadAction());
 
         interestToggle.setOnTouchListener((v, event) -> {
-            util.showComingSoonDialog(DetailsActivity.this, R.string.coming_soon_content);
-
-//            if (!interested) {
-//                interested = true;
-//                interestToggle.setChecked(false);
-//                util.showCulturalPassAlertDialog(DetailsActivity.this);
-//            } else {
-//                showDeclineDialog();
-//            }
+            if (interestToggle.isChecked()) {
+                interestToggle.setChecked(false);
+                util.showCulturalPassAlertDialog(DetailsActivity.this);
+            } else {
+                showDeclineDialog();
+            }
             return false;
         });
     }
@@ -458,11 +459,8 @@ public class DetailsActivity extends AppCompatActivity implements IPullZoom, OnM
         yes.setOnClickListener(view1 -> {
             dialog.dismiss();
             interestToggle.setChecked(true);
-            interested = false;
         });
-        no.setOnClickListener(v -> {
-            dialog.dismiss();
-        });
+        no.setOnClickListener(v -> dialog.dismiss());
 
         dialog.show();
     }
@@ -557,6 +555,7 @@ public class DetailsActivity extends AppCompatActivity implements IPullZoom, OnM
     }
 
     public void setTourDetailsData() {
+        new RetriveRegistrationDetails(DetailsActivity.this, nid).execute();
         commonContentLayout.setVisibility(View.VISIBLE);
         interestLayout.setVisibility(View.VISIBLE);
         videoLayout.setVisibility(View.GONE);
@@ -582,11 +581,13 @@ public class DetailsActivity extends AppCompatActivity implements IPullZoom, OnM
             public void onResponse(Call<ArrayList<TourDetailsModel>> call, Response<ArrayList<TourDetailsModel>> response) {
                 if (response.isSuccessful()) {
                     if (response.body() != null && response.body().size() > 0) {
+                        tourDetailsList.addAll(response.body());
+                        new RetriveRegistrationDetails(DetailsActivity.this,
+                                tourDetailsList.get(0).getnId()).execute();
                         commonContentLayout.setVisibility(View.VISIBLE);
                         interestLayout.setVisibility(View.VISIBLE);
                         videoLayout.setVisibility(View.GONE);
                         speakerLayout.setVisibility(View.VISIBLE);
-                        tourDetailsList.addAll(response.body());
                         removeTourDetailsHtmlTags(tourDetailsList);
                         if (tourDetailsList.get(0).getTourImage().size() > 1)
                             GlideApp.with(DetailsActivity.this)
@@ -607,6 +608,7 @@ public class DetailsActivity extends AppCompatActivity implements IPullZoom, OnM
                                         tourDetailsList.get(0).getTourContactEmail(),
                                 tourDetailsList.get(0).getTourLatitude(),
                                 tourDetailsList.get(0).getTourLongtitude(), true, null);
+
                         new SpecialEventDetailsRowCount(DetailsActivity.this, id).execute();
                     } else {
                         commonContentLayout.setVisibility(View.GONE);
@@ -627,6 +629,31 @@ public class DetailsActivity extends AppCompatActivity implements IPullZoom, OnM
             }
         });
 
+    }
+
+    private ArrayList<UserRegistrationModel> registeredEventLists = new ArrayList<>();
+
+    public class RetriveRegistrationDetails extends AsyncTask<Void, Void, List<UserRegistrationDetailsTable>> {
+        private WeakReference<DetailsActivity> activityReference;
+        String eventID;
+
+        RetriveRegistrationDetails(DetailsActivity context, String eventID) {
+            activityReference = new WeakReference<>(context);
+            this.eventID = eventID;
+        }
+
+        @Override
+        protected List<UserRegistrationDetailsTable> doInBackground(Void... voids) {
+            return activityReference.get().qmDatabase.getUserRegistrationTaleDao().getEventFromTable(eventID);
+        }
+
+        @Override
+        protected void onPostExecute(List<UserRegistrationDetailsTable> userRegistrationDetailsTableList) {
+            if (userRegistrationDetailsTableList.size() > 0) {
+                interestToggle.setChecked(false);
+            } else
+                interestToggle.setChecked(true);
+        }
     }
 
     private void getTravelsDetails() {
