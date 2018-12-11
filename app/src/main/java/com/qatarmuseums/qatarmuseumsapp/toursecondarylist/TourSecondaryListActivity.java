@@ -103,6 +103,8 @@ public class TourSecondaryListActivity extends AppCompatActivity {
             navigationIntent.putExtra("REGISTERED", tourDetailsList.get(position).getTourRegistered());
             navigationIntent.putExtra("LONGITUDE", tourDetailsList.get(position).getTourLongtitude());
             navigationIntent.putExtra("LATITUDE", tourDetailsList.get(position).getTourLatitude());
+            navigationIntent.putExtra("NID", tourDetailsList.get(position).getnId());
+            navigationIntent.putExtra("RESPONSE", tourDetailsList);
             startActivity(navigationIntent);
         });
         RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(getApplicationContext());

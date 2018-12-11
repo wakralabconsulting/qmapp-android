@@ -10,6 +10,7 @@ import com.qatarmuseums.qatarmuseumsapp.education.EducationEvents;
 import com.qatarmuseums.qatarmuseumsapp.floormap.ArtifactDetails;
 import com.qatarmuseums.qatarmuseumsapp.heritage.HeritageOrExhibitionDetailModel;
 import com.qatarmuseums.qatarmuseumsapp.home.HomeList;
+import com.qatarmuseums.qatarmuseumsapp.home.UserRegistrationModel;
 import com.qatarmuseums.qatarmuseumsapp.museumabout.MuseumAboutModel;
 import com.qatarmuseums.qatarmuseumsapp.museumcollectiondetails.CollectionDetailsList;
 import com.qatarmuseums.qatarmuseumsapp.park.ParkList;
@@ -155,5 +156,9 @@ public interface APIInterface {
     @GET("{language}/mobile_api/list_tour_per_day.json")
     Call<ArrayList<TourDetailsModel>> getTourDetails(@Path("language") String language,
                                                      @Query("event_id") String evetId);
+
+    @GET("{language}/mobile_api/list_event_user_registration.json")
+    Call<ArrayList<UserRegistrationModel>> getUserRegistrationDetails(@Path("language") String language,
+                                                                      @Query("user_id") String userId);
 
 }

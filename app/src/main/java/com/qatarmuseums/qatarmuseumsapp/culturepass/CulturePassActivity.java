@@ -6,6 +6,7 @@ import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.design.widget.TextInputLayout;
@@ -32,15 +33,19 @@ import android.widget.TextView;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.internal.LinkedTreeMap;
+import com.qatarmuseums.qatarmuseumsapp.QMDatabase;
 import com.qatarmuseums.qatarmuseumsapp.R;
 import com.qatarmuseums.qatarmuseumsapp.apicall.APIClient;
 import com.qatarmuseums.qatarmuseumsapp.apicall.APIInterface;
+import com.qatarmuseums.qatarmuseumsapp.home.HomeActivity;
+import com.qatarmuseums.qatarmuseumsapp.home.UserRegistrationModel;
 import com.qatarmuseums.qatarmuseumsapp.profile.ProfileActivity;
 import com.qatarmuseums.qatarmuseumsapp.profile.ProfileDetails;
 import com.qatarmuseums.qatarmuseumsapp.profile.UserData;
 import com.qatarmuseums.qatarmuseumsapp.utils.Util;
 import com.qatarmuseums.qatarmuseumsapp.webview.WebviewActivity;
 
+import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 
 import okhttp3.OkHttpClient;
@@ -80,6 +85,7 @@ public class CulturePassActivity extends AppCompatActivity {
     private LoginData loginData;
     private Retrofit retrofit;
     private String RSVP = null;
+    private QMDatabase qmDatabase;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -89,6 +95,7 @@ public class CulturePassActivity extends AppCompatActivity {
         becomeMember = findViewById(R.id.become_a_member_btn);
         loginButton = findViewById(R.id.login_btn);
         setSupportActionBar(toolbar);
+        qmDatabase = QMDatabase.getInstance(CulturePassActivity.this);
         util = new Util();
         isLogout = getIntent().getBooleanExtra("IS_LOGOUT", false);
         if (isLogout) {
@@ -304,6 +311,7 @@ public class CulturePassActivity extends AppCompatActivity {
                             editor = qmPreferences.edit();
                             editor.putString("RSVP", RSVP);
                             editor.commit();
+                            getUserRegistrationDetails(uid);
                         }
                     }
                     navigateToProfile(RSVP);
@@ -316,6 +324,57 @@ public class CulturePassActivity extends AppCompatActivity {
                 showProgress(false);
             }
         });
+    }
+
+    private ArrayList<UserRegistrationModel> registeredEventLists = new ArrayList<>();
+    UserRegistrationDetailsTable userRegistrationDetailsTable;
+
+    public void getUserRegistrationDetails(String userID) {
+        APIInterface apiService = APIClient.getClient().create(APIInterface.class);
+        Call<ArrayList<UserRegistrationModel>> call = apiService.getUserRegistrationDetails("en", userID);
+        call.enqueue(new Callback<ArrayList<UserRegistrationModel>>() {
+            @Override
+            public void onResponse(Call<ArrayList<UserRegistrationModel>> call, Response<ArrayList<UserRegistrationModel>> response) {
+                if (response.isSuccessful()) {
+                    if (response.body() != null && response.body().size() > 0) {
+                        registeredEventLists.addAll(response.body());
+                        new InsertRegistrationDatabaseTask(CulturePassActivity.this,
+                                userRegistrationDetailsTable).execute();
+                    }
+                }
+            }
+
+            @Override
+            public void onFailure(Call<ArrayList<UserRegistrationModel>> call, Throwable t) {
+            }
+        });
+    }
+
+    public class InsertRegistrationDatabaseTask extends AsyncTask<Void, Void, Boolean> {
+        private WeakReference<CulturePassActivity> activityReference;
+        private UserRegistrationDetailsTable userRegistrationDetailsTable;
+
+        InsertRegistrationDatabaseTask(CulturePassActivity context,
+                                       UserRegistrationDetailsTable userRegistrationDetailsTable) {
+            activityReference = new WeakReference<>(context);
+            this.userRegistrationDetailsTable = userRegistrationDetailsTable;
+        }
+
+        @Override
+        protected Boolean doInBackground(Void... voids) {
+            if (registeredEventLists != null) {
+                for (int i = 0; i < registeredEventLists.size(); i++) {
+                    userRegistrationDetailsTable = new UserRegistrationDetailsTable(
+                            registeredEventLists.get(i).getRegID(),
+                            registeredEventLists.get(i).getEventID(),
+                            registeredEventLists.get(i).getEventTitle()
+                    );
+                    activityReference.get().qmDatabase.getUserRegistrationTaleDao()
+                            .insertUserRegistrationTable(userRegistrationDetailsTable);
+                }
+            }
+            return true;
+        }
     }
 
     protected void showLoginDialog() {
