@@ -261,8 +261,8 @@ They exemplify the external influences and internal creativity that inspired thi
     <string name="event_date">Event Date</string>
     <string name="download_brochure_for_more_information"><u>Download Brochure for More Information</u></string>
     <string name="seporater"> - </string>
-    <string name="interested">Register</string>
-    <string name="not_interested">Unregister</string>
+    <string name="interested">Registered</string>
+    <string name="not_interested">Not Registered</string>
     <string name="date">Date</string>
     <string name="thankyou_interest">Thank you for showing interest in the tour. We will make necessary arrangements for it during your visit. You will receive further details on your email. For any queries, please contact Qatar Museums Authority via:\ninfo@qm.org.qa\n+974 4452 5555</string>
     <string name="offer_code">OFFER CODE</string>

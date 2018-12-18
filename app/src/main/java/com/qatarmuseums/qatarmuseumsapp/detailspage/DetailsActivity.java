@@ -38,6 +38,8 @@ import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MapStyleOptions;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 import com.qatarmuseums.qatarmuseumsapp.Convertor;
 import com.qatarmuseums.qatarmuseumsapp.QMDatabase;
 import com.qatarmuseums.qatarmuseumsapp.R;
@@ -49,6 +51,7 @@ import com.qatarmuseums.qatarmuseumsapp.commonpagedatabase.HeritageListTableArab
 import com.qatarmuseums.qatarmuseumsapp.commonpagedatabase.HeritageListTableEnglish;
 import com.qatarmuseums.qatarmuseumsapp.commonpagedatabase.PublicArtsTableArabic;
 import com.qatarmuseums.qatarmuseumsapp.commonpagedatabase.PublicArtsTableEnglish;
+import com.qatarmuseums.qatarmuseumsapp.culturepass.AddCookiesInterceptor;
 import com.qatarmuseums.qatarmuseumsapp.culturepass.UserRegistrationDetailsTable;
 import com.qatarmuseums.qatarmuseumsapp.heritage.HeritageOrExhibitionDetailModel;
 import com.qatarmuseums.qatarmuseumsapp.home.GlideApp;
@@ -57,6 +60,8 @@ import com.qatarmuseums.qatarmuseumsapp.museum.GlideLoaderForMuseum;
 import com.qatarmuseums.qatarmuseumsapp.museumabout.MuseumAboutModel;
 import com.qatarmuseums.qatarmuseumsapp.museumabout.MuseumAboutTableArabic;
 import com.qatarmuseums.qatarmuseumsapp.museumabout.MuseumAboutTableEnglish;
+import com.qatarmuseums.qatarmuseumsapp.profile.Model;
+import com.qatarmuseums.qatarmuseumsapp.profile.Und;
 import com.qatarmuseums.qatarmuseumsapp.publicart.PublicArtModel;
 import com.qatarmuseums.qatarmuseumsapp.tourdetails.TourDetailsModel;
 import com.qatarmuseums.qatarmuseumsapp.tourdetails.TourDetailsTableArabic;
@@ -67,18 +72,29 @@ import com.qatarmuseums.qatarmuseumsapp.utils.PullToZoomCoordinatorLayout;
 import com.qatarmuseums.qatarmuseumsapp.utils.Util;
 import com.qatarmuseums.qatarmuseumsapp.webview.WebviewActivity;
 
+import org.json.JSONStringer;
+
 import java.lang.ref.WeakReference;
+import java.lang.reflect.Type;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 import cn.jzvd.Jzvd;
 import cn.jzvd.JzvdStd;
 import cn.lightsky.infiniteindicator.IndicatorConfiguration;
 import cn.lightsky.infiniteindicator.InfiniteIndicator;
 import cn.lightsky.infiniteindicator.Page;
+import okhttp3.OkHttpClient;
+import okhttp3.logging.HttpLoggingInterceptor;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
+import retrofit2.Retrofit;
+import retrofit2.converter.gson.GsonConverterFactory;
 
 import static cn.lightsky.infiniteindicator.IndicatorConfiguration.LEFT;
 import static cn.lightsky.infiniteindicator.IndicatorConfiguration.RIGHT;
@@ -105,6 +121,14 @@ public class DetailsActivity extends AppCompatActivity implements IPullZoom, OnM
     private String latitude, longitude, id;
     Intent intent;
     int language;
+    String token, startTime, endTime;
+    long start, end;
+    String type, entity_id, entity_type, anon_mail, user_uid, count, author_uid, state, created,
+            updated, field_confirm_attendance, field_number_of_attendees, field_first_name_,
+            field_nmoq_last_name, field_qma_edu_reg_date, time_zone;
+    int field_membership_number;
+    JSONStringer jsonStringer = null;
+    JSONStringer completionjsonStringer = null;
     QMDatabase qmDatabase;
     PublicArtsTableEnglish publicArtsTableEnglish;
     PublicArtsTableArabic publicArtsTableArabic;
@@ -161,6 +185,9 @@ public class DetailsActivity extends AppCompatActivity implements IPullZoom, OnM
     private String eventDate, nid;
     TourDetailsTableEnglish tourDetailsTableEnglish;
     TourDetailsTableArabic tourDetailsTableArabic;
+    ArrayList<RegistrationDetailsModel> registrationDetailsModels = new ArrayList<>();
+    String registrationId;
+    RegistrationDetailsModel registrationDetailsModel;
 
     @SuppressLint("ClickableViewAccessibility")
     @Override
@@ -169,6 +196,12 @@ public class DetailsActivity extends AppCompatActivity implements IPullZoom, OnM
         setContentView(R.layout.activity_details);
         qmPreferences = PreferenceManager.getDefaultSharedPreferences(this);
         language = qmPreferences.getInt("AppLanguage", 1);
+        token = qmPreferences.getString("TOKEN", null);
+        user_uid = qmPreferences.getString("UID", null);
+        field_nmoq_last_name = qmPreferences.getString("LAST_NAME", null);
+        field_first_name_ = qmPreferences.getString("FIRST_NAME", null);
+        field_membership_number = qmPreferences.getInt("MEMBERSHIP", 0);
+        time_zone = qmPreferences.getString("TIMEZONE", null);
         progressBar = (ProgressBar) findViewById(R.id.progressBarLoading);
         intent = getIntent();
         mainTitle = intent.getStringExtra("MAIN_TITLE");
@@ -427,13 +460,67 @@ public class DetailsActivity extends AppCompatActivity implements IPullZoom, OnM
 
         interestToggle.setOnTouchListener((v, event) -> {
             if (interestToggle.isChecked()) {
-                interestToggle.setChecked(false);
-                util.showCulturalPassAlertDialog(DetailsActivity.this);
+                entryJsonarray();
+                entityRegistration(token, registrationDetailsModel);
+
             } else {
                 showDeclineDialog();
             }
             return false;
         });
+    }
+
+    public void entryJsonarray() {
+        ArrayList<Und> values = new ArrayList<>();
+        Und attendanceValue = new Und("1");
+        values.clear();
+        values.add(attendanceValue);
+        Model attendancemodel = new Model(values);
+        ArrayList<Und> nvalues = new ArrayList<>();
+        Und numberofattendanceValue = new Und("2");
+        nvalues.add(numberofattendanceValue);
+        Model numberofattendancemodel = new Model(nvalues);
+        ArrayList<Und> fvalues = new ArrayList<>();
+        Und firstnameValue = new Und(field_first_name_, null, field_first_name_);
+        fvalues.add(firstnameValue);
+        Model firstnamemodel = new Model(fvalues);
+        ArrayList<Und> lvalues = new ArrayList<>();
+        Und lastnameValue = new Und(field_nmoq_last_name, null, field_nmoq_last_name);
+        lvalues.add(lastnameValue);
+        Model lastnamemodel = new Model(lvalues);
+        ArrayList<Und> mvalues = new ArrayList<>();
+        Und membershipValue = new Und(String.valueOf(field_membership_number));
+        mvalues.add(membershipValue);
+        Model membershipmodel = new Model(mvalues);
+        String[] splitArray = eventDate.split("-");
+        startTime = splitArray[0].concat(splitArray[1].trim());
+        start = getTimeStamp(startTime);
+        endTime = splitArray[0].concat(splitArray[2]);
+        end = getTimeStamp(endTime);
+        ArrayList<Und> rvalues = new ArrayList<>();
+        Und membershipregValue = new Und(String.valueOf(start / 1000), String.valueOf(end / 1000), time_zone, "10800", "10800", time_zone, "datestamp");
+        rvalues.add(membershipregValue);
+        Model membershipregmodel = new Model(rvalues);
+        registrationDetailsModel =
+                new RegistrationDetailsModel("nmoq_event_registration", nid, "node",
+                        user_uid, "1", user_uid, "pending",
+                        String.valueOf(TimeUnit.MILLISECONDS.toSeconds(System.currentTimeMillis())),
+                        String.valueOf(TimeUnit.MILLISECONDS.toSeconds(System.currentTimeMillis())),
+                        attendancemodel, numberofattendancemodel, firstnamemodel,
+                        lastnamemodel, membershipmodel, membershipregmodel);
+    }
+
+    private long getTimeStamp(String dateVal) {
+        SimpleDateFormat format = new SimpleDateFormat("dd/MM/yyyy HH:mm");
+        long datevalue = 0;
+        try {
+            Date date = format.parse(dateVal);
+            datevalue = date.getTime();
+            System.out.println("datevalue  " + date.getTime());
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+        return datevalue;
     }
 
     protected void showDeclineDialog() {
@@ -457,8 +544,12 @@ public class DetailsActivity extends AppCompatActivity implements IPullZoom, OnM
         dialogContent.setText(getResources().getString(R.string.decline_content_tour));
 
         yes.setOnClickListener(view1 -> {
+            if(comingFrom.equals(getString(R.string.museum_discussion))){
+                new RetriveRegistrationId(DetailsActivity.this, id).execute();
+            }else {
+                new RetriveRegistrationId(DetailsActivity.this, nid).execute();
+            }
             dialog.dismiss();
-            interestToggle.setChecked(true);
         });
         no.setOnClickListener(v -> dialog.dismiss());
 
@@ -632,6 +723,43 @@ public class DetailsActivity extends AppCompatActivity implements IPullZoom, OnM
     }
 
     private ArrayList<UserRegistrationModel> registeredEventLists = new ArrayList<>();
+
+    public class RetriveRegistrationId extends AsyncTask<Void, Void, String> {
+        private WeakReference<DetailsActivity> activityReference;
+        String eventID;
+
+        RetriveRegistrationId(DetailsActivity context, String eventID) {
+            activityReference = new WeakReference<>(context);
+            this.eventID = eventID;
+        }
+
+        @Override
+        protected String doInBackground(Void... voids) {
+            return activityReference.get().qmDatabase.getUserRegistrationTaleDao().getRegistrationIdFromTable(eventID);
+        }
+
+        @Override
+        protected void onPostExecute(String rId) {
+            deleteEventRegistration(rId, token);
+        }
+    }
+
+    public class deleteEventFromDataBase extends AsyncTask<Void, Void, Integer> {
+        private WeakReference<DetailsActivity> activityReference;
+        String eventID;
+
+        deleteEventFromDataBase(DetailsActivity context, String eventID) {
+            activityReference = new WeakReference<>(context);
+            this.eventID = eventID;
+        }
+
+        @Override
+        protected Integer doInBackground(Void... voids) {
+            return activityReference.get().qmDatabase.getUserRegistrationTaleDao().deleteEventFromTable(eventID);
+        }
+
+    }
+
 
     public class RetriveRegistrationDetails extends AsyncTask<Void, Void, List<UserRegistrationDetailsTable>> {
         private WeakReference<DetailsActivity> activityReference;
@@ -1116,6 +1244,114 @@ public class DetailsActivity extends AppCompatActivity implements IPullZoom, OnM
             else
                 retryLayout.setVisibility(View.VISIBLE);
         }
+    }
+
+    public void entityRegistration(String token, RegistrationDetailsModel myRegistration) {
+        HttpLoggingInterceptor interceptor = new HttpLoggingInterceptor();
+        interceptor.setLevel(HttpLoggingInterceptor.Level.BODY);
+        OkHttpClient client;
+        OkHttpClient.Builder builder = new OkHttpClient.Builder();
+        builder.addInterceptor(interceptor);
+        builder.addInterceptor(new AddCookiesInterceptor(this));
+        client = builder.build();
+        Retrofit retrofit = new Retrofit.Builder()
+                .baseUrl(APIClient.apiBaseUrl)
+                .addConverterFactory(GsonConverterFactory.create())
+                .client(client)
+                .build();
+        APIInterface apiService = retrofit.create(APIInterface.class);
+
+        Call<RegistrationDetailsModel> call=apiService.eventRegistration("application/json", token, myRegistration);
+        call.enqueue(new Callback<RegistrationDetailsModel>() {
+            @Override
+            public void onResponse(Call<RegistrationDetailsModel> call, Response<RegistrationDetailsModel> response) {
+                if (response.isSuccessful()) {
+                    if (response.body() != null) {
+                        registrationDetailsModel = response.body();
+                        registrationId = registrationDetailsModel.getRegistrationID();
+                        registrationDetailsModel.setRegistrationState("completed");
+                        entityRegistrationCompletion(token, registrationDetailsModel, registrationId);
+                    }
+                }
+            }
+
+            @Override
+            public void onFailure(Call<RegistrationDetailsModel> call, Throwable t) {
+
+            }
+        });
+           }
+
+    public void entityRegistrationCompletion(String token, RegistrationDetailsModel myRegistration, String registrationId) {
+
+        HttpLoggingInterceptor interceptor = new HttpLoggingInterceptor();
+        interceptor.setLevel(HttpLoggingInterceptor.Level.BODY);
+        OkHttpClient client;
+        OkHttpClient.Builder builder = new OkHttpClient.Builder();
+        builder.addInterceptor(interceptor);
+        builder.addInterceptor(new AddCookiesInterceptor(this));
+        client = builder.build();
+        Retrofit retrofit = new Retrofit.Builder()
+                .baseUrl(APIClient.apiBaseUrl)
+                .addConverterFactory(GsonConverterFactory.create())
+                .client(client)
+                .build();
+
+        APIInterface apiService = retrofit.create(APIInterface.class);
+
+       Call<RegistrationDetailsModel> call=apiService.eventRegistrationCompletion("application/json",token,registrationId, myRegistration);
+       call.enqueue(new Callback<RegistrationDetailsModel>() {
+           @Override
+           public void onResponse(Call<RegistrationDetailsModel> call, Response<RegistrationDetailsModel> response) {
+               if (response.isSuccessful()) {
+                   if (response.body() != null) {
+                       registrationDetailsModel = response.body();
+                       interestToggle.setChecked(false);
+                       util.showCulturalPassAlertDialog(DetailsActivity.this);
+                   }
+               }
+           }
+
+           @Override
+           public void onFailure(Call<RegistrationDetailsModel> call, Throwable t) {
+            Log.d("Details",t.getMessage());
+           }
+       });
+
+    }
+
+    public void deleteEventRegistration(String id, String token) {
+
+        HttpLoggingInterceptor interceptor = new HttpLoggingInterceptor();
+        interceptor.setLevel(HttpLoggingInterceptor.Level.BODY);
+        OkHttpClient client;
+        OkHttpClient.Builder builder = new OkHttpClient.Builder();
+        builder.addInterceptor(interceptor);
+        builder.addInterceptor(new AddCookiesInterceptor(this));
+        client = builder.build();
+        Retrofit retrofit = new Retrofit.Builder()
+                .baseUrl(APIClient.apiBaseUrl)
+                .addConverterFactory(GsonConverterFactory.create())
+                .client(client)
+                .build();
+
+        APIInterface apiService = retrofit.create(APIInterface.class);
+
+        Call<String> call = apiService.deleteEventRegistration(id, token);
+        call.enqueue(new Callback<String>() {
+            @Override
+            public void onResponse(Call<String> call, Response<String> response) {
+                if (response.isSuccessful()) {
+                    new deleteEventFromDataBase(DetailsActivity.this, nid).execute();
+                    interestToggle.setChecked(true);
+                }
+            }
+
+            @Override
+            public void onFailure(Call<String> call, Throwable t) {
+                Log.d("DETAILS", t.getMessage());
+            }
+        });
     }
 
     public void getHeritageOrExhibitionDetailsFromAPI(String id, int language,

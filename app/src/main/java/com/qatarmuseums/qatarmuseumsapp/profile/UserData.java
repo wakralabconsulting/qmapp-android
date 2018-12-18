@@ -9,6 +9,8 @@ public class UserData extends ProfileDetails {
     private String picture;
     @SerializedName("name")
     private String name;
+    @SerializedName("timezone")
+    private String timeZone;
     @SerializedName("field_first_name")
     private Model firstName;
     @SerializedName("field_last_name")
@@ -87,6 +89,14 @@ public class UserData extends ProfileDetails {
 
     public void setCountry(Model country) {
         this.country = country;
+    }
+
+    public String getTimeZone() {
+        return timeZone;
+    }
+
+    public void setTimeZone(String timeZone) {
+        this.timeZone = timeZone;
     }
 
     public Model getNationality() {

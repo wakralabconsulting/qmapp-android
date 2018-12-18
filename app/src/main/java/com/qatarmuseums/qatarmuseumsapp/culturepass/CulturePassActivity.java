@@ -253,6 +253,10 @@ public class CulturePassActivity extends AppCompatActivity {
                         editor.putString("IMAGE", profileDetails.getUser().getPicture());
                         editor.putString("NAME", profileDetails.getUser().getFirstName().getUnd().get(0).getValue() +
                                 " " + profileDetails.getUser().getLastName().getUnd().get(0).getValue());
+                        editor.putString("FIRST_NAME", profileDetails.getUser().getFirstName().getUnd().get(0).getValue());
+                        editor.putString("LAST_NAME", profileDetails.getUser().getLastName().getUnd().get(0).getValue());
+                        editor.putInt("MEMBERSHIP", (Integer.parseInt(profileDetails.getUser().getuId()) + 6000));
+                        editor.putString("TIMEZONE", profileDetails.getUser().getTimeZone());
                         editor.commit();
                     }
                 } else {
