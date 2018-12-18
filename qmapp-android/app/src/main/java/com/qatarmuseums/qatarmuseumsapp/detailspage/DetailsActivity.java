@@ -27,6 +27,7 @@ import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
@@ -38,8 +39,6 @@ import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MapStyleOptions;
 import com.google.android.gms.maps.model.MarkerOptions;
-import com.google.gson.Gson;
-import com.google.gson.reflect.TypeToken;
 import com.qatarmuseums.qatarmuseumsapp.Convertor;
 import com.qatarmuseums.qatarmuseumsapp.QMDatabase;
 import com.qatarmuseums.qatarmuseumsapp.R;
@@ -75,12 +74,11 @@ import com.qatarmuseums.qatarmuseumsapp.webview.WebviewActivity;
 import org.json.JSONStringer;
 
 import java.lang.ref.WeakReference;
-import java.lang.reflect.Type;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
+import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Objects;
 import java.util.concurrent.TimeUnit;
 
 import cn.jzvd.Jzvd;
@@ -188,6 +186,15 @@ public class DetailsActivity extends AppCompatActivity implements IPullZoom, OnM
     ArrayList<RegistrationDetailsModel> registrationDetailsModels = new ArrayList<>();
     String registrationId;
     RegistrationDetailsModel registrationDetailsModel;
+    private UserRegistrationDetailsTable registrationDetails;
+    private HashMap<String, UserRegistrationDetailsTable> registrationDetailsMap;
+    private HashMap<String, TourDetailsModel> tourDetailsMap;
+    private TourDetailsModel tourDetailsModel;
+    private Iterator<String> myVeryOwnIterator;
+    private String currentEventTimeStampDiff;
+    private boolean isTimeSlotAvailable;
+    private UserRegistrationDetailsTable userRegistrationDetailsTable;
+    private RelativeLayout registrationLoader;
 
     @SuppressLint("ClickableViewAccessibility")
     @Override
@@ -213,6 +220,10 @@ public class DetailsActivity extends AppCompatActivity implements IPullZoom, OnM
         contactInfo = intent.getStringExtra("CONTACT");
         id = intent.getStringExtra("ID");
         isFavourite = intent.getBooleanExtra("IS_FAVOURITE", false);
+
+        registrationDetailsMap = new HashMap<String, UserRegistrationDetailsTable>();
+        tourDetailsMap = new HashMap<String, TourDetailsModel>();
+
         if (comingFrom.equals(getString(R.string.museum_tours))) {
             description = intent.getStringExtra("DESCRIPTION");
             eventDate = intent.getStringExtra("DATE");
@@ -223,6 +234,15 @@ public class DetailsActivity extends AppCompatActivity implements IPullZoom, OnM
             longitude = intent.getStringExtra("LONGITUDE");
             nid = intent.getStringExtra("NID");
             tourDetailsList = intent.getParcelableArrayListExtra("RESPONSE");
+            tourDetailsMap.clear();
+            for (int i = 0; i < tourDetailsList.size(); i++) {
+                tourDetailsModel = tourDetailsList.get(i);
+                if (!Objects.equals(tourDetailsModel.getnId(), nid))
+                    tourDetailsMap.put(tourDetailsModel.getnId(), tourDetailsModel);
+                else
+                    currentEventTimeStampDiff = tourDetailsModel.getEventTimeStampDiff();
+            }
+
         }
         qmDatabase = QMDatabase.getInstance(DetailsActivity.this);
         toolbar = (Toolbar) findViewById(R.id.toolbar);
@@ -261,6 +281,7 @@ public class DetailsActivity extends AppCompatActivity implements IPullZoom, OnM
         retryLayout = (LinearLayout) findViewById(R.id.retry_layout_about);
         retryButton = (Button) findViewById(R.id.retry_btn);
         circleIndicator = (InfiniteIndicator) findViewById(R.id.carousel_indicator);
+        registrationLoader = (RelativeLayout) findViewById(R.id.registration_loader);
         eventDateLayout = findViewById(R.id.event_date_layout);
         eventDateTxt = findViewById(R.id.event_date);
         videoLayout = findViewById(R.id.video_layout);
@@ -384,6 +405,8 @@ public class DetailsActivity extends AppCompatActivity implements IPullZoom, OnM
             }
             return false;
         });
+        registrationLoader.setOnClickListener(v -> {
+        });
         claimButton.setOnTouchListener((v, event) -> {
             switch (event.getAction()) {
                 case MotionEvent.ACTION_DOWN:
@@ -460,9 +483,27 @@ public class DetailsActivity extends AppCompatActivity implements IPullZoom, OnM
 
         interestToggle.setOnTouchListener((v, event) -> {
             if (interestToggle.isChecked()) {
-                entryJsonarray();
-                entityRegistration(token, registrationDetailsModel);
-
+                if (registrationDetailsMap.size() > 0 && tourDetailsMap.size() > 0) {
+                    myVeryOwnIterator = tourDetailsMap.keySet().iterator();
+                    isTimeSlotAvailable = true;
+                    while (myVeryOwnIterator.hasNext()) {
+                        final String key = myVeryOwnIterator.next();
+                        if (registrationDetailsMap.get(key) != null) {
+                            if (tourDetailsMap.get(key).getEventTimeStampDiff().equals(currentEventTimeStampDiff)) {
+                                isTimeSlotAvailable = false;
+                            }
+                        }
+                    }
+                    if (isTimeSlotAvailable) {
+                        entryJsonarray();
+                        entityRegistration(token, registrationDetailsModel);
+                    } else {
+                        util.showNormalDialog(DetailsActivity.this, R.string.time_slot_not_available);
+                    }
+                } else {
+                    entryJsonarray();
+                    entityRegistration(token, registrationDetailsModel);
+                }
             } else {
                 showDeclineDialog();
             }
@@ -494,9 +535,9 @@ public class DetailsActivity extends AppCompatActivity implements IPullZoom, OnM
         Model membershipmodel = new Model(mvalues);
         String[] splitArray = eventDate.split("-");
         startTime = splitArray[0].concat(splitArray[1].trim());
-        start = getTimeStamp(startTime);
+        start = util.getTimeStamp(startTime);
         endTime = splitArray[0].concat(splitArray[2]);
-        end = getTimeStamp(endTime);
+        end = util.getTimeStamp(endTime);
         ArrayList<Und> rvalues = new ArrayList<>();
         Und membershipregValue = new Und(String.valueOf(start / 1000), String.valueOf(end / 1000), time_zone, "10800", "10800", time_zone, "datestamp");
         rvalues.add(membershipregValue);
@@ -508,19 +549,6 @@ public class DetailsActivity extends AppCompatActivity implements IPullZoom, OnM
                         String.valueOf(TimeUnit.MILLISECONDS.toSeconds(System.currentTimeMillis())),
                         attendancemodel, numberofattendancemodel, firstnamemodel,
                         lastnamemodel, membershipmodel, membershipregmodel);
-    }
-
-    private long getTimeStamp(String dateVal) {
-        SimpleDateFormat format = new SimpleDateFormat("dd/MM/yyyy HH:mm");
-        long datevalue = 0;
-        try {
-            Date date = format.parse(dateVal);
-            datevalue = date.getTime();
-            System.out.println("datevalue  " + date.getTime());
-        } catch (ParseException e) {
-            e.printStackTrace();
-        }
-        return datevalue;
     }
 
     protected void showDeclineDialog() {
@@ -544,9 +572,10 @@ public class DetailsActivity extends AppCompatActivity implements IPullZoom, OnM
         dialogContent.setText(getResources().getString(R.string.decline_content_tour));
 
         yes.setOnClickListener(view1 -> {
-            if(comingFrom.equals(getString(R.string.museum_discussion))){
+            registrationLoader.setVisibility(View.VISIBLE);
+            if (comingFrom.equals(getString(R.string.museum_discussion))) {
                 new RetriveRegistrationId(DetailsActivity.this, id).execute();
-            }else {
+            } else {
                 new RetriveRegistrationId(DetailsActivity.this, nid).execute();
             }
             dialog.dismiss();
@@ -646,7 +675,7 @@ public class DetailsActivity extends AppCompatActivity implements IPullZoom, OnM
     }
 
     public void setTourDetailsData() {
-        new RetriveRegistrationDetails(DetailsActivity.this, nid).execute();
+        new RetriveRegistrationDetails(DetailsActivity.this, nid, true).execute();
         commonContentLayout.setVisibility(View.VISIBLE);
         interestLayout.setVisibility(View.VISIBLE);
         videoLayout.setVisibility(View.GONE);
@@ -674,7 +703,7 @@ public class DetailsActivity extends AppCompatActivity implements IPullZoom, OnM
                     if (response.body() != null && response.body().size() > 0) {
                         tourDetailsList.addAll(response.body());
                         new RetriveRegistrationDetails(DetailsActivity.this,
-                                tourDetailsList.get(0).getnId()).execute();
+                                tourDetailsList.get(0).getnId(), false).execute();
                         commonContentLayout.setVisibility(View.VISIBLE);
                         interestLayout.setVisibility(View.VISIBLE);
                         videoLayout.setVisibility(View.GONE);
@@ -744,6 +773,29 @@ public class DetailsActivity extends AppCompatActivity implements IPullZoom, OnM
         }
     }
 
+    public class InsertRegisteredEventToDataBase extends AsyncTask<Void, Void, Boolean> {
+        private WeakReference<DetailsActivity> activityReference;
+        private UserRegistrationDetailsTable userRegistrationDetailsTable;
+
+        InsertRegisteredEventToDataBase(DetailsActivity context,
+                                        UserRegistrationDetailsTable userRegistrationDetailsTable) {
+            activityReference = new WeakReference<>(context);
+            this.userRegistrationDetailsTable = userRegistrationDetailsTable;
+        }
+
+        @Override
+        protected Boolean doInBackground(Void... voids) {
+            userRegistrationDetailsTable = new UserRegistrationDetailsTable(
+                    registrationDetailsModel.getRegistrationID(),
+                    nid,
+                    mainTitle);
+            activityReference.get().qmDatabase.getUserRegistrationTaleDao()
+                    .insertUserRegistrationTable(userRegistrationDetailsTable);
+            return true;
+        }
+
+    }
+
     public class deleteEventFromDataBase extends AsyncTask<Void, Void, Integer> {
         private WeakReference<DetailsActivity> activityReference;
         String eventID;
@@ -764,23 +816,45 @@ public class DetailsActivity extends AppCompatActivity implements IPullZoom, OnM
     public class RetriveRegistrationDetails extends AsyncTask<Void, Void, List<UserRegistrationDetailsTable>> {
         private WeakReference<DetailsActivity> activityReference;
         String eventID;
+        Boolean isTour;
 
-        RetriveRegistrationDetails(DetailsActivity context, String eventID) {
+        RetriveRegistrationDetails(DetailsActivity context, String eventID, Boolean isTour) {
             activityReference = new WeakReference<>(context);
             this.eventID = eventID;
+            this.isTour = isTour;
         }
 
         @Override
         protected List<UserRegistrationDetailsTable> doInBackground(Void... voids) {
-            return activityReference.get().qmDatabase.getUserRegistrationTaleDao().getEventFromTable(eventID);
+            if (isTour)
+                return activityReference.get().qmDatabase.getUserRegistrationTaleDao().getAllDataFromTable();
+            else
+                return activityReference.get().qmDatabase.getUserRegistrationTaleDao().getEventFromTable(eventID);
+
         }
 
         @Override
         protected void onPostExecute(List<UserRegistrationDetailsTable> userRegistrationDetailsTableList) {
-            if (userRegistrationDetailsTableList.size() > 0) {
-                interestToggle.setChecked(false);
-            } else
-                interestToggle.setChecked(true);
+            if (isTour) {
+                if (userRegistrationDetailsTableList.size() > 0) {
+                    registrationDetailsMap.clear();
+                    for (int i = 0; i < userRegistrationDetailsTableList.size(); i++) {
+                        registrationDetails = userRegistrationDetailsTableList.get(i);
+                        registrationDetailsMap.put(registrationDetails.getEventId(), registrationDetails);
+                    }
+                    if (registrationDetailsMap.get(eventID) != null)
+                        interestToggle.setChecked(false);
+                    else
+                        interestToggle.setChecked(true);
+
+                } else
+                    interestToggle.setChecked(true);
+            } else {
+                if (userRegistrationDetailsTableList.size() > 0) {
+                    interestToggle.setChecked(false);
+                } else
+                    interestToggle.setChecked(true);
+            }
         }
     }
 
@@ -1247,6 +1321,7 @@ public class DetailsActivity extends AppCompatActivity implements IPullZoom, OnM
     }
 
     public void entityRegistration(String token, RegistrationDetailsModel myRegistration) {
+        registrationLoader.setVisibility(View.VISIBLE);
         HttpLoggingInterceptor interceptor = new HttpLoggingInterceptor();
         interceptor.setLevel(HttpLoggingInterceptor.Level.BODY);
         OkHttpClient client;
@@ -1261,7 +1336,7 @@ public class DetailsActivity extends AppCompatActivity implements IPullZoom, OnM
                 .build();
         APIInterface apiService = retrofit.create(APIInterface.class);
 
-        Call<RegistrationDetailsModel> call=apiService.eventRegistration("application/json", token, myRegistration);
+        Call<RegistrationDetailsModel> call = apiService.eventRegistration("application/json", token, myRegistration);
         call.enqueue(new Callback<RegistrationDetailsModel>() {
             @Override
             public void onResponse(Call<RegistrationDetailsModel> call, Response<RegistrationDetailsModel> response) {
@@ -1277,10 +1352,12 @@ public class DetailsActivity extends AppCompatActivity implements IPullZoom, OnM
 
             @Override
             public void onFailure(Call<RegistrationDetailsModel> call, Throwable t) {
-
+                util.showToast(getResources().getString(R.string.check_network), DetailsActivity.this);
+                registrationLoader.setVisibility(View.GONE);
             }
         });
-           }
+    }
+
 
     public void entityRegistrationCompletion(String token, RegistrationDetailsModel myRegistration, String registrationId) {
 
@@ -1299,24 +1376,28 @@ public class DetailsActivity extends AppCompatActivity implements IPullZoom, OnM
 
         APIInterface apiService = retrofit.create(APIInterface.class);
 
-       Call<RegistrationDetailsModel> call=apiService.eventRegistrationCompletion("application/json",token,registrationId, myRegistration);
-       call.enqueue(new Callback<RegistrationDetailsModel>() {
-           @Override
-           public void onResponse(Call<RegistrationDetailsModel> call, Response<RegistrationDetailsModel> response) {
-               if (response.isSuccessful()) {
-                   if (response.body() != null) {
-                       registrationDetailsModel = response.body();
-                       interestToggle.setChecked(false);
-                       util.showCulturalPassAlertDialog(DetailsActivity.this);
-                   }
-               }
-           }
+        Call<RegistrationDetailsModel> call = apiService.eventRegistrationCompletion("application/json", token, registrationId, myRegistration);
+        call.enqueue(new Callback<RegistrationDetailsModel>() {
+            @Override
+            public void onResponse(Call<RegistrationDetailsModel> call, Response<RegistrationDetailsModel> response) {
+                if (response.isSuccessful()) {
+                    if (response.body() != null) {
+                        registrationDetailsModel = response.body();
+                        interestToggle.setChecked(false);
+                        util.showCulturalPassAlertDialog(DetailsActivity.this);
+                        new InsertRegisteredEventToDataBase(DetailsActivity.this, userRegistrationDetailsTable).execute();
+                    }
+                }
+                registrationLoader.setVisibility(View.GONE);
+            }
 
-           @Override
-           public void onFailure(Call<RegistrationDetailsModel> call, Throwable t) {
-            Log.d("Details",t.getMessage());
-           }
-       });
+            @Override
+            public void onFailure(Call<RegistrationDetailsModel> call, Throwable t) {
+                Log.d("Details", t.getMessage());
+                util.showToast(getResources().getString(R.string.check_network), DetailsActivity.this);
+                registrationLoader.setVisibility(View.GONE);
+            }
+        });
 
     }
 
@@ -1345,11 +1426,14 @@ public class DetailsActivity extends AppCompatActivity implements IPullZoom, OnM
                     new deleteEventFromDataBase(DetailsActivity.this, nid).execute();
                     interestToggle.setChecked(true);
                 }
+                registrationLoader.setVisibility(View.GONE);
             }
 
             @Override
             public void onFailure(Call<String> call, Throwable t) {
                 Log.d("DETAILS", t.getMessage());
+                util.showToast(getResources().getString(R.string.check_network), DetailsActivity.this);
+                registrationLoader.setVisibility(View.GONE);
             }
         });
     }
