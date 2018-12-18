@@ -2,6 +2,8 @@ package com.qatarmuseums.qatarmuseumsapp.toursecondarylist;
 
 
 import android.content.Context;
+import android.content.SharedPreferences;
+import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -13,6 +15,7 @@ import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.google.gson.Gson;
 import com.qatarmuseums.qatarmuseumsapp.R;
 import com.qatarmuseums.qatarmuseumsapp.commonpage.RecyclerTouchListener;
 import com.qatarmuseums.qatarmuseumsapp.home.GlideApp;
@@ -20,6 +23,7 @@ import com.qatarmuseums.qatarmuseumsapp.tourdetails.TourDetailsModel;
 import com.qatarmuseums.qatarmuseumsapp.utils.Util;
 
 import java.lang.ref.WeakReference;
+import java.util.ArrayList;
 import java.util.List;
 
 public class TourSecondaryListAdapter extends RecyclerView.Adapter<TourSecondaryListAdapter.MyViewHolder> {
@@ -28,6 +32,7 @@ public class TourSecondaryListAdapter extends RecyclerView.Adapter<TourSecondary
     private final RecyclerTouchListener.ItemClickListener listener;
     private List<TourDetailsModel> commonModelList;
     private Animation zoomOutAnimation;
+    ArrayList<String> eventList=new ArrayList<>();
     Util util;
 
     public class MyViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
@@ -94,4 +99,5 @@ public class TourSecondaryListAdapter extends RecyclerView.Adapter<TourSecondary
     public int getItemCount() {
         return commonModelList.size();
     }
+
 }

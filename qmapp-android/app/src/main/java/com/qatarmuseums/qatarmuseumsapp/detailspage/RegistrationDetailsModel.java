@@ -13,8 +13,6 @@ public class RegistrationDetailsModel {
     private String registrationentityId;
     @SerializedName("entity_type")
     private String registrationentityType;
-    @SerializedName("anon_mail")
-    private String registrationAnon_mail;
     @SerializedName("user_uid")
     private String registrationUserUid;
     @SerializedName("count")
@@ -39,6 +37,52 @@ public class RegistrationDetailsModel {
     private Model registrationMembershipNumber;
     @SerializedName("field_qma_edu_reg_date")
     private Model registrationRegDate;
+
+    public RegistrationDetailsModel(String registrationID, String registrationType, String registrationentityId,
+                                    String registrationentityType, String registrationUserUid,
+                                    String registrationCount, String registrationAuthorUid, String registrationState, String registrationCreated,
+                                    String registrationUpdated, Model registrationConfirmAttendance, Model registrationNumberOfAttendees,
+                                    Model registrationFirstName, Model registrationLastName,
+                                    Model registrationMembershipNumber, Model registrationRegDate) {
+        this.registrationID = registrationID;
+        this.registrationType = registrationType;
+        this.registrationentityId = registrationentityId;
+        this.registrationentityType = registrationentityType;
+        this.registrationUserUid = registrationUserUid;
+        this.registrationCount = registrationCount;
+        this.registrationAuthorUid = registrationAuthorUid;
+        this.registrationState = registrationState;
+        this.registrationCreated = registrationCreated;
+        this.registrationUpdated = registrationUpdated;
+        this.registrationConfirmAttendance = registrationConfirmAttendance;
+        this.registrationNumberOfAttendees = registrationNumberOfAttendees;
+        this.registrationFirstName = registrationFirstName;
+        this.registrationLastName = registrationLastName;
+        this.registrationMembershipNumber = registrationMembershipNumber;
+        this.registrationRegDate = registrationRegDate;
+    }
+
+    public RegistrationDetailsModel(String registrationType, String registrationentityId, String registrationentityType,
+                                     String registrationUserUid, String registrationCount,
+                                    String registrationAuthorUid, String registrationState, String registrationCreated,
+                                    String registrationUpdated, Model registrationConfirmAttendance, Model registrationNumberOfAttendees,
+                                    Model registrationFirstName, Model registrationLastName, Model registrationMembershipNumber, Model registrationRegDate) {
+        this.registrationType = registrationType;
+        this.registrationentityId = registrationentityId;
+        this.registrationentityType = registrationentityType;
+        this.registrationUserUid = registrationUserUid;
+        this.registrationCount = registrationCount;
+        this.registrationAuthorUid = registrationAuthorUid;
+        this.registrationState = registrationState;
+        this.registrationCreated = registrationCreated;
+        this.registrationUpdated = registrationUpdated;
+        this.registrationConfirmAttendance = registrationConfirmAttendance;
+        this.registrationNumberOfAttendees = registrationNumberOfAttendees;
+        this.registrationFirstName = registrationFirstName;
+        this.registrationLastName = registrationLastName;
+        this.registrationMembershipNumber = registrationMembershipNumber;
+        this.registrationRegDate = registrationRegDate;
+    }
 
     public String getRegistrationID() {
         return registrationID;
@@ -70,14 +114,6 @@ public class RegistrationDetailsModel {
 
     public void setRegistrationentityType(String registrationentityType) {
         this.registrationentityType = registrationentityType;
-    }
-
-    public String getRegistrationAnon_mail() {
-        return registrationAnon_mail;
-    }
-
-    public void setRegistrationAnon_mail(String registrationAnon_mail) {
-        this.registrationAnon_mail = registrationAnon_mail;
     }
 
     public String getRegistrationUserUid() {

@@ -462,7 +462,24 @@ public class HomeActivity extends BaseActivity {
     UserRegistrationDetailsTable userRegistrationDetailsTable;
 
     public void getUserRegistrationDetails(String userID) {
-        APIInterface apiService = APIClient.getClient().create(APIInterface.class);
+//        APIInterface apiService = APIClient.getClient().create(APIInterface.class);
+        HttpLoggingInterceptor interceptor = new HttpLoggingInterceptor();
+        interceptor.setLevel(HttpLoggingInterceptor.Level.BODY);
+
+        OkHttpClient client;
+        OkHttpClient.Builder builder = new OkHttpClient.Builder();
+
+        builder.addInterceptor(interceptor);
+        builder.addInterceptor(new AddCookiesInterceptor(this));
+        client = builder.build();
+
+        retrofit = new Retrofit.Builder()
+                .baseUrl(APIClient.apiBaseUrl)
+                .addConverterFactory(GsonConverterFactory.create())
+                .client(client)
+                .build();
+
+        APIInterface apiService = retrofit.create(APIInterface.class);
         Call<ArrayList<UserRegistrationModel>> call = apiService.getUserRegistrationDetails("en", userID);
         call.enqueue(new Callback<ArrayList<UserRegistrationModel>>() {
             @Override
@@ -597,6 +614,10 @@ public class HomeActivity extends BaseActivity {
                         editor.putString("IMAGE", profileDetails.getUser().getPicture());
                         editor.putString("NAME", profileDetails.getUser().getFirstName().getUnd().get(0).getValue() +
                                 " " + profileDetails.getUser().getLastName().getUnd().get(0).getValue());
+                        editor.putString("FIRST_NAME", profileDetails.getUser().getFirstName().getUnd().get(0).getValue());
+                        editor.putString("LAST_NAME", profileDetails.getUser().getLastName().getUnd().get(0).getValue());
+                        editor.putInt("MEMBERSHIP", (Integer.parseInt(profileDetails.getUser().getuId()) + 6000));
+                        editor.putString("TIMEZONE", profileDetails.getUser().getTimeZone());
                         editor.commit();
                     }
                 } else {

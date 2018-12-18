@@ -17,9 +17,31 @@ public class Und {
     private String timezoneDB;
     @SerializedName("date_type")
     private String dateType;
+    @SerializedName("format")
+    private String format;
+    @SerializedName("safe_value")
+    private String safeValue;
+
+
 
     public Und(String value) {
         this.value = value;
+    }
+
+    public Und(String value, String format, String safeValue) {
+        this.value = value;
+        this.format = format;
+        this.safeValue = safeValue;
+    }
+
+    public Und(String value, String value2, String timezone, String offset, String offset2, String timezoneDB, String dateType) {
+        this.value = value;
+        this.value2 = value2;
+        this.timezone = timezone;
+        this.offset = offset;
+        this.offset2 = offset2;
+        this.timezoneDB = timezoneDB;
+        this.dateType = dateType;
     }
 
     public String getValue() {

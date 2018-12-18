@@ -5,6 +5,7 @@ import com.qatarmuseums.qatarmuseumsapp.calendar.CalendarEvents;
 import com.qatarmuseums.qatarmuseumsapp.commonpage.CommonModel;
 import com.qatarmuseums.qatarmuseumsapp.culturepass.LoginData;
 import com.qatarmuseums.qatarmuseumsapp.culturepass.TokenForPushNotification;
+import com.qatarmuseums.qatarmuseumsapp.detailspage.RegistrationDetailsModel;
 import com.qatarmuseums.qatarmuseumsapp.dining.DiningDetailModel;
 import com.qatarmuseums.qatarmuseumsapp.education.EducationEvents;
 import com.qatarmuseums.qatarmuseumsapp.floormap.ArtifactDetails;
@@ -25,6 +26,7 @@ import java.util.ArrayList;
 
 import retrofit2.Call;
 import retrofit2.http.Body;
+import retrofit2.http.DELETE;
 import retrofit2.http.GET;
 import retrofit2.http.Header;
 import retrofit2.http.POST;
@@ -160,5 +162,20 @@ public interface APIInterface {
     @GET("{language}/mobile_api/list_event_user_registration.json")
     Call<ArrayList<UserRegistrationModel>> getUserRegistrationDetails(@Path("language") String language,
                                                                       @Query("user_id") String userId);
+
+    @DELETE("en/mobile_api/entity_registration/{registration_id}.json")
+    Call<String> deleteEventRegistration(@Path("registration_id") String registrationId,
+                                         @Header("X-CSRF-Token") String token);
+
+    @POST("en/mobile_api/entity_registration.json")
+    Call<RegistrationDetailsModel> eventRegistration(@Header("Content-Type") String content,
+                                                     @Header("X-CSRF-Token") String token,
+                                                     @Body RegistrationDetailsModel model);
+
+    @PUT("en/mobile_api/entity_registration/{registration_id}.json")
+    Call<RegistrationDetailsModel> eventRegistrationCompletion(@Header("Content-Type") String content,
+                                                               @Header("X-CSRF-Token") String token,
+                                                               @Path("registration_id") String registrationId,
+                                                               @Body RegistrationDetailsModel model);
 
 }
