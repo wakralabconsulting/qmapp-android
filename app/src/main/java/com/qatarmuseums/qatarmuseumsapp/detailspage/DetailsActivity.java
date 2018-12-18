@@ -242,7 +242,6 @@ public class DetailsActivity extends AppCompatActivity implements IPullZoom, OnM
                 else
                     currentEventTimeStampDiff = tourDetailsModel.getEventTimeStampDiff();
             }
-
         }
         qmDatabase = QMDatabase.getInstance(DetailsActivity.this);
         toolbar = (Toolbar) findViewById(R.id.toolbar);
@@ -482,30 +481,34 @@ public class DetailsActivity extends AppCompatActivity implements IPullZoom, OnM
                 downloadAction());
 
         interestToggle.setOnTouchListener((v, event) -> {
-            if (interestToggle.isChecked()) {
-                if (registrationDetailsMap.size() > 0 && tourDetailsMap.size() > 0) {
-                    myVeryOwnIterator = tourDetailsMap.keySet().iterator();
-                    isTimeSlotAvailable = true;
-                    while (myVeryOwnIterator.hasNext()) {
-                        final String key = myVeryOwnIterator.next();
-                        if (registrationDetailsMap.get(key) != null) {
-                            if (tourDetailsMap.get(key).getEventTimeStampDiff().equals(currentEventTimeStampDiff)) {
-                                isTimeSlotAvailable = false;
+            if (util.isNetworkAvailable(DetailsActivity.this)) {
+                if (interestToggle.isChecked()) {
+                    if (registrationDetailsMap.size() > 0 && tourDetailsMap.size() > 0) {
+                        myVeryOwnIterator = tourDetailsMap.keySet().iterator();
+                        isTimeSlotAvailable = true;
+                        while (myVeryOwnIterator.hasNext()) {
+                            final String key = myVeryOwnIterator.next();
+                            if (registrationDetailsMap.get(key) != null) {
+                                if (tourDetailsMap.get(key).getEventTimeStampDiff().equals(currentEventTimeStampDiff)) {
+                                    isTimeSlotAvailable = false;
+                                }
                             }
                         }
-                    }
-                    if (isTimeSlotAvailable) {
+                        if (isTimeSlotAvailable) {
+                            entryJsonarray();
+                            entityRegistration(token, registrationDetailsModel);
+                        } else {
+                            util.showNormalDialog(DetailsActivity.this, R.string.time_slot_not_available);
+                        }
+                    } else {
                         entryJsonarray();
                         entityRegistration(token, registrationDetailsModel);
-                    } else {
-                        util.showNormalDialog(DetailsActivity.this, R.string.time_slot_not_available);
                     }
                 } else {
-                    entryJsonarray();
-                    entityRegistration(token, registrationDetailsModel);
+                    showDeclineDialog();
                 }
             } else {
-                showDeclineDialog();
+                util.showToast(getResources().getString(R.string.check_network), getApplicationContext());
             }
             return false;
         });
@@ -533,6 +536,9 @@ public class DetailsActivity extends AppCompatActivity implements IPullZoom, OnM
         Und membershipValue = new Und(String.valueOf(field_membership_number));
         mvalues.add(membershipValue);
         Model membershipmodel = new Model(mvalues);
+        if (comingFrom.equals(getString(R.string.museum_discussion))) {
+            eventDate = tourDetailsList.get(0).getTourDate();
+        }
         String[] splitArray = eventDate.split("-");
         startTime = splitArray[0].concat(splitArray[1].trim());
         start = util.getTimeStamp(startTime);
@@ -574,7 +580,7 @@ public class DetailsActivity extends AppCompatActivity implements IPullZoom, OnM
         yes.setOnClickListener(view1 -> {
             registrationLoader.setVisibility(View.VISIBLE);
             if (comingFrom.equals(getString(R.string.museum_discussion))) {
-                new RetriveRegistrationId(DetailsActivity.this, id).execute();
+                new RetriveRegistrationId(DetailsActivity.this, nid).execute();
             } else {
                 new RetriveRegistrationId(DetailsActivity.this, nid).execute();
             }
@@ -702,6 +708,7 @@ public class DetailsActivity extends AppCompatActivity implements IPullZoom, OnM
                 if (response.isSuccessful()) {
                     if (response.body() != null && response.body().size() > 0) {
                         tourDetailsList.addAll(response.body());
+                        nid = tourDetailsList.get(0).getnId();
                         new RetriveRegistrationDetails(DetailsActivity.this,
                                 tourDetailsList.get(0).getnId(), false).execute();
                         commonContentLayout.setVisibility(View.VISIBLE);
@@ -769,7 +776,7 @@ public class DetailsActivity extends AppCompatActivity implements IPullZoom, OnM
 
         @Override
         protected void onPostExecute(String rId) {
-            deleteEventRegistration(rId, token);
+            deleteEventRegistration(rId, token, eventID);
         }
     }
 
@@ -1385,7 +1392,8 @@ public class DetailsActivity extends AppCompatActivity implements IPullZoom, OnM
                         registrationDetailsModel = response.body();
                         interestToggle.setChecked(false);
                         util.showCulturalPassAlertDialog(DetailsActivity.this);
-                        new InsertRegisteredEventToDataBase(DetailsActivity.this, userRegistrationDetailsTable).execute();
+                        new InsertRegisteredEventToDataBase(DetailsActivity.this,
+                                userRegistrationDetailsTable).execute();
                     }
                 }
                 registrationLoader.setVisibility(View.GONE);
@@ -1401,7 +1409,7 @@ public class DetailsActivity extends AppCompatActivity implements IPullZoom, OnM
 
     }
 
-    public void deleteEventRegistration(String id, String token) {
+    public void deleteEventRegistration(String id, String token, String myNid) {
 
         HttpLoggingInterceptor interceptor = new HttpLoggingInterceptor();
         interceptor.setLevel(HttpLoggingInterceptor.Level.BODY);
@@ -1423,7 +1431,7 @@ public class DetailsActivity extends AppCompatActivity implements IPullZoom, OnM
             @Override
             public void onResponse(Call<String> call, Response<String> response) {
                 if (response.isSuccessful()) {
-                    new deleteEventFromDataBase(DetailsActivity.this, nid).execute();
+                    new deleteEventFromDataBase(DetailsActivity.this, myNid).execute();
                     interestToggle.setChecked(true);
                 }
                 registrationLoader.setVisibility(View.GONE);
