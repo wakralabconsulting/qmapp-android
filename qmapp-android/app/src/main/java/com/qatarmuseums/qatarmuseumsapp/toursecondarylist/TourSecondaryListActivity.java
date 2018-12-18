@@ -65,6 +65,9 @@ public class TourSecondaryListActivity extends AppCompatActivity {
     private QMDatabase qmDatabase;
     TourDetailsTableEnglish tourDetailsTableEnglish;
     TourDetailsTableArabic tourDetailsTableArabic;
+    private String[] splitArray;
+    private String startTime, endTime;
+    private long startTimeStamp, endTimeStamp;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -103,6 +106,8 @@ public class TourSecondaryListActivity extends AppCompatActivity {
             navigationIntent.putExtra("REGISTERED", tourDetailsList.get(position).getTourRegistered());
             navigationIntent.putExtra("LONGITUDE", tourDetailsList.get(position).getTourLongtitude());
             navigationIntent.putExtra("LATITUDE", tourDetailsList.get(position).getTourLatitude());
+            navigationIntent.putExtra("NID", tourDetailsList.get(position).getnId());
+            navigationIntent.putExtra("RESPONSE", tourDetailsList);
             startActivity(navigationIntent);
         });
         RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(getApplicationContext());
@@ -160,6 +165,14 @@ public class TourSecondaryListActivity extends AppCompatActivity {
                         recyclerView.setVisibility(View.VISIBLE);
                         tourDetailsList.addAll(response.body());
                         removeHtmlTags(tourDetailsList);
+                        for (int i = 0; i < tourDetailsList.size(); i++) {
+                            splitArray = tourDetailsList.get(i).getTourDate().split("-");
+                            startTime = splitArray[0].concat(splitArray[1].trim());
+                            startTimeStamp = util.getTimeStamp(startTime);
+                            endTime = splitArray[0].concat(splitArray[2]);
+                            endTimeStamp = util.getTimeStamp(endTime);
+                            tourDetailsList.get(i).setEventTimeStampDiff(String.valueOf(endTimeStamp - startTimeStamp));
+                        }
                         mAdapter.notifyDataSetChanged();
                         new TourDetailsRowCount(TourSecondaryListActivity.this, language, id).execute();
                     } else {

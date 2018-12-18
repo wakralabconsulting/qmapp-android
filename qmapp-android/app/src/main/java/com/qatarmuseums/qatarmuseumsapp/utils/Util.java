@@ -25,6 +25,9 @@ import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.safety.Whitelist;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.Locale;
 
 public class Util {
@@ -34,6 +37,18 @@ public class Util {
     private LayoutInflater layoutInflater;
     private View closeBtn;
     private EditText mTokenView;
+
+    public long getTimeStamp(String dateVal) {
+        SimpleDateFormat format = new SimpleDateFormat("dd/MM/yyyy HH:mm");
+        long datevalue = 0;
+        try {
+            Date date = format.parse(dateVal);
+            datevalue = date.getTime();
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+        return datevalue;
+    }
 
     public boolean checkImageResource(Context ctx, ImageView imageView,
                                       int imageResource) {
@@ -91,7 +106,8 @@ public class Util {
                 , ""
                 , activity.getResources().getString(R.string.thankyou_interest));
         customDialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
-        customDialog.show();
+        if (!activity.isFinishing())
+            customDialog.show();
 
     }
 

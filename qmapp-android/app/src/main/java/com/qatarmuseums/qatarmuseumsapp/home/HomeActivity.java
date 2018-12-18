@@ -57,6 +57,7 @@ import com.qatarmuseums.qatarmuseumsapp.culturepass.AddCookiesInterceptor;
 import com.qatarmuseums.qatarmuseumsapp.culturepass.CulturePassActivity;
 import com.qatarmuseums.qatarmuseumsapp.culturepass.LoginData;
 import com.qatarmuseums.qatarmuseumsapp.culturepass.ReceivedCookiesInterceptor;
+import com.qatarmuseums.qatarmuseumsapp.culturepass.UserRegistrationDetailsTable;
 import com.qatarmuseums.qatarmuseumsapp.culturepass.UserResponseDeserializer;
 import com.qatarmuseums.qatarmuseumsapp.museum.MuseumActivity;
 import com.qatarmuseums.qatarmuseumsapp.notification.NotificationActivity;
@@ -86,6 +87,7 @@ public class HomeActivity extends BaseActivity {
     private HomeListAdapter mAdapter;
     private ArrayList<HomeList> homeLists = new ArrayList<>();
     private ArrayList<HomeList> bannerLists = new ArrayList<>();
+    private ArrayList<UserRegistrationModel> registeredEventLists = new ArrayList<>();
     private Intent navigation_intent;
     Util util;
     RelativeLayout noResultFoundLayout;
@@ -128,6 +130,7 @@ public class HomeActivity extends BaseActivity {
     private LoginData loginData;
     private String token;
     private boolean isFirstLaunch;
+    private UserRegistrationDetailsTable userRegistrationModel;
 
 
     @Override
@@ -456,6 +459,45 @@ public class HomeActivity extends BaseActivity {
         });
     }
 
+    UserRegistrationDetailsTable userRegistrationDetailsTable;
+
+    public void getUserRegistrationDetails(String userID) {
+//        APIInterface apiService = APIClient.getClient().create(APIInterface.class);
+        HttpLoggingInterceptor interceptor = new HttpLoggingInterceptor();
+        interceptor.setLevel(HttpLoggingInterceptor.Level.BODY);
+
+        OkHttpClient client;
+        OkHttpClient.Builder builder = new OkHttpClient.Builder();
+
+        builder.addInterceptor(interceptor);
+        builder.addInterceptor(new AddCookiesInterceptor(this));
+        client = builder.build();
+
+        retrofit = new Retrofit.Builder()
+                .baseUrl(APIClient.apiBaseUrl)
+                .addConverterFactory(GsonConverterFactory.create())
+                .client(client)
+                .build();
+
+        APIInterface apiService = retrofit.create(APIInterface.class);
+        Call<ArrayList<UserRegistrationModel>> call = apiService.getUserRegistrationDetails("en", userID);
+        call.enqueue(new Callback<ArrayList<UserRegistrationModel>>() {
+            @Override
+            public void onResponse(Call<ArrayList<UserRegistrationModel>> call, Response<ArrayList<UserRegistrationModel>> response) {
+                if (response.isSuccessful()) {
+                    if (response.body() != null && response.body().size() > 0) {
+                        registeredEventLists.addAll(response.body());
+                        new InsertRegistrationDatabaseTask(HomeActivity.this, userRegistrationDetailsTable).execute();
+                    }
+                }
+            }
+
+            @Override
+            public void onFailure(Call<ArrayList<UserRegistrationModel>> call, Throwable t) {
+            }
+        });
+    }
+
     @Override
     protected void onResume() {
         super.onResume();
@@ -572,6 +614,10 @@ public class HomeActivity extends BaseActivity {
                         editor.putString("IMAGE", profileDetails.getUser().getPicture());
                         editor.putString("NAME", profileDetails.getUser().getFirstName().getUnd().get(0).getValue() +
                                 " " + profileDetails.getUser().getLastName().getUnd().get(0).getValue());
+                        editor.putString("FIRST_NAME", profileDetails.getUser().getFirstName().getUnd().get(0).getValue());
+                        editor.putString("LAST_NAME", profileDetails.getUser().getLastName().getUnd().get(0).getValue());
+                        editor.putInt("MEMBERSHIP", (Integer.parseInt(profileDetails.getUser().getuId()) + 6000));
+                        editor.putString("TIMEZONE", profileDetails.getUser().getTimeZone());
                         editor.commit();
                     }
                 } else {
@@ -630,6 +676,7 @@ public class HomeActivity extends BaseActivity {
                             editor.putString("RSVP", RSVP);
                             editor.commit();
                             showBanner();
+                            getUserRegistrationDetails(uid);
                         }
                     }
                     showProgress(false);
@@ -880,6 +927,34 @@ public class HomeActivity extends BaseActivity {
             }
         });
 
+    }
+
+    public class InsertRegistrationDatabaseTask extends AsyncTask<Void, Void, Boolean> {
+        private WeakReference<HomeActivity> activityReference;
+        private UserRegistrationDetailsTable userRegistrationDetailsTable;
+        String language;
+
+        InsertRegistrationDatabaseTask(HomeActivity context,
+                                       UserRegistrationDetailsTable userRegistrationDetailsTable) {
+            activityReference = new WeakReference<>(context);
+            this.userRegistrationDetailsTable = userRegistrationDetailsTable;
+        }
+
+        @Override
+        protected Boolean doInBackground(Void... voids) {
+            if (registeredEventLists != null) {
+                for (int i = 0; i < registeredEventLists.size(); i++) {
+                    userRegistrationDetailsTable = new UserRegistrationDetailsTable(
+                            registeredEventLists.get(i).getRegID(),
+                            registeredEventLists.get(i).getEventID(),
+                            registeredEventLists.get(i).getEventTitle()
+                    );
+                    activityReference.get().qmDatabase.getUserRegistrationTaleDao()
+                            .insertUserRegistrationTable(userRegistrationDetailsTable);
+                }
+            }
+            return true;
+        }
     }
 
 

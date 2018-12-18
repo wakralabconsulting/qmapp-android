@@ -27,6 +27,7 @@ import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
@@ -49,12 +50,17 @@ import com.qatarmuseums.qatarmuseumsapp.commonpagedatabase.HeritageListTableArab
 import com.qatarmuseums.qatarmuseumsapp.commonpagedatabase.HeritageListTableEnglish;
 import com.qatarmuseums.qatarmuseumsapp.commonpagedatabase.PublicArtsTableArabic;
 import com.qatarmuseums.qatarmuseumsapp.commonpagedatabase.PublicArtsTableEnglish;
+import com.qatarmuseums.qatarmuseumsapp.culturepass.AddCookiesInterceptor;
+import com.qatarmuseums.qatarmuseumsapp.culturepass.UserRegistrationDetailsTable;
 import com.qatarmuseums.qatarmuseumsapp.heritage.HeritageOrExhibitionDetailModel;
 import com.qatarmuseums.qatarmuseumsapp.home.GlideApp;
+import com.qatarmuseums.qatarmuseumsapp.home.UserRegistrationModel;
 import com.qatarmuseums.qatarmuseumsapp.museum.GlideLoaderForMuseum;
 import com.qatarmuseums.qatarmuseumsapp.museumabout.MuseumAboutModel;
 import com.qatarmuseums.qatarmuseumsapp.museumabout.MuseumAboutTableArabic;
 import com.qatarmuseums.qatarmuseumsapp.museumabout.MuseumAboutTableEnglish;
+import com.qatarmuseums.qatarmuseumsapp.profile.Model;
+import com.qatarmuseums.qatarmuseumsapp.profile.Und;
 import com.qatarmuseums.qatarmuseumsapp.publicart.PublicArtModel;
 import com.qatarmuseums.qatarmuseumsapp.tourdetails.TourDetailsModel;
 import com.qatarmuseums.qatarmuseumsapp.tourdetails.TourDetailsTableArabic;
@@ -65,18 +71,28 @@ import com.qatarmuseums.qatarmuseumsapp.utils.PullToZoomCoordinatorLayout;
 import com.qatarmuseums.qatarmuseumsapp.utils.Util;
 import com.qatarmuseums.qatarmuseumsapp.webview.WebviewActivity;
 
+import org.json.JSONStringer;
+
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Objects;
+import java.util.concurrent.TimeUnit;
 
 import cn.jzvd.Jzvd;
 import cn.jzvd.JzvdStd;
 import cn.lightsky.infiniteindicator.IndicatorConfiguration;
 import cn.lightsky.infiniteindicator.InfiniteIndicator;
 import cn.lightsky.infiniteindicator.Page;
+import okhttp3.OkHttpClient;
+import okhttp3.logging.HttpLoggingInterceptor;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
+import retrofit2.Retrofit;
+import retrofit2.converter.gson.GsonConverterFactory;
 
 import static cn.lightsky.infiniteindicator.IndicatorConfiguration.LEFT;
 import static cn.lightsky.infiniteindicator.IndicatorConfiguration.RIGHT;
@@ -103,6 +119,14 @@ public class DetailsActivity extends AppCompatActivity implements IPullZoom, OnM
     private String latitude, longitude, id;
     Intent intent;
     int language;
+    String token, startTime, endTime;
+    long start, end;
+    String type, entity_id, entity_type, anon_mail, user_uid, count, author_uid, state, created,
+            updated, field_confirm_attendance, field_number_of_attendees, field_first_name_,
+            field_nmoq_last_name, field_qma_edu_reg_date, time_zone;
+    int field_membership_number;
+    JSONStringer jsonStringer = null;
+    JSONStringer completionjsonStringer = null;
     QMDatabase qmDatabase;
     PublicArtsTableEnglish publicArtsTableEnglish;
     PublicArtsTableArabic publicArtsTableArabic;
@@ -156,9 +180,21 @@ public class DetailsActivity extends AppCompatActivity implements IPullZoom, OnM
     private Intent navigation_intent;
     private ArrayList<TourDetailsModel> tourDetailsList = new ArrayList<>();
     private String register, registered;
-    private String eventDate;
+    private String eventDate, nid;
     TourDetailsTableEnglish tourDetailsTableEnglish;
     TourDetailsTableArabic tourDetailsTableArabic;
+    ArrayList<RegistrationDetailsModel> registrationDetailsModels = new ArrayList<>();
+    String registrationId;
+    RegistrationDetailsModel registrationDetailsModel;
+    private UserRegistrationDetailsTable registrationDetails;
+    private HashMap<String, UserRegistrationDetailsTable> registrationDetailsMap;
+    private HashMap<String, TourDetailsModel> tourDetailsMap;
+    private TourDetailsModel tourDetailsModel;
+    private Iterator<String> myVeryOwnIterator;
+    private String currentEventTimeStampDiff;
+    private boolean isTimeSlotAvailable;
+    private UserRegistrationDetailsTable userRegistrationDetailsTable;
+    private RelativeLayout registrationLoader;
 
     @SuppressLint("ClickableViewAccessibility")
     @Override
@@ -167,6 +203,12 @@ public class DetailsActivity extends AppCompatActivity implements IPullZoom, OnM
         setContentView(R.layout.activity_details);
         qmPreferences = PreferenceManager.getDefaultSharedPreferences(this);
         language = qmPreferences.getInt("AppLanguage", 1);
+        token = qmPreferences.getString("TOKEN", null);
+        user_uid = qmPreferences.getString("UID", null);
+        field_nmoq_last_name = qmPreferences.getString("LAST_NAME", null);
+        field_first_name_ = qmPreferences.getString("FIRST_NAME", null);
+        field_membership_number = qmPreferences.getInt("MEMBERSHIP", 0);
+        time_zone = qmPreferences.getString("TIMEZONE", null);
         progressBar = (ProgressBar) findViewById(R.id.progressBarLoading);
         intent = getIntent();
         mainTitle = intent.getStringExtra("MAIN_TITLE");
@@ -178,6 +220,10 @@ public class DetailsActivity extends AppCompatActivity implements IPullZoom, OnM
         contactInfo = intent.getStringExtra("CONTACT");
         id = intent.getStringExtra("ID");
         isFavourite = intent.getBooleanExtra("IS_FAVOURITE", false);
+
+        registrationDetailsMap = new HashMap<String, UserRegistrationDetailsTable>();
+        tourDetailsMap = new HashMap<String, TourDetailsModel>();
+
         if (comingFrom.equals(getString(R.string.museum_tours))) {
             description = intent.getStringExtra("DESCRIPTION");
             eventDate = intent.getStringExtra("DATE");
@@ -186,6 +232,16 @@ public class DetailsActivity extends AppCompatActivity implements IPullZoom, OnM
             registered = intent.getStringExtra("REGISTERED");
             latitude = intent.getStringExtra("LATITUDE");
             longitude = intent.getStringExtra("LONGITUDE");
+            nid = intent.getStringExtra("NID");
+            tourDetailsList = intent.getParcelableArrayListExtra("RESPONSE");
+            tourDetailsMap.clear();
+            for (int i = 0; i < tourDetailsList.size(); i++) {
+                tourDetailsModel = tourDetailsList.get(i);
+                if (!Objects.equals(tourDetailsModel.getnId(), nid))
+                    tourDetailsMap.put(tourDetailsModel.getnId(), tourDetailsModel);
+                else
+                    currentEventTimeStampDiff = tourDetailsModel.getEventTimeStampDiff();
+            }
         }
         qmDatabase = QMDatabase.getInstance(DetailsActivity.this);
         toolbar = (Toolbar) findViewById(R.id.toolbar);
@@ -224,6 +280,7 @@ public class DetailsActivity extends AppCompatActivity implements IPullZoom, OnM
         retryLayout = (LinearLayout) findViewById(R.id.retry_layout_about);
         retryButton = (Button) findViewById(R.id.retry_btn);
         circleIndicator = (InfiniteIndicator) findViewById(R.id.carousel_indicator);
+        registrationLoader = (RelativeLayout) findViewById(R.id.registration_loader);
         eventDateLayout = findViewById(R.id.event_date_layout);
         eventDateTxt = findViewById(R.id.event_date);
         videoLayout = findViewById(R.id.video_layout);
@@ -347,6 +404,8 @@ public class DetailsActivity extends AppCompatActivity implements IPullZoom, OnM
             }
             return false;
         });
+        registrationLoader.setOnClickListener(v -> {
+        });
         claimButton.setOnTouchListener((v, event) -> {
             switch (event.getAction()) {
                 case MotionEvent.ACTION_DOWN:
@@ -422,17 +481,80 @@ public class DetailsActivity extends AppCompatActivity implements IPullZoom, OnM
                 downloadAction());
 
         interestToggle.setOnTouchListener((v, event) -> {
-            util.showComingSoonDialog(DetailsActivity.this, R.string.coming_soon_content);
-
-//            if (!interested) {
-//                interested = true;
-//                interestToggle.setChecked(false);
-//                util.showCulturalPassAlertDialog(DetailsActivity.this);
-//            } else {
-//                showDeclineDialog();
-//            }
+            if (util.isNetworkAvailable(DetailsActivity.this)) {
+                if (interestToggle.isChecked()) {
+                    if (registrationDetailsMap.size() > 0 && tourDetailsMap.size() > 0) {
+                        myVeryOwnIterator = tourDetailsMap.keySet().iterator();
+                        isTimeSlotAvailable = true;
+                        while (myVeryOwnIterator.hasNext()) {
+                            final String key = myVeryOwnIterator.next();
+                            if (registrationDetailsMap.get(key) != null) {
+                                if (tourDetailsMap.get(key).getEventTimeStampDiff().equals(currentEventTimeStampDiff)) {
+                                    isTimeSlotAvailable = false;
+                                }
+                            }
+                        }
+                        if (isTimeSlotAvailable) {
+                            entryJsonarray();
+                            entityRegistration(token, registrationDetailsModel);
+                        } else {
+                            util.showNormalDialog(DetailsActivity.this, R.string.time_slot_not_available);
+                        }
+                    } else {
+                        entryJsonarray();
+                        entityRegistration(token, registrationDetailsModel);
+                    }
+                } else {
+                    showDeclineDialog();
+                }
+            } else {
+                util.showToast(getResources().getString(R.string.check_network), getApplicationContext());
+            }
             return false;
         });
+    }
+
+    public void entryJsonarray() {
+        ArrayList<Und> values = new ArrayList<>();
+        Und attendanceValue = new Und("1");
+        values.clear();
+        values.add(attendanceValue);
+        Model attendancemodel = new Model(values);
+        ArrayList<Und> nvalues = new ArrayList<>();
+        Und numberofattendanceValue = new Und("2");
+        nvalues.add(numberofattendanceValue);
+        Model numberofattendancemodel = new Model(nvalues);
+        ArrayList<Und> fvalues = new ArrayList<>();
+        Und firstnameValue = new Und(field_first_name_, null, field_first_name_);
+        fvalues.add(firstnameValue);
+        Model firstnamemodel = new Model(fvalues);
+        ArrayList<Und> lvalues = new ArrayList<>();
+        Und lastnameValue = new Und(field_nmoq_last_name, null, field_nmoq_last_name);
+        lvalues.add(lastnameValue);
+        Model lastnamemodel = new Model(lvalues);
+        ArrayList<Und> mvalues = new ArrayList<>();
+        Und membershipValue = new Und(String.valueOf(field_membership_number));
+        mvalues.add(membershipValue);
+        Model membershipmodel = new Model(mvalues);
+        if (comingFrom.equals(getString(R.string.museum_discussion))) {
+            eventDate = tourDetailsList.get(0).getTourDate();
+        }
+        String[] splitArray = eventDate.split("-");
+        startTime = splitArray[0].concat(splitArray[1].trim());
+        start = util.getTimeStamp(startTime);
+        endTime = splitArray[0].concat(splitArray[2]);
+        end = util.getTimeStamp(endTime);
+        ArrayList<Und> rvalues = new ArrayList<>();
+        Und membershipregValue = new Und(String.valueOf(start / 1000), String.valueOf(end / 1000), time_zone, "10800", "10800", time_zone, "datestamp");
+        rvalues.add(membershipregValue);
+        Model membershipregmodel = new Model(rvalues);
+        registrationDetailsModel =
+                new RegistrationDetailsModel("nmoq_event_registration", nid, "node",
+                        user_uid, "1", user_uid, "pending",
+                        String.valueOf(TimeUnit.MILLISECONDS.toSeconds(System.currentTimeMillis())),
+                        String.valueOf(TimeUnit.MILLISECONDS.toSeconds(System.currentTimeMillis())),
+                        attendancemodel, numberofattendancemodel, firstnamemodel,
+                        lastnamemodel, membershipmodel, membershipregmodel);
     }
 
     protected void showDeclineDialog() {
@@ -456,13 +578,15 @@ public class DetailsActivity extends AppCompatActivity implements IPullZoom, OnM
         dialogContent.setText(getResources().getString(R.string.decline_content_tour));
 
         yes.setOnClickListener(view1 -> {
+            registrationLoader.setVisibility(View.VISIBLE);
+            if (comingFrom.equals(getString(R.string.museum_discussion))) {
+                new RetriveRegistrationId(DetailsActivity.this, nid).execute();
+            } else {
+                new RetriveRegistrationId(DetailsActivity.this, nid).execute();
+            }
             dialog.dismiss();
-            interestToggle.setChecked(true);
-            interested = false;
         });
-        no.setOnClickListener(v -> {
-            dialog.dismiss();
-        });
+        no.setOnClickListener(v -> dialog.dismiss());
 
         dialog.show();
     }
@@ -557,6 +681,7 @@ public class DetailsActivity extends AppCompatActivity implements IPullZoom, OnM
     }
 
     public void setTourDetailsData() {
+        new RetriveRegistrationDetails(DetailsActivity.this, nid, true).execute();
         commonContentLayout.setVisibility(View.VISIBLE);
         interestLayout.setVisibility(View.VISIBLE);
         videoLayout.setVisibility(View.GONE);
@@ -582,11 +707,14 @@ public class DetailsActivity extends AppCompatActivity implements IPullZoom, OnM
             public void onResponse(Call<ArrayList<TourDetailsModel>> call, Response<ArrayList<TourDetailsModel>> response) {
                 if (response.isSuccessful()) {
                     if (response.body() != null && response.body().size() > 0) {
+                        tourDetailsList.addAll(response.body());
+                        nid = tourDetailsList.get(0).getnId();
+                        new RetriveRegistrationDetails(DetailsActivity.this,
+                                tourDetailsList.get(0).getnId(), false).execute();
                         commonContentLayout.setVisibility(View.VISIBLE);
                         interestLayout.setVisibility(View.VISIBLE);
                         videoLayout.setVisibility(View.GONE);
                         speakerLayout.setVisibility(View.VISIBLE);
-                        tourDetailsList.addAll(response.body());
                         removeTourDetailsHtmlTags(tourDetailsList);
                         if (tourDetailsList.get(0).getTourImage().size() > 1)
                             GlideApp.with(DetailsActivity.this)
@@ -607,6 +735,7 @@ public class DetailsActivity extends AppCompatActivity implements IPullZoom, OnM
                                         tourDetailsList.get(0).getTourContactEmail(),
                                 tourDetailsList.get(0).getTourLatitude(),
                                 tourDetailsList.get(0).getTourLongtitude(), true, null);
+
                         new SpecialEventDetailsRowCount(DetailsActivity.this, id).execute();
                     } else {
                         commonContentLayout.setVisibility(View.GONE);
@@ -627,6 +756,113 @@ public class DetailsActivity extends AppCompatActivity implements IPullZoom, OnM
             }
         });
 
+    }
+
+    private ArrayList<UserRegistrationModel> registeredEventLists = new ArrayList<>();
+
+    public class RetriveRegistrationId extends AsyncTask<Void, Void, String> {
+        private WeakReference<DetailsActivity> activityReference;
+        String eventID;
+
+        RetriveRegistrationId(DetailsActivity context, String eventID) {
+            activityReference = new WeakReference<>(context);
+            this.eventID = eventID;
+        }
+
+        @Override
+        protected String doInBackground(Void... voids) {
+            return activityReference.get().qmDatabase.getUserRegistrationTaleDao().getRegistrationIdFromTable(eventID);
+        }
+
+        @Override
+        protected void onPostExecute(String rId) {
+            deleteEventRegistration(rId, token, eventID);
+        }
+    }
+
+    public class InsertRegisteredEventToDataBase extends AsyncTask<Void, Void, Boolean> {
+        private WeakReference<DetailsActivity> activityReference;
+        private UserRegistrationDetailsTable userRegistrationDetailsTable;
+
+        InsertRegisteredEventToDataBase(DetailsActivity context,
+                                        UserRegistrationDetailsTable userRegistrationDetailsTable) {
+            activityReference = new WeakReference<>(context);
+            this.userRegistrationDetailsTable = userRegistrationDetailsTable;
+        }
+
+        @Override
+        protected Boolean doInBackground(Void... voids) {
+            userRegistrationDetailsTable = new UserRegistrationDetailsTable(
+                    registrationDetailsModel.getRegistrationID(),
+                    nid,
+                    mainTitle);
+            activityReference.get().qmDatabase.getUserRegistrationTaleDao()
+                    .insertUserRegistrationTable(userRegistrationDetailsTable);
+            return true;
+        }
+
+    }
+
+    public class deleteEventFromDataBase extends AsyncTask<Void, Void, Integer> {
+        private WeakReference<DetailsActivity> activityReference;
+        String eventID;
+
+        deleteEventFromDataBase(DetailsActivity context, String eventID) {
+            activityReference = new WeakReference<>(context);
+            this.eventID = eventID;
+        }
+
+        @Override
+        protected Integer doInBackground(Void... voids) {
+            return activityReference.get().qmDatabase.getUserRegistrationTaleDao().deleteEventFromTable(eventID);
+        }
+
+    }
+
+
+    public class RetriveRegistrationDetails extends AsyncTask<Void, Void, List<UserRegistrationDetailsTable>> {
+        private WeakReference<DetailsActivity> activityReference;
+        String eventID;
+        Boolean isTour;
+
+        RetriveRegistrationDetails(DetailsActivity context, String eventID, Boolean isTour) {
+            activityReference = new WeakReference<>(context);
+            this.eventID = eventID;
+            this.isTour = isTour;
+        }
+
+        @Override
+        protected List<UserRegistrationDetailsTable> doInBackground(Void... voids) {
+            if (isTour)
+                return activityReference.get().qmDatabase.getUserRegistrationTaleDao().getAllDataFromTable();
+            else
+                return activityReference.get().qmDatabase.getUserRegistrationTaleDao().getEventFromTable(eventID);
+
+        }
+
+        @Override
+        protected void onPostExecute(List<UserRegistrationDetailsTable> userRegistrationDetailsTableList) {
+            if (isTour) {
+                if (userRegistrationDetailsTableList.size() > 0) {
+                    registrationDetailsMap.clear();
+                    for (int i = 0; i < userRegistrationDetailsTableList.size(); i++) {
+                        registrationDetails = userRegistrationDetailsTableList.get(i);
+                        registrationDetailsMap.put(registrationDetails.getEventId(), registrationDetails);
+                    }
+                    if (registrationDetailsMap.get(eventID) != null)
+                        interestToggle.setChecked(false);
+                    else
+                        interestToggle.setChecked(true);
+
+                } else
+                    interestToggle.setChecked(true);
+            } else {
+                if (userRegistrationDetailsTableList.size() > 0) {
+                    interestToggle.setChecked(false);
+                } else
+                    interestToggle.setChecked(true);
+            }
+        }
     }
 
     private void getTravelsDetails() {
@@ -1089,6 +1325,125 @@ public class DetailsActivity extends AppCompatActivity implements IPullZoom, OnM
             else
                 retryLayout.setVisibility(View.VISIBLE);
         }
+    }
+
+    public void entityRegistration(String token, RegistrationDetailsModel myRegistration) {
+        registrationLoader.setVisibility(View.VISIBLE);
+        HttpLoggingInterceptor interceptor = new HttpLoggingInterceptor();
+        interceptor.setLevel(HttpLoggingInterceptor.Level.BODY);
+        OkHttpClient client;
+        OkHttpClient.Builder builder = new OkHttpClient.Builder();
+        builder.addInterceptor(interceptor);
+        builder.addInterceptor(new AddCookiesInterceptor(this));
+        client = builder.build();
+        Retrofit retrofit = new Retrofit.Builder()
+                .baseUrl(APIClient.apiBaseUrl)
+                .addConverterFactory(GsonConverterFactory.create())
+                .client(client)
+                .build();
+        APIInterface apiService = retrofit.create(APIInterface.class);
+
+        Call<RegistrationDetailsModel> call = apiService.eventRegistration("application/json", token, myRegistration);
+        call.enqueue(new Callback<RegistrationDetailsModel>() {
+            @Override
+            public void onResponse(Call<RegistrationDetailsModel> call, Response<RegistrationDetailsModel> response) {
+                if (response.isSuccessful()) {
+                    if (response.body() != null) {
+                        registrationDetailsModel = response.body();
+                        registrationId = registrationDetailsModel.getRegistrationID();
+                        registrationDetailsModel.setRegistrationState("completed");
+                        entityRegistrationCompletion(token, registrationDetailsModel, registrationId);
+                    }
+                }
+            }
+
+            @Override
+            public void onFailure(Call<RegistrationDetailsModel> call, Throwable t) {
+                util.showToast(getResources().getString(R.string.check_network), DetailsActivity.this);
+                registrationLoader.setVisibility(View.GONE);
+            }
+        });
+    }
+
+
+    public void entityRegistrationCompletion(String token, RegistrationDetailsModel myRegistration, String registrationId) {
+
+        HttpLoggingInterceptor interceptor = new HttpLoggingInterceptor();
+        interceptor.setLevel(HttpLoggingInterceptor.Level.BODY);
+        OkHttpClient client;
+        OkHttpClient.Builder builder = new OkHttpClient.Builder();
+        builder.addInterceptor(interceptor);
+        builder.addInterceptor(new AddCookiesInterceptor(this));
+        client = builder.build();
+        Retrofit retrofit = new Retrofit.Builder()
+                .baseUrl(APIClient.apiBaseUrl)
+                .addConverterFactory(GsonConverterFactory.create())
+                .client(client)
+                .build();
+
+        APIInterface apiService = retrofit.create(APIInterface.class);
+
+        Call<RegistrationDetailsModel> call = apiService.eventRegistrationCompletion("application/json", token, registrationId, myRegistration);
+        call.enqueue(new Callback<RegistrationDetailsModel>() {
+            @Override
+            public void onResponse(Call<RegistrationDetailsModel> call, Response<RegistrationDetailsModel> response) {
+                if (response.isSuccessful()) {
+                    if (response.body() != null) {
+                        registrationDetailsModel = response.body();
+                        interestToggle.setChecked(false);
+                        util.showCulturalPassAlertDialog(DetailsActivity.this);
+                        new InsertRegisteredEventToDataBase(DetailsActivity.this,
+                                userRegistrationDetailsTable).execute();
+                    }
+                }
+                registrationLoader.setVisibility(View.GONE);
+            }
+
+            @Override
+            public void onFailure(Call<RegistrationDetailsModel> call, Throwable t) {
+                Log.d("Details", t.getMessage());
+                util.showToast(getResources().getString(R.string.check_network), DetailsActivity.this);
+                registrationLoader.setVisibility(View.GONE);
+            }
+        });
+
+    }
+
+    public void deleteEventRegistration(String id, String token, String myNid) {
+
+        HttpLoggingInterceptor interceptor = new HttpLoggingInterceptor();
+        interceptor.setLevel(HttpLoggingInterceptor.Level.BODY);
+        OkHttpClient client;
+        OkHttpClient.Builder builder = new OkHttpClient.Builder();
+        builder.addInterceptor(interceptor);
+        builder.addInterceptor(new AddCookiesInterceptor(this));
+        client = builder.build();
+        Retrofit retrofit = new Retrofit.Builder()
+                .baseUrl(APIClient.apiBaseUrl)
+                .addConverterFactory(GsonConverterFactory.create())
+                .client(client)
+                .build();
+
+        APIInterface apiService = retrofit.create(APIInterface.class);
+
+        Call<String> call = apiService.deleteEventRegistration(id, token);
+        call.enqueue(new Callback<String>() {
+            @Override
+            public void onResponse(Call<String> call, Response<String> response) {
+                if (response.isSuccessful()) {
+                    new deleteEventFromDataBase(DetailsActivity.this, myNid).execute();
+                    interestToggle.setChecked(true);
+                }
+                registrationLoader.setVisibility(View.GONE);
+            }
+
+            @Override
+            public void onFailure(Call<String> call, Throwable t) {
+                Log.d("DETAILS", t.getMessage());
+                util.showToast(getResources().getString(R.string.check_network), DetailsActivity.this);
+                registrationLoader.setVisibility(View.GONE);
+            }
+        });
     }
 
     public void getHeritageOrExhibitionDetailsFromAPI(String id, int language,
