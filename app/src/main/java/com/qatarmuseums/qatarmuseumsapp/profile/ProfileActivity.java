@@ -398,9 +398,11 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
 
     public void clearPreference() {
         new DeleteBannerTableEnglish(ProfileActivity.this).execute();
+        new DeleteRegistratioTable(ProfileActivity.this).execute();
         qmPreferences = PreferenceManager.getDefaultSharedPreferences(this);
         editor = qmPreferences.edit();
         editor.putString("TOKEN", null);
+        editor.putString("UID", null);
         editor.putString("MEMBERSHIP_NUMBER", null);
         editor.putString("EMAIL", null);
         editor.putString("DOB", null);
@@ -416,6 +418,20 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
         startActivity(navigationIntent);
         finish();
 
+    }
+
+    public class DeleteRegistratioTable extends AsyncTask<Void, Void, Void> {
+        private WeakReference<ProfileActivity> activityReference;
+
+        DeleteRegistratioTable(ProfileActivity context) {
+            activityReference = new WeakReference<>(context);
+        }
+
+        @Override
+        protected Void doInBackground(Void... voids) {
+            activityReference.get().qmDatabase.getUserRegistrationTaleDao().nukeRegistrationTable();
+            return null;
+        }
     }
 
     public class DeleteBannerTableEnglish extends AsyncTask<Void, Void, Void> {
