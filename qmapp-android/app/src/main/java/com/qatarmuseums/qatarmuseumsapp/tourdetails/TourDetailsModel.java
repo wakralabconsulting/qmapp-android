@@ -39,6 +39,8 @@ public class TourDetailsModel implements Parcelable {
     @SerializedName("nid")
     private String nId;
     private String eventTimeStampDiff;
+    private long startTimeStamp;
+    private long endTimeStamp;
 
     public TourDetailsModel(String tour_title, ArrayList<String> tour_images,
                             String tour_date, String tour_id,
@@ -77,6 +79,8 @@ public class TourDetailsModel implements Parcelable {
         tourSpeakerInfo = in.readString();
         nId = in.readString();
         eventTimeStampDiff = in.readString();
+        startTimeStamp=in.readLong();
+        endTimeStamp=in.readLong();
     }
 
     public static final Creator<TourDetailsModel> CREATOR = new Creator<TourDetailsModel>() {
@@ -211,6 +215,22 @@ public class TourDetailsModel implements Parcelable {
         this.nId = nId;
     }
 
+    public Long getStartTimeStamp() {
+        return startTimeStamp;
+    }
+
+    public void setStartTimeStamp(Long startTimeStamp) {
+        this.startTimeStamp = startTimeStamp;
+    }
+
+    public Long getEndTimeStamp() {
+        return endTimeStamp;
+    }
+
+    public void setEndTimeStamp(Long endTimeStamp) {
+        this.endTimeStamp = endTimeStamp;
+    }
+
     public String getEventTimeStampDiff() {
         return eventTimeStampDiff;
     }
@@ -242,5 +262,7 @@ public class TourDetailsModel implements Parcelable {
         dest.writeString(tourSpeakerInfo);
         dest.writeString(nId);
         dest.writeString(eventTimeStampDiff);
+        dest.writeLong(startTimeStamp);
+        dest.writeLong(endTimeStamp);
     }
 }
