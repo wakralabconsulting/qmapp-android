@@ -29,7 +29,6 @@ import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -193,6 +192,8 @@ public class DetailsActivity extends AppCompatActivity implements IPullZoom, OnM
     private TourDetailsModel tourDetailsModel;
     private Iterator<String> myVeryOwnIterator;
     private String currentEventTimeStampDiff;
+    private Long currentEventStartTimeStamp;
+    private Long currentEventEndTimeStamp;
     private boolean isTimeSlotAvailable;
     private UserRegistrationDetailsTable userRegistrationDetailsTable;
     private RelativeLayout registrationLoader;
@@ -240,8 +241,11 @@ public class DetailsActivity extends AppCompatActivity implements IPullZoom, OnM
                 tourDetailsModel = tourDetailsList.get(i);
                 if (!Objects.equals(tourDetailsModel.getnId(), nid))
                     tourDetailsMap.put(tourDetailsModel.getnId(), tourDetailsModel);
-                else
+                else {
                     currentEventTimeStampDiff = tourDetailsModel.getEventTimeStampDiff();
+                    currentEventStartTimeStamp = tourDetailsModel.getStartTimeStamp();
+                    currentEventEndTimeStamp = tourDetailsModel.getEndTimeStamp();
+                }
             }
         }
         qmDatabase = QMDatabase.getInstance(DetailsActivity.this);
@@ -493,8 +497,8 @@ public class DetailsActivity extends AppCompatActivity implements IPullZoom, OnM
                             if (registrationDetailsMap.get(key) != null) {
                                 if (tourDetailsMap.get(key).getEventTimeStampDiff().equals(currentEventTimeStampDiff)) {
                                     isTimeSlotAvailable = false;
-                                } else if (!((registrationDetailsMap.get(key).getStartTimeStamp() >= tourDetailsMap.get(key).getEndTimeStamp()) ||
-                                        (registrationDetailsMap.get(key).getEndTimeStamp() <= tourDetailsMap.get(key).getStartTimeStamp())) ){
+                                } else if (!((tourDetailsMap.get(key).getStartTimeStamp() >= currentEventEndTimeStamp) ||
+                                        (tourDetailsMap.get(key).getEndTimeStamp() <= currentEventStartTimeStamp))) {
                                     isTimeSlotAvailable = false;
                                 }
                             }
@@ -853,12 +857,6 @@ public class DetailsActivity extends AppCompatActivity implements IPullZoom, OnM
                     for (int i = 0; i < userRegistrationDetailsTableList.size(); i++) {
                         registrationDetails = userRegistrationDetailsTableList.get(i);
                         registrationDetailsMap.put(registrationDetails.getEventId(), registrationDetails);
-                        for (int j = 0; j < tourDetailsList.size(); j++) {
-                            if (registrationDetails.getEventId().equals(tourDetailsList.get(j).getnId())) {
-                                registrationDetails.setStartTimeStamp(tourDetailsList.get(j).getStartTimeStamp());
-                                registrationDetails.setEndTimeStamp(tourDetailsList.get(j).getEndTimeStamp());
-                            }
-                        }
                     }
                     if (registrationDetailsMap.get(eventID) != null)
                         interestToggle.setChecked(false);
