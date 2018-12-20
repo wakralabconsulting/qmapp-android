@@ -171,6 +171,8 @@ public class TourSecondaryListActivity extends AppCompatActivity {
                             startTimeStamp = util.getTimeStamp(startTime);
                             endTime = splitArray[0].concat(splitArray[2]);
                             endTimeStamp = util.getTimeStamp(endTime);
+                            tourDetailsList.get(i).setStartTimeStamp((startTimeStamp));
+                            tourDetailsList.get(i).setEndTimeStamp((endTimeStamp));
                             tourDetailsList.get(i).setEventTimeStampDiff(String.valueOf(endTimeStamp - startTimeStamp));
                         }
                         mAdapter.notifyDataSetChanged();

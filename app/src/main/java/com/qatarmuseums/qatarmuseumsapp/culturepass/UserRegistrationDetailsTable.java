@@ -14,6 +14,8 @@ public class UserRegistrationDetailsTable {
     private String eventId;
     @ColumnInfo()
     private String eventTitle;
+    private Long startTimeStamp;
+    private Long endTimeStamp;
 
 
     public UserRegistrationDetailsTable(@NonNull String registrationID, String eventId, String eventTitle) {
@@ -45,5 +47,21 @@ public class UserRegistrationDetailsTable {
 
     public void setEventTitle(String eventTitle) {
         this.eventTitle = eventTitle;
+    }
+
+    public Long getStartTimeStamp() {
+        return startTimeStamp;
+    }
+
+    public void setStartTimeStamp(Long startTimeStamp) {
+        this.startTimeStamp = startTimeStamp;
+    }
+
+    public Long getEndTimeStamp() {
+        return endTimeStamp;
+    }
+
+    public void setEndTimeStamp(Long endTimeStamp) {
+        this.endTimeStamp = endTimeStamp;
     }
 }
