@@ -29,6 +29,7 @@ import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -481,6 +482,7 @@ public class DetailsActivity extends AppCompatActivity implements IPullZoom, OnM
                 downloadAction());
 
         interestToggle.setOnTouchListener((v, event) -> {
+
             if (util.isNetworkAvailable(DetailsActivity.this)) {
                 if (interestToggle.isChecked()) {
                     if (registrationDetailsMap.size() > 0 && tourDetailsMap.size() > 0) {
@@ -490,6 +492,9 @@ public class DetailsActivity extends AppCompatActivity implements IPullZoom, OnM
                             final String key = myVeryOwnIterator.next();
                             if (registrationDetailsMap.get(key) != null) {
                                 if (tourDetailsMap.get(key).getEventTimeStampDiff().equals(currentEventTimeStampDiff)) {
+                                    isTimeSlotAvailable = false;
+                                } else if (!((registrationDetailsMap.get(key).getStartTimeStamp() >= tourDetailsMap.get(key).getEndTimeStamp()) ||
+                                        (registrationDetailsMap.get(key).getEndTimeStamp() <= tourDetailsMap.get(key).getStartTimeStamp())) ){
                                     isTimeSlotAvailable = false;
                                 }
                             }
@@ -848,6 +853,12 @@ public class DetailsActivity extends AppCompatActivity implements IPullZoom, OnM
                     for (int i = 0; i < userRegistrationDetailsTableList.size(); i++) {
                         registrationDetails = userRegistrationDetailsTableList.get(i);
                         registrationDetailsMap.put(registrationDetails.getEventId(), registrationDetails);
+                        for (int j = 0; j < tourDetailsList.size(); j++) {
+                            if (registrationDetails.getEventId().equals(tourDetailsList.get(j).getnId())) {
+                                registrationDetails.setStartTimeStamp(tourDetailsList.get(j).getStartTimeStamp());
+                                registrationDetails.setEndTimeStamp(tourDetailsList.get(j).getEndTimeStamp());
+                            }
+                        }
                     }
                     if (registrationDetailsMap.get(eventID) != null)
                         interestToggle.setChecked(false);
@@ -1423,7 +1434,6 @@ public class DetailsActivity extends AppCompatActivity implements IPullZoom, OnM
                 .addConverterFactory(GsonConverterFactory.create())
                 .client(client)
                 .build();
-
         APIInterface apiService = retrofit.create(APIInterface.class);
 
         Call<String> call = apiService.deleteEventRegistration(id, token);
