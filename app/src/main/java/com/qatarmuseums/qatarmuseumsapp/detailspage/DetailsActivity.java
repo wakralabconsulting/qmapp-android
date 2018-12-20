@@ -192,6 +192,8 @@ public class DetailsActivity extends AppCompatActivity implements IPullZoom, OnM
     private TourDetailsModel tourDetailsModel;
     private Iterator<String> myVeryOwnIterator;
     private String currentEventTimeStampDiff;
+    private Long currentEventStartTimeStamp;
+    private Long currentEventEndTimeStamp;
     private boolean isTimeSlotAvailable;
     private UserRegistrationDetailsTable userRegistrationDetailsTable;
     private RelativeLayout registrationLoader;
@@ -239,8 +241,11 @@ public class DetailsActivity extends AppCompatActivity implements IPullZoom, OnM
                 tourDetailsModel = tourDetailsList.get(i);
                 if (!Objects.equals(tourDetailsModel.getnId(), nid))
                     tourDetailsMap.put(tourDetailsModel.getnId(), tourDetailsModel);
-                else
+                else {
                     currentEventTimeStampDiff = tourDetailsModel.getEventTimeStampDiff();
+                    currentEventStartTimeStamp = tourDetailsModel.getStartTimeStamp();
+                    currentEventEndTimeStamp = tourDetailsModel.getEndTimeStamp();
+                }
             }
         }
         qmDatabase = QMDatabase.getInstance(DetailsActivity.this);
@@ -481,6 +486,7 @@ public class DetailsActivity extends AppCompatActivity implements IPullZoom, OnM
                 downloadAction());
 
         interestToggle.setOnTouchListener((v, event) -> {
+
             if (util.isNetworkAvailable(DetailsActivity.this)) {
                 if (interestToggle.isChecked()) {
                     if (registrationDetailsMap.size() > 0 && tourDetailsMap.size() > 0) {
@@ -490,6 +496,9 @@ public class DetailsActivity extends AppCompatActivity implements IPullZoom, OnM
                             final String key = myVeryOwnIterator.next();
                             if (registrationDetailsMap.get(key) != null) {
                                 if (tourDetailsMap.get(key).getEventTimeStampDiff().equals(currentEventTimeStampDiff)) {
+                                    isTimeSlotAvailable = false;
+                                } else if (!((tourDetailsMap.get(key).getStartTimeStamp() >= currentEventEndTimeStamp) ||
+                                        (tourDetailsMap.get(key).getEndTimeStamp() <= currentEventStartTimeStamp))) {
                                     isTimeSlotAvailable = false;
                                 }
                             }
@@ -1423,7 +1432,6 @@ public class DetailsActivity extends AppCompatActivity implements IPullZoom, OnM
                 .addConverterFactory(GsonConverterFactory.create())
                 .client(client)
                 .build();
-
         APIInterface apiService = retrofit.create(APIInterface.class);
 
         Call<String> call = apiService.deleteEventRegistration(id, token);

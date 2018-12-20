@@ -46,4 +46,5 @@ public class UserRegistrationDetailsTable {
     public void setEventTitle(String eventTitle) {
         this.eventTitle = eventTitle;
     }
+
 }
