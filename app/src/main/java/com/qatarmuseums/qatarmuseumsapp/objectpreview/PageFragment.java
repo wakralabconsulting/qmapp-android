@@ -198,7 +198,6 @@ public class PageFragment extends Fragment implements SeekBar.OnSeekBarChangeLis
         playButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-//                utils.isNetworkAvailable(getContext())
                 if (checkNetworkAvailable()) {
                     if (!playPause) {
                         playButton.setImageDrawable(getContext().getDrawable(R.drawable.pause_black));

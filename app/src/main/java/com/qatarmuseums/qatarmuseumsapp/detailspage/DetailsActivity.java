@@ -571,13 +571,13 @@ public class DetailsActivity extends AppCompatActivity implements IPullZoom, OnM
                             attendancemodel, numberofattendancemodel, firstnamemodel,
                             lastnamemodel, membershipmodel, membershipregmodel);
         } else {
-            showWarningDialog();
+            showRegistrationWarningDialog();
 
         }
 
     }
 
-    protected void showWarningDialog() {
+    protected void showRegistrationWarningDialog() {
 
         final Dialog dialog = new Dialog(this, R.style.DialogNoAnimation);
         dialog.setCancelable(true);
@@ -595,19 +595,8 @@ public class DetailsActivity extends AppCompatActivity implements IPullZoom, OnM
         line.setVisibility(View.GONE);
         dialogTitle.setVisibility(View.GONE);
         yes.setText(getResources().getString(R.string.ok));
-        dialogContent.setText("NO END TIME PROVIDED");
-
-//        yes.setOnClickListener(view1 -> {
-//            registrationLoader.setVisibility(View.VISIBLE);
-//            if (comingFrom.equals(getString(R.string.museum_discussion))) {
-//                new RetriveRegistrationId(DetailsActivity.this, nid).execute();
-//            } else {
-//                new RetriveRegistrationId(DetailsActivity.this, nid).execute();
-//            }
-//            dialog.dismiss();
-//        });
+        dialogContent.setText(R.string.warning_message);
         yes.setOnClickListener(v -> dialog.dismiss());
-
         dialog.show();
     }
 
