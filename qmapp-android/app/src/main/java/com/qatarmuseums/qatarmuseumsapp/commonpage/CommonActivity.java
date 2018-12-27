@@ -136,8 +136,11 @@ public class CommonActivity extends AppCompatActivity {
                 else
                     navigationIntent = new Intent(CommonActivity.this, DetailsActivity.class);
                 if (toolbarTitle.equals(getString(R.string.museum_tours)) ||
-                        toolbarTitle.equals(getString(R.string.museum_discussion)))
-                    navigationIntent.putExtra("HEADER_IMAGE", models.get(position).getImages().get(0));
+                        toolbarTitle.equals(getString(R.string.museum_discussion))) {
+                    if(models.get(position).getImages().size()>0) {
+                        navigationIntent.putExtra("HEADER_IMAGE", models.get(position).getImages().get(0));
+                    }
+                }
                 else
                     navigationIntent.putExtra("HEADER_IMAGE", models.get(position).getImage());
                 navigationIntent.putExtra("MAIN_TITLE", models.get(position).getName());

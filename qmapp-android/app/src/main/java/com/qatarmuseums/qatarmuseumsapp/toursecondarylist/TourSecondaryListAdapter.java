@@ -88,11 +88,19 @@ public class TourSecondaryListAdapter extends RecyclerView.Adapter<TourSecondary
         TourDetailsModel model = commonModelList.get(position);
         holder.name.setText(model.getTourTitle());
 
+        if(model.getTourImage().size()>0){
         GlideApp.with(mContext)
                 .load(model.getTourImage().get(0))
                 .centerCrop()
                 .placeholder(R.drawable.placeholder)
                 .into(holder.imageView);
+        }else{
+            GlideApp.with(mContext)
+                    .load("")
+                    .centerCrop()
+                    .placeholder(R.drawable.placeholder)
+                    .into(holder.imageView);
+        }
     }
 
     @Override

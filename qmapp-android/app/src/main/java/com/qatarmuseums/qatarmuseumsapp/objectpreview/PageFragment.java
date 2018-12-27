@@ -4,6 +4,8 @@ import android.app.ProgressDialog;
 import android.content.Context;
 import android.media.AudioManager;
 import android.media.MediaPlayer;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
@@ -178,6 +180,17 @@ public class PageFragment extends Fragment implements SeekBar.OnSeekBarChangeLis
         initialize_Controls();
     }
 
+    private boolean checkNetworkAvailable(){
+        ConnectivityManager connectivityManager
+                = (ConnectivityManager) getContext().getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo activeNetworkInfo = connectivityManager.getActiveNetworkInfo();
+        if (activeNetworkInfo != null && activeNetworkInfo.isConnected())
+            return true;
+        else {
+            return false;
+        }
+    }
+
     private void initialize_Controls() {
 
         seekBar.setOnSeekBarChangeListener(this);
@@ -185,7 +198,7 @@ public class PageFragment extends Fragment implements SeekBar.OnSeekBarChangeLis
         playButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (utils.isNetworkAvailable(getContext())) {
+                if (checkNetworkAvailable()) {
                     if (!playPause) {
                         playButton.setImageDrawable(getContext().getDrawable(R.drawable.pause_black));
                         if (initialStage) {
