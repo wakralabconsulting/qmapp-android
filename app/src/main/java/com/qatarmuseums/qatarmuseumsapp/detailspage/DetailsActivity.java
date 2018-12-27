@@ -766,16 +766,21 @@ public class DetailsActivity extends AppCompatActivity implements IPullZoom, OnM
                         commonContentLayout.setVisibility(View.VISIBLE);
                         interestLayout.setVisibility(View.VISIBLE);
                         videoLayout.setVisibility(View.GONE);
-                        speakerLayout.setVisibility(View.VISIBLE);
                         removeTourDetailsHtmlTags(tourDetailsList);
-                        if (tourDetailsList.get(0).getTourImage().size() > 1)
-                            GlideApp.with(DetailsActivity.this)
-                                    .load(tourDetailsList.get(0).getTourImage().get(1))
-                                    .centerCrop()
-                                    .placeholder(R.drawable.placeholder)
-                                    .into(speakerImage);
-                        speakerName.setText(tourDetailsList.get(0).getTourSpeakerName());
-                        speakerInfo.setText(tourDetailsList.get(0).getTourSpeakerInfo());
+                        if (!(tourDetailsList.get(0).getTourSpeakerName().equals(""))) {
+                            speakerLayout.setVisibility(View.VISIBLE);
+                            if (tourDetailsList.get(0).getTourImage().size() > 1)
+                                GlideApp.with(DetailsActivity.this)
+                                        .load(tourDetailsList.get(0).getTourImage().get(1))
+                                        .centerCrop()
+                                        .placeholder(R.drawable.placeholder)
+                                        .into(speakerImage);
+                            speakerName.setText(tourDetailsList.get(0).getTourSpeakerName());
+                            speakerInfo.setText(tourDetailsList.get(0).getTourSpeakerInfo());
+                        } else {
+                            speakerLayout.setVisibility(View.GONE);
+                        }
+
                         timingTitle.setText(R.string.date);
                         locationTitle.setText(R.string.venue);
                         loadData(null,
