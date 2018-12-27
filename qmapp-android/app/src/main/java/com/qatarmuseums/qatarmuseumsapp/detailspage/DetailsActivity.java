@@ -505,13 +505,18 @@ public class DetailsActivity extends AppCompatActivity implements IPullZoom, OnM
                         }
                         if (isTimeSlotAvailable) {
                             entryJsonarray();
-                            entityRegistration(token, registrationDetailsModel);
+                            if (registrationDetailsModel != null) {
+                                entityRegistration(token, registrationDetailsModel);
+                            }
+
                         } else {
                             util.showNormalDialog(DetailsActivity.this, R.string.time_slot_not_available);
                         }
                     } else {
                         entryJsonarray();
-                        entityRegistration(token, registrationDetailsModel);
+                        if (registrationDetailsModel != null) {
+                            entityRegistration(token, registrationDetailsModel);
+                        }
                     }
                 } else {
                     showDeclineDialog();
@@ -551,19 +556,48 @@ public class DetailsActivity extends AppCompatActivity implements IPullZoom, OnM
         String[] splitArray = eventDate.split("-");
         startTime = splitArray[0].concat(splitArray[1].trim());
         start = util.getTimeStamp(startTime);
-        endTime = splitArray[0].concat(splitArray[2]);
-        end = util.getTimeStamp(endTime);
-        ArrayList<Und> rvalues = new ArrayList<>();
-        Und membershipregValue = new Und(String.valueOf(start / 1000), String.valueOf(end / 1000), time_zone, "10800", "10800", time_zone, "datestamp");
-        rvalues.add(membershipregValue);
-        Model membershipregmodel = new Model(rvalues);
-        registrationDetailsModel =
-                new RegistrationDetailsModel("nmoq_event_registration", nid, "node",
-                        user_uid, "1", user_uid, "pending",
-                        String.valueOf(TimeUnit.MILLISECONDS.toSeconds(System.currentTimeMillis())),
-                        String.valueOf(TimeUnit.MILLISECONDS.toSeconds(System.currentTimeMillis())),
-                        attendancemodel, numberofattendancemodel, firstnamemodel,
-                        lastnamemodel, membershipmodel, membershipregmodel);
+        if (splitArray.length > 2) {
+            endTime = splitArray[0].concat(splitArray[2]);
+            end = util.getTimeStamp(endTime);
+            ArrayList<Und> rvalues = new ArrayList<>();
+            Und membershipregValue = new Und(String.valueOf(start / 1000), String.valueOf(end / 1000), time_zone, "10800", "10800", time_zone, "datestamp");
+            rvalues.add(membershipregValue);
+            Model membershipregmodel = new Model(rvalues);
+            registrationDetailsModel =
+                    new RegistrationDetailsModel("nmoq_event_registration", nid, "node",
+                            user_uid, "1", user_uid, "pending",
+                            String.valueOf(TimeUnit.MILLISECONDS.toSeconds(System.currentTimeMillis())),
+                            String.valueOf(TimeUnit.MILLISECONDS.toSeconds(System.currentTimeMillis())),
+                            attendancemodel, numberofattendancemodel, firstnamemodel,
+                            lastnamemodel, membershipmodel, membershipregmodel);
+        } else {
+            showRegistrationWarningDialog();
+
+        }
+
+    }
+
+    protected void showRegistrationWarningDialog() {
+
+        final Dialog dialog = new Dialog(this, R.style.DialogNoAnimation);
+        dialog.setCancelable(true);
+        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+
+        View view = getLayoutInflater().inflate(R.layout.vip_pop_up, null);
+        dialog.setContentView(view);
+
+        View line = (View) view.findViewById(R.id.view);
+        Button yes = (Button) view.findViewById(R.id.acceptbtn);
+        Button no = (Button) view.findViewById(R.id.accept_later_btn);
+        no.setVisibility(View.GONE);
+        TextView dialogTitle = (TextView) view.findViewById(R.id.dialog_tittle);
+        TextView dialogContent = (TextView) view.findViewById(R.id.dialog_content);
+        line.setVisibility(View.GONE);
+        dialogTitle.setVisibility(View.GONE);
+        yes.setText(getResources().getString(R.string.ok));
+        dialogContent.setText(R.string.warning_message);
+        yes.setOnClickListener(v -> dialog.dismiss());
+        dialog.show();
     }
 
     protected void showDeclineDialog() {

@@ -31,6 +31,7 @@ public class MyApp extends Application {
 //            return;
 //        }
 //        LeakCanary.install(this);
+//        LeakCanary.enableDisplayLeakActivity(getApplicationContext());
         // Normal app init code...
         SharedPreferences qmPreferences = PreferenceManager.getDefaultSharedPreferences(this);
         int appLanguage = qmPreferences.getInt("AppLanguage", 1);

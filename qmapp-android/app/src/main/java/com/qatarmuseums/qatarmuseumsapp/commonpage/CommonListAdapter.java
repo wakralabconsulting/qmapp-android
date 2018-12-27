@@ -149,18 +149,28 @@ public class CommonListAdapter extends RecyclerView.Adapter<CommonListAdapter.My
                     .centerCrop()
                     .placeholder(R.drawable.placeholder_portrait)
                     .into(holder.imageView);
-        else if (model.getEventDate() != null)
-            GlideApp.with(mContext)
-                    .load(model.getImages().get(0))
-                    .centerCrop()
-                    .placeholder(R.drawable.placeholder)
-                    .into(holder.imageView);
-        else
+        else if (model.getEventDate() != null) {
+            if (model.getImages().size() > 0 && (model.getImages().get(0) != null)) {
+                GlideApp.with(mContext)
+                        .load(model.getImages().get(0))
+                        .centerCrop()
+                        .placeholder(R.drawable.placeholder)
+                        .into(holder.imageView);
+            }else{
+                GlideApp.with(mContext)
+                        .load("")
+                        .centerCrop()
+                        .placeholder(R.drawable.placeholder)
+                        .into(holder.imageView);
+            }
+        } else {
             GlideApp.with(mContext)
                     .load(model.getImage())
                     .centerCrop()
                     .placeholder(R.drawable.placeholder)
                     .into(holder.imageView);
+
+        }
     }
 
     @Override
