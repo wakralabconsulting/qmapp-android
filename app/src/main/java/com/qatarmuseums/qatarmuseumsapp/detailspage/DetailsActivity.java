@@ -15,6 +15,9 @@ import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.SwitchCompat;
 import android.support.v7.widget.Toolbar;
+import android.text.Html;
+import android.text.Spanned;
+import android.text.method.LinkMovementMethod;
 import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
@@ -602,7 +605,13 @@ public class DetailsActivity extends AppCompatActivity implements IPullZoom, OnM
 
 
     private void downloadAction() {
-        util.showComingSoonDialog(this, R.string.coming_soon_content);
+        if (museumAboutModels.size() > 0 && museumAboutModels.get(0).getDownloadable().size() > 0) {
+            Intent browserIntent = new Intent(Intent.ACTION_VIEW,
+                    Uri.parse(museumAboutModels.get(0).getDownloadable().get(0)));
+            startActivity(browserIntent);
+        } else {
+            util.showNormalDialog(this, R.string.error_unexpected);
+        }
     }
 
     @Override
@@ -1190,7 +1199,8 @@ public class DetailsActivity extends AppCompatActivity implements IPullZoom, OnM
             }
             this.shortDescription.setText(shortDescription);
             if (longDescription != null) {
-                this.longDescription.setText(longDescription);
+                this.longDescription.setMovementMethod(LinkMovementMethod.getInstance());
+                this.longDescription.setText(Html.fromHtml(longDescription));
             } else {
                 this.longDescription.setVisibility(View.GONE);
 
@@ -2433,6 +2443,7 @@ public class DetailsActivity extends AppCompatActivity implements IPullZoom, OnM
                             eventDateTxt.setText(museumAboutModels.get(0).getEventDate());
                             videoLayout.setVisibility(View.GONE);
                             downloadLayout.setVisibility(View.VISIBLE);
+                            mainTitle = museumAboutModels.get(0).getName();
                         } else {
                             timingTitle.setText(R.string.museum_timings);
                         }
@@ -2459,11 +2470,32 @@ public class DetailsActivity extends AppCompatActivity implements IPullZoom, OnM
                             first_description = museumAboutModels.get(0).getDescriptionList().get(0);
                         long_description = "";
                         for (int i = 1; i < museumAboutModels.get(0).getDescriptionList().size(); i++) {
-                            long_description = long_description + museumAboutModels.get(0).getDescriptionList().get(i);
-                            long_description = long_description + "\n\n";
-
+                            if (isLaunchEvent) {
+                                if (i == museumAboutModels.get(0).getDescriptionList().size() - 1) {
+                                    String str[] = museumAboutModels.get(0).getDescriptionList().get(i).
+                                            trim().split(" ");
+                                    for (int j = 0; j < str.length; j++) {
+                                        if (j == str.length - 2) {
+                                            long_description = long_description +
+                                                    "<a href='http://visitqatar.qa/'> " + str[j];
+                                            long_description = long_description + " ";
+                                        } else if (j == str.length - 1) {
+                                            long_description = long_description + str[j];
+                                            long_description = long_description + " </a>";
+                                        } else {
+                                            long_description = long_description + str[j];
+                                            long_description = long_description + " ";
+                                        }
+                                    }
+                                } else {
+                                    long_description = long_description + museumAboutModels.get(0).getDescriptionList().get(i);
+                                    long_description = long_description + "<br/><br/><br/>";
+                                }
+                            } else {
+                                long_description = long_description + museumAboutModels.get(0).getDescriptionList().get(i);
+                                long_description = long_description + "\n\n";
+                            }
                         }
-
                         fromMuseumAbout = true;
                         String file;
                         if (museumAboutModels.get(0).getVideoInfo() == null || museumAboutModels.get(0).getVideoInfo().size() == 0) {
@@ -2471,15 +2503,34 @@ public class DetailsActivity extends AppCompatActivity implements IPullZoom, OnM
                         } else {
                             file = museumAboutModels.get(0).getVideoInfo().get(0);
                         }
-                        loadData(null, first_description,
-                                null,
-                                museumAboutModels.get(0).getSubTitle(), long_description,
-                                museumAboutModels.get(0).getTimingInfo(), "",
-                                null,
-                                museumAboutModels.get(0).getContactEmail(),
-                                museumAboutModels.get(0).getLatitude(),
-                                museumAboutModels.get(0).getLongitude(),
-                                fromMuseumAbout, file);
+                        if (!isLaunchEvent)
+                            loadData(null,
+                                    first_description,
+                                    null,
+                                    museumAboutModels.get(0).getSubTitle(),
+                                    long_description,
+                                    museumAboutModels.get(0).getTimingInfo(),
+                                    "",
+                                    null,
+                                    museumAboutModels.get(0).getContactEmail(),
+                                    museumAboutModels.get(0).getLatitude(),
+                                    museumAboutModels.get(0).getLongitude(),
+                                    fromMuseumAbout,
+                                    file);
+                        else
+                            loadData(null,
+                                    first_description,
+                                    long_description,
+                                    museumAboutModels.get(0).getSubTitle(),
+                                    null,
+                                    museumAboutModels.get(0).getTimingInfo(),
+                                    "",
+                                    null,
+                                    museumAboutModels.get(0).getContactEmail(),
+                                    museumAboutModels.get(0).getLatitude(),
+                                    museumAboutModels.get(0).getLongitude(),
+                                    fromMuseumAbout,
+                                    file);
                         new MuseumAboutRowCount(DetailsActivity.this, language).execute();
 
                     } else {
