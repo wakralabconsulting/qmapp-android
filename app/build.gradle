@@ -25,6 +25,7 @@ android {
     buildTypes {
         release {
             minifyEnabled true
+            shrinkResources true
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
@@ -89,7 +90,7 @@ dependencies {
     implementation 'org.jsoup:jsoup:1.11.3'
     //rtl viewpager
     implementation 'com.booking:rtlviewpager:1.0.1'
-    //for detecting memmory leaks
+    //for detecting memory leaks
     debugImplementation 'com.squareup.leakcanary:leakcanary-android:1.6.1'
     releaseImplementation 'com.squareup.leakcanary:leakcanary-android-no-op:1.6.1'
     // Optional, if you use support library fragments:
