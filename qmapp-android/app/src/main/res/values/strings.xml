@@ -269,5 +269,5 @@ They exemplify the external influences and internal creativity that inspired thi
     <string name="claim_offer">Claim Offer</string>
     <string name="venue">Venue</string>
     <string name="time_slot_not_available">You are already registered for another event at the selected time.</string>
-
+    <string name="visit_qatar_url">http://visitqatar.qa/</string>
 </resources>
