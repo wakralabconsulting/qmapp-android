@@ -216,6 +216,7 @@ They exemplify the external influences and internal creativity that inspired thi
     <string name="nationality">Nationality *:</string>
     <string name="logout_success_message">You have been successfully logged out!</string>
     <string name="ok">OK</string>
+    <string name="warning_message">NO END TIME PROVIDED</string>
     <!-- Strings related to Create Account -->
     <string name="create_your_account">Create your account</string>
     <string name="username">Username *</string>
