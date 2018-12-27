@@ -94,7 +94,9 @@ public class TourSecondaryListActivity extends AppCompatActivity {
         util = new Util();
         mAdapter = new TourSecondaryListAdapter(this, tourDetailsList, position -> {
             navigationIntent = new Intent(TourSecondaryListActivity.this, DetailsActivity.class);
-            navigationIntent.putExtra("HEADER_IMAGE", tourDetailsList.get(position).getTourImage().get(0));
+            if(tourDetailsList.get(position).getTourImage().size()>0) {
+                navigationIntent.putExtra("HEADER_IMAGE", tourDetailsList.get(position).getTourImage().get(0));
+            }
             navigationIntent.putExtra("MAIN_TITLE", tourDetailsList.get(position).getTourTitle());
             navigationIntent.putExtra("DESCRIPTION", tourDetailsList.get(position).getTourBody());
             navigationIntent.putExtra("DATE", tourDetailsList.get(position).getTourDate());
@@ -169,11 +171,13 @@ public class TourSecondaryListActivity extends AppCompatActivity {
                             splitArray = tourDetailsList.get(i).getTourDate().split("-");
                             startTime = splitArray[0].concat(splitArray[1].trim());
                             startTimeStamp = util.getTimeStamp(startTime);
-                            endTime = splitArray[0].concat(splitArray[2]);
-                            endTimeStamp = util.getTimeStamp(endTime);
-                            tourDetailsList.get(i).setStartTimeStamp((startTimeStamp));
-                            tourDetailsList.get(i).setEndTimeStamp((endTimeStamp));
-                            tourDetailsList.get(i).setEventTimeStampDiff(String.valueOf(endTimeStamp - startTimeStamp));
+                            if(splitArray.length>2){
+                                endTime = splitArray[0].concat(splitArray[2].trim());
+                                endTimeStamp = util.getTimeStamp(endTime);
+                                tourDetailsList.get(i).setStartTimeStamp((startTimeStamp));
+                                tourDetailsList.get(i).setEndTimeStamp((endTimeStamp));
+                                tourDetailsList.get(i).setEventTimeStampDiff(String.valueOf(endTimeStamp - startTimeStamp));
+                            }
                         }
                         mAdapter.notifyDataSetChanged();
                         new TourDetailsRowCount(TourSecondaryListActivity.this, language, id).execute();
