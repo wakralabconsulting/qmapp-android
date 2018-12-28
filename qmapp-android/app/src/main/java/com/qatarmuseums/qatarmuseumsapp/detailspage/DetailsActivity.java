@@ -31,6 +31,7 @@ import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -638,13 +639,15 @@ public class DetailsActivity extends AppCompatActivity implements IPullZoom, OnM
 
 
     private void downloadAction() {
-        if (museumAboutModels.size() > 0 && museumAboutModels.get(0).getDownloadable().size() > 0) {
-            Intent browserIntent = new Intent(Intent.ACTION_VIEW,
-                    Uri.parse(museumAboutModels.get(0).getDownloadable().get(0)));
-            startActivity(browserIntent);
-        } else {
-            util.showNormalDialog(this, R.string.error_unexpected);
-        }
+        if (util.isNetworkAvailable(this)) {
+            if (museumAboutModels.size() > 0 && museumAboutModels.get(0).getDownloadable().size() > 0) {
+                Intent browserIntent = new Intent(Intent.ACTION_VIEW,
+                        Uri.parse(museumAboutModels.get(0).getDownloadable().get(0)));
+                startActivity(browserIntent);
+            } else
+                util.showNormalDialog(this, R.string.location_alert_txt);
+        } else
+            Toast.makeText(this, getString(R.string.check_network), Toast.LENGTH_SHORT).show();
     }
 
     @Override
@@ -2893,14 +2896,24 @@ public class DetailsActivity extends AppCompatActivity implements IPullZoom, OnM
                 } else {
                     timingTitle.setText(R.string.museum_timings);
                 }
-                loadData(null, description1,
-                        null,
-                        museumAboutTableEnglish.getMuseum_subtitle(), description2,
-                        museumAboutTableEnglish.getMuseum_opening_time(), "",
-                        null, museumAboutTableEnglish.getMuseum_contact_email(),
-                        museumAboutTableEnglish.getMuseum_lattitude(),
-                        museumAboutTableEnglish.getMuseum_longitude(),
-                        true, null);
+                if (!isLaunchEvent)
+                    loadData(null, description1,
+                            null,
+                            museumAboutTableEnglish.getMuseum_subtitle(), description2,
+                            museumAboutTableEnglish.getMuseum_opening_time(), "",
+                            null, museumAboutTableEnglish.getMuseum_contact_email(),
+                            museumAboutTableEnglish.getMuseum_lattitude(),
+                            museumAboutTableEnglish.getMuseum_longitude(),
+                            true, null);
+                else
+                    loadData(null, description1,
+                            description2,
+                            museumAboutTableEnglish.getMuseum_subtitle(), null,
+                            museumAboutTableEnglish.getMuseum_opening_time(), "",
+                            null, museumAboutTableEnglish.getMuseum_contact_email(),
+                            museumAboutTableEnglish.getMuseum_lattitude(),
+                            museumAboutTableEnglish.getMuseum_longitude(),
+                            true, null);
 
             } else {
                 commonContentLayout.setVisibility(View.INVISIBLE);
