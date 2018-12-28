@@ -117,9 +117,6 @@ public class CommonListAdapter extends RecyclerView.Adapter<CommonListAdapter.My
             holder.name.setText(model.getName());
             holder.name.setTextSize(33);
             holder.name.setAllCaps(false);
-            ViewGroup.LayoutParams params = holder.recyclerRowItem.getLayoutParams();
-            params.height = model.getRowHeight();
-            holder.recyclerRowItem.setLayoutParams(params);
         } else
             holder.name.setText(model.getName());
 
@@ -143,20 +140,14 @@ public class CommonListAdapter extends RecyclerView.Adapter<CommonListAdapter.My
             holder.dateAndTime.setVisibility(View.VISIBLE);
             holder.dateAndTime.setText(model.getStartDate() + " - " + model.getEndDate());
         }
-        if (model.getIsTravel() != null)
-            GlideApp.with(mContext)
-                    .load(model.getImage())
-                    .centerCrop()
-                    .placeholder(R.drawable.placeholder_portrait)
-                    .into(holder.imageView);
-        else if (model.getEventDate() != null) {
+        if (model.getEventDate() != null) {
             if (model.getImages().size() > 0 && (model.getImages().get(0) != null)) {
                 GlideApp.with(mContext)
                         .load(model.getImages().get(0))
                         .centerCrop()
                         .placeholder(R.drawable.placeholder)
                         .into(holder.imageView);
-            }else{
+            } else {
                 GlideApp.with(mContext)
                         .load("")
                         .centerCrop()
