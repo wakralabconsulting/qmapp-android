@@ -722,6 +722,7 @@ public class DetailsActivity extends AppCompatActivity implements IPullZoom, OnM
         } else if (comingFrom.equals(getString(R.string.museum_travel))) {
             getTravelsDetails();
         } else if (comingFrom.equals(getString(R.string.museum_discussion))) {
+            shortDescription.setTextAlignment(View.TEXT_ALIGNMENT_VIEW_START);
             if (util.isNetworkAvailable(DetailsActivity.this))
                 getSpecialEventDetailFromAPI(id, language);
             else
@@ -737,6 +738,7 @@ public class DetailsActivity extends AppCompatActivity implements IPullZoom, OnM
         interestLayout.setVisibility(View.VISIBLE);
         videoLayout.setVisibility(View.GONE);
         timingTitle.setText(R.string.date);
+        shortDescription.setTextAlignment(View.TEXT_ALIGNMENT_VIEW_START);
         loadData(null, description,
                 null, null, null,
                 eventDate, null, null, contactInfo, latitude, longitude,

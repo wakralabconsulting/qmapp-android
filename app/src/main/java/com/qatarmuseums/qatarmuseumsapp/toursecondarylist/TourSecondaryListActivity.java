@@ -34,6 +34,7 @@ import com.qatarmuseums.qatarmuseumsapp.utils.Util;
 
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import retrofit2.Call;
@@ -94,7 +95,7 @@ public class TourSecondaryListActivity extends AppCompatActivity {
         util = new Util();
         mAdapter = new TourSecondaryListAdapter(this, tourDetailsList, position -> {
             navigationIntent = new Intent(TourSecondaryListActivity.this, DetailsActivity.class);
-            if(tourDetailsList.get(position).getTourImage().size()>0) {
+            if (tourDetailsList.get(position).getTourImage().size() > 0) {
                 navigationIntent.putExtra("HEADER_IMAGE", tourDetailsList.get(position).getTourImage().get(0));
             }
             navigationIntent.putExtra("MAIN_TITLE", tourDetailsList.get(position).getTourTitle());
@@ -171,7 +172,7 @@ public class TourSecondaryListActivity extends AppCompatActivity {
                             splitArray = tourDetailsList.get(i).getTourDate().split("-");
                             startTime = splitArray[0].concat(splitArray[1].trim());
                             startTimeStamp = util.getTimeStamp(startTime);
-                            if(splitArray.length>2){
+                            if (splitArray.length > 2) {
                                 endTime = splitArray[0].concat(splitArray[2].trim());
                                 endTimeStamp = util.getTimeStamp(endTime);
                                 tourDetailsList.get(i).setStartTimeStamp((startTimeStamp));
@@ -179,6 +180,7 @@ public class TourSecondaryListActivity extends AppCompatActivity {
                                 tourDetailsList.get(i).setEventTimeStampDiff(String.valueOf(endTimeStamp - startTimeStamp));
                             }
                         }
+                        Collections.sort(tourDetailsList);
                         mAdapter.notifyDataSetChanged();
                         new TourDetailsRowCount(TourSecondaryListActivity.this, language, id).execute();
                     } else {
@@ -437,6 +439,7 @@ public class TourSecondaryListActivity extends AppCompatActivity {
                     );
                     tourDetailsList.add(i, tourDetailsModel);
                 }
+                Collections.sort(tourDetailsList);
                 mAdapter.notifyDataSetChanged();
                 recyclerView.setVisibility(View.VISIBLE);
                 retryLayout.setVisibility(View.GONE);

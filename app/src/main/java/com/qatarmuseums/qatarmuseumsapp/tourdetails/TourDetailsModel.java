@@ -2,12 +2,13 @@ package com.qatarmuseums.qatarmuseumsapp.tourdetails;
 
 import android.os.Parcel;
 import android.os.Parcelable;
+import android.support.annotation.NonNull;
 
 import com.google.gson.annotations.SerializedName;
 
 import java.util.ArrayList;
 
-public class TourDetailsModel implements Parcelable {
+public class TourDetailsModel implements Parcelable, Comparable<TourDetailsModel> {
     @SerializedName("Title")
     private String tourTitle;
     @SerializedName("Body")
@@ -79,8 +80,8 @@ public class TourDetailsModel implements Parcelable {
         tourSpeakerInfo = in.readString();
         nId = in.readString();
         eventTimeStampDiff = in.readString();
-        startTimeStamp=in.readLong();
-        endTimeStamp=in.readLong();
+        startTimeStamp = in.readLong();
+        endTimeStamp = in.readLong();
     }
 
     public static final Creator<TourDetailsModel> CREATOR = new Creator<TourDetailsModel>() {
@@ -264,5 +265,10 @@ public class TourDetailsModel implements Parcelable {
         dest.writeString(eventTimeStampDiff);
         dest.writeLong(startTimeStamp);
         dest.writeLong(endTimeStamp);
+    }
+
+    @Override
+    public int compareTo(@NonNull TourDetailsModel tourDetailsModel) {
+        return this.tourSortId.compareTo(tourDetailsModel.tourSortId);
     }
 }
