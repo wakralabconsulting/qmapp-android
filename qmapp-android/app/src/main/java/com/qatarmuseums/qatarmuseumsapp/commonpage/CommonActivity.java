@@ -12,7 +12,6 @@ import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.view.MotionEvent;
 import android.view.View;
-import android.view.ViewTreeObserver;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.Button;
@@ -137,11 +136,10 @@ public class CommonActivity extends AppCompatActivity {
                     navigationIntent = new Intent(CommonActivity.this, DetailsActivity.class);
                 if (toolbarTitle.equals(getString(R.string.museum_tours)) ||
                         toolbarTitle.equals(getString(R.string.museum_discussion))) {
-                    if(models.get(position).getImages().size()>0) {
+                    if (models.get(position).getImages().size() > 0) {
                         navigationIntent.putExtra("HEADER_IMAGE", models.get(position).getImages().get(0));
                     }
-                }
-                else
+                } else
                     navigationIntent.putExtra("HEADER_IMAGE", models.get(position).getImage());
                 navigationIntent.putExtra("MAIN_TITLE", models.get(position).getName());
                 navigationIntent.putExtra("LONG_DESC", models.get(position).getDescription());
@@ -193,11 +191,11 @@ public class CommonActivity extends AppCompatActivity {
         convertor = new Convertor();
     }
 
-    private void getTravelDataFromDataBase(int rowHeight) {
+    private void getTravelDataFromDataBase() {
         if (appLanguage == 1) {
-            new RetriveEnglishTravelData(CommonActivity.this, appLanguage, rowHeight).execute();
+            new RetriveEnglishTravelData(CommonActivity.this, appLanguage).execute();
         } else {
-            new RetriveArabicTravelData(CommonActivity.this, appLanguage, rowHeight).execute();
+            new RetriveArabicTravelData(CommonActivity.this, appLanguage).execute();
         }
     }
 
@@ -234,20 +232,11 @@ public class CommonActivity extends AppCompatActivity {
                 getTourListFromAPI();
             else
                 new RetriveEnglishTourData(CommonActivity.this, appLanguage, 1).execute();
-
         } else if (toolbarTitle.equals(getString(R.string.museum_travel))) {
-            recyclerView.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
-                @Override
-                public void onGlobalLayout() {
-                    recyclerView.getViewTreeObserver().removeOnGlobalLayoutListener(this);
-                    if (toolbarTitle.equals(getString(R.string.museum_travel))) {
-                        if (util.isNetworkAvailable(CommonActivity.this))
-                            getTravelDataFromAPI(recyclerView.getHeight() / 2);
-                        else
-                            getTravelDataFromDataBase(recyclerView.getHeight() / 2);
-                    }
-                }
-            });
+            if (util.isNetworkAvailable(CommonActivity.this))
+                getTravelDataFromAPI();
+            else
+                getTravelDataFromDataBase();
         } else if (toolbarTitle.equals(getString(R.string.museum_discussion))) {
             if (util.isNetworkAvailable(CommonActivity.this))
                 getSpecialEventFromAPI();
@@ -337,7 +326,7 @@ public class CommonActivity extends AppCompatActivity {
         });
     }
 
-    private void getTravelDataFromAPI(int rowHeight) {
+    private void getTravelDataFromAPI() {
         progressBar.setVisibility(View.VISIBLE);
         final String language;
         if (appLanguage == 1) {
@@ -362,7 +351,7 @@ public class CommonActivity extends AppCompatActivity {
                                     response.body().get(i).getPromotionalCode(),
                                     response.body().get(i).getClaimOffer(),
                                     response.body().get(i).getId(),
-                                    true, rowHeight));
+                                    true));
                         removeHtmlTags(models);
                         mAdapter.notifyDataSetChanged();
                         new TravelRowCount(CommonActivity.this, language).execute();
@@ -1001,12 +990,11 @@ public class CommonActivity extends AppCompatActivity {
 
     public class RetriveEnglishTravelData extends AsyncTask<Void, Void, List<TravelDetailsTableEnglish>> {
         private WeakReference<CommonActivity> activityReference;
-        int language, rowHeight;
+        int language;
 
-        RetriveEnglishTravelData(CommonActivity context, int appLanguage, int rowHeight) {
+        RetriveEnglishTravelData(CommonActivity context, int appLanguage) {
             activityReference = new WeakReference<>(context);
             language = appLanguage;
-            this.rowHeight = rowHeight;
         }
 
         @Override
@@ -1027,7 +1015,7 @@ public class CommonActivity extends AppCompatActivity {
                             travelDetailsTableEnglishe.get(i).getPromotional_code(),
                             "",
                             travelDetailsTableEnglishe.get(i).getContent_ID(),
-                            true, rowHeight);
+                            true);
                     models.add(i, commonModel);
                 }
                 mAdapter.notifyDataSetChanged();
@@ -1047,12 +1035,11 @@ public class CommonActivity extends AppCompatActivity {
 
     public class RetriveArabicTravelData extends AsyncTask<Void, Void, List<TravelDetailsTableArabic>> {
         private WeakReference<CommonActivity> activityReference;
-        int language, rowHeight;
+        int language;
 
-        RetriveArabicTravelData(CommonActivity context, int appLanguage, int rowHeight) {
+        RetriveArabicTravelData(CommonActivity context, int appLanguage) {
             activityReference = new WeakReference<>(context);
             language = appLanguage;
-            this.rowHeight = rowHeight;
         }
 
         @Override
@@ -1073,7 +1060,7 @@ public class CommonActivity extends AppCompatActivity {
                             travelDetailsTableArabic.get(i).getPromotional_code(),
                             "",
                             travelDetailsTableArabic.get(i).getContent_ID(),
-                            true, rowHeight);
+                            true);
                     models.add(i, commonModel);
 
                 }
