@@ -110,7 +110,7 @@ public class CommonModel {
 
     public CommonModel(String name, String image, String description, String email, String contactnumber,
                        String promotionalCode, String claimOffer, String contentId,
-                       boolean isTravel, int rowHeight) {
+                       boolean isTravel) {
         this.name = name;
         this.image = image;
         this.description = description;
@@ -120,7 +120,6 @@ public class CommonModel {
         this.claimOffer = claimOffer;
         this.id = contentId;
         this.isTravel = isTravel;
-        this.rowHeight = rowHeight;
     }
 
     public CommonModel(String name, String id, String location, String image,
