@@ -95,11 +95,9 @@ public class HomeActivity extends BaseActivity {
     ProgressBar progressBar;
     SharedPreferences qmPreferences;
     QMDatabase qmDatabase;
-    HomePageTableEnglish homePageTableEnglish;
-    HomePageTableArabic homePageTableArabic;
     HomePageBannerTableEnglish homePageBannerTableEnglish;
     HomePageBannerTableArabic homePageBannerTableArabic;
-    int homePageTableRowCount, homePageBannerTableRowCount;
+    int homePageBannerTableRowCount;
     private Intent navigationIntent;
     private LinearLayout retryLayout;
     private Button retryButton;
@@ -409,7 +407,7 @@ public class HomeActivity extends BaseActivity {
                         recyclerView.setVisibility(View.VISIBLE);
                         homeLists.addAll(response.body());
                         mAdapter.notifyDataSetChanged();
-                        new RowCount(HomeActivity.this, language).execute();
+                        new RowCount(HomeActivity.this, language, homeLists).execute();
                     } else {
                         recyclerView.setVisibility(View.GONE);
                         noResultFoundLayout.setVisibility(View.VISIBLE);
@@ -1136,12 +1134,17 @@ public class HomeActivity extends BaseActivity {
             new RetriveArabicBannerTableData(HomeActivity.this, language).execute();
     }
 
-    public class RowCount extends AsyncTask<Void, Void, Integer> {
+    public static class RowCount extends AsyncTask<Void, Void, Integer> {
         private WeakReference<HomeActivity> activityReference;
+        private WeakReference<ArrayList<HomeList>> homeList;
         String language;
+        HomePageTableEnglish homePageTableEnglish;
+        HomePageTableArabic homePageTableArabic;
 
-        RowCount(HomeActivity context, String apiLanguage) {
+
+        RowCount(HomeActivity context, String apiLanguage, ArrayList<HomeList> list) {
             activityReference = new WeakReference<>(context);
+            homeList = new WeakReference<>(list);
             language = apiLanguage;
         }
 
@@ -1156,15 +1159,16 @@ public class HomeActivity extends BaseActivity {
 
         @Override
         protected void onPostExecute(Integer integer) {
+            int homePageTableRowCount;
             homePageTableRowCount = integer;
             if (homePageTableRowCount > 0) {
                 //updateEnglishTable or add row to database
-                new CheckDBRowExist(HomeActivity.this, language).execute();
+                new CheckDBRowExist(activityReference.get(), language, homeList.get()).execute();
 
             } else {
                 //create databse
-                new InsertDatabaseTask(HomeActivity.this, homePageTableEnglish,
-                        homePageTableArabic, language).execute();
+                new InsertDatabaseTask(activityReference.get(), homePageTableEnglish,
+                        homePageTableArabic, language, homeList.get()).execute();
 
             }
 
@@ -1172,54 +1176,56 @@ public class HomeActivity extends BaseActivity {
     }
 
 
-    public class CheckDBRowExist extends AsyncTask<Void, Void, Void> {
+    public static class CheckDBRowExist extends AsyncTask<Void, Void, Void> {
         private WeakReference<HomeActivity> activityReference;
+        private WeakReference<ArrayList<HomeList>> homeLists;
         private HomePageTableEnglish homePageTableEnglish;
         private HomePageTableArabic homePageTableArabic;
         String language;
 
-        CheckDBRowExist(HomeActivity context, String apiLanguage) {
+        CheckDBRowExist(HomeActivity context, String apiLanguage, ArrayList<HomeList> list) {
             activityReference = new WeakReference<>(context);
+            homeLists = new WeakReference<>(list);
             language = apiLanguage;
         }
 
         @Override
         protected Void doInBackground(Void... voids) {
-            if (homeLists.size() > 0) {
+            if (homeLists.get().size() > 0) {
                 if (language.equals("en")) {
-                    for (int i = 0; i < homeLists.size(); i++) {
+                    for (int i = 0; i < homeLists.get().size(); i++) {
                         int n = activityReference.get().qmDatabase.getHomePageTableDao().checkIdExistEnglish(
-                                Integer.parseInt(homeLists.get(i).getId()));
+                                Integer.parseInt(homeLists.get().get(i).getId()));
                         if (n > 0) {
                             //updateEnglishTable same id
-                            new UpdateHomePageTable(HomeActivity.this, language, i).execute();
+                            new UpdateHomePageTable(activityReference.get(), language, i, homeLists.get()).execute();
 
                         } else {
                             //create row with corresponding id
-                            homePageTableEnglish = new HomePageTableEnglish(Long.parseLong(homeLists.get(i).getId()),
-                                    homeLists.get(i).getName(),
-                                    homeLists.get(i).getTourguideAvailable().toString(),
-                                    homeLists.get(i).getImage(),
-                                    homeLists.get(i).getSortId());
+                            homePageTableEnglish = new HomePageTableEnglish(Long.parseLong(homeLists.get().get(i).getId()),
+                                    homeLists.get().get(i).getName(),
+                                    homeLists.get().get(i).getTourguideAvailable().toString(),
+                                    homeLists.get().get(i).getImage(),
+                                    homeLists.get().get(i).getSortId());
                             activityReference.get().qmDatabase.getHomePageTableDao().insertEnglishTable(homePageTableEnglish);
 
                         }
                     }
                 } else {
-                    for (int i = 0; i < homeLists.size(); i++) {
+                    for (int i = 0; i < homeLists.get().size(); i++) {
                         int n = activityReference.get().qmDatabase.getHomePageTableDao().checkIdExistArabic(
-                                Integer.parseInt(homeLists.get(i).getId()));
+                                Integer.parseInt(homeLists.get().get(i).getId()));
                         if (n > 0) {
                             //updateEnglishTable same id
-                            new UpdateHomePageTable(HomeActivity.this, language, i).execute();
+                            new UpdateHomePageTable(activityReference.get(), language, i, homeLists.get()).execute();
 
                         } else {
                             //create row with corresponding id
-                            homePageTableArabic = new HomePageTableArabic(Long.parseLong(homeLists.get(i).getId()),
-                                    homeLists.get(i).getName(),
-                                    homeLists.get(i).getTourguideAvailable().toString(),
-                                    homeLists.get(i).getImage(),
-                                    homeLists.get(i).getSortId());
+                            homePageTableArabic = new HomePageTableArabic(Long.parseLong(homeLists.get().get(i).getId()),
+                                    homeLists.get().get(i).getName(),
+                                    homeLists.get().get(i).getTourguideAvailable().toString(),
+                                    homeLists.get().get(i).getImage(),
+                                    homeLists.get().get(i).getSortId());
                             activityReference.get().qmDatabase.getHomePageTableDao().insertArabicTable(homePageTableArabic);
 
                         }
@@ -1232,15 +1238,17 @@ public class HomeActivity extends BaseActivity {
 
     }
 
-    public class InsertDatabaseTask extends AsyncTask<Void, Void, Boolean> {
+    public static class InsertDatabaseTask extends AsyncTask<Void, Void, Boolean> {
         private WeakReference<HomeActivity> activityReference;
+        private WeakReference<ArrayList<HomeList>> homeLists;
         private HomePageTableEnglish homePageTableEnglish;
         private HomePageTableArabic homePageTableArabic;
         String language;
 
         InsertDatabaseTask(HomeActivity context, HomePageTableEnglish homePageTableEnglish,
-                           HomePageTableArabic homePageTableArabic, String lan) {
+                           HomePageTableArabic homePageTableArabic, String lan, ArrayList<HomeList> list) {
             activityReference = new WeakReference<>(context);
+            homeLists = new WeakReference<>(list);
             this.homePageTableEnglish = homePageTableEnglish;
             this.homePageTableArabic = homePageTableArabic;
             language = lan;
@@ -1250,21 +1258,21 @@ public class HomeActivity extends BaseActivity {
         protected Boolean doInBackground(Void... voids) {
             if (homeLists != null) {
                 if (language.equals("en")) {
-                    for (int i = 0; i < homeLists.size(); i++) {
-                        homePageTableEnglish = new HomePageTableEnglish(Long.parseLong(homeLists.get(i).getId()),
-                                homeLists.get(i).getName(),
-                                homeLists.get(i).getTourguideAvailable().toString(),
-                                homeLists.get(i).getImage(),
-                                homeLists.get(i).getSortId());
+                    for (int i = 0; i < homeLists.get().size(); i++) {
+                        homePageTableEnglish = new HomePageTableEnglish(Long.parseLong(homeLists.get().get(i).getId()),
+                                homeLists.get().get(i).getName(),
+                                homeLists.get().get(i).getTourguideAvailable().toString(),
+                                homeLists.get().get(i).getImage(),
+                                homeLists.get().get(i).getSortId());
                         activityReference.get().qmDatabase.getHomePageTableDao().insertEnglishTable(homePageTableEnglish);
                     }
                 } else {
-                    for (int i = 0; i < homeLists.size(); i++) {
-                        homePageTableArabic = new HomePageTableArabic(Long.parseLong(homeLists.get(i).getId()),
-                                homeLists.get(i).getName(),
-                                homeLists.get(i).getTourguideAvailable().toString(),
-                                homeLists.get(i).getImage(),
-                                homeLists.get(i).getSortId());
+                    for (int i = 0; i < homeLists.get().size(); i++) {
+                        homePageTableArabic = new HomePageTableArabic(Long.parseLong(homeLists.get().get(i).getId()),
+                                homeLists.get().get(i).getName(),
+                                homeLists.get().get(i).getTourguideAvailable().toString(),
+                                homeLists.get().get(i).getImage(),
+                                homeLists.get().get(i).getSortId());
                         activityReference.get().qmDatabase.getHomePageTableDao().insertArabicTable(homePageTableArabic);
 
                     }
@@ -1280,13 +1288,15 @@ public class HomeActivity extends BaseActivity {
     }
 
 
-    public class UpdateHomePageTable extends AsyncTask<Void, Void, Void> {
+    public static class UpdateHomePageTable extends AsyncTask<Void, Void, Void> {
         private WeakReference<HomeActivity> activityReference;
+        private WeakReference<ArrayList<HomeList>> homeLists;
         String language;
         int position;
 
-        UpdateHomePageTable(HomeActivity context, String apiLanguage, int p) {
+        UpdateHomePageTable(HomeActivity context, String apiLanguage, int p, ArrayList<HomeList> list) {
             activityReference = new WeakReference<>(context);
+            homeLists = new WeakReference<>(list);
             language = apiLanguage;
             position = p;
         }
@@ -1296,17 +1306,17 @@ public class HomeActivity extends BaseActivity {
             if (language.equals("en")) {
                 // updateEnglishTable table with english name
                 activityReference.get().qmDatabase.getHomePageTableDao().updateHomePageEnglish(
-                        homeLists.get(position).getName(), homeLists.get(position).getTourguideAvailable().toString(),
-                        homeLists.get(position).getImage(), homeLists.get(position).getSortId(),
-                        homeLists.get(position).getId()
+                        homeLists.get().get(position).getName(), homeLists.get().get(position).getTourguideAvailable().toString(),
+                        homeLists.get().get(position).getImage(), homeLists.get().get(position).getSortId(),
+                        homeLists.get().get(position).getId()
                 );
 
             } else {
                 // updateEnglishTable table with arabic name
                 activityReference.get().qmDatabase.getHomePageTableDao().updateHomePageArabic(
-                        homeLists.get(position).getName(), homeLists.get(position).getTourguideAvailable().toString(),
-                        homeLists.get(position).getImage(), homeLists.get(position).getSortId(),
-                        homeLists.get(position).getId()
+                        homeLists.get().get(position).getName(), homeLists.get().get(position).getTourguideAvailable().toString(),
+                        homeLists.get().get(position).getImage(), homeLists.get().get(position).getSortId(),
+                        homeLists.get().get(position).getId()
                 );
             }
 

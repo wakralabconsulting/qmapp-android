@@ -1,5 +1,6 @@
 package com.qatarmuseums.qatarmuseumsapp.objectpreview;
 
+import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
@@ -17,7 +18,6 @@ class PagerAdapter extends FragmentPagerAdapter {
         super(fm);
         this.count = count;
         this.objectPreviewModels = objectPreviewModels;
-        pageFragment = new PageFragment();
     }
 
     @Override
@@ -27,17 +27,23 @@ class PagerAdapter extends FragmentPagerAdapter {
 
     @Override
     public Fragment getItem(int position) {
-        return pageFragment.newInstance(position, position == getCount(),
-                objectPreviewModels.get(position).getGalleryNumber(),
-                objectPreviewModels.get(position).getFloorLevel(),
-                objectPreviewModels.get(position).getImage(),
-                objectPreviewModels.get(position).getMainTitle(),
-                objectPreviewModels.get(position).getAccessionNumber(),
-                objectPreviewModels.get(position).getCuratorialDescription(),
-                objectPreviewModels.get(position).getObjectHistory(),
-                objectPreviewModels.get(position).getObjectENGSummary(),
-                objectPreviewModels.get(position).getImages(),
-                objectPreviewModels.get(position).getAudioFile());
+        Bundle args = new Bundle();
+        args.putInt("POSITION", position);
+        args.putString("GALLERY", objectPreviewModels.get(position).getGalleryNumber());
+        args.putString("FLOOR", objectPreviewModels.get(position).getFloorLevel());
+        args.putString("MAINTITLE", objectPreviewModels.get(position).getMainTitle());
+        args.putString("ACCESIONNUMBER", objectPreviewModels.get(position).getAccessionNumber());
+        args.putString("IMAGE", objectPreviewModels.get(position).getImage());
+        args.putString("DESCRIPTION", objectPreviewModels.get(position).getCuratorialDescription());
+        args.putString("HISTORY", objectPreviewModels.get(position).getObjectHistory());
+        args.putString("SUMMARY", objectPreviewModels.get(position).getObjectENGSummary());
+        args.putStringArrayList("IMAGES", objectPreviewModels.get(position).getImages());
+        args.putString("AUDIO", objectPreviewModels.get(position).getAudioFile());
+        if (position == getCount())
+            args.putBoolean("isLast", true);
+        final PageFragment fragment = new PageFragment();
+        fragment.setArguments(args);
+        return fragment;
     }
 
 }

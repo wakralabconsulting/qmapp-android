@@ -63,10 +63,13 @@ public class ObjectPreviewActivity extends AppCompatActivity {
     private int currentPosition;
     private LinearLayout rootLayout;
     private QMDatabase qmDatabase;
-    ArtifactTableEnglish artifactTableEnglish;
-    ArtifactTableArabic artifactTableArabic;
-    int artifactTableRowCount;
-    private Convertor converters;
+    private static AsyncTask row;
+    private static AsyncTask check;
+    private static AsyncTask insert;
+    private static AsyncTask update;
+
+
+    private static Convertor converters;
     LinearLayout retryLayout;
     Button retryButton;
 
@@ -262,7 +265,7 @@ public class ObjectPreviewActivity extends AppCompatActivity {
                 if (response.isSuccessful()) {
                     if (response.body() != null && response.body().size() > 0) {
                         artifactList = response.body();
-                        new RowCount(ObjectPreviewActivity.this, language).execute();
+                        row = new RowCount(ObjectPreviewActivity.this, language, artifactList).execute();
                         setupAdapter();
                     } else {
                         commonContentLayout.setVisibility(View.GONE);
@@ -305,208 +308,224 @@ public class ObjectPreviewActivity extends AppCompatActivity {
         pager.setAdapter(new PagerAdapter(getSupportFragmentManager(), artifactList.size(), artifactList));
     }
 
-    public class RowCount extends AsyncTask<Void, Void, Integer> {
+    public static class RowCount extends AsyncTask<Void, Void, Integer> {
         private WeakReference<ObjectPreviewActivity> activityReference;
+        private WeakReference<ArrayList<ArtifactDetails>> artifactList;
         String language;
+        ArtifactTableEnglish artifactTableEnglish;
+        ArtifactTableArabic artifactTableArabic;
 
-        RowCount(ObjectPreviewActivity context, String apiLanguage) {
+        RowCount(ObjectPreviewActivity context, String apiLanguage, ArrayList<ArtifactDetails> list) {
             activityReference = new WeakReference<>(context);
+            artifactList = new WeakReference<>(list);
             language = apiLanguage;
         }
 
         @Override
         protected Integer doInBackground(Void... voids) {
-            if (language.equals("en"))
-                return activityReference.get().qmDatabase.getArtifactTableDao().getNumberOfRowsEnglish();
-            else
-                return activityReference.get().qmDatabase.getArtifactTableDao().getNumberOfRowsArabic();
-
+            if (!(row.isCancelled())) {
+                if (language.equals("en"))
+                    return activityReference.get().qmDatabase.getArtifactTableDao().getNumberOfRowsEnglish();
+                else
+                    return activityReference.get().qmDatabase.getArtifactTableDao().getNumberOfRowsArabic();
+            }
+            return null;
         }
 
         @Override
         protected void onPostExecute(Integer integer) {
+            int artifactTableRowCount;
             artifactTableRowCount = integer;
             if (artifactTableRowCount > 0) {
                 //updateEnglishTable or add row to database
-                new CheckDBRowExist(ObjectPreviewActivity.this, language).execute();
+                check = new CheckDBRowExist(activityReference.get(), language, artifactList.get()).execute();
 
             } else {
                 //create databse
-                new InsertDatabaseTask(ObjectPreviewActivity.this, artifactTableEnglish,
-                        artifactTableArabic, language).execute();
+                insert = new InsertDatabaseTask(activityReference.get(), artifactTableEnglish,
+                        artifactTableArabic, language, artifactList.get()).execute();
 
             }
 
         }
     }
 
-    public class CheckDBRowExist extends AsyncTask<Void, Void, Void> {
+    public static class CheckDBRowExist extends AsyncTask<Void, Void, Void> {
         private WeakReference<ObjectPreviewActivity> activityReference;
+        private WeakReference<ArrayList<ArtifactDetails>> artifactList;
         private ArtifactTableEnglish artifactTableEnglish;
         private ArtifactTableArabic artifactTableArabic;
         String language;
 
-        CheckDBRowExist(ObjectPreviewActivity context, String apiLanguage) {
+        CheckDBRowExist(ObjectPreviewActivity context, String apiLanguage, ArrayList<ArtifactDetails> list) {
             activityReference = new WeakReference<>(context);
+            artifactList = new WeakReference<>(list);
             language = apiLanguage;
         }
 
         @Override
         protected Void doInBackground(Void... voids) {
-            if (artifactList.size() > 0) {
-                if (language.equals("en")) {
-                    for (int i = 0; i < artifactList.size(); i++) {
-                        int n = activityReference.get().qmDatabase.getArtifactTableDao().checkNidExistEnglish(
-                                Integer.parseInt(artifactList.get(i).getNid()));
-                        if (n > 0) {
-                            //updateEnglishTable same id
-                            new UpdateArtifactTable(ObjectPreviewActivity.this, language, i).execute();
+            if (!(check.isCancelled())) {
+                if (artifactList.get().size() > 0) {
+                    if (language.equals("en")) {
+                        for (int i = 0; i < artifactList.get().size(); i++) {
+                            int n = activityReference.get().qmDatabase.getArtifactTableDao().checkNidExistEnglish(
+                                    Integer.parseInt(artifactList.get().get(i).getNid()));
+                            if (n > 0) {
+                                //updateEnglishTable same id
+                                update = new UpdateArtifactTable(activityReference.get(), language, i, artifactList.get()).execute();
 
-                        } else {
-                            //create row with corresponding id
-                            artifactTableEnglish = new ArtifactTableEnglish(Long.parseLong(artifactList.get(i).getNid()),
-                                    artifactList.get(i).getTitle(),
-                                    artifactList.get(i).getAccessionNumber(),
-                                    artifactList.get(i).getTourGuideId(),
-                                    artifactList.get(i).getMainTitle(),
-                                    artifactList.get(i).getImage(),
-                                    artifactList.get(i).getArtifactPosition(),
-                                    artifactList.get(i).getAudioFile(),
-                                    artifactList.get(i).getAudioDescriptif(),
-                                    artifactList.get(i).getCuratorialDescription(),
-                                    converters.fromArrayList(artifactList.get(i).getImages()),
-                                    artifactList.get(i).getFloorLevel(),
-                                    artifactList.get(i).getGalleryNumber(),
-                                    artifactList.get(i).getObjectHistory(),
-                                    artifactList.get(i).getProduction(),
-                                    artifactList.get(i).getProductionDates(),
-                                    artifactList.get(i).getPeriodStyle(),
-                                    artifactList.get(i).getArtistCreatorAuthor(),
-                                    artifactList.get(i).getTechniqueMaterials(),
-                                    artifactList.get(i).getArtifactNumber(),
-                                    artifactList.get(i).getDimensions(),
-                                    artifactList.get(i).getSortId(),
-                                    artifactList.get(i).getThumbImage());
-                            activityReference.get().qmDatabase.getArtifactTableDao().insertEnglishTable(artifactTableEnglish);
+                            } else {
+                                //create row with corresponding id
+                                artifactTableEnglish = new ArtifactTableEnglish(Long.parseLong(artifactList.get().get(i).getNid()),
+                                        artifactList.get().get(i).getTitle(),
+                                        artifactList.get().get(i).getAccessionNumber(),
+                                        artifactList.get().get(i).getTourGuideId(),
+                                        artifactList.get().get(i).getMainTitle(),
+                                        artifactList.get().get(i).getImage(),
+                                        artifactList.get().get(i).getArtifactPosition(),
+                                        artifactList.get().get(i).getAudioFile(),
+                                        artifactList.get().get(i).getAudioDescriptif(),
+                                        artifactList.get().get(i).getCuratorialDescription(),
+                                        converters.fromArrayList(artifactList.get().get(i).getImages()),
+                                        artifactList.get().get(i).getFloorLevel(),
+                                        artifactList.get().get(i).getGalleryNumber(),
+                                        artifactList.get().get(i).getObjectHistory(),
+                                        artifactList.get().get(i).getProduction(),
+                                        artifactList.get().get(i).getProductionDates(),
+                                        artifactList.get().get(i).getPeriodStyle(),
+                                        artifactList.get().get(i).getArtistCreatorAuthor(),
+                                        artifactList.get().get(i).getTechniqueMaterials(),
+                                        artifactList.get().get(i).getArtifactNumber(),
+                                        artifactList.get().get(i).getDimensions(),
+                                        artifactList.get().get(i).getSortId(),
+                                        artifactList.get().get(i).getThumbImage());
+                                activityReference.get().qmDatabase.getArtifactTableDao().insertEnglishTable(artifactTableEnglish);
 
+                            }
                         }
-                    }
-                } else {
-                    for (int i = 0; i < artifactList.size(); i++) {
-                        int n = activityReference.get().qmDatabase.getArtifactTableDao().checkNidExistArabic(
-                                Integer.parseInt(artifactList.get(i).getNid()));
-                        if (n > 0) {
-                            //updateEnglishTable same id
-                            new UpdateArtifactTable(ObjectPreviewActivity.this, language, i).execute();
+                    } else {
+                        for (int i = 0; i < artifactList.get().size(); i++) {
+                            int n = activityReference.get().qmDatabase.getArtifactTableDao().checkNidExistArabic(
+                                    Integer.parseInt(artifactList.get().get(i).getNid()));
+                            if (n > 0) {
+                                //updateEnglishTable same id
+                                update = new UpdateArtifactTable(activityReference.get(), language, i, artifactList.get()).execute();
 
-                        } else {
-                            //create row with corresponding id
-                            artifactTableArabic = new ArtifactTableArabic(Long.parseLong(artifactList.get(i).getNid()),
-                                    artifactList.get(i).getTitle(),
-                                    artifactList.get(i).getAccessionNumber(),
-                                    artifactList.get(i).getTourGuideId(),
-                                    artifactList.get(i).getMainTitle(),
-                                    artifactList.get(i).getImage(),
-                                    artifactList.get(i).getArtifactPosition(),
-                                    artifactList.get(i).getAudioFile(),
-                                    artifactList.get(i).getAudioDescriptif(),
-                                    artifactList.get(i).getCuratorialDescription(),
-                                    converters.fromArrayList(artifactList.get(i).getImages()),
-                                    artifactList.get(i).getFloorLevel(),
-                                    artifactList.get(i).getGalleryNumber(),
-                                    artifactList.get(i).getObjectHistory(),
-                                    artifactList.get(i).getProduction(),
-                                    artifactList.get(i).getProductionDates(),
-                                    artifactList.get(i).getPeriodStyle(),
-                                    artifactList.get(i).getArtistCreatorAuthor(),
-                                    artifactList.get(i).getTechniqueMaterials(),
-                                    artifactList.get(i).getArtifactNumber(),
-                                    artifactList.get(i).getDimensions(),
-                                    artifactList.get(i).getSortId(),
-                                    artifactList.get(i).getThumbImage());
-                            activityReference.get().qmDatabase.getArtifactTableDao().insertArabicTable(artifactTableArabic);
+                            } else {
+                                //create row with corresponding id
+                                artifactTableArabic = new ArtifactTableArabic(Long.parseLong(artifactList.get().get(i).getNid()),
+                                        artifactList.get().get(i).getTitle(),
+                                        artifactList.get().get(i).getAccessionNumber(),
+                                        artifactList.get().get(i).getTourGuideId(),
+                                        artifactList.get().get(i).getMainTitle(),
+                                        artifactList.get().get(i).getImage(),
+                                        artifactList.get().get(i).getArtifactPosition(),
+                                        artifactList.get().get(i).getAudioFile(),
+                                        artifactList.get().get(i).getAudioDescriptif(),
+                                        artifactList.get().get(i).getCuratorialDescription(),
+                                        converters.fromArrayList(artifactList.get().get(i).getImages()),
+                                        artifactList.get().get(i).getFloorLevel(),
+                                        artifactList.get().get(i).getGalleryNumber(),
+                                        artifactList.get().get(i).getObjectHistory(),
+                                        artifactList.get().get(i).getProduction(),
+                                        artifactList.get().get(i).getProductionDates(),
+                                        artifactList.get().get(i).getPeriodStyle(),
+                                        artifactList.get().get(i).getArtistCreatorAuthor(),
+                                        artifactList.get().get(i).getTechniqueMaterials(),
+                                        artifactList.get().get(i).getArtifactNumber(),
+                                        artifactList.get().get(i).getDimensions(),
+                                        artifactList.get().get(i).getSortId(),
+                                        artifactList.get().get(i).getThumbImage());
+                                activityReference.get().qmDatabase.getArtifactTableDao().insertArabicTable(artifactTableArabic);
 
+                            }
                         }
                     }
                 }
             }
             return null;
+
         }
 
 
     }
 
-    public class InsertDatabaseTask extends AsyncTask<Void, Void, Boolean> {
+    public static class InsertDatabaseTask extends AsyncTask<Void, Void, Boolean> {
         private WeakReference<ObjectPreviewActivity> activityReference;
+        private WeakReference<ArrayList<ArtifactDetails>> artifactList;
         private ArtifactTableEnglish artifactTableEnglish;
         private ArtifactTableArabic artifactTableArabic;
         String language;
 
         InsertDatabaseTask(ObjectPreviewActivity context, ArtifactTableEnglish artifactTableEnglish,
-                           ArtifactTableArabic artifactTableArabic, String lan) {
+                           ArtifactTableArabic artifactTableArabic, String lan, ArrayList<ArtifactDetails> list) {
             activityReference = new WeakReference<>(context);
             this.artifactTableEnglish = artifactTableEnglish;
             this.artifactTableArabic = artifactTableArabic;
             language = lan;
+            artifactList = new WeakReference<>(list);
         }
 
         @Override
         protected Boolean doInBackground(Void... voids) {
-            if (artifactList != null) {
-                if (language.equals("en")) {
-                    for (int i = 0; i < artifactList.size(); i++) {
-                        artifactTableEnglish = new ArtifactTableEnglish(Long.parseLong(artifactList.get(i).getNid()),
-                                artifactList.get(i).getTitle(),
-                                artifactList.get(i).getAccessionNumber(),
-                                artifactList.get(i).getTourGuideId(),
-                                artifactList.get(i).getMainTitle(),
-                                artifactList.get(i).getImage(),
-                                artifactList.get(i).getArtifactPosition(),
-                                artifactList.get(i).getAudioFile(),
-                                artifactList.get(i).getAudioDescriptif(),
-                                artifactList.get(i).getCuratorialDescription(),
-                                converters.fromArrayList(artifactList.get(i).getImages()),
-                                artifactList.get(i).getFloorLevel(),
-                                artifactList.get(i).getGalleryNumber(),
-                                artifactList.get(i).getObjectHistory(),
-                                artifactList.get(i).getProduction(),
-                                artifactList.get(i).getProductionDates(),
-                                artifactList.get(i).getPeriodStyle(),
-                                artifactList.get(i).getArtistCreatorAuthor(),
-                                artifactList.get(i).getTechniqueMaterials(),
-                                artifactList.get(i).getArtifactNumber(),
-                                artifactList.get(i).getDimensions(),
-                                artifactList.get(i).getSortId(),
-                                artifactList.get(i).getThumbImage());
-                        activityReference.get().qmDatabase.getArtifactTableDao().insertEnglishTable(artifactTableEnglish);
-                    }
-                } else {
-                    for (int i = 0; i < artifactList.size(); i++) {
-                        artifactTableArabic = new ArtifactTableArabic(Long.parseLong(artifactList.get(i).getNid()),
-                                artifactList.get(i).getTitle(),
-                                artifactList.get(i).getAccessionNumber(),
-                                artifactList.get(i).getTourGuideId(),
-                                artifactList.get(i).getMainTitle(),
-                                artifactList.get(i).getImage(),
-                                artifactList.get(i).getArtifactPosition(),
-                                artifactList.get(i).getAudioFile(),
-                                artifactList.get(i).getAudioDescriptif(),
-                                artifactList.get(i).getCuratorialDescription(),
-                                converters.fromArrayList(artifactList.get(i).getImages()),
-                                artifactList.get(i).getFloorLevel(),
-                                artifactList.get(i).getGalleryNumber(),
-                                artifactList.get(i).getObjectHistory(),
-                                artifactList.get(i).getProduction(),
-                                artifactList.get(i).getProductionDates(),
-                                artifactList.get(i).getPeriodStyle(),
-                                artifactList.get(i).getArtistCreatorAuthor(),
-                                artifactList.get(i).getTechniqueMaterials(),
-                                artifactList.get(i).getArtifactNumber(),
-                                artifactList.get(i).getDimensions(),
-                                artifactList.get(i).getSortId(),
-                                artifactList.get(i).getThumbImage());
-                        activityReference.get().qmDatabase.getArtifactTableDao().insertArabicTable(artifactTableArabic);
+            if (!(insert.isCancelled())) {
+                if (artifactList != null) {
+                    if (language.equals("en")) {
+                        for (int i = 0; i < artifactList.get().size(); i++) {
+                            artifactTableEnglish = new ArtifactTableEnglish(Long.parseLong(artifactList.get().get(i).getNid()),
+                                    artifactList.get().get(i).getTitle(),
+                                    artifactList.get().get(i).getAccessionNumber(),
+                                    artifactList.get().get(i).getTourGuideId(),
+                                    artifactList.get().get(i).getMainTitle(),
+                                    artifactList.get().get(i).getImage(),
+                                    artifactList.get().get(i).getArtifactPosition(),
+                                    artifactList.get().get(i).getAudioFile(),
+                                    artifactList.get().get(i).getAudioDescriptif(),
+                                    artifactList.get().get(i).getCuratorialDescription(),
+                                    converters.fromArrayList(artifactList.get().get(i).getImages()),
+                                    artifactList.get().get(i).getFloorLevel(),
+                                    artifactList.get().get(i).getGalleryNumber(),
+                                    artifactList.get().get(i).getObjectHistory(),
+                                    artifactList.get().get(i).getProduction(),
+                                    artifactList.get().get(i).getProductionDates(),
+                                    artifactList.get().get(i).getPeriodStyle(),
+                                    artifactList.get().get(i).getArtistCreatorAuthor(),
+                                    artifactList.get().get(i).getTechniqueMaterials(),
+                                    artifactList.get().get(i).getArtifactNumber(),
+                                    artifactList.get().get(i).getDimensions(),
+                                    artifactList.get().get(i).getSortId(),
+                                    artifactList.get().get(i).getThumbImage());
+                            activityReference.get().qmDatabase.getArtifactTableDao().insertEnglishTable(artifactTableEnglish);
+                        }
+                    } else {
+                        for (int i = 0; i < artifactList.get().size(); i++) {
+                            artifactTableArabic = new ArtifactTableArabic(Long.parseLong(artifactList.get().get(i).getNid()),
+                                    artifactList.get().get(i).getTitle(),
+                                    artifactList.get().get(i).getAccessionNumber(),
+                                    artifactList.get().get(i).getTourGuideId(),
+                                    artifactList.get().get(i).getMainTitle(),
+                                    artifactList.get().get(i).getImage(),
+                                    artifactList.get().get(i).getArtifactPosition(),
+                                    artifactList.get().get(i).getAudioFile(),
+                                    artifactList.get().get(i).getAudioDescriptif(),
+                                    artifactList.get().get(i).getCuratorialDescription(),
+                                    converters.fromArrayList(artifactList.get().get(i).getImages()),
+                                    artifactList.get().get(i).getFloorLevel(),
+                                    artifactList.get().get(i).getGalleryNumber(),
+                                    artifactList.get().get(i).getObjectHistory(),
+                                    artifactList.get().get(i).getProduction(),
+                                    artifactList.get().get(i).getProductionDates(),
+                                    artifactList.get().get(i).getPeriodStyle(),
+                                    artifactList.get().get(i).getArtistCreatorAuthor(),
+                                    artifactList.get().get(i).getTechniqueMaterials(),
+                                    artifactList.get().get(i).getArtifactNumber(),
+                                    artifactList.get().get(i).getDimensions(),
+                                    artifactList.get().get(i).getSortId(),
+                                    artifactList.get().get(i).getThumbImage());
+                            activityReference.get().qmDatabase.getArtifactTableDao().insertArabicTable(artifactTableArabic);
 
+                        }
                     }
                 }
             }
@@ -520,76 +539,79 @@ public class ObjectPreviewActivity extends AppCompatActivity {
     }
 
 
-    public class UpdateArtifactTable extends AsyncTask<Void, Void, Void> {
+    public static class UpdateArtifactTable extends AsyncTask<Void, Void, Void> {
         private WeakReference<ObjectPreviewActivity> activityReference;
+        private WeakReference<ArrayList<ArtifactDetails>> artifactList;
         String language;
         int position;
 
-        UpdateArtifactTable(ObjectPreviewActivity context, String apiLanguage, int p) {
+        UpdateArtifactTable(ObjectPreviewActivity context, String apiLanguage, int p, ArrayList<ArtifactDetails> list) {
             activityReference = new WeakReference<>(context);
+            artifactList = new WeakReference<>(list);
             language = apiLanguage;
             position = p;
         }
 
         @Override
         protected Void doInBackground(Void... voids) {
-            if (language.equals("en")) {
-                // updateEnglishTable table with english name
-                activityReference.get().qmDatabase.getArtifactTableDao().updateArtifactEnglish(
-                        artifactList.get(position).getNid(),
-                        artifactList.get(position).getTitle(),
-                        artifactList.get(position).getAccessionNumber(),
-                        artifactList.get(position).getTourGuideId(),
-                        artifactList.get(position).getMainTitle(),
-                        artifactList.get(position).getImage(),
-                        artifactList.get(position).getArtifactPosition(),
-                        artifactList.get(position).getAudioFile(),
-                        artifactList.get(position).getAudioDescriptif(),
-                        artifactList.get(position).getCuratorialDescription(),
-                        converters.fromArrayList(artifactList.get(position).getImages()),
-                        artifactList.get(position).getFloorLevel(),
-                        artifactList.get(position).getGalleryNumber(),
-                        artifactList.get(position).getObjectHistory(),
-                        artifactList.get(position).getProduction(),
-                        artifactList.get(position).getProductionDates(),
-                        artifactList.get(position).getPeriodStyle(),
-                        artifactList.get(position).getArtistCreatorAuthor(),
-                        artifactList.get(position).getTechniqueMaterials(),
-                        artifactList.get(position).getArtifactNumber(),
-                        artifactList.get(position).getDimensions(),
-                        artifactList.get(position).getSortId(),
-                        artifactList.get(position).getThumbImage()
-                );
+            if (!(update.isCancelled())) {
+                if (language.equals("en")) {
+                    // updateEnglishTable table with english name
+                    activityReference.get().qmDatabase.getArtifactTableDao().updateArtifactEnglish(
+                            artifactList.get().get(position).getNid(),
+                            artifactList.get().get(position).getTitle(),
+                            artifactList.get().get(position).getAccessionNumber(),
+                            artifactList.get().get(position).getTourGuideId(),
+                            artifactList.get().get(position).getMainTitle(),
+                            artifactList.get().get(position).getImage(),
+                            artifactList.get().get(position).getArtifactPosition(),
+                            artifactList.get().get(position).getAudioFile(),
+                            artifactList.get().get(position).getAudioDescriptif(),
+                            artifactList.get().get(position).getCuratorialDescription(),
+                            converters.fromArrayList(artifactList.get().get(position).getImages()),
+                            artifactList.get().get(position).getFloorLevel(),
+                            artifactList.get().get(position).getGalleryNumber(),
+                            artifactList.get().get(position).getObjectHistory(),
+                            artifactList.get().get(position).getProduction(),
+                            artifactList.get().get(position).getProductionDates(),
+                            artifactList.get().get(position).getPeriodStyle(),
+                            artifactList.get().get(position).getArtistCreatorAuthor(),
+                            artifactList.get().get(position).getTechniqueMaterials(),
+                            artifactList.get().get(position).getArtifactNumber(),
+                            artifactList.get().get(position).getDimensions(),
+                            artifactList.get().get(position).getSortId(),
+                            artifactList.get().get(position).getThumbImage()
+                    );
 
-            } else {
-                // updateArabicTable table with arabic name
-                activityReference.get().qmDatabase.getArtifactTableDao().updateArtifactArabic(
-                        artifactList.get(position).getNid(),
-                        artifactList.get(position).getTitle(),
-                        artifactList.get(position).getAccessionNumber(),
-                        artifactList.get(position).getTourGuideId(),
-                        artifactList.get(position).getMainTitle(),
-                        artifactList.get(position).getImage(),
-                        artifactList.get(position).getArtifactPosition(),
-                        artifactList.get(position).getAudioFile(),
-                        artifactList.get(position).getAudioDescriptif(),
-                        artifactList.get(position).getCuratorialDescription(),
-                        converters.fromArrayList(artifactList.get(position).getImages()),
-                        artifactList.get(position).getFloorLevel(),
-                        artifactList.get(position).getGalleryNumber(),
-                        artifactList.get(position).getObjectHistory(),
-                        artifactList.get(position).getProduction(),
-                        artifactList.get(position).getProductionDates(),
-                        artifactList.get(position).getPeriodStyle(),
-                        artifactList.get(position).getArtistCreatorAuthor(),
-                        artifactList.get(position).getTechniqueMaterials(),
-                        artifactList.get(position).getArtifactNumber(),
-                        artifactList.get(position).getDimensions(),
-                        artifactList.get(position).getSortId(),
-                        artifactList.get(position).getThumbImage()
-                );
+                } else {
+                    // updateArabicTable table with arabic name
+                    activityReference.get().qmDatabase.getArtifactTableDao().updateArtifactArabic(
+                            artifactList.get().get(position).getNid(),
+                            artifactList.get().get(position).getTitle(),
+                            artifactList.get().get(position).getAccessionNumber(),
+                            artifactList.get().get(position).getTourGuideId(),
+                            artifactList.get().get(position).getMainTitle(),
+                            artifactList.get().get(position).getImage(),
+                            artifactList.get().get(position).getArtifactPosition(),
+                            artifactList.get().get(position).getAudioFile(),
+                            artifactList.get().get(position).getAudioDescriptif(),
+                            artifactList.get().get(position).getCuratorialDescription(),
+                            converters.fromArrayList(artifactList.get().get(position).getImages()),
+                            artifactList.get().get(position).getFloorLevel(),
+                            artifactList.get().get(position).getGalleryNumber(),
+                            artifactList.get().get(position).getObjectHistory(),
+                            artifactList.get().get(position).getProduction(),
+                            artifactList.get().get(position).getProductionDates(),
+                            artifactList.get().get(position).getPeriodStyle(),
+                            artifactList.get().get(position).getArtistCreatorAuthor(),
+                            artifactList.get().get(position).getTechniqueMaterials(),
+                            artifactList.get().get(position).getArtifactNumber(),
+                            artifactList.get().get(position).getDimensions(),
+                            artifactList.get().get(position).getSortId(),
+                            artifactList.get().get(position).getThumbImage()
+                    );
+                }
             }
-
             return null;
         }
 
@@ -737,4 +759,12 @@ public class ObjectPreviewActivity extends AppCompatActivity {
             new RetriveArabicTableData(ObjectPreviewActivity.this, language, tourId).execute();
     }
 
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        row.cancel(true);
+        check.cancel(true);
+        insert.cancel(true);
+        update.cancel(true);
+    }
 }
