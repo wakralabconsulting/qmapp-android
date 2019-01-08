@@ -343,7 +343,7 @@ public class CulturePassActivity extends AppCompatActivity {
                     if (response.body() != null && response.body().size() > 0) {
                         registeredEventLists.addAll(response.body());
                         new InsertRegistrationDatabaseTask(CulturePassActivity.this,
-                                userRegistrationDetailsTable).execute();
+                                userRegistrationDetailsTable, registeredEventLists).execute();
                     }
                 }
             }
@@ -354,14 +354,17 @@ public class CulturePassActivity extends AppCompatActivity {
         });
     }
 
-    public class InsertRegistrationDatabaseTask extends AsyncTask<Void, Void, Boolean> {
+    public static class InsertRegistrationDatabaseTask extends AsyncTask<Void, Void, Boolean> {
         private WeakReference<CulturePassActivity> activityReference;
         private UserRegistrationDetailsTable userRegistrationDetailsTable;
+        private ArrayList<UserRegistrationModel> registeredEventLists;
 
         InsertRegistrationDatabaseTask(CulturePassActivity context,
-                                       UserRegistrationDetailsTable userRegistrationDetailsTable) {
+                                       UserRegistrationDetailsTable userRegistrationDetailsTable,
+                                       ArrayList<UserRegistrationModel> registeredEventLists) {
             activityReference = new WeakReference<>(context);
             this.userRegistrationDetailsTable = userRegistrationDetailsTable;
+            this.registeredEventLists = registeredEventLists;
         }
 
         @Override
@@ -412,7 +415,6 @@ public class CulturePassActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 loginDialog.dismiss();
-
             }
         });
         mUsernameView = view.findViewById(R.id.username);

@@ -19,6 +19,7 @@ import com.qatarmuseums.qatarmuseumsapp.home.GlideApp;
 import com.qatarmuseums.qatarmuseumsapp.utils.Util;
 
 import java.lang.ref.WeakReference;
+import java.text.ParseException;
 import java.util.List;
 
 public class CommonListAdapter extends RecyclerView.Adapter<CommonListAdapter.MyViewHolder> {
@@ -92,7 +93,6 @@ public class CommonListAdapter extends RecyclerView.Adapter<CommonListAdapter.My
                 R.anim.zoom_out_more);
         util = new Util();
 
-
     }
 
     @NonNull
@@ -111,6 +111,11 @@ public class CommonListAdapter extends RecyclerView.Adapter<CommonListAdapter.My
             holder.commonTitleLayout.setVisibility(View.GONE);
             holder.tourTitleLayout.setVisibility(View.VISIBLE);
             holder.tourDayTxt.setText(model.getEventDay());
+            try {
+                model.setEventDate(util.formatDateFromDateString(model.getEventDate()));
+            } catch (ParseException e) {
+                e.printStackTrace();
+            }
             holder.tourDateTxt.setText(model.getEventDate());
             holder.tourTitleTxt.setText(model.getName());
         } else if (model.getIsTravel() != null) {

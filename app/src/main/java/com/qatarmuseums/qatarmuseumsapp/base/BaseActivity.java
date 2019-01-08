@@ -228,21 +228,22 @@ public class BaseActivity extends AppCompatActivity
         notificationMessage = msg;
         language = lan;
         new InsertDatabaseTask(BaseActivity.this, notificationTableEnglish,
-                notificationTableArabic, language).execute();
+                notificationTableArabic, language, msg).execute();
     }
 
-    public class InsertDatabaseTask extends AsyncTask<Void, Void, Boolean> {
+    public static class InsertDatabaseTask extends AsyncTask<Void, Void, Boolean> {
         private WeakReference<BaseActivity> activityReference;
         private NotificationTableEnglish notificationTableEnglish;
         private NotificationTableArabic notificationTableArabic;
-        String language;
+        String language, notificationMessage;
 
         InsertDatabaseTask(BaseActivity context, NotificationTableEnglish notificationTableEnglish,
-                           NotificationTableArabic notificationTableArabic, String lan) {
+                           NotificationTableArabic notificationTableArabic, String lan, String msg) {
             activityReference = new WeakReference<>(context);
             this.notificationTableEnglish = notificationTableEnglish;
             this.notificationTableArabic = notificationTableArabic;
             language = lan;
+            this.notificationMessage = msg;
         }
 
         @Override

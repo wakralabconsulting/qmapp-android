@@ -293,6 +293,10 @@ public class CommonModel {
         return category;
     }
 
+    public void setEventDate(String eventDate) {
+        this.eventDate = eventDate;
+    }
+
     public String getEventDate() {
         return eventDate;
     }

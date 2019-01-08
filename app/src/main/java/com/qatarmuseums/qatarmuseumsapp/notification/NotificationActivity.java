@@ -93,7 +93,7 @@ public class NotificationActivity extends AppCompatActivity {
             new RetriveArabicTableData(NotificationActivity.this, language).execute();
     }
 
-    public class RetriveEnglishTableData extends AsyncTask<Void, Void, List<NotificationTableEnglish>> {
+    public static class RetriveEnglishTableData extends AsyncTask<Void, Void, List<NotificationTableEnglish>> {
         private WeakReference<NotificationActivity> activityReference;
         int language;
 
@@ -111,23 +111,23 @@ public class NotificationActivity extends AppCompatActivity {
         @Override
         protected void onPostExecute(List<NotificationTableEnglish> notificationTableEnglishes) {
             if (notificationTableEnglishes.size() > 0) {
-                models.clear();
+                activityReference.get().models.clear();
                 for (int i = 0; i < notificationTableEnglishes.size(); i++) {
                     NotificationModel notificationModel = new NotificationModel(notificationTableEnglishes.get(i).getTitle());
-                    models.add(i, notificationModel);
+                    activityReference.get().models.add(i, notificationModel);
                 }
 
-                Collections.reverse(models);
-                mAdapter.notifyDataSetChanged();
-                recyclerView.setVisibility(View.VISIBLE);
+                Collections.reverse(activityReference.get().models);
+                activityReference.get().mAdapter.notifyDataSetChanged();
+                activityReference.get().recyclerView.setVisibility(View.VISIBLE);
             } else {
-                emptyText.setVisibility(View.VISIBLE);
-                recyclerView.setVisibility(View.GONE);
+                activityReference.get().emptyText.setVisibility(View.VISIBLE);
+                activityReference.get().recyclerView.setVisibility(View.GONE);
             }
         }
     }
 
-    public class RetriveArabicTableData extends AsyncTask<Void, Void,
+    public static class RetriveArabicTableData extends AsyncTask<Void, Void,
             List<NotificationTableArabic>> {
         private WeakReference<NotificationActivity> activityReference;
         int language;
@@ -147,21 +147,21 @@ public class NotificationActivity extends AppCompatActivity {
         @Override
         protected void onPostExecute(List<NotificationTableArabic> notificationTableArabics) {
             if (notificationTableArabics.size() > 0) {
-                models.clear();
+                activityReference.get().models.clear();
                 for (int i = 0; i < notificationTableArabics.size(); i++) {
                     NotificationModel notificationModel = new NotificationModel(notificationTableArabics.get(i).getTitle());
-                    models.add(i, notificationModel);
+                    activityReference.get().models.add(i, notificationModel);
                 }
 
-                Collections.reverse(models);
-                mAdapter.notifyDataSetChanged();
+                Collections.reverse(activityReference.get().models);
+                activityReference.get().mAdapter.notifyDataSetChanged();
 //                progressBar.setVisibility(View.GONE);
-                recyclerView.setVisibility(View.VISIBLE);
+                activityReference.get().recyclerView.setVisibility(View.VISIBLE);
 //                retryLayout.setVisibility(View.GONE);
             } else {
-                emptyText.setVisibility(View.VISIBLE);
+                activityReference.get().emptyText.setVisibility(View.VISIBLE);
 //                progressBar.setVisibility(View.GONE);
-                recyclerView.setVisibility(View.GONE);
+                activityReference.get().recyclerView.setVisibility(View.GONE);
 //                retryLayout.setVisibility(View.VISIBLE);
             }
         }

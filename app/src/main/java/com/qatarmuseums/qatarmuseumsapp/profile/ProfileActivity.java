@@ -420,7 +420,7 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
 
     }
 
-    public class DeleteRegistratioTable extends AsyncTask<Void, Void, Void> {
+    public static class DeleteRegistratioTable extends AsyncTask<Void, Void, Void> {
         private WeakReference<ProfileActivity> activityReference;
 
         DeleteRegistratioTable(ProfileActivity context) {
@@ -434,7 +434,7 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
         }
     }
 
-    public class DeleteBannerTableEnglish extends AsyncTask<Void, Void, Void> {
+    public static class DeleteBannerTableEnglish extends AsyncTask<Void, Void, Void> {
         private WeakReference<ProfileActivity> activityReference;
 
         DeleteBannerTableEnglish(ProfileActivity context) {
@@ -449,11 +449,11 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
 
         @Override
         protected void onPostExecute(Void aVoid) {
-            new DeleteBannerTableArabic(ProfileActivity.this).execute();
+            new DeleteBannerTableArabic(activityReference.get()).execute();
         }
     }
 
-    public class DeleteBannerTableArabic extends AsyncTask<Void, Void, Void> {
+    public static class DeleteBannerTableArabic extends AsyncTask<Void, Void, Void> {
         private WeakReference<ProfileActivity> activityReference;
 
         DeleteBannerTableArabic(ProfileActivity context) {

@@ -16,11 +16,13 @@ public class SelfGuideStarterModel {
     @SerializedName("Nid")
     private String nid;
 
-    public SelfGuideStarterModel(String title, String description, ArrayList<String> imageList, String museumsEntity) {
+    public SelfGuideStarterModel(String title, String description, ArrayList<String> imageList,
+                                 String museumsEntity, String nid) {
         this.title = title;
         this.description = description;
         this.imageList = imageList;
         this.museumsEntity = museumsEntity;
+        this.nid = nid;
     }
 
     public String getTitle() {

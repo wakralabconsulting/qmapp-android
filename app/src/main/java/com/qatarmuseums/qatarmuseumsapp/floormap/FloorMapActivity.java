@@ -173,7 +173,7 @@ public class FloorMapActivity extends AppCompatActivity implements OnMapReadyCal
             l2_g3_sc14_2, l2_g4_sc3, l2_g4_sc5, l2_g5_sc11, l2_g5_sc5, l2_g7_sc4, l2_g7_sc8,
             l2_g7_sc13, l3_g10_podium9, l3_g10_podium14, l3_g10_wr2_1, l3_g10_wr2_2, l3_g11_14,
             l3_g12_11, l3_g12_12, l3_g12_17, l3_g12_wr5, l3_g13_2, l3_g13_15, l3_g14_13, l3_g14_7,
-            l3_g15_13, l3_g16_wr5, l3_g18_1, l3_g18_3, l3_g17_8, l3_g17_9, l3_g18_11;
+            l3_g15_13, l3_g16_wr5, l3_g18_1, l3_g18_2, l3_g18_3, l3_g17_8, l3_g17_9, l3_g18_11;
 
     private int selectedLevel = 2;
 
@@ -229,11 +229,11 @@ public class FloorMapActivity extends AppCompatActivity implements OnMapReadyCal
     private String tourId;
     private QMDatabase qmDatabase;
 
-
     private static Convertor converters;
     Button retryButton;
     private Animation zoomOutAnimation;
     private ImageView mMarkerImageView;
+    private Bitmap resizedBitmap;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -290,7 +290,7 @@ public class FloorMapActivity extends AppCompatActivity implements OnMapReadyCal
                 retryLayout.setVisibility(View.VISIBLE);
             }
         } else {
-            if (new Util().isNetworkAvailable(this))
+            if (utils.isNetworkAvailable(this))
                 fetchArtifactsFromAPI();
             else
                 fetchArtifactsFromDB(appLanguage);
@@ -448,7 +448,7 @@ public class FloorMapActivity extends AppCompatActivity implements OnMapReadyCal
                 if (!playPause) {
                     btn_play.setImageDrawable(getDrawable(R.drawable.pause_black));
                     if (initialStage) {
-//                        new Player().execute(audioURL);
+                        new Player().execute(audioURL);
                     } else {
                         if (!mediaPlayer.isPlaying()) {
                             playAudio();
@@ -598,7 +598,7 @@ public class FloorMapActivity extends AppCompatActivity implements OnMapReadyCal
                     if (response.body().size() > 0) {
                         artifactList.addAll(response.body());
                         addDatasToHashMap();
-                        new RowCount(FloorMapActivity.this, language,artifactList).execute();
+                        new RowCount(FloorMapActivity.this, language, artifactList).execute();
                     }
                     floorMapRootLayout.setVisibility(View.VISIBLE);
                     retryLayout.setVisibility(View.GONE);
@@ -713,7 +713,7 @@ public class FloorMapActivity extends AppCompatActivity implements OnMapReadyCal
             l3_g15_13.setVisible(false);
             l3_g16_wr5.setVisible(false);
             l3_g18_1.setVisible(false);
-            l3_g18_3.setVisible(false);
+            l3_g18_2.setVisible(false);
             l3_g17_8.setVisible(false);
             l3_g17_9.setVisible(false);
             l3_g18_11.setVisible(false);
@@ -929,6 +929,8 @@ public class FloorMapActivity extends AppCompatActivity implements OnMapReadyCal
                 .icon(BitmapDescriptorFactory.fromBitmap(resizeMapIcons("default_map_marker", normalMapIconWidth, normalMapIconHeight))));
         markerHashMap.put("l3_g17_3", l3_g17_3);
 
+        if (resizedBitmap != null && !resizedBitmap.isRecycled())
+            resizedBitmap.recycle();
     }
 
     public void addHighlightMarkers() {
@@ -1152,7 +1154,7 @@ public class FloorMapActivity extends AppCompatActivity implements OnMapReadyCal
                 .snippet("l3_g13_15")
                 .visible(false)
                 .icon(BitmapDescriptorFactory.fromBitmap(resizeMapIcons("default_map_marker", normalMapIconWidth, normalMapIconHeight))));
-        markerHashMap.put("l3_g13_15l3_g13_15", l3_g13_2);
+        markerHashMap.put("l3_g13_15", l3_g13_15);
         l3_g14_13 = googleMap.addMarker(new MarkerOptions()
                 .position(L3_G14_13)
                 .title("PO.53")
@@ -1188,13 +1190,13 @@ public class FloorMapActivity extends AppCompatActivity implements OnMapReadyCal
                 .visible(false)
                 .icon(BitmapDescriptorFactory.fromBitmap(resizeMapIcons("default_map_marker", normalMapIconWidth, normalMapIconHeight))));
         markerHashMap.put("l3_g18_1", l3_g18_1);
-        l3_g18_3 = googleMap.addMarker(new MarkerOptions()
-                .position(L3_G18_3)
+        l3_g18_2 = googleMap.addMarker(new MarkerOptions()
+                .position(L3_G18_2)
                 .title("PO.265")
-                .snippet("l3_g18_3")
+                .snippet("l3_g18_2")
                 .visible(false)
                 .icon(BitmapDescriptorFactory.fromBitmap(resizeMapIcons("default_map_marker", normalMapIconWidth, normalMapIconHeight))));
-        markerHashMap.put("l3_g18_3", l3_g18_3);
+        markerHashMap.put("l3_g18_2", l3_g18_2);
         l3_g17_8 = googleMap.addMarker(new MarkerOptions()
                 .position(L3_G17_8)
                 .title("JE.180")
@@ -1216,7 +1218,8 @@ public class FloorMapActivity extends AppCompatActivity implements OnMapReadyCal
                 .visible(false)
                 .icon(BitmapDescriptorFactory.fromBitmap(resizeMapIcons("default_map_marker", normalMapIconWidth, normalMapIconHeight))));
         markerHashMap.put("l3_g18_11", l3_g18_11);
-
+        if (resizedBitmap != null && !resizedBitmap.isRecycled())
+            resizedBitmap.recycle();
     }
 
     public void showCorrespondingMarkers(String level) {
@@ -1238,7 +1241,8 @@ public class FloorMapActivity extends AppCompatActivity implements OnMapReadyCal
                                 markerHashMap.get(key).setIcon(BitmapDescriptorFactory.fromBitmap(resizeMapIcons(resource)));
                             }
                         });
-
+                if (resizedBitmap != null && !resizedBitmap.isRecycled())
+                    resizedBitmap.recycle();
             }
         }
     }
@@ -1395,15 +1399,20 @@ public class FloorMapActivity extends AppCompatActivity implements OnMapReadyCal
     }
 
     public Bitmap resizeMapIcons(String iconName, int width, int height) {
+        if (resizedBitmap != null && !resizedBitmap.isRecycled())
+            resizedBitmap.recycle();
         Bitmap imageBitmap = BitmapFactory.decodeResource(getResources(), getResources().getIdentifier(iconName, "drawable", getPackageName()));
-        Bitmap resizedBitmap = Bitmap.createScaledBitmap(imageBitmap, width, height, false);
+        resizedBitmap = Bitmap.createScaledBitmap(imageBitmap, width, height, false);
+        imageBitmap.recycle();
         return resizedBitmap;
     }
 
     public Bitmap resizeMapIcons(Bitmap bitmap) {
         int originalWidth = bitmap.getWidth();
         int originalHeight = bitmap.getHeight();
-        Bitmap resizedBitmap = Bitmap.createScaledBitmap(bitmap, (originalWidth * 3), (originalHeight * 3), false);
+        if (resizedBitmap != null && !resizedBitmap.isRecycled())
+            resizedBitmap.recycle();
+        resizedBitmap = Bitmap.createScaledBitmap(bitmap, (originalWidth * 3), (originalHeight * 3), false);
         return resizedBitmap;
     }
 
@@ -1506,12 +1515,11 @@ public class FloorMapActivity extends AppCompatActivity implements OnMapReadyCal
         private WeakReference<ArrayList<ArtifactDetails>> artifactList;
         String language;
 
-        RowCount(FloorMapActivity context, String apiLanguage,ArrayList<ArtifactDetails> list) {
+        RowCount(FloorMapActivity context, String apiLanguage, ArrayList<ArtifactDetails> list) {
             activityReference = new WeakReference<>(context);
             language = apiLanguage;
-            artifactList=new WeakReference<>(list);
+            artifactList = new WeakReference<>(list);
         }
-
 
 
         @Override
@@ -1530,14 +1538,14 @@ public class FloorMapActivity extends AppCompatActivity implements OnMapReadyCal
             if (artifactTableRowCount > 0) {
 
                 //updateEnglishTable or add row to database
-                new CheckDBRowExist(activityReference.get(), language,artifactList.get()).execute();
+                new CheckDBRowExist(activityReference.get(), language, artifactList.get()).execute();
 
             } else {
                 //create databse
                 ArtifactTableEnglish artifactTableEnglish = null;
                 ArtifactTableArabic artifactTableArabic = null;
                 new InsertDatabaseTask(activityReference.get(), artifactTableEnglish,
-                        artifactTableArabic, language,artifactList.get()).execute();
+                        artifactTableArabic, language, artifactList.get()).execute();
 
             }
 
@@ -1551,7 +1559,7 @@ public class FloorMapActivity extends AppCompatActivity implements OnMapReadyCal
         private ArtifactTableArabic artifactTableArabic;
         String language;
 
-        CheckDBRowExist(FloorMapActivity context, String apiLanguage,ArrayList<ArtifactDetails> list) {
+        CheckDBRowExist(FloorMapActivity context, String apiLanguage, ArrayList<ArtifactDetails> list) {
             activityReference = new WeakReference<>(context);
             artifactList = new WeakReference<>(list);
             language = apiLanguage;
@@ -1566,7 +1574,7 @@ public class FloorMapActivity extends AppCompatActivity implements OnMapReadyCal
                                 Integer.parseInt(artifactList.get().get(i).getNid()));
                         if (n > 0) {
                             //updateEnglishTable same id
-                            new UpdateArtifactTable(activityReference.get(), language, i,artifactList.get()).execute();
+                            new UpdateArtifactTable(activityReference.get(), language, i, artifactList.get()).execute();
 
                         } else {
                             //create row with corresponding id
@@ -1603,7 +1611,7 @@ public class FloorMapActivity extends AppCompatActivity implements OnMapReadyCal
                                 Integer.parseInt(artifactList.get().get(i).getNid()));
                         if (n > 0) {
                             //updateEnglishTable same id
-                            new UpdateArtifactTable(activityReference.get(), language, i,artifactList.get()).execute();
+                            new UpdateArtifactTable(activityReference.get(), language, i, artifactList.get()).execute();
 
                         } else {
                             //create row with corresponding id
@@ -1650,7 +1658,7 @@ public class FloorMapActivity extends AppCompatActivity implements OnMapReadyCal
         String language;
 
         InsertDatabaseTask(FloorMapActivity context, ArtifactTableEnglish artifactTableEnglish,
-                           ArtifactTableArabic artifactTableArabic, String lan,ArrayList<ArtifactDetails> list) {
+                           ArtifactTableArabic artifactTableArabic, String lan, ArrayList<ArtifactDetails> list) {
             activityReference = new WeakReference<>(context);
             artifactList = new WeakReference<>(list);
             this.artifactTableEnglish = artifactTableEnglish;
@@ -1734,7 +1742,7 @@ public class FloorMapActivity extends AppCompatActivity implements OnMapReadyCal
         String language;
         int position;
 
-        UpdateArtifactTable(FloorMapActivity context, String apiLanguage, int p,ArrayList<ArtifactDetails> list) {
+        UpdateArtifactTable(FloorMapActivity context, String apiLanguage, int p, ArrayList<ArtifactDetails> list) {
             activityReference = new WeakReference<>(context);
             artifactList = new WeakReference<>(list);
             language = apiLanguage;
@@ -1809,7 +1817,7 @@ public class FloorMapActivity extends AppCompatActivity implements OnMapReadyCal
         }
     }
 
-    public class RetriveEnglishTableData extends AsyncTask<Void, Void, List<ArtifactTableEnglish>> {
+    public static class RetriveEnglishTableData extends AsyncTask<Void, Void, List<ArtifactTableEnglish>> {
         private WeakReference<FloorMapActivity> activityReference;
         int language;
 
@@ -1827,7 +1835,7 @@ public class FloorMapActivity extends AppCompatActivity implements OnMapReadyCal
         @Override
         protected void onPostExecute(List<ArtifactTableEnglish> artifactDetailsList) {
             if (artifactDetailsList.size() > 0) {
-                artifactList.clear();
+                activityReference.get().artifactList.clear();
                 for (int i = 0; i < artifactDetailsList.size(); i++) {
                     ArtifactDetails artifactDetails = new ArtifactDetails(
                             artifactDetailsList.get(i).getNid(),
@@ -1853,25 +1861,24 @@ public class FloorMapActivity extends AppCompatActivity implements OnMapReadyCal
                             artifactDetailsList.get(i).getDimensions(),
                             artifactDetailsList.get(i).getSortId(),
                             artifactDetailsList.get(i).getThumbImage());
-                    artifactList.add(i, artifactDetails);
+                    activityReference.get().artifactList.add(i, artifactDetails);
                 }
-                addDatasToHashMap();
+                activityReference.get().addDatasToHashMap();
 
-                floorMapRootLayout.setVisibility(View.VISIBLE);
-                retryLayout.setVisibility(View.GONE);
-                progressBar.setVisibility(View.GONE);
+                activityReference.get().floorMapRootLayout.setVisibility(View.VISIBLE);
+                activityReference.get().retryLayout.setVisibility(View.GONE);
+                activityReference.get().progressBar.setVisibility(View.GONE);
             } else {
-                progressBar.setVisibility(View.GONE);
-                floorMapRootLayout.setVisibility(View.GONE);
-                retryLayout.setVisibility(View.VISIBLE);
+                activityReference.get().progressBar.setVisibility(View.GONE);
+                activityReference.get().floorMapRootLayout.setVisibility(View.GONE);
+                activityReference.get().retryLayout.setVisibility(View.VISIBLE);
             }
 
 
         }
     }
 
-    public class RetriveArabicTableData extends AsyncTask<Void, Void,
-            List<ArtifactTableArabic>> {
+    public static class RetriveArabicTableData extends AsyncTask<Void, Void, List<ArtifactTableArabic>> {
         private WeakReference<FloorMapActivity> activityReference;
         int language;
 
@@ -1879,7 +1886,6 @@ public class FloorMapActivity extends AppCompatActivity implements OnMapReadyCal
             activityReference = new WeakReference<>(context);
             language = appLanguage;
         }
-
 
         @Override
         protected List<ArtifactTableArabic> doInBackground(Void... voids) {
@@ -1890,7 +1896,7 @@ public class FloorMapActivity extends AppCompatActivity implements OnMapReadyCal
         @Override
         protected void onPostExecute(List<ArtifactTableArabic> artifactDetailsList) {
             if (artifactDetailsList.size() > 0) {
-                artifactList.clear();
+                activityReference.get().artifactList.clear();
                 for (int i = 0; i < artifactDetailsList.size(); i++) {
                     ArtifactDetails artifactDetails = new ArtifactDetails(artifactDetailsList.get(i).getNid(),
                             artifactDetailsList.get(i).getTitle(),
@@ -1915,16 +1921,16 @@ public class FloorMapActivity extends AppCompatActivity implements OnMapReadyCal
                             artifactDetailsList.get(i).getDimensions(),
                             artifactDetailsList.get(i).getSortId(),
                             artifactDetailsList.get(i).getThumbImage());
-                    artifactList.add(i, artifactDetails);
+                    activityReference.get().artifactList.add(i, artifactDetails);
                 }
-                addDatasToHashMap();
-                progressBar.setVisibility(View.GONE);
-                floorMapRootLayout.setVisibility(View.VISIBLE);
-                retryLayout.setVisibility(View.GONE);
+                activityReference.get().addDatasToHashMap();
+                activityReference.get().progressBar.setVisibility(View.GONE);
+                activityReference.get().floorMapRootLayout.setVisibility(View.VISIBLE);
+                activityReference.get().retryLayout.setVisibility(View.GONE);
             } else {
-                progressBar.setVisibility(View.GONE);
-                floorMapRootLayout.setVisibility(View.GONE);
-                retryLayout.setVisibility(View.VISIBLE);
+                activityReference.get().progressBar.setVisibility(View.GONE);
+                activityReference.get().floorMapRootLayout.setVisibility(View.GONE);
+                activityReference.get().retryLayout.setVisibility(View.VISIBLE);
             }
         }
 
@@ -1943,5 +1949,12 @@ public class FloorMapActivity extends AppCompatActivity implements OnMapReadyCal
         super.onPause();
         pauseAudio();
         playPause = false;
+    }
+
+    @Override
+    protected void onDestroy() {
+        markerHashMap.clear();
+        artifactDetailsMap.clear();
+        super.onDestroy();
     }
 }
