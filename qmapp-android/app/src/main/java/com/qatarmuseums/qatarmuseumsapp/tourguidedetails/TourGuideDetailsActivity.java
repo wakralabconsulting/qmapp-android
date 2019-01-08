@@ -236,7 +236,7 @@ public class TourGuideDetailsActivity extends AppCompatActivity {
         });
     }
 
-    public class SelfGuideStartRowCount extends AsyncTask<Void, Void, Integer> {
+    public static class SelfGuideStartRowCount extends AsyncTask<Void, Void, Integer> {
 
         private WeakReference<TourGuideDetailsActivity> activityReference;
         String language;
@@ -254,13 +254,13 @@ public class TourGuideDetailsActivity extends AppCompatActivity {
 
         @Override
         protected void onPostExecute(Integer integer) {
-            selfGuideStartRowCount = integer;
-            if (selfGuideStartRowCount > 0) {
-                new CheckTourGuideStartPageDBRowExist(TourGuideDetailsActivity.this, language).execute();
+            activityReference.get().selfGuideStartRowCount = integer;
+            if (activityReference.get().selfGuideStartRowCount > 0) {
+                new CheckTourGuideStartPageDBRowExist(activityReference.get(), language).execute();
             } else {
-                new InsertTourGuideStartPageDatabaseTask(TourGuideDetailsActivity.this, tourGuideStartPageEnglish,
-                        tourGuideStartPageArabic, language).execute();
-
+                new InsertTourGuideStartPageDatabaseTask(activityReference.get(),
+                        activityReference.get().tourGuideStartPageEnglish,
+                        activityReference.get().tourGuideStartPageArabic, language).execute();
             }
         }
 
@@ -276,7 +276,7 @@ public class TourGuideDetailsActivity extends AppCompatActivity {
         }
     }
 
-    public class CheckTourGuideStartPageDBRowExist extends AsyncTask<Void, Void, Void> {
+    public static class CheckTourGuideStartPageDBRowExist extends AsyncTask<Void, Void, Void> {
 
         private WeakReference<TourGuideDetailsActivity> activityReference;
         private TourGuideStartPageEnglish tourGuideStartPageEnglish;
@@ -300,42 +300,42 @@ public class TourGuideDetailsActivity extends AppCompatActivity {
 
         @Override
         protected Void doInBackground(Void... voids) {
-            if (tourGuideList.size() > 0) {
+            if (activityReference.get().tourGuideList.size() > 0) {
                 if (language.equals("en")) {
-                    for (int i = 0; i < tourGuideList.size(); i++) {
+                    for (int i = 0; i < activityReference.get().tourGuideList.size(); i++) {
                         int n = activityReference.get().qmDatabase.getTourGuideStartPageDao().checkEnglishIdExist(
-                                tourGuideList.get(i).getNid());
+                                activityReference.get().tourGuideList.get(i).getNid());
                         if (n > 0) {
-                            new UpdateTourGuideStartPageDetailTable(TourGuideDetailsActivity.this,
+                            new UpdateTourGuideStartPageDetailTable(activityReference.get(),
                                     language, i).execute();
 
                         } else {
                             tourGuideStartPageEnglish = new TourGuideStartPageEnglish(
-                                    tourGuideList.get(i).getTitle(),
-                                    tourGuideList.get(i).getNid(),
-                                    tourGuideList.get(i).getMuseumsEntity(),
-                                    tourGuideList.get(i).getDescription(),
-                                    converters.fromArrayList(tourGuideList.get(i).getImageList())
+                                    activityReference.get().tourGuideList.get(i).getTitle(),
+                                    activityReference.get().tourGuideList.get(i).getNid(),
+                                    activityReference.get().tourGuideList.get(i).getMuseumsEntity(),
+                                    activityReference.get().tourGuideList.get(i).getDescription(),
+                                    activityReference.get().converters.fromArrayList(activityReference.get().tourGuideList.get(i).getImageList())
                             );
                             activityReference.get().qmDatabase.getTourGuideStartPageDao().insert(tourGuideStartPageEnglish);
 
                         }
                     }
                 } else {
-                    for (int i = 0; i < tourGuideList.size(); i++) {
+                    for (int i = 0; i < activityReference.get().tourGuideList.size(); i++) {
 
                         int n = activityReference.get().qmDatabase.getTourGuideStartPageDao().checkArabicIdExist(
-                                tourGuideList.get(i).getNid());
+                                activityReference.get().tourGuideList.get(i).getNid());
                         if (n > 0) {
-                            new UpdateTourGuideStartPageDetailTable(TourGuideDetailsActivity.this, language, i).execute();
+                            new UpdateTourGuideStartPageDetailTable(activityReference.get(), language, i).execute();
 
                         } else {
                             tourGuideStartPageArabic = new TourGuideStartPageArabic(
-                                    tourGuideList.get(i).getTitle(),
-                                    tourGuideList.get(i).getNid(),
-                                    tourGuideList.get(i).getMuseumsEntity(),
-                                    tourGuideList.get(i).getDescription(),
-                                    converters.fromArrayList(tourGuideList.get(i).getImageList()));
+                                    activityReference.get().tourGuideList.get(i).getTitle(),
+                                    activityReference.get().tourGuideList.get(i).getNid(),
+                                    activityReference.get().tourGuideList.get(i).getMuseumsEntity(),
+                                    activityReference.get().tourGuideList.get(i).getDescription(),
+                                    activityReference.get().converters.fromArrayList(activityReference.get().tourGuideList.get(i).getImageList()));
                             activityReference.get().qmDatabase.getTourGuideStartPageDao().insert(tourGuideStartPageArabic);
 
                         }
@@ -347,7 +347,7 @@ public class TourGuideDetailsActivity extends AppCompatActivity {
         }
     }
 
-    public class InsertTourGuideStartPageDatabaseTask extends AsyncTask<Void, Void, Boolean> {
+    public static class InsertTourGuideStartPageDatabaseTask extends AsyncTask<Void, Void, Boolean> {
         private WeakReference<TourGuideDetailsActivity> activityReference;
         private TourGuideStartPageEnglish tourGuideStartPageEnglish;
         private TourGuideStartPageArabic tourGuideStartPageArabic;
@@ -363,24 +363,26 @@ public class TourGuideDetailsActivity extends AppCompatActivity {
 
         @Override
         protected Boolean doInBackground(Void... voids) {
-            if (tourGuideList != null) {
+            if (activityReference.get().tourGuideList != null) {
                 if (language.equals("en")) {
-                    for (int i = 0; i < tourGuideList.size(); i++) {
-                        tourGuideStartPageEnglish = new TourGuideStartPageEnglish(tourGuideList.get(i).getTitle(),
-                                tourGuideList.get(i).getNid(),
-                                tourGuideList.get(i).getMuseumsEntity(),
-                                tourGuideList.get(i).getDescription(),
-                                converters.fromArrayList(tourGuideList.get(i).getImageList()));
+                    for (int i = 0; i < activityReference.get().tourGuideList.size(); i++) {
+                        tourGuideStartPageEnglish = new TourGuideStartPageEnglish(
+                                activityReference.get().tourGuideList.get(i).getTitle(),
+                                activityReference.get().tourGuideList.get(i).getNid(),
+                                activityReference.get().tourGuideList.get(i).getMuseumsEntity(),
+                                activityReference.get().tourGuideList.get(i).getDescription(),
+                                activityReference.get().converters.fromArrayList(activityReference.get().tourGuideList.get(i).getImageList()));
                         activityReference.get().qmDatabase.getTourGuideStartPageDao().insert(tourGuideStartPageEnglish);
 
                     }
                 } else {
-                    for (int i = 0; i < tourGuideList.size(); i++) {
-                        tourGuideStartPageArabic = new TourGuideStartPageArabic(tourGuideList.get(i).getTitle(),
-                                tourGuideList.get(i).getNid(),
-                                tourGuideList.get(i).getMuseumsEntity(),
-                                tourGuideList.get(i).getDescription(),
-                                converters.fromArrayList(tourGuideList.get(i).getImageList()));
+                    for (int i = 0; i < activityReference.get().tourGuideList.size(); i++) {
+                        tourGuideStartPageArabic = new TourGuideStartPageArabic(
+                                activityReference.get().tourGuideList.get(i).getTitle(),
+                                activityReference.get().tourGuideList.get(i).getNid(),
+                                activityReference.get().tourGuideList.get(i).getMuseumsEntity(),
+                                activityReference.get().tourGuideList.get(i).getDescription(),
+                                activityReference.get().converters.fromArrayList(activityReference.get().tourGuideList.get(i).getImageList()));
                         activityReference.get().qmDatabase.getTourGuideStartPageDao().insert(tourGuideStartPageArabic);
 
                     }
@@ -395,7 +397,7 @@ public class TourGuideDetailsActivity extends AppCompatActivity {
         }
     }
 
-    public class UpdateTourGuideStartPageDetailTable extends AsyncTask<Void, Void, Void> {
+    public static class UpdateTourGuideStartPageDetailTable extends AsyncTask<Void, Void, Void> {
 
         private WeakReference<TourGuideDetailsActivity> activityReference;
         String language;
@@ -421,19 +423,19 @@ public class TourGuideDetailsActivity extends AppCompatActivity {
         protected Void doInBackground(Void... voids) {
             if (language.equals("en")) {
                 activityReference.get().qmDatabase.getTourGuideStartPageDao().updateTourGuideStartDataEnglish(
-                        tourGuideList.get(position).getTitle(),
-                        tourGuideList.get(position).getDescription(),
-                        tourGuideList.get(position).getMuseumsEntity(),
-                        converters.fromArrayList(tourGuideList.get(position).getImageList()),
-                        tourGuideList.get(position).getNid()
+                        activityReference.get().tourGuideList.get(position).getTitle(),
+                        activityReference.get().tourGuideList.get(position).getDescription(),
+                        activityReference.get().tourGuideList.get(position).getMuseumsEntity(),
+                        activityReference.get().converters.fromArrayList(activityReference.get().tourGuideList.get(position).getImageList()),
+                        activityReference.get().tourGuideList.get(position).getNid()
                 );
             } else {
                 activityReference.get().qmDatabase.getTourGuideStartPageDao().updateTourGuideStartDataArabic(
-                        tourGuideList.get(position).getTitle(),
-                        tourGuideList.get(position).getDescription(),
-                        tourGuideList.get(position).getMuseumsEntity(),
-                        converters.fromArrayList(tourGuideList.get(position).getImageList()),
-                        tourGuideList.get(position).getNid()
+                        activityReference.get().tourGuideList.get(position).getTitle(),
+                        activityReference.get().tourGuideList.get(position).getDescription(),
+                        activityReference.get().tourGuideList.get(position).getMuseumsEntity(),
+                        activityReference.get().converters.fromArrayList(activityReference.get().tourGuideList.get(position).getImageList()),
+                        activityReference.get().tourGuideList.get(position).getNid()
                 );
 
             }
@@ -441,7 +443,7 @@ public class TourGuideDetailsActivity extends AppCompatActivity {
         }
     }
 
-    public class RetriveTourGuideDetailsDataEnglish extends AsyncTask<Void, Void, List<TourGuideStartPageEnglish>> {
+    public static class RetriveTourGuideDetailsDataEnglish extends AsyncTask<Void, Void, List<TourGuideStartPageEnglish>> {
         private WeakReference<TourGuideDetailsActivity> activityReference;
         int language;
         String museumId;
@@ -462,26 +464,27 @@ public class TourGuideDetailsActivity extends AppCompatActivity {
         @Override
         protected void onPostExecute(List<TourGuideStartPageEnglish> tourGuideStartPageEnglish) {
             if (tourGuideStartPageEnglish != null && tourGuideStartPageEnglish.size() > 0) {
-                retryLayout.setVisibility(View.GONE);
-                scrollviewContainer.setVisibility(View.VISIBLE);
+                activityReference.get().retryLayout.setVisibility(View.GONE);
+                activityReference.get().scrollviewContainer.setVisibility(View.VISIBLE);
                 for (int i = 0; i < tourGuideStartPageEnglish.size(); i++) {
                     SelfGuideStarterModel model = new SelfGuideStarterModel(
                             tourGuideStartPageEnglish.get(i).getTitle(),
                             tourGuideStartPageEnglish.get(i).getDescription(),
-                            converters.fromString(tourGuideStartPageEnglish.get(i).getImages()),
-                            tourGuideStartPageEnglish.get(i).getMuseum_entity());
-                    tourGuideList.add(model);
+                            activityReference.get().converters.fromString(tourGuideStartPageEnglish.get(i).getImages()),
+                            tourGuideStartPageEnglish.get(i).getMuseum_entity(),
+                            tourGuideStartPageEnglish.get(i).getNid());
+                    activityReference.get().tourGuideList.add(model);
                 }
-                mAdapter.notifyDataSetChanged();
+                activityReference.get().mAdapter.notifyDataSetChanged();
             } else {
-                retryLayout.setVisibility(View.VISIBLE);
-                scrollviewContainer.setVisibility(View.GONE);
+                activityReference.get().retryLayout.setVisibility(View.VISIBLE);
+                activityReference.get().scrollviewContainer.setVisibility(View.GONE);
             }
 
         }
     }
 
-    public class RetriveTourGuideDetailsDataArabic extends AsyncTask<Void, Void, List<TourGuideStartPageArabic>> {
+    public static class RetriveTourGuideDetailsDataArabic extends AsyncTask<Void, Void, List<TourGuideStartPageArabic>> {
         private WeakReference<TourGuideDetailsActivity> activityReference;
         int language;
         String museumId;
@@ -501,21 +504,22 @@ public class TourGuideDetailsActivity extends AppCompatActivity {
         @Override
         protected void onPostExecute(List<TourGuideStartPageArabic> tourGuideStartPageArabic) {
             if (tourGuideStartPageArabic != null && tourGuideStartPageArabic.size() > 0) {
-                retryLayout.setVisibility(View.GONE);
-                scrollviewContainer.setVisibility(View.VISIBLE);
+                activityReference.get().retryLayout.setVisibility(View.GONE);
+                activityReference.get().scrollviewContainer.setVisibility(View.VISIBLE);
                 for (int i = 0; i < tourGuideStartPageArabic.size(); i++) {
                     SelfGuideStarterModel model = new SelfGuideStarterModel(
                             tourGuideStartPageArabic.get(i).getTitle(),
                             tourGuideStartPageArabic.get(i).getDescription(),
-                            converters.fromString(tourGuideStartPageArabic.get(i).getImages()),
-                            tourGuideStartPageArabic.get(i).getMuseum_entity());
-                    tourGuideList.add(model);
+                            activityReference.get().converters.fromString(tourGuideStartPageArabic.get(i).getImages()),
+                            tourGuideStartPageArabic.get(i).getMuseum_entity(),
+                            tourGuideStartPageArabic.get(i).getNid());
+                    activityReference.get().tourGuideList.add(model);
                 }
-                mAdapter.notifyDataSetChanged();
+                activityReference.get().mAdapter.notifyDataSetChanged();
 
             } else {
-                retryLayout.setVisibility(View.VISIBLE);
-                scrollviewContainer.setVisibility(View.GONE);
+                activityReference.get().retryLayout.setVisibility(View.VISIBLE);
+                activityReference.get().scrollviewContainer.setVisibility(View.GONE);
 
             }
 

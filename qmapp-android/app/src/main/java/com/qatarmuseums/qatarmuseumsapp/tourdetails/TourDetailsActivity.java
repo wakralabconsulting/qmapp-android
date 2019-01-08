@@ -167,7 +167,7 @@ public class TourDetailsActivity extends AppCompatActivity {
         }
     }
 
-    public class TourDetailsRowCount extends AsyncTask<Void, Void, Integer> {
+    public static class TourDetailsRowCount extends AsyncTask<Void, Void, Integer> {
 
         private WeakReference<TourDetailsActivity> activityReference;
         String language, tourId;
@@ -189,11 +189,12 @@ public class TourDetailsActivity extends AppCompatActivity {
             int tourDetailsRowCount = integer;
             if (tourDetailsRowCount > 0) {
                 //updateEnglishTable or add row to database
-                new CheckTourDetailsRowExist(TourDetailsActivity.this, language, tourId).execute();
+                new CheckTourDetailsRowExist(activityReference.get(), language, tourId).execute();
             } else {
                 //create databse
-                new InsertDatabaseTask(TourDetailsActivity.this, tourDetailsTableEnglish,
-                        tourDetailsTableArabic, language, tourId).execute();
+                new InsertDatabaseTask(activityReference.get(),
+                        activityReference.get().tourDetailsTableEnglish,
+                        activityReference.get().tourDetailsTableArabic, language, tourId).execute();
 
             }
         }
@@ -217,7 +218,7 @@ public class TourDetailsActivity extends AppCompatActivity {
         }
     }
 
-    public class CheckTourDetailsRowExist extends AsyncTask<Void, Void, Void> {
+    public static class CheckTourDetailsRowExist extends AsyncTask<Void, Void, Void> {
         private WeakReference<TourDetailsActivity> activityReference;
         String language, tourId;
 
@@ -229,26 +230,28 @@ public class TourDetailsActivity extends AppCompatActivity {
 
         @Override
         protected Void doInBackground(Void... voids) {
-            if (tourDetailsList.size() > 0) {
+            if (activityReference.get().tourDetailsList.size() > 0) {
                 if (language.equals("en")) {
                     int n = activityReference.get().qmDatabase.getTourDetailsTaleDao().checkEnglishIdExist(
                             tourId);
                     if (n > 0) {
-                        new DeleteEventsTableRow(TourDetailsActivity.this, language,
+                        new DeleteEventsTableRow(activityReference.get(), language,
                                 tourId).execute();
                     } else {
-                        new InsertDatabaseTask(TourDetailsActivity.this, tourDetailsTableEnglish,
-                                tourDetailsTableArabic, language, tourId).execute();
+                        new InsertDatabaseTask(activityReference.get(),
+                                activityReference.get().tourDetailsTableEnglish,
+                                activityReference.get().tourDetailsTableArabic, language, tourId).execute();
                     }
                 } else {
                     int n = activityReference.get().qmDatabase.getTourDetailsTaleDao().checkArabicIdExist(
                             tourId);
                     if (n > 0) {
-                        new DeleteEventsTableRow(TourDetailsActivity.this, language,
+                        new DeleteEventsTableRow(activityReference.get(), language,
                                 tourId).execute();
                     } else {
-                        new InsertDatabaseTask(TourDetailsActivity.this, tourDetailsTableEnglish,
-                                tourDetailsTableArabic, language, tourId).execute();
+                        new InsertDatabaseTask(activityReference.get(),
+                                activityReference.get().tourDetailsTableEnglish,
+                                activityReference.get().tourDetailsTableArabic, language, tourId).execute();
                     }
                 }
             }
@@ -258,7 +261,7 @@ public class TourDetailsActivity extends AppCompatActivity {
 
     }
 
-    public class InsertDatabaseTask extends AsyncTask<Void, Void, Boolean> {
+    public static class InsertDatabaseTask extends AsyncTask<Void, Void, Boolean> {
         private WeakReference<TourDetailsActivity> activityReference;
         private TourDetailsTableEnglish tourDetailsTableEnglish;
         private TourDetailsTableArabic tourDetailsTableArabic;
@@ -276,24 +279,24 @@ public class TourDetailsActivity extends AppCompatActivity {
 
         @Override
         protected Boolean doInBackground(Void... voids) {
-            if (tourDetailsList != null) {
+            if (activityReference.get().tourDetailsList != null) {
                 if (language.equals("en")) {
-                    for (int i = 0; i < tourDetailsList.size(); i++) {
+                    for (int i = 0; i < activityReference.get().tourDetailsList.size(); i++) {
                         Convertor converters = new Convertor();
                         tourDetailsTableEnglish = new TourDetailsTableEnglish(
-                                tourDetailsList.get(i).getTourTitle(),
-                                converters.fromArrayList(tourDetailsList.get(i).getTourImage()),
-                                tourDetailsList.get(i).getTourDate(),
-                                tourDetailsList.get(i).getTourEventId(),
-                                tourDetailsList.get(i).getTourContactEmail(),
-                                tourDetailsList.get(i).getTourContactPhone(),
-                                tourDetailsList.get(i).getTourLatitude(),
-                                tourDetailsList.get(i).getTourLongtitude(),
-                                tourDetailsList.get(i).getTourSortId(),
-                                tourDetailsList.get(i).getTourBody(),
-                                tourDetailsList.get(i).getTourRegistered(),
-                                tourDetailsList.get(i).getTourSpeakerName(),
-                                tourDetailsList.get(i).getTourSpeakerInfo()
+                                activityReference.get().tourDetailsList.get(i).getTourTitle(),
+                                converters.fromArrayList(activityReference.get().tourDetailsList.get(i).getTourImage()),
+                                activityReference.get().tourDetailsList.get(i).getTourDate(),
+                                activityReference.get().tourDetailsList.get(i).getTourEventId(),
+                                activityReference.get().tourDetailsList.get(i).getTourContactEmail(),
+                                activityReference.get().tourDetailsList.get(i).getTourContactPhone(),
+                                activityReference.get().tourDetailsList.get(i).getTourLatitude(),
+                                activityReference.get().tourDetailsList.get(i).getTourLongtitude(),
+                                activityReference.get().tourDetailsList.get(i).getTourSortId(),
+                                activityReference.get().tourDetailsList.get(i).getTourBody(),
+                                activityReference.get().tourDetailsList.get(i).getTourRegistered(),
+                                activityReference.get().tourDetailsList.get(i).getTourSpeakerName(),
+                                activityReference.get().tourDetailsList.get(i).getTourSpeakerInfo()
 
                         );
                         activityReference.get().qmDatabase.getTourDetailsTaleDao().
@@ -301,21 +304,21 @@ public class TourDetailsActivity extends AppCompatActivity {
 
                     }
                 } else {
-                    for (int i = 0; i < tourDetailsList.size(); i++) {
+                    for (int i = 0; i < activityReference.get().tourDetailsList.size(); i++) {
 
                         Convertor converters = new Convertor();
                         tourDetailsTableArabic = new TourDetailsTableArabic(
-                                tourDetailsList.get(i).getTourTitle(),
-                                converters.fromArrayList(tourDetailsList.get(i).getTourImage()),
-                                tourDetailsList.get(i).getTourDate(),
-                                tourDetailsList.get(i).getTourEventId(),
-                                tourDetailsList.get(i).getTourContactEmail(),
-                                tourDetailsList.get(i).getTourContactPhone(),
-                                tourDetailsList.get(i).getTourLatitude(),
-                                tourDetailsList.get(i).getTourLongtitude(),
-                                tourDetailsList.get(i).getTourSortId(),
-                                tourDetailsList.get(i).getTourBody(),
-                                tourDetailsList.get(i).getTourRegistered()
+                                activityReference.get().tourDetailsList.get(i).getTourTitle(),
+                                converters.fromArrayList(activityReference.get().tourDetailsList.get(i).getTourImage()),
+                                activityReference.get().tourDetailsList.get(i).getTourDate(),
+                                activityReference.get().tourDetailsList.get(i).getTourEventId(),
+                                activityReference.get().tourDetailsList.get(i).getTourContactEmail(),
+                                activityReference.get().tourDetailsList.get(i).getTourContactPhone(),
+                                activityReference.get().tourDetailsList.get(i).getTourLatitude(),
+                                activityReference.get().tourDetailsList.get(i).getTourLongtitude(),
+                                activityReference.get().tourDetailsList.get(i).getTourSortId(),
+                                activityReference.get().tourDetailsList.get(i).getTourBody(),
+                                activityReference.get().tourDetailsList.get(i).getTourRegistered()
                         );
                         activityReference.get().qmDatabase.getTourDetailsTaleDao().
                                 insert(tourDetailsTableArabic);
@@ -327,7 +330,7 @@ public class TourDetailsActivity extends AppCompatActivity {
         }
     }
 
-    public class DeleteEventsTableRow extends AsyncTask<Void, Void, Void> {
+    public static class DeleteEventsTableRow extends AsyncTask<Void, Void, Void> {
         private WeakReference<TourDetailsActivity> activityReference;
         String language, tourId;
 
@@ -355,13 +358,14 @@ public class TourDetailsActivity extends AppCompatActivity {
 
         @Override
         protected void onPostExecute(Void aVoid) {
-            new InsertDatabaseTask(TourDetailsActivity.this, tourDetailsTableEnglish,
-                    tourDetailsTableArabic, language, tourId).execute();
+            new InsertDatabaseTask(activityReference.get(),
+                    activityReference.get().tourDetailsTableEnglish,
+                    activityReference.get().tourDetailsTableArabic, language, tourId).execute();
 
         }
     }
 
-    public class RetriveTourDetailsEnglish extends AsyncTask<Void, Void, List<TourDetailsTableEnglish>> {
+    public static class RetriveTourDetailsEnglish extends AsyncTask<Void, Void, List<TourDetailsTableEnglish>> {
         private WeakReference<TourDetailsActivity> activityReference;
         String tourId;
 
@@ -377,7 +381,7 @@ public class TourDetailsActivity extends AppCompatActivity {
 
         @Override
         protected void onPostExecute(List<TourDetailsTableEnglish> tourDetailsTableEnglishList) {
-            tourDetailsList.clear();
+            activityReference.get().tourDetailsList.clear();
             Convertor converters = new Convertor();
             if (tourDetailsTableEnglishList.size() > 0) {
                 for (int i = 0; i < tourDetailsTableEnglishList.size(); i++) {
@@ -394,20 +398,20 @@ public class TourDetailsActivity extends AppCompatActivity {
                             tourDetailsTableEnglishList.get(i).getTour_body(),
                             tourDetailsTableEnglishList.get(i).getTour_registered()
                     );
-                    tourDetailsList.add(i, calendarEvents);
+                    activityReference.get().tourDetailsList.add(i, calendarEvents);
                 }
-                mAdapter.notifyDataSetChanged();
-                recyclerView.setVisibility(View.VISIBLE);
-                retryLayout.setVisibility(View.GONE);
+                activityReference.get().mAdapter.notifyDataSetChanged();
+                activityReference.get().recyclerView.setVisibility(View.VISIBLE);
+                activityReference.get().retryLayout.setVisibility(View.GONE);
             } else {
-                recyclerView.setVisibility(View.GONE);
-                retryLayout.setVisibility(View.VISIBLE);
+                activityReference.get().recyclerView.setVisibility(View.GONE);
+                activityReference.get().retryLayout.setVisibility(View.VISIBLE);
             }
-            progressBar.setVisibility(View.GONE);
+            activityReference.get().progressBar.setVisibility(View.GONE);
         }
     }
 
-    public class RetriveTourDetailsArabic extends AsyncTask<Void, Void, List<TourDetailsTableArabic>> {
+    public static class RetriveTourDetailsArabic extends AsyncTask<Void, Void, List<TourDetailsTableArabic>> {
         private WeakReference<TourDetailsActivity> activityReference;
         String tourId;
 
@@ -424,7 +428,7 @@ public class TourDetailsActivity extends AppCompatActivity {
 
         @Override
         protected void onPostExecute(List<TourDetailsTableArabic> tourDetailsTableArabicList) {
-            tourDetailsList.clear();
+            activityReference.get().tourDetailsList.clear();
             Convertor converters = new Convertor();
             if (tourDetailsTableArabicList.size() > 0) {
                 for (int i = 0; i < tourDetailsTableArabicList.size(); i++) {
@@ -441,16 +445,16 @@ public class TourDetailsActivity extends AppCompatActivity {
                             tourDetailsTableArabicList.get(i).getTour_body(),
                             tourDetailsTableArabicList.get(i).getTour_registered()
                     );
-                    tourDetailsList.add(i, calendarEvents);
+                    activityReference.get().tourDetailsList.add(i, calendarEvents);
                 }
-                mAdapter.notifyDataSetChanged();
-                recyclerView.setVisibility(View.VISIBLE);
-                retryLayout.setVisibility(View.GONE);
+                activityReference.get().mAdapter.notifyDataSetChanged();
+                activityReference.get().recyclerView.setVisibility(View.VISIBLE);
+                activityReference.get().retryLayout.setVisibility(View.GONE);
             } else {
-                recyclerView.setVisibility(View.GONE);
-                retryLayout.setVisibility(View.VISIBLE);
+                activityReference.get().recyclerView.setVisibility(View.GONE);
+                activityReference.get().retryLayout.setVisibility(View.VISIBLE);
             }
-            progressBar.setVisibility(View.GONE);
+            activityReference.get().progressBar.setVisibility(View.GONE);
         }
     }
 

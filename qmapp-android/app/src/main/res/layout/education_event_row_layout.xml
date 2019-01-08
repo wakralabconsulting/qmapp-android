@@ -21,50 +21,52 @@
             android:layout_weight="5"
             android:orientation="vertical">
 
-            <LinearLayout
+            <RelativeLayout
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:layout_marginTop="@dimen/padding_15"
                 android:orientation="vertical"
-                android:padding="@dimen/padding_5"
-                android:weightSum="9">
+                android:padding="@dimen/padding_5">
 
                 <TextView
                     android:id="@+id/event_title"
                     android:layout_width="wrap_content"
-                    android:layout_height="0dp"
-                    android:layout_weight="3"
+                    android:layout_height="wrap_content"
                     android:gravity="start"
-                    android:textColor="@color/black"
+                    android:textAllCaps="true"
+                    android:textColor="@color/event_titile_color"
                     android:textSize="@dimen/text_size_11"
-                    android:textStyle="bold" />
+                    android:textStyle="bold"
+                    android:visibility="gone" />
 
                 <TextView
                     android:id="@+id/event_hiphen"
                     android:layout_width="wrap_content"
-                    android:layout_height="0dp"
-                    android:layout_weight="3"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@id/event_title"
                     android:gravity="start"
                     android:text="-"
-                    android:textColor="@color/black"
+                    android:textColor="@color/event_titile_color"
                     android:textSize="@dimen/text_size_11"
-                    android:textStyle="bold" />
+                    android:textStyle="bold"
+                    android:visibility="gone" />
 
                 <TextView
                     android:id="@+id/event_subtitle"
                     android:layout_width="wrap_content"
-                    android:layout_height="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@id/event_hiphen"
                     android:layout_marginBottom="@dimen/padding_3"
-                    android:layout_weight="3"
-                    android:gravity="start"
                     android:ellipsize="end"
-                    android:singleLine="true"
-                    android:textColor="@color/black"
+                    android:gravity="start"
+                    android:lines="4"
+                    android:textAllCaps="true"
+                    android:textColor="@color/event_titile_color"
                     android:textSize="@dimen/text_size_11"
                     android:textStyle="bold" />
 
 
-            </LinearLayout>
+            </RelativeLayout>
 
         </LinearLayout>
 
