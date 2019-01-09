@@ -234,6 +234,7 @@ public class FloorMapActivity extends AppCompatActivity implements OnMapReadyCal
     private Animation zoomOutAnimation;
     private ImageView mMarkerImageView;
     private Bitmap resizedBitmap;
+    private Call<ArrayList<ArtifactDetails>> call;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -588,8 +589,10 @@ public class FloorMapActivity extends AppCompatActivity implements OnMapReadyCal
         }
         // Commented for temporary
 //        Call<ArrayList<ArtifactDetails>> call = apiService.getArtifactList(language);
-        Call<ArrayList<ArtifactDetails>> call = apiService.getObjectPreviewDetails(language,
-                "12471");   // Temporary
+        if (language.equals("ar"))
+            call = apiService.getObjectPreviewDetails(language, "12916");   // Temporary
+        else
+            call = apiService.getObjectPreviewDetails(language, "12471");   // Temporary
         call.enqueue(new Callback<ArrayList<ArtifactDetails>>() {
 
             @Override
