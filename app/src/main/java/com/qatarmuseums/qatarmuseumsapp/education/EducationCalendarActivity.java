@@ -49,7 +49,6 @@ import com.qatarmuseums.qatarmuseumsapp.apicall.APIInterface;
 import com.qatarmuseums.qatarmuseumsapp.utils.Util;
 import com.shrikanthravi.collapsiblecalendarview.widget.CollapsibleCalendar;
 
-import java.io.IOException;
 import java.lang.ref.WeakReference;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -435,7 +434,7 @@ public class EducationCalendarActivity extends AppCompatActivity {
         }
     }
 
-    public class EventsRowCount extends AsyncTask<Void, Void, Integer> {
+    public static class EventsRowCount extends AsyncTask<Void, Void, Integer> {
 
         private WeakReference<EducationCalendarActivity> activityReference;
         String language;
@@ -454,26 +453,28 @@ public class EducationCalendarActivity extends AppCompatActivity {
 
         @Override
         protected void onPostExecute(Integer integer) {
-            eventsTableRowCount = integer;
-            if (eventsTableRowCount > 0) {
-                if (educationEvents.size() > 0 && util.isNetworkAvailable(EducationCalendarActivity.this))
-                    new CheckEventRowExist(EducationCalendarActivity.this, language, timeStamp).execute();
+            activityReference.get().eventsTableRowCount = integer;
+            if (activityReference.get().eventsTableRowCount > 0) {
+                if (activityReference.get().educationEvents.size() > 0 &&
+                        activityReference.get().util.isNetworkAvailable(activityReference.get()))
+                    new CheckEventRowExist(activityReference.get(), language, timeStamp).execute();
                 else {
                     if (language.equals("en")) {
-                        new RetriveEnglishTableData(EducationCalendarActivity.this, 1,
+                        new RetriveEnglishTableData(activityReference.get(), 1,
                                 timeStamp).execute();
                     } else {
-                        new RetriveArabicTableData(EducationCalendarActivity.this, 2,
+                        new RetriveArabicTableData(activityReference.get(), 2,
                                 timeStamp).execute();
                     }
                 }
-            } else if (educationEvents.size() > 0) {
-                new InsertDatabaseTask(EducationCalendarActivity.this, educationalCalendarEventsTableEnglish,
-                        educationalCalendarEventsTableArabic, language, timeStamp).execute();
+            } else if (activityReference.get().educationEvents.size() > 0) {
+                new InsertDatabaseTask(activityReference.get(),
+                        activityReference.get().educationalCalendarEventsTableEnglish,
+                        activityReference.get().educationalCalendarEventsTableArabic, language, timeStamp).execute();
             } else {
-                progress.setVisibility(View.GONE);
-                eventListView.setVisibility(View.GONE);
-                retryLayout.setVisibility(View.VISIBLE);
+                activityReference.get().progress.setVisibility(View.GONE);
+                activityReference.get().eventListView.setVisibility(View.GONE);
+                activityReference.get().retryLayout.setVisibility(View.VISIBLE);
             }
         }
 
@@ -487,7 +488,7 @@ public class EducationCalendarActivity extends AppCompatActivity {
         }
     }
 
-    public class CheckEventRowExist extends AsyncTask<Void, Void, Void> {
+    public static class CheckEventRowExist extends AsyncTask<Void, Void, Void> {
 
         private WeakReference<EducationCalendarActivity> activityReference;
         String language;
@@ -511,47 +512,51 @@ public class EducationCalendarActivity extends AppCompatActivity {
 
         @Override
         protected Void doInBackground(Void... voids) {
-            if (educationEvents.size() > 0) {
+            if (activityReference.get().educationEvents.size() > 0) {
                 if (language.equals("en")) {
                     int n = activityReference.get().qmDatabase.getEducationCalendarEventsDao()
                             .checkEnglishWithEventDateExist(String.valueOf(timestamp));
                     if (n > 0) {
-                        for (int i = 0; i < educationEvents.size(); i++) {
+                        for (int i = 0; i < activityReference.get().educationEvents.size(); i++) {
                             int count = activityReference.get().qmDatabase.getEducationCalendarEventsDao()
                                     .checkEnglishWithEventIdExist(String.valueOf(timestamp),
-                                            educationEvents.get(i).getEid());
+                                            activityReference.get().educationEvents.get(i).getEid());
                             if (count > 0) {
-                                new UpdateEventsTableRow(EducationCalendarActivity.this, language,
-                                        i, timestamp, educationEvents.get(i).getEid()).execute();
+                                new UpdateEventsTableRow(activityReference.get(), language,
+                                        i, timestamp, activityReference.get().educationEvents.get(i).getEid()).execute();
                             } else {
-                                new InsertSingleElementDatabaseTask(EducationCalendarActivity.this, educationalCalendarEventsTableEnglish,
-                                        educationalCalendarEventsTableArabic, language, i, timestamp).execute();
+                                new InsertSingleElementDatabaseTask(activityReference.get(),
+                                        activityReference.get().educationalCalendarEventsTableEnglish,
+                                        activityReference.get().educationalCalendarEventsTableArabic, language, i, timestamp).execute();
                             }
                         }
                     } else {
-                        new InsertDatabaseTask(EducationCalendarActivity.this, educationalCalendarEventsTableEnglish,
-                                educationalCalendarEventsTableArabic, language, timestamp).execute();
+                        new InsertDatabaseTask(activityReference.get(),
+                                activityReference.get().educationalCalendarEventsTableEnglish,
+                                activityReference.get().educationalCalendarEventsTableArabic, language, timestamp).execute();
                     }
                 } else {
                     int n = activityReference.get().qmDatabase.getEducationCalendarEventsDao()
                             .checkArabicWithEventDateExist(String.valueOf(timestamp));
                     if (n > 0) {
-                        for (int i = 0; i < educationEvents.size(); i++) {
+                        for (int i = 0; i < activityReference.get().educationEvents.size(); i++) {
                             int count = activityReference.get().qmDatabase.getEducationCalendarEventsDao()
                                     .checkArabicWithEventIdExist(String.valueOf(timestamp),
-                                            educationEvents.get(i).getEid());
+                                            activityReference.get().educationEvents.get(i).getEid());
                             if (count > 0) {
-                                new UpdateEventsTableRow(EducationCalendarActivity.this, language,
-                                        i, timestamp, educationEvents.get(i).getEid()).execute();
+                                new UpdateEventsTableRow(activityReference.get(), language,
+                                        i, timestamp, activityReference.get().educationEvents.get(i).getEid()).execute();
                             } else {
-                                new InsertSingleElementDatabaseTask(EducationCalendarActivity.this, educationalCalendarEventsTableEnglish,
-                                        educationalCalendarEventsTableArabic, language, i, timestamp).execute();
+                                new InsertSingleElementDatabaseTask(activityReference.get(),
+                                        activityReference.get().educationalCalendarEventsTableEnglish,
+                                        activityReference.get().educationalCalendarEventsTableArabic, language, i, timestamp).execute();
                                 break;
                             }
                         }
                     } else {
-                        new EducationCalendarActivity.InsertDatabaseTask(EducationCalendarActivity.this, educationalCalendarEventsTableEnglish,
-                                educationalCalendarEventsTableArabic, language, timestamp).execute();
+                        new EducationCalendarActivity.InsertDatabaseTask(activityReference.get(),
+                                activityReference.get().educationalCalendarEventsTableEnglish,
+                                activityReference.get().educationalCalendarEventsTableArabic, language, timestamp).execute();
                     }
                 }
             }
@@ -559,7 +564,7 @@ public class EducationCalendarActivity extends AppCompatActivity {
         }
     }
 
-    public class UpdateEventsTableRow extends AsyncTask<Void, Void, Void> {
+    public static class UpdateEventsTableRow extends AsyncTask<Void, Void, Void> {
         private WeakReference<EducationCalendarActivity> activityReference;
         String language;
         int position;
@@ -592,49 +597,49 @@ public class EducationCalendarActivity extends AppCompatActivity {
                 // updateEnglishTable table with english name
 
                 ArrayList<String> fieldval = new ArrayList<String>();
-                fieldval = educationEvents.get(position).getField();
+                fieldval = activityReference.get().educationEvents.get(position).getField();
                 ArrayList<String> startDate = new ArrayList<String>();
-                startDate = educationEvents.get(position).getStart_time();
+                startDate = activityReference.get().educationEvents.get(position).getStart_time();
                 ArrayList<String> endDate = new ArrayList<String>();
-                endDate = educationEvents.get(position).getEnd_time();
+                endDate = activityReference.get().educationEvents.get(position).getEnd_time();
                 activityReference.get().qmDatabase.getEducationCalendarEventsDao().updateEventsEnglish(
-                        educationEvents.get(position).getTitle(),
-                        util.html2string(startDate.get(0)),
-                        util.html2string(endDate.get(0)),
-                        educationEvents.get(position).getRegistration(),
-                        educationEvents.get(position).getMax_group_size(),
-                        educationEvents.get(position).getShort_desc(),
-                        educationEvents.get(position).getLong_desc(),
-                        educationEvents.get(position).getLocation(),
-                        educationEvents.get(position).getCategory(),
-                        educationEvents.get(position).getEid()
+                        activityReference.get().educationEvents.get(position).getTitle(),
+                        activityReference.get().util.html2string(startDate.get(0)),
+                        activityReference.get().util.html2string(endDate.get(0)),
+                        activityReference.get().educationEvents.get(position).getRegistration(),
+                        activityReference.get().educationEvents.get(position).getMax_group_size(),
+                        activityReference.get().educationEvents.get(position).getShort_desc(),
+                        activityReference.get().educationEvents.get(position).getLong_desc(),
+                        activityReference.get().educationEvents.get(position).getLocation(),
+                        activityReference.get().educationEvents.get(position).getCategory(),
+                        activityReference.get().educationEvents.get(position).getEid()
                 );
 
             } else {
                 ArrayList<String> fieldval = new ArrayList<String>();
-                fieldval = educationEvents.get(position).getField();
+                fieldval = activityReference.get().educationEvents.get(position).getField();
                 ArrayList<String> startDate = new ArrayList<String>();
-                startDate = educationEvents.get(position).getStart_time();
+                startDate = activityReference.get().educationEvents.get(position).getStart_time();
                 ArrayList<String> endDate = new ArrayList<String>();
-                endDate = educationEvents.get(position).getEnd_time();
+                endDate = activityReference.get().educationEvents.get(position).getEnd_time();
                 activityReference.get().qmDatabase.getEducationCalendarEventsDao().updateEventsArabic(
-                        educationEvents.get(position).getTitle(),
-                        util.html2string(startDate.get(0)),
-                        util.html2string(endDate.get(0)),
-                        educationEvents.get(position).getRegistration(),
-                        educationEvents.get(position).getMax_group_size(),
-                        educationEvents.get(position).getShort_desc(),
-                        educationEvents.get(position).getLong_desc(),
-                        educationEvents.get(position).getLocation(),
-                        educationEvents.get(position).getCategory(),
-                        educationEvents.get(position).getEid()
+                        activityReference.get().educationEvents.get(position).getTitle(),
+                        activityReference.get().util.html2string(startDate.get(0)),
+                        activityReference.get().util.html2string(endDate.get(0)),
+                        activityReference.get().educationEvents.get(position).getRegistration(),
+                        activityReference.get().educationEvents.get(position).getMax_group_size(),
+                        activityReference.get().educationEvents.get(position).getShort_desc(),
+                        activityReference.get().educationEvents.get(position).getLong_desc(),
+                        activityReference.get().educationEvents.get(position).getLocation(),
+                        activityReference.get().educationEvents.get(position).getCategory(),
+                        activityReference.get().educationEvents.get(position).getEid()
                 );
             }
             return null;
         }
     }
 
-    public class InsertSingleElementDatabaseTask extends AsyncTask<Void, Void, Boolean> {
+    public static class InsertSingleElementDatabaseTask extends AsyncTask<Void, Void, Boolean> {
 
         private WeakReference<EducationCalendarActivity> activityReference;
         private EducationalCalendarEventsTableEnglish educationalCalendarEventsTableEnglish;
@@ -667,35 +672,35 @@ public class EducationCalendarActivity extends AppCompatActivity {
 
         @Override
         protected Boolean doInBackground(Void... voids) {
-            if (educationEvents != null) {
+            if (activityReference.get().educationEvents != null) {
                 if (language.equals("en")) {
                     Convertor converters = new Convertor();
                     ArrayList<String> fieldval = new ArrayList<String>();
-                    fieldval = educationEvents.get(position).getField();
+                    fieldval = activityReference.get().educationEvents.get(position).getField();
                     ArrayList<String> startDate = new ArrayList<String>();
-                    startDate = educationEvents.get(position).getStart_time();
+                    startDate = activityReference.get().educationEvents.get(position).getStart_time();
                     ArrayList<String> endDate = new ArrayList<String>();
-                    endDate = educationEvents.get(position).getEnd_time();
+                    endDate = activityReference.get().educationEvents.get(position).getEnd_time();
                     educationalCalendarEventsTableEnglish = new EducationalCalendarEventsTableEnglish(
-                            educationEvents.get(position).getEid(),
-                            educationEvents.get(position).getTitle(),
+                            activityReference.get().educationEvents.get(position).getEid(),
+                            activityReference.get().educationEvents.get(position).getTitle(),
                             String.valueOf(timestamp),
-                            educationEvents.get(position).getInstitution(),
-                            educationEvents.get(position).getAge_group(),
-                            educationEvents.get(position).getProgram_type(),
-                            util.html2string(startDate.get(0)),
-                            util.html2string(endDate.get(0)),
-                            educationEvents.get(position).getRegistration(),
-                            educationEvents.get(position).getMax_group_size(),
-                            educationEvents.get(position).getShort_desc(),
-                            educationEvents.get(position).getLong_desc(),
-                            educationEvents.get(position).getLocation(),
-                            educationEvents.get(position).getCategory(),
-                            educationEvents.get(position).getFilter(),
-                            util.html2string(fieldval.get(0)),
-                            converters.fromArrayList(educationEvents.get(position).getAge()),
-                            converters.fromArrayList(educationEvents.get(position).getAssociatedTopics()),
-                            educationEvents.get(position).getMuseumDepartment()
+                            activityReference.get().educationEvents.get(position).getInstitution(),
+                            activityReference.get().educationEvents.get(position).getAge_group(),
+                            activityReference.get().educationEvents.get(position).getProgram_type(),
+                            activityReference.get().util.html2string(startDate.get(0)),
+                            activityReference.get().util.html2string(endDate.get(0)),
+                            activityReference.get().educationEvents.get(position).getRegistration(),
+                            activityReference.get().educationEvents.get(position).getMax_group_size(),
+                            activityReference.get().educationEvents.get(position).getShort_desc(),
+                            activityReference.get().educationEvents.get(position).getLong_desc(),
+                            activityReference.get().educationEvents.get(position).getLocation(),
+                            activityReference.get().educationEvents.get(position).getCategory(),
+                            activityReference.get().educationEvents.get(position).getFilter(),
+                            activityReference.get().util.html2string(fieldval.get(0)),
+                            converters.fromArrayList(activityReference.get().educationEvents.get(position).getAge()),
+                            converters.fromArrayList(activityReference.get().educationEvents.get(position).getAssociatedTopics()),
+                            activityReference.get().educationEvents.get(position).getMuseumDepartment()
                     );
                     activityReference.get().qmDatabase.getEducationCalendarEventsDao().
                             insertEventsTableEnglish(educationalCalendarEventsTableEnglish);
@@ -703,31 +708,31 @@ public class EducationCalendarActivity extends AppCompatActivity {
                 } else {
                     Convertor converters = new Convertor();
                     ArrayList<String> fieldval = new ArrayList<String>();
-                    fieldval = educationEvents.get(position).getField();
+                    fieldval = activityReference.get().educationEvents.get(position).getField();
                     ArrayList<String> startDate = new ArrayList<String>();
-                    startDate = educationEvents.get(position).getStart_time();
+                    startDate = activityReference.get().educationEvents.get(position).getStart_time();
                     ArrayList<String> endDate = new ArrayList<String>();
-                    endDate = educationEvents.get(position).getEnd_time();
+                    endDate = activityReference.get().educationEvents.get(position).getEnd_time();
                     educationalCalendarEventsTableArabic = new EducationalCalendarEventsTableArabic(
-                            educationEvents.get(position).getEid(),
-                            educationEvents.get(position).getTitle(),
+                            activityReference.get().educationEvents.get(position).getEid(),
+                            activityReference.get().educationEvents.get(position).getTitle(),
                             String.valueOf(timestamp),
-                            educationEvents.get(position).getInstitution(),
-                            educationEvents.get(position).getAge_group(),
-                            educationEvents.get(position).getProgram_type(),
-                            util.html2string(startDate.get(0)),
-                            util.html2string(endDate.get(0)),
-                            educationEvents.get(position).getRegistration(),
-                            educationEvents.get(position).getMax_group_size(),
-                            educationEvents.get(position).getShort_desc(),
-                            educationEvents.get(position).getLong_desc(),
-                            educationEvents.get(position).getLocation(),
-                            educationEvents.get(position).getCategory(),
-                            educationEvents.get(position).getFilter(),
-                            util.html2string(fieldval.get(0)),
-                            converters.fromArrayList(educationEvents.get(position).getAge()),
-                            converters.fromArrayList(educationEvents.get(position).getAssociatedTopics()),
-                            educationEvents.get(position).getMuseumDepartment()
+                            activityReference.get().educationEvents.get(position).getInstitution(),
+                            activityReference.get().educationEvents.get(position).getAge_group(),
+                            activityReference.get().educationEvents.get(position).getProgram_type(),
+                            activityReference.get().util.html2string(startDate.get(0)),
+                            activityReference.get().util.html2string(endDate.get(0)),
+                            activityReference.get().educationEvents.get(position).getRegistration(),
+                            activityReference.get().educationEvents.get(position).getMax_group_size(),
+                            activityReference.get().educationEvents.get(position).getShort_desc(),
+                            activityReference.get().educationEvents.get(position).getLong_desc(),
+                            activityReference.get().educationEvents.get(position).getLocation(),
+                            activityReference.get().educationEvents.get(position).getCategory(),
+                            activityReference.get().educationEvents.get(position).getFilter(),
+                            activityReference.get().util.html2string(fieldval.get(0)),
+                            converters.fromArrayList(activityReference.get().educationEvents.get(position).getAge()),
+                            converters.fromArrayList(activityReference.get().educationEvents.get(position).getAssociatedTopics()),
+                            activityReference.get().educationEvents.get(position).getMuseumDepartment()
                     );
                     activityReference.get().qmDatabase.getEducationCalendarEventsDao().
                             insertEventsTableArabic(educationalCalendarEventsTableArabic);
@@ -737,7 +742,7 @@ public class EducationCalendarActivity extends AppCompatActivity {
         }
     }
 
-    public class InsertDatabaseTask extends AsyncTask<Void, Void, Boolean> {
+    public static class InsertDatabaseTask extends AsyncTask<Void, Void, Boolean> {
 
         private WeakReference<EducationCalendarActivity> activityReference;
         private EducationalCalendarEventsTableEnglish educationalCalendarEventsTableEnglish;
@@ -768,36 +773,36 @@ public class EducationCalendarActivity extends AppCompatActivity {
 
         @Override
         protected Boolean doInBackground(Void... voids) {
-            if (educationEvents != null) {
+            if (activityReference.get().educationEvents != null) {
                 if (language.equals("en")) {
                     Convertor converters = new Convertor();
-                    for (int i = 0; i < educationEvents.size(); i++) {
+                    for (int i = 0; i < activityReference.get().educationEvents.size(); i++) {
                         ArrayList<String> fieldval = new ArrayList<String>();
-                        fieldval = educationEvents.get(i).getField();
+                        fieldval = activityReference.get().educationEvents.get(i).getField();
                         ArrayList<String> startDate = new ArrayList<String>();
-                        startDate = educationEvents.get(i).getStart_time();
+                        startDate = activityReference.get().educationEvents.get(i).getStart_time();
                         ArrayList<String> endDate = new ArrayList<String>();
-                        endDate = educationEvents.get(i).getEnd_time();
+                        endDate = activityReference.get().educationEvents.get(i).getEnd_time();
                         educationalCalendarEventsTableEnglish = new EducationalCalendarEventsTableEnglish(
-                                educationEvents.get(i).getEid(),
-                                educationEvents.get(i).getTitle(),
+                                activityReference.get().educationEvents.get(i).getEid(),
+                                activityReference.get().educationEvents.get(i).getTitle(),
                                 String.valueOf(timestamp),
-                                educationEvents.get(i).getInstitution(),
-                                educationEvents.get(i).getAge_group(),
-                                educationEvents.get(i).getProgram_type(),
-                                util.html2string(startDate.get(0)),
-                                util.html2string(endDate.get(0)),
-                                educationEvents.get(i).getRegistration(),
-                                educationEvents.get(i).getMax_group_size(),
-                                educationEvents.get(i).getShort_desc(),
-                                educationEvents.get(i).getLong_desc(),
-                                educationEvents.get(i).getLocation(),
-                                educationEvents.get(i).getCategory(),
-                                educationEvents.get(i).getFilter(),
-                                util.html2string(fieldval.get(0)),
-                                converters.fromArrayList(educationEvents.get(i).getAge()),
-                                converters.fromArrayList(educationEvents.get(i).getAssociatedTopics()),
-                                educationEvents.get(i).getMuseumDepartment()
+                                activityReference.get().educationEvents.get(i).getInstitution(),
+                                activityReference.get().educationEvents.get(i).getAge_group(),
+                                activityReference.get().educationEvents.get(i).getProgram_type(),
+                                activityReference.get().util.html2string(startDate.get(0)),
+                                activityReference.get().util.html2string(endDate.get(0)),
+                                activityReference.get().educationEvents.get(i).getRegistration(),
+                                activityReference.get().educationEvents.get(i).getMax_group_size(),
+                                activityReference.get().educationEvents.get(i).getShort_desc(),
+                                activityReference.get().educationEvents.get(i).getLong_desc(),
+                                activityReference.get().educationEvents.get(i).getLocation(),
+                                activityReference.get().educationEvents.get(i).getCategory(),
+                                activityReference.get().educationEvents.get(i).getFilter(),
+                                activityReference.get().util.html2string(fieldval.get(0)),
+                                converters.fromArrayList(activityReference.get().educationEvents.get(i).getAge()),
+                                converters.fromArrayList(activityReference.get().educationEvents.get(i).getAssociatedTopics()),
+                                activityReference.get().educationEvents.get(i).getMuseumDepartment()
                         );
                         activityReference.get().qmDatabase.getEducationCalendarEventsDao().
                                 insertEventsTableEnglish(educationalCalendarEventsTableEnglish);
@@ -805,33 +810,33 @@ public class EducationCalendarActivity extends AppCompatActivity {
                     }
                 } else {
                     Convertor converters = new Convertor();
-                    for (int i = 0; i < educationEvents.size(); i++) {
+                    for (int i = 0; i < activityReference.get().educationEvents.size(); i++) {
                         ArrayList<String> fieldval = new ArrayList<String>();
-                        fieldval = educationEvents.get(i).getField();
+                        fieldval = activityReference.get().educationEvents.get(i).getField();
                         ArrayList<String> startDate = new ArrayList<String>();
-                        startDate = educationEvents.get(i).getStart_time();
+                        startDate = activityReference.get().educationEvents.get(i).getStart_time();
                         ArrayList<String> endDate = new ArrayList<String>();
-                        endDate = educationEvents.get(i).getEnd_time();
+                        endDate = activityReference.get().educationEvents.get(i).getEnd_time();
                         educationalCalendarEventsTableArabic = new EducationalCalendarEventsTableArabic(
-                                educationEvents.get(i).getEid(),
-                                educationEvents.get(i).getTitle(),
+                                activityReference.get().educationEvents.get(i).getEid(),
+                                activityReference.get().educationEvents.get(i).getTitle(),
                                 String.valueOf(timestamp),
-                                educationEvents.get(i).getInstitution(),
-                                educationEvents.get(i).getAge_group(),
-                                educationEvents.get(i).getProgram_type(),
-                                util.html2string(startDate.get(0)),
-                                util.html2string(endDate.get(0)),
-                                educationEvents.get(i).getRegistration(),
-                                educationEvents.get(i).getMax_group_size(),
-                                educationEvents.get(i).getShort_desc(),
-                                educationEvents.get(i).getLong_desc(),
-                                educationEvents.get(i).getLocation(),
-                                educationEvents.get(i).getCategory(),
-                                educationEvents.get(i).getFilter(),
-                                util.html2string(fieldval.get(0)),
-                                converters.fromArrayList(educationEvents.get(i).getAge()),
-                                converters.fromArrayList(educationEvents.get(i).getAssociatedTopics()),
-                                educationEvents.get(i).getMuseumDepartment()
+                                activityReference.get().educationEvents.get(i).getInstitution(),
+                                activityReference.get().educationEvents.get(i).getAge_group(),
+                                activityReference.get().educationEvents.get(i).getProgram_type(),
+                                activityReference.get().util.html2string(startDate.get(0)),
+                                activityReference.get().util.html2string(endDate.get(0)),
+                                activityReference.get().educationEvents.get(i).getRegistration(),
+                                activityReference.get().educationEvents.get(i).getMax_group_size(),
+                                activityReference.get().educationEvents.get(i).getShort_desc(),
+                                activityReference.get().educationEvents.get(i).getLong_desc(),
+                                activityReference.get().educationEvents.get(i).getLocation(),
+                                activityReference.get().educationEvents.get(i).getCategory(),
+                                activityReference.get().educationEvents.get(i).getFilter(),
+                                activityReference.get().util.html2string(fieldval.get(0)),
+                                converters.fromArrayList(activityReference.get().educationEvents.get(i).getAge()),
+                                converters.fromArrayList(activityReference.get().educationEvents.get(i).getAssociatedTopics()),
+                                activityReference.get().educationEvents.get(i).getMuseumDepartment()
                         );
                         activityReference.get().qmDatabase.getEducationCalendarEventsDao().
                                 insertEventsTableArabic(educationalCalendarEventsTableArabic);
@@ -843,7 +848,7 @@ public class EducationCalendarActivity extends AppCompatActivity {
         }
     }
 
-    public class RetriveEnglishTableData extends AsyncTask<Void, Void, List<EducationalCalendarEventsTableEnglish>> {
+    public static class RetriveEnglishTableData extends AsyncTask<Void, Void, List<EducationalCalendarEventsTableEnglish>> {
 
         private WeakReference<EducationCalendarActivity> activityReference;
         int language;
@@ -862,7 +867,7 @@ public class EducationCalendarActivity extends AppCompatActivity {
 
         @Override
         protected void onPostExecute(List<EducationalCalendarEventsTableEnglish> educationalCalendarEventsTableEnglish) {
-            educationEvents.clear();
+            activityReference.get().educationEvents.clear();
             ArrayList<String> fieldval = new ArrayList<String>();
             ArrayList<String> startDate = new ArrayList<String>();
             ArrayList<String> endDate = new ArrayList<String>();
@@ -893,47 +898,51 @@ public class EducationCalendarActivity extends AppCompatActivity {
                             converters.fromString(educationalCalendarEventsTableEnglish.get(i).getAssociatedTopics()),
                             educationalCalendarEventsTableEnglish.get(i).getMuseum()
                     );
-                    educationEvents.add(i, educationEventsList);
+                    activityReference.get().educationEvents.add(i, educationEventsList);
                 }
-                educationAdapter.notifyDataSetChanged();
-                eventListView.setVisibility(View.VISIBLE);
-                retryLayout.setVisibility(View.GONE);
+                activityReference.get().educationAdapter.notifyDataSetChanged();
+                activityReference.get().eventListView.setVisibility(View.VISIBLE);
+                activityReference.get().retryLayout.setVisibility(View.GONE);
             } else {
-                progress.setVisibility(View.GONE);
-                eventListView.setVisibility(View.GONE);
-                retryLayout.setVisibility(View.VISIBLE);
+                activityReference.get().progress.setVisibility(View.GONE);
+                activityReference.get().eventListView.setVisibility(View.GONE);
+                activityReference.get().retryLayout.setVisibility(View.VISIBLE);
             }
-            progress.setVisibility(View.GONE);
+            activityReference.get().progress.setVisibility(View.GONE);
         }
 
         @Override
         protected List<EducationalCalendarEventsTableEnglish> doInBackground(Void... voids) {
-            if (institutionFilter.equalsIgnoreCase("All") &&
-                    ageGroupFilter.equalsIgnoreCase("All") &&
-                    programmeTypeFilter.equalsIgnoreCase("All")) {
+            if (activityReference.get().institutionFilter.equalsIgnoreCase("All") &&
+                    activityReference.get().ageGroupFilter.equalsIgnoreCase("All") &&
+                    activityReference.get().programmeTypeFilter.equalsIgnoreCase("All")) {
                 return activityReference.get().qmDatabase.getEducationCalendarEventsDao()
                         .getAllEventsEnglish(String.valueOf(eventDate));
-            } else if (institutionFilter.equalsIgnoreCase("All") &&
-                    ageGroupFilter.equalsIgnoreCase("All")) {
+            } else if (activityReference.get().institutionFilter.equalsIgnoreCase("All") &&
+                    activityReference.get().ageGroupFilter.equalsIgnoreCase("All")) {
                 return activityReference.get().qmDatabase.getEducationCalendarEventsDao().
-                        getProgrammeFilterEventsEnglish(String.valueOf(eventDate), programmeTypeFilter);
-            } else if (institutionFilter.equalsIgnoreCase("All") &&
-                    programmeTypeFilter.equalsIgnoreCase("All")) {
+                        getProgrammeFilterEventsEnglish(String.valueOf(eventDate),
+                                activityReference.get().programmeTypeFilter);
+            } else if (activityReference.get().institutionFilter.equalsIgnoreCase("All") &&
+                    activityReference.get().programmeTypeFilter.equalsIgnoreCase("All")) {
                 return activityReference.get().qmDatabase.getEducationCalendarEventsDao().
-                        getAgeGroupFilterEventsEnglish(String.valueOf(eventDate), ageGroupFilter);
-            } else if (programmeTypeFilter.equalsIgnoreCase("All") &&
-                    ageGroupFilter.equalsIgnoreCase("All")) {
+                        getAgeGroupFilterEventsEnglish(String.valueOf(eventDate),
+                                activityReference.get().ageGroupFilter);
+            } else if (activityReference.get().programmeTypeFilter.equalsIgnoreCase("All") &&
+                    activityReference.get().ageGroupFilter.equalsIgnoreCase("All")) {
                 return activityReference.get().qmDatabase.getEducationCalendarEventsDao().
-                        getInstitutionFilterEventsEnglish(String.valueOf(eventDate), institutionFilter);
+                        getInstitutionFilterEventsEnglish(String.valueOf(eventDate),
+                                activityReference.get().institutionFilter);
             } else {
                 return activityReference.get().qmDatabase.getEducationCalendarEventsDao()
-                        .getEventsWithDateEnglish(String.valueOf(eventDate), institutionFilter,
-                                ageGroupFilter, programmeTypeFilter);
+                        .getEventsWithDateEnglish(String.valueOf(eventDate), activityReference.get().institutionFilter,
+                                activityReference.get().ageGroupFilter,
+                                activityReference.get().programmeTypeFilter);
             }
         }
     }
 
-    public class RetriveArabicTableData extends AsyncTask<Void, Void, List<EducationalCalendarEventsTableArabic>> {
+    public static class RetriveArabicTableData extends AsyncTask<Void, Void, List<EducationalCalendarEventsTableArabic>> {
 
         private WeakReference<EducationCalendarActivity> activityReference;
         int language;
@@ -952,7 +961,7 @@ public class EducationCalendarActivity extends AppCompatActivity {
 
         @Override
         protected void onPostExecute(List<EducationalCalendarEventsTableArabic> educationalCalendarEventsTableArabic) {
-            educationEvents.clear();
+            activityReference.get().educationEvents.clear();
             ArrayList<String> fieldval = new ArrayList<String>();
             ArrayList<String> startDate = new ArrayList<String>();
             ArrayList<String> endDate = new ArrayList<String>();
@@ -983,43 +992,43 @@ public class EducationCalendarActivity extends AppCompatActivity {
                             converters.fromString(educationalCalendarEventsTableArabic.get(i).getAssociatedTopics()),
                             educationalCalendarEventsTableArabic.get(i).getMuseum()
                     );
-                    educationEvents.add(i, educationEventsList);
+                    activityReference.get().educationEvents.add(i, educationEventsList);
                 }
-                educationAdapter.notifyDataSetChanged();
-                eventListView.setVisibility(View.VISIBLE);
-                retryLayout.setVisibility(View.GONE);
+                activityReference.get().educationAdapter.notifyDataSetChanged();
+                activityReference.get().eventListView.setVisibility(View.VISIBLE);
+                activityReference.get().retryLayout.setVisibility(View.GONE);
             } else {
-                progress.setVisibility(View.GONE);
-                eventListView.setVisibility(View.GONE);
-                retryLayout.setVisibility(View.VISIBLE);
+                activityReference.get().progress.setVisibility(View.GONE);
+                activityReference.get().eventListView.setVisibility(View.GONE);
+                activityReference.get().retryLayout.setVisibility(View.VISIBLE);
             }
-            progress.setVisibility(View.GONE);
+            activityReference.get().progress.setVisibility(View.GONE);
         }
 
         @Override
         protected List<EducationalCalendarEventsTableArabic> doInBackground(Void... voids) {
 
-            if (institutionFilter.equalsIgnoreCase("All") &&
-                    ageGroupFilter.equalsIgnoreCase("All") &&
-                    programmeTypeFilter.equalsIgnoreCase("All")) {
+            if (activityReference.get().institutionFilter.equalsIgnoreCase("All") &&
+                    activityReference.get().ageGroupFilter.equalsIgnoreCase("All") &&
+                    activityReference.get().programmeTypeFilter.equalsIgnoreCase("All")) {
                 return activityReference.get().qmDatabase.getEducationCalendarEventsDao()
                         .getAllEventsArabic(String.valueOf(eventDate));
-            } else if (institutionFilter.equalsIgnoreCase("All") &&
-                    ageGroupFilter.equalsIgnoreCase("All")) {
+            } else if (activityReference.get().institutionFilter.equalsIgnoreCase("All") &&
+                    activityReference.get().ageGroupFilter.equalsIgnoreCase("All")) {
                 return activityReference.get().qmDatabase.getEducationCalendarEventsDao().
-                        getProgrammeFilterEventsArabic(String.valueOf(eventDate), programmeTypeFilter);
-            } else if (institutionFilter.equalsIgnoreCase("All") &&
-                    programmeTypeFilter.equalsIgnoreCase("All")) {
+                        getProgrammeFilterEventsArabic(String.valueOf(eventDate), activityReference.get().programmeTypeFilter);
+            } else if (activityReference.get().institutionFilter.equalsIgnoreCase("All") &&
+                    activityReference.get().programmeTypeFilter.equalsIgnoreCase("All")) {
                 return activityReference.get().qmDatabase.getEducationCalendarEventsDao().
-                        getAgeGroupFilterEventsArabic(String.valueOf(eventDate), ageGroupFilter);
-            } else if (programmeTypeFilter.equalsIgnoreCase("All") &&
-                    ageGroupFilter.equalsIgnoreCase("All")) {
+                        getAgeGroupFilterEventsArabic(String.valueOf(eventDate), activityReference.get().ageGroupFilter);
+            } else if (activityReference.get().programmeTypeFilter.equalsIgnoreCase("All") &&
+                    activityReference.get().ageGroupFilter.equalsIgnoreCase("All")) {
                 return activityReference.get().qmDatabase.getEducationCalendarEventsDao().
-                        getInstitutionFilterEventsArabic(String.valueOf(eventDate), institutionFilter);
+                        getInstitutionFilterEventsArabic(String.valueOf(eventDate), activityReference.get().institutionFilter);
             } else {
                 return activityReference.get().qmDatabase.getEducationCalendarEventsDao()
-                        .getEventsWithDateArabic(String.valueOf(eventDate), institutionFilter,
-                                ageGroupFilter, programmeTypeFilter);
+                        .getEventsWithDateArabic(String.valueOf(eventDate), activityReference.get().institutionFilter,
+                                activityReference.get().ageGroupFilter, activityReference.get().programmeTypeFilter);
             }
         }
     }

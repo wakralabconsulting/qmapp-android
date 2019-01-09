@@ -327,11 +327,13 @@ public class HomeActivity extends BaseActivity {
     }
 
     public void navigateToLaunchPage() {
-        navigationIntent = new Intent(HomeActivity.this, MuseumActivity.class);
-        navigationIntent.putExtra("MUSEUMTITLE", bannerText.getText());
-        navigationIntent.putExtra("MUSEUM_ID", bannerLists.get(0).getId());
-        navigationIntent.putExtra("IS_BANNER", true);
-        startActivity(navigationIntent);
+        if (bannerLists.size() > 0) {
+            navigationIntent = new Intent(HomeActivity.this, MuseumActivity.class);
+            navigationIntent.putExtra("MUSEUMTITLE", bannerText.getText());
+            navigationIntent.putExtra("MUSEUM_ID", bannerLists.get(0).getId());
+            navigationIntent.putExtra("IS_BANNER", true);
+            startActivity(navigationIntent);
+        }
     }
 
     public void checkForNotification(Intent intent) {
@@ -361,6 +363,7 @@ public class HomeActivity extends BaseActivity {
     @Override
     public void onDestroy() {
         super.onDestroy();
+        QMDatabase.cleanUp();
         LocalBroadcastManager.getInstance(this).unregisterReceiver(mRegistrationBroadcastReceiver);
     }
 
@@ -446,7 +449,7 @@ public class HomeActivity extends BaseActivity {
                     if (response.body() != null) {
                         bannerLists.addAll(response.body());
                         addBannerData(bannerLists);
-                        new RowCountBanner(HomeActivity.this, language).execute();
+                        new RowCountBanner(HomeActivity.this, language, bannerLists).execute();
                     }
                 }
             }
@@ -460,7 +463,6 @@ public class HomeActivity extends BaseActivity {
     UserRegistrationDetailsTable userRegistrationDetailsTable;
 
     public void getUserRegistrationDetails(String userID) {
-//        APIInterface apiService = APIClient.getClient().create(APIInterface.class);
         HttpLoggingInterceptor interceptor = new HttpLoggingInterceptor();
         interceptor.setLevel(HttpLoggingInterceptor.Level.BODY);
 
@@ -485,7 +487,8 @@ public class HomeActivity extends BaseActivity {
                 if (response.isSuccessful()) {
                     if (response.body() != null && response.body().size() > 0) {
                         registeredEventLists.addAll(response.body());
-                        new InsertRegistrationDatabaseTask(HomeActivity.this, userRegistrationDetailsTable).execute();
+                        new InsertRegistrationDatabaseTask(HomeActivity.this,
+                                userRegistrationDetailsTable, registeredEventLists).execute();
                     }
                 }
             }
@@ -523,14 +526,15 @@ public class HomeActivity extends BaseActivity {
     }
 
     public void addBannerData(List<HomeList> bannerLists) {
-        if (!HomeActivity.this.isFinishing())
-            GlideApp.with(HomeActivity.this)
-                    .load(bannerLists.get(0).getImage())
-                    .centerCrop()
-                    .placeholder(R.drawable.placeholder_header)
-                    .into(headerImageView);
-        bannerText.setText(bannerLists.get(0).getName());
-
+        if (bannerLists.size() > 0) {
+            if (!HomeActivity.this.isFinishing())
+                GlideApp.with(HomeActivity.this)
+                        .load(bannerLists.get(0).getImage())
+                        .centerCrop()
+                        .placeholder(R.drawable.placeholder_header)
+                        .into(headerImageView);
+            bannerText.setText(bannerLists.get(0).getName());
+        }
     }
 
     public void fetchToken() {
@@ -927,15 +931,17 @@ public class HomeActivity extends BaseActivity {
 
     }
 
-    public class InsertRegistrationDatabaseTask extends AsyncTask<Void, Void, Boolean> {
+    public static class InsertRegistrationDatabaseTask extends AsyncTask<Void, Void, Boolean> {
         private WeakReference<HomeActivity> activityReference;
         private UserRegistrationDetailsTable userRegistrationDetailsTable;
-        String language;
+        private ArrayList<UserRegistrationModel> registeredEventLists;
 
         InsertRegistrationDatabaseTask(HomeActivity context,
-                                       UserRegistrationDetailsTable userRegistrationDetailsTable) {
+                                       UserRegistrationDetailsTable userRegistrationDetailsTable,
+                                       ArrayList<UserRegistrationModel> registeredEventLists) {
             activityReference = new WeakReference<>(context);
             this.userRegistrationDetailsTable = userRegistrationDetailsTable;
+            this.registeredEventLists = registeredEventLists;
         }
 
         @Override
@@ -955,14 +961,15 @@ public class HomeActivity extends BaseActivity {
         }
     }
 
-
-    public class RowCountBanner extends AsyncTask<Void, Void, Integer> {
+    public static class RowCountBanner extends AsyncTask<Void, Void, Integer> {
         private WeakReference<HomeActivity> activityReference;
         String language;
+        private ArrayList<HomeList> bannerLists;
 
-        RowCountBanner(HomeActivity context, String apiLanguage) {
+        RowCountBanner(HomeActivity context, String apiLanguage, ArrayList<HomeList> bannerLists) {
             activityReference = new WeakReference<>(context);
             language = apiLanguage;
+            this.bannerLists = bannerLists;
         }
 
         @Override
@@ -976,28 +983,30 @@ public class HomeActivity extends BaseActivity {
 
         @Override
         protected void onPostExecute(Integer integer) {
-            homePageBannerTableRowCount = integer;
+            int homePageBannerTableRowCount = integer;
             if (homePageBannerTableRowCount > 0) {
                 //updateEnglishTable or add row to database
-                new UpdateHomePageBannerTable(HomeActivity.this, language).execute();
+                new UpdateHomePageBannerTable(activityReference.get(), language, bannerLists).execute();
 
             } else {
                 //create databse
-                new InsertBannerDatabaseTask(HomeActivity.this, homePageBannerTableEnglish,
-                        homePageBannerTableArabic, language).execute();
+                new InsertBannerDatabaseTask(activityReference.get(), activityReference.get().homePageBannerTableEnglish,
+                        activityReference.get().homePageBannerTableArabic, language, bannerLists).execute();
 
             }
 
         }
     }
 
-    public class UpdateHomePageBannerTable extends AsyncTask<Void, Void, Void> {
+    public static class UpdateHomePageBannerTable extends AsyncTask<Void, Void, Void> {
         private WeakReference<HomeActivity> activityReference;
         String language;
+        private ArrayList<HomeList> bannerLists;
 
-        UpdateHomePageBannerTable(HomeActivity context, String apiLanguage) {
+        UpdateHomePageBannerTable(HomeActivity context, String apiLanguage, ArrayList<HomeList> bannerLists) {
             activityReference = new WeakReference<>(context);
             language = apiLanguage;
+            this.bannerLists = bannerLists;
         }
 
         @Override
@@ -1024,18 +1033,21 @@ public class HomeActivity extends BaseActivity {
 
     }
 
-    public class InsertBannerDatabaseTask extends AsyncTask<Void, Void, Boolean> {
+    public static class InsertBannerDatabaseTask extends AsyncTask<Void, Void, Boolean> {
         private WeakReference<HomeActivity> activityReference;
         private HomePageBannerTableEnglish homePageBannerTableEnglish;
         private HomePageBannerTableArabic homePageBannerTableArabic;
         String language;
+        private ArrayList<HomeList> bannerLists;
 
         InsertBannerDatabaseTask(HomeActivity context, HomePageBannerTableEnglish homePageBannerTableEnglish,
-                                 HomePageBannerTableArabic homePageBannerTableArabic, String lan) {
+                                 HomePageBannerTableArabic homePageBannerTableArabic, String lan,
+                                 ArrayList<HomeList> bannerLists) {
             activityReference = new WeakReference<>(context);
             this.homePageBannerTableEnglish = homePageBannerTableEnglish;
             this.homePageBannerTableArabic = homePageBannerTableArabic;
             language = lan;
+            this.bannerLists = bannerLists;
         }
 
         @Override
@@ -1062,7 +1074,7 @@ public class HomeActivity extends BaseActivity {
         }
     }
 
-    public class RetriveEnglishBannerTableData extends AsyncTask<Void, Void, List<HomePageBannerTableEnglish>> {
+    public static class RetriveEnglishBannerTableData extends AsyncTask<Void, Void, List<HomePageBannerTableEnglish>> {
         private WeakReference<HomeActivity> activityReference;
         int language;
 
@@ -1080,20 +1092,28 @@ public class HomeActivity extends BaseActivity {
         @Override
         protected void onPostExecute(List<HomePageBannerTableEnglish> homePageBannerTableEnglishes) {
             if (homePageBannerTableEnglishes.size() > 0) {
-                bannerLists.clear();
+                activityReference.get().bannerLists.clear();
                 HomeList bannerList = new HomeList(homePageBannerTableEnglishes.get(0).getName()
                         , String.valueOf(homePageBannerTableEnglishes.get(0).getQatarmuseum_id()),
                         homePageBannerTableEnglishes.get(0).getImage());
-                bannerLists.add(bannerList);
-                addBannerData(bannerLists);
-                bannerLayout.setVisibility(View.VISIBLE);
+                activityReference.get().bannerLists.add(bannerList);
+                if (activityReference.get().bannerLists.size() > 0) {
+                    if (!activityReference.get().isFinishing())
+                        GlideApp.with(activityReference.get())
+                                .load(activityReference.get().bannerLists.get(0).getImage())
+                                .centerCrop()
+                                .placeholder(R.drawable.placeholder_header)
+                                .into(activityReference.get().headerImageView);
+                    activityReference.get().bannerText.setText(activityReference.get().bannerLists.get(0).getName());
+                }
+                activityReference.get().bannerLayout.setVisibility(View.VISIBLE);
             } else {
-                bannerLayout.setVisibility(View.GONE);
+                activityReference.get().bannerLayout.setVisibility(View.GONE);
             }
         }
     }
 
-    public class RetriveArabicBannerTableData extends AsyncTask<Void, Void,
+    public static class RetriveArabicBannerTableData extends AsyncTask<Void, Void,
             List<HomePageBannerTableArabic>> {
         private WeakReference<HomeActivity> activityReference;
         int language;
@@ -1113,15 +1133,24 @@ public class HomeActivity extends BaseActivity {
         @Override
         protected void onPostExecute(List<HomePageBannerTableArabic> homePageBannerTableArabics) {
             if (homePageBannerTableArabics.size() > 0) {
-                bannerLists.clear();
+                activityReference.get().bannerLists.clear();
                 HomeList bannerList = new HomeList(homePageBannerTableArabics.get(0).getName()
                         , String.valueOf(homePageBannerTableArabics.get(0).getQatarmuseum_id()),
                         homePageBannerTableArabics.get(0).getImage());
-                bannerLists.add(bannerList);
-                addBannerData(bannerLists);
-                bannerLayout.setVisibility(View.VISIBLE);
+                activityReference.get().bannerLists.add(bannerList);
+                if (activityReference.get().bannerLists.size() > 0) {
+                    if (!activityReference.get().isFinishing())
+                        GlideApp.with(activityReference.get())
+                                .load(activityReference.get().bannerLists.get(0).getImage())
+                                .centerCrop()
+                                .placeholder(R.drawable.placeholder_header)
+                                .into(activityReference.get().headerImageView);
+                    activityReference.get().bannerText.setText(activityReference.get().bannerLists.get(0).getName());
+                }
+
+                activityReference.get().bannerLayout.setVisibility(View.VISIBLE);
             } else {
-                bannerLayout.setVisibility(View.GONE);
+                activityReference.get().bannerLayout.setVisibility(View.GONE);
             }
         }
 
@@ -1175,7 +1204,6 @@ public class HomeActivity extends BaseActivity {
         }
     }
 
-
     public static class CheckDBRowExist extends AsyncTask<Void, Void, Void> {
         private WeakReference<HomeActivity> activityReference;
         private WeakReference<ArrayList<HomeList>> homeLists;
@@ -1204,7 +1232,7 @@ public class HomeActivity extends BaseActivity {
                             //create row with corresponding id
                             homePageTableEnglish = new HomePageTableEnglish(Long.parseLong(homeLists.get().get(i).getId()),
                                     homeLists.get().get(i).getName(),
-                                    homeLists.get().get(i).getTourguideAvailable().toString(),
+                                    homeLists.get().get(i).getTourguideAvailable(),
                                     homeLists.get().get(i).getImage(),
                                     homeLists.get().get(i).getSortId());
                             activityReference.get().qmDatabase.getHomePageTableDao().insertEnglishTable(homePageTableEnglish);
@@ -1223,7 +1251,7 @@ public class HomeActivity extends BaseActivity {
                             //create row with corresponding id
                             homePageTableArabic = new HomePageTableArabic(Long.parseLong(homeLists.get().get(i).getId()),
                                     homeLists.get().get(i).getName(),
-                                    homeLists.get().get(i).getTourguideAvailable().toString(),
+                                    homeLists.get().get(i).getTourguideAvailable(),
                                     homeLists.get().get(i).getImage(),
                                     homeLists.get().get(i).getSortId());
                             activityReference.get().qmDatabase.getHomePageTableDao().insertArabicTable(homePageTableArabic);
@@ -1261,7 +1289,7 @@ public class HomeActivity extends BaseActivity {
                     for (int i = 0; i < homeLists.get().size(); i++) {
                         homePageTableEnglish = new HomePageTableEnglish(Long.parseLong(homeLists.get().get(i).getId()),
                                 homeLists.get().get(i).getName(),
-                                homeLists.get().get(i).getTourguideAvailable().toString(),
+                                homeLists.get().get(i).getTourguideAvailable(),
                                 homeLists.get().get(i).getImage(),
                                 homeLists.get().get(i).getSortId());
                         activityReference.get().qmDatabase.getHomePageTableDao().insertEnglishTable(homePageTableEnglish);
@@ -1270,7 +1298,7 @@ public class HomeActivity extends BaseActivity {
                     for (int i = 0; i < homeLists.get().size(); i++) {
                         homePageTableArabic = new HomePageTableArabic(Long.parseLong(homeLists.get().get(i).getId()),
                                 homeLists.get().get(i).getName(),
-                                homeLists.get().get(i).getTourguideAvailable().toString(),
+                                homeLists.get().get(i).getTourguideAvailable(),
                                 homeLists.get().get(i).getImage(),
                                 homeLists.get().get(i).getSortId());
                         activityReference.get().qmDatabase.getHomePageTableDao().insertArabicTable(homePageTableArabic);
@@ -1306,7 +1334,7 @@ public class HomeActivity extends BaseActivity {
             if (language.equals("en")) {
                 // updateEnglishTable table with english name
                 activityReference.get().qmDatabase.getHomePageTableDao().updateHomePageEnglish(
-                        homeLists.get().get(position).getName(), homeLists.get().get(position).getTourguideAvailable().toString(),
+                        homeLists.get().get(position).getName(), homeLists.get().get(position).getTourguideAvailable(),
                         homeLists.get().get(position).getImage(), homeLists.get().get(position).getSortId(),
                         homeLists.get().get(position).getId()
                 );
@@ -1314,7 +1342,7 @@ public class HomeActivity extends BaseActivity {
             } else {
                 // updateEnglishTable table with arabic name
                 activityReference.get().qmDatabase.getHomePageTableDao().updateHomePageArabic(
-                        homeLists.get().get(position).getName(), homeLists.get().get(position).getTourguideAvailable().toString(),
+                        homeLists.get().get(position).getName(), homeLists.get().get(position).getTourguideAvailable(),
                         homeLists.get().get(position).getImage(), homeLists.get().get(position).getSortId(),
                         homeLists.get().get(position).getId()
                 );
@@ -1329,7 +1357,7 @@ public class HomeActivity extends BaseActivity {
         }
     }
 
-    public class RetriveEnglishTableData extends AsyncTask<Void, Void, List<HomePageTableEnglish>> {
+    public static class RetriveEnglishTableData extends AsyncTask<Void, Void, List<HomePageTableEnglish>> {
         private WeakReference<HomeActivity> activityReference;
         int language;
 
@@ -1347,32 +1375,32 @@ public class HomeActivity extends BaseActivity {
         @Override
         protected void onPostExecute(List<HomePageTableEnglish> homePageTableEnglishes) {
             if (homePageTableEnglishes.size() > 0) {
-                homeLists.clear();
+                activityReference.get().homeLists.clear();
                 for (int i = 0; i < homePageTableEnglishes.size(); i++) {
                     HomeList exhibitonObject = new HomeList(homePageTableEnglishes.get(i).getName()
                             , String.valueOf(homePageTableEnglishes.get(i).getQatarmuseum_id()),
                             homePageTableEnglishes.get(i).getImage(),
                             homePageTableEnglishes.get(i).getTourguide_available(),
                             homePageTableEnglishes.get(i).getSortId());
-                    homeLists.add(i, exhibitonObject);
+                    activityReference.get().homeLists.add(i, exhibitonObject);
                 }
 
-                Collections.sort(homeLists);
-                mAdapter.notifyDataSetChanged();
-                progressBar.setVisibility(View.GONE);
-                recyclerView.setVisibility(View.VISIBLE);
-                retryLayout.setVisibility(View.GONE);
+                Collections.sort(activityReference.get().homeLists);
+                activityReference.get().mAdapter.notifyDataSetChanged();
+                activityReference.get().progressBar.setVisibility(View.GONE);
+                activityReference.get().recyclerView.setVisibility(View.VISIBLE);
+                activityReference.get().retryLayout.setVisibility(View.GONE);
             } else {
-                progressBar.setVisibility(View.GONE);
-                recyclerView.setVisibility(View.GONE);
-                retryLayout.setVisibility(View.VISIBLE);
+                activityReference.get().progressBar.setVisibility(View.GONE);
+                activityReference.get().recyclerView.setVisibility(View.GONE);
+                activityReference.get().retryLayout.setVisibility(View.VISIBLE);
             }
 
 
         }
     }
 
-    public class RetriveArabicTableData extends AsyncTask<Void, Void,
+    public static class RetriveArabicTableData extends AsyncTask<Void, Void,
             List<HomePageTableArabic>> {
         private WeakReference<HomeActivity> activityReference;
         int language;
@@ -1392,25 +1420,25 @@ public class HomeActivity extends BaseActivity {
         @Override
         protected void onPostExecute(List<HomePageTableArabic> homePageTableArabics) {
             if (homePageTableArabics.size() > 0) {
-                homeLists.clear();
+                activityReference.get().homeLists.clear();
                 for (int i = 0; i < homePageTableArabics.size(); i++) {
                     HomeList exhibitonObject = new HomeList(homePageTableArabics.get(i).getName()
                             , String.valueOf(homePageTableArabics.get(i).getQatarmuseum_id()),
                             homePageTableArabics.get(i).getImage(),
                             homePageTableArabics.get(i).getTourguide_available(),
                             homePageTableArabics.get(i).getSortId());
-                    homeLists.add(i, exhibitonObject);
+                    activityReference.get().homeLists.add(i, exhibitonObject);
                 }
 
-                Collections.sort(homeLists);
-                mAdapter.notifyDataSetChanged();
-                progressBar.setVisibility(View.GONE);
-                recyclerView.setVisibility(View.VISIBLE);
-                retryLayout.setVisibility(View.GONE);
+                Collections.sort(activityReference.get().homeLists);
+                activityReference.get().mAdapter.notifyDataSetChanged();
+                activityReference.get().progressBar.setVisibility(View.GONE);
+                activityReference.get().recyclerView.setVisibility(View.VISIBLE);
+                activityReference.get().retryLayout.setVisibility(View.GONE);
             } else {
-                progressBar.setVisibility(View.GONE);
-                recyclerView.setVisibility(View.GONE);
-                retryLayout.setVisibility(View.VISIBLE);
+                activityReference.get().progressBar.setVisibility(View.GONE);
+                activityReference.get().recyclerView.setVisibility(View.GONE);
+                activityReference.get().retryLayout.setVisibility(View.VISIBLE);
             }
         }
 

@@ -544,7 +544,7 @@ public class DiningActivity extends AppCompatActivity implements IPullZoom, OnMa
         googleMap.getUiSettings().setMapToolbarEnabled(false);
     }
 
-    public class DiningRowCount extends AsyncTask<Void, Void, Integer> {
+    public static class DiningRowCount extends AsyncTask<Void, Void, Integer> {
 
         private WeakReference<DiningActivity> activityReference;
         String language;
@@ -561,14 +561,14 @@ public class DiningActivity extends AppCompatActivity implements IPullZoom, OnMa
 
         @Override
         protected void onPostExecute(Integer integer) {
-            diningTableRowCount = integer;
+            int diningTableRowCount = integer;
             if (diningTableRowCount > 0) {
-                if (diningDetailModels.size() > 0)
+                if (activityReference.get().diningDetailModels.size() > 0)
                     //updateEnglishTable or add row to database
-                    new CheckDiningDBRowExist(DiningActivity.this, language).execute();
+                    new CheckDiningDBRowExist(activityReference.get(), language).execute();
             } else {
-                diningContent.setVisibility(View.INVISIBLE);
-                retryLayout.setVisibility(View.VISIBLE);
+                activityReference.get().diningContent.setVisibility(View.INVISIBLE);
+                activityReference.get().retryLayout.setVisibility(View.VISIBLE);
             }
         }
 
@@ -582,7 +582,7 @@ public class DiningActivity extends AppCompatActivity implements IPullZoom, OnMa
         }
     }
 
-    public class CheckDiningDBRowExist extends AsyncTask<Void, Void, Void> {
+    public static class CheckDiningDBRowExist extends AsyncTask<Void, Void, Void> {
         private WeakReference<DiningActivity> activityReference;
         private DiningTableEnglish diningTableEnglish;
         private DiningTableArabic diningTableArabic;
@@ -606,24 +606,24 @@ public class DiningActivity extends AppCompatActivity implements IPullZoom, OnMa
         @Override
         protected Void doInBackground(Void... voids) {
 
-            if (diningDetailModels.size() > 0) {
+            if (activityReference.get().diningDetailModels.size() > 0) {
                 if (language.equals("en")) {
-                    for (int i = 0; i < diningDetailModels.size(); i++) {
+                    for (int i = 0; i < activityReference.get().diningDetailModels.size(); i++) {
                         int n = activityReference.get().qmDatabase.getDiningTableDao().checkEnglishIdExist(
-                                Integer.parseInt(diningDetailModels.get(i).getId()));
+                                Integer.parseInt(activityReference.get().diningDetailModels.get(i).getId()));
                         if (n > 0) {
                             //updateEnglishTable same id
-                            new UpdateDiningTable(DiningActivity.this, language, i).execute();
+                            new UpdateDiningTable(activityReference.get(), language, i).execute();
 
                         }
                     }
                 } else {
-                    for (int i = 0; i < diningDetailModels.size(); i++) {
+                    for (int i = 0; i < activityReference.get().diningDetailModels.size(); i++) {
                         int n = activityReference.get().qmDatabase.getDiningTableDao().checkArabicIdExist(
-                                Integer.parseInt(diningDetailModels.get(i).getId()));
+                                Integer.parseInt(activityReference.get().diningDetailModels.get(i).getId()));
                         if (n > 0) {
                             //updateEnglishTable same id
-                            new UpdateDiningTable(DiningActivity.this, language, i).execute();
+                            new UpdateDiningTable(activityReference.get(), language, i).execute();
 
                         }
                     }
@@ -634,7 +634,7 @@ public class DiningActivity extends AppCompatActivity implements IPullZoom, OnMa
         }
     }
 
-    public class UpdateDiningTable extends AsyncTask<Void, Void, Void> {
+    public static class UpdateDiningTable extends AsyncTask<Void, Void, Void> {
         private WeakReference<DiningActivity> activityReference;
         String language;
         int position;
@@ -650,29 +650,29 @@ public class DiningActivity extends AppCompatActivity implements IPullZoom, OnMa
             if (language.equals("en")) {
                 // updateEnglishTable table with english name
                 activityReference.get().qmDatabase.getDiningTableDao().updateDiningDetailsEnglish(
-                        diningDetailModels.get(position).getName(),
-                        diningDetailModels.get(position).getImage(),
-                        diningDetailModels.get(position).getDescription(),
-                        diningDetailModels.get(position).getOpeningTime(),
-                        diningDetailModels.get(position).getClosingTime(),
-                        diningDetailModels.get(position).getLatitude(),
-                        diningDetailModels.get(position).getLongitude(),
-                        diningDetailModels.get(position).getId(),
-                        diningDetailModels.get(position).getSortId()
+                        activityReference.get().diningDetailModels.get(position).getName(),
+                        activityReference.get().diningDetailModels.get(position).getImage(),
+                        activityReference.get().diningDetailModels.get(position).getDescription(),
+                        activityReference.get().diningDetailModels.get(position).getOpeningTime(),
+                        activityReference.get().diningDetailModels.get(position).getClosingTime(),
+                        activityReference.get().diningDetailModels.get(position).getLatitude(),
+                        activityReference.get().diningDetailModels.get(position).getLongitude(),
+                        activityReference.get().diningDetailModels.get(position).getId(),
+                        activityReference.get().diningDetailModels.get(position).getSortId()
                 );
 
             } else {
                 // updateArabicTable table with arabic name
                 activityReference.get().qmDatabase.getDiningTableDao().updateDiningDetailsArabic(
-                        diningDetailModels.get(position).getName(),
-                        diningDetailModels.get(position).getImage(),
-                        diningDetailModels.get(position).getDescription(),
-                        diningDetailModels.get(position).getOpeningTime(),
-                        diningDetailModels.get(position).getClosingTime(),
-                        diningDetailModels.get(position).getLatitude(),
-                        diningDetailModels.get(position).getLongitude(),
-                        diningDetailModels.get(position).getId(),
-                        diningDetailModels.get(position).getSortId()
+                        activityReference.get().diningDetailModels.get(position).getName(),
+                        activityReference.get().diningDetailModels.get(position).getImage(),
+                        activityReference.get().diningDetailModels.get(position).getDescription(),
+                        activityReference.get().diningDetailModels.get(position).getOpeningTime(),
+                        activityReference.get().diningDetailModels.get(position).getClosingTime(),
+                        activityReference.get().diningDetailModels.get(position).getLatitude(),
+                        activityReference.get().diningDetailModels.get(position).getLongitude(),
+                        activityReference.get().diningDetailModels.get(position).getId(),
+                        activityReference.get().diningDetailModels.get(position).getSortId()
                 );
             }
             return null;
@@ -683,7 +683,7 @@ public class DiningActivity extends AppCompatActivity implements IPullZoom, OnMa
         }
     }
 
-    public class RetriveEnglishDiningData extends AsyncTask<Void, Void, List<DiningTableEnglish>> {
+    public static class RetriveEnglishDiningData extends AsyncTask<Void, Void, List<DiningTableEnglish>> {
         private WeakReference<DiningActivity> activityReference;
         int language;
         String diningId;
@@ -701,15 +701,15 @@ public class DiningActivity extends AppCompatActivity implements IPullZoom, OnMa
         @Override
         protected void onPostExecute(List<DiningTableEnglish> diningTableEnglishList) {
             if (diningTableEnglishList.get(0).getDescription() != null) {
-                loadData(diningTableEnglishList.get(0).getDescription(),
+                activityReference.get().loadData(diningTableEnglishList.get(0).getDescription(),
                         diningTableEnglishList.get(0).getOpening_time(),
                         diningTableEnglishList.get(0).getClosing_time(),
                         diningTableEnglishList.get(0).getLocation(),
                         diningTableEnglishList.get(0).getLatitude(),
                         diningTableEnglishList.get(0).getLongitude());
             } else {
-                diningContent.setVisibility(View.INVISIBLE);
-                retryLayout.setVisibility(View.VISIBLE);
+                activityReference.get().diningContent.setVisibility(View.INVISIBLE);
+                activityReference.get().retryLayout.setVisibility(View.VISIBLE);
             }
         }
 
@@ -719,7 +719,7 @@ public class DiningActivity extends AppCompatActivity implements IPullZoom, OnMa
         }
     }
 
-    public class RetriveArabicDiningData extends AsyncTask<Void, Void, List<DiningTableArabic>> {
+    public static class RetriveArabicDiningData extends AsyncTask<Void, Void, List<DiningTableArabic>> {
         private WeakReference<DiningActivity> activityReference;
         int language;
         String diningId;
@@ -732,12 +732,12 @@ public class DiningActivity extends AppCompatActivity implements IPullZoom, OnMa
 
         @Override
         protected void onPreExecute() {
-            progressBar.setVisibility(View.VISIBLE);
+            activityReference.get().progressBar.setVisibility(View.VISIBLE);
         }
 
         @Override
         protected void onPostExecute(List<DiningTableArabic> diningTableArabicList) {
-            loadData(diningTableArabicList.get(0).getDescription(),
+            activityReference.get().loadData(diningTableArabicList.get(0).getDescription(),
                     diningTableArabicList.get(0).getOpening_time(),
                     diningTableArabicList.get(0).getClosing_time(),
                     diningTableArabicList.get(0).getLocation(),

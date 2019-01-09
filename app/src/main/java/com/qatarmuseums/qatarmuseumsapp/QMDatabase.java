@@ -137,15 +137,11 @@ public abstract class QMDatabase extends RoomDatabase {
     }
 
     private static QMDatabase buildDatabaseInstance(Context context) {
-        QMDatabase qmd = Room.databaseBuilder(context,
-                QMDatabase.class,
+        return Room.databaseBuilder(context.getApplicationContext(), QMDatabase.class,
                 "QMDatabase").build();
-        return qmd;
-
-
     }
 
-    public void cleanUp() {
+    public static void cleanUp() {
         qmDatabase = null;
     }
 

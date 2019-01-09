@@ -54,7 +54,11 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_toStartOf="@id/headphone_icon"
+            android:ellipsize="end"
             android:fontFamily="@font/din_regular"
+            android:lines="2"
+            android:gravity="bottom"
+            android:textAlignment="gravity"
             android:textAllCaps="true"
             android:textColor="@android:color/white"
             android:textSize="@dimen/home_list_item_name"
@@ -84,10 +88,24 @@
         android:padding="10dp"
         android:visibility="gone">
 
-        <LinearLayout
-            android:id="@+id/date_layout"
+        <TextView
+            android:id="@+id/tour_title_text"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:ellipsize="end"
+            android:fontFamily="@font/din_regular"
+            android:lines="1"
+            android:text="Day 01"
+            android:textColor="@android:color/white"
+            android:textSize="@dimen/font_size_38"
+            android:textStyle="bold" />
+
+        <LinearLayout
+            android:id="@+id/date_layout"
+            android:visibility="visible"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/tour_title_text"
             android:layoutDirection="ltr">
 
             <TextView
@@ -98,7 +116,6 @@
                 android:fontFamily="@font/din_regular"
                 android:maxLength="20"
                 android:text="Day 01"
-                android:textAllCaps="true"
                 android:textColor="@android:color/white"
                 android:textSize="@dimen/font_size_22"
                 android:textStyle="bold" />
@@ -110,7 +127,6 @@
                 android:fontFamily="@font/din_next_lt_pro_bold"
                 android:paddingEnd="@dimen/padding_5"
                 android:paddingStart="@dimen/padding_5"
-                android:text="@string/seporater"
                 android:textAllCaps="true"
                 android:textColor="@android:color/white"
                 android:textSize="@dimen/font_size_18"
@@ -123,24 +139,10 @@
                 android:layout_gravity="center_vertical"
                 android:fontFamily="@font/din_regular"
                 android:text="25 March 2018"
-                android:textAllCaps="true"
                 android:textColor="@android:color/white"
-                android:textSize="@dimen/font_size_14"
+                android:textSize="@dimen/font_size_20"
                 android:textStyle="bold" />
         </LinearLayout>
-
-        <TextView
-            android:id="@+id/tour_title_text"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_below="@id/date_layout"
-            android:ellipsize="end"
-            android:fontFamily="@font/din_regular"
-            android:lines="1"
-            android:text="Day 01"
-            android:textColor="@android:color/white"
-            android:textSize="@dimen/font_size_38"
-            android:textStyle="bold" />
 
 
     </RelativeLayout>

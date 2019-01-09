@@ -98,75 +98,52 @@ public class ParkActivity extends AppCompatActivity implements IPullZoom {
             // fetch data from database
             getParkDetailsFromDataBase(appLanguage);
         }
-        toolbarClose.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                onBackPressed();
-            }
-        });
+        toolbarClose.setOnClickListener(v -> onBackPressed());
 
-        favIcon.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (utilObject.checkImageResource(ParkActivity.this, favIcon, R.drawable.heart_fill)) {
-                    favIcon.setImageResource(R.drawable.heart_empty);
-                } else
-                    favIcon.setImageResource(R.drawable.heart_fill);
-            }
+        favIcon.setOnClickListener(v -> {
+            if (utilObject.checkImageResource(ParkActivity.this, favIcon, R.drawable.heart_fill)) {
+                favIcon.setImageResource(R.drawable.heart_empty);
+            } else
+                favIcon.setImageResource(R.drawable.heart_fill);
         });
         zoomOutAnimation = AnimationUtils.loadAnimation(getApplicationContext(),
                 R.anim.zoom_out_more);
-        retryButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                getParkDetailsFromAPI(appLanguage);
-                progressBar.setVisibility(View.VISIBLE);
-                retryLayout.setVisibility(View.GONE);
-            }
+        retryButton.setOnClickListener(v -> {
+            getParkDetailsFromAPI(appLanguage);
+            progressBar.setVisibility(View.VISIBLE);
+            retryLayout.setVisibility(View.GONE);
         });
-        retryButton.setOnTouchListener(new View.OnTouchListener() {
-            @Override
-            public boolean onTouch(View v, MotionEvent event) {
-                switch (event.getAction()) {
-                    case MotionEvent.ACTION_DOWN:
-                        retryButton.startAnimation(zoomOutAnimation);
-                        break;
-                }
-                return false;
+        retryButton.setOnTouchListener((v, event) -> {
+            switch (event.getAction()) {
+                case MotionEvent.ACTION_DOWN:
+                    retryButton.startAnimation(zoomOutAnimation);
+                    break;
             }
+            return false;
         });
-        toolbarClose.setOnTouchListener(new View.OnTouchListener() {
-            @Override
-            public boolean onTouch(View v, MotionEvent event) {
-                switch (event.getAction()) {
-                    case MotionEvent.ACTION_DOWN:
-                        toolbarClose.startAnimation(zoomOutAnimation);
-                        break;
-                }
-                return false;
+        toolbarClose.setOnTouchListener((v, event) -> {
+            switch (event.getAction()) {
+                case MotionEvent.ACTION_DOWN:
+                    toolbarClose.startAnimation(zoomOutAnimation);
+                    break;
             }
+            return false;
         });
-        favIcon.setOnTouchListener(new View.OnTouchListener() {
-            @Override
-            public boolean onTouch(View v, MotionEvent event) {
-                switch (event.getAction()) {
-                    case MotionEvent.ACTION_DOWN:
-                        favIcon.startAnimation(zoomOutAnimation);
-                        break;
-                }
-                return false;
+        favIcon.setOnTouchListener((v, event) -> {
+            switch (event.getAction()) {
+                case MotionEvent.ACTION_DOWN:
+                    favIcon.startAnimation(zoomOutAnimation);
+                    break;
             }
+            return false;
         });
-        shareIcon.setOnTouchListener(new View.OnTouchListener() {
-            @Override
-            public boolean onTouch(View v, MotionEvent event) {
-                switch (event.getAction()) {
-                    case MotionEvent.ACTION_DOWN:
-                        shareIcon.startAnimation(zoomOutAnimation);
-                        break;
-                }
-                return false;
+        shareIcon.setOnTouchListener((v, event) -> {
+            switch (event.getAction()) {
+                case MotionEvent.ACTION_DOWN:
+                    shareIcon.startAnimation(zoomOutAnimation);
+                    break;
             }
+            return false;
         });
         initViews();
     }
@@ -259,7 +236,7 @@ public class ParkActivity extends AppCompatActivity implements IPullZoom {
     }
 
 
-    public class RowCount extends AsyncTask<Void, Void, Integer> {
+    public static class RowCount extends AsyncTask<Void, Void, Integer> {
         private WeakReference<ParkActivity> activityReference;
         String language;
 
@@ -279,22 +256,22 @@ public class ParkActivity extends AppCompatActivity implements IPullZoom {
 
         @Override
         protected void onPostExecute(Integer integer) {
-            parkTableRowCount = integer;
-            if (parkTableRowCount > 0) {
+            activityReference.get().parkTableRowCount = integer;
+            if (activityReference.get().parkTableRowCount > 0) {
                 //updateEnglishTable or add row to database
-                new CheckDBRowExist(ParkActivity.this, language).execute();
+                new CheckDBRowExist(activityReference.get(), language).execute();
 
             } else {
                 //create databse
-                new InsertDatabaseTask(ParkActivity.this, parkTableEnglish,
-                        parkTableArabic, language).execute();
+                new InsertDatabaseTask(activityReference.get(), activityReference.get().parkTableEnglish,
+                        activityReference.get().parkTableArabic, language).execute();
 
             }
 
         }
     }
 
-    public class CheckDBRowExist extends AsyncTask<Void, Void, Void> {
+    public static class CheckDBRowExist extends AsyncTask<Void, Void, Void> {
         private WeakReference<ParkActivity> activityReference;
         private ParkTableEnglish parkTableEnglish;
         private ParkTableArabic parkTableArabic;
@@ -307,39 +284,45 @@ public class ParkActivity extends AppCompatActivity implements IPullZoom {
 
         @Override
         protected Void doInBackground(Void... voids) {
-            if (parkLists.size() > 0) {
+            if (activityReference.get().parkLists.size() > 0) {
                 if (language.equals("en")) {
-                    for (int i = 0; i < parkLists.size(); i++) {
+                    for (int i = 0; i < activityReference.get().parkLists.size(); i++) {
                         int n = activityReference.get().qmDatabase.getParkTableDao().checkIdExistEnglish(
-                                Integer.parseInt(parkLists.get(i).getSortId()));
+                                Integer.parseInt(activityReference.get().parkLists.get(i).getSortId()));
                         if (n > 0) {
                             //updateEnglishTable same id
-                            new UpdateHomePageTable(ParkActivity.this, language, i).execute();
+                            new UpdateHomePageTable(activityReference.get(), language, i).execute();
 
                         } else {
                             //create row with corresponding id
-                            parkTableEnglish = new ParkTableEnglish(parkLists.get(i).getMainTitle(), parkLists.get(i).getShortDescription(),
-                                    parkLists.get(i).getImage(), Long.parseLong(parkLists.get(i).getSortId()),
-                                    parkLists.get(i).getLatitude(), parkLists.get(i).getLongitude(),
-                                    parkLists.get(i).getTimingInfo());
+                            parkTableEnglish = new ParkTableEnglish(activityReference.get().parkLists.get(i).getMainTitle(),
+                                    activityReference.get().parkLists.get(i).getShortDescription(),
+                                    activityReference.get().parkLists.get(i).getImage(),
+                                    Long.parseLong(activityReference.get().parkLists.get(i).getSortId()),
+                                    activityReference.get().parkLists.get(i).getLatitude(),
+                                    activityReference.get().parkLists.get(i).getLongitude(),
+                                    activityReference.get().parkLists.get(i).getTimingInfo());
                             activityReference.get().qmDatabase.getParkTableDao().insertEnglishTable(parkTableEnglish);
 
                         }
                     }
                 } else {
-                    for (int i = 0; i < parkLists.size(); i++) {
+                    for (int i = 0; i < activityReference.get().parkLists.size(); i++) {
                         int n = activityReference.get().qmDatabase.getParkTableDao().checkIdExistArabic(
-                                Integer.parseInt(parkLists.get(i).getSortId()));
+                                Integer.parseInt(activityReference.get().parkLists.get(i).getSortId()));
                         if (n > 0) {
                             //updateEnglishTable same id
-                            new UpdateHomePageTable(ParkActivity.this, language, i).execute();
+                            new UpdateHomePageTable(activityReference.get(), language, i).execute();
 
                         } else {
                             //create row with corresponding id
-                            parkTableArabic = new ParkTableArabic(parkLists.get(i).getMainTitle(), parkLists.get(i).getShortDescription(),
-                                    parkLists.get(i).getImage(), Long.parseLong(parkLists.get(i).getSortId()),
-                                    parkLists.get(i).getLatitude(), parkLists.get(i).getLongitude(),
-                                    parkLists.get(i).getTimingInfo());
+                            parkTableArabic = new ParkTableArabic(activityReference.get().parkLists.get(i).getMainTitle(),
+                                    activityReference.get().parkLists.get(i).getShortDescription(),
+                                    activityReference.get().parkLists.get(i).getImage(),
+                                    Long.parseLong(activityReference.get().parkLists.get(i).getSortId()),
+                                    activityReference.get().parkLists.get(i).getLatitude(),
+                                    activityReference.get().parkLists.get(i).getLongitude(),
+                                    activityReference.get().parkLists.get(i).getTimingInfo());
                             activityReference.get().qmDatabase.getParkTableDao().insertArabicTable(parkTableArabic);
 
                         }
@@ -352,7 +335,7 @@ public class ParkActivity extends AppCompatActivity implements IPullZoom {
 
     }
 
-    public class InsertDatabaseTask extends AsyncTask<Void, Void, Boolean> {
+    public static class InsertDatabaseTask extends AsyncTask<Void, Void, Boolean> {
         private WeakReference<ParkActivity> activityReference;
         private ParkTableEnglish parkTableEnglish;
         private ParkTableArabic parkTableArabic;
@@ -368,21 +351,29 @@ public class ParkActivity extends AppCompatActivity implements IPullZoom {
 
         @Override
         protected Boolean doInBackground(Void... voids) {
-            if (parkLists != null) {
+            if (activityReference.get().parkLists != null) {
                 if (language.equals("en")) {
-                    for (int i = 0; i < parkLists.size(); i++) {
-                        parkTableEnglish = new ParkTableEnglish(parkLists.get(i).getMainTitle(), parkLists.get(i).getShortDescription(),
-                                parkLists.get(i).getImage(), Long.parseLong(parkLists.get(i).getSortId()),
-                                parkLists.get(i).getLatitude(), parkLists.get(i).getLongitude(),
-                                parkLists.get(i).getTimingInfo());
+                    for (int i = 0; i < activityReference.get().parkLists.size(); i++) {
+                        parkTableEnglish = new ParkTableEnglish(
+                                activityReference.get().parkLists.get(i).getMainTitle(),
+                                activityReference.get().parkLists.get(i).getShortDescription(),
+                                activityReference.get().parkLists.get(i).getImage(),
+                                Long.parseLong(activityReference.get().parkLists.get(i).getSortId()),
+                                activityReference.get().parkLists.get(i).getLatitude(),
+                                activityReference.get().parkLists.get(i).getLongitude(),
+                                activityReference.get().parkLists.get(i).getTimingInfo());
                         activityReference.get().qmDatabase.getParkTableDao().insertEnglishTable(parkTableEnglish);
                     }
                 } else {
-                    for (int i = 0; i < parkLists.size(); i++) {
-                        parkTableArabic = new ParkTableArabic(parkLists.get(i).getMainTitle(), parkLists.get(i).getShortDescription(),
-                                parkLists.get(i).getImage(), Long.parseLong(parkLists.get(i).getSortId()),
-                                parkLists.get(i).getLatitude(), parkLists.get(i).getLongitude(),
-                                parkLists.get(i).getTimingInfo());
+                    for (int i = 0; i < activityReference.get().parkLists.size(); i++) {
+                        parkTableArabic = new ParkTableArabic(
+                                activityReference.get().parkLists.get(i).getMainTitle(),
+                                activityReference.get().parkLists.get(i).getShortDescription(),
+                                activityReference.get().parkLists.get(i).getImage(),
+                                Long.parseLong(activityReference.get().parkLists.get(i).getSortId()),
+                                activityReference.get().parkLists.get(i).getLatitude(),
+                                activityReference.get().parkLists.get(i).getLongitude(),
+                                activityReference.get().parkLists.get(i).getTimingInfo());
                         activityReference.get().qmDatabase.getParkTableDao().insertArabicTable(parkTableArabic);
 
                     }
@@ -397,7 +388,7 @@ public class ParkActivity extends AppCompatActivity implements IPullZoom {
         }
     }
 
-    public class UpdateHomePageTable extends AsyncTask<Void, Void, Void> {
+    public static class UpdateHomePageTable extends AsyncTask<Void, Void, Void> {
         private WeakReference<ParkActivity> activityReference;
         String language;
         int position;
@@ -413,19 +404,25 @@ public class ParkActivity extends AppCompatActivity implements IPullZoom {
             if (language.equals("en")) {
                 // updateEnglishTable table with english name
                 activityReference.get().qmDatabase.getParkTableDao().updateParkEnglish(
-                        parkLists.get(position).getMainTitle(), parkLists.get(position).getShortDescription(),
-                        parkLists.get(position).getImage(),
-                        parkLists.get(position).getLatitude(), parkLists.get(position).getLongitude(),
-                        parkLists.get(position).getTimingInfo(), Long.parseLong(parkLists.get(position).getSortId())
+                        activityReference.get().parkLists.get(position).getMainTitle(),
+                        activityReference.get().parkLists.get(position).getShortDescription(),
+                        activityReference.get().parkLists.get(position).getImage(),
+                        activityReference.get().parkLists.get(position).getLatitude(),
+                        activityReference.get().parkLists.get(position).getLongitude(),
+                        activityReference.get().parkLists.get(position).getTimingInfo(),
+                        Long.parseLong(activityReference.get().parkLists.get(position).getSortId())
                 );
 
             } else {
                 // updateEnglishTable table with arabic name
                 activityReference.get().qmDatabase.getParkTableDao().updateParkArabic(
-                        parkLists.get(position).getMainTitle(), parkLists.get(position).getShortDescription(),
-                        parkLists.get(position).getImage(),
-                        parkLists.get(position).getLatitude(), parkLists.get(position).getLongitude(),
-                        parkLists.get(position).getTimingInfo(), Long.parseLong(parkLists.get(position).getSortId())
+                        activityReference.get().parkLists.get(position).getMainTitle(),
+                        activityReference.get().parkLists.get(position).getShortDescription(),
+                        activityReference.get().parkLists.get(position).getImage(),
+                        activityReference.get().parkLists.get(position).getLatitude(),
+                        activityReference.get().parkLists.get(position).getLongitude(),
+                        activityReference.get().parkLists.get(position).getTimingInfo(),
+                        Long.parseLong(activityReference.get().parkLists.get(position).getSortId())
                 );
             }
 
@@ -439,7 +436,7 @@ public class ParkActivity extends AppCompatActivity implements IPullZoom {
     }
 
 
-    public class RetriveEnglishTableData extends AsyncTask<Void, Void, List<ParkTableEnglish>> {
+    public static class RetriveEnglishTableData extends AsyncTask<Void, Void, List<ParkTableEnglish>> {
         private WeakReference<ParkActivity> activityReference;
         int language;
 
@@ -457,7 +454,7 @@ public class ParkActivity extends AppCompatActivity implements IPullZoom {
         @Override
         protected void onPostExecute(List<ParkTableEnglish> parkTableEnglishes) {
             if (parkTableEnglishes.size() > 0) {
-                parkLists.clear();
+                activityReference.get().parkLists.clear();
                 for (int i = 0; i < parkTableEnglishes.size(); i++) {
                     ParkList parkObject = new ParkList(parkTableEnglishes.get(i).getMainTitle(),
                             parkTableEnglishes.get(i).getShortDescription(),
@@ -465,15 +462,15 @@ public class ParkActivity extends AppCompatActivity implements IPullZoom {
                             parkTableEnglishes.get(i).getLatitude(), parkTableEnglishes.get(i).getLongitude(),
                             parkTableEnglishes.get(i).getTimingInfo(),
                             String.valueOf(parkTableEnglishes.get(i).getSortId()));
-                    parkLists.add(i, parkObject);
+                    activityReference.get().parkLists.add(i, parkObject);
                 }
 
 
-                mAdapter.notifyDataSetChanged();
-                progressBar.setVisibility(View.GONE);
+                activityReference.get().mAdapter.notifyDataSetChanged();
+                activityReference.get().progressBar.setVisibility(View.GONE);
             } else {
-                progressBar.setVisibility(View.GONE);
-                retryLayout.setVisibility(View.VISIBLE);
+                activityReference.get().progressBar.setVisibility(View.GONE);
+                activityReference.get().retryLayout.setVisibility(View.VISIBLE);
             }
 
 
@@ -481,7 +478,7 @@ public class ParkActivity extends AppCompatActivity implements IPullZoom {
     }
 
 
-    public class RetriveArabicTableData extends AsyncTask<Void, Void, List<ParkTableArabic>> {
+    public static class RetriveArabicTableData extends AsyncTask<Void, Void, List<ParkTableArabic>> {
         private WeakReference<ParkActivity> activityReference;
         int language;
 
@@ -499,7 +496,7 @@ public class ParkActivity extends AppCompatActivity implements IPullZoom {
         @Override
         protected void onPostExecute(List<ParkTableArabic> parkTableArabics) {
             if (parkTableArabics.size() > 0) {
-                parkLists.clear();
+                activityReference.get().parkLists.clear();
                 for (int i = 0; i < parkTableArabics.size(); i++) {
                     ParkList parkObject = new ParkList(parkTableArabics.get(i).getMainTitle(),
                             parkTableArabics.get(i).getShortDescription(),
@@ -507,15 +504,15 @@ public class ParkActivity extends AppCompatActivity implements IPullZoom {
                             parkTableArabics.get(i).getLatitude(), parkTableArabics.get(i).getLongitude(),
                             parkTableArabics.get(i).getTimingInfo(),
                             String.valueOf(parkTableArabics.get(i).getSortId()));
-                    parkLists.add(i, parkObject);
+                    activityReference.get().parkLists.add(i, parkObject);
                 }
 
 
-                mAdapter.notifyDataSetChanged();
-                progressBar.setVisibility(View.GONE);
+                activityReference.get().mAdapter.notifyDataSetChanged();
+                activityReference.get().progressBar.setVisibility(View.GONE);
             } else {
-                progressBar.setVisibility(View.GONE);
-                retryLayout.setVisibility(View.VISIBLE);
+                activityReference.get().progressBar.setVisibility(View.GONE);
+                activityReference.get().retryLayout.setVisibility(View.VISIBLE);
             }
 
 

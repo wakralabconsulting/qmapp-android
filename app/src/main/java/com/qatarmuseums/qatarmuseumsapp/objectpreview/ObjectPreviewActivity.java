@@ -538,7 +538,6 @@ public class ObjectPreviewActivity extends AppCompatActivity {
         }
     }
 
-
     public static class UpdateArtifactTable extends AsyncTask<Void, Void, Void> {
         private WeakReference<ObjectPreviewActivity> activityReference;
         private WeakReference<ArrayList<ArtifactDetails>> artifactList;
@@ -621,7 +620,7 @@ public class ObjectPreviewActivity extends AppCompatActivity {
         }
     }
 
-    public class RetriveEnglishTableData extends AsyncTask<Void, Void, List<ArtifactTableEnglish>> {
+    public static class RetriveEnglishTableData extends AsyncTask<Void, Void, List<ArtifactTableEnglish>> {
         private WeakReference<ObjectPreviewActivity> activityReference;
         int language;
         String tourId;
@@ -641,7 +640,7 @@ public class ObjectPreviewActivity extends AppCompatActivity {
         @Override
         protected void onPostExecute(List<ArtifactTableEnglish> artifactDetailsList) {
             if (artifactDetailsList.size() > 0) {
-                artifactList.clear();
+                activityReference.get().artifactList.clear();
                 for (int i = 0; i < artifactDetailsList.size(); i++) {
                     ArtifactDetails artifactDetails = new ArtifactDetails(
                             artifactDetailsList.get(i).getNid(),
@@ -667,26 +666,26 @@ public class ObjectPreviewActivity extends AppCompatActivity {
                             artifactDetailsList.get(i).getDimensions(),
                             artifactDetailsList.get(i).getSortId(),
                             artifactDetailsList.get(i).getThumbImage());
-                    artifactList.add(i, artifactDetails);
+                    activityReference.get().artifactList.add(i, artifactDetails);
                 }
-                if (artifactList.size() > 0) {
-                    setupAdapter();
+                if (activityReference.get().artifactList.size() > 0) {
+                    activityReference.get().setupAdapter();
                 } else {
-                    commonContentLayout.setVisibility(View.GONE);
-                    retryLayout.setVisibility(View.VISIBLE);
+                    activityReference.get().commonContentLayout.setVisibility(View.GONE);
+                    activityReference.get().retryLayout.setVisibility(View.VISIBLE);
                 }
-                progressBar.setVisibility(View.GONE);
+                activityReference.get().progressBar.setVisibility(View.GONE);
             } else {
-                progressBar.setVisibility(View.GONE);
-                commonContentLayout.setVisibility(View.GONE);
-                retryLayout.setVisibility(View.VISIBLE);
+                activityReference.get().progressBar.setVisibility(View.GONE);
+                activityReference.get().commonContentLayout.setVisibility(View.GONE);
+                activityReference.get().retryLayout.setVisibility(View.VISIBLE);
             }
 
 
         }
     }
 
-    public class RetriveArabicTableData extends AsyncTask<Void, Void,
+    public static class RetriveArabicTableData extends AsyncTask<Void, Void,
             List<ArtifactTableArabic>> {
         private WeakReference<ObjectPreviewActivity> activityReference;
         int language;
@@ -708,7 +707,7 @@ public class ObjectPreviewActivity extends AppCompatActivity {
         @Override
         protected void onPostExecute(List<ArtifactTableArabic> artifactDetailsList) {
             if (artifactDetailsList.size() > 0) {
-                artifactList.clear();
+                activityReference.get().artifactList.clear();
                 for (int i = 0; i < artifactDetailsList.size(); i++) {
                     ArtifactDetails artifactDetails = new ArtifactDetails(artifactDetailsList.get(i).getNid(),
                             artifactDetailsList.get(i).getTitle(),
@@ -733,19 +732,19 @@ public class ObjectPreviewActivity extends AppCompatActivity {
                             artifactDetailsList.get(i).getDimensions(),
                             artifactDetailsList.get(i).getSortId(),
                             artifactDetailsList.get(i).getThumbImage());
-                    artifactList.add(i, artifactDetails);
+                    activityReference.get().artifactList.add(i, artifactDetails);
                 }
-                if (artifactList.size() > 0) {
-                    setupAdapter();
+                if (activityReference.get().artifactList.size() > 0) {
+                    activityReference.get().setupAdapter();
                 } else {
-                    commonContentLayout.setVisibility(View.GONE);
-                    retryLayout.setVisibility(View.VISIBLE);
+                    activityReference.get().commonContentLayout.setVisibility(View.GONE);
+                    activityReference.get().retryLayout.setVisibility(View.VISIBLE);
                 }
-                progressBar.setVisibility(View.GONE);
+                activityReference.get().progressBar.setVisibility(View.GONE);
             } else {
-                progressBar.setVisibility(View.GONE);
-                commonContentLayout.setVisibility(View.GONE);
-                retryLayout.setVisibility(View.VISIBLE);
+                activityReference.get().progressBar.setVisibility(View.GONE);
+                activityReference.get().commonContentLayout.setVisibility(View.GONE);
+                activityReference.get().retryLayout.setVisibility(View.VISIBLE);
             }
         }
 
@@ -762,9 +761,13 @@ public class ObjectPreviewActivity extends AppCompatActivity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        row.cancel(true);
-        check.cancel(true);
-        insert.cancel(true);
-        update.cancel(true);
+        if (row != null)
+            row.cancel(true);
+        if (check != null)
+            check.cancel(true);
+        if (insert != null)
+            insert.cancel(true);
+        if (update != null)
+            update.cancel(true);
     }
 }

@@ -32,7 +32,7 @@ public class TourSecondaryListAdapter extends RecyclerView.Adapter<TourSecondary
     private final RecyclerTouchListener.ItemClickListener listener;
     private List<TourDetailsModel> commonModelList;
     private Animation zoomOutAnimation;
-    ArrayList<String> eventList=new ArrayList<>();
+    ArrayList<String> eventList = new ArrayList<>();
     Util util;
 
     public class MyViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
@@ -52,7 +52,8 @@ public class TourSecondaryListAdapter extends RecyclerView.Adapter<TourSecondary
             tourDayTxt = view.findViewById(R.id.tour_day_text);
             tourDateTxt = view.findViewById(R.id.tour_date_text);
             tourTitleTxt = view.findViewById(R.id.tour_title_text);
-
+            name.setAllCaps(false);
+            name.setTextSize(33);
             view.setOnClickListener(this);
 
         }
@@ -88,13 +89,13 @@ public class TourSecondaryListAdapter extends RecyclerView.Adapter<TourSecondary
         TourDetailsModel model = commonModelList.get(position);
         holder.name.setText(model.getTourTitle());
 
-        if(model.getTourImage().size()>0){
-        GlideApp.with(mContext)
-                .load(model.getTourImage().get(0))
-                .centerCrop()
-                .placeholder(R.drawable.placeholder)
-                .into(holder.imageView);
-        }else{
+        if (model.getTourImage().size() > 0) {
+            GlideApp.with(mContext)
+                    .load(model.getTourImage().get(0))
+                    .centerCrop()
+                    .placeholder(R.drawable.placeholder)
+                    .into(holder.imageView);
+        } else {
             GlideApp.with(mContext)
                     .load("")
                     .centerCrop()
