@@ -15,9 +15,6 @@ import com.squareup.leakcanary.LeakCanary;
 
 import java.util.Locale;
 
-/**
- * Created by Exalture on 23-07-2018.
- */
 
 public class MyApp extends Application {
     Locale myLocale;
@@ -25,13 +22,13 @@ public class MyApp extends Application {
     @Override
     public void onCreate() {
         super.onCreate();
-        if (LeakCanary.isInAnalyzerProcess(this)) {
-            // This process is dedicated to LeakCanary for heap analysis.
-            // You should not init your app in this process.
-            return;
-        }
-        LeakCanary.install(this);
-        LeakCanary.enableDisplayLeakActivity(getApplicationContext());
+//        if (LeakCanary.isInAnalyzerProcess(this)) {
+//            // This process is dedicated to LeakCanary for heap analysis.
+//            // You should not init your app in this process.
+//            return;
+//        }
+//        LeakCanary.install(this);
+//        LeakCanary.enableDisplayLeakActivity(getApplicationContext());
         // Normal app init code...
         SharedPreferences qmPreferences = PreferenceManager.getDefaultSharedPreferences(this);
         int appLanguage = qmPreferences.getInt("AppLanguage", 1);

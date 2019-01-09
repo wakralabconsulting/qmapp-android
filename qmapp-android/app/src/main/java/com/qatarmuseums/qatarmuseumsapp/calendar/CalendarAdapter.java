@@ -41,7 +41,12 @@ public class CalendarAdapter extends RecyclerView.Adapter<CalendarAdapter.Calend
     @Override
     public void onBindViewHolder(@NonNull final CalendarAdapter.CalendarAdapterViewHolder holder, final int position) {
         if (calendarEventsList.size() > 0) {
-            holder.eventTitle.setText(calendarEventsList.get(position).getInstitution());
+            if (calendarEventsList.get(position).getInstitution() != null &&
+                    !calendarEventsList.get(position).getInstitution().equals("")) {
+                holder.eventTitle.setVisibility(View.VISIBLE);
+                holder.titleHiphen.setVisibility(View.VISIBLE);
+                holder.eventTitle.setText(calendarEventsList.get(position).getInstitution());
+            }
             holder.eventSubTitle.setText(calendarEventsList.get(position).getEventTitle());
             holder.eventTiming.setText(calendarEventsList.get(position).getEventTimings());
         }
@@ -56,7 +61,7 @@ public class CalendarAdapter extends RecyclerView.Adapter<CalendarAdapter.Calend
             public void onClick(View view) {
                 ((CalendarActivity) context).onClickCalled(calendarEventsList.get(position).getRegistration(),
                         holder.eventSubTitle.getText().toString(),
-                        calendarEventsList.get(position).getEventDetails(),calendarEventsList.get(position).getStartTime().get(0),
+                        calendarEventsList.get(position).getEventDetails(), calendarEventsList.get(position).getStartTime().get(0),
                         calendarEventsList.get(position).getEndTime().get(0));
             }
         });
@@ -69,12 +74,13 @@ public class CalendarAdapter extends RecyclerView.Adapter<CalendarAdapter.Calend
 
     public class CalendarAdapterViewHolder extends RecyclerView.ViewHolder {
 
-        public TextView eventTitle, eventSubTitle, eventTiming, viewDetails;
+        public TextView eventTitle, titleHiphen, eventSubTitle, eventTiming, viewDetails;
         public LinearLayout layoutHolder;
 
         public CalendarAdapterViewHolder(View itemView) {
             super(itemView);
             eventTitle = (TextView) itemView.findViewById(R.id.event_title);
+            titleHiphen = (TextView) itemView.findViewById(R.id.event_hiphen);
             eventSubTitle = (TextView) itemView.findViewById(R.id.event_subtitle);
             eventTiming = (TextView) itemView.findViewById(R.id.event_timing);
             viewDetails = (TextView) itemView.findViewById(R.id.event_view_details);

@@ -221,4 +221,14 @@ public class Util {
 
     }
 
+    public String formatDateFromDateString(String inputDate) throws ParseException {
+        Date mParsedDate;
+        String mOutputDateString;
+        SimpleDateFormat mInputDateFormat = new SimpleDateFormat("dd/MM/yyyy", java.util.Locale.getDefault());
+        SimpleDateFormat mOutputDateFormat = new SimpleDateFormat("dd MMMM yyyy", java.util.Locale.getDefault());
+        mParsedDate = mInputDateFormat.parse(inputDate);
+        mOutputDateString = mOutputDateFormat.format(mParsedDate);
+        return mOutputDateString;
+
+    }
 }
