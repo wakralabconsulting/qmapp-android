@@ -1,16 +1,18 @@
 package com.qatarmuseums.qatarmuseumsapp.calendar;
 
 import android.Manifest;
+import android.annotation.SuppressLint;
 import android.app.Dialog;
 import android.content.ContentResolver;
 import android.content.ContentValues;
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.content.res.ColorStateList;
+import android.database.Cursor;
 import android.net.Uri;
 import android.os.AsyncTask;
-import android.os.Build;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.provider.CalendarContract;
@@ -25,6 +27,7 @@ import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.text.format.DateFormat;
 import android.util.DisplayMetrics;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
@@ -57,7 +60,6 @@ import java.util.Comparator;
 import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.List;
-import java.util.TimeZone;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -500,6 +502,49 @@ public class CalendarActivity extends AppCompatActivity {
         dialog.show();
     }
 
+    @SuppressLint("MissingPermission")
+    private int getCalendarId(Context context) {
+
+        Cursor cursor = null;
+        ContentResolver contentResolver = context.getContentResolver();
+        Uri calendars = CalendarContract.Calendars.CONTENT_URI;
+
+        String[] EVENT_PROJECTION = new String[]{
+                CalendarContract.Calendars._ID,                           // 0
+                CalendarContract.Calendars.ACCOUNT_NAME,                  // 1
+                CalendarContract.Calendars.CALENDAR_DISPLAY_NAME,         // 2
+                CalendarContract.Calendars.OWNER_ACCOUNT,                 // 3
+                CalendarContract.Calendars.IS_PRIMARY                     // 4
+        };
+
+        int PROJECTION_ID_INDEX = 0;
+        int PROJECTION_ACCOUNT_NAME_INDEX = 1;
+        int PROJECTION_DISPLAY_NAME_INDEX = 2;
+        int PROJECTION_OWNER_ACCOUNT_INDEX = 3;
+        int PROJECTION_VISIBLE = 4;
+
+        cursor = contentResolver.query(calendars, EVENT_PROJECTION, null, null, null);
+
+        if (cursor.moveToFirst()) {
+            String calName;
+            long calId = 0;
+            String visible;
+
+            do {
+                calName = cursor.getString(PROJECTION_DISPLAY_NAME_INDEX);
+                calId = cursor.getLong(PROJECTION_ID_INDEX);
+                visible = cursor.getString(PROJECTION_VISIBLE);
+                if (visible.equals("1")) {
+                    return (int) calId;
+                }
+                Log.e("Calendar Id : ", "" + calId + " : " + calName + " : " + visible);
+            } while (cursor.moveToNext());
+
+            return (int) calId;
+        }
+        return 1;
+    }
+
     private void addToCalendar(String title, String details, String startDate, String endDate) {
         contentResolver = getContentResolver();
         contentValues = new ContentValues();
@@ -507,12 +552,6 @@ public class CalendarActivity extends AppCompatActivity {
         contentValues.put(CalendarContract.Events.DESCRIPTION, details);
         contentValues.put(CalendarContract.Events.DTSTART, startDate);
         contentValues.put(CalendarContract.Events.DTEND, endDate);
-        if (Build.VERSION.SDK_INT > Build.VERSION_CODES.M) {
-            contentValues.put(CalendarContract.Events.CALENDAR_ID, 3);
-        } else {
-            contentValues.put(CalendarContract.Events.CALENDAR_ID, 1);
-        }
-        TimeZone timeZone = TimeZone.getDefault();
         contentValues.put(CalendarContract.Events.EVENT_TIMEZONE, Calendar.getInstance().getTimeZone().getID());
 
         if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.M) {
@@ -520,7 +559,7 @@ public class CalendarActivity extends AppCompatActivity {
                     Manifest.permission.WRITE_CALENDAR)
                     != PackageManager.PERMISSION_GRANTED) {
                 ActivityCompat.requestPermissions((CalendarActivity) this,
-                        new String[]{Manifest.permission.WRITE_CALENDAR},
+                        new String[]{Manifest.permission.WRITE_CALENDAR, Manifest.permission.READ_CALENDAR},
                         MY_PERMISSIONS_REQUEST_CALENDAR);
 
             } else {
@@ -532,10 +571,15 @@ public class CalendarActivity extends AppCompatActivity {
     }
 
     public void insertEventToCalendar() {
-        Uri uri = contentResolver.insert(CalendarContract.Events.CONTENT_URI, contentValues);
-        Snackbar snackbar = Snackbar
-                .make(layoutContainer, R.string.event_added, Snackbar.LENGTH_LONG);
-        snackbar.show();
+        try {
+            contentValues.put(CalendarContract.Events.CALENDAR_ID, getCalendarId(this));
+            Uri uri = contentResolver.insert(CalendarContract.Events.CONTENT_URI, contentValues);
+            Snackbar snackbar = Snackbar
+                    .make(layoutContainer, R.string.event_added, Snackbar.LENGTH_LONG);
+            snackbar.show();
+        } catch (Exception ex) {
+            Log.e("Add_event", "Error in adding event on calendar : " + ex.getMessage());
+        }
     }
 
     @Override
