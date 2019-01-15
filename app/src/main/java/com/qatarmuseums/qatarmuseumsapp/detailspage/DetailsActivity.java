@@ -229,7 +229,8 @@ public class DetailsActivity extends AppCompatActivity implements IPullZoom, OnM
         registrationDetailsMap = new HashMap<String, UserRegistrationDetailsTable>();
         tourDetailsMap = new HashMap<String, TourDetailsModel>();
 
-        if (comingFrom.equals(getString(R.string.museum_tours))) {
+        if (comingFrom.equals(getString(R.string.museum_tours)) ||
+                comingFrom.equals(getString(R.string.museum_discussion))) {
             description = intent.getStringExtra("DESCRIPTION");
             eventDate = intent.getStringExtra("DATE");
             contactInfo = intent.getStringExtra("CONTACT");
@@ -306,16 +307,6 @@ public class DetailsActivity extends AppCompatActivity implements IPullZoom, OnM
         speakerName = findViewById(R.id.name_of_the_speaker);
         speakerInfo = findViewById(R.id.information_of_the_speaker);
         locationTitle = findViewById(R.id.location_title);
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            speakerImage.setOutlineProvider(new ViewOutlineProvider() {
-                @Override
-                public void getOutline(View view, Outline outline) {
-                    outline.setRoundRect(0, 0, view.getWidth(),
-                            (int) (view.getHeight() + curveRadius), curveRadius);
-                }
-            });
-            speakerImage.setClipToOutline(true);
-        }
         util = new Util();
         title.setText(mainTitle);
         getData();
@@ -721,14 +712,10 @@ public class DetailsActivity extends AppCompatActivity implements IPullZoom, OnM
                 getMuseumAboutDetailsFromDatabase(id, language, true);
         } else if (comingFrom.equals(getString(R.string.museum_travel))) {
             getTravelsDetails();
-        } else if (comingFrom.equals(getString(R.string.museum_discussion))) {
-            shortDescription.setTextAlignment(View.TEXT_ALIGNMENT_VIEW_START);
-            if (util.isNetworkAvailable(DetailsActivity.this))
-                getSpecialEventDetailFromAPI(id, language);
-            else
-                getTourDetailsFromDatabase(id);
         } else if (comingFrom.equals(getString(R.string.museum_tours))) {
             setTourDetailsData();
+        } else if (comingFrom.equals(getString(R.string.museum_discussion))) {
+            setSpecialEventDetailsData();
         }
     }
 
@@ -745,77 +732,16 @@ public class DetailsActivity extends AppCompatActivity implements IPullZoom, OnM
                 true, null);
     }
 
-    public void getSpecialEventDetailFromAPI(String id, int appLanguage) {
-        progressBar.setVisibility(View.VISIBLE);
-        final String language;
-        if (appLanguage == 1) {
-            language = "en";
-        } else {
-            language = "ar";
-        }
-        APIInterface apiService = APIClient.getClient().create(APIInterface.class);
-        Call<ArrayList<TourDetailsModel>> call = apiService.getTourDetails(language, id);
-        call.enqueue(new Callback<ArrayList<TourDetailsModel>>() {
-            @Override
-            public void onResponse(Call<ArrayList<TourDetailsModel>> call, Response<ArrayList<TourDetailsModel>> response) {
-                if (response.isSuccessful()) {
-                    if (response.body() != null && response.body().size() > 0) {
-                        tourDetailsList.addAll(response.body());
-                        nid = tourDetailsList.get(0).getnId();
-                        new RetriveRegistrationDetails(DetailsActivity.this,
-                                tourDetailsList.get(0).getnId(), false).execute();
-                        commonContentLayout.setVisibility(View.VISIBLE);
-                        interestLayout.setVisibility(View.VISIBLE);
-                        videoLayout.setVisibility(View.GONE);
-                        removeTourDetailsHtmlTags(tourDetailsList);
-//                        if (!(tourDetailsList.get(0).getTourSpeakerName().equals(""))) {  // Hiding speaker layout
-//                            speakerLayout.setVisibility(View.VISIBLE);
-//                            if (tourDetailsList.get(0).getTourImage().size() > 1)
-//                                GlideApp.with(DetailsActivity.this)
-//                                        .load(tourDetailsList.get(0).getTourImage().get(1))
-//                                        .centerCrop()
-//                                        .placeholder(R.drawable.placeholder)
-//                                        .into(speakerImage);
-//                            speakerName.setText(tourDetailsList.get(0).getTourSpeakerName());
-//                            speakerInfo.setText(tourDetailsList.get(0).getTourSpeakerInfo());
-//                        } else {
-//                            speakerLayout.setVisibility(View.GONE);
-//                        }
-                        timingTitle.setText(R.string.date);
-                        locationTitle.setText(R.string.venue);
-                        loadData(null,
-                                tourDetailsList.get(0).getTourBody(),
-                                null, null, null,
-                                tourDetailsList.get(0).getTourDate(),
-                                null, null,
-                                tourDetailsList.get(0).getTourContactPhone() + "\n" +
-                                        tourDetailsList.get(0).getTourContactEmail(),
-                                tourDetailsList.get(0).getTourLatitude(),
-                                tourDetailsList.get(0).getTourLongtitude(), true, null);
-
-                        new SpecialEventDetailsRowCount(DetailsActivity.this, id).execute();
-                    } else {
-                        commonContentLayout.setVisibility(View.GONE);
-                        noResultFoundTxt.setVisibility(View.VISIBLE);
-                    }
-                } else {
-                    commonContentLayout.setVisibility(View.GONE);
-                    retryLayout.setVisibility(View.VISIBLE);
-                }
-                progressBar.setVisibility(View.GONE);
-            }
-
-            @Override
-            public void onFailure(Call<ArrayList<TourDetailsModel>> call, Throwable t) {
-                commonContentLayout.setVisibility(View.GONE);
-                retryLayout.setVisibility(View.VISIBLE);
-                progressBar.setVisibility(View.GONE);
-            }
-        });
-
+    public void setSpecialEventDetailsData() {
+        commonContentLayout.setVisibility(View.VISIBLE);
+        videoLayout.setVisibility(View.GONE);
+        timingTitle.setText(R.string.date);
+        shortDescription.setTextAlignment(View.TEXT_ALIGNMENT_VIEW_START);
+        loadData(null, description,
+                null, null, null,
+                eventDate, null, null, contactInfo, latitude, longitude,
+                true, null);
     }
-
-    private ArrayList<UserRegistrationModel> registeredEventLists = new ArrayList<>();
 
     public static class RetriveRegistrationId extends AsyncTask<Void, Void, String> {
         private WeakReference<DetailsActivity> activityReference;
@@ -931,194 +857,6 @@ public class DetailsActivity extends AppCompatActivity implements IPullZoom, OnM
         loadData(null, description, null, null,
                 null, null, null, null,
                 contactInfo, null, null, false, null);
-    }
-
-    public void getTourDetailsFromDatabase(String id) {
-        progressBar.setVisibility(View.VISIBLE);
-        new RetriveTourDetailsEnglish(DetailsActivity.this, id).execute();
-    }
-
-    public static class SpecialEventDetailsRowCount extends AsyncTask<Void, Void, Integer> {
-
-        private WeakReference<DetailsActivity> activityReference;
-        String language, tourId;
-
-
-        SpecialEventDetailsRowCount(DetailsActivity context, String tourId) {
-            activityReference = new WeakReference<>(context);
-            this.tourId = tourId;
-        }
-
-        @Override
-        protected void onPreExecute() {
-            super.onPreExecute();
-        }
-
-        @Override
-        protected void onPostExecute(Integer integer) {
-            int tourDetailsRowCount = integer;
-            if (tourDetailsRowCount > 0) {
-                new CheckTourDetailsRowExist(activityReference.get(), tourId).execute();
-            } else {
-                new InsertDatabaseTask(activityReference.get(), activityReference.get().tourDetailsTableEnglish,
-                        activityReference.get().tourDetailsTableArabic, tourId).execute();
-            }
-        }
-
-        @Override
-        protected Integer doInBackground(Void... voids) {
-            return activityReference.get().qmDatabase.getTourDetailsTaleDao().getNumberOfRowsEnglish();
-        }
-    }
-
-    public static class CheckTourDetailsRowExist extends AsyncTask<Void, Void, Void> {
-        private WeakReference<DetailsActivity> activityReference;
-        String tourId;
-
-        CheckTourDetailsRowExist(DetailsActivity context, String tourId) {
-            activityReference = new WeakReference<>(context);
-
-            this.tourId = tourId;
-        }
-
-        @Override
-        protected Void doInBackground(Void... voids) {
-            if (activityReference.get().tourDetailsList.size() > 0) {
-                int n = activityReference.get().qmDatabase.getTourDetailsTaleDao().checkEnglishIdExist(
-                        tourId);
-                if (n > 0) {
-                    new DeleteEventsTableRow(activityReference.get(),
-                            tourId).execute();
-                } else {
-                    new InsertDatabaseTask(activityReference.get(), activityReference.get().tourDetailsTableEnglish,
-                            activityReference.get().tourDetailsTableArabic, tourId).execute();
-                }
-
-            }
-            return null;
-        }
-
-
-    }
-
-    public static class InsertDatabaseTask extends AsyncTask<Void, Void, Boolean> {
-        private WeakReference<DetailsActivity> activityReference;
-        private TourDetailsTableEnglish tourDetailsTableEnglish;
-        private TourDetailsTableArabic tourDetailsTableArabic;
-        String language;
-        String tourId;
-
-        InsertDatabaseTask(DetailsActivity context, TourDetailsTableEnglish tourDetailsTableEnglish,
-                           TourDetailsTableArabic tourDetailsTableArabic, String tourId) {
-            activityReference = new WeakReference<>(context);
-            this.tourDetailsTableEnglish = tourDetailsTableEnglish;
-            this.tourDetailsTableArabic = tourDetailsTableArabic;
-
-            this.tourId = tourId;
-        }
-
-        @Override
-        protected Boolean doInBackground(Void... voids) {
-            if (activityReference.get().tourDetailsList != null) {
-                for (int i = 0; i < activityReference.get().tourDetailsList.size(); i++) {
-                    Convertor converters = new Convertor();
-                    tourDetailsTableEnglish = new TourDetailsTableEnglish(
-                            activityReference.get().tourDetailsList.get(i).getTourTitle(),
-                            converters.fromArrayList(activityReference.get().tourDetailsList.get(i).getTourImage()),
-                            activityReference.get().tourDetailsList.get(i).getTourDate(),
-                            activityReference.get().tourDetailsList.get(i).getTourEventId(),
-                            activityReference.get().tourDetailsList.get(i).getTourContactEmail(),
-                            activityReference.get().tourDetailsList.get(i).getTourContactPhone(),
-                            activityReference.get().tourDetailsList.get(i).getTourLatitude(),
-                            activityReference.get().tourDetailsList.get(i).getTourLongtitude(),
-                            activityReference.get().tourDetailsList.get(i).getTourSortId(),
-                            activityReference.get().tourDetailsList.get(i).getTourBody(),
-                            activityReference.get().tourDetailsList.get(i).getTourRegistered(),
-                            activityReference.get().tourDetailsList.get(i).getTourSpeakerName(),
-                            activityReference.get().tourDetailsList.get(i).getTourSpeakerInfo()
-                    );
-                    activityReference.get().qmDatabase.getTourDetailsTaleDao().
-                            insert(tourDetailsTableEnglish);
-                }
-            }
-            return true;
-        }
-    }
-
-    public static class DeleteEventsTableRow extends AsyncTask<Void, Void, Void> {
-        private WeakReference<DetailsActivity> activityReference;
-        String language, tourId;
-
-        DeleteEventsTableRow(DetailsActivity context, String tourId) {
-            activityReference = new WeakReference<>(context);
-            this.tourId = tourId;
-        }
-
-        @Override
-        protected Void doInBackground(Void... voids) {
-            activityReference.get().qmDatabase.getTourDetailsTaleDao().
-                    deleteEnglishTourDetailsWithId(tourId);
-            return null;
-        }
-
-        @Override
-        protected void onPostExecute(Void aVoid) {
-            new InsertDatabaseTask(activityReference.get(), activityReference.get().tourDetailsTableEnglish,
-                    activityReference.get().tourDetailsTableArabic, tourId).execute();
-
-        }
-    }
-
-    public static class RetriveTourDetailsEnglish extends AsyncTask<Void, Void, List<TourDetailsTableEnglish>> {
-        private WeakReference<DetailsActivity> activityReference;
-        String tourId;
-
-        RetriveTourDetailsEnglish(DetailsActivity context, String tourId) {
-            activityReference = new WeakReference<>(context);
-            this.tourId = tourId;
-        }
-
-        @Override
-        protected List<TourDetailsTableEnglish> doInBackground(Void... voids) {
-            return activityReference.get().qmDatabase.getTourDetailsTaleDao().getTourDetailsWithIdEnglish(tourId);
-        }
-
-        @Override
-        protected void onPostExecute(List<TourDetailsTableEnglish> tourDetailsTableEnglishList) {
-            activityReference.get().tourDetailsList.clear();
-            Convertor converters = new Convertor();
-            if (tourDetailsTableEnglishList.size() > 0) {
-                activityReference.get().interestLayout.setVisibility(View.VISIBLE);
-                activityReference.get().videoLayout.setVisibility(View.GONE);
-//                activityReference.get().speakerLayout.setVisibility(View.VISIBLE);    // Hiding speaker layout
-                if (tourDetailsTableEnglishList.size() > 1)
-                    GlideApp.with(activityReference.get())
-                            .load(converters.fromString(tourDetailsTableEnglishList.get(0).getTour_images()).get(1))
-                            .centerCrop()
-                            .placeholder(R.drawable.placeholder)
-                            .into(activityReference.get().speakerImage);
-                activityReference.get().speakerName.setText(tourDetailsTableEnglishList.get(0).getModerator_name());
-                activityReference.get().speakerInfo.setText(tourDetailsTableEnglishList.get(0).getDescription_for_moderator());
-                activityReference.get().timingTitle.setText(R.string.date);
-                activityReference.get().locationTitle.setText(R.string.venue);
-                activityReference.get().loadData(null,
-                        tourDetailsTableEnglishList.get(0).getTour_body(),
-                        null, null, null,
-                        tourDetailsTableEnglishList.get(0).getTour_date(),
-                        null, null,
-                        tourDetailsTableEnglishList.get(0).getTour_contact_phone() + "\n" +
-                                tourDetailsTableEnglishList.get(0).getTour_contact_email(),
-                        tourDetailsTableEnglishList.get(0).getTour_latitude(),
-                        tourDetailsTableEnglishList.get(0).getTour_longtitude(), true, null);
-
-                activityReference.get().commonContentLayout.setVisibility(View.VISIBLE);
-                activityReference.get().retryLayout.setVisibility(View.GONE);
-            } else {
-                activityReference.get().commonContentLayout.setVisibility(View.GONE);
-                activityReference.get().retryLayout.setVisibility(View.VISIBLE);
-            }
-            activityReference.get().progressBar.setVisibility(View.GONE);
-        }
     }
 
     private void getCommonListAPIDataFromDatabase(String id, int appLanguage) {
@@ -1611,15 +1349,6 @@ public class DetailsActivity extends AppCompatActivity implements IPullZoom, OnM
         circleIndicator.init(configuration);
         circleIndicator.notifyDataChange(ads);
         circleIndicator.stop();
-    }
-
-    public void removeTourDetailsHtmlTags(ArrayList<TourDetailsModel> models) {
-        for (int i = 0; i < models.size(); i++) {
-            models.get(i).setTourTitle(util.html2string(models.get(i).getTourTitle()));
-            models.get(i).setTourDate(util.html2string(models.get(i).getTourDate()));
-            models.get(i).setTourBody(util.html2string(models.get(i).getTourBody()));
-
-        }
     }
 
     public void removeHtmlTags(ArrayList<HeritageOrExhibitionDetailModel> models) {

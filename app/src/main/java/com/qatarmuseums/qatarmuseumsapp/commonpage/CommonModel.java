@@ -61,6 +61,8 @@ public class CommonModel {
     private String descriptionForModerator;
     @SerializedName("Status")
     private String exhibitionStatus;
+    @SerializedName("Display_date")
+    private String exhibitionDisplayDate;
 
     private Boolean isTour;
     private Boolean isTravel;
@@ -71,15 +73,14 @@ public class CommonModel {
     }
 
 
-    public CommonModel(String id, String name, String startDate,
-                       String endDate, String location, String image, String exhibitionStatus) {
+    public CommonModel(String id, String name, String location, String image, String exhibitionStatus,
+                       String exhibitionDisplayDate) {
         this.id = id;
         this.name = name;
-        this.startDate = startDate;
-        this.endDate = endDate;
         this.location = location;
         this.image = image;
         this.exhibitionStatus = exhibitionStatus;
+        this.exhibitionDisplayDate = exhibitionDisplayDate;
 
     }
 
@@ -355,6 +356,10 @@ public class CommonModel {
 
     public String getExhibitionStatus() {
         return exhibitionStatus;
+    }
+
+    public String getDisplayDate() {
+        return exhibitionDisplayDate;
     }
 }
 
