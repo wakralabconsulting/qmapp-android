@@ -120,7 +120,6 @@ public class CommonListAdapter extends RecyclerView.Adapter<CommonListAdapter.My
             holder.tourTitleTxt.setText(model.getName());
         } else if (model.getIsTravel() != null) {
             holder.name.setText(model.getName());
-            holder.name.setTextSize(33);
             holder.name.setAllCaps(false);
         } else
             holder.name.setText(model.getName());

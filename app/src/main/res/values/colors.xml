@@ -36,4 +36,5 @@
     <color name="divider">#1d1f30</color>
     <color name="confirm_password_box_color">#e6e7e8</color>
     <color name="image_tint_white">#60ffffff</color>
+    <color name="link_color">#097FFE</color>
 </resources>

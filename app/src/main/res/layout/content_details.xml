@@ -71,20 +71,22 @@
 
                 <TextView
                     android:id="@+id/short_description"
-                    android:layout_width="wrap_content"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_margin="@dimen/text_margin"
+                    android:autoLink="web|email"
                     android:fontFamily="@font/din_next_lt_pro_regular"
                     android:textAlignment="center"
-                    android:autoLink="web"
                     android:textColor="@color/black"
+                    android:textColorLink="@color/link_color"
                     android:textSize="@dimen/font_size_15" />
 
                 <TextView
                     android:id="@+id/long_description"
-                    android:layout_width="wrap_content"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_margin="@dimen/text_margin"
+                    android:textColorLink="@color/link_color"
                     android:fontFamily="@font/din_next_lt_pro_regular"
                     android:textAlignment="center"
                     android:textColor="@color/black"
@@ -529,10 +531,11 @@
                         android:layout_marginEnd="@dimen/text_margin"
                         android:layout_marginStart="@dimen/text_margin"
                         android:autoLink="phone|email"
-                        android:lineSpacingExtra="10dp"
                         android:fontFamily="@font/din_next_lt_pro_regular"
+                        android:lineSpacingExtra="10dp"
                         android:textAlignment="center"
                         android:textColor="@color/black"
+                        android:textColorLink="@color/link_color"
                         android:textSize="@dimen/font_size_15" />
                 </LinearLayout>
 
