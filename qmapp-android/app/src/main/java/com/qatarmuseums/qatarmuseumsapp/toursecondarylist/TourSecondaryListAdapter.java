@@ -53,7 +53,6 @@ public class TourSecondaryListAdapter extends RecyclerView.Adapter<TourSecondary
             tourDateTxt = view.findViewById(R.id.tour_date_text);
             tourTitleTxt = view.findViewById(R.id.tour_title_text);
             name.setAllCaps(false);
-            name.setTextSize(33);
             view.setOnClickListener(this);
 
         }
