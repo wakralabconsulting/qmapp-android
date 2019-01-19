@@ -129,7 +129,8 @@ public class CommonActivity extends AppCompatActivity {
                 else if (toolbarTitle.equals(getString(R.string.museum_collection_text)))
                     navigationIntent = new Intent(CommonActivity.this,
                             CollectionDetailsActivity.class);
-                else if (toolbarTitle.equals(getString(R.string.museum_tours)))
+                else if (toolbarTitle.equals(getString(R.string.museum_tours)) ||
+                        toolbarTitle.equals(getString(R.string.museum_discussion)))
                     navigationIntent = new Intent(CommonActivity.this,
                             TourSecondaryListActivity.class);
                 else
@@ -2013,7 +2014,8 @@ public class CommonActivity extends AppCompatActivity {
                                     null,
                                     null,
                                     activityReference.get().models.get(i).getMuseumId(),
-                                    activityReference.get().models.get(i).getExhibitionStatus());
+                                    activityReference.get().models.get(i).getExhibitionStatus(),
+                                    activityReference.get().models.get(i).getDisplayDate());
                             activityReference.get().qmDatabase.getExhibitionTableDao().insert(exhibitionListTableEnglish);
 
                         }
@@ -2040,7 +2042,8 @@ public class CommonActivity extends AppCompatActivity {
                                     null,
                                     null,
                                     activityReference.get().models.get(i).getMuseumId(),
-                                    activityReference.get().models.get(i).getExhibitionStatus());
+                                    activityReference.get().models.get(i).getExhibitionStatus(),
+                                    activityReference.get().models.get(i).getDisplayDate());
                             activityReference.get().qmDatabase.getExhibitionTableDao().insert(activityReference.get().exhibitionListTableArabic);
 
                         }
@@ -2093,7 +2096,8 @@ public class CommonActivity extends AppCompatActivity {
                                 null,
                                 null,
                                 activityReference.get().models.get(i).getMuseumId(),
-                                activityReference.get().models.get(i).getExhibitionStatus());
+                                activityReference.get().models.get(i).getExhibitionStatus(),
+                                activityReference.get().models.get(i).getDisplayDate());
                         activityReference.get().qmDatabase.getExhibitionTableDao().insert(exhibitionListTableEnglish);
                     }
                 } else {
@@ -2110,7 +2114,8 @@ public class CommonActivity extends AppCompatActivity {
                                 null,
                                 null,
                                 activityReference.get().models.get(i).getMuseumId(),
-                                activityReference.get().models.get(i).getExhibitionStatus());
+                                activityReference.get().models.get(i).getExhibitionStatus(),
+                                activityReference.get().models.get(i).getDisplayDate());
                         activityReference.get().qmDatabase.getExhibitionTableDao().insert(exhibitionListTableArabic);
                     }
                 }
@@ -2194,11 +2199,10 @@ public class CommonActivity extends AppCompatActivity {
                 for (int i = 0; i < exhibitionListTableEnglish.size(); i++) {
                     CommonModel commonModel = new CommonModel(String.valueOf(exhibitionListTableEnglish.get(i).getExhibition_id()),
                             exhibitionListTableEnglish.get(i).getExhibition_name(),
-                            exhibitionListTableEnglish.get(i).getExhibition_start_date(),
-                            exhibitionListTableEnglish.get(i).getExhibition_end_date(),
                             exhibitionListTableEnglish.get(i).getExhibition_location(),
                             exhibitionListTableEnglish.get(i).getExhibition_latest_image(),
-                            exhibitionListTableEnglish.get(i).getExhibition_status());
+                            exhibitionListTableEnglish.get(i).getExhibition_status(),
+                            exhibitionListTableEnglish.get(i).getExhibition_display_date());
 
                     activityReference.get().models.add(i, commonModel);
 
@@ -2249,11 +2253,10 @@ public class CommonActivity extends AppCompatActivity {
                 for (int i = 0; i < exhibitionListTableArabic.size(); i++) {
                     CommonModel commonModel = new CommonModel(String.valueOf(exhibitionListTableArabic.get(i).getExhibition_id()),
                             exhibitionListTableArabic.get(i).getExhibition_name(),
-                            exhibitionListTableArabic.get(i).getExhibition_start_date(),
-                            exhibitionListTableArabic.get(i).getExhibition_end_date(),
                             exhibitionListTableArabic.get(i).getExhibition_location(),
                             exhibitionListTableArabic.get(i).getExhibition_latest_image(),
-                            exhibitionListTableArabic.get(i).getExhibition_status());
+                            exhibitionListTableArabic.get(i).getExhibition_status(),
+                            exhibitionListTableArabic.get(i).getExhibition_display_date());
                     activityReference.get().models.add(i, commonModel);
                 }
                 activityReference.get().mAdapter.notifyDataSetChanged();

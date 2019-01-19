@@ -120,7 +120,6 @@ public class CommonListAdapter extends RecyclerView.Adapter<CommonListAdapter.My
             holder.tourTitleTxt.setText(model.getName());
         } else if (model.getIsTravel() != null) {
             holder.name.setText(model.getName());
-            holder.name.setTextSize(33);
             holder.name.setAllCaps(false);
         } else
             holder.name.setText(model.getName());
@@ -141,9 +140,9 @@ public class CommonListAdapter extends RecyclerView.Adapter<CommonListAdapter.My
                 holder.statusTag.setBackgroundResource(R.drawable.round_corner_grey);
             }
         }
-        if (model.getStartDate() != null) {
+        if (model.getDisplayDate() != null) {
             holder.dateAndTime.setVisibility(View.VISIBLE);
-            holder.dateAndTime.setText(model.getStartDate() + " - " + model.getEndDate());
+            holder.dateAndTime.setText(model.getDisplayDate());
         }
         if (model.getEventDate() != null) {
             if (model.getImages().size() > 0 && (model.getImages().get(0) != null)) {

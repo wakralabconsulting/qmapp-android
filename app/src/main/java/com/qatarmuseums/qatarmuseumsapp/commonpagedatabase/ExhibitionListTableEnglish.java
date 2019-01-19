@@ -5,10 +5,6 @@ import android.arch.persistence.room.Entity;
 import android.arch.persistence.room.PrimaryKey;
 import android.support.annotation.NonNull;
 
-/**
- * Created by MoongedePC on 17-Aug-18.
- */
-
 @Entity(tableName = "exhibitionlistenglish")
 public class ExhibitionListTableEnglish {
     @NonNull
@@ -24,6 +20,8 @@ public class ExhibitionListTableEnglish {
     private String exhibition_start_date;
     @ColumnInfo()
     private String exhibition_end_date;
+    @ColumnInfo()
+    private String exhibition_display_date;
     @ColumnInfo()
     private String exhibition_location;
     @ColumnInfo()
@@ -44,7 +42,8 @@ public class ExhibitionListTableEnglish {
                                       String exhibition_short_description,
                                       String exhibition_long_description,
                                       String exhibition_latitude, String exhibition_longitude,
-                                      String museum_id, String exhibition_status) {
+                                      String museum_id, String exhibition_status,
+                                      String exhibition_display_date) {
         this.exhibition_id = exhibition_id;
         this.exhibition_name = exhibition_name;
         this.exhibition_latest_image = exhibition_latest_image;
@@ -57,6 +56,7 @@ public class ExhibitionListTableEnglish {
         this.exhibition_longitude = exhibition_longitude;
         this.museum_id = museum_id;
         this.exhibition_status = exhibition_status;
+        this.exhibition_display_date = exhibition_display_date;
     }
 
     @NonNull
@@ -154,5 +154,9 @@ public class ExhibitionListTableEnglish {
 
     public void setExhibition_status(String exhibition_status) {
         this.exhibition_status = exhibition_status;
+    }
+
+    public String getExhibition_display_date() {
+        return exhibition_display_date;
     }
 }
