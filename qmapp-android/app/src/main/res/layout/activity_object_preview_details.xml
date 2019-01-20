@@ -68,6 +68,7 @@
                 android:orientation="horizontal"
                 android:paddingEnd="@dimen/pading_25"
                 android:paddingStart="@dimen/pading_25"
+                android:layoutDirection="ltr"
                 android:paddingTop="@dimen/pading_10"
                 android:paddingBottom="@dimen/padding_5"
                 android:visibility="gone">

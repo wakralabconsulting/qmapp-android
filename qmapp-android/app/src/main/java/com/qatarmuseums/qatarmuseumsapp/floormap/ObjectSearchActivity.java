@@ -6,6 +6,8 @@ import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.animation.Animation;
@@ -53,6 +55,11 @@ public class ObjectSearchActivity extends AppCompatActivity implements View.OnCl
     ScrollView mainContainer;
     @BindView(R.id.progressBarLoading)
     ProgressBar progressBar;
+    @BindView(R.id.done_button_layout)
+    LinearLayout doneButtonLayout;
+    @BindView(R.id.clear_button_layout)
+    LinearLayout clearButtonLayout;
+
     LinearLayout[] displayButtons;
     String display = "";
     SharedPreferences qmPreferences;
@@ -80,11 +87,36 @@ public class ObjectSearchActivity extends AppCompatActivity implements View.OnCl
                 displayButtons[i].setOnClickListener(this);
             }
         }
-        displayClearButton.setOnClickListener(new View.OnClickListener() {
+        displayClearButton.setEnabled(false);
+        doneButton.setEnabled(false);
+        displayClearButton.setOnClickListener(view -> {
+            display = "";
+            numberPadDisplay.setText("");
+        });
+        numberPadDisplay.addTextChangedListener(new TextWatcher() {
             @Override
-            public void onClick(View view) {
-                display = "";
-                numberPadDisplay.setText("");
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                if (count > 0) {
+                    doneButtonLayout.setBackground(getResources().getDrawable(R.drawable.number_pad_search_circular_view));
+                    clearButtonLayout.setBackground(getResources().getDrawable(R.drawable.number_pad_clear_circular_view));
+                    doneButton.setEnabled(true);
+                    displayClearButton.setEnabled(true);
+                } else {
+                    doneButton.setEnabled(false);
+                    displayClearButton.setEnabled(false);
+                    doneButtonLayout.setBackground(getResources().getDrawable(R.drawable.number_pad_circular_view_gray));
+                    clearButtonLayout.setBackground(getResources().getDrawable(R.drawable.number_pad_circular_view_gray));
+                }
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+
             }
         });
         doneButton.setOnClickListener(new View.OnClickListener() {
