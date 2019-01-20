@@ -36,14 +36,14 @@ public interface MuseumAboutTableDao {
     MuseumAboutTableArabic getMuseumAboutDataArabic(int idFromAPI);
 
     @Query("UPDATE museumabouttableenglish SET museum_name = :museumnameFromApi," +
-            "tourguide_available = :tourguideAvailableFromApi,short_description = :museumshortDescriptionFromApi," +
+            "tourguide_available = :tourguideAvailableFromApi, short_description = :museumshortDescriptionFromApi," +
             "long_description = :museumLongDescriptionFromApi, " +
-            "museum_image = :museumImageFromApi,museum_contact_number = :museumContactNumberFromApi, " +
-            "museum_contact_email = :museumContactEmailFromApi,museum_lattitude = :museumLattitude," +
+            "museum_image = :museumImageFromApi, museum_contact_number = :museumContactNumberFromApi, " +
+            "museum_contact_email = :museumContactEmailFromApi, museum_lattitude = :museumLattitude," +
             "museum_longitude = :museumLongitude," +
             "tourguide_availability = :museumtourguideAvailabilityFromApi," +
             "museum_subtitle = :museumSubtitleFromApi," +
-            "museum_opening_time = :museumOpeningTimeFromApi WHERE museum_id=:idFromApi")
+            "museum_opening_time = :museumOpeningTimeFromApi WHERE museum_id = :idFromApi")
     void updateMuseumAboutDataEnglish(String museumnameFromApi,
                                       String tourguideAvailableFromApi, String museumshortDescriptionFromApi,
                                       String museumLongDescriptionFromApi,
@@ -59,7 +59,7 @@ public interface MuseumAboutTableDao {
             "museum_longitude = :museumLongitude," +
             "tourguide_availability = :museumtourguideAvailabilityFromApi," +
             "museum_subtitle = :museumSubtitleFromApi," +
-            "museum_opening_time = :museumOpeningTimeFromApi WHERE museum_id=:idFromApi")
+            "museum_opening_time = :museumOpeningTimeFromApi WHERE museum_id = :idFromApi")
     void updateMuseumAboutDataArabic(String museumnameFromApi,
                                      String tourguideAvailableFromApi, String museumShortDescriptionFromApi,
                                      String museumLongDescriptionFromApi,

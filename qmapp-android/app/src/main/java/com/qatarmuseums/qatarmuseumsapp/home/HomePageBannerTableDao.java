@@ -30,10 +30,12 @@ public interface HomePageBannerTableDao {
     @Query("SELECT COUNT(qatarmuseum_id) FROM homepagebannertableArabic WHERE qatarmuseum_id = :idFromAPI")
     int checkIdExistBannerArabic(int idFromAPI);
 
-    @Query("UPDATE homepagebannertableEnglish SET name = :nameFromApi, image = :imageFromApi WHERE qatarmuseum_id=:id")
+    @Query("UPDATE homepagebannertableEnglish SET name = :nameFromApi, image = :imageFromApi " +
+            "WHERE qatarmuseum_id = :id")
     void updateHomePageBannerEnglish(String nameFromApi, String imageFromApi, String id);
 
-    @Query("UPDATE homepagebannertableArabic SET name=:arabicNameFromApi, image = :imageFromApi WHERE qatarmuseum_id=:id")
+    @Query("UPDATE homepagebannertableArabic SET name=:arabicNameFromApi, image = :imageFromApi " +
+            "WHERE qatarmuseum_id = :id")
     void updateHomePageBannerArabic(String arabicNameFromApi, String imageFromApi, String id);
 
 

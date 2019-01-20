@@ -7,6 +7,7 @@ import android.content.Intent;
 
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.v4.content.LocalBroadcastManager;
@@ -25,14 +26,19 @@ import android.widget.TextView;
 
 import com.github.rubensousa.gravitysnaphelper.GravitySnapHelper;
 import com.qatarmuseums.qatarmuseumsapp.Config;
+import com.qatarmuseums.qatarmuseumsapp.Convertor;
+import com.qatarmuseums.qatarmuseumsapp.QMDatabase;
 import com.qatarmuseums.qatarmuseumsapp.R;
 import com.qatarmuseums.qatarmuseumsapp.apicall.APIClient;
 import com.qatarmuseums.qatarmuseumsapp.apicall.APIInterface;
 import com.qatarmuseums.qatarmuseumsapp.base.BaseActivity;
 import com.qatarmuseums.qatarmuseumsapp.museumabout.MuseumAboutModel;
+import com.qatarmuseums.qatarmuseumsapp.museumabout.MuseumAboutTableArabic;
+import com.qatarmuseums.qatarmuseumsapp.museumabout.MuseumAboutTableEnglish;
 import com.qatarmuseums.qatarmuseumsapp.utils.Util;
 
 import java.io.IOException;
+import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -83,6 +89,9 @@ public class MuseumActivity extends BaseActivity implements
     private BroadcastReceiver mNotificationBroadcastReceiver;
     private int badgeCount;
     private boolean isBanner;
+    private MuseumAboutTableEnglish museumAboutTableEnglish;
+    private MuseumAboutTableArabic museumAboutTableArabic;
+    private QMDatabase qmDatabase;
 
 
     @Override
@@ -103,7 +112,7 @@ public class MuseumActivity extends BaseActivity implements
             setToolbarForMuseumActivity();
         animCircleIndicator = (InfiniteIndicator) findViewById(R.id.main_indicator_default_circle);
         sliderPlaceholderImage = (ImageView) findViewById(R.id.ads_place_holder);
-
+        qmDatabase = QMDatabase.getInstance(MuseumActivity.this);
         museumHorizontalScrollViewAdapter = new MuseumHorizontalScrollViewAdapter(this,
                 museumHScrollModelList, intent.getStringExtra("MUSEUMTITLE"), museumId, getScreenWidth());
         animCircleIndicator.setVisibility(View.GONE);
@@ -200,8 +209,7 @@ public class MuseumActivity extends BaseActivity implements
             prepareRecyclerViewDataForLaunch();
         else
             prepareRecyclerViewData();
-
-        getSliderImagesfromAPI();
+        getMuseumSliderImageFromDatabase();
 
         mNotificationBroadcastReceiver = new BroadcastReceiver() {
             @Override
@@ -432,7 +440,7 @@ public class MuseumActivity extends BaseActivity implements
 
     }
 
-    public void getSliderImagesfromAPI() {
+    public void getSliderImagesfromAPI(Boolean noDataInDB) {
         APIInterface apiService =
                 APIClient.getClient().create(APIInterface.class);
         Call<ArrayList<MuseumAboutModel>> call;
@@ -453,21 +461,22 @@ public class MuseumActivity extends BaseActivity implements
                         museumAboutModels.addAll(response.body());
                         if (museumAboutModels.size() != 0) {
                             if (museumAboutModels.get(0).getImageList().size() > 0) {
-                                int imageSliderSize;
-                                ArrayList<String> sliderList = new ArrayList<>();
-                                if (museumAboutModels.get(0).getImageList().size() >= 4) {
-                                    imageSliderSize = 4;
-                                } else {
-                                    imageSliderSize = museumAboutModels.get(0).getImageList().size();
-                                }
+                                if (noDataInDB) {
+                                    int imageSliderSize;
+                                    ArrayList<String> sliderList = new ArrayList<>();
+                                    if (museumAboutModels.get(0).getImageList().size() >= 4) {
+                                        imageSliderSize = 4;
+                                    } else {
+                                        imageSliderSize = museumAboutModels.get(0).getImageList().size();
+                                    }
 
-                                for (int i = 1; i < imageSliderSize; i++) {
-                                    sliderList.add(i - 1, museumAboutModels.get(0).getImageList().get(i));
+                                    for (int i = 1; i < imageSliderSize; i++) {
+                                        sliderList.add(i - 1, museumAboutModels.get(0).getImageList().get(i));
+                                    }
+                                    setSliderImages(sliderList);
+                                    sliderPlaceholderImage.setVisibility(View.GONE);
+                                    animCircleIndicator.setVisibility(View.VISIBLE);
                                 }
-
-                                setSliderImages(sliderList);
-                                sliderPlaceholderImage.setVisibility(View.GONE);
-                                animCircleIndicator.setVisibility(View.VISIBLE);
                             } else {
                                 sliderPlaceholderImage.setVisibility(View.VISIBLE);
                                 animCircleIndicator.setVisibility(View.GONE);
@@ -477,6 +486,7 @@ public class MuseumActivity extends BaseActivity implements
                             sliderPlaceholderImage.setVisibility(View.VISIBLE);
                             animCircleIndicator.setVisibility(View.GONE);
                         }
+                        new MuseumAboutRowCount(MuseumActivity.this, language).execute();
 
                     } else {
                         sliderPlaceholderImage.setVisibility(View.VISIBLE);
@@ -492,17 +502,384 @@ public class MuseumActivity extends BaseActivity implements
 
             @Override
             public void onFailure(Call<ArrayList<MuseumAboutModel>> call, Throwable t) {
-                if (t instanceof IOException) {
+                if (t instanceof IOException && noDataInDB) {
                     util.showToast(getResources().getString(R.string.check_network), getApplicationContext());
-
-                } else {
-                    // error due to mapping issues
                 }
-                sliderPlaceholderImage.setVisibility(View.VISIBLE);
-                animCircleIndicator.setVisibility(View.GONE);
+                if (noDataInDB) {
+                    sliderPlaceholderImage.setVisibility(View.VISIBLE);
+                    animCircleIndicator.setVisibility(View.GONE);
+                }
             }
         });
 
+
+    }
+
+    public void getMuseumSliderImageFromDatabase() {
+        if (appLanguage == english) {
+            new RetriveMuseumAboutDataEnglish(MuseumActivity.this, museumId).execute();
+        } else {
+            new RetriveMuseumAboutDataArabic(MuseumActivity.this, museumId).execute();
+        }
+    }
+
+    public static class MuseumAboutRowCount extends AsyncTask<Void, Void, Integer> {
+
+        private WeakReference<MuseumActivity> activityReference;
+        String language;
+
+
+        MuseumAboutRowCount(MuseumActivity context, String apiLanguage) {
+            activityReference = new WeakReference<>(context);
+            language = apiLanguage;
+        }
+
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+        }
+
+        @Override
+        protected void onPostExecute(Integer integer) {
+            Integer museumAboutRowCount = integer;
+            if (museumAboutRowCount > 0) {
+                //updateEnglishTable or add row to database
+                new CheckMuseumAboutDBRowExist(activityReference.get(), language).execute();
+            } else {
+                //create databse
+                new InsertMuseumAboutDatabaseTask(activityReference.get(), activityReference.get().museumAboutTableEnglish,
+                        activityReference.get().museumAboutTableArabic, language).execute();
+
+            }
+        }
+
+        @Override
+        protected Integer doInBackground(Void... voids) {
+            if (language.equals("en")) {
+                return activityReference.get().qmDatabase.getMuseumAboutDao().getNumberOfRowsEnglish();
+            } else {
+                return activityReference.get().qmDatabase.getMuseumAboutDao().getNumberOfRowsArabic();
+            }
+
+
+        }
+    }
+
+    public static class CheckMuseumAboutDBRowExist extends AsyncTask<Void, Void, Void> {
+
+        private WeakReference<MuseumActivity> activityReference;
+        private MuseumAboutTableEnglish museumAboutTableEnglish;
+        private MuseumAboutTableArabic museumAboutTableArabic;
+        String language;
+
+        CheckMuseumAboutDBRowExist(MuseumActivity context, String apiLanguage) {
+            activityReference = new WeakReference<>(context);
+            language = apiLanguage;
+        }
+
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+        }
+
+        @Override
+        protected void onPostExecute(Void aVoid) {
+            super.onPostExecute(aVoid);
+        }
+
+        @Override
+        protected Void doInBackground(Void... voids) {
+            Convertor converters = new Convertor();
+            if (activityReference.get().museumAboutModels.size() > 0) {
+                if (language.equals("en")) {
+                    for (int i = 0; i < activityReference.get().museumAboutModels.size(); i++) {
+                        int n = activityReference.get().qmDatabase.getMuseumAboutDao().checkEnglishIdExist(
+                                Integer.parseInt(activityReference.get().museumAboutModels.get(i).getMuseumId()));
+                        if (n > 0) {
+                            //updateEnglishTable same id
+                            new UpdateMuseumAboutDetailTable(activityReference.get(), language, i).execute();
+
+                        } else {
+                            museumAboutTableEnglish = new MuseumAboutTableEnglish(
+                                    activityReference.get().museumAboutModels.get(i).getName(),
+                                    Long.parseLong(activityReference.get().museumAboutModels.get(i).getMuseumId()),
+                                    activityReference.get().museumAboutModels.get(i).getTourGuideAvailable(),
+                                    "",
+                                    "",
+                                    converters.fromArrayList(activityReference.get().museumAboutModels.get(i).getImageList()),
+                                    activityReference.get().museumAboutModels.get(i).getContactNumber(),
+                                    activityReference.get().museumAboutModels.get(i).getContactEmail(),
+                                    activityReference.get().museumAboutModels.get(i).getLatitude(),
+                                    activityReference.get().museumAboutModels.get(i).getLongitude(),
+                                    activityReference.get().museumAboutModels.get(i).getTourGuideAvailability(),
+                                    activityReference.get().museumAboutModels.get(i).getSubTitle(),
+                                    activityReference.get().museumAboutModels.get(i).getTimingInfo(),
+                                    activityReference.get().museumAboutModels.get(i).getEventDate());
+                            activityReference.get().qmDatabase.getMuseumAboutDao().insert(museumAboutTableEnglish);
+
+                        }
+                    }
+                } else {
+                    for (int i = 0; i < activityReference.get().museumAboutModels.size(); i++) {
+                        int n = activityReference.get().qmDatabase.getMuseumAboutDao().checkArabicIdExist(
+                                Integer.parseInt(activityReference.get().museumAboutModels.get(i).getMuseumId()));
+                        if (n > 0) {
+                            //updateEnglishTable same id
+                            new UpdateMuseumAboutDetailTable(activityReference.get(), language, i).execute();
+
+                        } else {
+                            museumAboutTableArabic = new MuseumAboutTableArabic(
+                                    activityReference.get().museumAboutModels.get(i).getName(),
+                                    Long.parseLong(activityReference.get().museumAboutModels.get(i).getMuseumId()),
+                                    activityReference.get().museumAboutModels.get(i).getTourGuideAvailable(),
+                                    "",
+                                    "",
+                                    converters.fromArrayList(activityReference.get().museumAboutModels.get(i).getImageList()),
+                                    activityReference.get().museumAboutModels.get(i).getContactNumber(),
+                                    activityReference.get().museumAboutModels.get(i).getContactEmail(),
+                                    activityReference.get().museumAboutModels.get(i).getLatitude(),
+                                    activityReference.get().museumAboutModels.get(i).getLongitude(),
+                                    activityReference.get().museumAboutModels.get(i).getTourGuideAvailability(),
+                                    activityReference.get().museumAboutModels.get(i).getSubTitle(),
+                                    activityReference.get().museumAboutModels.get(i).getTimingInfo(),
+                                    activityReference.get().museumAboutModels.get(i).getEventDate());
+                            activityReference.get().qmDatabase.getMuseumAboutDao().insert(museumAboutTableArabic);
+
+                        }
+                    }
+                }
+            }
+
+            return null;
+        }
+    }
+
+    public static class InsertMuseumAboutDatabaseTask extends AsyncTask<Void, Void, Boolean> {
+        private WeakReference<MuseumActivity> activityReference;
+        private MuseumAboutTableEnglish museumAboutTableEnglish;
+        private MuseumAboutTableArabic museumAboutTableArabic;
+        String language;
+
+        InsertMuseumAboutDatabaseTask(MuseumActivity context, MuseumAboutTableEnglish museumAboutTableEnglish,
+                                      MuseumAboutTableArabic museumAboutTableArabic, String lan) {
+            activityReference = new WeakReference<>(context);
+            this.museumAboutTableEnglish = museumAboutTableEnglish;
+            this.museumAboutTableArabic = museumAboutTableArabic;
+            language = lan;
+        }
+
+        @Override
+        protected Boolean doInBackground(Void... voids) {
+            if (activityReference.get().museumAboutModels != null) {
+                Convertor converters = new Convertor();
+                if (language.equals("en")) {
+                    for (int i = 0; i < activityReference.get().museumAboutModels.size(); i++) {
+                        museumAboutTableEnglish = new MuseumAboutTableEnglish(
+                                activityReference.get().museumAboutModels.get(i).getName(),
+                                Long.parseLong(activityReference.get().museumAboutModels.get(i).getMuseumId()),
+                                activityReference.get().museumAboutModels.get(i).getTourGuideAvailable(),
+                                "",
+                                "",
+                                converters.fromArrayList(activityReference.get().museumAboutModels.get(i).getImageList()),
+                                activityReference.get().museumAboutModels.get(i).getContactNumber(),
+                                activityReference.get().museumAboutModels.get(i).getContactEmail(),
+                                activityReference.get().museumAboutModels.get(i).getLatitude(),
+                                activityReference.get().museumAboutModels.get(i).getLongitude(),
+                                activityReference.get().museumAboutModels.get(i).getTourGuideAvailability(),
+                                activityReference.get().museumAboutModels.get(i).getSubTitle(),
+                                activityReference.get().museumAboutModels.get(i).getTimingInfo(),
+                                activityReference.get().museumAboutModels.get(i).getEventDate());
+                        activityReference.get().qmDatabase.getMuseumAboutDao().insert(museumAboutTableEnglish);
+
+                    }
+                } else {
+                    for (int i = 0; i < activityReference.get().museumAboutModels.size(); i++) {
+                        museumAboutTableArabic = new MuseumAboutTableArabic(
+                                activityReference.get().museumAboutModels.get(i).getName(),
+                                Long.parseLong(activityReference.get().museumAboutModels.get(i).getMuseumId()),
+                                activityReference.get().museumAboutModels.get(i).getTourGuideAvailable(),
+                                "",
+                                "",
+                                converters.fromArrayList(activityReference.get().museumAboutModels.get(i).getImageList()),
+                                activityReference.get().museumAboutModels.get(i).getContactNumber(),
+                                activityReference.get().museumAboutModels.get(i).getContactEmail(),
+                                activityReference.get().museumAboutModels.get(i).getLatitude(),
+                                activityReference.get().museumAboutModels.get(i).getLongitude(),
+                                activityReference.get().museumAboutModels.get(i).getTourGuideAvailability(),
+                                activityReference.get().museumAboutModels.get(i).getSubTitle(),
+                                activityReference.get().museumAboutModels.get(i).getTimingInfo(),
+                                activityReference.get().museumAboutModels.get(i).getEventDate());
+                        activityReference.get().qmDatabase.getMuseumAboutDao().insert(museumAboutTableArabic);
+
+                    }
+                }
+            }
+            return true;
+        }
+
+        @Override
+        protected void onPostExecute(Boolean aBoolean) {
+
+        }
+    }
+
+    public static class UpdateMuseumAboutDetailTable extends AsyncTask<Void, Void, Void> {
+
+        private WeakReference<MuseumActivity> activityReference;
+        String language;
+        int position;
+
+        UpdateMuseumAboutDetailTable(MuseumActivity context, String apiLanguage, int p) {
+            activityReference = new WeakReference<>(context);
+            language = apiLanguage;
+            position = p;
+        }
+
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+        }
+
+        @Override
+        protected void onPostExecute(Void aVoid) {
+            super.onPostExecute(aVoid);
+        }
+
+        @Override
+        protected Void doInBackground(Void... voids) {
+            Convertor converters = new Convertor();
+            if (language.equals("en")) {
+                // updateEnglishTable table with english name
+                activityReference.get().qmDatabase.getMuseumAboutDao().updateMuseumAboutDataEnglish(
+                        activityReference.get().museumAboutModels.get(position).getName(),
+                        activityReference.get().museumAboutModels.get(position).getTourGuideAvailable(),
+                        "",
+                        "",
+                        converters.fromArrayList(activityReference.get().museumAboutModels.get(position).getImageList()),
+                        activityReference.get().museumAboutModels.get(position).getContactNumber(),
+                        activityReference.get().museumAboutModels.get(position).getContactEmail(),
+                        activityReference.get().museumAboutModels.get(position).getLatitude(),
+                        activityReference.get().museumAboutModels.get(position).getLongitude(),
+                        activityReference.get().museumAboutModels.get(position).getTourGuideAvailability(),
+                        activityReference.get().museumAboutModels.get(position).getSubTitle(),
+                        activityReference.get().museumAboutModels.get(position).getTimingInfo(),
+                        Long.parseLong(activityReference.get().museumAboutModels.get(position).getMuseumId()));
+            } else {
+                // updateArabicTable table with arabic name
+                activityReference.get().qmDatabase.getMuseumAboutDao().updateMuseumAboutDataArabic(
+                        activityReference.get().museumAboutModels.get(position).getName(),
+                        activityReference.get().museumAboutModels.get(position).getTourGuideAvailable(),
+                        "",
+                        "",
+                        converters.fromArrayList(activityReference.get().museumAboutModels.get(position).getImageList()),
+                        activityReference.get().museumAboutModels.get(position).getContactNumber(),
+                        activityReference.get().museumAboutModels.get(position).getContactEmail(),
+                        activityReference.get().museumAboutModels.get(position).getLatitude(),
+                        activityReference.get().museumAboutModels.get(position).getLongitude(),
+                        activityReference.get().museumAboutModels.get(position).getTourGuideAvailability(),
+                        activityReference.get().museumAboutModels.get(position).getSubTitle(),
+                        activityReference.get().museumAboutModels.get(position).getTimingInfo(),
+                        Long.parseLong(activityReference.get().museumAboutModels.get(position).getMuseumId()));
+
+            }
+            return null;
+        }
+    }
+
+    public static class RetriveMuseumAboutDataEnglish extends AsyncTask<Void, Void, MuseumAboutTableEnglish> {
+        private WeakReference<MuseumActivity> activityReference;
+        String museumId;
+
+        RetriveMuseumAboutDataEnglish(MuseumActivity context, String museumId) {
+            activityReference = new WeakReference<>(context);
+            this.museumId = museumId;
+        }
+
+        @Override
+        protected MuseumAboutTableEnglish doInBackground(Void... voids) {
+            return activityReference.get().qmDatabase.getMuseumAboutDao().getMuseumAboutDataEnglish(Integer.parseInt(museumId));
+        }
+
+        @Override
+        protected void onPostExecute(MuseumAboutTableEnglish museumAboutTableEnglish) {
+            Convertor converters = new Convertor();
+            if (museumAboutTableEnglish != null) {
+                if (converters.fromString(museumAboutTableEnglish.getMuseum_image()) != null &&
+                        converters.fromString(museumAboutTableEnglish.getMuseum_image()).size() > 0) {
+                    int imageSliderSize;
+                    ArrayList<String> sliderList = new ArrayList<>();
+                    if (converters.fromString(museumAboutTableEnglish.getMuseum_image()).size() >= 4) {
+                        imageSliderSize = 4;
+                    } else {
+                        imageSliderSize = converters.fromString(museumAboutTableEnglish.getMuseum_image()).size();
+                    }
+
+                    for (int i = 1; i < imageSliderSize; i++) {
+                        sliderList.add(i - 1, converters.fromString(museumAboutTableEnglish.getMuseum_image()).get(i));
+                    }
+
+                    activityReference.get().setSliderImages(sliderList);
+                    activityReference.get().sliderPlaceholderImage.setVisibility(View.GONE);
+                    activityReference.get().animCircleIndicator.setVisibility(View.VISIBLE);
+                } else {
+                    activityReference.get().sliderPlaceholderImage.setVisibility(View.VISIBLE);
+                    activityReference.get().animCircleIndicator.setVisibility(View.GONE);
+                }
+                activityReference.get().getSliderImagesfromAPI(false);
+            } else {
+                activityReference.get().getSliderImagesfromAPI(true);
+                activityReference.get().sliderPlaceholderImage.setVisibility(View.VISIBLE);
+                activityReference.get().animCircleIndicator.setVisibility(View.GONE);
+            }
+
+        }
+    }
+
+    public static class RetriveMuseumAboutDataArabic extends AsyncTask<Void, Void, MuseumAboutTableArabic> {
+        private WeakReference<MuseumActivity> activityReference;
+        String museumId;
+
+        RetriveMuseumAboutDataArabic(MuseumActivity context, String museumId) {
+            activityReference = new WeakReference<>(context);
+            this.museumId = museumId;
+        }
+
+        @Override
+        protected MuseumAboutTableArabic doInBackground(Void... voids) {
+            return activityReference.get().qmDatabase.getMuseumAboutDao().getMuseumAboutDataArabic(Integer.parseInt(museumId));
+        }
+
+        @Override
+        protected void onPostExecute(MuseumAboutTableArabic museumAboutTableArabic) {
+            if (museumAboutTableArabic != null) {
+                Convertor converters = new Convertor();
+                if (converters.fromString(museumAboutTableArabic.getMuseum_image()) != null &&
+                        converters.fromString(museumAboutTableArabic.getMuseum_image()).size() > 0) {
+                    int imageSliderSize;
+                    ArrayList<String> sliderList = new ArrayList<>();
+                    if (converters.fromString(museumAboutTableArabic.getMuseum_image()).size() >= 4) {
+                        imageSliderSize = 4;
+                    } else {
+                        imageSliderSize = converters.fromString(museumAboutTableArabic.getMuseum_image()).size();
+                    }
+
+                    for (int i = 1; i < imageSliderSize; i++) {
+                        sliderList.add(i - 1, converters.fromString(museumAboutTableArabic.getMuseum_image()).get(i));
+                    }
+
+                    activityReference.get().setSliderImages(sliderList);
+                    activityReference.get().sliderPlaceholderImage.setVisibility(View.GONE);
+                    activityReference.get().animCircleIndicator.setVisibility(View.VISIBLE);
+                } else {
+                    activityReference.get().sliderPlaceholderImage.setVisibility(View.VISIBLE);
+                    activityReference.get().animCircleIndicator.setVisibility(View.GONE);
+                }
+
+            } else {
+                activityReference.get().sliderPlaceholderImage.setVisibility(View.VISIBLE);
+                activityReference.get().animCircleIndicator.setVisibility(View.GONE);
+            }
+        }
 
     }
 
