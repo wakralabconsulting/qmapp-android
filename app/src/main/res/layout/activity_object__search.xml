@@ -55,10 +55,10 @@
     </android.support.design.widget.AppBarLayout>
 
     <ScrollView
+        android:id="@+id/container"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_below="@id/app_bar"
-        android:id="@+id/container"
         android:background="@color/number_pad_bg"
         android:visibility="visible">
 
@@ -375,12 +375,13 @@
                     android:paddingTop="@dimen/padding_10">
 
                     <LinearLayout
+                        android:id="@+id/clear_button_layout"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_gravity="center"
                         android:layout_marginEnd="@dimen/padding_10"
                         android:layout_marginStart="@dimen/padding_10"
-                        android:background="@drawable/number_pad_clear_circular_view"
+                        android:background="@drawable/number_pad_circular_view_gray"
                         android:gravity="center">
 
                         <ImageView
@@ -414,12 +415,13 @@
                     </LinearLayout>
 
                     <LinearLayout
+                        android:id="@+id/done_button_layout"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_gravity="center"
                         android:layout_marginEnd="@dimen/padding_10"
                         android:layout_marginStart="@dimen/padding_10"
-                        android:background="@drawable/number_pad_search_circular_view"
+                        android:background="@drawable/number_pad_circular_view_gray"
                         android:gravity="center">
 
                         <ImageView

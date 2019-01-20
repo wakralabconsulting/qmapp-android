@@ -22,6 +22,7 @@ import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
@@ -122,7 +123,7 @@ public class FloorMapActivity extends AppCompatActivity implements OnMapReadyCal
     LatLng L2_G3_SC14_2 = new LatLng(25.295580, 51.539392);
     LatLng L2_G3_WR4 = new LatLng(25.295540, 51.539470);
     LatLng L2_G4_SC5 = new LatLng(25.295690, 51.539312);
-    LatLng L2_G3_SC3 = new LatLng(25.295715, 51.539348);
+    LatLng L2_G4_SC3 = new LatLng(25.295715, 51.539348);
     LatLng L2_G5_SC5 = new LatLng(25.295715, 51.539205);
     LatLng L2_G5_SC11 = new LatLng(25.295735, 51.539225);
     LatLng L2_G7_SC13 = new LatLng(25.295395, 51.538915);
@@ -231,15 +232,20 @@ public class FloorMapActivity extends AppCompatActivity implements OnMapReadyCal
 
     private static Convertor converters;
     Button retryButton;
-    private Animation zoomOutAnimation;
+    private Animation zoomOutAnimation, zoomOutAnimationMore;
     private ImageView mMarkerImageView;
     private Bitmap resizedBitmap;
     private Call<ArrayList<ArtifactDetails>> call;
+    private Toolbar toolbar;
+    private ImageView backArrow;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_floor_map);
+        toolbar = (Toolbar) findViewById(R.id.common_toolbar);
+        setSupportActionBar(toolbar);
+        backArrow = (ImageView) findViewById(R.id.toolbar_back);
         floormapLayout = findViewById(R.id.floor_map_activity);
         floorMapRootLayout = findViewById(R.id.floor_map_root);
         levelPicker = (LinearLayout) findViewById(R.id.level_picker);
@@ -403,6 +409,17 @@ public class FloorMapActivity extends AppCompatActivity implements OnMapReadyCal
 
         zoomOutAnimation = AnimationUtils.loadAnimation(getApplicationContext(),
                 R.anim.zoom_out);
+        zoomOutAnimationMore = AnimationUtils.loadAnimation(getApplicationContext(),
+                R.anim.zoom_out_more);
+        backArrow.setOnTouchListener((v, event) -> {
+            switch (event.getAction()) {
+                case MotionEvent.ACTION_DOWN:
+                    backArrow.startAnimation(zoomOutAnimationMore);
+                    break;
+            }
+            return false;
+        });
+        backArrow.setOnClickListener(v -> onBackPressed());
 
         retryButton.setOnTouchListener((v, event) -> {
             switch (event.getAction()) {
@@ -435,7 +452,8 @@ public class FloorMapActivity extends AppCompatActivity implements OnMapReadyCal
         btn_play.setImageDrawable(getDrawable(R.drawable.play_black));
 
         seekBar = new SeekBar(this);
-        LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+        LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,
+                ViewGroup.LayoutParams.WRAP_CONTENT);
         seekBar.setLayoutParams(lp);
         seekBar.setOnSeekBarChangeListener(this);
 
@@ -1009,7 +1027,7 @@ public class FloorMapActivity extends AppCompatActivity implements OnMapReadyCal
                 .icon(BitmapDescriptorFactory.fromBitmap(resizeMapIcons("default_map_marker", normalMapIconWidth, normalMapIconHeight))));
         markerHashMap.put("l2_g3_sc14_2", l2_g3_sc14_2);
         l2_g4_sc3 = googleMap.addMarker(new MarkerOptions()
-                .position(L2_G8_SC4_1)
+                .position(L2_G4_SC3)
                 .title("PO.124")
                 .snippet("l2_g4_sc3")
                 .visible(false)

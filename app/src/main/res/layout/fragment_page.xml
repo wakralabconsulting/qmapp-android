@@ -60,6 +60,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:gravity="center"
+                    android:layoutDirection="ltr"
                     android:orientation="horizontal"
                     android:paddingBottom="@dimen/padding_5"
                     android:paddingEnd="@dimen/pading_25"
@@ -97,8 +98,9 @@
 
                 <TextView
                     android:id="@+id/acession_number"
-                    android:layout_width="match_parent"
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:layout_gravity="start"
                     android:layout_marginTop="@dimen/padding_3"
                     android:fontFamily="@font/din_next_lt_pro_regular"
                     android:paddingEnd="@dimen/padding_25"

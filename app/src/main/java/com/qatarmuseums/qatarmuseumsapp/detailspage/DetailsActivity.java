@@ -2622,7 +2622,8 @@ public class DetailsActivity extends AppCompatActivity implements IPullZoom, OnM
 
         @Override
         protected void onPostExecute(MuseumAboutTableEnglish museumAboutTableEnglish) {
-            if (museumAboutTableEnglish != null) {
+            if (museumAboutTableEnglish != null &&
+                    !museumAboutTableEnglish.getShort_description().equals("")) {
                 Convertor converters = new Convertor();
                 activityReference.get().commonContentLayout.setVisibility(View.VISIBLE);
                 activityReference.get().retryLayout.setVisibility(View.GONE);
@@ -2702,7 +2703,8 @@ public class DetailsActivity extends AppCompatActivity implements IPullZoom, OnM
 
         @Override
         protected void onPostExecute(MuseumAboutTableArabic museumAboutTableArabic) {
-            if (museumAboutTableArabic != null) {
+            if (museumAboutTableArabic != null &&
+                    !museumAboutTableArabic.getShort_description().equals("")) {
                 Convertor converters = new Convertor();
                 activityReference.get().commonContentLayout.setVisibility(View.VISIBLE);
                 activityReference.get().retryLayout.setVisibility(View.GONE);
