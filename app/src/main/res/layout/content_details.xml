@@ -86,10 +86,10 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_margin="@dimen/text_margin"
-                    android:textColorLink="@color/link_color"
                     android:fontFamily="@font/din_next_lt_pro_regular"
                     android:textAlignment="center"
                     android:textColor="@color/black"
+                    android:textColorLink="@color/link_color"
                     android:textSize="@dimen/font_size_15" />
 
                 <LinearLayout
@@ -296,17 +296,38 @@
                 android:gravity="center_horizontal"
                 android:orientation="vertical">
 
+
+                <LinearLayout
+                    android:id="@+id/video_layout"
+                    android:layout_width="match_parent"
+                    android:layout_height="200dp"
+                    android:layout_marginBottom="@dimen/padding_15"
+                    android:orientation="vertical"
+                    android:visibility="visible">
+
+                    <cn.jzvd.JzvdStd
+                        android:id="@+id/videoplayer"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content" />
+
+                    <ImageView
+                        android:id="@+id/video_place_holder"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:visibility="gone" />
+
+                </LinearLayout>
+
                 <LinearLayout
                     android:id="@+id/timing_layout"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginBottom="@dimen/text_margin"
-                    android:layout_marginTop="@dimen/text_margin"
                     android:gravity="center"
                     android:orientation="vertical"
                     android:paddingEnd="@dimen/padding_25"
                     android:paddingStart="@dimen/padding_25"
-                    android:paddingTop="@dimen/padding_25"
+                    android:paddingTop="@dimen/padding_15"
                     android:visibility="gone">
 
                     <TextView
@@ -338,26 +359,6 @@
                         android:textSize="@dimen/font_size_15" />
                 </LinearLayout>
 
-                <LinearLayout
-                    android:id="@+id/video_layout"
-                    android:layout_width="match_parent"
-                    android:layout_height="200dp"
-                    android:layout_marginBottom="@dimen/padding_15"
-                    android:orientation="vertical"
-                    android:visibility="visible">
-
-                    <cn.jzvd.JzvdStd
-                        android:id="@+id/videoplayer"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content" />
-
-                    <ImageView
-                        android:id="@+id/video_place_holder"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:visibility="gone" />
-
-                </LinearLayout>
 
                 <LinearLayout
                     android:id="@+id/location_layout"
