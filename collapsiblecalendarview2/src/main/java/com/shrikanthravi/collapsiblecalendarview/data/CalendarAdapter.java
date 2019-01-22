@@ -2,7 +2,6 @@ package com.shrikanthravi.collapsiblecalendarview.data;
 
 import android.content.Context;
 import android.content.SharedPreferences;
-import android.graphics.Color;
 import android.graphics.PorterDuff;
 import android.preference.PreferenceManager;
 import android.view.LayoutInflater;
@@ -35,7 +34,7 @@ public class CalendarAdapter {
     public CalendarAdapter(Context context, Calendar cal) {
         this.mCal = (Calendar) cal.clone();
         this.mCal.set(Calendar.DAY_OF_MONTH, 1);
-         this.context=context;
+        this.context = context;
         mInflater = LayoutInflater.from(context);
 
         refresh();
@@ -120,15 +119,20 @@ public class CalendarAdapter {
             View view = mInflater.inflate(R.layout.day_layout, null);
             TextView txtDay = (TextView) view.findViewById(R.id.txt_day);
             ImageView imgEventTag = (ImageView) view.findViewById(R.id.img_event_tag);
-            SharedPreferences qmPreferences = PreferenceManager.getDefaultSharedPreferences(context);
-            int appLanguage = qmPreferences.getInt("AppLanguage", 1);
-            if (appLanguage == 1) {
+
+            SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+            String language;
+            if (Locale.getDefault().getLanguage().equals("ur") ||
+                    Locale.getDefault().getLanguage().equals("ar"))
+                language = "ar";
+            else
+                language = "en";
+            if (prefs.getString("AppLanguage", language).equals("en")) {
 //                english
                 txtDay.setText(String.valueOf(day.getDay()));
-            }
-            else {
+            } else {
 //                    ,"EG"
-                NumberFormat nf= NumberFormat.getInstance(new Locale("ar"));
+                NumberFormat nf = NumberFormat.getInstance(new Locale("ar"));
                 nf.format(day.getDay());
                 txtDay.setText(String.valueOf(nf.format(day.getDay())));
             }
@@ -143,7 +147,7 @@ public class CalendarAdapter {
                         && day.getMonth() == event.getMonth()
                         && day.getDay() == event.getDay()) {
                     imgEventTag.setVisibility(View.GONE);
-                    imgEventTag.setColorFilter(event.getColor(),PorterDuff.Mode.SRC_ATOP);
+                    imgEventTag.setColorFilter(event.getColor(), PorterDuff.Mode.SRC_ATOP);
                 }
             }
 

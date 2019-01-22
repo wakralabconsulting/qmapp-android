@@ -1,5 +1,6 @@
 package com.qatarmuseums.qatarmuseumsapp.detailspage;
 
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
@@ -18,6 +19,7 @@ import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MapStyleOptions;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.qatarmuseums.qatarmuseumsapp.LocaleManager;
 import com.qatarmuseums.qatarmuseumsapp.R;
 
 public class LocationActivity extends AppCompatActivity implements OnMapReadyCallback {
@@ -28,6 +30,11 @@ public class LocationActivity extends AppCompatActivity implements OnMapReadyCal
     private double latitude, longitude;
     GoogleMap map;
     Intent intent;
+
+    @Override
+    protected void attachBaseContext(Context base) {
+        super.attachBaseContext(LocaleManager.setLocale(base));
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

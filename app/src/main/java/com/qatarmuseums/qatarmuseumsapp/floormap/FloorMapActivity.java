@@ -54,6 +54,7 @@ import com.google.android.gms.maps.model.MapStyleOptions;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.qatarmuseums.qatarmuseumsapp.Convertor;
+import com.qatarmuseums.qatarmuseumsapp.LocaleManager;
 import com.qatarmuseums.qatarmuseumsapp.QMDatabase;
 import com.qatarmuseums.qatarmuseumsapp.R;
 import com.qatarmuseums.qatarmuseumsapp.apicall.APIClient;
@@ -194,7 +195,6 @@ public class FloorMapActivity extends AppCompatActivity implements OnMapReadyCal
     private RelativeLayout.LayoutParams params;
     private ImageView imageToZoom;
     private SharedPreferences qmPreferences;
-    private int appLanguage;
     private APIInterface apiService;
     private String language;
     LinearLayout progressBar;
@@ -238,6 +238,11 @@ public class FloorMapActivity extends AppCompatActivity implements OnMapReadyCal
     private Call<ArrayList<ArtifactDetails>> call;
     private Toolbar toolbar;
     private ImageView backArrow;
+
+    @Override
+    protected void attachBaseContext(Context base) {
+        super.attachBaseContext(LocaleManager.setLocale(base));
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -286,7 +291,7 @@ public class FloorMapActivity extends AppCompatActivity implements OnMapReadyCal
         artifactDetailsMap = new HashMap<String, ArtifactDetails>();
         markerHashMap = new HashMap<String, Marker>();
         qmPreferences = PreferenceManager.getDefaultSharedPreferences(this);
-        appLanguage = qmPreferences.getInt("AppLanguage", 1);
+        language = LocaleManager.getLanguage(this);
         artifactList = new ArrayList<ArtifactDetails>();
         tourId = getIntent().getStringExtra("TourId");
         if (getIntent().getParcelableArrayListExtra("RESPONSE") != null) {
@@ -300,7 +305,7 @@ public class FloorMapActivity extends AppCompatActivity implements OnMapReadyCal
             if (utils.isNetworkAvailable(this))
                 fetchArtifactsFromAPI();
             else
-                fetchArtifactsFromDB(appLanguage);
+                fetchArtifactsFromDB();
         }
         numberPad.setOnClickListener(view -> {
             Intent numberPadIntent = new Intent(FloorMapActivity.this, ObjectSearchActivity.class);
@@ -600,14 +605,10 @@ public class FloorMapActivity extends AppCompatActivity implements OnMapReadyCal
     public void fetchArtifactsFromAPI() {
         progressBar.setVisibility(View.VISIBLE);
         apiService = APIClient.getClient().create(APIInterface.class);
-        if (appLanguage == 1) {
-            language = "en";
-        } else {
-            language = "ar";
-        }
+
         // Commented for temporary
 //        Call<ArrayList<ArtifactDetails>> call = apiService.getArtifactList(language);
-        if (language.equals("ar"))
+        if (language.equals(LocaleManager.LANGUAGE_ARABIC))
             call = apiService.getObjectPreviewDetails(language, "12916");   // Temporary
         else
             call = apiService.getObjectPreviewDetails(language, "12471");   // Temporary
@@ -1320,15 +1321,15 @@ public class FloorMapActivity extends AppCompatActivity implements OnMapReadyCal
                     .placeholder(R.drawable.placeholder_portrait)
                     .centerInside()
                     .into(imageToZoom);
+            if (artifactDetails.getObjectENGSummary() != null) {
+                image2Description.setText(utils.html2string(artifactDetails.getObjectENGSummary()));
+                image2Description.setVisibility(View.VISIBLE);
+            }
             if (artifactDetails.getObjectHistory() != null &&
                     !artifactDetails.getObjectHistory().equals("")) {
                 historyTitle.setVisibility(View.VISIBLE);
                 historyDescription.setVisibility(View.VISIBLE);
                 historyDescription.setText(artifactDetails.getObjectHistory());
-                if (artifactDetails.getObjectENGSummary() != null) {
-                    image2Description.setText(utils.html2string(artifactDetails.getObjectENGSummary()));
-                    image2Description.setVisibility(View.VISIBLE);
-                }
 
             }
             if (artifactDetails.getImages().size() > 0) {
@@ -1840,11 +1841,9 @@ public class FloorMapActivity extends AppCompatActivity implements OnMapReadyCal
 
     public static class RetriveEnglishTableData extends AsyncTask<Void, Void, List<ArtifactTableEnglish>> {
         private WeakReference<FloorMapActivity> activityReference;
-        int language;
 
-        RetriveEnglishTableData(FloorMapActivity context, int appLanguage) {
+        RetriveEnglishTableData(FloorMapActivity context) {
             activityReference = new WeakReference<>(context);
-            language = appLanguage;
         }
 
         @Override
@@ -1901,11 +1900,9 @@ public class FloorMapActivity extends AppCompatActivity implements OnMapReadyCal
 
     public static class RetriveArabicTableData extends AsyncTask<Void, Void, List<ArtifactTableArabic>> {
         private WeakReference<FloorMapActivity> activityReference;
-        int language;
 
-        RetriveArabicTableData(FloorMapActivity context, int appLanguage) {
+        RetriveArabicTableData(FloorMapActivity context) {
             activityReference = new WeakReference<>(context);
-            language = appLanguage;
         }
 
         @Override
@@ -1957,12 +1954,12 @@ public class FloorMapActivity extends AppCompatActivity implements OnMapReadyCal
 
     }
 
-    public void fetchArtifactsFromDB(int language) {
+    public void fetchArtifactsFromDB() {
         progressBar.setVisibility(View.VISIBLE);
-        if (language == 1)
-            new RetriveEnglishTableData(FloorMapActivity.this, language).execute();
+        if (language.equals(LocaleManager.LANGUAGE_ENGLISH))
+            new RetriveEnglishTableData(FloorMapActivity.this).execute();
         else
-            new RetriveArabicTableData(FloorMapActivity.this, language).execute();
+            new RetriveArabicTableData(FloorMapActivity.this).execute();
     }
 
     @Override

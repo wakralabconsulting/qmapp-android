@@ -1,6 +1,5 @@
 package com.shrikanthravi.collapsiblecalendarview.data;
 
-import android.content.Intent;
 import android.os.Parcel;
 import android.os.Parcelable;
 

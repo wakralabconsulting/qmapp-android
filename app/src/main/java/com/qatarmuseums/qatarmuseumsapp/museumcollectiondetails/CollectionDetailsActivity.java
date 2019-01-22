@@ -1,11 +1,11 @@
 package com.qatarmuseums.qatarmuseumsapp.museumcollectiondetails;
 
+import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
-import android.preference.PreferenceManager;
+import android.os.AsyncTask;
+import android.os.Bundle;
 import android.support.v4.widget.NestedScrollView;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
@@ -17,10 +17,9 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
-import android.widget.ScrollView;
 import android.widget.TextView;
-import android.os.AsyncTask;
 
+import com.qatarmuseums.qatarmuseumsapp.LocaleManager;
 import com.qatarmuseums.qatarmuseumsapp.QMDatabase;
 import com.qatarmuseums.qatarmuseumsapp.R;
 import com.qatarmuseums.qatarmuseumsapp.apicall.APIClient;
@@ -29,7 +28,6 @@ import com.qatarmuseums.qatarmuseumsapp.museum.MuseumCollectionDetailTableArabic
 import com.qatarmuseums.qatarmuseumsapp.museum.MuseumCollectionDetailTableEnglish;
 import com.qatarmuseums.qatarmuseumsapp.utils.Util;
 
-import java.io.IOException;
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.List;
@@ -74,13 +72,16 @@ public class CollectionDetailsActivity extends AppCompatActivity {
     private ArrayList<CollectionDetailsList> collectionDetailsList = new ArrayList<>();
     private String categoryName;
     Util util;
-    int appLanguage;
-    SharedPreferences qmPreferences;
+    String appLanguage;
     int collectionDetailRowCount;
     QMDatabase qmDatabase;
     MuseumCollectionDetailTableEnglish museumCollectionDetailTableEnglish;
     MuseumCollectionDetailTableArabic museumCollectionDetailTableArabic;
 
+    @Override
+    protected void attachBaseContext(Context base) {
+        super.attachBaseContext(LocaleManager.setLocale(base));
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -103,8 +104,7 @@ public class CollectionDetailsActivity extends AppCompatActivity {
         recyclerView.setNestedScrollingEnabled(false);
         recyclerView.setAdapter(mAdapter);
         recyclerView.setFocusable(false);
-        qmPreferences = PreferenceManager.getDefaultSharedPreferences(this);
-        appLanguage = qmPreferences.getInt("AppLanguage", 1);
+        appLanguage = LocaleManager.getLanguage(this);
         if (util.isNetworkAvailable(CollectionDetailsActivity.this))
             getMuseumCollectionDetailFromAPI();
         else
@@ -172,15 +172,9 @@ public class CollectionDetailsActivity extends AppCompatActivity {
 
     public void getMuseumCollectionDetailFromAPI() {
         progressBar.setVisibility(View.VISIBLE);
-        final String language;
-        if (appLanguage == 1) {
-            language = "en";
-        } else {
-            language = "ar";
-        }
         APIInterface apiService =
                 APIClient.getClient().create(APIInterface.class);
-        Call<ArrayList<CollectionDetailsList>> call = apiService.getMuseumCollectionDetails(language, categoryName);
+        Call<ArrayList<CollectionDetailsList>> call = apiService.getMuseumCollectionDetails(appLanguage, categoryName);
         call.enqueue(new Callback<ArrayList<CollectionDetailsList>>() {
             @Override
             public void onResponse(Call<ArrayList<CollectionDetailsList>> call, Response<ArrayList<CollectionDetailsList>> response) {
@@ -190,7 +184,7 @@ public class CollectionDetailsActivity extends AppCompatActivity {
                         collectionDetailsList.addAll(response.body());
                         removeHtmlTags(collectionDetailsList);
                         mAdapter.notifyDataSetChanged();
-                        new CollectionDetailRowCount(CollectionDetailsActivity.this, appLanguage).execute();
+                        new CollectionDetailRowCount(CollectionDetailsActivity.this).execute();
 
 
                     } else {
@@ -215,10 +209,10 @@ public class CollectionDetailsActivity extends AppCompatActivity {
     }
 
     public void getMuseumCollectionDetailFromDatabase() {
-        if (appLanguage == 1) {
-            new RetriveMuseumCollectionDetailDataEnglish(CollectionDetailsActivity.this, appLanguage).execute();
+        if (appLanguage.equals(LocaleManager.LANGUAGE_ENGLISH)) {
+            new RetriveMuseumCollectionDetailDataEnglish(CollectionDetailsActivity.this).execute();
         } else {
-            new RetriveMuseumCollectionDetailDataArabic(CollectionDetailsActivity.this, appLanguage).execute();
+            new RetriveMuseumCollectionDetailDataArabic(CollectionDetailsActivity.this).execute();
         }
     }
 
@@ -232,16 +226,9 @@ public class CollectionDetailsActivity extends AppCompatActivity {
     public static class CollectionDetailRowCount extends AsyncTask<Void, Void, Integer> {
 
         private WeakReference<CollectionDetailsActivity> activityReference;
-        String language;
 
-
-        CollectionDetailRowCount(CollectionDetailsActivity context, int apiLanguage) {
+        CollectionDetailRowCount(CollectionDetailsActivity context) {
             activityReference = new WeakReference<>(context);
-            if (activityReference.get().appLanguage == 1) {
-                language = "en";
-            } else {
-                language = "ar";
-            }
 
         }
 
@@ -255,19 +242,21 @@ public class CollectionDetailsActivity extends AppCompatActivity {
             activityReference.get().collectionDetailRowCount = integer;
             if (activityReference.get().collectionDetailRowCount > 0) {
                 //updateEnglishTable or add row to database
-                new CheckMuseumCollectionDetailDBRowExist(activityReference.get(), language).execute();
+                new CheckMuseumCollectionDetailDBRowExist(activityReference.get(),
+                        activityReference.get().appLanguage).execute();
 
             } else {
                 //create databse
                 new InsertMuseumCollectionDetailListDataToDataBase(activityReference.get(),
                         activityReference.get().museumCollectionDetailTableEnglish,
-                        activityReference.get().museumCollectionDetailTableArabic, language).execute();
+                        activityReference.get().museumCollectionDetailTableArabic,
+                        activityReference.get().appLanguage).execute();
             }
         }
 
         @Override
         protected Integer doInBackground(Void... voids) {
-            if (language.equals("en")) {
+            if (activityReference.get().appLanguage.equals(LocaleManager.LANGUAGE_ENGLISH)) {
                 return activityReference.get().qmDatabase.getMuseumCollectionDetailDao().getNumberOfRowsEnglish();
             } else {
                 return activityReference.get().qmDatabase.getMuseumCollectionDetailDao().getNumberOfRowsArabic();
@@ -385,10 +374,10 @@ public class CollectionDetailsActivity extends AppCompatActivity {
 
     public static class UpdateMuseumCollectionDetailTable extends AsyncTask<Void, Void, Void> {
         private WeakReference<CollectionDetailsActivity> activityReference;
-        int language;
+        String language;
         int position;
 
-        UpdateMuseumCollectionDetailTable(CollectionDetailsActivity context, int apiLanguage, int p) {
+        UpdateMuseumCollectionDetailTable(CollectionDetailsActivity context, String apiLanguage, int p) {
             activityReference = new WeakReference<>(context);
             language = apiLanguage;
             position = p;
@@ -396,7 +385,7 @@ public class CollectionDetailsActivity extends AppCompatActivity {
 
         @Override
         protected Void doInBackground(Void... voids) {
-            if (language == 1) {
+            if (language.equals(LocaleManager.LANGUAGE_ENGLISH)) {
                 // updateEnglishTable table with english name
                 activityReference.get().qmDatabase.getMuseumCollectionDetailDao().updateMuseumDetailTableEnglish(
                         activityReference.get().collectionDetailsList.get(position).getCategoryName(),
@@ -426,11 +415,9 @@ public class CollectionDetailsActivity extends AppCompatActivity {
 
     public static class RetriveMuseumCollectionDetailDataEnglish extends AsyncTask<Void, Void, List<MuseumCollectionDetailTableEnglish>> {
         private WeakReference<CollectionDetailsActivity> activityReference;
-        int language;
 
-        RetriveMuseumCollectionDetailDataEnglish(CollectionDetailsActivity context, int appLanguage) {
+        RetriveMuseumCollectionDetailDataEnglish(CollectionDetailsActivity context) {
             activityReference = new WeakReference<>(context);
-            language = appLanguage;
         }
 
         @Override
@@ -471,11 +458,9 @@ public class CollectionDetailsActivity extends AppCompatActivity {
 
     public static class RetriveMuseumCollectionDetailDataArabic extends AsyncTask<Void, Void, List<MuseumCollectionDetailTableArabic>> {
         private WeakReference<CollectionDetailsActivity> activityReference;
-        int language;
 
-        RetriveMuseumCollectionDetailDataArabic(CollectionDetailsActivity context, int appLanguage) {
+        RetriveMuseumCollectionDetailDataArabic(CollectionDetailsActivity context) {
             activityReference = new WeakReference<>(context);
-            language = appLanguage;
         }
 
         @Override

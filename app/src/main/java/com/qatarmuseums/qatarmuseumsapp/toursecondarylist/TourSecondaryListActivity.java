@@ -1,10 +1,9 @@
 package com.qatarmuseums.qatarmuseumsapp.toursecondarylist;
 
+import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.preference.PreferenceManager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
@@ -22,6 +21,7 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.qatarmuseums.qatarmuseumsapp.Convertor;
+import com.qatarmuseums.qatarmuseumsapp.LocaleManager;
 import com.qatarmuseums.qatarmuseumsapp.QMDatabase;
 import com.qatarmuseums.qatarmuseumsapp.R;
 import com.qatarmuseums.qatarmuseumsapp.apicall.APIClient;
@@ -43,8 +43,6 @@ import retrofit2.Response;
 
 public class TourSecondaryListActivity extends AppCompatActivity {
 
-    private SharedPreferences qmPreferences;
-    private int appLanguage;
     private ProgressBar progressBar;
     private Intent intent;
     private String mainTitle;
@@ -71,11 +69,15 @@ public class TourSecondaryListActivity extends AppCompatActivity {
     private long startTimeStamp, endTimeStamp;
 
     @Override
+    protected void attachBaseContext(Context base) {
+        super.attachBaseContext(LocaleManager.setLocale(base));
+    }
+
+    @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_tour_secondary_list);
-        qmPreferences = PreferenceManager.getDefaultSharedPreferences(this);
-        appLanguage = qmPreferences.getInt("AppLanguage", 1);
+        language = LocaleManager.getLanguage(this);
         progressBar = (ProgressBar) findViewById(R.id.progressBarLoading);
         intent = getIntent();
         mainTitle = intent.getStringExtra("MAIN_TITLE");
@@ -121,7 +123,7 @@ public class TourSecondaryListActivity extends AppCompatActivity {
         zoomOutAnimation = AnimationUtils.loadAnimation(getApplicationContext(),
                 R.anim.zoom_out_more);
         retryButton.setOnClickListener(v -> {
-            getTourDetailFromAPI(language, tourId);
+            getTourDetailFromAPI(tourId);
             progressBar.setVisibility(View.VISIBLE);
             retryLayout.setVisibility(View.GONE);
         });
@@ -144,18 +146,13 @@ public class TourSecondaryListActivity extends AppCompatActivity {
         });
 
         toolbarTitle.setText(mainTitle);
-        if (appLanguage == 1) {
-            language = "en";
-        } else {
-            language = "ar";
-        }
         if (util.isNetworkAvailable(this))
-            getTourDetailFromAPI(language, tourId);
+            getTourDetailFromAPI(tourId);
         else
-            getTourDetailsFromDatabase(language, tourId);
+            getTourDetailsFromDatabase(tourId);
     }
 
-    public void getTourDetailFromAPI(String language, String id) {
+    public void getTourDetailFromAPI(String id) {
         progressBar.setVisibility(View.VISIBLE);
         APIInterface apiService =
                 APIClient.getClient().create(APIInterface.class);
@@ -213,8 +210,8 @@ public class TourSecondaryListActivity extends AppCompatActivity {
         }
     }
 
-    public void getTourDetailsFromDatabase(String language, String id) {
-        if (language.equals("en")) {
+    public void getTourDetailsFromDatabase(String id) {
+        if (language.equals(LocaleManager.LANGUAGE_ENGLISH)) {
             progressBar.setVisibility(View.VISIBLE);
             new RetriveTourDetailsEnglish(TourSecondaryListActivity.this, id).execute();
         } else {

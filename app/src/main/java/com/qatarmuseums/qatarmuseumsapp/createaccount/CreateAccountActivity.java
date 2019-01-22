@@ -1,5 +1,6 @@
 package com.qatarmuseums.qatarmuseumsapp.createaccount;
 
+import android.content.Context;
 import android.support.design.widget.TextInputLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -12,6 +13,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Spinner;
 
+import com.qatarmuseums.qatarmuseumsapp.LocaleManager;
 import com.qatarmuseums.qatarmuseumsapp.R;
 import com.qatarmuseums.qatarmuseumsapp.utils.Util;
 
@@ -27,6 +29,11 @@ public class CreateAccountActivity extends AppCompatActivity {
     private ArrayAdapter<String> titleAdapter, countryAdapter;
     private View createAccountButton, closeButton;
     private Animation zoomOutAnimation, iconZoomOutAnimation;
+
+    @Override
+    protected void attachBaseContext(Context base) {
+        super.attachBaseContext(LocaleManager.setLocale(base));
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

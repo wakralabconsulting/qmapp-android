@@ -3,35 +3,29 @@ package com.qatarmuseums.qatarmuseumsapp.settings;
 import android.annotation.SuppressLint;
 import android.app.Dialog;
 import android.content.Intent;
-import android.content.SharedPreferences;
-import android.content.res.Configuration;
-import android.content.res.Resources;
-import android.preference.PreferenceManager;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SwitchCompat;
 import android.support.v7.widget.Toolbar;
-import android.util.DisplayMetrics;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.Window;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.Button;
-import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.qatarmuseums.qatarmuseumsapp.LocaleManager;
 import com.qatarmuseums.qatarmuseumsapp.R;
 import com.qatarmuseums.qatarmuseumsapp.commonpage.RecyclerTouchListener;
 import com.qatarmuseums.qatarmuseumsapp.home.HomeActivity;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Locale;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -55,10 +49,6 @@ public class SettingsActivity extends AppCompatActivity implements View.OnClickL
     @BindView(R.id.setting_page_apply_btn)
     Button settingPageApplyButton;
     String language;
-    Locale myLocale;
-    private SharedPreferences qmPreferences;
-    private int appLanguage;
-    private SharedPreferences.Editor editor;
 
     @SuppressLint("ClickableViewAccessibility")
     @Override
@@ -68,29 +58,16 @@ public class SettingsActivity extends AppCompatActivity implements View.OnClickL
         ButterKnife.bind(this);
         setSupportActionBar(toolbar);
         setClicklistenerforButtons();
-        qmPreferences = PreferenceManager.getDefaultSharedPreferences(this);
-        languageChangeButton.setOnTouchListener(new View.OnTouchListener() {
-            @Override
-            public boolean onTouch(View v, MotionEvent event) {
-                appLanguage = qmPreferences.getInt("AppLanguage", 1);
-                if (appLanguage == 1) {
-                    language = "ar";
-                    showDialog(language);
-                } else {
-                    language = "en";
-                    showDialog(language);
-
-                }
-                return false;
-            }
+        languageChangeButton.setOnTouchListener((v, event) -> {
+            if (language.equals(LocaleManager.LANGUAGE_ENGLISH))
+                showDialog(LocaleManager.LANGUAGE_ARABIC);
+            else
+                showDialog(LocaleManager.LANGUAGE_ENGLISH);
+            return false;
         });
 
-        appLanguage = qmPreferences.getInt("AppLanguage", 1);
-        if (appLanguage == 1) {
-            languageChangeButton.setChecked(false);
-        } else {
-            languageChangeButton.setChecked(true);
-        }
+        language = LocaleManager.getLanguage(this);
+
         toolbar_title.setText(getResources().getString(R.string.settings_activity_tittle));
         settingsPageListAdapter = new SettingsPageListAdapter(this, settingsPageModelList);
         RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(getApplicationContext());
@@ -165,27 +142,12 @@ public class SettingsActivity extends AppCompatActivity implements View.OnClickL
     }
 
     public void setLocale(String lang) {
-        int language = 1;
-        Configuration configuration = getResources().getConfiguration();
-        configuration.setLayoutDirection(new Locale(lang));
-        getResources().updateConfiguration(configuration, getResources().getDisplayMetrics());
-        myLocale = new Locale(lang);
-        Resources res = getResources();
-        DisplayMetrics dm = res.getDisplayMetrics();
-        Configuration conf = res.getConfiguration();
-        conf.locale = myLocale;
-        res.updateConfiguration(conf, dm);
-        if (lang.equalsIgnoreCase("en")) {
-            language = 1;
+        if (lang.equalsIgnoreCase(LocaleManager.LANGUAGE_ENGLISH)) {
             languageChangeButton.setChecked(true);
-        } else if (lang.equalsIgnoreCase("ar")) {
-            language = 2;
+        } else if (lang.equalsIgnoreCase(LocaleManager.LANGUAGE_ARABIC)) {
             languageChangeButton.setChecked(false);
         }
-        qmPreferences = PreferenceManager.getDefaultSharedPreferences(this);
-        editor = qmPreferences.edit();
-        editor.putInt("AppLanguage", language);
-        editor.commit();
+        LocaleManager.setNewLocale(this, lang);
         refreshActivity();
 
     }
@@ -240,5 +202,16 @@ public class SettingsActivity extends AppCompatActivity implements View.OnClickL
             }
         });
         dialog.show();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        language = LocaleManager.getLanguage(this);
+        if (language.equals(LocaleManager.LANGUAGE_ENGLISH)) {
+            languageChangeButton.setChecked(false);
+        } else {
+            languageChangeButton.setChecked(true);
+        }
     }
 }

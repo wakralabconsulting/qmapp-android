@@ -110,10 +110,6 @@
                 android:layout_below="@id/short_description_layout"
                 android:orientation="vertical">
 
-                <com.pierfrancescosoffritti.androidyoutubeplayer.player.YouTubePlayerView
-                    android:id="@+id/youtube_player_view"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content" />
             </LinearLayout>
 
             <LinearLayout
@@ -128,7 +124,6 @@
                     android:layout_height="wrap_content"
                     android:layout_margin="@dimen/text_margin"
                     android:fontFamily="@font/din_next_lt_pro_light"
-                    android:text="@string/education_long_description"
                     android:textColor="@color/black"
                     android:textSize="@dimen/font_size_14" />
 

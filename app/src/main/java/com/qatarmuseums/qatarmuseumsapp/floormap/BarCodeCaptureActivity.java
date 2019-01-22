@@ -39,6 +39,7 @@ import com.google.android.gms.common.api.CommonStatusCodes;
 import com.google.android.gms.vision.MultiProcessor;
 import com.google.android.gms.vision.barcode.Barcode;
 import com.google.android.gms.vision.barcode.BarcodeDetector;
+import com.qatarmuseums.qatarmuseumsapp.LocaleManager;
 import com.qatarmuseums.qatarmuseumsapp.R;
 import com.qatarmuseums.qatarmuseumsapp.floormap.camera.CameraSource;
 import com.qatarmuseums.qatarmuseumsapp.floormap.camera.CameraSourcePreview;
@@ -81,6 +82,11 @@ public class BarCodeCaptureActivity extends AppCompatActivity implements Handler
     private GestureDetector gestureDetector;
 
     private final Handler handler = new Handler(this);
+
+    @Override
+    protected void attachBaseContext(Context base) {
+        super.attachBaseContext(LocaleManager.setLocale(base));
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

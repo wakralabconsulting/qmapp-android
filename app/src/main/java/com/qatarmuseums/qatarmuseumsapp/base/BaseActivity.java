@@ -1,5 +1,6 @@
 package com.qatarmuseums.qatarmuseumsapp.base;
 
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Color;
@@ -23,6 +24,7 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.qatarmuseums.qatarmuseumsapp.LocaleManager;
 import com.qatarmuseums.qatarmuseumsapp.QMDatabase;
 import com.qatarmuseums.qatarmuseumsapp.R;
 import com.qatarmuseums.qatarmuseumsapp.calendar.CalendarActivity;
@@ -150,8 +152,12 @@ public class BaseActivity extends AppCompatActivity
     private QMDatabase qmDatabase;
     NotificationTableEnglish notificationTableEnglish;
     NotificationTableArabic notificationTableArabic;
-    private int appLanguage;
     private String language;
+
+    @Override
+    protected void attachBaseContext(Context base) {
+        super.attachBaseContext(LocaleManager.setLocale(base));
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -170,16 +176,13 @@ public class BaseActivity extends AppCompatActivity
         zoomOutAnimation = AnimationUtils.loadAnimation(getApplicationContext(),
                 R.anim.zoom_out_more);
         qmDatabase = QMDatabase.getInstance(BaseActivity.this);
-        topbarBack.setOnTouchListener(new View.OnTouchListener() {
-            @Override
-            public boolean onTouch(View v, MotionEvent event) {
-                switch (event.getAction()) {
-                    case MotionEvent.ACTION_DOWN:
-                        topbarBack.startAnimation(zoomOutAnimation);
-                        break;
-                }
-                return false;
+        topbarBack.setOnTouchListener((v, event) -> {
+            switch (event.getAction()) {
+                case MotionEvent.ACTION_DOWN:
+                    topbarBack.startAnimation(zoomOutAnimation);
+                    break;
             }
+            return false;
         });
 
 
@@ -219,7 +222,6 @@ public class BaseActivity extends AppCompatActivity
         qmPreferences = PreferenceManager.getDefaultSharedPreferences(this);
         name = qmPreferences.getString("NAME", null);
         badgeCount = qmPreferences.getInt("BADGE_COUNT", 0);
-        appLanguage = qmPreferences.getInt("AppLanguage", 1);
         if (badgeCount > 0)
             setBadge(badgeCount);
     }
@@ -372,7 +374,6 @@ public class BaseActivity extends AppCompatActivity
             case R.id.sidemenu_education_layout:
             case R.id.sidemenu_education_icon:
                 touchListnerForLayout(sidemenuEducationLayout);
-                sidemenuEducationLayout.startAnimation(zoomOutAnimation);
                 navigation_intent = new Intent(this, EducationActivity.class);
                 startActivity(navigation_intent);
                 clearAnimations();
