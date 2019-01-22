@@ -42,6 +42,7 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.qatarmuseums.qatarmuseumsapp.Convertor;
+import com.qatarmuseums.qatarmuseumsapp.LocaleManager;
 import com.qatarmuseums.qatarmuseumsapp.QMDatabase;
 import com.qatarmuseums.qatarmuseumsapp.R;
 import com.qatarmuseums.qatarmuseumsapp.apicall.APIClient;
@@ -59,6 +60,7 @@ import java.util.Comparator;
 import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.List;
+import java.util.Locale;
 import java.util.TimeZone;
 
 import butterknife.BindView;
@@ -112,18 +114,21 @@ public class EducationCalendarActivity extends AppCompatActivity {
     EducationalCalendarEventsTableEnglish educationalCalendarEventsTableEnglish;
     EducationalCalendarEventsTableArabic educationalCalendarEventsTableArabic;
     private String language;
-    private SharedPreferences qmPreferences;
-    SharedPreferences sharedfilterpreferences;
-    SharedPreferences.Editor editor;
     public static final String FILTERPREFS = "FilterPref";
     public static final String INSTITUTEPREFS = "InstitutionPref";
     public static final String AGEGROUPPREFS = "AgeGroupPref";
     public static final String PROGRAMMEPREFS = "ProgrammePref";
-    private int appLanguage;
+    private String appLanguage;
     private Calendar today;
     String day;
     String monthNumber;
     String year;
+    private SimpleDateFormat dayDateFormat, monthDateFormat, yearDateFormat;
+
+    @Override
+    protected void attachBaseContext(Context base) {
+        super.attachBaseContext(LocaleManager.setLocale(base));
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -134,10 +139,12 @@ public class EducationCalendarActivity extends AppCompatActivity {
         toolbar_title.setText(getResources().getString(R.string.education_calendar_activity_tittle));
         collapsibleCalendar = (CollapsibleCalendar) findViewById(R.id.collapsibleCalendarView);
         eventListView = (RecyclerView) findViewById(R.id.event_list);
+        dayDateFormat = new SimpleDateFormat("d", Locale.US);
+        monthDateFormat = new SimpleDateFormat("M", Locale.US);
+        yearDateFormat = new SimpleDateFormat("YYYY", Locale.US);
+
         util = new Util();
-        qmPreferences = PreferenceManager.getDefaultSharedPreferences(this);
-        appLanguage = qmPreferences.getInt("AppLanguage", 1);
-        sharedfilterpreferences = getSharedPreferences(FILTERPREFS, Context.MODE_PRIVATE);
+        appLanguage = LocaleManager.getLanguage(this);
         qmDatabase = QMDatabase.getInstance(EducationCalendarActivity.this);
         zoomOutAnimation = AnimationUtils.loadAnimation(getApplicationContext(),
                 R.anim.zoom_out_more);
@@ -212,9 +219,9 @@ public class EducationCalendarActivity extends AppCompatActivity {
         today.set(Calendar.HOUR_OF_DAY, 0);
         today.set(Calendar.MINUTE, 0);
         today.set(Calendar.SECOND, 0);
-        day = (String) DateFormat.format("d", today);
-        monthNumber = (String) DateFormat.format("M", today);
-        year = (String) DateFormat.format("yyyy", today);
+        day = dayDateFormat.format(today.getTime());
+        monthNumber = monthDateFormat.format(today.getTime());
+        year = yearDateFormat.format(today.getTime());
         if (util.isNetworkAvailable(EducationCalendarActivity.this)) {
             getDataOnline();
         } else {
@@ -239,10 +246,11 @@ public class EducationCalendarActivity extends AppCompatActivity {
                 isDateSelected = true;
                 selectedDate = calendarInstance.getTimeInMillis();
                 if (util.isNetworkAvailable(EducationCalendarActivity.this)) {
-                    day = (String) DateFormat.format("d", selectedDate);
-                    monthNumber = (String) DateFormat.format("M", selectedDate);
-                    year = (String) DateFormat.format("yyyy", selectedDate);
-                    getEducationCalendarDataFromApi(institutionFilter, ageGroupFilter, programmeTypeFilter, monthNumber, day, year, selectedDate);
+                    day = dayDateFormat.format(calendarInstance.getTime());
+                    monthNumber = monthDateFormat.format(calendarInstance.getTime());
+                    year = yearDateFormat.format(calendarInstance.getTime());
+                    getEducationCalendarDataFromApi(institutionFilter, ageGroupFilter,
+                            programmeTypeFilter, monthNumber, day, year, selectedDate);
                 } else {
                     getEducationCalendarEventsFromDatabase(calendarInstance.getTimeInMillis());
                 }
@@ -315,14 +323,17 @@ public class EducationCalendarActivity extends AppCompatActivity {
         if (isDateSelected) {
             eventListView.setVisibility(View.GONE);
             progress.setVisibility(View.VISIBLE);
-            day = (String) DateFormat.format("d", selectedDate);
-            monthNumber = (String) DateFormat.format("M", selectedDate);
-            year = (String) DateFormat.format("yyyy", selectedDate);
-            getEducationCalendarDataFromApi(institutionFilter, ageGroupFilter, programmeTypeFilter, monthNumber, day, year, selectedDate);
+            day = dayDateFormat.format(calendarInstance.getTime());
+            monthNumber = monthDateFormat.format(calendarInstance.getTime());
+            year = yearDateFormat.format(calendarInstance.getTime());
+
+            getEducationCalendarDataFromApi(institutionFilter, ageGroupFilter, programmeTypeFilter,
+                    monthNumber, day, year, selectedDate);
         } else {
             eventListView.setVisibility(View.GONE);
             progress.setVisibility(View.VISIBLE);
-            getEducationCalendarDataFromApi(institutionFilter, ageGroupFilter, programmeTypeFilter, monthNumber, day, year, today.getTimeInMillis());
+            getEducationCalendarDataFromApi(institutionFilter, ageGroupFilter, programmeTypeFilter,
+                    monthNumber, day, year, today.getTimeInMillis());
             isDateSelected = false;
         }
     }
@@ -330,12 +341,7 @@ public class EducationCalendarActivity extends AppCompatActivity {
     private void getEducationCalendarEventsFromDatabase(long timeStamp) {
         progress.setVisibility(View.VISIBLE);
         educationAdapter.clear();
-        String language;
-        if (appLanguage == 1)
-            language = "en";
-        else
-            language = "ar";
-        new EducationCalendarActivity.EventsRowCount(EducationCalendarActivity.this, language, timeStamp / 1000).execute();
+        new EducationCalendarActivity.EventsRowCount(EducationCalendarActivity.this, appLanguage, timeStamp / 1000).execute();
     }
 
     @Override
@@ -347,12 +353,15 @@ public class EducationCalendarActivity extends AppCompatActivity {
 
         if (util.isNetworkAvailable(EducationCalendarActivity.this)) {
             if (isDateSelected) {
-                day = (String) DateFormat.format("d", selectedDate);
-                monthNumber = (String) DateFormat.format("M", selectedDate);
-                year = (String) DateFormat.format("yyyy", selectedDate);
-                getEducationCalendarDataFromApi(institutionFilter, ageGroupFilter, programmeTypeFilter, monthNumber, day, year, selectedDate);
+                day = dayDateFormat.format(calendarInstance.getTime());
+                monthNumber = monthDateFormat.format(calendarInstance.getTime());
+                year = yearDateFormat.format(calendarInstance.getTime());
+
+                getEducationCalendarDataFromApi(institutionFilter, ageGroupFilter,
+                        programmeTypeFilter, monthNumber, day, year, selectedDate);
             } else {
-                getEducationCalendarDataFromApi(institutionFilter, ageGroupFilter, programmeTypeFilter, monthNumber, day, year, today.getTimeInMillis());
+                getEducationCalendarDataFromApi(institutionFilter, ageGroupFilter,
+                        programmeTypeFilter, monthNumber, day, year, today.getTimeInMillis());
                 isDateSelected = false;
             }
         } else {
@@ -372,14 +381,8 @@ public class EducationCalendarActivity extends AppCompatActivity {
         progress.setVisibility(View.VISIBLE);
         APIInterface apiService =
                 APIClient.getClient().create(APIInterface.class);
-        if (appLanguage == 1) {
-            language = "en";
-        } else {
-            language = "ar";
-        }
-
         Call<ArrayList<EducationEvents>> call = apiService.
-                getEducationCalendarDetails(language, institute, ageGroup, programmeType, month, day, year, "field_eduprog_date");
+                getEducationCalendarDetails(appLanguage, institute, ageGroup, programmeType, month, day, year, "field_eduprog_date");
         call.enqueue(new Callback<ArrayList<EducationEvents>>() {
             @Override
             public void onResponse(Call<ArrayList<EducationEvents>> call, Response<ArrayList<EducationEvents>> response) {
@@ -396,7 +399,8 @@ public class EducationCalendarActivity extends AppCompatActivity {
                         convertToTimstamp(day, month, year);
                         sortEventsWithStartTime();
                         educationAdapter.notifyDataSetChanged();
-                        new EventsRowCount(EducationCalendarActivity.this, language, timeStamp / 1000).execute();
+                        new EventsRowCount(EducationCalendarActivity.this, appLanguage,
+                                timeStamp / 1000).execute();
 
                     } else {
                         progress.setVisibility(View.GONE);
@@ -430,6 +434,7 @@ public class EducationCalendarActivity extends AppCompatActivity {
             models.get(i).setEnd_time(endDateVal);
             models.get(i).setProgram_type(util.html2string(models.get(i).getProgram_type()));
             models.get(i).setLong_desc(util.html2string(models.get(i).getLong_desc()));
+            models.get(i).setShort_desc(util.html2string(models.get(i).getShort_desc()));
             models.get(i).setTitle(util.html2string(models.get(i).getTitle()));
         }
     }
@@ -459,7 +464,7 @@ public class EducationCalendarActivity extends AppCompatActivity {
                         activityReference.get().util.isNetworkAvailable(activityReference.get()))
                     new CheckEventRowExist(activityReference.get(), language, timeStamp).execute();
                 else {
-                    if (language.equals("en")) {
+                    if (language.equals(LocaleManager.LANGUAGE_ENGLISH)) {
                         new RetriveEnglishTableData(activityReference.get(), 1,
                                 timeStamp).execute();
                     } else {
@@ -480,7 +485,7 @@ public class EducationCalendarActivity extends AppCompatActivity {
 
         @Override
         protected Integer doInBackground(Void... voids) {
-            if (language.equals("en"))
+            if (language.equals(LocaleManager.LANGUAGE_ENGLISH))
                 return activityReference.get().qmDatabase.getEducationCalendarEventsDao().getNumberOfRowsEnglish();
             else
                 return activityReference.get().qmDatabase.getEducationCalendarEventsDao().getNumberOfRowsArabic();
@@ -513,7 +518,7 @@ public class EducationCalendarActivity extends AppCompatActivity {
         @Override
         protected Void doInBackground(Void... voids) {
             if (activityReference.get().educationEvents.size() > 0) {
-                if (language.equals("en")) {
+                if (language.equals(LocaleManager.LANGUAGE_ENGLISH)) {
                     int n = activityReference.get().qmDatabase.getEducationCalendarEventsDao()
                             .checkEnglishWithEventDateExist(String.valueOf(timestamp));
                     if (n > 0) {
@@ -593,7 +598,7 @@ public class EducationCalendarActivity extends AppCompatActivity {
         @Override
         protected Void doInBackground(Void... voids) {
 
-            if (language.equals("en")) {
+            if (language.equals(LocaleManager.LANGUAGE_ENGLISH)) {
                 // updateEnglishTable table with english name
 
                 ArrayList<String> fieldval = new ArrayList<String>();
@@ -673,7 +678,7 @@ public class EducationCalendarActivity extends AppCompatActivity {
         @Override
         protected Boolean doInBackground(Void... voids) {
             if (activityReference.get().educationEvents != null) {
-                if (language.equals("en")) {
+                if (language.equals(LocaleManager.LANGUAGE_ENGLISH)) {
                     Convertor converters = new Convertor();
                     ArrayList<String> fieldval = new ArrayList<String>();
                     fieldval = activityReference.get().educationEvents.get(position).getField();
@@ -774,7 +779,7 @@ public class EducationCalendarActivity extends AppCompatActivity {
         @Override
         protected Boolean doInBackground(Void... voids) {
             if (activityReference.get().educationEvents != null) {
-                if (language.equals("en")) {
+                if (language.equals(LocaleManager.LANGUAGE_ENGLISH)) {
                     Convertor converters = new Convertor();
                     for (int i = 0; i < activityReference.get().educationEvents.size(); i++) {
                         ArrayList<String> fieldval = new ArrayList<String>();

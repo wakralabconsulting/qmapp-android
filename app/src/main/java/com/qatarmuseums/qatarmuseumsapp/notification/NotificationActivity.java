@@ -2,10 +2,9 @@ package com.qatarmuseums.qatarmuseumsapp.notification;
 
 import android.arch.lifecycle.ViewModelProviders;
 import android.content.BroadcastReceiver;
-import android.content.SharedPreferences;
+import android.content.Context;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.preference.PreferenceManager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
@@ -17,6 +16,7 @@ import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.TextView;
 
+import com.qatarmuseums.qatarmuseumsapp.LocaleManager;
 import com.qatarmuseums.qatarmuseumsapp.QMDatabase;
 import com.qatarmuseums.qatarmuseumsapp.R;
 
@@ -37,8 +37,12 @@ public class NotificationActivity extends AppCompatActivity {
     private BroadcastReceiver mRegistrationBroadcastReceiver;
     private NotificationViewModel notificationViewModel;
     private QMDatabase qmDatabase;
-    private SharedPreferences qmPreferences;
-    private int appLanguage;
+    private String appLanguage;
+
+    @Override
+    protected void attachBaseContext(Context base) {
+        super.attachBaseContext(LocaleManager.setLocale(base));
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -74,32 +78,29 @@ public class NotificationActivity extends AppCompatActivity {
             }
         });
         qmDatabase = QMDatabase.getInstance(NotificationActivity.this);
-        qmPreferences = PreferenceManager.getDefaultSharedPreferences(this);
-        appLanguage = qmPreferences.getInt("AppLanguage", 1);
+        appLanguage = LocaleManager.getLanguage(this);
 
         notificationViewModel = ViewModelProviders.of(this).get(NotificationViewModel.class);
-        if (appLanguage == 1)
+        if (appLanguage.equals(LocaleManager.LANGUAGE_ENGLISH))
             notificationViewModel.getAllPostsEnglish().observe(this, models -> mAdapter.setData(models));
         else
             notificationViewModel.getAllPostsArabic().observe(this, models -> mAdapter.setData(models));
-        getDataFromDataBase(appLanguage);
+        getDataFromDataBase();
 
     }
 
-    public void getDataFromDataBase(int language) {
-        if (language == 1)
-            new RetriveEnglishTableData(NotificationActivity.this, language).execute();
+    public void getDataFromDataBase() {
+        if (appLanguage.equals(LocaleManager.LANGUAGE_ENGLISH))
+            new RetriveEnglishTableData(NotificationActivity.this).execute();
         else
-            new RetriveArabicTableData(NotificationActivity.this, language).execute();
+            new RetriveArabicTableData(NotificationActivity.this).execute();
     }
 
     public static class RetriveEnglishTableData extends AsyncTask<Void, Void, List<NotificationTableEnglish>> {
         private WeakReference<NotificationActivity> activityReference;
-        int language;
 
-        RetriveEnglishTableData(NotificationActivity context, int appLanguage) {
+        RetriveEnglishTableData(NotificationActivity context) {
             activityReference = new WeakReference<>(context);
-            language = appLanguage;
         }
 
         @Override
@@ -130,11 +131,9 @@ public class NotificationActivity extends AppCompatActivity {
     public static class RetriveArabicTableData extends AsyncTask<Void, Void,
             List<NotificationTableArabic>> {
         private WeakReference<NotificationActivity> activityReference;
-        int language;
 
-        RetriveArabicTableData(NotificationActivity context, int appLanguage) {
+        RetriveArabicTableData(NotificationActivity context) {
             activityReference = new WeakReference<>(context);
-            language = appLanguage;
         }
 
 

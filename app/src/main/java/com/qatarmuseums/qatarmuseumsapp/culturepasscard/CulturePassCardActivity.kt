@@ -8,11 +8,15 @@ import com.google.zxing.BarcodeFormat
 import com.google.zxing.MultiFormatWriter
 import com.google.zxing.WriterException
 import com.journeyapps.barcodescanner.BarcodeEncoder
+import com.qatarmuseums.qatarmuseumsapp.LocaleManager
 import com.qatarmuseums.qatarmuseumsapp.R
 import kotlinx.android.synthetic.main.activity_culture_pass_card.*
 
 
 class CulturePassCardActivity : AppCompatActivity() {
+    override fun attachBaseContext(base: Context) {
+        super.attachBaseContext(LocaleManager.setLocale(base))
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

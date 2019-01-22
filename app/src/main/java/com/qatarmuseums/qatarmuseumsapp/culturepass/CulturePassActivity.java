@@ -33,6 +33,7 @@ import android.widget.TextView;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.internal.LinkedTreeMap;
+import com.qatarmuseums.qatarmuseumsapp.LocaleManager;
 import com.qatarmuseums.qatarmuseumsapp.QMDatabase;
 import com.qatarmuseums.qatarmuseumsapp.R;
 import com.qatarmuseums.qatarmuseumsapp.apicall.APIClient;
@@ -75,7 +76,6 @@ public class CulturePassActivity extends AppCompatActivity {
     private String language;
     private String qatar, museum;
     private SharedPreferences qmPreferences;
-    private int appLanguage;
     private ProfileDetails profileDetails;
     private SharedPreferences.Editor editor;
     private Intent navigationIntent;
@@ -86,6 +86,11 @@ public class CulturePassActivity extends AppCompatActivity {
     private Retrofit retrofit;
     private String RSVP = null;
     private QMDatabase qmDatabase;
+
+    @Override
+    protected void attachBaseContext(Context base) {
+        super.attachBaseContext(LocaleManager.setLocale(base));
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -104,12 +109,9 @@ public class CulturePassActivity extends AppCompatActivity {
         profileDetails = new ProfileDetails();
         backArrow = findViewById(R.id.toolbar_back);
         qmPreferences = PreferenceManager.getDefaultSharedPreferences(this);
-        appLanguage = qmPreferences.getInt("AppLanguage", 1);
         token = qmPreferences.getString("TOKEN", null);
-        if (appLanguage == 1)
-            language = "en";
-        else
-            language = "ar";
+
+        language = LocaleManager.getLanguage(this);
         backArrow.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

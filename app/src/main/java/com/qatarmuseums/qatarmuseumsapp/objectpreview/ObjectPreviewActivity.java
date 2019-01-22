@@ -1,9 +1,8 @@
 package com.qatarmuseums.qatarmuseumsapp.objectpreview;
 
+import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.preference.PreferenceManager;
 import android.support.design.widget.Snackbar;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
@@ -23,6 +22,7 @@ import android.widget.TextView;
 
 import com.booking.rtlviewpager.RtlViewPager;
 import com.qatarmuseums.qatarmuseumsapp.Convertor;
+import com.qatarmuseums.qatarmuseumsapp.LocaleManager;
 import com.qatarmuseums.qatarmuseumsapp.QMDatabase;
 import com.qatarmuseums.qatarmuseumsapp.R;
 import com.qatarmuseums.qatarmuseumsapp.apicall.APIClient;
@@ -55,8 +55,7 @@ public class ObjectPreviewActivity extends AppCompatActivity {
     TextView noResultFoundTxt;
     Intent intent;
     String tourId;
-    int language;
-    SharedPreferences qmPreferences;
+    String language;
     private Util util;
     ViewPager pager;
     ArrayList<ArtifactDetails> artifactList = new ArrayList<>();
@@ -72,6 +71,11 @@ public class ObjectPreviewActivity extends AppCompatActivity {
     private static Convertor converters;
     LinearLayout retryLayout;
     Button retryButton;
+
+    @Override
+    protected void attachBaseContext(Context base) {
+        super.attachBaseContext(LocaleManager.setLocale(base));
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -92,8 +96,7 @@ public class ObjectPreviewActivity extends AppCompatActivity {
         noResultFoundTxt = (TextView) findViewById(R.id.noResultFoundTxt);
         retryLayout = findViewById(R.id.retry_layout);
         retryButton = findViewById(R.id.retry_btn);
-        qmPreferences = PreferenceManager.getDefaultSharedPreferences(this);
-        language = qmPreferences.getInt("AppLanguage", 1);
+        language = LocaleManager.getLanguage(this);
         pager = (RtlViewPager) findViewById(R.id.pager);
         assert pager != null;
         stepIndicatorRecyclerView = findViewById(R.id.idRecyclerViewHorizontalList);
@@ -104,9 +107,9 @@ public class ObjectPreviewActivity extends AppCompatActivity {
                 R.anim.zoom_out_more);
         qmDatabase = QMDatabase.getInstance(ObjectPreviewActivity.this);
         if (new Util().isNetworkAvailable(this))
-            getObjectPreviewDetailsFromAPI(tourId, language);
+            getObjectPreviewDetailsFromAPI(tourId);
         else
-            getObjectPreviewDetailsFromDB(tourId, language);
+            getObjectPreviewDetailsFromDB(tourId);
 
         pager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
             @Override
@@ -141,7 +144,7 @@ public class ObjectPreviewActivity extends AppCompatActivity {
         retryButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                getObjectPreviewDetailsFromAPI(tourId, language);
+                getObjectPreviewDetailsFromAPI(tourId);
                 progressBar.setVisibility(View.VISIBLE);
                 retryLayout.setVisibility(View.GONE);
             }
@@ -248,14 +251,8 @@ public class ObjectPreviewActivity extends AppCompatActivity {
         return width;
     }
 
-    public void getObjectPreviewDetailsFromAPI(String id, int appLanguage) {
+    public void getObjectPreviewDetailsFromAPI(String id) {
         progressBar.setVisibility(View.VISIBLE);
-        final String language;
-        if (appLanguage == 1) {
-            language = "en";
-        } else {
-            language = "ar";
-        }
         APIInterface apiService =
                 APIClient.getClient().create(APIInterface.class);
         Call<ArrayList<ArtifactDetails>> call = apiService.getObjectPreviewDetails(language, id);
@@ -622,12 +619,10 @@ public class ObjectPreviewActivity extends AppCompatActivity {
 
     public static class RetriveEnglishTableData extends AsyncTask<Void, Void, List<ArtifactTableEnglish>> {
         private WeakReference<ObjectPreviewActivity> activityReference;
-        int language;
         String tourId;
 
-        RetriveEnglishTableData(ObjectPreviewActivity context, int appLanguage, String tourId) {
+        RetriveEnglishTableData(ObjectPreviewActivity context, String tourId) {
             activityReference = new WeakReference<>(context);
-            language = appLanguage;
             this.tourId = tourId;
         }
 
@@ -688,12 +683,10 @@ public class ObjectPreviewActivity extends AppCompatActivity {
     public static class RetriveArabicTableData extends AsyncTask<Void, Void,
             List<ArtifactTableArabic>> {
         private WeakReference<ObjectPreviewActivity> activityReference;
-        int language;
         String tourId;
 
-        RetriveArabicTableData(ObjectPreviewActivity context, int appLanguage, String tourId) {
+        RetriveArabicTableData(ObjectPreviewActivity context, String tourId) {
             activityReference = new WeakReference<>(context);
-            language = appLanguage;
             this.tourId = tourId;
         }
 
@@ -750,12 +743,12 @@ public class ObjectPreviewActivity extends AppCompatActivity {
 
     }
 
-    public void getObjectPreviewDetailsFromDB(String tourId, int language) {
+    public void getObjectPreviewDetailsFromDB(String tourId) {
         progressBar.setVisibility(View.VISIBLE);
-        if (language == 1)
-            new RetriveEnglishTableData(ObjectPreviewActivity.this, language, tourId).execute();
+        if (language.equals(LocaleManager.LANGUAGE_ENGLISH))
+            new RetriveEnglishTableData(ObjectPreviewActivity.this, tourId).execute();
         else
-            new RetriveArabicTableData(ObjectPreviewActivity.this, language, tourId).execute();
+            new RetriveArabicTableData(ObjectPreviewActivity.this, tourId).execute();
     }
 
     @Override

@@ -1,9 +1,5 @@
 package com.shrikanthravi.collapsiblecalendarview.widget;
 
-/**
- * Created by shrikanthravi on 07/03/18.
- */
-
 
 import android.content.Context;
 import android.content.SharedPreferences;
@@ -170,9 +166,14 @@ public class CollapsibleCalendar extends UICalendar {
             SimpleDateFormat dateFormat = new SimpleDateFormat("MMMM-yyyy");
             dateFormat.setTimeZone(mAdapter.getCalendar().getTimeZone());
 
-            SharedPreferences qmPreferences = PreferenceManager.getDefaultSharedPreferences(getContext());
-            int appLanguage = qmPreferences.getInt("AppLanguage", 1);
-            if (appLanguage == 1) {
+            SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getContext());
+            String language;
+            if (Locale.getDefault().getLanguage().equals("ur") ||
+                    Locale.getDefault().getLanguage().equals("ar"))
+                language = "ar";
+            else
+                language = "en";
+            if (prefs.getString("AppLanguage", language).equals("en")) {
 //                english
                 mTxtTitle.setText(dateFormat.format(mAdapter.getCalendar().getTime()));
             } else {
@@ -189,7 +190,7 @@ public class CollapsibleCalendar extends UICalendar {
             TableRow rowCurrent;
 
             // set day of week
-            int[]  dayOfWeekIds = new int[]{
+            int[] dayOfWeekIds = new int[]{
                     R.string.sunday,
                     R.string.monday,
                     R.string.tuesday,
@@ -200,7 +201,6 @@ public class CollapsibleCalendar extends UICalendar {
             };
 
 
-
             rowCurrent = new TableRow(mContext);
             rowCurrent.setLayoutParams(new TableLayout.LayoutParams(
                     ViewGroup.LayoutParams.MATCH_PARENT,
@@ -209,7 +209,7 @@ public class CollapsibleCalendar extends UICalendar {
                 View view = mInflater.inflate(R.layout.layout_day_of_week, null);
                 TextView txtDayOfWeek = (TextView) view.findViewById(R.id.txt_day_of_week);
 
-                String week= String.valueOf(dayOfWeekIds[(i + getFirstDayOfWeek()) % 7]);
+                String week = String.valueOf(dayOfWeekIds[(i + getFirstDayOfWeek()) % 7]);
                 txtDayOfWeek.setText(dayOfWeekIds[(i + getFirstDayOfWeek()) % 7]);
                 view.setLayoutParams(new TableRow.LayoutParams(
                         0,

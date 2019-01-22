@@ -1,10 +1,9 @@
 package com.qatarmuseums.qatarmuseumsapp.tourguide;
 
+import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.preference.PreferenceManager;
 import android.support.v4.widget.NestedScrollView;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.DefaultItemAnimator;
@@ -22,6 +21,7 @@ import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.qatarmuseums.qatarmuseumsapp.LocaleManager;
 import com.qatarmuseums.qatarmuseumsapp.QMDatabase;
 import com.qatarmuseums.qatarmuseumsapp.R;
 import com.qatarmuseums.qatarmuseumsapp.apicall.APIClient;
@@ -58,12 +58,16 @@ public class TourGuideActivity extends AppCompatActivity {
     private ProgressBar progressBar;
     private RelativeLayout noResultFoundLayout;
     private NestedScrollView scrollviewContainer;
-    private SharedPreferences qmPreferences;
-    private int appLanguage;
+    private String appLanguage;
     private QMDatabase qmDatabase;
     HomePageTableEnglish homePageTableEnglish;
     HomePageTableArabic homePageTableArabic;
     int homePageTableRowCount;
+
+    @Override
+    protected void attachBaseContext(Context base) {
+        super.attachBaseContext(LocaleManager.setLocale(base));
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -134,7 +138,7 @@ public class TourGuideActivity extends AppCompatActivity {
         retryButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                getTourGuidePageAPIData(appLanguage);
+                getTourGuidePageAPIData();
                 progressBar.setVisibility(View.VISIBLE);
                 retryLayout.setVisibility(View.GONE);
             }
@@ -162,26 +166,18 @@ public class TourGuideActivity extends AppCompatActivity {
                 return false;
             }
         });
-        qmPreferences = PreferenceManager.getDefaultSharedPreferences(this);
-        appLanguage = qmPreferences.getInt("AppLanguage", 1);
+        appLanguage = LocaleManager.getLanguage(this);
         if (new Util().isNetworkAvailable(this))
-            getTourGuidePageAPIData(appLanguage);
+            getTourGuidePageAPIData();
         else
-            getDataFromDataBase(appLanguage);
+            getDataFromDataBase();
     }
 
-    public void getTourGuidePageAPIData(int lan) {
+    public void getTourGuidePageAPIData() {
         progressBar.setVisibility(View.VISIBLE);
-        int appLanguage = lan;
-        final String language;
-        if (appLanguage == 1) {
-            language = "en";
-        } else {
-            language = "ar";
-        }
         APIInterface apiService =
                 APIClient.getClient().create(APIInterface.class);
-        Call<ArrayList<HomeList>> call = apiService.getHomepageDetails(language);
+        Call<ArrayList<HomeList>> call = apiService.getHomepageDetails(appLanguage);
         call.enqueue(new Callback<ArrayList<HomeList>>() {
             @Override
             public void onResponse(Call<ArrayList<HomeList>> call, Response<ArrayList<HomeList>> response) {
@@ -197,7 +193,7 @@ public class TourGuideActivity extends AppCompatActivity {
                             }
                         }
                         mAdapter.notifyDataSetChanged();
-                        new RowCount(TourGuideActivity.this, language).execute();
+                        new RowCount(TourGuideActivity.this, appLanguage).execute();
                     } else {
                         scrollviewContainer.setVisibility(View.GONE);
                         noResultFoundLayout.setVisibility(View.VISIBLE);
@@ -398,11 +394,9 @@ public class TourGuideActivity extends AppCompatActivity {
 
     public static class RetriveEnglishTableData extends AsyncTask<Void, Void, List<HomePageTableEnglish>> {
         private WeakReference<TourGuideActivity> activityReference;
-        int language;
 
-        RetriveEnglishTableData(TourGuideActivity context, int appLanguage) {
+        RetriveEnglishTableData(TourGuideActivity context) {
             activityReference = new WeakReference<>(context);
-            language = appLanguage;
         }
 
         @Override
@@ -439,11 +433,10 @@ public class TourGuideActivity extends AppCompatActivity {
     public static class RetriveArabicTableData extends AsyncTask<Void, Void,
             List<HomePageTableArabic>> {
         private WeakReference<TourGuideActivity> activityReference;
-        int language;
 
-        RetriveArabicTableData(TourGuideActivity context, int appLanguage) {
+        RetriveArabicTableData(TourGuideActivity context) {
             activityReference = new WeakReference<>(context);
-            language = appLanguage;
+
         }
 
 
@@ -479,12 +472,12 @@ public class TourGuideActivity extends AppCompatActivity {
 
     }
 
-    public void getDataFromDataBase(int language) {
+    public void getDataFromDataBase() {
         progressBar.setVisibility(View.VISIBLE);
-        if (language == 1)
-            new RetriveEnglishTableData(TourGuideActivity.this, language).execute();
+        if (appLanguage.equals(LocaleManager.LANGUAGE_ENGLISH))
+            new RetriveEnglishTableData(TourGuideActivity.this).execute();
         else
-            new RetriveArabicTableData(TourGuideActivity.this, language).execute();
+            new RetriveArabicTableData(TourGuideActivity.this).execute();
     }
 
 }

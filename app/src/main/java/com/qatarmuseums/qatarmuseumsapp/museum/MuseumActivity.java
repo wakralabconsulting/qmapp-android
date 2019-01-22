@@ -4,7 +4,6 @@ package com.qatarmuseums.qatarmuseumsapp.museum;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
-
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.os.AsyncTask;
@@ -15,7 +14,6 @@ import android.support.v4.view.ViewPager;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-
 import android.support.v7.widget.SnapHelper;
 import android.util.DisplayMetrics;
 import android.view.Gravity;
@@ -27,6 +25,7 @@ import android.widget.TextView;
 import com.github.rubensousa.gravitysnaphelper.GravitySnapHelper;
 import com.qatarmuseums.qatarmuseumsapp.Config;
 import com.qatarmuseums.qatarmuseumsapp.Convertor;
+import com.qatarmuseums.qatarmuseumsapp.LocaleManager;
 import com.qatarmuseums.qatarmuseumsapp.QMDatabase;
 import com.qatarmuseums.qatarmuseumsapp.R;
 import com.qatarmuseums.qatarmuseumsapp.apicall.APIClient;
@@ -41,7 +40,6 @@ import java.io.IOException;
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.List;
-
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -79,8 +77,6 @@ public class MuseumActivity extends BaseActivity implements
     ArrayList<Page> ads;
     Intent intent;
     SharedPreferences qmPreferences;
-    int appLanguage;
-    private final int english = 1;
     ImageView sliderPlaceholderImage;
     Util util;
     ArrayList<MuseumAboutModel> museumAboutModels = new ArrayList<>();
@@ -93,6 +89,10 @@ public class MuseumActivity extends BaseActivity implements
     private MuseumAboutTableArabic museumAboutTableArabic;
     private QMDatabase qmDatabase;
 
+    @Override
+    protected void attachBaseContext(Context base) {
+        super.attachBaseContext(LocaleManager.setLocale(base));
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -101,7 +101,7 @@ public class MuseumActivity extends BaseActivity implements
         ButterKnife.bind(this);
         util = new Util();
         qmPreferences = PreferenceManager.getDefaultSharedPreferences(this);
-        appLanguage = qmPreferences.getInt("AppLanguage", 1);
+        language = LocaleManager.getLanguage(this);
         intent = getIntent();
         sliderImageTitle.setText(intent.getStringExtra("MUSEUMTITLE"));
         museumId = intent.getStringExtra("MUSEUM_ID");
@@ -116,7 +116,7 @@ public class MuseumActivity extends BaseActivity implements
         museumHorizontalScrollViewAdapter = new MuseumHorizontalScrollViewAdapter(this,
                 museumHScrollModelList, intent.getStringExtra("MUSEUMTITLE"), museumId, getScreenWidth());
         animCircleIndicator.setVisibility(View.GONE);
-        if (appLanguage == english) {
+        if (language.equals(LocaleManager.LANGUAGE_ENGLISH)) {
             recyclerviewLayoutManager =
                     new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false);
             recyclerviewLayoutManager.setStackFromEnd(false);
@@ -155,7 +155,7 @@ public class MuseumActivity extends BaseActivity implements
                     firstVisibleItemPosition = ((LinearLayoutManager) recyclerView
                             .getLayoutManager()).findFirstCompletelyVisibleItemPosition();
 
-                    if (appLanguage == english) {
+                    if (language.equals(LocaleManager.LANGUAGE_ENGLISH)) {
                         if (firstVisibleItemPosition == 0) {
                             showRightArrow();
                         } else if (lastCompleteVisibleItemPosition == museumHScrollModelList.size() - 1) {
@@ -178,7 +178,7 @@ public class MuseumActivity extends BaseActivity implements
                 }
             });
 
-            if (appLanguage == english) {
+            if (language.equals(LocaleManager.LANGUAGE_ENGLISH)) {
                 SnapHelper snapHelperStart = new GravitySnapHelper(Gravity.START);
                 snapHelperStart.attachToRecyclerView(recyclerView);
             } else {
@@ -346,10 +346,10 @@ public class MuseumActivity extends BaseActivity implements
 
 
     public void loadAdsToSlider(ArrayList<Page> adsImages) {
-        int appLanguage = qmPreferences.getInt("AppLanguage", 1);
+        language = LocaleManager.getLanguage(this);
         if (adsImages.size() > 1) {
             glideLoader = new GlideLoaderForMuseum();
-            if (appLanguage == english) {
+            if (language.equals(LocaleManager.LANGUAGE_ENGLISH)) {
                 configuration = new IndicatorConfiguration.Builder()
                         .imageLoader(glideLoader)
                         .isStopWhileTouch(true)
@@ -444,11 +444,6 @@ public class MuseumActivity extends BaseActivity implements
         APIInterface apiService =
                 APIClient.getClient().create(APIInterface.class);
         Call<ArrayList<MuseumAboutModel>> call;
-        if (appLanguage == english) {
-            language = "en";
-        } else {
-            language = "ar";
-        }
         if (isBanner)
             call = apiService.getLaunchMuseumAboutDetails(language, museumId);
         else
@@ -516,7 +511,7 @@ public class MuseumActivity extends BaseActivity implements
     }
 
     public void getMuseumSliderImageFromDatabase() {
-        if (appLanguage == english) {
+        if (language.equals(LocaleManager.LANGUAGE_ENGLISH)) {
             new RetriveMuseumAboutDataEnglish(MuseumActivity.this, museumId).execute();
         } else {
             new RetriveMuseumAboutDataArabic(MuseumActivity.this, museumId).execute();
@@ -797,7 +792,8 @@ public class MuseumActivity extends BaseActivity implements
 
         @Override
         protected MuseumAboutTableEnglish doInBackground(Void... voids) {
-            return activityReference.get().qmDatabase.getMuseumAboutDao().getMuseumAboutDataEnglish(Integer.parseInt(museumId));
+            return activityReference.get().qmDatabase.getMuseumAboutDao().
+                    getMuseumAboutDataEnglish(Integer.parseInt(museumId));
         }
 
         @Override
@@ -846,7 +842,8 @@ public class MuseumActivity extends BaseActivity implements
 
         @Override
         protected MuseumAboutTableArabic doInBackground(Void... voids) {
-            return activityReference.get().qmDatabase.getMuseumAboutDao().getMuseumAboutDataArabic(Integer.parseInt(museumId));
+            return activityReference.get().qmDatabase.getMuseumAboutDao().
+                    getMuseumAboutDataArabic(Integer.parseInt(museumId));
         }
 
         @Override
@@ -874,8 +871,9 @@ public class MuseumActivity extends BaseActivity implements
                     activityReference.get().sliderPlaceholderImage.setVisibility(View.VISIBLE);
                     activityReference.get().animCircleIndicator.setVisibility(View.GONE);
                 }
-
+                activityReference.get().getSliderImagesfromAPI(false);
             } else {
+                activityReference.get().getSliderImagesfromAPI(true);
                 activityReference.get().sliderPlaceholderImage.setVisibility(View.VISIBLE);
                 activityReference.get().animCircleIndicator.setVisibility(View.GONE);
             }

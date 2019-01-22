@@ -1,10 +1,9 @@
 package com.qatarmuseums.qatarmuseumsapp.tourguidedetails;
 
+import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.preference.PreferenceManager;
 import android.support.v4.widget.NestedScrollView;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.DefaultItemAnimator;
@@ -23,6 +22,7 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.qatarmuseums.qatarmuseumsapp.Convertor;
+import com.qatarmuseums.qatarmuseumsapp.LocaleManager;
 import com.qatarmuseums.qatarmuseumsapp.QMDatabase;
 import com.qatarmuseums.qatarmuseumsapp.R;
 import com.qatarmuseums.qatarmuseumsapp.apicall.APIClient;
@@ -61,13 +61,17 @@ public class TourGuideDetailsActivity extends AppCompatActivity {
     private ProgressBar progressBar;
     private NestedScrollView scrollviewContainer;
     private RelativeLayout noResultFoundLayout;
-    private SharedPreferences qmPreferences;
-    private int appLanguage;
+    private String appLanguage;
     int selfGuideStartRowCount;
     QMDatabase qmDatabase;
     TourGuideStartPageEnglish tourGuideStartPageEnglish;
     TourGuideStartPageArabic tourGuideStartPageArabic;
     private Convertor converters;
+
+    @Override
+    protected void attachBaseContext(Context base) {
+        super.attachBaseContext(LocaleManager.setLocale(base));
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -138,7 +142,7 @@ public class TourGuideDetailsActivity extends AppCompatActivity {
         exploreZoomOutAnimation = AnimationUtils.loadAnimation(getApplicationContext(),
                 R.anim.zoom_out);
         retryButton.setOnClickListener(v -> {
-            getTourGuideDetailsPageAPIData(appLanguage);
+            getTourGuideDetailsPageAPIData();
             progressBar.setVisibility(View.VISIBLE);
             retryLayout.setVisibility(View.GONE);
         });
@@ -187,26 +191,18 @@ public class TourGuideDetailsActivity extends AppCompatActivity {
             }
         });
         converters = new Convertor();
-        qmPreferences = PreferenceManager.getDefaultSharedPreferences(this);
-        appLanguage = qmPreferences.getInt("AppLanguage", 1);
+        appLanguage = LocaleManager.getLanguage(this);
         if (new Util().isNetworkAvailable(this))
-            getTourGuideDetailsPageAPIData(appLanguage);
+            getTourGuideDetailsPageAPIData();
         else
-            getSliderImagesandDdetailsfromDatabase(appLanguage, museumId);
+            getSliderImagesandDdetailsfromDatabase(museumId);
     }
 
-    public void getTourGuideDetailsPageAPIData(int lan) {
+    public void getTourGuideDetailsPageAPIData() {
         progressBar.setVisibility(View.VISIBLE);
-        int appLanguage = lan;
-        final String language;
-        if (appLanguage == 1) {
-            language = "en";
-        } else {
-            language = "ar";
-        }
         APIInterface apiService =
                 APIClient.getClient().create(APIInterface.class);
-        Call<ArrayList<SelfGuideStarterModel>> call = apiService.getSelfGuideStarterPageDetails(language, museumId);
+        Call<ArrayList<SelfGuideStarterModel>> call = apiService.getSelfGuideStarterPageDetails(appLanguage, museumId);
         call.enqueue(new Callback<ArrayList<SelfGuideStarterModel>>() {
             @Override
             public void onResponse(Call<ArrayList<SelfGuideStarterModel>> call, Response<ArrayList<SelfGuideStarterModel>> response) {
@@ -215,7 +211,7 @@ public class TourGuideDetailsActivity extends AppCompatActivity {
                         scrollviewContainer.setVisibility(View.VISIBLE);
                         tourGuideList.addAll(response.body());
                         mAdapter.notifyDataSetChanged();
-                        new SelfGuideStartRowCount(TourGuideDetailsActivity.this, language).execute();
+                        new SelfGuideStartRowCount(TourGuideDetailsActivity.this, appLanguage).execute();
                     } else {
                         scrollviewContainer.setVisibility(View.GONE);
                         noResultFoundLayout.setVisibility(View.VISIBLE);
@@ -445,13 +441,11 @@ public class TourGuideDetailsActivity extends AppCompatActivity {
 
     public static class RetriveTourGuideDetailsDataEnglish extends AsyncTask<Void, Void, List<TourGuideStartPageEnglish>> {
         private WeakReference<TourGuideDetailsActivity> activityReference;
-        int language;
         String museumId;
 
-        RetriveTourGuideDetailsDataEnglish(TourGuideDetailsActivity context, int appLanguage,
+        RetriveTourGuideDetailsDataEnglish(TourGuideDetailsActivity context,
                                            String museumId) {
             activityReference = new WeakReference<>(context);
-            language = appLanguage;
             this.museumId = museumId;
         }
 
@@ -486,12 +480,10 @@ public class TourGuideDetailsActivity extends AppCompatActivity {
 
     public static class RetriveTourGuideDetailsDataArabic extends AsyncTask<Void, Void, List<TourGuideStartPageArabic>> {
         private WeakReference<TourGuideDetailsActivity> activityReference;
-        int language;
         String museumId;
 
-        RetriveTourGuideDetailsDataArabic(TourGuideDetailsActivity context, int appLanguage, String museumId) {
+        RetriveTourGuideDetailsDataArabic(TourGuideDetailsActivity context, String museumId) {
             activityReference = new WeakReference<>(context);
-            language = appLanguage;
             this.museumId = museumId;
         }
 
@@ -526,11 +518,11 @@ public class TourGuideDetailsActivity extends AppCompatActivity {
         }
     }
 
-    public void getSliderImagesandDdetailsfromDatabase(int language, String museumId) {
-        if (language == 1) {
-            new RetriveTourGuideDetailsDataEnglish(TourGuideDetailsActivity.this, language, museumId).execute();
+    public void getSliderImagesandDdetailsfromDatabase(String museumId) {
+        if (appLanguage.equals(LocaleManager.LANGUAGE_ENGLISH)) {
+            new RetriveTourGuideDetailsDataEnglish(TourGuideDetailsActivity.this, museumId).execute();
         } else {
-            new RetriveTourGuideDetailsDataArabic(TourGuideDetailsActivity.this, language, museumId).execute();
+            new RetriveTourGuideDetailsDataArabic(TourGuideDetailsActivity.this, museumId).execute();
         }
     }
 

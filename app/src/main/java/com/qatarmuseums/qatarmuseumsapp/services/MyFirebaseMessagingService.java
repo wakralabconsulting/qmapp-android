@@ -11,6 +11,7 @@ import android.widget.Toast;
 import com.google.firebase.messaging.FirebaseMessagingService;
 import com.google.firebase.messaging.RemoteMessage;
 import com.qatarmuseums.qatarmuseumsapp.Config;
+import com.qatarmuseums.qatarmuseumsapp.LocaleManager;
 import com.qatarmuseums.qatarmuseumsapp.apicall.APIClient;
 import com.qatarmuseums.qatarmuseumsapp.apicall.APIInterface;
 import com.qatarmuseums.qatarmuseumsapp.culturepass.LoginData;
@@ -120,14 +121,7 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
     }
 
     private void sendRegistrationToServer(String token) {
-        String language;
-        qmPreferences = PreferenceManager.getDefaultSharedPreferences(this);
-        appLanguage = qmPreferences.getInt("AppLanguage", 1);
-        if (appLanguage == 1)
-            language = "en";
-        else
-            language = "ar";
-        getLoginToken(language, token);
+        getLoginToken(LocaleManager.getLanguage(this), token);
 
     }
 

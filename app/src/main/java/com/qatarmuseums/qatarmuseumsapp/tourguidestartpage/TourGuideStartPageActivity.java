@@ -1,5 +1,6 @@
 package com.qatarmuseums.qatarmuseumsapp.tourguidestartpage;
 
+import android.content.Context;
 import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -13,6 +14,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.bumptech.glide.load.engine.Resource;
+import com.qatarmuseums.qatarmuseumsapp.LocaleManager;
 import com.qatarmuseums.qatarmuseumsapp.R;
 import com.qatarmuseums.qatarmuseumsapp.floormap.FloorMapActivity;
 import com.qatarmuseums.qatarmuseumsapp.objectpreview.ObjectPreviewActivity;
@@ -24,12 +26,16 @@ public class TourGuideStartPageActivity extends AppCompatActivity {
     Button startBtn;
     private Animation zoomOutAnimation;
 
+    @Override
+    protected void attachBaseContext(Context base) {
+        super.attachBaseContext(LocaleManager.setLocale(base));
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_tour_guide_start_page);
-        mainLayout = (FrameLayout)findViewById(R.id.layout_bg);
+        mainLayout = (FrameLayout) findViewById(R.id.layout_bg);
         playButton = (ImageView) findViewById(R.id.playBtn);
         museumTitle = (TextView) findViewById(R.id.museum_tittle);
         museumDesc = (TextView) findViewById(R.id.museum_desc);

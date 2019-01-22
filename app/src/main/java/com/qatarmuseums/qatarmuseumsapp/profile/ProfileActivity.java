@@ -3,6 +3,7 @@ package com.qatarmuseums.qatarmuseumsapp.profile;
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.Dialog;
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.AsyncTask;
@@ -22,6 +23,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.bumptech.glide.request.RequestOptions;
+import com.qatarmuseums.qatarmuseumsapp.LocaleManager;
 import com.qatarmuseums.qatarmuseumsapp.QMDatabase;
 import com.qatarmuseums.qatarmuseumsapp.R;
 import com.qatarmuseums.qatarmuseumsapp.apicall.APIClient;
@@ -31,7 +33,6 @@ import com.qatarmuseums.qatarmuseumsapp.culturepass.CulturePassActivity;
 import com.qatarmuseums.qatarmuseumsapp.culturepass.ReceivedCookiesInterceptor;
 import com.qatarmuseums.qatarmuseumsapp.culturepasscard.CulturePassCardActivity;
 import com.qatarmuseums.qatarmuseumsapp.home.GlideApp;
-import com.qatarmuseums.qatarmuseumsapp.home.HomeActivity;
 import com.qatarmuseums.qatarmuseumsapp.utils.Util;
 
 import org.json.JSONArray;
@@ -66,7 +67,6 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
             imageURL, rsvpAttendance, acceptStatus;
     private SharedPreferences.Editor editor;
     private LinearLayout progressBar;
-    private int appLanguage;
     String language;
     private Retrofit retrofit;
     HashMap<String, String> country = new HashMap<>();
@@ -78,6 +78,11 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
     private String uid;
     private List<Und> unds = new ArrayList<>();
     private QMDatabase qmDatabase;
+
+    @Override
+    protected void attachBaseContext(Context base) {
+        super.attachBaseContext(LocaleManager.setLocale(base));
+    }
 
     @SuppressLint("ClickableViewAccessibility")
     @Override
@@ -127,11 +132,7 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
             return false;
         });
         qmPreferences = PreferenceManager.getDefaultSharedPreferences(this);
-        appLanguage = qmPreferences.getInt("AppLanguage", 1);
-        if (appLanguage == 1)
-            language = "en";
-        else
-            language = "ar";
+        language = LocaleManager.getLanguage(this);
         token = qmPreferences.getString("TOKEN", null);
         username = qmPreferences.getString("NAME", null);
         membershipNumber = qmPreferences.getString("MEMBERSHIP_NUMBER", null);
@@ -166,7 +167,7 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
         membershipNumberTxt.setText(membershipNumber);
         emailTxt.setText(email);
         dobTxt.setText(dateOfBirth);
-        if (appLanguage == 1) {
+        if (language.equals(LocaleManager.LANGUAGE_ENGLISH)) {
             try {
                 JSONArray m_jArry = new JSONArray(loadJSONFromAsset(language));
                 for (int i = 0; i < m_jArry.length(); i++) {
