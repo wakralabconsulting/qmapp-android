@@ -19,6 +19,7 @@ import android.widget.ImageView;
 import android.widget.Spinner;
 import android.widget.TextView;
 
+import com.qatarmuseums.qatarmuseumsapp.LocaleManager;
 import com.qatarmuseums.qatarmuseumsapp.R;
 
 import java.util.ArrayList;
@@ -74,6 +75,11 @@ public class EducationFilterActivity extends AppCompatActivity {
     SharedPreferences.Editor editor;
     SharedPreferences sharedfilterpreferences;
     int institutionPosition = 0, ageGroupPosition = 0, programmeTypePosition = 0;
+
+    @Override
+    protected void attachBaseContext(Context base) {
+        super.attachBaseContext(LocaleManager.setLocale(base));
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

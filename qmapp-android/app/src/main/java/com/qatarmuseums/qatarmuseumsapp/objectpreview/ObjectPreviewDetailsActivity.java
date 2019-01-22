@@ -21,6 +21,7 @@ import android.widget.Toast;
 
 import com.github.chrisbanes.photoview.PhotoView;
 import com.google.android.gms.vision.text.Text;
+import com.qatarmuseums.qatarmuseumsapp.LocaleManager;
 import com.qatarmuseums.qatarmuseumsapp.R;
 import com.qatarmuseums.qatarmuseumsapp.floormap.FloorMapActivity;
 import com.qatarmuseums.qatarmuseumsapp.home.GlideApp;
@@ -56,6 +57,11 @@ public class ObjectPreviewDetailsActivity extends AppCompatActivity implements S
         }
     };
     private LinearLayout audioControlLayout;
+
+    @Override
+    protected void attachBaseContext(Context base) {
+        super.attachBaseContext(LocaleManager.setLocale(base));
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -111,15 +117,14 @@ public class ObjectPreviewDetailsActivity extends AppCompatActivity implements S
                 .placeholder(R.drawable.placeholder)
                 .centerInside()
                 .into(imageToZoom);
+        if (summary != null) {
+            image2Description.setText(utils.html2string(summary));
+            image2Description.setVisibility(View.VISIBLE);
+        }
         if (history != null && !history.equals("")) {
             historyTitle.setVisibility(View.VISIBLE);
             historyDescription.setVisibility(View.VISIBLE);
             historyDescription.setText(history);
-            if (summary != null) {
-                image2Description.setText(utils.html2string(summary));
-                image2Description.setVisibility(View.VISIBLE);
-            }
-
         }
         if (imageList != null && imageList.size() > 0) {
             switch (imageList.size()) {

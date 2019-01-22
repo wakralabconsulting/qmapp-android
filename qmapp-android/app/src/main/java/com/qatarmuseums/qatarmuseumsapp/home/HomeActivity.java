@@ -46,6 +46,7 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.internal.LinkedTreeMap;
 import com.qatarmuseums.qatarmuseumsapp.Config;
+import com.qatarmuseums.qatarmuseumsapp.LocaleManager;
 import com.qatarmuseums.qatarmuseumsapp.QMDatabase;
 import com.qatarmuseums.qatarmuseumsapp.R;
 import com.qatarmuseums.qatarmuseumsapp.apicall.APIClient;
@@ -101,7 +102,6 @@ public class HomeActivity extends BaseActivity {
     private Intent navigationIntent;
     private LinearLayout retryLayout;
     private Button retryButton;
-    private int appLanguage;
     private String name;
     private SharedPreferences.Editor editor;
     private int badgeCount;
@@ -234,20 +234,15 @@ public class HomeActivity extends BaseActivity {
             editor.putBoolean("FIRST_LAUNCH", false);
             editor.commit();
         }
-        appLanguage = qmPreferences.getInt("AppLanguage", 1);
-        if (appLanguage == 1)
-            language = "en";
-        else
-            language = "ar";
-
+        language = LocaleManager.getLanguage(this);
         if (util.isNetworkAvailable(this)) {
-            getHomePageAPIData(appLanguage);
+            getHomePageAPIData(language);
         } else {
-            getDataFromDataBase(appLanguage);
+            getDataFromDataBase(language);
         }
 
         retryButton.setOnClickListener(v -> {
-            getHomePageAPIData(appLanguage);
+            getHomePageAPIData(language);
             progressBar.setVisibility(View.VISIBLE);
             retryLayout.setVisibility(View.GONE);
             RSVP = qmPreferences.getString("RSVP", null);
@@ -352,10 +347,6 @@ public class HomeActivity extends BaseActivity {
     }
 
     public void updateNotificationDB(String message) {
-        if (appLanguage == 1)
-            language = "en";
-        else
-            language = "ar";
         insertNotificationRelatedDataToDataBase(message, language);
 
     }
@@ -391,14 +382,7 @@ public class HomeActivity extends BaseActivity {
         }
     }
 
-    public void getHomePageAPIData(int lan) {
-        int appLanguage = lan;
-        final String language;
-        if (appLanguage == 1) {
-            language = "en";
-        } else {
-            language = "ar";
-        }
+    public void getHomePageAPIData(String language) {
         APIInterface apiService =
                 APIClient.getClient().create(APIInterface.class);
         Call<ArrayList<HomeList>> call = apiService.getHomepageDetails(language);
@@ -431,14 +415,7 @@ public class HomeActivity extends BaseActivity {
         });
     }
 
-    public void getBannerAPIData(int lan) {
-        int appLanguage = lan;
-        final String language;
-        if (appLanguage == 1) {
-            language = "en";
-        } else {
-            language = "ar";
-        }
+    public void getBannerAPIData() {
         APIInterface apiService =
                 APIClient.getClient().create(APIInterface.class);
         Call<ArrayList<HomeList>> call = apiService.getBannerDetails(language);
@@ -502,8 +479,9 @@ public class HomeActivity extends BaseActivity {
     @Override
     protected void onResume() {
         super.onResume();
+        language = LocaleManager.getLanguage(this);
         if (retryLayout.getVisibility() == View.VISIBLE) {
-            getDataFromDataBase(appLanguage);
+            getDataFromDataBase(language);
         }
         updateBadge();
         RSVP = qmPreferences.getString("RSVP", null);
@@ -516,11 +494,11 @@ public class HomeActivity extends BaseActivity {
     }
 
     public void showBanner() {
-        if (appLanguage == 1) {
+        if (language.equals(LocaleManager.LANGUAGE_ENGLISH)) {
             if (util.isNetworkAvailable(this))
-                getBannerAPIData(appLanguage);
+                getBannerAPIData();
             else
-                getBannerDataFromDataBase(appLanguage);
+                getBannerDataFromDataBase();
             bannerLayout.setVisibility(View.VISIBLE);
         }
     }
@@ -703,16 +681,13 @@ public class HomeActivity extends BaseActivity {
         loginDialog.setContentView(view);
         closeBtn = view.findViewById(R.id.close_dialog);
         dialogLoginButton = view.findViewById(R.id.dialog_login_button);
-        dialogLoginButton.setOnTouchListener(new View.OnTouchListener() {
-            @Override
-            public boolean onTouch(View v, MotionEvent event) {
-                switch (event.getAction()) {
-                    case MotionEvent.ACTION_DOWN:
-                        dialogLoginButton.startAnimation(zoomOutAnimation);
-                        break;
-                }
-                return false;
+        dialogLoginButton.setOnTouchListener((v, event) -> {
+            switch (event.getAction()) {
+                case MotionEvent.ACTION_DOWN:
+                    dialogLoginButton.startAnimation(zoomOutAnimation);
+                    break;
             }
+            return false;
         });
         dialogLoginButton.setOnClickListener(view1 -> {
             attemptLogin();
@@ -724,16 +699,13 @@ public class HomeActivity extends BaseActivity {
         mPasswordViewLayout = view.findViewById(R.id.password_text_input_layout);
         mUsernameViewLayout = view.findViewById(R.id.username_text_input_layout);
         forgotPassword = view.findViewById(R.id.forgot_password);
-        mPasswordView.setOnEditorActionListener(new TextView.OnEditorActionListener() {
-            @Override
-            public boolean onEditorAction(TextView textView, int id, KeyEvent keyEvent) {
-                if (id == EditorInfo.IME_ACTION_DONE || id == EditorInfo.IME_NULL) {
-                    attemptLogin();
-                    hideSoftKeyboard(textView);
-                    return true;
-                }
-                return false;
+        mPasswordView.setOnEditorActionListener((textView, id, keyEvent) -> {
+            if (id == EditorInfo.IME_ACTION_DONE || id == EditorInfo.IME_NULL) {
+                attemptLogin();
+                hideSoftKeyboard(textView);
+                return true;
             }
+            return false;
         });
         forgotPassword.setOnClickListener(v -> attemptForgotPassword());
         mUsernameView.addTextChangedListener(new TextWatcher() {
@@ -1076,11 +1048,9 @@ public class HomeActivity extends BaseActivity {
 
     public static class RetriveEnglishBannerTableData extends AsyncTask<Void, Void, List<HomePageBannerTableEnglish>> {
         private WeakReference<HomeActivity> activityReference;
-        int language;
 
-        RetriveEnglishBannerTableData(HomeActivity context, int appLanguage) {
+        RetriveEnglishBannerTableData(HomeActivity context) {
             activityReference = new WeakReference<>(context);
-            language = appLanguage;
         }
 
         @Override
@@ -1116,11 +1086,9 @@ public class HomeActivity extends BaseActivity {
     public static class RetriveArabicBannerTableData extends AsyncTask<Void, Void,
             List<HomePageBannerTableArabic>> {
         private WeakReference<HomeActivity> activityReference;
-        int language;
 
-        RetriveArabicBannerTableData(HomeActivity context, int appLanguage) {
+        RetriveArabicBannerTableData(HomeActivity context) {
             activityReference = new WeakReference<>(context);
-            language = appLanguage;
         }
 
 
@@ -1156,11 +1124,11 @@ public class HomeActivity extends BaseActivity {
 
     }
 
-    public void getBannerDataFromDataBase(int language) {
-        if (language == 1)
-            new RetriveEnglishBannerTableData(HomeActivity.this, language).execute();
+    public void getBannerDataFromDataBase() {
+        if (language.equals(LocaleManager.LANGUAGE_ENGLISH))
+            new RetriveEnglishBannerTableData(HomeActivity.this).execute();
         else
-            new RetriveArabicBannerTableData(HomeActivity.this, language).execute();
+            new RetriveArabicBannerTableData(HomeActivity.this).execute();
     }
 
     public static class RowCount extends AsyncTask<Void, Void, Integer> {
@@ -1359,11 +1327,9 @@ public class HomeActivity extends BaseActivity {
 
     public static class RetriveEnglishTableData extends AsyncTask<Void, Void, List<HomePageTableEnglish>> {
         private WeakReference<HomeActivity> activityReference;
-        int language;
 
-        RetriveEnglishTableData(HomeActivity context, int appLanguage) {
+        RetriveEnglishTableData(HomeActivity context) {
             activityReference = new WeakReference<>(context);
-            language = appLanguage;
         }
 
         @Override
@@ -1403,11 +1369,9 @@ public class HomeActivity extends BaseActivity {
     public static class RetriveArabicTableData extends AsyncTask<Void, Void,
             List<HomePageTableArabic>> {
         private WeakReference<HomeActivity> activityReference;
-        int language;
 
-        RetriveArabicTableData(HomeActivity context, int appLanguage) {
+        RetriveArabicTableData(HomeActivity context) {
             activityReference = new WeakReference<>(context);
-            language = appLanguage;
         }
 
 
@@ -1444,12 +1408,12 @@ public class HomeActivity extends BaseActivity {
 
     }
 
-    public void getDataFromDataBase(int language) {
+    public void getDataFromDataBase(String language) {
         progressBar.setVisibility(View.VISIBLE);
-        if (language == 1)
-            new RetriveEnglishTableData(HomeActivity.this, language).execute();
+        if (language.equals(LocaleManager.LANGUAGE_ENGLISH))
+            new RetriveEnglishTableData(HomeActivity.this).execute();
         else
-            new RetriveArabicTableData(HomeActivity.this, language).execute();
+            new RetriveArabicTableData(HomeActivity.this).execute();
     }
 
 }

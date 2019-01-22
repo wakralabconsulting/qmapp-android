@@ -4,20 +4,16 @@ import android.annotation.SuppressLint;
 import android.app.Application;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
-import android.content.SharedPreferences;
+import android.content.Context;
 import android.content.res.Configuration;
-import android.content.res.Resources;
 import android.os.Build;
-import android.preference.PreferenceManager;
-import android.util.DisplayMetrics;
+import android.util.Log;
 
 import com.squareup.leakcanary.LeakCanary;
 
-import java.util.Locale;
-
 
 public class MyApp extends Application {
-    Locale myLocale;
+    private final String TAG = "App";
 
     @Override
     public void onCreate() {
@@ -29,23 +25,20 @@ public class MyApp extends Application {
 //        }
 //        LeakCanary.install(this);
 //        LeakCanary.enableDisplayLeakActivity(getApplicationContext());
-        // Normal app init code...
-        SharedPreferences qmPreferences = PreferenceManager.getDefaultSharedPreferences(this);
-        int appLanguage = qmPreferences.getInt("AppLanguage", 1);
-        if (appLanguage == 2) {
-            Configuration configuration = getResources().getConfiguration();
-            configuration.setLayoutDirection(new Locale("ar"));
-            getResources().updateConfiguration(configuration, getResources().getDisplayMetrics());
-            myLocale = new Locale("ar");
-            Resources res = getResources();
-            DisplayMetrics dm = res.getDisplayMetrics();
-            Configuration conf = res.getConfiguration();
-            conf.locale = myLocale;
-            res.updateConfiguration(conf, dm);
-        } else {
-            // no need to do anything app open in english
-        }
         createNotificationChannel();
+    }
+
+    @Override
+    protected void attachBaseContext(Context base) {
+        super.attachBaseContext(LocaleManager.setLocale(base));
+        Log.d(TAG, "attachBaseContext");
+    }
+
+    @Override
+    public void onConfigurationChanged(Configuration newConfig) {
+        super.onConfigurationChanged(newConfig);
+        LocaleManager.setNewLocale(this, newConfig.locale.getLanguage());
+        Log.d(TAG, "onConfigurationChanged: " + newConfig.locale.getLanguage());
     }
 
     private void createNotificationChannel() {

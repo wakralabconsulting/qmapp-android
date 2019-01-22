@@ -1,5 +1,6 @@
 package com.qatarmuseums.qatarmuseumsapp.tourguidestartpage;
 
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
@@ -18,6 +19,7 @@ import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.qatarmuseums.qatarmuseumsapp.LocaleManager;
 import com.qatarmuseums.qatarmuseumsapp.R;
 import com.qatarmuseums.qatarmuseumsapp.objectpreview.ObjectPreviewActivity;
 import com.qatarmuseums.qatarmuseumsapp.utils.Util;
@@ -44,8 +46,7 @@ public class SelfGuidedStartPageActivity extends AppCompatActivity implements
     private IndicatorConfiguration configuration;
     private InfiniteIndicator animCircleIndicator;
     private GlideLoaderForTourGuide glideLoader;
-    SharedPreferences qmPreferences;
-    int appLanguage;
+    String appLanguage;
     ArrayList<Page> ads;
     ImageView sliderPlaceholderImage;
     private String tourId;
@@ -56,6 +57,11 @@ public class SelfGuidedStartPageActivity extends AppCompatActivity implements
     private ImageView backArrow;
 
     @Override
+    protected void attachBaseContext(Context base) {
+        super.attachBaseContext(LocaleManager.setLocale(base));
+    }
+
+    @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_self_guided_starter);
@@ -63,8 +69,7 @@ public class SelfGuidedStartPageActivity extends AppCompatActivity implements
         setSupportActionBar(toolbar);
         toolbar_title = (TextView) findViewById(R.id.toolbar_title);
         backArrow = (ImageView) findViewById(R.id.toolbar_back);
-        qmPreferences = PreferenceManager.getDefaultSharedPreferences(this);
-        appLanguage = qmPreferences.getInt("AppLanguage", 1);
+        appLanguage = LocaleManager.getLanguage(this);
         playButton = (ImageView) findViewById(R.id.playBtn);
         util = new Util();
         museumTitle = (TextView) findViewById(R.id.museum_tittle);
@@ -135,10 +140,10 @@ public class SelfGuidedStartPageActivity extends AppCompatActivity implements
 
 
     public void loadAdsToSlider(ArrayList<Page> adsImages) {
-        int appLanguage = qmPreferences.getInt("AppLanguage", 1);
+        appLanguage = LocaleManager.getLanguage(this);
         if (adsImages.size() > 1) {
             glideLoader = new GlideLoaderForTourGuide();
-            if (appLanguage == 1) {
+            if (appLanguage.equals(LocaleManager.LANGUAGE_ENGLISH)) {
                 configuration = new IndicatorConfiguration.Builder()
                         .imageLoader(glideLoader)
                         .isStopWhileTouch(true)

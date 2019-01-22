@@ -149,11 +149,10 @@ public class PageFragment extends Fragment implements SeekBar.OnSeekBarChangeLis
             historyTitle.setVisibility(View.VISIBLE);
             historyDescription.setVisibility(View.VISIBLE);
             historyDescription.setText(history);
-            if (summary != null) {
-                image2Description.setText(utils.html2string(summary));
-                image2Description.setVisibility(View.VISIBLE);
-            }
-
+        }
+        if (summary != null) {
+            image2Description.setText(utils.html2string(summary));
+            image2Description.setVisibility(View.VISIBLE);
         }
         if (imageList != null && imageList.size() > 0) {
             switch (imageList.size()) {

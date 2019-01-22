@@ -1,5 +1,6 @@
 package com.qatarmuseums.qatarmuseumsapp.floormap;
 
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
@@ -18,6 +19,7 @@ import android.widget.ProgressBar;
 import android.widget.ScrollView;
 import android.widget.TextView;
 
+import com.qatarmuseums.qatarmuseumsapp.LocaleManager;
 import com.qatarmuseums.qatarmuseumsapp.R;
 import com.qatarmuseums.qatarmuseumsapp.apicall.APIClient;
 import com.qatarmuseums.qatarmuseumsapp.apicall.APIInterface;
@@ -63,10 +65,14 @@ public class ObjectSearchActivity extends AppCompatActivity implements View.OnCl
     LinearLayout[] displayButtons;
     String display = "";
     SharedPreferences qmPreferences;
-    int language;
+    String language;
     ArrayList<ArtifactDetails> artifactList = new ArrayList<>();
     Util util;
 
+    @Override
+    protected void attachBaseContext(Context base) {
+        super.attachBaseContext(LocaleManager.setLocale(base));
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -76,7 +82,7 @@ public class ObjectSearchActivity extends AppCompatActivity implements View.OnCl
         setSupportActionBar(toolbar);
         toolbar_title.setText(getResources().getString(R.string.object_search));
         qmPreferences = PreferenceManager.getDefaultSharedPreferences(this);
-        language = qmPreferences.getInt("AppLanguage", 1);
+        language = LocaleManager.getLanguage(this);
         util = new Util();
         displayButtons = new LinearLayout[10];
         for (int i = 0; i < displayButtons.length; i++) {
@@ -125,7 +131,7 @@ public class ObjectSearchActivity extends AppCompatActivity implements View.OnCl
                 if (numberPadDisplay.getText().toString() == "") {
                     util.showAlertDialog(ObjectSearchActivity.this);
                 } else {
-                    getDetailsFromApi(display, language);
+                    getDetailsFromApi(display);
                 }
             }
         });
@@ -168,15 +174,9 @@ public class ObjectSearchActivity extends AppCompatActivity implements View.OnCl
 
     }
 
-    private void getDetailsFromApi(String id, int applanguage) {
+    private void getDetailsFromApi(String id) {
         progressBar.setVisibility(View.VISIBLE);
         mainContainer.setVisibility(View.GONE);
-        final String language;
-        if (applanguage == 1) {
-            language = "en";
-        } else {
-            language = "ar";
-        }
         APIInterface apiService =
                 APIClient.getClient().create(APIInterface.class);
         Call<ArrayList<ArtifactDetails>> call = apiService.getObjectSearchDetails(language, id);
