@@ -14,7 +14,6 @@ import android.database.Cursor;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.preference.PreferenceManager;
 import android.provider.CalendarContract;
 import android.provider.Settings;
 import android.support.design.widget.Snackbar;
@@ -25,7 +24,6 @@ import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
-import android.text.format.DateFormat;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -43,6 +41,7 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.qatarmuseums.qatarmuseumsapp.Convertor;
+import com.qatarmuseums.qatarmuseumsapp.LocaleManager;
 import com.qatarmuseums.qatarmuseumsapp.QMDatabase;
 import com.qatarmuseums.qatarmuseumsapp.R;
 import com.qatarmuseums.qatarmuseumsapp.apicall.APIClient;
@@ -60,6 +59,7 @@ import java.util.Comparator;
 import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.List;
+import java.util.Locale;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -106,7 +106,6 @@ public class CalendarActivity extends AppCompatActivity {
     private ContentValues contentValues;
     private SharedPreferences qmPreferences;
     private String language;
-    private int appLanguage;
     private QMDatabase qmDatabase;
     CalendarEventsTableEnglish calendarEventsTableEnglish;
     CalendarEventsTableArabic calendarEventsTableArabic;
@@ -116,6 +115,12 @@ public class CalendarActivity extends AppCompatActivity {
     String day;
     String monthNumber;
     String year;
+    private SimpleDateFormat dayDateFormat, monthDateFormat, yearDateFormat;
+
+    @Override
+    protected void attachBaseContext(Context base) {
+        super.attachBaseContext(LocaleManager.setLocale(base));
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -128,8 +133,10 @@ public class CalendarActivity extends AppCompatActivity {
         util = new Util();
         collapsibleCalendar = (CollapsibleCalendar) findViewById(R.id.collapsibleCalendarView);
         eventListView = (RecyclerView) findViewById(R.id.event_list);
-        qmPreferences = PreferenceManager.getDefaultSharedPreferences(this);
-        appLanguage = qmPreferences.getInt("AppLanguage", 1);
+        language = LocaleManager.getLanguage(this);
+        dayDateFormat = new SimpleDateFormat("d", Locale.US);
+        monthDateFormat = new SimpleDateFormat("M", Locale.US);
+        yearDateFormat = new SimpleDateFormat("YYYY", Locale.US);
 
         zoomOutAnimation = AnimationUtils.loadAnimation(getApplicationContext(),
                 R.anim.zoom_out_more);
@@ -188,9 +195,9 @@ public class CalendarActivity extends AppCompatActivity {
                 calendarInstance.set(Calendar.HOUR_OF_DAY, 0);
                 calendarInstance.set(Calendar.MINUTE, 0);
                 calendarInstance.set(Calendar.SECOND, 0);
-                day = (String) DateFormat.format("d", calendarInstance);
-                monthNumber = (String) DateFormat.format("M", calendarInstance);
-                year = (String) DateFormat.format("yyyy", calendarInstance);
+                day = dayDateFormat.format(calendarInstance.getTime());
+                monthNumber = monthDateFormat.format(calendarInstance.getTime());
+                year = yearDateFormat.format(calendarInstance.getTime());
                 if (util.isNetworkAvailable(CalendarActivity.this))
                     getCalendarEventsFromAPI(monthNumber, day, year, calendarInstance.getTimeInMillis());
                 else
@@ -265,9 +272,9 @@ public class CalendarActivity extends AppCompatActivity {
         today.set(Calendar.HOUR_OF_DAY, 0);
         today.set(Calendar.MINUTE, 0);
         today.set(Calendar.SECOND, 0);
-        day = (String) DateFormat.format("d", today);
-        monthNumber = (String) DateFormat.format("M", today);
-        year = (String) DateFormat.format("yyyy", today);
+        day = dayDateFormat.format(today.getTime());
+        monthNumber = monthDateFormat.format(today.getTime());
+        year = yearDateFormat.format(today.getTime());
         if (util.isNetworkAvailable(CalendarActivity.this))
             getCalendarEventsFromAPI(monthNumber, day, year, today.getTimeInMillis());
         else
@@ -277,11 +284,6 @@ public class CalendarActivity extends AppCompatActivity {
     public void getCalendarEventsFromDatabase(Long timeStamp) {
         progress.setVisibility(View.VISIBLE);
         calendarAdapter.clear();
-        String language;
-        if (appLanguage == 1)
-            language = "en";
-        else
-            language = "ar";
         new EventsRowCount(CalendarActivity.this, language, timeStamp / 1000).execute();
     }
 
@@ -289,11 +291,6 @@ public class CalendarActivity extends AppCompatActivity {
         progress.setVisibility(View.VISIBLE);
         calendarAdapter.clear();
         apiService = APIClient.getClient().create(APIInterface.class);
-        if (appLanguage == 1) {
-            language = "en";
-        } else {
-            language = "ar";
-        }
         Call<ArrayList<CalendarEvents>> call = apiService.getCalendarDetails(language,
                 "All", "All", "All", month, day, year, "field_eduprog_date");
         call.enqueue(new Callback<ArrayList<CalendarEvents>>() {
@@ -343,6 +340,7 @@ public class CalendarActivity extends AppCompatActivity {
             models.get(i).setEndTime(endDateVal);
             models.get(i).setProgramType(util.html2string(models.get(i).getProgramType()));
             models.get(i).setEventDetails(util.html2string(models.get(i).getEventDetails()));
+            models.get(i).setEventTimings(util.html2string(models.get(i).getEventTimings()));
             models.get(i).setEventTitle(util.html2string(models.get(i).getEventTitle()));
         }
     }
@@ -683,11 +681,9 @@ public class CalendarActivity extends AppCompatActivity {
                     new CheckEventRowExist(activityReference.get(), language, timeStamp).execute();
                 else {
                     if (language.equals("en")) {
-                        new RetriveEnglishTableData(activityReference.get(), 1,
-                                timeStamp).execute();
+                        new RetriveEnglishTableData(activityReference.get(), timeStamp).execute();
                     } else {
-                        new RetriveArabicTableData(activityReference.get(), 2,
-                                timeStamp).execute();
+                        new RetriveArabicTableData(activityReference.get(), timeStamp).execute();
                     }
                 }
             } else if (activityReference.get().calendarEventList.size() > 0) {
@@ -887,12 +883,10 @@ public class CalendarActivity extends AppCompatActivity {
 
     public static class RetriveEnglishTableData extends AsyncTask<Void, Void, List<CalendarEventsTableEnglish>> {
         private WeakReference<CalendarActivity> activityReference;
-        int language;
         long eventDate;
 
-        RetriveEnglishTableData(CalendarActivity context, int appLanguage, long eventDate) {
+        RetriveEnglishTableData(CalendarActivity context, long eventDate) {
             activityReference = new WeakReference<>(context);
-            language = appLanguage;
             this.eventDate = eventDate;
         }
 
@@ -950,12 +944,10 @@ public class CalendarActivity extends AppCompatActivity {
     public static class RetriveArabicTableData extends AsyncTask<Void, Void,
             List<CalendarEventsTableArabic>> {
         private WeakReference<CalendarActivity> activityReference;
-        int language;
         long eventDate;
 
-        RetriveArabicTableData(CalendarActivity context, int appLanguage, long eventDate) {
+        RetriveArabicTableData(CalendarActivity context, long eventDate) {
             activityReference = new WeakReference<>(context);
-            language = appLanguage;
             this.eventDate = eventDate;
         }
 

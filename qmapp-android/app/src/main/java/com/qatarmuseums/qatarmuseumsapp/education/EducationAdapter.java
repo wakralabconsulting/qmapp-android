@@ -14,10 +14,6 @@ import com.qatarmuseums.qatarmuseumsapp.R;
 
 import java.util.ArrayList;
 
-/**
- * Created by MoongedePC on 26-Jul-18.
- */
-
 public class EducationAdapter extends RecyclerView.Adapter<EducationAdapter.EducationAdapterViewHolder> {
 
     Context context;

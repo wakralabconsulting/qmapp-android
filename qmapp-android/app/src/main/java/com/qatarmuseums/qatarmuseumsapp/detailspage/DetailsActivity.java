@@ -2,12 +2,11 @@ package com.qatarmuseums.qatarmuseumsapp.detailspage;
 
 import android.annotation.SuppressLint;
 import android.app.Dialog;
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.graphics.Outline;
 import android.net.Uri;
 import android.os.AsyncTask;
-import android.os.Build;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.design.widget.AppBarLayout;
@@ -20,7 +19,6 @@ import android.text.method.LinkMovementMethod;
 import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
-import android.view.ViewOutlineProvider;
 import android.view.Window;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
@@ -43,6 +41,7 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MapStyleOptions;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.qatarmuseums.qatarmuseumsapp.Convertor;
+import com.qatarmuseums.qatarmuseumsapp.LocaleManager;
 import com.qatarmuseums.qatarmuseumsapp.QMDatabase;
 import com.qatarmuseums.qatarmuseumsapp.R;
 import com.qatarmuseums.qatarmuseumsapp.apicall.APIClient;
@@ -57,7 +56,6 @@ import com.qatarmuseums.qatarmuseumsapp.culturepass.AddCookiesInterceptor;
 import com.qatarmuseums.qatarmuseumsapp.culturepass.UserRegistrationDetailsTable;
 import com.qatarmuseums.qatarmuseumsapp.heritage.HeritageOrExhibitionDetailModel;
 import com.qatarmuseums.qatarmuseumsapp.home.GlideApp;
-import com.qatarmuseums.qatarmuseumsapp.home.UserRegistrationModel;
 import com.qatarmuseums.qatarmuseumsapp.museum.GlideLoaderForMuseum;
 import com.qatarmuseums.qatarmuseumsapp.museumabout.MuseumAboutModel;
 import com.qatarmuseums.qatarmuseumsapp.museumabout.MuseumAboutTableArabic;
@@ -116,7 +114,8 @@ public class DetailsActivity extends AppCompatActivity implements IPullZoom, OnM
     private View zoomView;
     ArrayList<String> imageList = new ArrayList<String>();
     private AppBarLayout appBarLayout;
-    private int headerOffSetSize, appLanguage;
+    private int headerOffSetSize;
+    String appLanguage;
     private LinearLayout secondTitleLayout, timingLayout, contactLayout, retryLayout, videoLayout,
             downloadLayout;
     private String latitude, longitude, id;
@@ -201,13 +200,22 @@ public class DetailsActivity extends AppCompatActivity implements IPullZoom, OnM
     private UserRegistrationDetailsTable userRegistrationDetailsTable;
     private RelativeLayout registrationLoader;
 
+    @Override
+    protected void attachBaseContext(Context base) {
+        super.attachBaseContext(LocaleManager.setLocale(base));
+    }
+
     @SuppressLint("ClickableViewAccessibility")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_details);
         qmPreferences = PreferenceManager.getDefaultSharedPreferences(this);
-        language = qmPreferences.getInt("AppLanguage", 1);
+        appLanguage = LocaleManager.getLanguage(this);
+        if (appLanguage.equals(LocaleManager.LANGUAGE_ENGLISH))
+            language = 1;
+        else
+            language = 2;
         token = qmPreferences.getString("TOKEN", null);
         user_uid = qmPreferences.getString("UID", null);
         field_nmoq_last_name = qmPreferences.getString("LAST_NAME", null);
@@ -1329,7 +1337,7 @@ public class DetailsActivity extends AppCompatActivity implements IPullZoom, OnM
     public void showIndicator(int language) {
         circleIndicator.setVisibility(View.VISIBLE);
         ads = new ArrayList<>();
-        for (int i = 0; i < 3; i++) {
+        for (int i = 0; i < (imageList.size() > 3 ? 3 : imageList.size()); i++) {
             ads.add(new Page("", imageList.get(0),
                     null));
         }
@@ -1557,7 +1565,7 @@ public class DetailsActivity extends AppCompatActivity implements IPullZoom, OnM
                 }
                 if (activityReference.get().imageList.size() > 0) {
                     activityReference.get().zoomView.setOnClickListener(view -> activityReference.get().showCarouselView());
-                    activityReference.get().showIndicator(activityReference.get().appLanguage);
+                    activityReference.get().showIndicator(language);
                 }
 
                 activityReference.get().loadDataForHeritageOrExhibitionDetails(null,
@@ -1613,7 +1621,7 @@ public class DetailsActivity extends AppCompatActivity implements IPullZoom, OnM
                 }
                 if (activityReference.get().imageList.size() > 0) {
                     activityReference.get().zoomView.setOnClickListener(view -> activityReference.get().showCarouselView());
-                    activityReference.get().showIndicator(activityReference.get().appLanguage);
+                    activityReference.get().showIndicator(language);
                 }
 
                 activityReference.get().loadDataForHeritageOrExhibitionDetails(null,
@@ -1802,7 +1810,7 @@ public class DetailsActivity extends AppCompatActivity implements IPullZoom, OnM
                 }
                 if (activityReference.get().imageList.size() > 0) {
                     activityReference.get().zoomView.setOnClickListener(view -> activityReference.get().showCarouselView());
-                    activityReference.get().showIndicator(activityReference.get().appLanguage);
+                    activityReference.get().showIndicator(language);
                 }
 
                 activityReference.get().loadDataForHeritageOrExhibitionDetails(null,
@@ -1856,7 +1864,7 @@ public class DetailsActivity extends AppCompatActivity implements IPullZoom, OnM
                 }
                 if (activityReference.get().imageList.size() > 0) {
                     activityReference.get().zoomView.setOnClickListener(view -> activityReference.get().showCarouselView());
-                    activityReference.get().showIndicator(activityReference.get().appLanguage);
+                    activityReference.get().showIndicator(language);
                 }
 
                 activityReference.get().loadDataForHeritageOrExhibitionDetails(null, heritageListTableArabic.get(0).getHeritage_short_description(),
@@ -2107,7 +2115,7 @@ public class DetailsActivity extends AppCompatActivity implements IPullZoom, OnM
                 }
                 if (activityReference.get().imageList.size() > 0) {
                     activityReference.get().zoomView.setOnClickListener(view -> activityReference.get().showCarouselView());
-                    activityReference.get().showIndicator(activityReference.get().appLanguage);
+                    activityReference.get().showIndicator(language);
                 }
 
                 for (int i = 0; i < publicArtsTableEnglish.size(); i++) {
@@ -2164,7 +2172,7 @@ public class DetailsActivity extends AppCompatActivity implements IPullZoom, OnM
                 }
                 if (activityReference.get().imageList.size() > 0) {
                     activityReference.get().zoomView.setOnClickListener(view -> activityReference.get().showCarouselView());
-                    activityReference.get().showIndicator(activityReference.get().appLanguage);
+                    activityReference.get().showIndicator(language);
                 }
 
                 for (int i = 0; i < publicArtsTableArabic.size(); i++) {
@@ -2289,7 +2297,8 @@ public class DetailsActivity extends AppCompatActivity implements IPullZoom, OnM
                                     museumAboutModels.get(0).getTimingInfo(),
                                     "",
                                     null,
-                                    museumAboutModels.get(0).getContactEmail(),
+                                    museumAboutModels.get(0).getContactNumber() + "\n" +
+                                            museumAboutModels.get(0).getContactEmail(),
                                     museumAboutModels.get(0).getLatitude(),
                                     museumAboutModels.get(0).getLongitude(),
                                     fromMuseumAbout,
@@ -2303,7 +2312,8 @@ public class DetailsActivity extends AppCompatActivity implements IPullZoom, OnM
                                     museumAboutModels.get(0).getTimingInfo(),
                                     "",
                                     null,
-                                    museumAboutModels.get(0).getContactEmail(),
+                                    museumAboutModels.get(0).getContactNumber() + "\n" +
+                                            museumAboutModels.get(0).getContactEmail(),
                                     museumAboutModels.get(0).getLatitude(),
                                     museumAboutModels.get(0).getLongitude(),
                                     fromMuseumAbout,
@@ -2642,7 +2652,7 @@ public class DetailsActivity extends AppCompatActivity implements IPullZoom, OnM
 
                 if (activityReference.get().imageList.size() > 0) {
                     activityReference.get().zoomView.setOnClickListener(view -> activityReference.get().showCarouselView());
-                    activityReference.get().showIndicator(activityReference.get().appLanguage);
+                    activityReference.get().showIndicator(language);
                 }
 
                 String description1 = museumAboutTableEnglish.getShort_description();
@@ -2723,7 +2733,7 @@ public class DetailsActivity extends AppCompatActivity implements IPullZoom, OnM
                 String description2 = museumAboutTableArabic.getLong_description();
                 if (activityReference.get().imageList.size() > 0) {
                     activityReference.get().zoomView.setOnClickListener(view -> activityReference.get().showCarouselView());
-                    activityReference.get().showIndicator(activityReference.get().appLanguage);
+                    activityReference.get().showIndicator(language);
                 }
 
                 if (isLaunchEvent) {

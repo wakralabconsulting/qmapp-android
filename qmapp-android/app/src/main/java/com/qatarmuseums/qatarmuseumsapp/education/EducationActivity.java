@@ -1,5 +1,6 @@
 package com.qatarmuseums.qatarmuseumsapp.education;
 
+import android.content.Context;
 import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.content.res.Configuration;
@@ -11,12 +12,15 @@ import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.Button;
+import android.widget.LinearLayout;
+import android.widget.TextView;
 
 import com.pierfrancescosoffritti.androidyoutubeplayer.player.YouTubePlayer;
 import com.pierfrancescosoffritti.androidyoutubeplayer.player.YouTubePlayerView;
 import com.pierfrancescosoffritti.androidyoutubeplayer.player.listeners.AbstractYouTubePlayerListener;
 import com.pierfrancescosoffritti.androidyoutubeplayer.player.listeners.YouTubePlayerFullScreenListener;
 import com.pierfrancescosoffritti.androidyoutubeplayer.player.listeners.YouTubePlayerInitListener;
+import com.qatarmuseums.qatarmuseumsapp.LocaleManager;
 import com.qatarmuseums.qatarmuseumsapp.R;
 import com.qatarmuseums.qatarmuseumsapp.utils.FullScreenHelper;
 
@@ -28,6 +32,13 @@ public class EducationActivity extends AppCompatActivity {
     private View backButton;
     Button discoverButton;
     private Animation zoomOutAnimation;
+    private TextView longDescription;
+    private LinearLayout youTubePlayerLayout;
+
+    @Override
+    protected void attachBaseContext(Context base) {
+        super.attachBaseContext(LocaleManager.setLocale(base));
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -35,53 +46,44 @@ public class EducationActivity extends AppCompatActivity {
         setContentView(R.layout.activity_education);
         appBar = findViewById(R.id.app_bar);
         backButton = findViewById(R.id.toolbar_back);
+        longDescription = findViewById(R.id.long_description);
         discoverButton = (Button) findViewById(R.id.discover_btn);
-        youTubePlayerView = findViewById(R.id.youtube_player_view);
-        initYouTubePlayerView();
-        backButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                onBackPressed();
-            }
-        });
-        discoverButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                //Discover button action
-                Intent intent = new Intent(EducationActivity.this, EducationCalendarActivity.class);
-                startActivity(intent);
-            }
+        longDescription.setText(getString(R.string.education_long_description));
+        backButton.setOnClickListener(v -> onBackPressed());
+        discoverButton.setOnClickListener(v -> {
+            //Discover button action
+            Intent intent = new Intent(EducationActivity.this, EducationCalendarActivity.class);
+            startActivity(intent);
         });
         zoomOutAnimation = AnimationUtils.loadAnimation(getApplicationContext(),
                 R.anim.zoom_out_more);
 
-        backButton.setOnTouchListener(new View.OnTouchListener() {
-            @Override
-            public boolean onTouch(View v, MotionEvent event) {
-                switch (event.getAction()) {
-                    case MotionEvent.ACTION_DOWN:
-                        backButton.startAnimation(zoomOutAnimation);
-                        break;
-                }
-                return false;
+        backButton.setOnTouchListener((v, event) -> {
+            switch (event.getAction()) {
+                case MotionEvent.ACTION_DOWN:
+                    backButton.startAnimation(zoomOutAnimation);
+                    break;
             }
+            return false;
         });
+        youTubePlayerLayout = findViewById(R.id.youtube_player_layout);
+        initYouTubePlayerView();
+
     }
 
     public void initYouTubePlayerView() {
+        youTubePlayerView = new YouTubePlayerView(this);
+        youTubePlayerLayout.addView(youTubePlayerView);
         getLifecycle().addObserver(youTubePlayerView);
         youTubePlayerView.initialize(
-                new YouTubePlayerInitListener() {
-                    @Override
-                    public void onInitSuccess(@NonNull final YouTubePlayer initializedYouTubePlayer) {
-                        initializedYouTubePlayer.addListener(new AbstractYouTubePlayerListener() {
-                            @Override
-                            public void onReady() {
-                                initializedYouTubePlayer.cueVideo(videoId, 0);
-                            }
-                        });
+                initializedYouTubePlayer -> {
+                    initializedYouTubePlayer.addListener(new AbstractYouTubePlayerListener() {
+                        @Override
+                        public void onReady() {
+                            initializedYouTubePlayer.cueVideo(videoId, 0);
+                        }
+                    });
 //                        addFullScreenListenerToPlayer(initializedYouTubePlayer);
-                    }
                 }, true);
     }
 
@@ -113,5 +115,11 @@ public class EducationActivity extends AppCompatActivity {
                 fullScreenHelper.exitFullScreen();
             }
         });
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        youTubePlayerView.release();
     }
 }

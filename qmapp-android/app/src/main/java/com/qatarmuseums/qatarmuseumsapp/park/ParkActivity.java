@@ -1,11 +1,10 @@
 package com.qatarmuseums.qatarmuseumsapp.park;
 
-import android.content.SharedPreferences;
+import android.content.Context;
 import android.os.AsyncTask;
-import android.preference.PreferenceManager;
+import android.os.Bundle;
 import android.support.design.widget.AppBarLayout;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -20,6 +19,7 @@ import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 
+import com.qatarmuseums.qatarmuseumsapp.LocaleManager;
 import com.qatarmuseums.qatarmuseumsapp.QMDatabase;
 import com.qatarmuseums.qatarmuseumsapp.R;
 import com.qatarmuseums.qatarmuseumsapp.apicall.APIClient;
@@ -30,7 +30,6 @@ import com.qatarmuseums.qatarmuseumsapp.utils.PixelUtil;
 import com.qatarmuseums.qatarmuseumsapp.utils.PullToZoomCoordinatorLayout;
 import com.qatarmuseums.qatarmuseumsapp.utils.Util;
 
-import java.io.IOException;
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.List;
@@ -47,7 +46,6 @@ public class ParkActivity extends AppCompatActivity implements IPullZoom {
     private ImageView headerImageView, favIcon, shareIcon, toolbarClose;
     private Toolbar toolbar;
     private Animation zoomOutAnimation;
-    SharedPreferences qmPreferences;
     ProgressBar progressBar;
     RelativeLayout noResultFoundLayout;
     LinearLayout mainLayout, retryLayout;
@@ -61,8 +59,13 @@ public class ParkActivity extends AppCompatActivity implements IPullZoom {
     private AppBarLayout appBarLayout;
     private int headerOffSetSize;
     Button retryButton;
-    private int appLanguage;
+    private String appLanguage;
     private static final String MAP_VIEW_BUNDLE_KEY = "MapViewBundleKey";
+
+    @Override
+    protected void attachBaseContext(Context base) {
+        super.attachBaseContext(LocaleManager.setLocale(base));
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -89,14 +92,13 @@ public class ParkActivity extends AppCompatActivity implements IPullZoom {
         recyclerView.setItemAnimator(new DefaultItemAnimator());
         recyclerView.setAdapter(mAdapter);
         recyclerView.setNestedScrollingEnabled(false);
-        qmPreferences = PreferenceManager.getDefaultSharedPreferences(this);
-        appLanguage = qmPreferences.getInt("AppLanguage", 1);
+        appLanguage = LocaleManager.getLanguage(this);
         if (utilObject.isNetworkAvailable(this)) {
             // fetch data from api
-            getParkDetailsFromAPI(appLanguage);
+            getParkDetailsFromAPI();
         } else {
             // fetch data from database
-            getParkDetailsFromDataBase(appLanguage);
+            getParkDetailsFromDataBase();
         }
         toolbarClose.setOnClickListener(v -> onBackPressed());
 
@@ -109,7 +111,7 @@ public class ParkActivity extends AppCompatActivity implements IPullZoom {
         zoomOutAnimation = AnimationUtils.loadAnimation(getApplicationContext(),
                 R.anim.zoom_out_more);
         retryButton.setOnClickListener(v -> {
-            getParkDetailsFromAPI(appLanguage);
+            getParkDetailsFromAPI();
             progressBar.setVisibility(View.VISIBLE);
             retryLayout.setVisibility(View.GONE);
         });
@@ -163,17 +165,11 @@ public class ParkActivity extends AppCompatActivity implements IPullZoom {
         });
     }
 
-    public void getParkDetailsFromAPI(int lan) {
+    public void getParkDetailsFromAPI() {
         progressBar.setVisibility(View.VISIBLE);
-        final String language;
-        if (lan == 1) {
-            language = "en";
-        } else {
-            language = "ar";
-        }
         APIInterface apiService =
                 APIClient.getClient().create(APIInterface.class);
-        Call<ArrayList<ParkList>> call = apiService.getParkDetails(language);
+        Call<ArrayList<ParkList>> call = apiService.getParkDetails(appLanguage);
         call.enqueue(new Callback<ArrayList<ParkList>>() {
             @Override
             public void onResponse(Call<ArrayList<ParkList>> call, Response<ArrayList<ParkList>> response) {
@@ -190,7 +186,7 @@ public class ParkActivity extends AppCompatActivity implements IPullZoom {
                                     .into(headerImageView);
                         }
                         mAdapter.notifyDataSetChanged();
-                        new RowCount(ParkActivity.this, language).execute();
+                        new RowCount(ParkActivity.this, appLanguage).execute();
                     } else {
                         mainLayout.setVisibility(View.GONE);
                         noResultFoundLayout.setVisibility(View.VISIBLE);
@@ -211,12 +207,12 @@ public class ParkActivity extends AppCompatActivity implements IPullZoom {
         });
     }
 
-    public void getParkDetailsFromDataBase(int language) {
+    public void getParkDetailsFromDataBase() {
         progressBar.setVisibility(View.VISIBLE);
-        if (language == 1)
-            new RetriveEnglishTableData(ParkActivity.this, language).execute();
+        if (appLanguage.equals(LocaleManager.LANGUAGE_ENGLISH))
+            new RetriveEnglishTableData(ParkActivity.this).execute();
         else
-            new RetriveArabicTableData(ParkActivity.this, language).execute();
+            new RetriveArabicTableData(ParkActivity.this).execute();
 
     }
 
@@ -438,11 +434,9 @@ public class ParkActivity extends AppCompatActivity implements IPullZoom {
 
     public static class RetriveEnglishTableData extends AsyncTask<Void, Void, List<ParkTableEnglish>> {
         private WeakReference<ParkActivity> activityReference;
-        int language;
 
-        RetriveEnglishTableData(ParkActivity context, int appLanguage) {
+        RetriveEnglishTableData(ParkActivity context) {
             activityReference = new WeakReference<>(context);
-            language = appLanguage;
         }
 
         @Override
@@ -480,11 +474,9 @@ public class ParkActivity extends AppCompatActivity implements IPullZoom {
 
     public static class RetriveArabicTableData extends AsyncTask<Void, Void, List<ParkTableArabic>> {
         private WeakReference<ParkActivity> activityReference;
-        int language;
 
-        RetriveArabicTableData(ParkActivity context, int appLanguage) {
+        RetriveArabicTableData(ParkActivity context) {
             activityReference = new WeakReference<>(context);
-            language = appLanguage;
         }
 
         @Override

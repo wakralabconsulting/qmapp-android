@@ -1,6 +1,7 @@
 package com.qatarmuseums.qatarmuseumsapp.detailspage;
 
 import android.annotation.SuppressLint;
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.net.Uri;
@@ -36,6 +37,7 @@ import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MapStyleOptions;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.qatarmuseums.qatarmuseumsapp.LocaleManager;
 import com.qatarmuseums.qatarmuseumsapp.QMDatabase;
 import com.qatarmuseums.qatarmuseumsapp.R;
 import com.qatarmuseums.qatarmuseumsapp.apicall.APIClient;
@@ -104,6 +106,12 @@ public class DiningActivity extends AppCompatActivity implements IPullZoom, OnMa
     private ArrayList ads;
     private GlideLoaderForMuseum glideLoader;
     private IndicatorConfiguration configuration;
+    private String appLanguage;
+
+    @Override
+    protected void attachBaseContext(Context base) {
+        super.attachBaseContext(LocaleManager.setLocale(base));
+    }
 
     @SuppressLint("ClickableViewAccessibility")
     @Override
@@ -124,7 +132,11 @@ public class DiningActivity extends AppCompatActivity implements IPullZoom, OnMa
         retryLayout = findViewById(R.id.retry_layout);
         retryButton = findViewById(R.id.retry_btn);
         qmPreferences = PreferenceManager.getDefaultSharedPreferences(this);
-        language = qmPreferences.getInt("AppLanguage", 1);
+        appLanguage = LocaleManager.getLanguage(this);
+        if (appLanguage.equals(LocaleManager.LANGUAGE_ENGLISH))
+            language = 1;
+        else
+            language = 2;
         qmDatabase = QMDatabase.getInstance(DiningActivity.this);
         setSupportActionBar(toolbar);
         toolbarClose = (ImageView) findViewById(R.id.toolbar_close);
@@ -403,7 +415,7 @@ public class DiningActivity extends AppCompatActivity implements IPullZoom, OnMa
     public void showIndicator(int language) {
         circleIndicator.setVisibility(View.VISIBLE);
         ads = new ArrayList<>();
-        for (int i = 0; i < 3; i++) {
+        for (int i = 0; i < (imageList.size() > 3 ? 3 : imageList.size()); i++) {
             ads.add(new Page("", imageList.get(i),
                     null));
         }

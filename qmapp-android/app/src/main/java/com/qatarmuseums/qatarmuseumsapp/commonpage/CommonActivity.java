@@ -1,5 +1,6 @@
 package com.qatarmuseums.qatarmuseumsapp.commonpage;
 
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.AsyncTask;
@@ -22,6 +23,7 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.qatarmuseums.qatarmuseumsapp.Convertor;
+import com.qatarmuseums.qatarmuseumsapp.LocaleManager;
 import com.qatarmuseums.qatarmuseumsapp.QMDatabase;
 import com.qatarmuseums.qatarmuseumsapp.R;
 import com.qatarmuseums.qatarmuseumsapp.apicall.APIClient;
@@ -88,7 +90,7 @@ public class CommonActivity extends AppCompatActivity {
     int publicArtsTableRowCount;
     int heritageTableRowCount, museumCollectionListRowCount;
     int diningTableRowCount;
-    int appLanguage;
+    String appLanguage;
     String pageName = null;
     String id;
     private APIInterface apiService;
@@ -97,6 +99,11 @@ public class CommonActivity extends AppCompatActivity {
     Button retryButton;
     private Integer travelTableRowCount;
     private Convertor convertor;
+
+    @Override
+    protected void attachBaseContext(Context base) {
+        super.attachBaseContext(LocaleManager.setLocale(base));
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -114,7 +121,7 @@ public class CommonActivity extends AppCompatActivity {
         retryLayout = findViewById(R.id.retry_layout);
         retryButton = findViewById(R.id.retry_btn);
         qmPreferences = PreferenceManager.getDefaultSharedPreferences(this);
-        appLanguage = qmPreferences.getInt("AppLanguage", 1);
+        appLanguage = LocaleManager.getLanguage(this);
         toolbarTitle = intent.getStringExtra(getString(R.string.toolbar_title_key));
         id = intent.getStringExtra("ID");
         toolbar_title.setText(toolbarTitle);
@@ -193,10 +200,10 @@ public class CommonActivity extends AppCompatActivity {
     }
 
     private void getTravelDataFromDataBase() {
-        if (appLanguage == 1) {
-            new RetriveEnglishTravelData(CommonActivity.this, appLanguage).execute();
+        if (appLanguage.equals(LocaleManager.LANGUAGE_ENGLISH)) {
+            new RetriveEnglishTravelData(CommonActivity.this).execute();
         } else {
-            new RetriveArabicTravelData(CommonActivity.this, appLanguage).execute();
+            new RetriveArabicTravelData(CommonActivity.this).execute();
         }
     }
 
@@ -232,7 +239,7 @@ public class CommonActivity extends AppCompatActivity {
             if (util.isNetworkAvailable(CommonActivity.this))
                 getTourListFromAPI();
             else
-                new RetriveEnglishTourData(CommonActivity.this, appLanguage, 1).execute();
+                new RetriveEnglishTourData(CommonActivity.this, 1).execute();
         } else if (toolbarTitle.equals(getString(R.string.museum_travel))) {
             if (util.isNetworkAvailable(CommonActivity.this))
                 getTravelDataFromAPI();
@@ -242,21 +249,15 @@ public class CommonActivity extends AppCompatActivity {
             if (util.isNetworkAvailable(CommonActivity.this))
                 getSpecialEventFromAPI();
             else
-                new RetriveEnglishTourData(CommonActivity.this, appLanguage, 0).execute();
+                new RetriveEnglishTourData(CommonActivity.this, 0).execute();
 
         }
     }
 
     private void getTourListFromAPI() {
         progressBar.setVisibility(View.VISIBLE);
-        final String language;
-        if (appLanguage == 1) {
-            language = "en";
-        } else {
-            language = "ar";
-        }
         APIInterface apiService = APIClient.getClient().create(APIInterface.class);
-        Call<ArrayList<CommonModel>> call = apiService.getTourList(language);
+        Call<ArrayList<CommonModel>> call = apiService.getTourList(appLanguage);
         call.enqueue(new Callback<ArrayList<CommonModel>>() {
             @Override
             public void onResponse(Call<ArrayList<CommonModel>> call, Response<ArrayList<CommonModel>> response) {
@@ -266,7 +267,7 @@ public class CommonActivity extends AppCompatActivity {
                         models.addAll(response.body());
                         removeHtmlTags(models);
                         mAdapter.notifyDataSetChanged();
-                        new TourRowCount(CommonActivity.this, language, 1).execute();
+                        new TourRowCount(CommonActivity.this, appLanguage, 1).execute();
                     } else {
                         recyclerView.setVisibility(View.GONE);
                         noResultFoundLayout.setVisibility(View.VISIBLE);
@@ -289,14 +290,8 @@ public class CommonActivity extends AppCompatActivity {
 
     private void getSpecialEventFromAPI() {
         progressBar.setVisibility(View.VISIBLE);
-        final String language;
-        if (appLanguage == 1) {
-            language = "en";
-        } else {
-            language = "ar";
-        }
         APIInterface apiService = APIClient.getClient().create(APIInterface.class);
-        Call<ArrayList<CommonModel>> call = apiService.getSpecialEvents(language);
+        Call<ArrayList<CommonModel>> call = apiService.getSpecialEvents(appLanguage);
         call.enqueue(new Callback<ArrayList<CommonModel>>() {
             @Override
             public void onResponse(Call<ArrayList<CommonModel>> call, Response<ArrayList<CommonModel>> response) {
@@ -306,7 +301,7 @@ public class CommonActivity extends AppCompatActivity {
                         models.addAll(response.body());
                         removeHtmlTags(models);
                         mAdapter.notifyDataSetChanged();
-                        new TourRowCount(CommonActivity.this, language, 0).execute();
+                        new TourRowCount(CommonActivity.this, appLanguage, 0).execute();
                     } else {
                         recyclerView.setVisibility(View.GONE);
                         noResultFoundLayout.setVisibility(View.VISIBLE);
@@ -329,14 +324,8 @@ public class CommonActivity extends AppCompatActivity {
 
     private void getTravelDataFromAPI() {
         progressBar.setVisibility(View.VISIBLE);
-        final String language;
-        if (appLanguage == 1) {
-            language = "en";
-        } else {
-            language = "ar";
-        }
         APIInterface apiService = APIClient.getClient().create(APIInterface.class);
-        Call<ArrayList<CommonModel>> call = apiService.getTravelData(language);
+        Call<ArrayList<CommonModel>> call = apiService.getTravelData(appLanguage);
         call.enqueue(new Callback<ArrayList<CommonModel>>() {
             @Override
             public void onResponse(Call<ArrayList<CommonModel>> call, Response<ArrayList<CommonModel>> response) {
@@ -355,7 +344,7 @@ public class CommonActivity extends AppCompatActivity {
                                     true));
                         removeHtmlTags(models);
                         mAdapter.notifyDataSetChanged();
-                        new TravelRowCount(CommonActivity.this, language).execute();
+                        new TravelRowCount(CommonActivity.this, appLanguage).execute();
                     } else {
                         recyclerView.setVisibility(View.GONE);
                         noResultFoundLayout.setVisibility(View.VISIBLE);
@@ -379,47 +368,36 @@ public class CommonActivity extends AppCompatActivity {
     public void getCommonListDataFromDatabase(String apiParts) {
 
         if (apiParts.equals("Heritage_List_Page.json")) {
-            if (appLanguage == 1) {
-                new RetriveDataEnglish(CommonActivity.this, appLanguage).execute();
+            if (appLanguage.equals(LocaleManager.LANGUAGE_ENGLISH)) {
+                new RetriveDataEnglish(CommonActivity.this).execute();
             } else {
-                new RetriveDataArabic(CommonActivity.this, appLanguage).execute();
+                new RetriveDataArabic(CommonActivity.this).execute();
             }
 
         } else if (apiParts.equals("Public_Arts_List_Page.json")) {
-            if (appLanguage == 1) {
-                new RetriveEnglishPublicArtsData(CommonActivity.this, appLanguage).execute();
+            if (appLanguage.equals(LocaleManager.LANGUAGE_ENGLISH)) {
+                new RetriveEnglishPublicArtsData(CommonActivity.this).execute();
             } else {
-                new RetriveArabicPublicArtsData(CommonActivity.this, appLanguage).execute();
+                new RetriveArabicPublicArtsData(CommonActivity.this).execute();
             }
 
         } else if (apiParts.equals("Exhibition_List_Page.json")) {
-            if (appLanguage == 1) {
-                new RetriveExhibitionDataEnglish(CommonActivity.this, appLanguage).execute();
+            if (appLanguage.equals(LocaleManager.LANGUAGE_ENGLISH)) {
+                new RetriveExhibitionDataEnglish(CommonActivity.this).execute();
             } else {
-                new RetriveExhibitionDataArabic(CommonActivity.this, appLanguage).execute();
+                new RetriveExhibitionDataArabic(CommonActivity.this).execute();
             }
         } else if (apiParts.equals("getDiningList.json")) {
-            String language;
-            if (appLanguage == 1)
-                language = "en";
-            else
-                language = "ar";
-            new DiningRowCount(CommonActivity.this, language).execute();
+            new DiningRowCount(CommonActivity.this, appLanguage).execute();
         }
     }
 
     private void getMuseumCollectionListFromAPI() {
         progressBar.setVisibility(View.VISIBLE);
-        final String language;
-        if (appLanguage == 1) {
-            language = "en";
-        } else {
-            language = "ar";
-        }
         APIInterface apiService =
                 APIClient.getClient().create(APIInterface.class);
 
-        Call<ArrayList<CommonModel>> call = apiService.getCollectionList(language, id);
+        Call<ArrayList<CommonModel>> call = apiService.getCollectionList(appLanguage, id);
         call.enqueue(new Callback<ArrayList<CommonModel>>() {
             @Override
             public void onResponse(Call<ArrayList<CommonModel>> call, Response<ArrayList<CommonModel>> response) {
@@ -429,7 +407,7 @@ public class CommonActivity extends AppCompatActivity {
                         models.addAll(response.body());
                         removeHtmlTags(models);
                         mAdapter.notifyDataSetChanged();
-                        new MuseumCollectionRowCount(CommonActivity.this, language).execute();
+                        new MuseumCollectionRowCount(CommonActivity.this, appLanguage).execute();
                     } else {
                         recyclerView.setVisibility(View.GONE);
                         noResultFoundLayout.setVisibility(View.VISIBLE);
@@ -461,22 +439,16 @@ public class CommonActivity extends AppCompatActivity {
 
     private void getCommonListAPIDataFromAPI(String name) {
         progressBar.setVisibility(View.VISIBLE);
-        final String language;
         pageName = name;
-        if (appLanguage == 1) {
-            language = "en";
-        } else {
-            language = "ar";
-        }
 
         if (pageName.contains("php"))  // For Temporary API
             apiService = APIClient.getTempClient().create(APIInterface.class);
         else
             apiService = APIClient.getClient().create(APIInterface.class);
         if (id != null)
-            call = apiService.getCommonpageListWithID(language, pageName, id);
+            call = apiService.getCommonpageListWithID(appLanguage, pageName, id);
         else
-            call = apiService.getCommonpageList(language, pageName);
+            call = apiService.getCommonpageList(appLanguage, pageName);
         call.enqueue(new Callback<ArrayList<CommonModel>>() {
             @Override
             public void onResponse(Call<ArrayList<CommonModel>> call, Response<ArrayList<CommonModel>> response) {
@@ -487,13 +459,13 @@ public class CommonActivity extends AppCompatActivity {
                         removeHtmlTags(models);
                         mAdapter.notifyDataSetChanged();
                         if (pageName.equals("Heritage_List_Page.json")) {
-                            new RowCount(CommonActivity.this, language).execute();
+                            new RowCount(CommonActivity.this, appLanguage).execute();
                         } else if (pageName.equals("Public_Arts_List_Page.json")) {
-                            new PublicArtsRowCount(CommonActivity.this, language).execute();
+                            new PublicArtsRowCount(CommonActivity.this, appLanguage).execute();
                         } else if (pageName.equals("Exhibition_List_Page.json")) {
-                            new ExhibitionRowCount(CommonActivity.this, language).execute();
+                            new ExhibitionRowCount(CommonActivity.this, appLanguage).execute();
                         } else if (pageName.equals("getDiningList.json")) {
-                            new DiningRowCount(CommonActivity.this, language).execute();
+                            new DiningRowCount(CommonActivity.this, appLanguage).execute();
                         }
                     } else {
                         recyclerView.setVisibility(View.GONE);
@@ -690,12 +662,10 @@ public class CommonActivity extends AppCompatActivity {
 
     public static class RetriveEnglishTourData extends AsyncTask<Void, Void, List<TourListTableEnglish>> {
         private WeakReference<CommonActivity> activityReference;
-        int language;
         int isTour;
 
-        RetriveEnglishTourData(CommonActivity context, int appLanguage, int isTour) {
+        RetriveEnglishTourData(CommonActivity context, int isTour) {
             activityReference = new WeakReference<>(context);
-            language = appLanguage;
             this.isTour = isTour;
         }
 
@@ -948,11 +918,9 @@ public class CommonActivity extends AppCompatActivity {
 
     public static class RetriveEnglishTravelData extends AsyncTask<Void, Void, List<TravelDetailsTableEnglish>> {
         private WeakReference<CommonActivity> activityReference;
-        int language;
 
-        RetriveEnglishTravelData(CommonActivity context, int appLanguage) {
+        RetriveEnglishTravelData(CommonActivity context) {
             activityReference = new WeakReference<>(context);
-            language = appLanguage;
         }
 
         @Override
@@ -993,11 +961,9 @@ public class CommonActivity extends AppCompatActivity {
 
     public static class RetriveArabicTravelData extends AsyncTask<Void, Void, List<TravelDetailsTableArabic>> {
         private WeakReference<CommonActivity> activityReference;
-        int language;
 
-        RetriveArabicTravelData(CommonActivity context, int appLanguage) {
+        RetriveArabicTravelData(CommonActivity context) {
             activityReference = new WeakReference<>(context);
-            language = appLanguage;
         }
 
         @Override
@@ -1068,16 +1034,16 @@ public class CommonActivity extends AppCompatActivity {
                     new CheckDiningDBRowExist(activityReference.get(), language).execute();
                 else {
                     if (museumID == null) {
-                        if (language.equals("en")) {
-                            new RetriveEnglishDiningData(activityReference.get(), 1).execute();
+                        if (language.equals(LocaleManager.LANGUAGE_ENGLISH)) {
+                            new RetriveEnglishDiningData(activityReference.get()).execute();
                         } else {
-                            new RetriveArabicDiningData(activityReference.get(), 2).execute();
+                            new RetriveArabicDiningData(activityReference.get()).execute();
                         }
                     } else {
-                        if (language.equals("en")) {
-                            new RetriveEnglishDiningData(activityReference.get(), 1, museumID).execute();
+                        if (language.equals(LocaleManager.LANGUAGE_ENGLISH)) {
+                            new RetriveEnglishDiningData(activityReference.get(), museumID).execute();
                         } else {
-                            new RetriveArabicDiningData(activityReference.get(), 2, museumID).execute();
+                            new RetriveArabicDiningData(activityReference.get(), museumID).execute();
                         }
                     }
                 }
@@ -1270,17 +1236,14 @@ public class CommonActivity extends AppCompatActivity {
 
     public static class RetriveEnglishDiningData extends AsyncTask<Void, Void, List<DiningTableEnglish>> {
         private WeakReference<CommonActivity> activityReference;
-        int language;
         String museumID;
 
-        RetriveEnglishDiningData(CommonActivity context, int appLanguage) {
+        RetriveEnglishDiningData(CommonActivity context) {
             activityReference = new WeakReference<>(context);
-            language = appLanguage;
         }
 
-        RetriveEnglishDiningData(CommonActivity context, int appLanguage, String museumId) {
+        RetriveEnglishDiningData(CommonActivity context, String museumId) {
             activityReference = new WeakReference<>(context);
-            language = appLanguage;
             museumID = museumId;
         }
 
@@ -1319,17 +1282,14 @@ public class CommonActivity extends AppCompatActivity {
 
     public static class RetriveArabicDiningData extends AsyncTask<Void, Void, List<DiningTableArabic>> {
         private WeakReference<CommonActivity> activityReference;
-        int language;
         String museumID;
 
-        RetriveArabicDiningData(CommonActivity context, int appLanguage) {
+        RetriveArabicDiningData(CommonActivity context) {
             activityReference = new WeakReference<>(context);
-            language = appLanguage;
         }
 
-        RetriveArabicDiningData(CommonActivity context, int appLanguage, String museumId) {
+        RetriveArabicDiningData(CommonActivity context, String museumId) {
             activityReference = new WeakReference<>(context);
-            language = appLanguage;
             museumID = museumId;
         }
 
@@ -1572,11 +1532,9 @@ public class CommonActivity extends AppCompatActivity {
 
     public static class RetriveEnglishPublicArtsData extends AsyncTask<Void, Void, List<PublicArtsTableEnglish>> {
         private WeakReference<CommonActivity> activityReference;
-        int language;
 
-        RetriveEnglishPublicArtsData(CommonActivity context, int appLanguage) {
+        RetriveEnglishPublicArtsData(CommonActivity context) {
             activityReference = new WeakReference<>(context);
-            language = appLanguage;
         }
 
         @Override
@@ -1615,11 +1573,9 @@ public class CommonActivity extends AppCompatActivity {
 
     public static class RetriveArabicPublicArtsData extends AsyncTask<Void, Void, List<PublicArtsTableArabic>> {
         private WeakReference<CommonActivity> activityReference;
-        int language;
 
-        RetriveArabicPublicArtsData(CommonActivity context, int appLanguage) {
+        RetriveArabicPublicArtsData(CommonActivity context) {
             activityReference = new WeakReference<>(context);
-            language = appLanguage;
         }
 
         @Override
@@ -1800,10 +1756,10 @@ public class CommonActivity extends AppCompatActivity {
 
     public static class UpdateHeritagePageTable extends AsyncTask<Void, Void, Void> {
         private WeakReference<CommonActivity> activityReference;
-        int language;
+        String language;
         int position;
 
-        UpdateHeritagePageTable(CommonActivity context, int apiLanguage, int p) {
+        UpdateHeritagePageTable(CommonActivity context, String apiLanguage, int p) {
             activityReference = new WeakReference<>(context);
             language = apiLanguage;
             position = p;
@@ -1811,7 +1767,7 @@ public class CommonActivity extends AppCompatActivity {
 
         @Override
         protected Void doInBackground(Void... voids) {
-            if (language == 1) {
+            if (language.equals(LocaleManager.LANGUAGE_ENGLISH)) {
                 // updateEnglishTable table with english name
                 activityReference.get().qmDatabase.getHeritageListTableDao().updateHeritageListEnglish(
                         activityReference.get().models.get(position).getName(),
@@ -1841,11 +1797,10 @@ public class CommonActivity extends AppCompatActivity {
 
     public static class RetriveDataEnglish extends AsyncTask<Void, Void, List<HeritageListTableEnglish>> {
         private WeakReference<CommonActivity> activityReference;
-        int language;
 
-        RetriveDataEnglish(CommonActivity context, int appLanguage) {
+
+        RetriveDataEnglish(CommonActivity context) {
             activityReference = new WeakReference<>(context);
-            language = appLanguage;
         }
 
         @Override
@@ -1885,11 +1840,9 @@ public class CommonActivity extends AppCompatActivity {
     public static class RetriveDataArabic extends AsyncTask<Void, Void, List<HeritageListTableArabic>> {
 
         private WeakReference<CommonActivity> activityReference;
-        int language;
 
-        RetriveDataArabic(CommonActivity context, int appLanguage) {
+        RetriveDataArabic(CommonActivity context) {
             activityReference = new WeakReference<>(context);
-            language = appLanguage;
         }
 
         @Override
@@ -2126,10 +2079,10 @@ public class CommonActivity extends AppCompatActivity {
 
     public static class UpdateExhibitionTable extends AsyncTask<Void, Void, Void> {
         private WeakReference<CommonActivity> activityReference;
-        int language;
+        String language;
         int position;
 
-        UpdateExhibitionTable(CommonActivity context, int apiLanguage, int p) {
+        UpdateExhibitionTable(CommonActivity context, String apiLanguage, int p) {
             activityReference = new WeakReference<>(context);
             language = apiLanguage;
             position = p;
@@ -2147,7 +2100,7 @@ public class CommonActivity extends AppCompatActivity {
 
         @Override
         protected Void doInBackground(Void... voids) {
-            if (language == 1) {
+            if (language.equals(LocaleManager.LANGUAGE_ENGLISH)) {
                 // updateEnglishTable table with english name
                 activityReference.get().qmDatabase.getExhibitionTableDao().updateExhibitionListEnglish(
                         activityReference.get().models.get(position).getStartDate(),
@@ -2173,17 +2126,15 @@ public class CommonActivity extends AppCompatActivity {
 
     public static class RetriveExhibitionDataEnglish extends AsyncTask<Void, Void, List<ExhibitionListTableEnglish>> {
         private WeakReference<CommonActivity> activityReference;
-        int language;
+
         String museumID;
 
-        RetriveExhibitionDataEnglish(CommonActivity context, int appLanguage) {
+        RetriveExhibitionDataEnglish(CommonActivity context) {
             activityReference = new WeakReference<>(context);
-            language = appLanguage;
         }
 
-        RetriveExhibitionDataEnglish(CommonActivity context, int appLanguage, String museumId) {
+        RetriveExhibitionDataEnglish(CommonActivity context, String museumId) {
             activityReference = new WeakReference<>(context);
-            language = appLanguage;
             museumID = museumId;
         }
 
@@ -2227,17 +2178,14 @@ public class CommonActivity extends AppCompatActivity {
 
     public static class RetriveExhibitionDataArabic extends AsyncTask<Void, Void, List<ExhibitionListTableArabic>> {
         private WeakReference<CommonActivity> activityReference;
-        int language;
         String museumID;
 
-        RetriveExhibitionDataArabic(CommonActivity context, int appLanguage) {
+        RetriveExhibitionDataArabic(CommonActivity context) {
             activityReference = new WeakReference<>(context);
-            language = appLanguage;
         }
 
-        RetriveExhibitionDataArabic(CommonActivity context, int appLanguage, String museumId) {
+        RetriveExhibitionDataArabic(CommonActivity context, String museumId) {
             activityReference = new WeakReference<>(context);
-            language = appLanguage;
             museumID = museumId;
         }
 
@@ -2280,10 +2228,10 @@ public class CommonActivity extends AppCompatActivity {
     }
 
     public void getMuseumCollectionListFromDatabase() {
-        if (appLanguage == 1) {
-            new RetriveMuseumCollectionDataEnglish(CommonActivity.this, appLanguage, id).execute();
+        if (appLanguage.equals(LocaleManager.LANGUAGE_ENGLISH)) {
+            new RetriveMuseumCollectionDataEnglish(CommonActivity.this, id).execute();
         } else {
-            new RetriveMuseumCollectionDataArabic(CommonActivity.this, appLanguage, id).execute();
+            new RetriveMuseumCollectionDataArabic(CommonActivity.this, id).execute();
         }
     }
 
@@ -2431,10 +2379,10 @@ public class CommonActivity extends AppCompatActivity {
 
     public static class UpdateMuseumCollectionListTable extends AsyncTask<Void, Void, Void> {
         private WeakReference<CommonActivity> activityReference;
-        int language;
+        String language;
         int position;
 
-        UpdateMuseumCollectionListTable(CommonActivity context, int apiLanguage, int p) {
+        UpdateMuseumCollectionListTable(CommonActivity context, String apiLanguage, int p) {
             activityReference = new WeakReference<>(context);
             language = apiLanguage;
             position = p;
@@ -2442,7 +2390,7 @@ public class CommonActivity extends AppCompatActivity {
 
         @Override
         protected Void doInBackground(Void... voids) {
-            if (language == 1) {
+            if (language.equals(LocaleManager.LANGUAGE_ENGLISH)) {
                 // updateEnglishTable table with english name
                 activityReference.get().qmDatabase.getMuseumCollectionListDao().updateMuseumListTableEnglish(
                         activityReference.get().models.get(position).getImage(),
@@ -2470,12 +2418,10 @@ public class CommonActivity extends AppCompatActivity {
 
     public static class RetriveMuseumCollectionDataEnglish extends AsyncTask<Void, Void, List<MuseumCollectionListTableEnglish>> {
         private WeakReference<CommonActivity> activityReference;
-        int language;
         String museumReference;
 
-        RetriveMuseumCollectionDataEnglish(CommonActivity context, int appLanguage, String museumId) {
+        RetriveMuseumCollectionDataEnglish(CommonActivity context, String museumId) {
             activityReference = new WeakReference<>(context);
-            language = appLanguage;
             museumReference = museumId;
         }
 
@@ -2510,15 +2456,14 @@ public class CommonActivity extends AppCompatActivity {
         }
     }
 
-    public static class RetriveMuseumCollectionDataArabic extends AsyncTask<Void, Void, List<MuseumCollectionListTableArabic>> {
+    public static class RetriveMuseumCollectionDataArabic extends AsyncTask<Void, Void,
+            List<MuseumCollectionListTableArabic>> {
 
         private WeakReference<CommonActivity> activityReference;
-        int language;
         String museumReference;
 
-        RetriveMuseumCollectionDataArabic(CommonActivity context, int appLanguage, String museumId) {
+        RetriveMuseumCollectionDataArabic(CommonActivity context, String museumId) {
             activityReference = new WeakReference<>(context);
-            language = appLanguage;
             museumReference = museumId;
         }
 
