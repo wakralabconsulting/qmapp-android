@@ -35,10 +35,9 @@
                     android:id="@+id/header_img"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:background="@drawable/placeholder_header"
+                    android:src="@drawable/placeholder_header"
                     android:contentDescription="@string/app_name"
-                    android:scaleType="centerCrop"
-                    android:tint="@color/image_tint_white"
+                    android:tint="@color/semitransparent"
                     app:layout_collapseMode="parallax" />
 
                 <TextView
@@ -50,7 +49,7 @@
                     android:gravity="center"
                     android:paddingEnd="@dimen/padding_10"
                     android:paddingStart="@dimen/padding_10"
-                    android:textColor="@color/black"
+                    android:textColor="@color/white"
                     android:textSize="@dimen/font_size_30" />
             </android.support.design.widget.CollapsingToolbarLayout>
         </android.support.design.widget.AppBarLayout>
