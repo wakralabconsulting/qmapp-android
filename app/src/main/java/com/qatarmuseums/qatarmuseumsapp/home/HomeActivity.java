@@ -509,7 +509,6 @@ public class HomeActivity extends BaseActivity {
             if (!HomeActivity.this.isFinishing())
                 GlideApp.with(HomeActivity.this)
                         .load(bannerLists.get(0).getImage())
-                        .centerCrop()
                         .placeholder(R.drawable.placeholder_header)
                         .into(headerImageView);
             bannerText.setText(bannerLists.get(0).getName());
