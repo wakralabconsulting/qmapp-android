@@ -12,7 +12,6 @@ import android.widget.TextView;
 
 import com.qatarmuseums.qatarmuseumsapp.R;
 
-
 import java.util.List;
 
 public class HomeListAdapter extends RecyclerView.Adapter<HomeListAdapter.MyViewHolder> {
@@ -63,7 +62,6 @@ public class HomeListAdapter extends RecyclerView.Adapter<HomeListAdapter.MyView
         GlideApp.with(mContext)
                 .load(homeList.getImage())
                 .placeholder(R.drawable.placeholder)
-                .centerCrop()
                 .into(holder.imageView);
     }
 

@@ -11,6 +11,8 @@ import android.graphics.drawable.Drawable;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Build;
+import android.text.Spannable;
+import android.text.style.URLSpan;
 import android.util.DisplayMetrics;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -230,5 +232,17 @@ public class Util {
         mOutputDateString = mOutputDateFormat.format(mParsedDate);
         return mOutputDateString;
 
+    }
+
+    public void removeUnderlines(Spannable p_Text) {
+        URLSpan[] spans = p_Text.getSpans(0, p_Text.length(), URLSpan.class);
+
+        for (URLSpan span : spans) {
+            int start = p_Text.getSpanStart(span);
+            int end = p_Text.getSpanEnd(span);
+            p_Text.removeSpan(span);
+            span = new URLSpanNoUnderline(span.getURL());
+            p_Text.setSpan(span, start, end, 0);
+        }
     }
 }

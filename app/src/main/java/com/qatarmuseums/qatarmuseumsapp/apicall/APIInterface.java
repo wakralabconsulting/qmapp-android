@@ -159,9 +159,9 @@ public interface APIInterface {
     Call<ArrayList<TourDetailsModel>> getTourDetails(@Path("language") String language,
                                                      @Query("event_id") String evetId);
 
-    @GET("{language}/mobile_api/list_event_user_registration.json")
+    @GET("{language}/mobile_api/user_registeration_event.json")
     Call<ArrayList<UserRegistrationModel>> getUserRegistrationDetails(@Path("language") String language,
-                                                                      @Query("user_id") String userId);
+                                                                      @Query("uid") String userId);
 
     @DELETE("en/mobile_api/entity_registration/{registration_id}.json")
     Call<String> deleteEventRegistration(@Path("registration_id") String registrationId,

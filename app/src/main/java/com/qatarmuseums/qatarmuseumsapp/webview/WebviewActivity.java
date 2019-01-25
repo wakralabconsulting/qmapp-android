@@ -3,7 +3,6 @@ package com.qatarmuseums.qatarmuseumsapp.webview;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.Typeface;
-import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
@@ -79,14 +78,7 @@ public class WebviewActivity extends AppCompatActivity {
 
             @Override
             public boolean shouldOverrideUrlLoading(WebView view, WebResourceRequest request) {
-                if (Uri.parse(url).getHost().equals("www.qm.org.qa") ||
-                        Uri.parse(url).getHost().equals("inq-online.com") ||
-                        Uri.parse(url).getHost().equals("www.qatarairways.com")) {
-                    return false;
-                } else {
-                    webView.loadUrl(url);
-                    return true;
-                }
+                return false;
             }
 
             @Override

@@ -45,7 +45,6 @@ import com.qatarmuseums.qatarmuseumsapp.home.HomePageBannerTableEnglish;
 import com.qatarmuseums.qatarmuseumsapp.home.HomePageTableArabic;
 import com.qatarmuseums.qatarmuseumsapp.home.HomePageTableDao;
 import com.qatarmuseums.qatarmuseumsapp.home.HomePageTableEnglish;
-import com.qatarmuseums.qatarmuseumsapp.home.UserRegistrationModel;
 import com.qatarmuseums.qatarmuseumsapp.museum.MuseumCollectionDetailTableArabic;
 import com.qatarmuseums.qatarmuseumsapp.museum.MuseumCollectionDetailTableDao;
 import com.qatarmuseums.qatarmuseumsapp.museum.MuseumCollectionDetailTableEnglish;
@@ -83,7 +82,7 @@ import com.qatarmuseums.qatarmuseumsapp.tourguidestartpage.TourGuideStartPageEng
         HomePageBannerTableEnglish.class, HomePageBannerTableArabic.class, TravelDetailsTableEnglish.class,
         TravelDetailsTableArabic.class, TourListTableEnglish.class, TourListTableArabic.class,
         TourDetailsTableEnglish.class, TourDetailsTableArabic.class, UserRegistrationDetailsTable.class},
-        version = 1, exportSchema = false)
+        version = 2, exportSchema = false)
 @TypeConverters({Convertor.class})
 
 
@@ -138,7 +137,9 @@ public abstract class QMDatabase extends RoomDatabase {
 
     private static QMDatabase buildDatabaseInstance(Context context) {
         return Room.databaseBuilder(context.getApplicationContext(), QMDatabase.class,
-                "QMDatabase").build();
+                "QMDatabase")
+                .fallbackToDestructiveMigration()
+                .build();
     }
 
     public static void cleanUp() {
