@@ -1,22 +1,33 @@
 package com.qatarmuseums.qatarmuseumsapp.detailspage;
 
+import android.Manifest;
 import android.annotation.SuppressLint;
 import android.app.Dialog;
+import android.content.ContentResolver;
+import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
+import android.database.Cursor;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
+import android.provider.CalendarContract;
+import android.provider.Settings;
+import android.support.constraint.ConstraintLayout;
 import android.support.design.widget.AppBarLayout;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.FragmentTransaction;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.SwitchCompat;
 import android.support.v7.widget.Toolbar;
 import android.text.Html;
+import android.text.Spannable;
 import android.text.method.LinkMovementMethod;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.Window;
@@ -26,6 +37,7 @@ import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.NumberPicker;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
@@ -75,7 +87,11 @@ import com.qatarmuseums.qatarmuseumsapp.webview.WebviewActivity;
 import org.json.JSONStringer;
 
 import java.lang.ref.WeakReference;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -98,7 +114,8 @@ import retrofit2.converter.gson.GsonConverterFactory;
 import static cn.lightsky.infiniteindicator.IndicatorConfiguration.LEFT;
 import static cn.lightsky.infiniteindicator.IndicatorConfiguration.RIGHT;
 
-public class DetailsActivity extends AppCompatActivity implements IPullZoom, OnMapReadyCallback {
+public class DetailsActivity extends AppCompatActivity implements IPullZoom, OnMapReadyCallback,
+        NumberPicker.OnValueChangeListener {
 
     ImageView headerImageView, toolbarClose, favIcon, shareIcon;
     String headerImage;
@@ -106,7 +123,7 @@ public class DetailsActivity extends AppCompatActivity implements IPullZoom, OnM
     boolean isFavourite;
     Toolbar toolbar;
     TextView title, subTitle, shortDescription, longDescription, secondTitle, secondTitleDescription,
-            timingTitle, timingDetails, locationDetails, contactDetails;
+            timingTitle, timingDetails, locationDetails, contactPhone, contactEmail;
     private Util util;
     private Animation zoomOutAnimation;
     private PullToZoomCoordinatorLayout coordinatorLayout;
@@ -163,10 +180,9 @@ public class DetailsActivity extends AppCompatActivity implements IPullZoom, OnM
     private IndicatorConfiguration configuration;
     private LinearLayout eventDateLayout;
     private TextView eventDateTxt;
-    private TextView downloadText, speakerName, speakerInfo, locationTitle;
+    private TextView downloadText, speakerName, speakerInfo, locationTitle, registerUregisterCount;
     private View downloadButton;
-    private LinearLayout interestLayout;
-    private SwitchCompat interestToggle;
+    private ConstraintLayout interestLayout;
     private Boolean interested = false;
     private LinearLayout locationLayout;
     private LinearLayout offerLayout;
@@ -175,7 +191,7 @@ public class DetailsActivity extends AppCompatActivity implements IPullZoom, OnM
     private ImageView speakerImage;
     private float curveRadius = 30F;
     private String description;
-    private String contactInfo;
+    private String contactNumber, contactMail;
     private String promotionCode;
     private TextView offerCode;
     private String claimOfferURL;
@@ -199,6 +215,18 @@ public class DetailsActivity extends AppCompatActivity implements IPullZoom, OnM
     private boolean isTimeSlotAvailable;
     private UserRegistrationDetailsTable userRegistrationDetailsTable;
     private RelativeLayout registrationLoader;
+    private Button registerButton;
+    private ContentResolver contentResolver;
+    private ContentValues contentValues;
+    private Dialog dialog;
+    private LayoutInflater layoutInflater;
+    private ImageView closeBtn;
+    private Button dialogActionButton;
+    private TextView dialogTitle, dialogContent;
+    int MY_PERMISSIONS_REQUEST_CALENDAR = 100;
+    int REQUEST_PERMISSION_SETTING = 110;
+    String seatsRemaining = "0";
+    private int seatsCount;
 
     @Override
     protected void attachBaseContext(Context base) {
@@ -230,7 +258,8 @@ public class DetailsActivity extends AppCompatActivity implements IPullZoom, OnM
         description = intent.getStringExtra("LONG_DESC");
         promotionCode = intent.getStringExtra("PROMOTION_CODE");
         claimOfferURL = intent.getStringExtra("CLAIM_OFFER");
-        contactInfo = intent.getStringExtra("CONTACT");
+        contactNumber = intent.getStringExtra("CONTACT_PHONE");
+        contactMail = intent.getStringExtra("CONTACT_MAIL");
         id = intent.getStringExtra("ID");
         isFavourite = intent.getBooleanExtra("IS_FAVOURITE", false);
 
@@ -241,7 +270,8 @@ public class DetailsActivity extends AppCompatActivity implements IPullZoom, OnM
                 comingFrom.equals(getString(R.string.museum_discussion))) {
             description = intent.getStringExtra("DESCRIPTION");
             eventDate = intent.getStringExtra("DATE");
-            contactInfo = intent.getStringExtra("CONTACT");
+            contactNumber = intent.getStringExtra("CONTACT_PHONE");
+            contactMail = intent.getStringExtra("CONTACT_MAIL");
             register = intent.getStringExtra("REGISTER");
             registered = intent.getStringExtra("REGISTERED");
             latitude = intent.getStringExtra("LATITUDE");
@@ -257,6 +287,8 @@ public class DetailsActivity extends AppCompatActivity implements IPullZoom, OnM
                     currentEventTimeStampDiff = tourDetailsModel.getEventTimeStampDiff();
                     currentEventStartTimeStamp = tourDetailsModel.getStartTimeStamp();
                     currentEventEndTimeStamp = tourDetailsModel.getEndTimeStamp();
+                    if (tourDetailsModel.getSeatsRemaining() != null)
+                        seatsRemaining = tourDetailsModel.getSeatsRemaining();
                 }
             }
         }
@@ -286,7 +318,8 @@ public class DetailsActivity extends AppCompatActivity implements IPullZoom, OnM
         }
         mapDetails.onCreate(mapViewBundle);
         mapDetails.getMapAsync(this);
-        contactDetails = (TextView) findViewById(R.id.contact_info);
+        contactPhone = (TextView) findViewById(R.id.contact_phone);
+        contactEmail = (TextView) findViewById(R.id.contact_mail);
         favIcon = (ImageView) findViewById(R.id.favourite);
         shareIcon = (ImageView) findViewById(R.id.share);
         secondTitleLayout = (LinearLayout) findViewById(R.id.second_title_layout);
@@ -305,7 +338,8 @@ public class DetailsActivity extends AppCompatActivity implements IPullZoom, OnM
         downloadText = findViewById(R.id.download_text);
         downloadButton = findViewById(R.id.download_button);
         interestLayout = findViewById(R.id.interest_layout);
-        interestToggle = findViewById(R.id.interest_toggle_button);
+        registerUregisterCount = findViewById(R.id.register_unregister_label);
+        registerButton = findViewById(R.id.register_button);
         locationLayout = findViewById(R.id.location_layout);
         offerLayout = findViewById(R.id.offer_layout);
         offerCode = findViewById(R.id.offer_code);
@@ -481,51 +515,64 @@ public class DetailsActivity extends AppCompatActivity implements IPullZoom, OnM
         downloadText.setOnClickListener(v ->
 
                 downloadAction());
-
-        interestToggle.setOnTouchListener((v, event) -> {
-
-            if (util.isNetworkAvailable(DetailsActivity.this)) {
-                if (interestToggle.isChecked()) {
-                    if (registrationDetailsMap.size() > 0 && tourDetailsMap.size() > 0) {
-                        myVeryOwnIterator = tourDetailsMap.keySet().iterator();
-                        isTimeSlotAvailable = true;
-                        while (myVeryOwnIterator.hasNext()) {
-                            final String key = myVeryOwnIterator.next();
-                            if (registrationDetailsMap.get(key) != null) {
-                                if (tourDetailsMap.get(key).getEventTimeStampDiff().equals(currentEventTimeStampDiff)) {
-                                    isTimeSlotAvailable = false;
-                                } else if (!((tourDetailsMap.get(key).getStartTimeStamp() >= currentEventEndTimeStamp) ||
-                                        (tourDetailsMap.get(key).getEndTimeStamp() <= currentEventStartTimeStamp))) {
-                                    isTimeSlotAvailable = false;
-                                }
+        registerButton.setOnClickListener(v -> {
+            if (registerButton.getText().toString().equals(getResources().getString(R.string.interested))) {
+                if (registrationDetailsMap.size() > 0 && tourDetailsMap.size() > 0) {
+                    myVeryOwnIterator = tourDetailsMap.keySet().iterator();
+                    isTimeSlotAvailable = true;
+                    while (myVeryOwnIterator.hasNext()) {
+                        final String key = myVeryOwnIterator.next();
+                        if (registrationDetailsMap.get(key) != null) {
+                            if (tourDetailsMap.get(key).getEventTimeStampDiff().equals(currentEventTimeStampDiff))
+                                isTimeSlotAvailable = false;
+                            else if (!((tourDetailsMap.get(key).getStartTimeStamp() >= currentEventEndTimeStamp) ||
+                                    (tourDetailsMap.get(key).getEndTimeStamp() <= currentEventStartTimeStamp))) {
+                                isTimeSlotAvailable = false;
                             }
-                        }
-                        if (isTimeSlotAvailable) {
-                            entryJsonarray();
-                            if (registrationDetailsModel != null) {
-                                entityRegistration(token, registrationDetailsModel);
-                            }
-
-                        } else {
-                            util.showNormalDialog(DetailsActivity.this, R.string.time_slot_not_available);
-                        }
-                    } else {
-                        entryJsonarray();
-                        if (registrationDetailsModel != null) {
-                            entityRegistration(token, registrationDetailsModel);
                         }
                     }
-                } else {
-                    showDeclineDialog();
-                }
-            } else {
-                util.showToast(getResources().getString(R.string.check_network), getApplicationContext());
-            }
-            return false;
+                    if (isTimeSlotAvailable) {
+                        showNumberPicker();
+                    } else {
+                        util.showNormalDialog(DetailsActivity.this, R.string.time_slot_not_available);
+                    }
+                } else
+                    showNumberPicker();
+
+            } else
+                showDeclineDialog();
         });
     }
 
-    public void entryJsonarray() {
+    public void registerButtonAction(String registrationCount) {
+        if (util.isNetworkAvailable(DetailsActivity.this)) {
+            entryJsonarray(registrationCount);
+            if (registrationDetailsModel != null) {
+                entityRegistration(token, registrationDetailsModel);
+            }
+        } else {
+            util.showToast(getResources().getString(R.string.check_network), getApplicationContext());
+        }
+    }
+
+    @Override
+    public void onValueChange(NumberPicker numberPicker, int i, int i1) {
+        if (numberPicker.getValue() <= Integer.parseInt(seatsRemaining))
+            registerButtonAction(String.valueOf(numberPicker.getValue()));
+        else
+            showRegistrationWarningDialog(R.string.warning_selection_not_available);
+    }
+
+    public void showNumberPicker() {
+        if (eventDate.split("-").length > 2) {
+            NumberPickerDialog newFragment = new NumberPickerDialog();
+            newFragment.setValueChangeListener(this);
+            newFragment.show(getSupportFragmentManager(), "number picker");
+        } else
+            showRegistrationWarningDialog(R.string.warning_no_end_time);
+    }
+
+    public void entryJsonarray(String registrationCount) {
         ArrayList<Und> values = new ArrayList<>();
         Und attendanceValue = new Und("1");
         values.clear();
@@ -562,19 +609,18 @@ public class DetailsActivity extends AppCompatActivity implements IPullZoom, OnM
             Model membershipregmodel = new Model(rvalues);
             registrationDetailsModel =
                     new RegistrationDetailsModel("nmoq_event_registration", nid, "node",
-                            user_uid, "1", user_uid, "pending",
+                            user_uid, registrationCount, user_uid, "pending",
                             String.valueOf(TimeUnit.MILLISECONDS.toSeconds(System.currentTimeMillis())),
                             String.valueOf(TimeUnit.MILLISECONDS.toSeconds(System.currentTimeMillis())),
                             attendancemodel, numberofattendancemodel, firstnamemodel,
                             lastnamemodel, membershipmodel, membershipregmodel);
         } else {
-            showRegistrationWarningDialog();
-
+            showRegistrationWarningDialog(R.string.warning_no_end_time);
         }
 
     }
 
-    protected void showRegistrationWarningDialog() {
+    protected void showRegistrationWarningDialog(int message) {
 
         final Dialog dialog = new Dialog(this, R.style.DialogNoAnimation);
         dialog.setCancelable(true);
@@ -592,7 +638,7 @@ public class DetailsActivity extends AppCompatActivity implements IPullZoom, OnM
         line.setVisibility(View.GONE);
         dialogTitle.setVisibility(View.GONE);
         yes.setText(getResources().getString(R.string.ok));
-        dialogContent.setText(R.string.warning_message);
+        dialogContent.setText(message);
         yes.setOnClickListener(v -> dialog.dismiss());
         dialog.show();
     }
@@ -736,7 +782,7 @@ public class DetailsActivity extends AppCompatActivity implements IPullZoom, OnM
         shortDescription.setTextAlignment(View.TEXT_ALIGNMENT_VIEW_START);
         loadData(null, description,
                 null, null, null,
-                eventDate, null, null, contactInfo, latitude, longitude,
+                eventDate, null, null, contactNumber, contactMail, latitude, longitude,
                 true, null);
     }
 
@@ -747,7 +793,7 @@ public class DetailsActivity extends AppCompatActivity implements IPullZoom, OnM
         shortDescription.setTextAlignment(View.TEXT_ALIGNMENT_VIEW_START);
         loadData(null, description,
                 null, null, null,
-                eventDate, null, null, contactInfo, latitude, longitude,
+                eventDate, null, null, contactNumber, contactMail, latitude, longitude,
                 true, null);
     }
 
@@ -767,7 +813,8 @@ public class DetailsActivity extends AppCompatActivity implements IPullZoom, OnM
 
         @Override
         protected void onPostExecute(String rId) {
-            activityReference.get().deleteEventRegistration(rId, activityReference.get().token, eventID);
+            activityReference.get().deleteEventRegistration(rId, activityReference.get().token,
+                    eventID, activityReference.get().seatsRemaining);
         }
     }
 
@@ -786,7 +833,8 @@ public class DetailsActivity extends AppCompatActivity implements IPullZoom, OnM
             userRegistrationDetailsTable = new UserRegistrationDetailsTable(
                     activityReference.get().registrationDetailsModel.getRegistrationID(),
                     activityReference.get().nid,
-                    activityReference.get().mainTitle);
+                    activityReference.get().mainTitle,
+                    activityReference.get().registrationDetailsModel.getRegistrationCount());
             activityReference.get().qmDatabase.getUserRegistrationTaleDao()
                     .insertUserRegistrationTable(userRegistrationDetailsTable);
             return true;
@@ -831,28 +879,132 @@ public class DetailsActivity extends AppCompatActivity implements IPullZoom, OnM
 
         }
 
+        @SuppressLint("SetTextI18n")
         @Override
         protected void onPostExecute(List<UserRegistrationDetailsTable> userRegistrationDetailsTableList) {
+            int count = 0;
             if (isTour) {
                 if (userRegistrationDetailsTableList.size() > 0) {
                     activityReference.get().registrationDetailsMap.clear();
                     for (int i = 0; i < userRegistrationDetailsTableList.size(); i++) {
                         activityReference.get().registrationDetails = userRegistrationDetailsTableList.get(i);
                         activityReference.get().registrationDetailsMap.put(
-                                activityReference.get().registrationDetails.getEventId(), activityReference.get().registrationDetails);
+                                activityReference.get().registrationDetails.getEventId(),
+                                activityReference.get().registrationDetails);
                     }
-                    if (activityReference.get().registrationDetailsMap.get(eventID) != null)
-                        activityReference.get().interestToggle.setChecked(false);
-                    else
-                        activityReference.get().interestToggle.setChecked(true);
+                    if (activityReference.get().registrationDetailsMap.get(eventID) != null) {
+                        if (activityReference.get().registrationDetailsMap.get(eventID).
+                                getNumberOfReservations() != null)
+                            count = Integer.parseInt(activityReference.get().registrationDetailsMap.get(eventID).
+                                    getNumberOfReservations());
+                        activityReference.get().registerButton.setBackground(
+                                activityReference.get().getResources().getDrawable(R.drawable.round_corner_red));
+                        activityReference.get().registerButton.setText(R.string.not_interested);
+                        if (count == 0) {
+                            activityReference.get().registerUregisterCount.setText(
+                                    activityReference.get().getResources().getString(R.string.warning_no_seat_available));
+                            activityReference.get().registerButton.setEnabled(false);
+                            activityReference.get().registerButton.setText(R.string.interested);
+                            activityReference.get().registerButton.setBackground(
+                                    activityReference.get().getResources().getDrawable(R.drawable.rounded_corner_grey));
+                        } else if (count > 1)
+                            activityReference.get().registerUregisterCount.setText(
+                                    activityReference.get().getResources().getString(R.string.you_have_registered) + count +
+                                            activityReference.get().getResources().getString(R.string.seats_for_this_tour));
+                        else
+                            activityReference.get().registerUregisterCount.setText(
+                                    activityReference.get().getResources().getString(R.string.you_have_registered) + count +
+                                            activityReference.get().getResources().getString(R.string.seat_for_this_tour));
 
-                } else
-                    activityReference.get().interestToggle.setChecked(true);
+
+                    } else {
+                        if (activityReference.get().seatsRemaining != null)
+                            count = Integer.parseInt(activityReference.get().seatsRemaining);
+                        activityReference.get().registerButton.setBackground(
+                                activityReference.get().getResources().getDrawable(R.drawable.round_corner_green));
+                        activityReference.get().registerButton.setText(R.string.interested);
+                        if (count == 0) {
+                            activityReference.get().registerUregisterCount.setText(
+                                    activityReference.get().getResources().getString(R.string.warning_no_seat_available));
+                            activityReference.get().registerButton.setEnabled(false);
+                            activityReference.get().registerButton.setBackground(
+                                    activityReference.get().getResources().getDrawable(R.drawable.rounded_corner_grey));
+                        } else if (count > 1)
+                            activityReference.get().registerUregisterCount.setText(
+                                    activityReference.get().getResources().getString(R.string.hurry_up_only) + count +
+                                            activityReference.get().getResources().getString(R.string.seats_for_this_tour));
+                        else
+                            activityReference.get().registerUregisterCount.setText(
+                                    activityReference.get().getResources().getString(R.string.hurry_up_only) + count +
+                                            activityReference.get().getResources().getString(R.string.seat_for_this_tour));
+                    }
+                } else {
+                    if (activityReference.get().seatsRemaining != null)
+                        count = Integer.parseInt(activityReference.get().seatsRemaining);
+                    activityReference.get().registerButton.setBackground(
+                            activityReference.get().getResources().getDrawable(R.drawable.round_corner_green));
+                    activityReference.get().registerButton.setText(R.string.interested);
+                    if (count == 0) {
+                        activityReference.get().registerUregisterCount.setText(
+                                activityReference.get().getResources().getString(R.string.warning_no_seat_available));
+                        activityReference.get().registerButton.setEnabled(false);
+                        activityReference.get().registerButton.setBackground(
+                                activityReference.get().getResources().getDrawable(R.drawable.rounded_corner_grey));
+                    } else if (count > 1)
+                        activityReference.get().registerUregisterCount.setText(
+                                activityReference.get().getResources().getString(R.string.hurry_up_only) + count +
+                                        activityReference.get().getResources().getString(R.string.seats_for_this_tour));
+                    else
+                        activityReference.get().registerUregisterCount.setText(
+                                activityReference.get().getResources().getString(R.string.hurry_up_only) + count +
+                                        activityReference.get().getResources().getString(R.string.seat_for_this_tour));
+                }
             } else {
                 if (userRegistrationDetailsTableList.size() > 0) {
-                    activityReference.get().interestToggle.setChecked(false);
-                } else
-                    activityReference.get().interestToggle.setChecked(true);
+                    if (activityReference.get().registrationDetailsMap.get(eventID).
+                            getNumberOfReservations() != null)
+                        count = Integer.parseInt(activityReference.get().registrationDetailsMap.get(eventID).
+                                getNumberOfReservations());
+                    activityReference.get().registerButton.setBackground(
+                            activityReference.get().getResources().getDrawable(R.drawable.round_corner_red));
+                    activityReference.get().registerButton.setText(R.string.not_interested);
+                    if (count == 0) {
+                        activityReference.get().registerUregisterCount.setText(
+                                activityReference.get().getResources().getString(R.string.warning_no_seat_available));
+                        activityReference.get().registerButton.setEnabled(false);
+                        activityReference.get().registerButton.setText(R.string.interested);
+                        activityReference.get().registerButton.setBackground(
+                                activityReference.get().getResources().getDrawable(R.drawable.rounded_corner_grey));
+                    } else if (count > 1)
+                        activityReference.get().registerUregisterCount.setText(
+                                activityReference.get().getResources().getString(R.string.you_have_registered) + count +
+                                        activityReference.get().getResources().getString(R.string.seats_for_this_tour));
+                    else
+                        activityReference.get().registerUregisterCount.setText(
+                                activityReference.get().getResources().getString(R.string.you_have_registered) + count +
+                                        activityReference.get().getResources().getString(R.string.seat_for_this_tour));
+
+                } else {
+                    if (activityReference.get().seatsRemaining != null)
+                        count = Integer.parseInt(activityReference.get().seatsRemaining);
+                    activityReference.get().registerButton.setBackground(
+                            activityReference.get().getResources().getDrawable(R.drawable.round_corner_green));
+                    activityReference.get().registerButton.setText(R.string.interested);
+                    if (count == 0) {
+                        activityReference.get().registerUregisterCount.setText(
+                                activityReference.get().getResources().getString(R.string.warning_no_seat_available));
+                        activityReference.get().registerButton.setEnabled(false);
+                        activityReference.get().registerButton.setBackground(
+                                activityReference.get().getResources().getDrawable(R.drawable.rounded_corner_grey));
+                    } else if (count > 1)
+                        activityReference.get().registerUregisterCount.setText(
+                                activityReference.get().getResources().getString(R.string.hurry_up_only) + count +
+                                        activityReference.get().getResources().getString(R.string.seats_for_this_tour));
+                    else
+                        activityReference.get().registerUregisterCount.setText(
+                                activityReference.get().getResources().getString(R.string.hurry_up_only) + count +
+                                        activityReference.get().getResources().getString(R.string.seat_for_this_tour));
+                }
             }
         }
     }
@@ -864,7 +1016,8 @@ public class DetailsActivity extends AppCompatActivity implements IPullZoom, OnM
         offerCode.setText(promotionCode);
         loadData(null, description, null, null,
                 null, null, null, null,
-                contactInfo, null, null, false, null);
+                contactNumber, contactMail, null, null,
+                false, null);
     }
 
     private void getCommonListAPIDataFromDatabase(String id, int appLanguage) {
@@ -953,8 +1106,8 @@ public class DetailsActivity extends AppCompatActivity implements IPullZoom, OnM
 
     public void loadData(String subTitle, String shortDescription, String longDescription,
                          String secondTitle, String secondTitleDescription, String openingTime,
-                         String closingTime, String locationInfo, String contactInfo, String latitudefromApi,
-                         String longitudefromApi, boolean museumAboutStatus, String videoFile) {
+                         String closingTime, String locationInfo, String contactNumber, String contactMail,
+                         String latitudefromApi, String longitudefromApi, boolean museumAboutStatus, String videoFile) {
         if (shortDescription != null) {
             commonContentLayout.setVisibility(View.VISIBLE);
             retryLayout.setVisibility(View.GONE);
@@ -1012,9 +1165,17 @@ public class DetailsActivity extends AppCompatActivity implements IPullZoom, OnM
                 this.locationDetails.setVisibility(View.VISIBLE);
                 this.locationDetails.setText(locationInfo);
             }
-            if (contactInfo != null && !(contactInfo.isEmpty()) && !contactInfo.equals("\n")) {
+            if (contactNumber != null && !(contactNumber.isEmpty()) && !contactNumber.equals("\n")) {
                 this.contactLayout.setVisibility(View.VISIBLE);
-                this.contactDetails.setText(contactInfo);
+                this.contactPhone.setVisibility(View.VISIBLE);
+                this.contactPhone.setText(contactNumber, TextView.BufferType.SPANNABLE);
+                if (contactPhone != null)
+                    util.removeUnderlines((Spannable) contactPhone.getText());
+            }
+            if (contactMail != null && !(contactMail.isEmpty()) && !contactMail.equals("\n")) {
+                this.contactLayout.setVisibility(View.VISIBLE);
+                this.contactEmail.setVisibility(View.VISIBLE);
+                this.contactEmail.setText(contactMail);
             }
             if (latitude != null) {
                 if (latitude.contains("°")) {
@@ -1048,7 +1209,7 @@ public class DetailsActivity extends AppCompatActivity implements IPullZoom, OnM
     public void loadDataForHeritageOrExhibitionDetails(String subTitle, String shortDescription,
                                                        String longDescription, String secondTitle,
                                                        String secondTitleDescription, String timingInfo,
-                                                       String locationInfo, String contactInfo,
+                                                       String locationInfo, String contactMail,
                                                        String latitudefromApi, String longitudefromApi,
                                                        String openingTime, String closingtime,
                                                        String videoFile) {
@@ -1101,9 +1262,10 @@ public class DetailsActivity extends AppCompatActivity implements IPullZoom, OnM
                 jzvdStd.setVisibility(View.GONE);
                 imagePlaceHolder.setImageResource(R.drawable.placeholder_video);
             }
-            if (contactInfo != null && !(contactInfo.isEmpty())) {
+            if (contactMail != null && !(contactMail.isEmpty())) {
                 this.contactLayout.setVisibility(View.VISIBLE);
-                this.contactDetails.setText(contactInfo);
+                this.contactEmail.setVisibility(View.VISIBLE);
+                this.contactEmail.setText(contactMail);
             }
             if (latitude != null) {
                 if (latitude.contains("°")) {
@@ -1192,13 +1354,25 @@ public class DetailsActivity extends AppCompatActivity implements IPullZoom, OnM
 
         Call<RegistrationDetailsModel> call = apiService.eventRegistrationCompletion("application/json", token, registrationId, myRegistration);
         call.enqueue(new Callback<RegistrationDetailsModel>() {
+            @SuppressLint("SetTextI18n")
             @Override
             public void onResponse(Call<RegistrationDetailsModel> call, Response<RegistrationDetailsModel> response) {
                 if (response.isSuccessful()) {
                     if (response.body() != null) {
                         registrationDetailsModel = response.body();
-                        interestToggle.setChecked(false);
-                        util.showCulturalPassAlertDialog(DetailsActivity.this);
+                        seatsCount = Integer.parseInt(registrationDetailsModel.getRegistrationCount());
+                        if (seatsCount > 1)
+                            registerUregisterCount.setText(
+                                    getResources().getString(R.string.you_have_registered) + seatsCount +
+                                            getResources().getString(R.string.seats_for_this_tour));
+                        else
+                            registerUregisterCount.setText(
+                                    getResources().getString(R.string.you_have_registered) + seatsCount +
+                                            getResources().getString(R.string.seat_for_this_tour));
+
+                        registerButton.setBackground(getResources().getDrawable(R.drawable.round_corner_red));
+                        registerButton.setText(R.string.not_interested);
+                        showCalendarDialog(mainTitle, description, eventDate);
                         new InsertRegisteredEventToDataBase(DetailsActivity.this,
                                 userRegistrationDetailsTable).execute();
                     }
@@ -1216,7 +1390,186 @@ public class DetailsActivity extends AppCompatActivity implements IPullZoom, OnM
 
     }
 
-    public void deleteEventRegistration(String id, String token, String myNid) {
+    protected void showCalendarDialog(final String title, final String details, String eventDate) {
+        dialog = new Dialog(this, R.style.DialogNoAnimation);
+        dialog.setCancelable(true);
+        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+
+        layoutInflater = (LayoutInflater) getSystemService(LAYOUT_INFLATER_SERVICE);
+        View view = layoutInflater.inflate(R.layout.registration_success_popup, null);
+        dialog.setContentView(view);
+        closeBtn = (ImageView) view.findViewById(R.id.close_dialog);
+        dialogActionButton = (Button) view.findViewById(R.id.doneBtn);
+        dialogContent = (TextView) view.findViewById(R.id.dialog_content);
+
+        dialogActionButton.setText(getResources().getString(R.string.add_to_calendar));
+        dialogContent.setText(getResources().getString(R.string.thankyou_interest));
+
+        dialogActionButton.setOnClickListener(view1 -> {
+            addToCalendar(title, details, eventDate);
+            dialog.dismiss();
+
+        });
+        closeBtn.setOnClickListener(view12 -> dialog.dismiss());
+        dialog.show();
+    }
+
+
+    private void addToCalendar(String title, String details, String eventDate) {
+        String[] dateTimeArray = eventDate.trim().split("-");
+        SimpleDateFormat formatter = new SimpleDateFormat("MM/dd/yyyy HH:mm");
+        Date startDate = null, endDate = null;
+        try {
+            startDate = (Date) formatter.parse(dateTimeArray[0].trim() + " " + dateTimeArray[1].trim());
+            endDate = (Date) formatter.parse(dateTimeArray[0].trim() + " " + dateTimeArray[2].trim());
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+
+        contentResolver = getContentResolver();
+        contentValues = new ContentValues();
+        contentValues.put(CalendarContract.Events.TITLE, title);
+        contentValues.put(CalendarContract.Events.DESCRIPTION, details);
+        contentValues.put(CalendarContract.Events.DTSTART, startDate.getTime());
+        contentValues.put(CalendarContract.Events.DTEND, endDate.getTime());
+        contentValues.put(CalendarContract.Events.EVENT_TIMEZONE, Calendar.getInstance().getTimeZone().getID());
+
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.M) {
+            if (ContextCompat.checkSelfPermission(this,
+                    Manifest.permission.WRITE_CALENDAR)
+                    != PackageManager.PERMISSION_GRANTED) {
+                ActivityCompat.requestPermissions((DetailsActivity) this,
+                        new String[]{Manifest.permission.WRITE_CALENDAR, Manifest.permission.READ_CALENDAR},
+                        MY_PERMISSIONS_REQUEST_CALENDAR);
+
+            } else {
+                insertEventToCalendar();
+            }
+        } else
+            insertEventToCalendar();
+
+    }
+
+    public void insertEventToCalendar() {
+        try {
+            contentValues.put(CalendarContract.Events.CALENDAR_ID, getCalendarId(this));
+            Uri uri = contentResolver.insert(CalendarContract.Events.CONTENT_URI, contentValues);
+            Toast.makeText(this, R.string.event_added, Toast.LENGTH_SHORT).show();
+        } catch (Exception ex) {
+            Log.e("Add_event", "Error in adding event on calendar : " + ex.getMessage());
+        }
+    }
+
+    @SuppressLint("MissingPermission")
+    private int getCalendarId(Context context) {
+
+        Cursor cursor = null;
+        ContentResolver contentResolver = context.getContentResolver();
+        Uri calendars = CalendarContract.Calendars.CONTENT_URI;
+
+        String[] EVENT_PROJECTION = new String[]{
+                CalendarContract.Calendars._ID,                           // 0
+                CalendarContract.Calendars.ACCOUNT_NAME,                  // 1
+                CalendarContract.Calendars.CALENDAR_DISPLAY_NAME,         // 2
+                CalendarContract.Calendars.OWNER_ACCOUNT,                 // 3
+                CalendarContract.Calendars.IS_PRIMARY                     // 4
+        };
+
+        int PROJECTION_ID_INDEX = 0;
+        int PROJECTION_ACCOUNT_NAME_INDEX = 1;
+        int PROJECTION_DISPLAY_NAME_INDEX = 2;
+        int PROJECTION_OWNER_ACCOUNT_INDEX = 3;
+        int PROJECTION_VISIBLE = 4;
+
+        cursor = contentResolver.query(calendars, EVENT_PROJECTION, null, null, null);
+
+        if (cursor.moveToFirst()) {
+            String calName;
+            long calId = 0;
+            String visible;
+
+            do {
+                calName = cursor.getString(PROJECTION_DISPLAY_NAME_INDEX);
+                calId = cursor.getLong(PROJECTION_ID_INDEX);
+                visible = cursor.getString(PROJECTION_VISIBLE);
+                if (visible.equals("1")) {
+                    return (int) calId;
+                }
+                Log.e("Calendar Id : ", "" + calId + " : " + calName + " : " + visible);
+            } while (cursor.moveToNext());
+
+            return (int) calId;
+        }
+        return 1;
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode,
+                                           String permissions[], int[] grantResults) {
+        switch (requestCode) {
+            case 100: {
+                // If request is cancelled, the result arrays are empty.
+                if (grantResults.length > 0
+                        && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    insertEventToCalendar();
+                } else {
+                    boolean showRationale = false;
+                    if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.M) {
+                        showRationale = shouldShowRequestPermissionRationale(permissions[0]);
+                    }
+                    if (!showRationale) {
+                        showNavigationDialog(getString(R.string.permission_required), getString(R.string.runtime_permission));
+                    }
+                }
+            }
+        }
+    }
+
+    protected void showNavigationDialog(String title, final String details) {
+
+        dialog = new Dialog(this, R.style.DialogNoAnimation);
+        dialog.setCancelable(true);
+        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+
+        layoutInflater = (LayoutInflater) getSystemService(LAYOUT_INFLATER_SERVICE);
+        View view = layoutInflater.inflate(R.layout.common_popup, null);
+
+        dialog.setContentView(view);
+        closeBtn = (ImageView) view.findViewById(R.id.close_dialog);
+        dialogActionButton = (Button) view.findViewById(R.id.doneBtn);
+        dialogTitle = (TextView) view.findViewById(R.id.dialog_tittle);
+        dialogContent = (TextView) view.findViewById(R.id.dialog_content);
+        dialogTitle.setText(title);
+        dialogActionButton.setText(getResources().getString(R.string.open_settings));
+        dialogContent.setText(details);
+
+        dialogActionButton.setOnClickListener(view1 -> {
+            navigateToSettings();
+            dialog.dismiss();
+
+        });
+        closeBtn.setOnClickListener(view12 -> dialog.dismiss());
+        dialog.show();
+    }
+
+    public void navigateToSettings() {
+        Intent intent = new Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS);
+        Uri uri = Uri.fromParts("package", getPackageName(), null);
+        intent.setData(uri);
+        startActivityForResult(intent, REQUEST_PERMISSION_SETTING);
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (ContextCompat.checkSelfPermission(this,
+                Manifest.permission.WRITE_CALENDAR)
+                == PackageManager.PERMISSION_GRANTED) {
+            insertEventToCalendar();
+        }
+    }
+
+    public void deleteEventRegistration(String id, String token, String myNid, String seatsRemaining) {
 
         HttpLoggingInterceptor interceptor = new HttpLoggingInterceptor();
         interceptor.setLevel(HttpLoggingInterceptor.Level.BODY);
@@ -1234,11 +1587,29 @@ public class DetailsActivity extends AppCompatActivity implements IPullZoom, OnM
 
         Call<String> call = apiService.deleteEventRegistration(id, token);
         call.enqueue(new Callback<String>() {
+            @SuppressLint("SetTextI18n")
             @Override
             public void onResponse(Call<String> call, Response<String> response) {
                 if (response.isSuccessful()) {
                     new deleteEventFromDataBase(DetailsActivity.this, myNid).execute();
-                    interestToggle.setChecked(true);
+                    registerButton.setBackground(getResources().getDrawable(R.drawable.round_corner_green));
+                    registerButton.setText(R.string.interested);
+                    seatsCount = Integer.parseInt(seatsRemaining);
+                    if (seatsCount == 0) {
+                        registerUregisterCount.setText(
+                                getResources().getString(R.string.warning_no_seat_available));
+                        registerButton.setEnabled(false);
+                        registerButton.setBackground(getResources().getDrawable(R.drawable.rounded_corner_grey));
+                    } else if (seatsCount > 1)
+                        registerUregisterCount.setText(
+                                getResources().getString(R.string.hurry_up_only) + seatsCount +
+                                        getResources().getString(R.string.seats_for_this_tour));
+                    else
+                        registerUregisterCount.setText(
+                                getResources().getString(R.string.hurry_up_only) + seatsCount +
+                                        getResources().getString(R.string.seat_for_this_tour));
+
+
                 }
                 registrationLoader.setVisibility(View.GONE);
             }
@@ -1574,7 +1945,8 @@ public class DetailsActivity extends AppCompatActivity implements IPullZoom, OnM
                         null, null,
                         null,
                         exhibitionListTableEnglish.get(0).getExhibition_location(),
-                        null, exhibitionListTableEnglish.get(0).getExhibition_latitude(),
+                        activityReference.get().getResources().getString(R.string.contact_mail),
+                        exhibitionListTableEnglish.get(0).getExhibition_latitude(),
                         exhibitionListTableEnglish.get(0).getExhibition_longitude(),
                         exhibitionListTableEnglish.get(0).getExhibition_start_date(),
                         exhibitionListTableEnglish.get(0).getExhibition_end_date(), null);
@@ -1630,7 +2002,8 @@ public class DetailsActivity extends AppCompatActivity implements IPullZoom, OnM
                         null, null,
                         null,
                         exhibitionListTableArabics.get(0).getExhibition_location(),
-                        null, exhibitionListTableArabics.get(0).getExhibition_latitude(),
+                        activityReference.get().getResources().getString(R.string.contact_mail),
+                        exhibitionListTableArabics.get(0).getExhibition_latitude(),
                         exhibitionListTableArabics.get(0).getExhibition_longitude(),
                         exhibitionListTableArabics.get(0).getExhibition_start_date(),
                         exhibitionListTableArabics.get(0).getExhibition_end_date(), null);
@@ -1923,7 +2296,7 @@ public class DetailsActivity extends AppCompatActivity implements IPullZoom, OnM
                                 publicArtModel.get(0).getShortDescription(),
                                 publicArtModel.get(0).getLongDescription(),
                                 null, null, null, null,
-                                null, null, publicArtModel.get(0).getLatitude(),
+                                null, null, null, publicArtModel.get(0).getLatitude(),
                                 publicArtModel.get(0).getLatitude(), fromMuseumAbout, null);
                         new PublicArtsRowCount(DetailsActivity.this, language).execute();
                     } else {
@@ -2124,7 +2497,7 @@ public class DetailsActivity extends AppCompatActivity implements IPullZoom, OnM
                             publicArtsTableEnglish.get(i).getShort_description(),
                             publicArtsTableEnglish.get(i).getDescription(),
                             null, null, null,
-                            null, null, null,
+                            null, null, null, null,
                             publicArtsTableEnglish.get(i).getLatitude(),
                             publicArtsTableEnglish.get(i).getLongitude(), activityReference.get().fromMuseumAbout, null);
                 }
@@ -2181,7 +2554,7 @@ public class DetailsActivity extends AppCompatActivity implements IPullZoom, OnM
                             publicArtsTableArabic.get(i).getShort_description(),
                             publicArtsTableArabic.get(i).getDescription(),
                             null, null, null,
-                            null, null, null,
+                            null, null, null, null,
                             publicArtsTableArabic.get(i).getLatitude(),
                             publicArtsTableArabic.get(i).getLongitude(), activityReference.get().fromMuseumAbout, null);
                 }
@@ -2297,8 +2670,8 @@ public class DetailsActivity extends AppCompatActivity implements IPullZoom, OnM
                                     museumAboutModels.get(0).getTimingInfo(),
                                     "",
                                     null,
-                                    museumAboutModels.get(0).getContactNumber() + "\n" +
-                                            museumAboutModels.get(0).getContactEmail(),
+                                    museumAboutModels.get(0).getContactNumber(),
+                                    museumAboutModels.get(0).getContactEmail(),
                                     museumAboutModels.get(0).getLatitude(),
                                     museumAboutModels.get(0).getLongitude(),
                                     fromMuseumAbout,
@@ -2312,8 +2685,8 @@ public class DetailsActivity extends AppCompatActivity implements IPullZoom, OnM
                                     museumAboutModels.get(0).getTimingInfo(),
                                     "",
                                     null,
-                                    museumAboutModels.get(0).getContactNumber() + "\n" +
-                                            museumAboutModels.get(0).getContactEmail(),
+                                    museumAboutModels.get(0).getContactNumber(),
+                                    museumAboutModels.get(0).getContactEmail(),
                                     museumAboutModels.get(0).getLatitude(),
                                     museumAboutModels.get(0).getLongitude(),
                                     fromMuseumAbout,
@@ -2671,7 +3044,8 @@ public class DetailsActivity extends AppCompatActivity implements IPullZoom, OnM
                             null,
                             museumAboutTableEnglish.getMuseum_subtitle(), description2,
                             museumAboutTableEnglish.getMuseum_opening_time(), "",
-                            null, museumAboutTableEnglish.getMuseum_contact_email(),
+                            null, museumAboutTableEnglish.getMuseum_contact_number(),
+                            museumAboutTableEnglish.getMuseum_contact_email(),
                             museumAboutTableEnglish.getMuseum_lattitude(),
                             museumAboutTableEnglish.getMuseum_longitude(),
                             true, null);
@@ -2680,7 +3054,8 @@ public class DetailsActivity extends AppCompatActivity implements IPullZoom, OnM
                             description2,
                             museumAboutTableEnglish.getMuseum_subtitle(), null,
                             museumAboutTableEnglish.getMuseum_opening_time(), "",
-                            null, museumAboutTableEnglish.getMuseum_contact_email(),
+                            null, museumAboutTableEnglish.getMuseum_contact_number(),
+                            museumAboutTableEnglish.getMuseum_contact_email(),
                             museumAboutTableEnglish.getMuseum_lattitude(),
                             museumAboutTableEnglish.getMuseum_longitude(),
                             true, null);
@@ -2748,7 +3123,8 @@ public class DetailsActivity extends AppCompatActivity implements IPullZoom, OnM
                         null,
                         museumAboutTableArabic.getMuseum_subtitle(), description2,
                         museumAboutTableArabic.getMuseum_opening_time(), "",
-                        null, museumAboutTableArabic.getMuseum_contact_email(),
+                        null, museumAboutTableArabic.getMuseum_contact_number(),
+                        museumAboutTableArabic.getMuseum_contact_email(),
                         museumAboutTableArabic.getMuseum_lattitude(),
                         museumAboutTableArabic.getMuseum_longitude(),
                         true, null);

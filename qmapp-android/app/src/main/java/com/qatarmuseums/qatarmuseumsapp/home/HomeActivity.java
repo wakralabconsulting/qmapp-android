@@ -23,7 +23,6 @@ import android.support.v7.widget.RecyclerView;
 import android.text.Editable;
 import android.text.TextUtils;
 import android.text.TextWatcher;
-import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
@@ -425,8 +424,11 @@ public class HomeActivity extends BaseActivity {
                 if (response.isSuccessful()) {
                     if (response.body() != null) {
                         bannerLists.addAll(response.body());
-                        addBannerData(bannerLists);
-                        new RowCountBanner(HomeActivity.this, language, bannerLists).execute();
+                        if (bannerLists.size() > 0) {
+                            bannerLayout.setVisibility(View.VISIBLE);
+                            addBannerData(bannerLists);
+                            new RowCountBanner(HomeActivity.this, language, bannerLists).execute();
+                        }
                     }
                 }
             }
@@ -499,7 +501,6 @@ public class HomeActivity extends BaseActivity {
                 getBannerAPIData();
             else
                 getBannerDataFromDataBase();
-            bannerLayout.setVisibility(View.VISIBLE);
         }
     }
 
@@ -918,12 +919,13 @@ public class HomeActivity extends BaseActivity {
 
         @Override
         protected Boolean doInBackground(Void... voids) {
-            if (registeredEventLists != null) {
+            if (registeredEventLists != null && registeredEventLists.size() > 0) {
                 for (int i = 0; i < registeredEventLists.size(); i++) {
                     userRegistrationDetailsTable = new UserRegistrationDetailsTable(
                             registeredEventLists.get(i).getRegID(),
                             registeredEventLists.get(i).getEventID(),
-                            registeredEventLists.get(i).getEventTitle()
+                            registeredEventLists.get(i).getEventTitle(),
+                            registeredEventLists.get(i).getNumberOfReservations()
                     );
                     activityReference.get().qmDatabase.getUserRegistrationTaleDao()
                             .insertUserRegistrationTable(userRegistrationDetailsTable);
@@ -1024,7 +1026,7 @@ public class HomeActivity extends BaseActivity {
 
         @Override
         protected Boolean doInBackground(Void... voids) {
-            if (bannerLists != null) {
+            if (bannerLists != null && bannerLists.size() > 0) {
                 if (language.equals("en")) {
                     homePageBannerTableEnglish = new HomePageBannerTableEnglish(
                             Long.parseLong(bannerLists.get(0).getId()),
@@ -1252,7 +1254,7 @@ public class HomeActivity extends BaseActivity {
 
         @Override
         protected Boolean doInBackground(Void... voids) {
-            if (homeLists != null) {
+            if (homeLists != null && homeLists.get().size() > 0) {
                 if (language.equals("en")) {
                     for (int i = 0; i < homeLists.get().size(); i++) {
                         homePageTableEnglish = new HomePageTableEnglish(Long.parseLong(homeLists.get().get(i).getId()),

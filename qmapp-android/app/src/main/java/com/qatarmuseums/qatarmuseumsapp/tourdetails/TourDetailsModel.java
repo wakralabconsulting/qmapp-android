@@ -39,6 +39,8 @@ public class TourDetailsModel implements Parcelable, Comparable<TourDetailsModel
     private String tourSpeakerInfo;
     @SerializedName("nid")
     private String nId;
+    @SerializedName("Seats_remaining")
+    private String seatsRemaining;
     private String eventTimeStampDiff;
     private long startTimeStamp;
     private long endTimeStamp;
@@ -49,7 +51,8 @@ public class TourDetailsModel implements Parcelable, Comparable<TourDetailsModel
                             String tour_latitude,
                             String tour_longtitude,
                             String tour_sort_id, String tour_body,
-                            String tour_registered) {
+                            String tour_registered,
+                            String seatsRemaining) {
         this.tourTitle = tour_title;
         this.tourImage = tour_images;
         this.tourDate = tour_date;
@@ -61,6 +64,7 @@ public class TourDetailsModel implements Parcelable, Comparable<TourDetailsModel
         this.tourBody = tour_body;
         this.tourRegistered = tour_registered;
         this.tourEventId = tour_id;
+        this.seatsRemaining = seatsRemaining;
     }
 
     protected TourDetailsModel(Parcel in) {
@@ -79,6 +83,7 @@ public class TourDetailsModel implements Parcelable, Comparable<TourDetailsModel
         tourSpeakerName = in.readString();
         tourSpeakerInfo = in.readString();
         nId = in.readString();
+        seatsRemaining = in.readString();
         eventTimeStampDiff = in.readString();
         startTimeStamp = in.readLong();
         endTimeStamp = in.readLong();
@@ -240,6 +245,14 @@ public class TourDetailsModel implements Parcelable, Comparable<TourDetailsModel
         this.eventTimeStampDiff = eventTimeStampDiff;
     }
 
+    public String getSeatsRemaining() {
+        return seatsRemaining;
+    }
+
+    public void setSeatsRemaining(String seatsRemaining) {
+        this.seatsRemaining = seatsRemaining;
+    }
+
     @Override
     public int describeContents() {
         return 0;
@@ -262,6 +275,7 @@ public class TourDetailsModel implements Parcelable, Comparable<TourDetailsModel
         dest.writeString(tourSpeakerName);
         dest.writeString(tourSpeakerInfo);
         dest.writeString(nId);
+        dest.writeString(seatsRemaining);
         dest.writeString(eventTimeStampDiff);
         dest.writeLong(startTimeStamp);
         dest.writeLong(endTimeStamp);

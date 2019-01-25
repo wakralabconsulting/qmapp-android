@@ -427,7 +427,7 @@ public class CalendarActivity extends AppCompatActivity {
         dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
 
         layoutInflater = (LayoutInflater) getSystemService(LAYOUT_INFLATER_SERVICE);
-        View view = layoutInflater.inflate(R.layout.common_popup, null);
+        View view = layoutInflater.inflate(R.layout.calendar_popup, null);
         dialog.setContentView(view);
         FrameLayout contentLayout = (FrameLayout) view.findViewById(R.id.content_frame_layout);
         closeBtn = (ImageView) view.findViewById(R.id.close_dialog);
@@ -466,7 +466,7 @@ public class CalendarActivity extends AppCompatActivity {
         dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
 
         layoutInflater = (LayoutInflater) getSystemService(LAYOUT_INFLATER_SERVICE);
-        View view = layoutInflater.inflate(R.layout.common_popup, null);
+        View view = layoutInflater.inflate(R.layout.calendar_popup, null);
 
         dialog.setContentView(view);
         FrameLayout contentLayout = (FrameLayout) view.findViewById(R.id.content_frame_layout);
