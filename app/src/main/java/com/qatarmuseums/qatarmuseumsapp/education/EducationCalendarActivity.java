@@ -138,7 +138,7 @@ public class EducationCalendarActivity extends AppCompatActivity {
         eventListView = (RecyclerView) findViewById(R.id.event_list);
         dayDateFormat = new SimpleDateFormat("d", Locale.US);
         monthDateFormat = new SimpleDateFormat("M", Locale.US);
-        yearDateFormat = new SimpleDateFormat("YYYY", Locale.US);
+        yearDateFormat = new SimpleDateFormat("yyyy", Locale.US);
 
         util = new Util();
         appLanguage = LocaleManager.getLanguage(this);

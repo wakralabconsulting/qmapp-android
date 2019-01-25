@@ -136,7 +136,7 @@ public class CalendarActivity extends AppCompatActivity {
         language = LocaleManager.getLanguage(this);
         dayDateFormat = new SimpleDateFormat("d", Locale.US);
         monthDateFormat = new SimpleDateFormat("M", Locale.US);
-        yearDateFormat = new SimpleDateFormat("YYYY", Locale.US);
+        yearDateFormat = new SimpleDateFormat("yyyy", Locale.US);
 
         zoomOutAnimation = AnimationUtils.loadAnimation(getApplicationContext(),
                 R.anim.zoom_out_more);
