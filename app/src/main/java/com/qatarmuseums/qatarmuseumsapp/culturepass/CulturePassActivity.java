@@ -38,7 +38,6 @@ import com.qatarmuseums.qatarmuseumsapp.QMDatabase;
 import com.qatarmuseums.qatarmuseumsapp.R;
 import com.qatarmuseums.qatarmuseumsapp.apicall.APIClient;
 import com.qatarmuseums.qatarmuseumsapp.apicall.APIInterface;
-import com.qatarmuseums.qatarmuseumsapp.home.HomeActivity;
 import com.qatarmuseums.qatarmuseumsapp.home.UserRegistrationModel;
 import com.qatarmuseums.qatarmuseumsapp.profile.ProfileActivity;
 import com.qatarmuseums.qatarmuseumsapp.profile.ProfileDetails;
@@ -376,7 +375,8 @@ public class CulturePassActivity extends AppCompatActivity {
                     userRegistrationDetailsTable = new UserRegistrationDetailsTable(
                             registeredEventLists.get(i).getRegID(),
                             registeredEventLists.get(i).getEventID(),
-                            registeredEventLists.get(i).getEventTitle()
+                            registeredEventLists.get(i).getEventTitle(),
+                            registeredEventLists.get(i).getNumberOfReservations()
                     );
                     activityReference.get().qmDatabase.getUserRegistrationTaleDao()
                             .insertUserRegistrationTable(userRegistrationDetailsTable);

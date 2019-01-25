@@ -16,6 +16,8 @@ public class TourDetailsTableArabic {
     @ColumnInfo()
     private String tour_id;
     @ColumnInfo()
+    private String seats_remaining;
+    @ColumnInfo()
     private String tour_images;
     @ColumnInfo()
     private String tour_date;
@@ -41,7 +43,8 @@ public class TourDetailsTableArabic {
                                   String tour_latitude,
                                   String tour_longtitude,
                                   String tour_sort_id, String tour_body,
-                                  String tour_registered) {
+                                  String tour_registered,
+                                  String seats_remaining) {
         this.tour_title = tour_title;
         this.tour_images = tour_images;
         this.tour_date = tour_date;
@@ -53,6 +56,7 @@ public class TourDetailsTableArabic {
         this.tour_body = tour_body;
         this.tour_registered = tour_registered;
         this.tour_id = tour_id;
+        this.seats_remaining = seats_remaining;
     }
 
     @NonNull
@@ -150,5 +154,13 @@ public class TourDetailsTableArabic {
 
     public void setTour_registered(String tour_registered) {
         this.tour_registered = tour_registered;
+    }
+
+    public String getSeats_remaining() {
+        return seats_remaining;
+    }
+
+    public void setSeats_remaining(String seats_remaining) {
+        this.seats_remaining = seats_remaining;
     }
 }

@@ -467,7 +467,7 @@ public class ObjectPreviewActivity extends AppCompatActivity {
         @Override
         protected Boolean doInBackground(Void... voids) {
             if (!(insert.isCancelled())) {
-                if (artifactList != null) {
+                if (artifactList != null && artifactList.get().size() > 0) {
                     if (language.equals("en")) {
                         for (int i = 0; i < artifactList.get().size(); i++) {
                             artifactTableEnglish = new ArtifactTableEnglish(Long.parseLong(artifactList.get().get(i).getNid()),

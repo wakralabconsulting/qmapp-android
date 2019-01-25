@@ -57,7 +57,7 @@ public class MuseumHorizontalScrollViewAdapter extends RecyclerView.Adapter<Muse
         holder.itemLayout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (museumHScrollModelList.get(position).getTextName().equals(mContext.getResources().getString(R.string.museum_about_text))) {
+                if (museumHScrollModelList.get(position).getResId() == R.drawable.about_icon) {
                     navigationIntent = new Intent(mContext, DetailsActivity.class);
                     navigationIntent.putExtra("MAIN_TITLE", title);
                     navigationIntent.putExtra("COMING_FROM", mContext.getString(R.string.museum_about));
@@ -89,8 +89,7 @@ public class MuseumHorizontalScrollViewAdapter extends RecyclerView.Adapter<Muse
                     navigationIntent.putExtra(mContext.getString(R.string.toolbar_title_key), mContext.getString(R.string.sidemenu_dining_text));
                     navigationIntent.putExtra("ID", museumId);
                     mContext.startActivity(navigationIntent);
-                } else if (museumHScrollModelList.get(position).getTextName()
-                        .equals(mContext.getResources().getString(R.string.museum_about_launch))) {
+                } else if (museumHScrollModelList.get(position).getResId() == R.drawable.about_launch) {
                     navigationIntent = new Intent(mContext, DetailsActivity.class);
                     navigationIntent.putExtra("MAIN_TITLE", title);
                     navigationIntent.putExtra("COMING_FROM", mContext.getString(R.string.museum_about_launch));
