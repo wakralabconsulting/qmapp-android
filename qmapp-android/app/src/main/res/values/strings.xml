@@ -216,7 +216,7 @@ They exemplify the external influences and internal creativity that inspired thi
     <string name="nationality">Nationality *:</string>
     <string name="logout_success_message">You have been successfully logged out!</string>
     <string name="ok">OK</string>
-    <string name="warning_message">NO END TIME PROVIDED</string>
+
     <!-- Strings related to Create Account -->
     <string name="create_your_account">Create your account</string>
     <string name="username">Username *</string>
@@ -240,7 +240,7 @@ They exemplify the external influences and internal creativity that inspired thi
     <string name="decline">Decline</string>
     <string name="thankyou">Thank you for accepting the\ninvitation. You will receive\nfurther details on your\nemail. For any queries,\nplease contact Qatar\n Museums Authority via:\n info@qm.org.qa\n +974 4452 5555</string>
     <string name="decline_content">Are you sure you want to\ndecline the Invitation?</string>
-    <string name="decline_content_tour">Are you sure you want to cancel the request to make your tour arrangements?</string>
+    <string name="decline_content_tour">Are you sure you want to cancel this tour?</string>
     <string name="profile_link"><u>Invitation for National Museum\nof Qatar Launch Event</u></string>
     <string name="artifact_invalid">Invalid Artifact Number</string>
     <string name="yes">Yes</string>
@@ -255,21 +255,32 @@ They exemplify the external influences and internal creativity that inspired thi
     <string name="notification_channel_description">Notifications related to Culture Pass </string>
     <string name="launch_event">National Museum of Qatar Launch Event</string>
     <!-- Strings related to Museum Launch -->
-    <string name="museum_about_launch">About Event</string>
+    <string name="museum_about_launch">About</string>
     <string name="museum_tours">Tours</string>
-    <string name="museum_travel">Travel Arrangements</string>
-    <string name="museum_discussion">Special Events</string>
+    <string name="museum_travel">Travel</string>
+    <string name="museum_discussion">Activities</string>
     <string name="event_date">Event Date</string>
     <string name="download_brochure_for_more_information"><u>Download Brochure for More Information</u></string>
     <string name="seporater"> - </string>
-    <string name="interested">Registered</string>
+    <string name="interested">Register</string>
     <string name="not_interested">UnRegister</string>
     <string name="date">Date</string>
-    <string name="thankyou_interest">Thank you for showing interest in the tour. We will make necessary arrangements for it during your visit. You will receive further details on your email. For any queries, please contact Qatar Museums Authority via:\ninfo@qm.org.qa\n+974 4452 5555</string>
-    <string name="offer_code">OFFER CODE</string>
+    <string name="thankyou_interest">Thank you for registering.\n\nYou will receive an email with further information.\n\n
+        Any questions, please contact info@qm.org.qa or +974 4452 5555</string>
+    <string name="offer_code">Special offer</string>
     <string name="claim_offer">Claim Offer</string>
     <string name="venue">Venue</string>
     <string name="time_slot_not_available">You are already registered for another event at the selected time.</string>
     <string name="visit_qatar_url">http://visitqatar.qa/</string>
     <string name="mia_floors">MIA Floors</string>
+    <string name="warning_no_end_time">NO END TIME AVAILABLE</string>
+    <string name="warning_no_seat_available">Sorry, no seats available for the specific tour.</string>
+    <string name="warning_selection_not_available">Sorry, no seats available for the specific tour.</string>
+    <string name="you_have_registered">You have registered&#160;</string>
+    <string name="hurry_up_only">Hurry up only&#160;</string>
+    <string name="seat_for_this_tour">&#160;seat for this tour.</string>
+    <string name="seats_for_this_tour">&#160;seats for this tour.</string>
+    <string name="number_of_visitors">Number of Visitors</string>
+    <string name="done">Done</string>
+
 </resources>

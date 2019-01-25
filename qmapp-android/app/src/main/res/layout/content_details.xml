@@ -155,45 +155,43 @@
 
                 </LinearLayout>
 
-                <LinearLayout
+                <android.support.constraint.ConstraintLayout
                     android:id="@+id/interest_layout"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:gravity="center"
-                    android:orientation="horizontal"
                     android:visibility="gone">
 
                     <TextView
+                        android:id="@+id/register_unregister_label"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_margin="@dimen/text_margin"
                         android:fontFamily="@font/din_next_lt_pro_light"
+                        android:textAlignment="center"
+                        android:textColor="@color/black"
+                        android:textSize="@dimen/font_size_16"
+                        android:visibility="visible"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent" />
+
+                    <Button
+                        android:id="@+id/register_button"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/padding_15"
+                        android:background="@drawable/round_corner_green"
+                        android:paddingEnd="@dimen/padding_50"
+                        android:paddingStart="@dimen/padding_50"
                         android:text="@string/interested"
-                        android:textAlignment="center"
-                        android:textColor="@color/black"
-                        android:textSize="@dimen/font_size_16" />
+                        android:textAllCaps="false"
+                        android:textColor="@color/white"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@id/register_unregister_label" />
 
-                    <android.support.v7.widget.SwitchCompat
-                        android:id="@+id/interest_toggle_button"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:checked="true"
 
-                        android:clickable="false"
-                        android:textAppearance="?android:attr/textAppearanceMedium"
-                        android:theme="@style/ColorSwitchStyle" />
+                </android.support.constraint.ConstraintLayout>
 
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_margin="@dimen/text_margin"
-                        android:fontFamily="@font/din_next_lt_pro_light"
-                        android:text="@string/not_interested"
-                        android:textAlignment="center"
-                        android:textColor="@color/black"
-                        android:textSize="@dimen/font_size_16" />
-
-                </LinearLayout>
             </LinearLayout>
 
             <LinearLayout
@@ -459,6 +457,7 @@
                         android:layout_marginTop="@dimen/text_margin"
                         android:fontFamily="@font/din_next_lt_pro_bold"
                         android:text="@string/offer_code"
+                        android:textAllCaps="true"
                         android:textColor="@color/black"
                         android:textSize="@dimen/font_size_18" />
 
@@ -525,19 +524,36 @@
                         android:background="@color/black" />
 
                     <TextView
-                        android:id="@+id/contact_info"
+                        android:id="@+id/contact_phone"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginBottom="@dimen/text_margin"
                         android:layout_marginEnd="@dimen/text_margin"
                         android:layout_marginStart="@dimen/text_margin"
-                        android:autoLink="phone|email"
+                        android:autoLink="phone"
                         android:fontFamily="@font/din_next_lt_pro_regular"
-                        android:lineSpacingExtra="10dp"
+                        android:layoutDirection="ltr"
                         android:textAlignment="center"
                         android:textColor="@color/black"
-                        android:textColorLink="@color/link_color"
-                        android:textSize="@dimen/font_size_15" />
+                        android:textColorLink="@color/black"
+                        android:textSize="@dimen/font_size_15"
+                        android:visibility="gone" />
+
+                    <TextView
+                        android:id="@+id/contact_mail"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginBottom="@dimen/text_margin"
+                        android:layout_marginEnd="@dimen/text_margin"
+                        android:layout_marginStart="@dimen/text_margin"
+                        android:autoLink="email"
+                        android:fontFamily="@font/din_next_lt_pro_regular"
+                        android:layoutDirection="ltr"
+                        android:textAlignment="center"
+                        android:textColor="@color/black"
+                        android:textColorLink="@color/black"
+                        android:textSize="@dimen/font_size_15"
+                        android:visibility="gone" />
                 </LinearLayout>
 
             </LinearLayout>

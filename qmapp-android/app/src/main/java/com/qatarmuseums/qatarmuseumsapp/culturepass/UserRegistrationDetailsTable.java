@@ -13,13 +13,17 @@ public class UserRegistrationDetailsTable {
     @ColumnInfo()
     private String eventId;
     @ColumnInfo()
+    private String numberOfReservations;
+    @ColumnInfo()
     private String eventTitle;
 
 
-    public UserRegistrationDetailsTable(@NonNull String registrationID, String eventId, String eventTitle) {
+    public UserRegistrationDetailsTable(@NonNull String registrationID, String eventId,
+                                        String eventTitle, String numberOfReservations) {
         this.registrationID = registrationID;
         this.eventId = eventId;
         this.eventTitle = eventTitle;
+        this.numberOfReservations = numberOfReservations;
     }
 
     @NonNull
@@ -47,4 +51,11 @@ public class UserRegistrationDetailsTable {
         this.eventTitle = eventTitle;
     }
 
+    public void setNumberOfReservations(String numberOfReservations) {
+        this.numberOfReservations = numberOfReservations;
+    }
+
+    public String getNumberOfReservations() {
+        return numberOfReservations;
+    }
 }

@@ -105,8 +105,8 @@ public class TourSecondaryListActivity extends AppCompatActivity {
             navigationIntent.putExtra("DATE", tourDetailsList.get(position).getTourDate());
             navigationIntent.putExtra("ID", tourDetailsList.get(position).getTourEventId());
             navigationIntent.putExtra("COMING_FROM", comingFrom);
-            navigationIntent.putExtra("CONTACT", tourDetailsList.get(position).getTourContactPhone() + "\n" +
-                    tourDetailsList.get(position).getTourContactEmail());
+            navigationIntent.putExtra("CONTACT_PHONE", tourDetailsList.get(position).getTourContactPhone());
+            navigationIntent.putExtra("CONTACT_MAIL", tourDetailsList.get(position).getTourContactEmail());
             navigationIntent.putExtra("REGISTER", tourDetailsList.get(position).getTourRegister());
             navigationIntent.putExtra("REGISTERED", tourDetailsList.get(position).getTourRegistered());
             navigationIntent.putExtra("LONGITUDE", tourDetailsList.get(position).getTourLongtitude());
@@ -336,7 +336,8 @@ public class TourSecondaryListActivity extends AppCompatActivity {
                                 activityReference.get().tourDetailsList.get(i).getTourBody(),
                                 activityReference.get().tourDetailsList.get(i).getTourRegistered(),
                                 activityReference.get().tourDetailsList.get(i).getTourSpeakerName(),
-                                activityReference.get().tourDetailsList.get(i).getTourSpeakerInfo()
+                                activityReference.get().tourDetailsList.get(i).getTourSpeakerInfo(),
+                                activityReference.get().tourDetailsList.get(i).getSeatsRemaining()
 
                         );
                         activityReference.get().qmDatabase.getTourDetailsTaleDao().
@@ -358,7 +359,8 @@ public class TourSecondaryListActivity extends AppCompatActivity {
                                 activityReference.get().tourDetailsList.get(i).getTourLongtitude(),
                                 activityReference.get().tourDetailsList.get(i).getTourSortId(),
                                 activityReference.get().tourDetailsList.get(i).getTourBody(),
-                                activityReference.get().tourDetailsList.get(i).getTourRegistered()
+                                activityReference.get().tourDetailsList.get(i).getTourRegistered(),
+                                activityReference.get().tourDetailsList.get(i).getSeatsRemaining()
                         );
                         activityReference.get().qmDatabase.getTourDetailsTaleDao().
                                 insert(tourDetailsTableArabic);
@@ -436,7 +438,8 @@ public class TourSecondaryListActivity extends AppCompatActivity {
                             tourDetailsTableEnglishList.get(i).getTour_longtitude(),
                             tourDetailsTableEnglishList.get(i).getTour_sort_id(),
                             tourDetailsTableEnglishList.get(i).getTour_body(),
-                            tourDetailsTableEnglishList.get(i).getTour_registered()
+                            tourDetailsTableEnglishList.get(i).getTour_registered(),
+                            tourDetailsTableEnglishList.get(i).getSeats_remaining()
                     );
                     activityReference.get().tourDetailsList.add(i, tourDetailsModel);
                 }
@@ -484,7 +487,8 @@ public class TourSecondaryListActivity extends AppCompatActivity {
                             tourDetailsTableArabicList.get(i).getTour_longtitude(),
                             tourDetailsTableArabicList.get(i).getTour_sort_id(),
                             tourDetailsTableArabicList.get(i).getTour_body(),
-                            tourDetailsTableArabicList.get(i).getTour_registered()
+                            tourDetailsTableArabicList.get(i).getTour_registered(),
+                            tourDetailsTableArabicList.get(i).getSeats_remaining()
                     );
                     activityReference.get().tourDetailsList.add(i, tourDetailsModel);
                 }

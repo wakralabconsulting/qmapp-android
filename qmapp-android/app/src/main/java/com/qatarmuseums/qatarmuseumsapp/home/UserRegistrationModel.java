@@ -8,8 +8,10 @@ public class UserRegistrationModel {
     private String eventTitle;
     @SerializedName("event_ID")
     private String eventID;
-    @SerializedName("reg_id")
+    @SerializedName(value = "reg_id", alternate = "Registration_ID")
     private String regID;
+    @SerializedName("Seats")
+    private String numberOfReservations;
 
     public UserRegistrationModel() {
 
@@ -43,5 +45,9 @@ public class UserRegistrationModel {
 
     public void setRegID(String regID) {
         this.regID = regID;
+    }
+
+    public String getNumberOfReservations() {
+        return numberOfReservations;
     }
 }

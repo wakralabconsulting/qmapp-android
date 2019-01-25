@@ -16,7 +16,8 @@
         <FrameLayout
             android:id="@+id/content_frame_layout"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+            android:layout_height="wrap_content"
+            >
 
             <RelativeLayout
                 android:id="@+id/dialog_layout"
@@ -27,8 +28,8 @@
                 android:layout_marginEnd="@dimen/pading_20"
                 android:layout_marginStart="@dimen/pading_10"
                 android:layout_marginTop="@dimen/pading_20"
-                android:background="@drawable/round_corner_white"
                 android:paddingBottom="@dimen/padding_10"
+                android:background="@drawable/round_corner_white"
                 android:paddingEnd="@dimen/pading_10"
                 android:paddingStart="@dimen/pading_10">
 
@@ -56,26 +57,34 @@
                     android:layout_width="match_parent"
                     android:layout_height="@dimen/pading_2"
                     android:layout_below="@id/title_layout"
-                    android:layout_marginBottom="@dimen/pading_20"
                     android:layout_marginTop="@dimen/pading_20"
                     android:background="@color/black" />
 
-                <TextView
-                    android:id="@+id/dialog_content"
+                <ScrollView
+                    android:id="@+id/scroll_view_content"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:layout_above="@id/doneBtn"
                     android:layout_below="@id/view_line"
-                    android:paddingEnd="@dimen/pading_5"
-                    android:paddingStart="@dimen/pading_5"
-                    android:textAlignment="center"
-                    android:textSize="@dimen/settings_text_size" />
+                    android:layout_marginTop="@dimen/padding_10"
+                    android:scrollbars="none">
+
+                    <TextView
+                        android:id="@+id/dialog_content"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:paddingEnd="@dimen/pading_5"
+                        android:paddingStart="@dimen/pading_5"
+                        android:textAlignment="center"
+                        android:textSize="@dimen/settings_text_size" />
+                </ScrollView>
 
 
                 <Button
                     android:id="@+id/doneBtn"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_below="@id/dialog_content"
+                    android:layout_alignParentBottom="true"
                     android:layout_gravity="center"
                     android:layout_marginBottom="@dimen/padding_15"
                     android:background="@drawable/round_corner_black"

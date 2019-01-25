@@ -159,8 +159,8 @@ public class CommonActivity extends AppCompatActivity {
                 navigationIntent.putExtra("PUBLIC_ARTS_ID", models.get(position).getId());
                 navigationIntent.putExtra("PROMOTION_CODE", models.get(position).getPromotionalCode());
                 navigationIntent.putExtra("CLAIM_OFFER", models.get(position).getClaimOffer());
-                navigationIntent.putExtra("CONTACT", models.get(position).getContactnumber() +
-                        "\n" + models.get(position).getEmail());
+                navigationIntent.putExtra("CONTACT_PHONE", models.get(position).getContactnumber());
+                navigationIntent.putExtra("CONTACT_MAIL", models.get(position).getEmail());
                 startActivity(navigationIntent);
 
             }
@@ -429,11 +429,13 @@ public class CommonActivity extends AppCompatActivity {
     }
 
     public void removeHtmlTags(ArrayList<CommonModel> models) {
-        for (int i = 0; i < models.size(); i++) {
-            models.get(i).setName(util.html2string(models.get(i).getName()));
-            models.get(i).setDescription(util.html2string(models.get(i).getDescription()));
-            models.get(i).setStartDate(util.html2string(models.get(i).getStartDate()));
-            models.get(i).setEndDate(util.html2string(models.get(i).getEndDate()));
+        if (models.size() > 0) {
+            for (int i = 0; i < models.size(); i++) {
+                models.get(i).setName(util.html2string(models.get(i).getName()));
+                models.get(i).setDescription(util.html2string(models.get(i).getDescription()));
+                models.get(i).setStartDate(util.html2string(models.get(i).getStartDate()));
+                models.get(i).setEndDate(util.html2string(models.get(i).getEndDate()));
+            }
         }
     }
 
@@ -644,7 +646,7 @@ public class CommonActivity extends AppCompatActivity {
 
         @Override
         protected Boolean doInBackground(Void... voids) {
-            if (activityReference.get().models != null) {
+            if (activityReference.get().models != null && activityReference.get().models.size() > 0) {
                 for (int i = 0; i < activityReference.get().models.size(); i++) {
                     tourListTableEnglish = new TourListTableEnglish(activityReference.get().models.get(i).getId(),
                             activityReference.get().models.get(i).getEventDay(),
@@ -885,7 +887,7 @@ public class CommonActivity extends AppCompatActivity {
 
         @Override
         protected Boolean doInBackground(Void... voids) {
-            if (activityReference.get().models != null) {
+            if (activityReference.get().models != null && activityReference.get().models.size() > 0) {
                 if (language.equals("en")) {
                     for (int i = 0; i < activityReference.get().models.size(); i++) {
                         travelDetailsTableEnglish = new TravelDetailsTableEnglish(
@@ -1206,7 +1208,7 @@ public class CommonActivity extends AppCompatActivity {
 
         @Override
         protected Boolean doInBackground(Void... voids) {
-            if (activityReference.get().models != null) {
+            if (activityReference.get().models != null && activityReference.get().models.size() > 0) {
                 if (language.equals("en")) {
                     for (int i = 0; i < activityReference.get().models.size(); i++) {
                         diningTableEnglish = new DiningTableEnglish(Long.parseLong(
@@ -1502,7 +1504,7 @@ public class CommonActivity extends AppCompatActivity {
 
         @Override
         protected Boolean doInBackground(Void... voids) {
-            if (activityReference.get().models != null) {
+            if (activityReference.get().models != null && activityReference.get().models.size() > 0) {
                 if (language.equals("en")) {
                     for (int i = 0; i < activityReference.get().models.size(); i++) {
                         publicArtsTableEnglish = new PublicArtsTableEnglish(Long.parseLong(
@@ -1661,7 +1663,7 @@ public class CommonActivity extends AppCompatActivity {
 
         @Override
         protected Boolean doInBackground(Void... voids) {
-            if (activityReference.get().models != null) {
+            if (activityReference.get().models != null && activityReference.get().models.size() > 0) {
                 if (language.equals("en")) {
                     for (int i = 0; i < activityReference.get().models.size(); i++) {
                         heritageListTableEnglish = new HeritageListTableEnglish(
@@ -2034,7 +2036,7 @@ public class CommonActivity extends AppCompatActivity {
 
         @Override
         protected Boolean doInBackground(Void... voids) {
-            if (activityReference.get().models != null) {
+            if (activityReference.get().models != null && activityReference.get().models.size() > 0) {
                 if (language.equals("en")) {
                     for (int i = 0; i < activityReference.get().models.size(); i++) {
                         exhibitionListTableEnglish = new ExhibitionListTableEnglish(Long.parseLong(
@@ -2347,7 +2349,7 @@ public class CommonActivity extends AppCompatActivity {
 
         @Override
         protected Boolean doInBackground(Void... voids) {
-            if (activityReference.get().models != null) {
+            if (activityReference.get().models != null && activityReference.get().models.size() > 0) {
                 if (language.equals("en")) {
                     for (int i = 0; i < activityReference.get().models.size(); i++) {
                         museumCollectionListTableEnglish =
