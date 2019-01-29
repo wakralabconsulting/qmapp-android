@@ -37,7 +37,7 @@ public class TourDetailsModel implements Parcelable, Comparable<TourDetailsModel
     private String tourSpeakerName;
     @SerializedName("description_for_moderator")
     private String tourSpeakerInfo;
-    @SerializedName("nid")
+    @SerializedName(value = "nid", alternate = "node_id")
     private String nId;
     @SerializedName("Seats_remaining")
     private String seatsRemaining;
