@@ -264,7 +264,14 @@ public class CommonActivity extends AppCompatActivity {
                 if (response.isSuccessful()) {
                     if (response.body() != null && response.body().size() > 0) {
                         recyclerView.setVisibility(View.VISIBLE);
-                        models.addAll(response.body());
+                        for (int i = 0; i < response.body().size(); i++)
+                            models.add(new CommonModel(
+                                    response.body().get(i).getId(),
+                                    response.body().get(i).getEventDay(),
+                                    response.body().get(i).getEventDate(),
+                                    response.body().get(i).getName(),
+                                    response.body().get(i).getImages(),
+                                    true));
                         removeHtmlTags(models);
                         mAdapter.notifyDataSetChanged();
                         new TourRowCount(CommonActivity.this, appLanguage, 1).execute();
@@ -298,7 +305,14 @@ public class CommonActivity extends AppCompatActivity {
                 if (response.isSuccessful()) {
                     if (response.body() != null && response.body().size() > 0) {
                         recyclerView.setVisibility(View.VISIBLE);
-                        models.addAll(response.body());
+                        for (int i = 0; i < response.body().size(); i++)
+                            models.add(new CommonModel(
+                                    response.body().get(i).getId(),
+                                    response.body().get(i).getEventDay(),
+                                    response.body().get(i).getEventDate(),
+                                    response.body().get(i).getName(),
+                                    response.body().get(i).getImages(),
+                                    false));
                         removeHtmlTags(models);
                         mAdapter.notifyDataSetChanged();
                         new TourRowCount(CommonActivity.this, appLanguage, 0).execute();
@@ -678,15 +692,26 @@ public class CommonActivity extends AppCompatActivity {
 
         @Override
         protected void onPostExecute(List<TourListTableEnglish> tourListTableEnglishes) {
+            CommonModel commonModel;
             activityReference.get().models.clear();
             if (tourListTableEnglishes.size() > 0) {
                 for (int i = 0; i < tourListTableEnglishes.size(); i++) {
-                    CommonModel commonModel = new CommonModel(
-                            tourListTableEnglishes.get(i).getTourNid(),
-                            tourListTableEnglishes.get(i).getTourDay(),
-                            tourListTableEnglishes.get(i).getTourEventDate(),
-                            tourListTableEnglishes.get(i).getTourSubtitle(),
-                            activityReference.get().convertor.fromString(tourListTableEnglishes.get(i).getTourImages()));
+                    if (isTour == 1)
+                        commonModel = new CommonModel(
+                                tourListTableEnglishes.get(i).getTourNid(),
+                                tourListTableEnglishes.get(i).getTourDay(),
+                                tourListTableEnglishes.get(i).getTourEventDate(),
+                                tourListTableEnglishes.get(i).getTourSubtitle(),
+                                activityReference.get().convertor.fromString(tourListTableEnglishes.get(i).getTourImages()),
+                                true);
+                    else
+                        commonModel = new CommonModel(
+                                tourListTableEnglishes.get(i).getTourNid(),
+                                tourListTableEnglishes.get(i).getTourDay(),
+                                tourListTableEnglishes.get(i).getTourEventDate(),
+                                tourListTableEnglishes.get(i).getTourSubtitle(),
+                                activityReference.get().convertor.fromString(tourListTableEnglishes.get(i).getTourImages()),
+                                false);
                     activityReference.get().models.add(i, commonModel);
                 }
                 activityReference.get().mAdapter.notifyDataSetChanged();
@@ -783,7 +808,8 @@ public class CommonActivity extends AppCompatActivity {
                                     activityReference.get().models.get(i).getDescription(),
                                     activityReference.get().models.get(i).getEmail(),
                                     activityReference.get().models.get(i).getContactnumber(),
-                                    activityReference.get().models.get(i).getPromotionalCode());
+                                    activityReference.get().models.get(i).getPromotionalCode(),
+                                    activityReference.get().models.get(i).getClaimOffer());
                             activityReference.get().qmDatabase.getTravelDetailsTableDao().insert(travelDetailsTableEnglish);
 
                         }
@@ -804,7 +830,8 @@ public class CommonActivity extends AppCompatActivity {
                                     activityReference.get().models.get(i).getDescription(),
                                     activityReference.get().models.get(i).getEmail(),
                                     activityReference.get().models.get(i).getContactnumber(),
-                                    activityReference.get().models.get(i).getPromotionalCode());
+                                    activityReference.get().models.get(i).getPromotionalCode(),
+                                    activityReference.get().models.get(i).getClaimOffer());
                             activityReference.get().qmDatabase.getTravelDetailsTableDao().insert(travelDetailsTableArabic);
 
                         }
@@ -897,7 +924,8 @@ public class CommonActivity extends AppCompatActivity {
                                 activityReference.get().models.get(i).getDescription(),
                                 activityReference.get().models.get(i).getEmail(),
                                 activityReference.get().models.get(i).getContactnumber(),
-                                activityReference.get().models.get(i).getPromotionalCode());
+                                activityReference.get().models.get(i).getPromotionalCode(),
+                                activityReference.get().models.get(i).getClaimOffer());
                         activityReference.get().qmDatabase.getTravelDetailsTableDao().insert(travelDetailsTableEnglish);
                     }
                 } else {
@@ -908,7 +936,8 @@ public class CommonActivity extends AppCompatActivity {
                                 activityReference.get().models.get(i).getDescription(),
                                 activityReference.get().models.get(i).getEmail(),
                                 activityReference.get().models.get(i).getContactnumber(),
-                                activityReference.get().models.get(i).getPromotionalCode());
+                                activityReference.get().models.get(i).getPromotionalCode(),
+                                activityReference.get().models.get(i).getClaimOffer());
                         activityReference.get().qmDatabase.getTravelDetailsTableDao().insert(travelDetailsTableArabic);
                     }
                 }
@@ -941,7 +970,7 @@ public class CommonActivity extends AppCompatActivity {
                             travelDetailsTableEnglishe.get(i).getTravel_email(),
                             travelDetailsTableEnglishe.get(i).getContact_number(),
                             travelDetailsTableEnglishe.get(i).getPromotional_code(),
-                            "",
+                            travelDetailsTableEnglishe.get(i).getClaim_offer(),
                             travelDetailsTableEnglishe.get(i).getContent_ID(),
                             true);
                     activityReference.get().models.add(i, commonModel);
@@ -984,7 +1013,7 @@ public class CommonActivity extends AppCompatActivity {
                             travelDetailsTableArabic.get(i).getTravel_email(),
                             travelDetailsTableArabic.get(i).getContact_number(),
                             travelDetailsTableArabic.get(i).getPromotional_code(),
-                            "",
+                            travelDetailsTableArabic.get(i).getClaim_offer(),
                             travelDetailsTableArabic.get(i).getContent_ID(),
                             true);
                     activityReference.get().models.add(i, commonModel);

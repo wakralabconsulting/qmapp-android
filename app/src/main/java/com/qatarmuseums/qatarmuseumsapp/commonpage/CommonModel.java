@@ -137,12 +137,13 @@ public class CommonModel {
     }
 
     public CommonModel(String id, String eventDay, String eventDate, String name,
-                       ArrayList<String> images) {
+                       ArrayList<String> images, boolean isTour) {
         this.id = id;
         this.name = name;
         this.images = images;
         this.eventDay = eventDay;
         this.eventDate = eventDate;
+        this.isTour = isTour;
     }
 
     public String getName() {
