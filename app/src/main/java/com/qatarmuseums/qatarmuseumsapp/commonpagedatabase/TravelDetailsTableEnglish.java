@@ -23,6 +23,8 @@ public class TravelDetailsTableEnglish {
     private String contact_number;
     @ColumnInfo()
     private String promotional_code;
+    @ColumnInfo()
+    private String claim_offer;
 
     public TravelDetailsTableEnglish(@NonNull String content_ID,
                                      String travel_name,
@@ -30,7 +32,7 @@ public class TravelDetailsTableEnglish {
                                      String travel_description,
                                      String travel_email,
                                      String contact_number,
-                                     String promotional_code) {
+                                     String promotional_code, String claim_offer) {
         this.content_ID = content_ID;
         this.travel_name = travel_name;
         this.travel_image = travel_image;
@@ -38,6 +40,7 @@ public class TravelDetailsTableEnglish {
         this.travel_email = travel_email;
         this.contact_number = contact_number;
         this.promotional_code = promotional_code;
+        this.claim_offer = claim_offer;
     }
 
     @NonNull
@@ -95,5 +98,13 @@ public class TravelDetailsTableEnglish {
 
     public void setPromotional_code(String promotional_code) {
         this.promotional_code = promotional_code;
+    }
+
+    public String getClaim_offer() {
+        return claim_offer;
+    }
+
+    public void setClaim_offer(String claim_offer) {
+        this.claim_offer = claim_offer;
     }
 }
