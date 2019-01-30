@@ -459,12 +459,15 @@ public class DetailsActivity extends AppCompatActivity implements IPullZoom, OnM
             return false;
         });
         claimButton.setOnClickListener(v -> {
-            if (!claimOfferURL.equals("")) {
-                navigation_intent = new Intent(DetailsActivity.this, WebviewActivity.class);
-                navigation_intent.putExtra("url", claimOfferURL);
-                startActivity(navigation_intent);
+            if (util.isNetworkAvailable(this)) {
+                if (!claimOfferURL.equals("")) {
+                    navigation_intent = new Intent(DetailsActivity.this, WebviewActivity.class);
+                    navigation_intent.putExtra("url", claimOfferURL);
+                    startActivity(navigation_intent);
+                } else
+                    util. showComingSoonDialog(DetailsActivity.this, R.string.coming_soon_content);
             } else
-                util.showComingSoonDialog(DetailsActivity.this, R.string.coming_soon_content);
+                util.showToast(getResources().getString(R.string.check_network), getApplicationContext());
         });
         mapImageView.setOnClickListener(view -> {
             if (iconView == 0) {
@@ -1013,7 +1016,10 @@ public class DetailsActivity extends AppCompatActivity implements IPullZoom, OnM
         videoLayout.setVisibility(View.GONE);
         locationLayout.setVisibility(View.GONE);
         offerLayout.setVisibility(View.VISIBLE);
-        offerCode.setText(promotionCode);
+        if (promotionCode != null && !promotionCode.equals("")) {
+            offerCode.setVisibility(View.VISIBLE);
+            offerCode.setText(promotionCode);
+        }
         loadData(null, description, null, null,
                 null, null, null, null,
                 contactNumber, contactMail, null, null,
