@@ -116,7 +116,8 @@ public class CommonListAdapter extends RecyclerView.Adapter<CommonListAdapter.My
             } catch (ParseException e) {
                 e.printStackTrace();
             }
-            holder.tourDateTxt.setText(model.getEventDate());
+            if (model.getIsTour())
+                holder.tourDateTxt.setText(model.getEventDate());
             holder.tourTitleTxt.setText(model.getName());
         } else if (model.getIsTravel() != null) {
             holder.name.setText(model.getName());
