@@ -21,6 +21,7 @@ import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.google.firebase.analytics.FirebaseAnalytics;
 import com.qatarmuseums.qatarmuseumsapp.Convertor;
 import com.qatarmuseums.qatarmuseumsapp.LocaleManager;
 import com.qatarmuseums.qatarmuseumsapp.QMDatabase;
@@ -67,6 +68,7 @@ public class TourGuideDetailsActivity extends AppCompatActivity {
     TourGuideStartPageEnglish tourGuideStartPageEnglish;
     TourGuideStartPageArabic tourGuideStartPageArabic;
     private Convertor converters;
+    private FirebaseAnalytics mFirebaseAnalytics;
 
     @Override
     protected void attachBaseContext(Context base) {
@@ -82,6 +84,7 @@ public class TourGuideDetailsActivity extends AppCompatActivity {
         intent = getIntent();
         museumId = intent.getStringExtra("ID");
 
+        mFirebaseAnalytics = FirebaseAnalytics.getInstance(this);
         tourguideMainTitle = (TextView) findViewById(R.id.tourguide_tittle);
         tourguideSubTitle = (TextView) findViewById(R.id.tourguide_subtittle);
         tourguideMainDesc = (TextView) findViewById(R.id.tourguide_title_desc);
@@ -526,4 +529,9 @@ public class TourGuideDetailsActivity extends AppCompatActivity {
         }
     }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+        mFirebaseAnalytics.setCurrentScreen(this, getString(R.string.tour_guide_details_page), null);
+    }
 }

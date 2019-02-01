@@ -20,6 +20,7 @@ import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.google.firebase.analytics.FirebaseAnalytics;
 import com.qatarmuseums.qatarmuseumsapp.Convertor;
 import com.qatarmuseums.qatarmuseumsapp.LocaleManager;
 import com.qatarmuseums.qatarmuseumsapp.QMDatabase;
@@ -67,6 +68,7 @@ public class TourSecondaryListActivity extends AppCompatActivity {
     private String[] splitArray;
     private String startTime, endTime;
     private long startTimeStamp, endTimeStamp;
+    private FirebaseAnalytics mFirebaseAnalytics;
 
     @Override
     protected void attachBaseContext(Context base) {
@@ -95,6 +97,7 @@ public class TourSecondaryListActivity extends AppCompatActivity {
         recyclerView = (RecyclerView) findViewById(R.id.tour_recycler_view);
         qmDatabase = QMDatabase.getInstance(TourSecondaryListActivity.this);
         util = new Util();
+        mFirebaseAnalytics = FirebaseAnalytics.getInstance(this);
         mAdapter = new TourSecondaryListAdapter(this, tourDetailsList, position -> {
             navigationIntent = new Intent(TourSecondaryListActivity.this, DetailsActivity.class);
             if (tourDetailsList.get(position).getTourImage().size() > 0) {
@@ -503,4 +506,14 @@ public class TourSecondaryListActivity extends AppCompatActivity {
         }
     }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+        if (comingFrom != null && !comingFrom.equals("")) {
+            if (comingFrom.equals(getString(R.string.museum_tours)))
+                mFirebaseAnalytics.setCurrentScreen(this, getString(R.string.tour_secondary_page), null);
+            else
+                mFirebaseAnalytics.setCurrentScreen(this, getString(R.string.activities_secondary_page), null);
+        }
+    }
 }

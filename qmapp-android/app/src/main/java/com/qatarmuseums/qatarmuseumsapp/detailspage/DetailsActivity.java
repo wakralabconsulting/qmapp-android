@@ -52,6 +52,7 @@ import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MapStyleOptions;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.firebase.analytics.FirebaseAnalytics;
 import com.qatarmuseums.qatarmuseumsapp.Convertor;
 import com.qatarmuseums.qatarmuseumsapp.LocaleManager;
 import com.qatarmuseums.qatarmuseumsapp.QMDatabase;
@@ -227,6 +228,8 @@ public class DetailsActivity extends AppCompatActivity implements IPullZoom, OnM
     int REQUEST_PERMISSION_SETTING = 110;
     String seatsRemaining = "0";
     private int seatsCount;
+    private FirebaseAnalytics mFirebaseAnalytics;
+    private String pageName = null;
 
     @Override
     protected void attachBaseContext(Context base) {
@@ -350,6 +353,7 @@ public class DetailsActivity extends AppCompatActivity implements IPullZoom, OnM
         speakerInfo = findViewById(R.id.information_of_the_speaker);
         locationTitle = findViewById(R.id.location_title);
         util = new Util();
+        mFirebaseAnalytics = FirebaseAnalytics.getInstance(this);
         title.setText(mainTitle);
         getData();
 
@@ -465,7 +469,7 @@ public class DetailsActivity extends AppCompatActivity implements IPullZoom, OnM
                     navigation_intent.putExtra("url", claimOfferURL);
                     startActivity(navigation_intent);
                 } else
-                    util. showComingSoonDialog(DetailsActivity.this, R.string.coming_soon_content);
+                    util.showComingSoonDialog(DetailsActivity.this, R.string.coming_soon_content);
             } else
                 util.showToast(getResources().getString(R.string.check_network), getApplicationContext());
         });
@@ -709,6 +713,8 @@ public class DetailsActivity extends AppCompatActivity implements IPullZoom, OnM
     protected void onResume() {
         super.onResume();
         mapDetails.onResume();
+        if (pageName != null)
+            mFirebaseAnalytics.setCurrentScreen(this, pageName + getString(R.string.details_page), null);
     }
 
     @Override
@@ -740,38 +746,46 @@ public class DetailsActivity extends AppCompatActivity implements IPullZoom, OnM
 
     public void getData() {
         if (comingFrom.equals(getString(R.string.sidemenu_exhibition_text))) {
+            pageName = comingFrom;
             if (util.isNetworkAvailable(DetailsActivity.this)) {
                 getHeritageOrExhibitionDetailsFromAPI(id, language, "Exhibition_detail_Page.json");
             } else {
                 getExhibitionAPIDataFromDatabase(id, language);
             }
         } else if (comingFrom.equals(getString(R.string.sidemenu_heritage_text))) {
+            pageName = comingFrom.replaceAll(" ", "");
             if (util.isNetworkAvailable(DetailsActivity.this)) {
                 getHeritageOrExhibitionDetailsFromAPI(id, language, "heritage_detail_Page.json");
             } else {
                 getHeritageAPIDataFromDatabase(id, language);
             }
         } else if (comingFrom.equals(getString(R.string.sidemenu_public_arts_text))) {
+            pageName = comingFrom.replaceAll(" ", "");
             if (util.isNetworkAvailable(DetailsActivity.this))
                 getPublicArtDetailsFromAPI(id, language);
             else
                 getCommonListAPIDataFromDatabase(id, language);
 
         } else if (comingFrom.equals(getString(R.string.museum_about))) {
+            pageName = comingFrom.replaceAll(" ", "");
             if (util.isNetworkAvailable(DetailsActivity.this))
                 getMuseumAboutDetailsFromAPI(id, language, false);
             else
                 getMuseumAboutDetailsFromDatabase(id, language, false);
         } else if (comingFrom.equals(getString(R.string.museum_about_launch))) {
+            pageName = getString(R.string.nmoq) + comingFrom;
             if (util.isNetworkAvailable(DetailsActivity.this))
                 getMuseumAboutDetailsFromAPI(id, language, true);
             else
                 getMuseumAboutDetailsFromDatabase(id, language, true);
         } else if (comingFrom.equals(getString(R.string.museum_travel))) {
+            pageName = getString(R.string.nmoq) + comingFrom;
             getTravelsDetails();
         } else if (comingFrom.equals(getString(R.string.museum_tours))) {
+            pageName = getString(R.string.nmoq) + comingFrom;
             setTourDetailsData();
         } else if (comingFrom.equals(getString(R.string.museum_discussion))) {
+            pageName = getString(R.string.nmoq) + comingFrom;
             setSpecialEventDetailsData();
         }
     }
@@ -933,13 +947,9 @@ public class DetailsActivity extends AppCompatActivity implements IPullZoom, OnM
                             activityReference.get().registerButton.setBackground(
                                     activityReference.get().getResources().getDrawable(R.drawable.rounded_corner_grey));
                         } else if (count > 1)
-                            activityReference.get().registerUregisterCount.setText(
-                                    activityReference.get().getResources().getString(R.string.hurry_up_only) + count +
-                                            activityReference.get().getResources().getString(R.string.seats_for_this_tour));
+                            activityReference.get().registerUregisterCount.setText(count + activityReference.get().getResources().getString(R.string.seats_available));
                         else
-                            activityReference.get().registerUregisterCount.setText(
-                                    activityReference.get().getResources().getString(R.string.hurry_up_only) + count +
-                                            activityReference.get().getResources().getString(R.string.seat_for_this_tour));
+                            activityReference.get().registerUregisterCount.setText(count + activityReference.get().getResources().getString(R.string.seat_available));
                     }
                 } else {
                     if (activityReference.get().seatsRemaining != null)
@@ -954,13 +964,9 @@ public class DetailsActivity extends AppCompatActivity implements IPullZoom, OnM
                         activityReference.get().registerButton.setBackground(
                                 activityReference.get().getResources().getDrawable(R.drawable.rounded_corner_grey));
                     } else if (count > 1)
-                        activityReference.get().registerUregisterCount.setText(
-                                activityReference.get().getResources().getString(R.string.hurry_up_only) + count +
-                                        activityReference.get().getResources().getString(R.string.seats_for_this_tour));
+                        activityReference.get().registerUregisterCount.setText(count + activityReference.get().getResources().getString(R.string.seats_available));
                     else
-                        activityReference.get().registerUregisterCount.setText(
-                                activityReference.get().getResources().getString(R.string.hurry_up_only) + count +
-                                        activityReference.get().getResources().getString(R.string.seat_for_this_tour));
+                        activityReference.get().registerUregisterCount.setText(count + activityReference.get().getResources().getString(R.string.seat_available));
                 }
             } else {
                 if (userRegistrationDetailsTableList.size() > 0) {
@@ -1000,13 +1006,9 @@ public class DetailsActivity extends AppCompatActivity implements IPullZoom, OnM
                         activityReference.get().registerButton.setBackground(
                                 activityReference.get().getResources().getDrawable(R.drawable.rounded_corner_grey));
                     } else if (count > 1)
-                        activityReference.get().registerUregisterCount.setText(
-                                activityReference.get().getResources().getString(R.string.hurry_up_only) + count +
-                                        activityReference.get().getResources().getString(R.string.seats_for_this_tour));
+                        activityReference.get().registerUregisterCount.setText(count + activityReference.get().getResources().getString(R.string.seats_available));
                     else
-                        activityReference.get().registerUregisterCount.setText(
-                                activityReference.get().getResources().getString(R.string.hurry_up_only) + count +
-                                        activityReference.get().getResources().getString(R.string.seat_for_this_tour));
+                        activityReference.get().registerUregisterCount.setText(count + activityReference.get().getResources().getString(R.string.seat_available));
                 }
             }
         }
@@ -1020,6 +1022,7 @@ public class DetailsActivity extends AppCompatActivity implements IPullZoom, OnM
             offerCode.setVisibility(View.VISIBLE);
             offerCode.setText(promotionCode);
         }
+        shortDescription.setTextAlignment(View.TEXT_ALIGNMENT_VIEW_START);
         loadData(null, description, null, null,
                 null, null, null, null,
                 contactNumber, contactMail, null, null,
@@ -1607,13 +1610,9 @@ public class DetailsActivity extends AppCompatActivity implements IPullZoom, OnM
                         registerButton.setEnabled(false);
                         registerButton.setBackground(getResources().getDrawable(R.drawable.rounded_corner_grey));
                     } else if (seatsCount > 1)
-                        registerUregisterCount.setText(
-                                getResources().getString(R.string.hurry_up_only) + seatsCount +
-                                        getResources().getString(R.string.seats_for_this_tour));
+                        registerUregisterCount.setText(seatsCount + getResources().getString(R.string.seats_available));
                     else
-                        registerUregisterCount.setText(
-                                getResources().getString(R.string.hurry_up_only) + seatsCount +
-                                        getResources().getString(R.string.seat_for_this_tour));
+                        registerUregisterCount.setText(seatsCount + getResources().getString(R.string.seat_available));
 
 
                 }

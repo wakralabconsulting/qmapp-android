@@ -37,6 +37,7 @@ import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MapStyleOptions;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.firebase.analytics.FirebaseAnalytics;
 import com.qatarmuseums.qatarmuseumsapp.LocaleManager;
 import com.qatarmuseums.qatarmuseumsapp.QMDatabase;
 import com.qatarmuseums.qatarmuseumsapp.R;
@@ -107,6 +108,7 @@ public class DiningActivity extends AppCompatActivity implements IPullZoom, OnMa
     private GlideLoaderForMuseum glideLoader;
     private IndicatorConfiguration configuration;
     private String appLanguage;
+    private FirebaseAnalytics mFirebaseAnalytics;
 
     @Override
     protected void attachBaseContext(Context base) {
@@ -159,6 +161,7 @@ public class DiningActivity extends AppCompatActivity implements IPullZoom, OnMa
         shareIcon = (ImageView) findViewById(R.id.share);
         circleIndicator = (InfiniteIndicator) findViewById(R.id.carousel_indicator);
         util = new Util();
+        mFirebaseAnalytics = FirebaseAnalytics.getInstance(this);
         GlideApp.with(this)
                 .load(headerImage)
                 .centerCrop()
@@ -345,6 +348,7 @@ public class DiningActivity extends AppCompatActivity implements IPullZoom, OnMa
     protected void onResume() {
         super.onResume();
         mapDetails.onResume();
+        mFirebaseAnalytics.setCurrentScreen(this, getString(R.string.dining_details_page), null);
     }
 
     @Override

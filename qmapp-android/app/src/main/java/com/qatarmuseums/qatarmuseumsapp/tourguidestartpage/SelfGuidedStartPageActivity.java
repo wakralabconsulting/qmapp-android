@@ -19,6 +19,7 @@ import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.google.firebase.analytics.FirebaseAnalytics;
 import com.qatarmuseums.qatarmuseumsapp.LocaleManager;
 import com.qatarmuseums.qatarmuseumsapp.R;
 import com.qatarmuseums.qatarmuseumsapp.objectpreview.ObjectPreviewActivity;
@@ -55,6 +56,7 @@ public class SelfGuidedStartPageActivity extends AppCompatActivity implements
     private Toolbar toolbar;
     private TextView toolbar_title;
     private ImageView backArrow;
+    private FirebaseAnalytics mFirebaseAnalytics;
 
     @Override
     protected void attachBaseContext(Context base) {
@@ -72,6 +74,7 @@ public class SelfGuidedStartPageActivity extends AppCompatActivity implements
         appLanguage = LocaleManager.getLanguage(this);
         playButton = (ImageView) findViewById(R.id.playBtn);
         util = new Util();
+        mFirebaseAnalytics = FirebaseAnalytics.getInstance(this);
         museumTitle = (TextView) findViewById(R.id.museum_tittle);
         sliderPlaceholderImage = (ImageView) findViewById(R.id.ads_place_holder);
         museumDesc = (TextView) findViewById(R.id.museum_desc);
@@ -242,7 +245,7 @@ public class SelfGuidedStartPageActivity extends AppCompatActivity implements
         super.onResume();
         if (configuration != null)
             animCircleIndicator.start();
-
+        mFirebaseAnalytics.setCurrentScreen(this, getString(R.string.self_guided_starter_page), null);
 
     }
 

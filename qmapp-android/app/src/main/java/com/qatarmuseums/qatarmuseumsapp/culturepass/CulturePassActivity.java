@@ -30,6 +30,7 @@ import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
+import com.google.firebase.analytics.FirebaseAnalytics;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.internal.LinkedTreeMap;
@@ -85,6 +86,8 @@ public class CulturePassActivity extends AppCompatActivity {
     private Retrofit retrofit;
     private String RSVP = null;
     private QMDatabase qmDatabase;
+    private FirebaseAnalytics mFirebaseAnalytics;
+    private Bundle bundleParams;
 
     @Override
     protected void attachBaseContext(Context base) {
@@ -100,6 +103,7 @@ public class CulturePassActivity extends AppCompatActivity {
         loginButton = findViewById(R.id.login_btn);
         setSupportActionBar(toolbar);
         qmDatabase = QMDatabase.getInstance(CulturePassActivity.this);
+        mFirebaseAnalytics = FirebaseAnalytics.getInstance(this);
         util = new Util();
         isLogout = getIntent().getBooleanExtra("IS_LOGOUT", false);
         if (isLogout) {
@@ -207,8 +211,11 @@ public class CulturePassActivity extends AppCompatActivity {
 
             @Override
             public void onFailure(Call<ProfileDetails> call, Throwable t) {
-                util.showToast(getResources().getString(R.string.check_network),
-                        CulturePassActivity.this);
+                if (t.getMessage().contains("timeout"))
+                    util.showToast(t.getMessage(), CulturePassActivity.this);
+                else
+                    util.showToast(getResources().getString(R.string.check_network),
+                            CulturePassActivity.this);
                 showProgress(false);
             }
 
@@ -317,10 +324,19 @@ public class CulturePassActivity extends AppCompatActivity {
                             editor.putString("RSVP", RSVP);
                             editor.commit();
                             getUserRegistrationDetails(uid);
+                            bundleParams = new Bundle();
+                            bundleParams.putString(FirebaseAnalytics.Param.CONTENT_TYPE, "VIP USER");
+                            mFirebaseAnalytics.logEvent(FirebaseAnalytics.Event.LOGIN, bundleParams);
+                        } else {
+                            bundleParams = new Bundle();
+                            bundleParams.putString(FirebaseAnalytics.Param.CONTENT_TYPE, "NORMAL USER");
+                            mFirebaseAnalytics.logEvent(FirebaseAnalytics.Event.LOGIN, bundleParams);
                         }
+
                     }
                     navigateToProfile(RSVP);
                 }
+
             }
 
             @Override
@@ -654,5 +670,11 @@ public class CulturePassActivity extends AppCompatActivity {
                 util.showNormalDialog(this, R.string.logout_success_message);
             }
         }
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        mFirebaseAnalytics.setCurrentScreen(this, getString(R.string.culture_pass_page), null);
     }
 }

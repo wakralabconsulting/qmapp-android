@@ -15,6 +15,7 @@ import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.google.firebase.analytics.FirebaseAnalytics;
 import com.pierfrancescosoffritti.androidyoutubeplayer.player.YouTubePlayer;
 import com.pierfrancescosoffritti.androidyoutubeplayer.player.YouTubePlayerView;
 import com.pierfrancescosoffritti.androidyoutubeplayer.player.listeners.AbstractYouTubePlayerListener;
@@ -34,6 +35,7 @@ public class EducationActivity extends AppCompatActivity {
     private Animation zoomOutAnimation;
     private TextView longDescription;
     private LinearLayout youTubePlayerLayout;
+    private FirebaseAnalytics mFirebaseAnalytics;
 
     @Override
     protected void attachBaseContext(Context base) {
@@ -48,6 +50,7 @@ public class EducationActivity extends AppCompatActivity {
         backButton = findViewById(R.id.toolbar_back);
         longDescription = findViewById(R.id.long_description);
         discoverButton = (Button) findViewById(R.id.discover_btn);
+        mFirebaseAnalytics = FirebaseAnalytics.getInstance(this);
         longDescription.setText(getString(R.string.education_long_description));
         backButton.setOnClickListener(v -> onBackPressed());
         discoverButton.setOnClickListener(v -> {
@@ -121,5 +124,11 @@ public class EducationActivity extends AppCompatActivity {
     protected void onDestroy() {
         super.onDestroy();
         youTubePlayerView.release();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        mFirebaseAnalytics.setCurrentScreen(this, getString(R.string.education_page), null);
     }
 }

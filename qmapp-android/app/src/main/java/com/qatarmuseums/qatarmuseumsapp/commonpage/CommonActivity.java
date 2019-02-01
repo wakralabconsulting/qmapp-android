@@ -22,6 +22,7 @@ import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.google.firebase.analytics.FirebaseAnalytics;
 import com.qatarmuseums.qatarmuseumsapp.Convertor;
 import com.qatarmuseums.qatarmuseumsapp.LocaleManager;
 import com.qatarmuseums.qatarmuseumsapp.QMDatabase;
@@ -92,6 +93,7 @@ public class CommonActivity extends AppCompatActivity {
     int diningTableRowCount;
     String appLanguage;
     String pageName = null;
+    String screenName = null;
     String id;
     private APIInterface apiService;
     private Call<ArrayList<CommonModel>> call;
@@ -99,6 +101,7 @@ public class CommonActivity extends AppCompatActivity {
     Button retryButton;
     private Integer travelTableRowCount;
     private Convertor convertor;
+    private FirebaseAnalytics mFirebaseAnalytics;
 
     @Override
     protected void attachBaseContext(Context base) {
@@ -114,6 +117,7 @@ public class CommonActivity extends AppCompatActivity {
         toolbar_title = (TextView) findViewById(R.id.toolbar_title);
         backArrow = (ImageView) findViewById(R.id.toolbar_back);
         intent = getIntent();
+        mFirebaseAnalytics = FirebaseAnalytics.getInstance(this);
         util = new Util();
         qmDatabase = QMDatabase.getInstance(this);
         progressBar = (ProgressBar) findViewById(R.id.progressBarLoading);
@@ -209,49 +213,56 @@ public class CommonActivity extends AppCompatActivity {
 
     public void getData() {
         if (toolbarTitle.equals(getString(R.string.sidemenu_exhibition_text))) {
+            screenName = toolbarTitle;
             if (util.isNetworkAvailable(CommonActivity.this))
                 getCommonListAPIDataFromAPI("Exhibition_List_Page.json");
             else
                 getCommonListDataFromDatabase("Exhibition_List_Page.json");
         } else if (toolbarTitle.equals(getString(R.string.sidemenu_heritage_text))) {
+            screenName = toolbarTitle.replaceAll(" ", "");
             if (util.isNetworkAvailable(CommonActivity.this))
                 getCommonListAPIDataFromAPI("Heritage_List_Page.json");
             else
                 getCommonListDataFromDatabase("Heritage_List_Page.json");
         } else if (toolbarTitle.equals(getString(R.string.sidemenu_public_arts_text))) {
-
+            screenName = toolbarTitle.replaceAll(" ", "");
             if (util.isNetworkAvailable(CommonActivity.this))
                 getCommonListAPIDataFromAPI("Public_Arts_List_Page.json");
             else
                 getCommonListDataFromDatabase("Public_Arts_List_Page.json");
-
         } else if (toolbarTitle.equals(getString(R.string.sidemenu_dining_text))) {
+            screenName = toolbarTitle;
             if (util.isNetworkAvailable(CommonActivity.this))
                 getCommonListAPIDataFromAPI("getDiningList.json");
             else
                 getCommonListDataFromDatabase("getDiningList.json");
         } else if (toolbarTitle.equals(getString(R.string.museum_collection_text))) {
+            screenName = toolbarTitle;
             if (util.isNetworkAvailable(CommonActivity.this))
                 getMuseumCollectionListFromAPI();
             else
                 getMuseumCollectionListFromDatabase();
         } else if (toolbarTitle.equals(getString(R.string.museum_tours))) {
+            screenName = getString(R.string.nmoq) + toolbarTitle;
             if (util.isNetworkAvailable(CommonActivity.this))
                 getTourListFromAPI();
             else
                 new RetriveEnglishTourData(CommonActivity.this, 1).execute();
         } else if (toolbarTitle.equals(getString(R.string.museum_travel))) {
+            screenName = getString(R.string.nmoq) + toolbarTitle;
             if (util.isNetworkAvailable(CommonActivity.this))
                 getTravelDataFromAPI();
             else
                 getTravelDataFromDataBase();
         } else if (toolbarTitle.equals(getString(R.string.museum_discussion))) {
+            screenName = getString(R.string.nmoq) + toolbarTitle;
             if (util.isNetworkAvailable(CommonActivity.this))
                 getSpecialEventFromAPI();
             else
                 new RetriveEnglishTourData(CommonActivity.this, 0).execute();
 
         }
+
     }
 
     private void getTourListFromAPI() {
@@ -2529,4 +2540,11 @@ public class CommonActivity extends AppCompatActivity {
         }
     }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+        if (screenName != null)
+            mFirebaseAnalytics.setCurrentScreen(this, screenName + getString(R.string.page), null);
+
+    }
 }

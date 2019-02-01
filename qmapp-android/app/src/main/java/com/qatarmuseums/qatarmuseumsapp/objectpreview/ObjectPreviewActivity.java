@@ -21,6 +21,7 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.booking.rtlviewpager.RtlViewPager;
+import com.google.firebase.analytics.FirebaseAnalytics;
 import com.qatarmuseums.qatarmuseumsapp.Convertor;
 import com.qatarmuseums.qatarmuseumsapp.LocaleManager;
 import com.qatarmuseums.qatarmuseumsapp.QMDatabase;
@@ -71,6 +72,7 @@ public class ObjectPreviewActivity extends AppCompatActivity {
     private static Convertor converters;
     LinearLayout retryLayout;
     Button retryButton;
+    private FirebaseAnalytics mFirebaseAnalytics;
 
     @Override
     protected void attachBaseContext(Context base) {
@@ -98,6 +100,7 @@ public class ObjectPreviewActivity extends AppCompatActivity {
         retryButton = findViewById(R.id.retry_btn);
         language = LocaleManager.getLanguage(this);
         pager = (RtlViewPager) findViewById(R.id.pager);
+        mFirebaseAnalytics = FirebaseAnalytics.getInstance(this);
         assert pager != null;
         stepIndicatorRecyclerView = findViewById(R.id.idRecyclerViewHorizontalList);
 
@@ -762,5 +765,11 @@ public class ObjectPreviewActivity extends AppCompatActivity {
             insert.cancel(true);
         if (update != null)
             update.cancel(true);
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        mFirebaseAnalytics.setCurrentScreen(this, getString(R.string.object_preview_page), null);
     }
 }
