@@ -19,6 +19,7 @@ import android.widget.ProgressBar;
 import android.widget.ScrollView;
 import android.widget.TextView;
 
+import com.google.firebase.analytics.FirebaseAnalytics;
 import com.qatarmuseums.qatarmuseumsapp.LocaleManager;
 import com.qatarmuseums.qatarmuseumsapp.R;
 import com.qatarmuseums.qatarmuseumsapp.apicall.APIClient;
@@ -68,6 +69,7 @@ public class ObjectSearchActivity extends AppCompatActivity implements View.OnCl
     String language;
     ArrayList<ArtifactDetails> artifactList = new ArrayList<>();
     Util util;
+    private FirebaseAnalytics mFirebaseAnalytics;
 
     @Override
     protected void attachBaseContext(Context base) {
@@ -93,6 +95,7 @@ public class ObjectSearchActivity extends AppCompatActivity implements View.OnCl
                 displayButtons[i].setOnClickListener(this);
             }
         }
+        mFirebaseAnalytics = FirebaseAnalytics.getInstance(this);
         displayClearButton.setEnabled(false);
         doneButton.setEnabled(false);
         displayClearButton.setOnClickListener(view -> {
@@ -273,5 +276,11 @@ public class ObjectSearchActivity extends AppCompatActivity implements View.OnCl
                 numberPadDisplay.setText(display);
                 break;
         }
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        mFirebaseAnalytics.setCurrentScreen(this, getString(R.string.object_search_page), null);
     }
 }

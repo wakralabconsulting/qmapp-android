@@ -4,6 +4,7 @@ import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
+import com.google.firebase.analytics.FirebaseAnalytics
 import com.google.zxing.BarcodeFormat
 import com.google.zxing.MultiFormatWriter
 import com.google.zxing.WriterException
@@ -27,8 +28,6 @@ class CulturePassCardActivity : AppCompatActivity() {
         membershipTxtView.text = getString(R.string.membership_number) + " " + membershipNumber
         membershipTxt.text = membershipNumber
         nameTxt.text = userName
-
-
 
         flipButtonSecond.setOnClickListener {
             flipView.flipTheView()
@@ -75,5 +74,12 @@ class CulturePassCardActivity : AppCompatActivity() {
             val intent = Intent(context, CulturePassCardActivity::class.java)
             context.startActivity(intent)
         }
+    }
+
+    override fun onResume() {
+        super.onResume()
+        FirebaseAnalytics.getInstance(this).setCurrentScreen(this,
+                getString(R.string.culture_pass_card_page), null)
+
     }
 }

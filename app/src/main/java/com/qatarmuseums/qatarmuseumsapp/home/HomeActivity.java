@@ -41,6 +41,7 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.firebase.analytics.FirebaseAnalytics;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.internal.LinkedTreeMap;
@@ -128,6 +129,8 @@ public class HomeActivity extends BaseActivity {
     private String token;
     private boolean isFirstLaunch;
     private UserRegistrationDetailsTable userRegistrationModel;
+    private FirebaseAnalytics mFirebaseAnalytics;
+    private Bundle bundleParams;
 
 
     @Override
@@ -149,7 +152,7 @@ public class HomeActivity extends BaseActivity {
         bannerText = findViewById(R.id.banner_text);
         headerImageView.setOnClickListener(v -> navigateToLaunchPage());
         bannerLayout = (AppBarLayout) findViewById(R.id.banner);
-
+        mFirebaseAnalytics = FirebaseAnalytics.getInstance(this);
         util = new Util();
         profileDetails = new ProfileDetails();
         qmDatabase = QMDatabase.getInstance(HomeActivity.this);
@@ -481,6 +484,7 @@ public class HomeActivity extends BaseActivity {
     @Override
     protected void onResume() {
         super.onResume();
+        mFirebaseAnalytics.setCurrentScreen(this, getString(R.string.home_page), null);
         language = LocaleManager.getLanguage(this);
         if (retryLayout.getVisibility() == View.VISIBLE) {
             getDataFromDataBase(language);
@@ -657,6 +661,13 @@ public class HomeActivity extends BaseActivity {
                             editor.commit();
                             showBanner();
                             getUserRegistrationDetails(uid);
+                            bundleParams = new Bundle();
+                            bundleParams.putString(FirebaseAnalytics.Param.CONTENT_TYPE, "VIP USER");
+                            mFirebaseAnalytics.logEvent(FirebaseAnalytics.Event.LOGIN, bundleParams);
+                        } else {
+                            bundleParams = new Bundle();
+                            bundleParams.putString(FirebaseAnalytics.Param.CONTENT_TYPE, "NORMAL USER");
+                            mFirebaseAnalytics.logEvent(FirebaseAnalytics.Event.LOGIN, bundleParams);
                         }
                     }
                     showProgress(false);

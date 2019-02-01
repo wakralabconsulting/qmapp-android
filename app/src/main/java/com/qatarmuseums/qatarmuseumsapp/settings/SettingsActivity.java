@@ -19,6 +19,7 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.google.firebase.analytics.FirebaseAnalytics;
 import com.qatarmuseums.qatarmuseumsapp.LocaleManager;
 import com.qatarmuseums.qatarmuseumsapp.R;
 import com.qatarmuseums.qatarmuseumsapp.commonpage.RecyclerTouchListener;
@@ -49,6 +50,7 @@ public class SettingsActivity extends AppCompatActivity implements View.OnClickL
     @BindView(R.id.setting_page_apply_btn)
     Button settingPageApplyButton;
     String language;
+    private FirebaseAnalytics mFirebaseAnalytics;
 
     @SuppressLint("ClickableViewAccessibility")
     @Override
@@ -58,6 +60,7 @@ public class SettingsActivity extends AppCompatActivity implements View.OnClickL
         ButterKnife.bind(this);
         setSupportActionBar(toolbar);
         setClicklistenerforButtons();
+        mFirebaseAnalytics = FirebaseAnalytics.getInstance(this);
         languageChangeButton.setOnTouchListener((v, event) -> {
             if (language.equals(LocaleManager.LANGUAGE_ENGLISH))
                 showDialog(LocaleManager.LANGUAGE_ARABIC);
@@ -213,5 +216,6 @@ public class SettingsActivity extends AppCompatActivity implements View.OnClickL
         } else {
             languageChangeButton.setChecked(true);
         }
+        mFirebaseAnalytics.setCurrentScreen(this, getString(R.string.settings_page), null);
     }
 }

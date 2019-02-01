@@ -19,6 +19,7 @@ import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
+import com.google.firebase.analytics.FirebaseAnalytics;
 import com.qatarmuseums.qatarmuseumsapp.LocaleManager;
 import com.qatarmuseums.qatarmuseumsapp.QMDatabase;
 import com.qatarmuseums.qatarmuseumsapp.R;
@@ -77,6 +78,7 @@ public class CollectionDetailsActivity extends AppCompatActivity {
     QMDatabase qmDatabase;
     MuseumCollectionDetailTableEnglish museumCollectionDetailTableEnglish;
     MuseumCollectionDetailTableArabic museumCollectionDetailTableArabic;
+    private FirebaseAnalytics mFirebaseAnalytics;
 
     @Override
     protected void attachBaseContext(Context base) {
@@ -92,6 +94,7 @@ public class CollectionDetailsActivity extends AppCompatActivity {
         intent = getIntent();
         qmDatabase = QMDatabase.getInstance(CollectionDetailsActivity.this);
         util = new Util();
+        mFirebaseAnalytics = FirebaseAnalytics.getInstance(this);
         categoryName = intent.getStringExtra("MAIN_TITLE");
         zoomOutAnimation = AnimationUtils.loadAnimation(getApplicationContext(),
                 R.anim.zoom_out_more);
@@ -497,5 +500,9 @@ public class CollectionDetailsActivity extends AppCompatActivity {
         }
     }
 
-
+    @Override
+    protected void onResume() {
+        super.onResume();
+        mFirebaseAnalytics.setCurrentScreen(this, getString(R.string.collection_details_page), null);
+    }
 }

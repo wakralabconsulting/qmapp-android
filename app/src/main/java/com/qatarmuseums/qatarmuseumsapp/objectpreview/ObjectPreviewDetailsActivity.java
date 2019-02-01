@@ -21,6 +21,7 @@ import android.widget.Toast;
 
 import com.github.chrisbanes.photoview.PhotoView;
 import com.google.android.gms.vision.text.Text;
+import com.google.firebase.analytics.FirebaseAnalytics;
 import com.qatarmuseums.qatarmuseumsapp.LocaleManager;
 import com.qatarmuseums.qatarmuseumsapp.R;
 import com.qatarmuseums.qatarmuseumsapp.floormap.FloorMapActivity;
@@ -57,6 +58,7 @@ public class ObjectPreviewDetailsActivity extends AppCompatActivity implements S
         }
     };
     private LinearLayout audioControlLayout;
+    private FirebaseAnalytics mFirebaseAnalytics;
 
     @Override
     protected void attachBaseContext(Context base) {
@@ -69,6 +71,7 @@ public class ObjectPreviewDetailsActivity extends AppCompatActivity implements S
         setContentView(R.layout.activity_object_preview_details);
         toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+        mFirebaseAnalytics = FirebaseAnalytics.getInstance(this);
         closeBtn = findViewById(R.id.close_btn);
         closeBtn.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -350,4 +353,9 @@ public class ObjectPreviewDetailsActivity extends AppCompatActivity implements S
         playPause = false;
     }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+        mFirebaseAnalytics.setCurrentScreen(this, getString(R.string.object_preview_details_page), null);
+    }
 }

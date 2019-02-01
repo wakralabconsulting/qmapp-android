@@ -13,6 +13,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Spinner;
 
+import com.google.firebase.analytics.FirebaseAnalytics;
 import com.qatarmuseums.qatarmuseumsapp.LocaleManager;
 import com.qatarmuseums.qatarmuseumsapp.R;
 import com.qatarmuseums.qatarmuseumsapp.utils.Util;
@@ -29,6 +30,7 @@ public class CreateAccountActivity extends AppCompatActivity {
     private ArrayAdapter<String> titleAdapter, countryAdapter;
     private View createAccountButton, closeButton;
     private Animation zoomOutAnimation, iconZoomOutAnimation;
+    private FirebaseAnalytics mFirebaseAnalytics;
 
     @Override
     protected void attachBaseContext(Context base) {
@@ -46,6 +48,7 @@ public class CreateAccountActivity extends AppCompatActivity {
         residenceSpinner = findViewById(R.id.residence_spinner);
         nationalitySpinner = findViewById(R.id.nationality_spinner);
         createAccountButton = findViewById(R.id.create_account_btn);
+        mFirebaseAnalytics = FirebaseAnalytics.getInstance(this);
         zoomOutAnimation = AnimationUtils.loadAnimation(getApplicationContext(),
                 R.anim.zoom_out);
         iconZoomOutAnimation = AnimationUtils.loadAnimation(getApplicationContext(),
@@ -109,5 +112,11 @@ public class CreateAccountActivity extends AppCompatActivity {
                 return false;
             }
         });
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        mFirebaseAnalytics.setCurrentScreen(this, getString(R.string.create_account_page), null);
     }
 }

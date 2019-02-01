@@ -23,6 +23,7 @@ import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
+import com.google.firebase.analytics.FirebaseAnalytics;
 import com.qatarmuseums.qatarmuseumsapp.R;
 
 import butterknife.BindView;
@@ -48,6 +49,7 @@ public class WebviewActivity extends AppCompatActivity {
     private String url, toolbarTittleText;
     Typeface mTypeFace;
     private Animation zoomOutAnimation;
+    private FirebaseAnalytics mFirebaseAnalytics;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -55,6 +57,7 @@ public class WebviewActivity extends AppCompatActivity {
         setContentView(R.layout.activity_webview);
         ButterKnife.bind(this);
         setSupportActionBar(toolbar);
+        mFirebaseAnalytics = FirebaseAnalytics.getInstance(this);
         url = getIntent().getStringExtra("url");
         if (TextUtils.isEmpty(url)) {
             finish();
@@ -157,5 +160,11 @@ public class WebviewActivity extends AppCompatActivity {
                 return false;
             }
         });
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        mFirebaseAnalytics.setCurrentScreen(this, getString(R.string.webview_page), null);
     }
 }

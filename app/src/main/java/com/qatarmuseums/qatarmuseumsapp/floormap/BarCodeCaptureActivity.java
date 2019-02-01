@@ -39,6 +39,7 @@ import com.google.android.gms.common.api.CommonStatusCodes;
 import com.google.android.gms.vision.MultiProcessor;
 import com.google.android.gms.vision.barcode.Barcode;
 import com.google.android.gms.vision.barcode.BarcodeDetector;
+import com.google.firebase.analytics.FirebaseAnalytics;
 import com.qatarmuseums.qatarmuseumsapp.LocaleManager;
 import com.qatarmuseums.qatarmuseumsapp.R;
 import com.qatarmuseums.qatarmuseumsapp.floormap.camera.CameraSource;
@@ -82,6 +83,7 @@ public class BarCodeCaptureActivity extends AppCompatActivity implements Handler
     private GestureDetector gestureDetector;
 
     private final Handler handler = new Handler(this);
+    private FirebaseAnalytics mFirebaseAnalytics;
 
     @Override
     protected void attachBaseContext(Context base) {
@@ -100,6 +102,7 @@ public class BarCodeCaptureActivity extends AppCompatActivity implements Handler
         mPreview = (CameraSourcePreview) findViewById(R.id.preview);
         mGraphicOverlay = (GraphicOverlay<BarcodeGraphic>) findViewById(R.id.graphicOverlay);
 
+        mFirebaseAnalytics = FirebaseAnalytics.getInstance(this);
         // read parameters from the intent used to launch the activity.
         boolean autoFocus = getIntent().getBooleanExtra(AutoFocus, true);
         boolean useFlash = getIntent().getBooleanExtra(UseFlash, false);
@@ -270,6 +273,7 @@ public class BarCodeCaptureActivity extends AppCompatActivity implements Handler
         super.onResume();
         handler_ = handler;
         startCameraSource();
+        mFirebaseAnalytics.setCurrentScreen(this, getString(R.string.barcode_page), null);
     }
 
     /**

@@ -53,6 +53,7 @@ import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.MapStyleOptions;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.firebase.analytics.FirebaseAnalytics;
 import com.qatarmuseums.qatarmuseumsapp.Convertor;
 import com.qatarmuseums.qatarmuseumsapp.LocaleManager;
 import com.qatarmuseums.qatarmuseumsapp.QMDatabase;
@@ -238,6 +239,7 @@ public class FloorMapActivity extends AppCompatActivity implements OnMapReadyCal
     private Call<ArrayList<ArtifactDetails>> call;
     private Toolbar toolbar;
     private ImageView backArrow;
+    private FirebaseAnalytics mFirebaseAnalytics;
 
     @Override
     protected void attachBaseContext(Context base) {
@@ -288,6 +290,7 @@ public class FloorMapActivity extends AppCompatActivity implements OnMapReadyCal
         utils = new Util();
         qmDatabase = QMDatabase.getInstance(FloorMapActivity.this);
 
+        mFirebaseAnalytics = FirebaseAnalytics.getInstance(this);
         artifactDetailsMap = new HashMap<String, ArtifactDetails>();
         markerHashMap = new HashMap<String, Marker>();
         qmPreferences = PreferenceManager.getDefaultSharedPreferences(this);
@@ -1974,5 +1977,11 @@ public class FloorMapActivity extends AppCompatActivity implements OnMapReadyCal
         markerHashMap.clear();
         artifactDetailsMap.clear();
         super.onDestroy();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        mFirebaseAnalytics.setCurrentScreen(this, getString(R.string.floor_map_page), null);
     }
 }

@@ -38,6 +38,7 @@ import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.google.firebase.analytics.FirebaseAnalytics;
 import com.qatarmuseums.qatarmuseumsapp.Convertor;
 import com.qatarmuseums.qatarmuseumsapp.LocaleManager;
 import com.qatarmuseums.qatarmuseumsapp.QMDatabase;
@@ -121,6 +122,7 @@ public class EducationCalendarActivity extends AppCompatActivity {
     String monthNumber;
     String year;
     private SimpleDateFormat dayDateFormat, monthDateFormat, yearDateFormat;
+    private FirebaseAnalytics mFirebaseAnalytics;
 
     @Override
     protected void attachBaseContext(Context base) {
@@ -141,6 +143,7 @@ public class EducationCalendarActivity extends AppCompatActivity {
         yearDateFormat = new SimpleDateFormat("yyyy", Locale.US);
 
         util = new Util();
+        mFirebaseAnalytics = FirebaseAnalytics.getInstance(this);
         appLanguage = LocaleManager.getLanguage(this);
         qmDatabase = QMDatabase.getInstance(EducationCalendarActivity.this);
         zoomOutAnimation = AnimationUtils.loadAnimation(getApplicationContext(),
@@ -1270,5 +1273,11 @@ public class EducationCalendarActivity extends AppCompatActivity {
         double height = displayMetrics.heightPixels;
         height = (height) * (0.75);
         return (int) height;
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        mFirebaseAnalytics.setCurrentScreen(this, getString(R.string.education_calander_page), null);
     }
 }
