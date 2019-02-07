@@ -336,7 +336,7 @@ public class CulturePassActivity extends AppCompatActivity {
 
     public void getUserRegistrationDetails(String userID) {
         APIInterface apiService = APIClient.getClient().create(APIInterface.class);
-        Call<ArrayList<UserRegistrationModel>> call = apiService.getUserRegistrationDetails("en", userID);
+        Call<ArrayList<UserRegistrationModel>> call = apiService.getUserRegistrationDetails(language, userID);
         call.enqueue(new Callback<ArrayList<UserRegistrationModel>>() {
             @Override
             public void onResponse(Call<ArrayList<UserRegistrationModel>> call, Response<ArrayList<UserRegistrationModel>> response) {

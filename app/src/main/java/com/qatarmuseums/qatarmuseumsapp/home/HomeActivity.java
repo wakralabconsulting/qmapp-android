@@ -128,6 +128,7 @@ public class HomeActivity extends BaseActivity {
     private String token;
     private boolean isFirstLaunch;
     private UserRegistrationDetailsTable userRegistrationModel;
+    String appLanguage;
 
 
     @Override
@@ -153,6 +154,7 @@ public class HomeActivity extends BaseActivity {
         util = new Util();
         profileDetails = new ProfileDetails();
         qmDatabase = QMDatabase.getInstance(HomeActivity.this);
+        appLanguage = LocaleManager.getLanguage(this);
         qmPreferences = PreferenceManager.getDefaultSharedPreferences(this);
         name = qmPreferences.getString("NAME", null);
         badgeCount = qmPreferences.getInt("BADGE_COUNT", 0);
@@ -459,7 +461,7 @@ public class HomeActivity extends BaseActivity {
                 .build();
 
         APIInterface apiService = retrofit.create(APIInterface.class);
-        Call<ArrayList<UserRegistrationModel>> call = apiService.getUserRegistrationDetails("en", userID);
+        Call<ArrayList<UserRegistrationModel>> call = apiService.getUserRegistrationDetails(appLanguage, userID);
         call.enqueue(new Callback<ArrayList<UserRegistrationModel>>() {
             @Override
             public void onResponse(Call<ArrayList<UserRegistrationModel>> call, Response<ArrayList<UserRegistrationModel>> response) {
