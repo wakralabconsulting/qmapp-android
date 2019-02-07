@@ -660,16 +660,31 @@ public class CommonActivity extends AppCompatActivity {
 
         @Override
         protected Boolean doInBackground(Void... voids) {
-            if (activityReference.get().models != null && activityReference.get().models.size() > 0) {
-                for (int i = 0; i < activityReference.get().models.size(); i++) {
-                    tourListTableEnglish = new TourListTableEnglish(activityReference.get().models.get(i).getId(),
-                            activityReference.get().models.get(i).getEventDay(),
-                            activityReference.get().models.get(i).getEventDate(),
-                            activityReference.get().models.get(i).getName(),
-                            activityReference.get().convertor.fromArrayList(activityReference.get().models.get(i).getImages()),
-                            activityReference.get().models.get(i).getSortId(),
-                            activityReference.get().models.get(i).getDescription(), isTour);
-                    activityReference.get().qmDatabase.getTourListTaleDao().insert(tourListTableEnglish);
+            if (language.equals("en")) {
+                if (activityReference.get().models != null && activityReference.get().models.size() > 0) {
+                    for (int i = 0; i < activityReference.get().models.size(); i++) {
+                        tourListTableEnglish = new TourListTableEnglish(activityReference.get().models.get(i).getId(),
+                                activityReference.get().models.get(i).getEventDay(),
+                                activityReference.get().models.get(i).getEventDate(),
+                                activityReference.get().models.get(i).getName(),
+                                activityReference.get().convertor.fromArrayList(activityReference.get().models.get(i).getImages()),
+                                activityReference.get().models.get(i).getSortId(),
+                                activityReference.get().models.get(i).getDescription(), isTour);
+                        activityReference.get().qmDatabase.getTourListTaleDao().insert(tourListTableEnglish);
+                    }
+                }
+            }else{
+                if (activityReference.get().models != null && activityReference.get().models.size() > 0) {
+                    for (int i = 0; i < activityReference.get().models.size(); i++) {
+                        tourListTableArabic = new TourListTableArabic(activityReference.get().models.get(i).getId(),
+                                activityReference.get().models.get(i).getEventDay(),
+                                activityReference.get().models.get(i).getEventDate(),
+                                activityReference.get().models.get(i).getName(),
+                                activityReference.get().convertor.fromArrayList(activityReference.get().models.get(i).getImages()),
+                                activityReference.get().models.get(i).getSortId(),
+                                activityReference.get().models.get(i).getDescription(), isTour);
+                        activityReference.get().qmDatabase.getTourListTaleDao().insert(tourListTableArabic);
+                    }
                 }
             }
             return true;
