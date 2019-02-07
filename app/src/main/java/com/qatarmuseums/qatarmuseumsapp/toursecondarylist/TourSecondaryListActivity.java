@@ -165,16 +165,18 @@ public class TourSecondaryListActivity extends AppCompatActivity {
                         recyclerView.setVisibility(View.VISIBLE);
                         tourDetailsList.addAll(response.body());
                         removeHtmlTags(tourDetailsList);
-                        for (int i = 0; i < tourDetailsList.size(); i++) {
-                            splitArray = tourDetailsList.get(i).getTourDate().split("-");
-                            startTime = splitArray[0].concat(splitArray[1].trim());
-                            startTimeStamp = util.getTimeStamp(startTime);
-                            if (splitArray.length > 2) {
-                                endTime = splitArray[0].concat(splitArray[2].trim());
-                                endTimeStamp = util.getTimeStamp(endTime);
-                                tourDetailsList.get(i).setStartTimeStamp((startTimeStamp));
-                                tourDetailsList.get(i).setEndTimeStamp((endTimeStamp));
-                                tourDetailsList.get(i).setEventTimeStampDiff(String.valueOf(endTimeStamp - startTimeStamp));
+                        if (comingFrom.equals(getString(R.string.museum_tours))) {
+                            for (int i = 0; i < tourDetailsList.size(); i++) {
+                                splitArray = tourDetailsList.get(i).getTourDate().split("-");
+                                startTime = splitArray[0].concat(splitArray[1].trim());
+                                startTimeStamp = util.getTimeStamp(startTime);
+                                if (splitArray.length > 2) {
+                                    endTime = splitArray[0].concat(splitArray[2].trim());
+                                    endTimeStamp = util.getTimeStamp(endTime);
+                                    tourDetailsList.get(i).setStartTimeStamp((startTimeStamp));
+                                    tourDetailsList.get(i).setEndTimeStamp((endTimeStamp));
+                                    tourDetailsList.get(i).setEventTimeStampDiff(String.valueOf(endTimeStamp - startTimeStamp));
+                                }
                             }
                         }
                         Collections.sort(tourDetailsList);
