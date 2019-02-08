@@ -317,6 +317,7 @@ public class CulturePassActivity extends AppCompatActivity {
                             editor.putString("RSVP", RSVP);
                             editor.commit();
                             getUserRegistrationDetails(uid);
+                            getUserRegistrationDetailsArabic(uid);
                         }
                     }
                     navigateToProfile(RSVP);
@@ -332,19 +333,61 @@ public class CulturePassActivity extends AppCompatActivity {
     }
 
     private ArrayList<UserRegistrationModel> registeredEventLists = new ArrayList<>();
-    UserRegistrationDetailsTable userRegistrationDetailsTable;
+    UserRegistrationDetailsEnglishTable userRegistrationDetailsEnglishTable;
+    UserRegistrationDetailsArabicTable userRegistrationDetailsArabicTable;
 
-    public void getUserRegistrationDetails(String userID) {
-        APIInterface apiService = APIClient.getClient().create(APIInterface.class);
-        Call<ArrayList<UserRegistrationModel>> call = apiService.getUserRegistrationDetails("en", userID);
+    private void getUserRegistrationDetailsArabic(String uid) {
+        HttpLoggingInterceptor interceptor = new HttpLoggingInterceptor();
+        interceptor.setLevel(HttpLoggingInterceptor.Level.BODY);
+
+        OkHttpClient client;
+        OkHttpClient.Builder builder = new OkHttpClient.Builder();
+
+        builder.addInterceptor(interceptor);
+        builder.addInterceptor(new AddCookiesInterceptor(this));
+        client = builder.build();
+
+        retrofit = new Retrofit.Builder()
+                .baseUrl(APIClient.apiBaseUrl)
+                .addConverterFactory(GsonConverterFactory.create())
+                .client(client)
+                .build();
+
+        APIInterface apiService = retrofit.create(APIInterface.class);
+        Call<ArrayList<UserRegistrationModel>> call = apiService.getUserRegistrationDetails("ar", uid);
         call.enqueue(new Callback<ArrayList<UserRegistrationModel>>() {
             @Override
             public void onResponse(Call<ArrayList<UserRegistrationModel>> call, Response<ArrayList<UserRegistrationModel>> response) {
                 if (response.isSuccessful()) {
                     if (response.body() != null && response.body().size() > 0) {
+                        registeredEventLists.clear();
+                        registeredEventLists.addAll(response.body());
+                        new InsertArabicRegistrationDatabaseTask(CulturePassActivity.this,
+                                userRegistrationDetailsArabicTable, registeredEventLists).execute();
+                    }
+                }
+            }
+
+            @Override
+            public void onFailure(Call<ArrayList<UserRegistrationModel>> call, Throwable t) {
+
+            }
+        });
+    }
+
+
+    public void getUserRegistrationDetails(String userID) {
+        APIInterface apiService = APIClient.getClient().create(APIInterface.class);
+        Call<ArrayList<UserRegistrationModel>> call = apiService.getUserRegistrationDetails(language, userID);
+        call.enqueue(new Callback<ArrayList<UserRegistrationModel>>() {
+            @Override
+            public void onResponse(Call<ArrayList<UserRegistrationModel>> call, Response<ArrayList<UserRegistrationModel>> response) {
+                if (response.isSuccessful()) {
+                    if (response.body() != null && response.body().size() > 0) {
+                        registeredEventLists.clear();
                         registeredEventLists.addAll(response.body());
                         new InsertRegistrationDatabaseTask(CulturePassActivity.this,
-                                userRegistrationDetailsTable, registeredEventLists).execute();
+                                userRegistrationDetailsEnglishTable, registeredEventLists).execute();
                     }
                 }
             }
@@ -355,16 +398,16 @@ public class CulturePassActivity extends AppCompatActivity {
         });
     }
 
-    public static class InsertRegistrationDatabaseTask extends AsyncTask<Void, Void, Boolean> {
+    public static class InsertArabicRegistrationDatabaseTask extends AsyncTask<Void, Void, Boolean> {
         private WeakReference<CulturePassActivity> activityReference;
-        private UserRegistrationDetailsTable userRegistrationDetailsTable;
+        private UserRegistrationDetailsArabicTable userRegistrationDetailsArabicTable;
         private ArrayList<UserRegistrationModel> registeredEventLists;
 
-        InsertRegistrationDatabaseTask(CulturePassActivity context,
-                                       UserRegistrationDetailsTable userRegistrationDetailsTable,
-                                       ArrayList<UserRegistrationModel> registeredEventLists) {
+        InsertArabicRegistrationDatabaseTask(CulturePassActivity context,
+                                             UserRegistrationDetailsArabicTable userRegistrationDetailsArabicTable,
+                                             ArrayList<UserRegistrationModel> registeredEventLists) {
             activityReference = new WeakReference<>(context);
-            this.userRegistrationDetailsTable = userRegistrationDetailsTable;
+            this.userRegistrationDetailsArabicTable = userRegistrationDetailsArabicTable;
             this.registeredEventLists = registeredEventLists;
         }
 
@@ -372,16 +415,49 @@ public class CulturePassActivity extends AppCompatActivity {
         protected Boolean doInBackground(Void... voids) {
             if (registeredEventLists != null) {
                 for (int i = 0; i < registeredEventLists.size(); i++) {
-                    userRegistrationDetailsTable = new UserRegistrationDetailsTable(
+                    userRegistrationDetailsArabicTable = new UserRegistrationDetailsArabicTable(
                             registeredEventLists.get(i).getRegID(),
                             registeredEventLists.get(i).getEventID(),
                             registeredEventLists.get(i).getEventTitle(),
                             registeredEventLists.get(i).getNumberOfReservations()
                     );
                     activityReference.get().qmDatabase.getUserRegistrationTaleDao()
-                            .insertUserRegistrationTable(userRegistrationDetailsTable);
+                            .insertArabicUserRegistrationTable(userRegistrationDetailsArabicTable);
                 }
             }
+            return true;
+        }
+    }
+
+    public static class InsertRegistrationDatabaseTask extends AsyncTask<Void, Void, Boolean> {
+        private WeakReference<CulturePassActivity> activityReference;
+        private UserRegistrationDetailsEnglishTable userRegistrationDetailsEnglishTable;
+        private UserRegistrationDetailsArabicTable userRegistrationDetailsArabicTable;
+        private ArrayList<UserRegistrationModel> registeredEventLists;
+
+        InsertRegistrationDatabaseTask(CulturePassActivity context,
+                                       UserRegistrationDetailsEnglishTable userRegistrationDetailsEnglishTable,
+                                       ArrayList<UserRegistrationModel> registeredEventLists) {
+            activityReference = new WeakReference<>(context);
+            this.userRegistrationDetailsEnglishTable = userRegistrationDetailsEnglishTable;
+            this.registeredEventLists = registeredEventLists;
+        }
+
+        @Override
+        protected Boolean doInBackground(Void... voids) {
+            if (registeredEventLists != null) {
+                for (int i = 0; i < registeredEventLists.size(); i++) {
+                    userRegistrationDetailsEnglishTable = new UserRegistrationDetailsEnglishTable(
+                            registeredEventLists.get(i).getRegID(),
+                            registeredEventLists.get(i).getEventID(),
+                            registeredEventLists.get(i).getEventTitle(),
+                            registeredEventLists.get(i).getNumberOfReservations()
+                    );
+                    activityReference.get().qmDatabase.getUserRegistrationTaleDao()
+                            .insertUserRegistrationTable(userRegistrationDetailsEnglishTable);
+                }
+            }
+
             return true;
         }
     }

@@ -31,7 +31,8 @@ import com.qatarmuseums.qatarmuseumsapp.commonpagedatabase.TourListTableEnglish;
 import com.qatarmuseums.qatarmuseumsapp.commonpagedatabase.TravelDetailsTableArabic;
 import com.qatarmuseums.qatarmuseumsapp.commonpagedatabase.TravelDetailsTableDao;
 import com.qatarmuseums.qatarmuseumsapp.commonpagedatabase.TravelDetailsTableEnglish;
-import com.qatarmuseums.qatarmuseumsapp.culturepass.UserRegistrationDetailsTable;
+import com.qatarmuseums.qatarmuseumsapp.culturepass.UserRegistrationDetailsArabicTable;
+import com.qatarmuseums.qatarmuseumsapp.culturepass.UserRegistrationDetailsEnglishTable;
 import com.qatarmuseums.qatarmuseumsapp.culturepass.UserRegistrationDetailsTableDao;
 import com.qatarmuseums.qatarmuseumsapp.education.EducationCalendarTableDao;
 import com.qatarmuseums.qatarmuseumsapp.education.EducationalCalendarEventsTableArabic;
@@ -81,7 +82,8 @@ import com.qatarmuseums.qatarmuseumsapp.tourguidestartpage.TourGuideStartPageEng
         ArtifactTableArabic.class, NotificationTableEnglish.class, NotificationTableArabic.class,
         HomePageBannerTableEnglish.class, HomePageBannerTableArabic.class, TravelDetailsTableEnglish.class,
         TravelDetailsTableArabic.class, TourListTableEnglish.class, TourListTableArabic.class,
-        TourDetailsTableEnglish.class, TourDetailsTableArabic.class, UserRegistrationDetailsTable.class},
+        TourDetailsTableEnglish.class, TourDetailsTableArabic.class, UserRegistrationDetailsEnglishTable.class,
+        UserRegistrationDetailsArabicTable.class},
         version = 2, exportSchema = false)
 @TypeConverters({Convertor.class})
 
@@ -125,6 +127,7 @@ public abstract class QMDatabase extends RoomDatabase {
     public abstract TourDetailsTableDao getTourDetailsTaleDao();
 
     public abstract UserRegistrationDetailsTableDao getUserRegistrationTaleDao();
+
 
     private static QMDatabase qmDatabase;
 

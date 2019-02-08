@@ -57,7 +57,8 @@ import com.qatarmuseums.qatarmuseumsapp.culturepass.AddCookiesInterceptor;
 import com.qatarmuseums.qatarmuseumsapp.culturepass.CulturePassActivity;
 import com.qatarmuseums.qatarmuseumsapp.culturepass.LoginData;
 import com.qatarmuseums.qatarmuseumsapp.culturepass.ReceivedCookiesInterceptor;
-import com.qatarmuseums.qatarmuseumsapp.culturepass.UserRegistrationDetailsTable;
+import com.qatarmuseums.qatarmuseumsapp.culturepass.UserRegistrationDetailsArabicTable;
+import com.qatarmuseums.qatarmuseumsapp.culturepass.UserRegistrationDetailsEnglishTable;
 import com.qatarmuseums.qatarmuseumsapp.culturepass.UserResponseDeserializer;
 import com.qatarmuseums.qatarmuseumsapp.museum.MuseumActivity;
 import com.qatarmuseums.qatarmuseumsapp.notification.NotificationActivity;
@@ -127,7 +128,8 @@ public class HomeActivity extends BaseActivity {
     private LoginData loginData;
     private String token;
     private boolean isFirstLaunch;
-    private UserRegistrationDetailsTable userRegistrationModel;
+    private UserRegistrationDetailsEnglishTable userRegistrationModel;
+    String appLanguage;
 
 
     @Override
@@ -153,6 +155,7 @@ public class HomeActivity extends BaseActivity {
         util = new Util();
         profileDetails = new ProfileDetails();
         qmDatabase = QMDatabase.getInstance(HomeActivity.this);
+        appLanguage = LocaleManager.getLanguage(this);
         qmPreferences = PreferenceManager.getDefaultSharedPreferences(this);
         name = qmPreferences.getString("NAME", null);
         badgeCount = qmPreferences.getInt("BADGE_COUNT", 0);
@@ -439,7 +442,48 @@ public class HomeActivity extends BaseActivity {
         });
     }
 
-    UserRegistrationDetailsTable userRegistrationDetailsTable;
+    UserRegistrationDetailsEnglishTable userRegistrationDetailsEnglishTable;
+    UserRegistrationDetailsArabicTable userRegistrationDetailsArabicTable;
+
+    private void getUserRegistrationDetailsArabic(String uid) {
+        HttpLoggingInterceptor interceptor = new HttpLoggingInterceptor();
+        interceptor.setLevel(HttpLoggingInterceptor.Level.BODY);
+
+        OkHttpClient client;
+        OkHttpClient.Builder builder = new OkHttpClient.Builder();
+
+        builder.addInterceptor(interceptor);
+        builder.addInterceptor(new AddCookiesInterceptor(this));
+        client = builder.build();
+
+        retrofit = new Retrofit.Builder()
+                .baseUrl(APIClient.apiBaseUrl)
+                .addConverterFactory(GsonConverterFactory.create())
+                .client(client)
+                .build();
+
+        APIInterface apiService = retrofit.create(APIInterface.class);
+        Call<ArrayList<UserRegistrationModel>> call = apiService.getUserRegistrationDetails("ar", uid);
+        call.enqueue(new Callback<ArrayList<UserRegistrationModel>>() {
+            @Override
+            public void onResponse(Call<ArrayList<UserRegistrationModel>> call, Response<ArrayList<UserRegistrationModel>> response) {
+                if (response.isSuccessful()) {
+                    if (response.body() != null && response.body().size() > 0) {
+                        registeredEventLists.clear();
+                        registeredEventLists.addAll(response.body());
+                        new InsertArabicRegistrationDatabaseTask(HomeActivity.this,
+                                userRegistrationDetailsArabicTable, registeredEventLists).execute();
+                    }
+                }
+            }
+
+            @Override
+            public void onFailure(Call<ArrayList<UserRegistrationModel>> call, Throwable t) {
+
+            }
+        });
+    }
+
 
     public void getUserRegistrationDetails(String userID) {
         HttpLoggingInterceptor interceptor = new HttpLoggingInterceptor();
@@ -465,9 +509,10 @@ public class HomeActivity extends BaseActivity {
             public void onResponse(Call<ArrayList<UserRegistrationModel>> call, Response<ArrayList<UserRegistrationModel>> response) {
                 if (response.isSuccessful()) {
                     if (response.body() != null && response.body().size() > 0) {
+                        registeredEventLists.clear();
                         registeredEventLists.addAll(response.body());
                         new InsertRegistrationDatabaseTask(HomeActivity.this,
-                                userRegistrationDetailsTable, registeredEventLists).execute();
+                                userRegistrationDetailsEnglishTable, registeredEventLists).execute();
                     }
                 }
             }
@@ -657,6 +702,7 @@ public class HomeActivity extends BaseActivity {
                             editor.commit();
                             showBanner();
                             getUserRegistrationDetails(uid);
+                            getUserRegistrationDetailsArabic(uid);
                         }
                     }
                     showProgress(false);
@@ -671,6 +717,7 @@ public class HomeActivity extends BaseActivity {
             }
         });
     }
+
 
     protected void showLoginDialog() {
         loginDialog = new Dialog(this, R.style.DialogNoAnimation);
@@ -903,16 +950,16 @@ public class HomeActivity extends BaseActivity {
 
     }
 
-    public static class InsertRegistrationDatabaseTask extends AsyncTask<Void, Void, Boolean> {
+    public static class InsertArabicRegistrationDatabaseTask extends AsyncTask<Void, Void, Boolean> {
         private WeakReference<HomeActivity> activityReference;
-        private UserRegistrationDetailsTable userRegistrationDetailsTable;
+        private UserRegistrationDetailsArabicTable userRegistrationDetailsArabicTable;
         private ArrayList<UserRegistrationModel> registeredEventLists;
 
-        InsertRegistrationDatabaseTask(HomeActivity context,
-                                       UserRegistrationDetailsTable userRegistrationDetailsTable,
-                                       ArrayList<UserRegistrationModel> registeredEventLists) {
+        InsertArabicRegistrationDatabaseTask(HomeActivity context,
+                                             UserRegistrationDetailsArabicTable userRegistrationDetailsArabicTable,
+                                             ArrayList<UserRegistrationModel> registeredEventLists) {
             activityReference = new WeakReference<>(context);
-            this.userRegistrationDetailsTable = userRegistrationDetailsTable;
+            this.userRegistrationDetailsArabicTable = userRegistrationDetailsArabicTable;
             this.registeredEventLists = registeredEventLists;
         }
 
@@ -920,19 +967,52 @@ public class HomeActivity extends BaseActivity {
         protected Boolean doInBackground(Void... voids) {
             if (registeredEventLists != null && registeredEventLists.size() > 0) {
                 for (int i = 0; i < registeredEventLists.size(); i++) {
-                    userRegistrationDetailsTable = new UserRegistrationDetailsTable(
+                    userRegistrationDetailsArabicTable = new UserRegistrationDetailsArabicTable(
                             registeredEventLists.get(i).getRegID(),
                             registeredEventLists.get(i).getEventID(),
                             registeredEventLists.get(i).getEventTitle(),
                             registeredEventLists.get(i).getNumberOfReservations()
                     );
                     activityReference.get().qmDatabase.getUserRegistrationTaleDao()
-                            .insertUserRegistrationTable(userRegistrationDetailsTable);
+                            .insertArabicUserRegistrationTable(userRegistrationDetailsArabicTable);
                 }
             }
             return true;
         }
     }
+
+    public static class InsertRegistrationDatabaseTask extends AsyncTask<Void, Void, Boolean> {
+        private WeakReference<HomeActivity> activityReference;
+        private UserRegistrationDetailsEnglishTable userRegistrationDetailsEnglishTable;
+        private ArrayList<UserRegistrationModel> registeredEventLists;
+
+        InsertRegistrationDatabaseTask(HomeActivity context,
+                                       UserRegistrationDetailsEnglishTable userRegistrationDetailsEnglishTable,
+                                       ArrayList<UserRegistrationModel> registeredEventLists) {
+            activityReference = new WeakReference<>(context);
+            this.userRegistrationDetailsEnglishTable = userRegistrationDetailsEnglishTable;
+            this.registeredEventLists = registeredEventLists;
+        }
+
+        @Override
+        protected Boolean doInBackground(Void... voids) {
+            if (registeredEventLists != null && registeredEventLists.size() > 0) {
+                for (int i = 0; i < registeredEventLists.size(); i++) {
+                    userRegistrationDetailsEnglishTable = new UserRegistrationDetailsEnglishTable(
+                            registeredEventLists.get(i).getRegID(),
+                            registeredEventLists.get(i).getEventID(),
+                            registeredEventLists.get(i).getEventTitle(),
+                            registeredEventLists.get(i).getNumberOfReservations()
+                    );
+                    activityReference.get().qmDatabase.getUserRegistrationTaleDao()
+                            .insertUserRegistrationTable(userRegistrationDetailsEnglishTable);
+                }
+            }
+
+            return true;
+        }
+    }
+
 
     public static class RowCountBanner extends AsyncTask<Void, Void, Integer> {
         private WeakReference<HomeActivity> activityReference;
@@ -951,7 +1031,6 @@ public class HomeActivity extends BaseActivity {
                 return activityReference.get().qmDatabase.getHomePageBannerTableDao().getNumberOfBannerRowsEnglish();
             else
                 return activityReference.get().qmDatabase.getHomePageBannerTableDao().getNumberOfBannerRowsArabic();
-
         }
 
         @Override
@@ -962,7 +1041,7 @@ public class HomeActivity extends BaseActivity {
                 new UpdateHomePageBannerTable(activityReference.get(), language, bannerLists).execute();
 
             } else {
-                //create databse
+                //create database
                 new InsertBannerDatabaseTask(activityReference.get(), activityReference.get().homePageBannerTableEnglish,
                         activityReference.get().homePageBannerTableArabic, language, bannerLists).execute();
 

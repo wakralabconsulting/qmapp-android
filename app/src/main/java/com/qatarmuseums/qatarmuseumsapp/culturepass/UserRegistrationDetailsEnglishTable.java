@@ -5,8 +5,8 @@ import android.arch.persistence.room.Entity;
 import android.arch.persistence.room.PrimaryKey;
 import android.support.annotation.NonNull;
 
-@Entity(tableName = "userRegistrationTable")
-public class UserRegistrationDetailsTable {
+@Entity(tableName = "userRegistrationDetailsEnglishTable")
+public class UserRegistrationDetailsEnglishTable {
     @NonNull
     @PrimaryKey(autoGenerate = false)
     private String registrationID;
@@ -18,8 +18,8 @@ public class UserRegistrationDetailsTable {
     private String eventTitle;
 
 
-    public UserRegistrationDetailsTable(@NonNull String registrationID, String eventId,
-                                        String eventTitle, String numberOfReservations) {
+    public UserRegistrationDetailsEnglishTable(@NonNull String registrationID, String eventId,
+                                               String eventTitle, String numberOfReservations) {
         this.registrationID = registrationID;
         this.eventId = eventId;
         this.eventTitle = eventTitle;
