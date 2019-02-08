@@ -65,7 +65,8 @@ import com.qatarmuseums.qatarmuseumsapp.commonpagedatabase.HeritageListTableEngl
 import com.qatarmuseums.qatarmuseumsapp.commonpagedatabase.PublicArtsTableArabic;
 import com.qatarmuseums.qatarmuseumsapp.commonpagedatabase.PublicArtsTableEnglish;
 import com.qatarmuseums.qatarmuseumsapp.culturepass.AddCookiesInterceptor;
-import com.qatarmuseums.qatarmuseumsapp.culturepass.UserRegistrationDetailsTable;
+import com.qatarmuseums.qatarmuseumsapp.culturepass.UserRegistrationDetailsArabicTable;
+import com.qatarmuseums.qatarmuseumsapp.culturepass.UserRegistrationDetailsEnglishTable;
 import com.qatarmuseums.qatarmuseumsapp.heritage.HeritageOrExhibitionDetailModel;
 import com.qatarmuseums.qatarmuseumsapp.home.GlideApp;
 import com.qatarmuseums.qatarmuseumsapp.museum.GlideLoaderForMuseum;
@@ -132,7 +133,7 @@ public class DetailsActivity extends AppCompatActivity implements IPullZoom, OnM
     ArrayList<String> imageList = new ArrayList<String>();
     private AppBarLayout appBarLayout;
     private int headerOffSetSize;
-    String appLanguage;
+    private String appLanguage;
     private LinearLayout secondTitleLayout, timingLayout, contactLayout, retryLayout, videoLayout,
             downloadLayout;
     private String latitude, longitude, id;
@@ -204,8 +205,10 @@ public class DetailsActivity extends AppCompatActivity implements IPullZoom, OnM
     ArrayList<RegistrationDetailsModel> registrationDetailsModels = new ArrayList<>();
     String registrationId;
     RegistrationDetailsModel registrationDetailsModel;
-    private UserRegistrationDetailsTable registrationDetails;
-    private HashMap<String, UserRegistrationDetailsTable> registrationDetailsMap;
+    private UserRegistrationDetailsEnglishTable registrationDetails;
+    private UserRegistrationDetailsArabicTable registrationDetailsArabic;
+    private HashMap<String, UserRegistrationDetailsEnglishTable> registrationDetailsMap;
+    private HashMap<String, UserRegistrationDetailsArabicTable> registrationDetailsMapArabic;
     private HashMap<String, TourDetailsModel> tourDetailsMap;
     private TourDetailsModel tourDetailsModel;
     private Iterator<String> myVeryOwnIterator;
@@ -213,7 +216,7 @@ public class DetailsActivity extends AppCompatActivity implements IPullZoom, OnM
     private Long currentEventStartTimeStamp;
     private Long currentEventEndTimeStamp;
     private boolean isTimeSlotAvailable;
-    private UserRegistrationDetailsTable userRegistrationDetailsTable;
+    private UserRegistrationDetailsEnglishTable userRegistrationDetailsEnglishTable;
     private RelativeLayout registrationLoader;
     private Button registerButton;
     private ContentResolver contentResolver;
@@ -263,7 +266,8 @@ public class DetailsActivity extends AppCompatActivity implements IPullZoom, OnM
         id = intent.getStringExtra("ID");
         isFavourite = intent.getBooleanExtra("IS_FAVOURITE", false);
 
-        registrationDetailsMap = new HashMap<String, UserRegistrationDetailsTable>();
+        registrationDetailsMap = new HashMap<String, UserRegistrationDetailsEnglishTable>();
+        registrationDetailsMapArabic = new HashMap<String, UserRegistrationDetailsArabicTable>();
         tourDetailsMap = new HashMap<String, TourDetailsModel>();
 
         if (comingFrom.equals(getString(R.string.museum_tours)) ||
@@ -465,7 +469,7 @@ public class DetailsActivity extends AppCompatActivity implements IPullZoom, OnM
                     navigation_intent.putExtra("url", claimOfferURL);
                     startActivity(navigation_intent);
                 } else
-                    util. showComingSoonDialog(DetailsActivity.this, R.string.coming_soon_content);
+                    util.showComingSoonDialog(DetailsActivity.this, R.string.coming_soon_content);
             } else
                 util.showToast(getResources().getString(R.string.check_network), getApplicationContext());
         });
@@ -520,27 +524,52 @@ public class DetailsActivity extends AppCompatActivity implements IPullZoom, OnM
                 downloadAction());
         registerButton.setOnClickListener(v -> {
             if (registerButton.getText().toString().equals(getResources().getString(R.string.interested))) {
-                if (registrationDetailsMap.size() > 0 && tourDetailsMap.size() > 0) {
-                    myVeryOwnIterator = tourDetailsMap.keySet().iterator();
-                    isTimeSlotAvailable = true;
-                    while (myVeryOwnIterator.hasNext()) {
-                        final String key = myVeryOwnIterator.next();
-                        if (registrationDetailsMap.get(key) != null) {
-                            if (tourDetailsMap.get(key).getEventTimeStampDiff().equals(currentEventTimeStampDiff))
-                                isTimeSlotAvailable = false;
-                            else if (!((tourDetailsMap.get(key).getStartTimeStamp() >= currentEventEndTimeStamp) ||
-                                    (tourDetailsMap.get(key).getEndTimeStamp() <= currentEventStartTimeStamp))) {
-                                isTimeSlotAvailable = false;
+                if (appLanguage.equals(LocaleManager.LANGUAGE_ENGLISH)) {
+                    if (registrationDetailsMap.size() > 0 && tourDetailsMap.size() > 0) {
+                        myVeryOwnIterator = tourDetailsMap.keySet().iterator();
+                        isTimeSlotAvailable = true;
+                        while (myVeryOwnIterator.hasNext()) {
+                            final String key = myVeryOwnIterator.next();
+                            if (registrationDetailsMap.get(key) != null) {
+                                if (tourDetailsMap.get(key).getEventTimeStampDiff().equals(currentEventTimeStampDiff))
+                                    isTimeSlotAvailable = false;
+                                else if (!((tourDetailsMap.get(key).getStartTimeStamp() >= currentEventEndTimeStamp) ||
+                                        (tourDetailsMap.get(key).getEndTimeStamp() <= currentEventStartTimeStamp))) {
+                                    isTimeSlotAvailable = false;
+                                }
                             }
                         }
-                    }
-                    if (isTimeSlotAvailable) {
+                        if (isTimeSlotAvailable) {
+                            showNumberPicker();
+                        } else {
+                            util.showNormalDialog(DetailsActivity.this, R.string.time_slot_not_available);
+                        }
+                    } else
                         showNumberPicker();
-                    } else {
-                        util.showNormalDialog(DetailsActivity.this, R.string.time_slot_not_available);
-                    }
-                } else
-                    showNumberPicker();
+                } else {
+                    if (registrationDetailsMapArabic.size() > 0 && tourDetailsMap.size() > 0) {
+                        myVeryOwnIterator = tourDetailsMap.keySet().iterator();
+                        isTimeSlotAvailable = true;
+                        while (myVeryOwnIterator.hasNext()) {
+                            final String key = myVeryOwnIterator.next();
+                            if (registrationDetailsMapArabic.get(key) != null) {
+                                if (tourDetailsMap.get(key).getEventTimeStampDiff().equals(currentEventTimeStampDiff))
+                                    isTimeSlotAvailable = false;
+                                else if (!((tourDetailsMap.get(key).getStartTimeStamp() >= currentEventEndTimeStamp) ||
+                                        (tourDetailsMap.get(key).getEndTimeStamp() <= currentEventStartTimeStamp))) {
+                                    isTimeSlotAvailable = false;
+                                }
+                            }
+                        }
+                        if (isTimeSlotAvailable) {
+                            showNumberPicker();
+                        } else {
+                            util.showNormalDialog(DetailsActivity.this, R.string.time_slot_not_available);
+                        }
+                    } else
+                        showNumberPicker();
+                }
+
 
             } else
                 showDeclineDialog();
@@ -777,7 +806,11 @@ public class DetailsActivity extends AppCompatActivity implements IPullZoom, OnM
     }
 
     public void setTourDetailsData() {
-        new RetriveRegistrationDetails(DetailsActivity.this, nid, true).execute();
+        if (appLanguage.equals(LocaleManager.LANGUAGE_ENGLISH)) {
+            new RetriveEnglishRegistrationDetails(DetailsActivity.this, nid, true).execute();
+        } else {
+            new RetriveArabicRegistrationDetails(DetailsActivity.this, nid, true).execute();
+        }
         commonContentLayout.setVisibility(View.VISIBLE);
         interestLayout.setVisibility(View.VISIBLE);
         videoLayout.setVisibility(View.GONE);
@@ -811,7 +844,11 @@ public class DetailsActivity extends AppCompatActivity implements IPullZoom, OnM
 
         @Override
         protected String doInBackground(Void... voids) {
-            return activityReference.get().qmDatabase.getUserRegistrationTaleDao().getRegistrationIdFromTable(eventID);
+            if (activityReference.get().appLanguage.equals(LocaleManager.LANGUAGE_ENGLISH)) {
+                return activityReference.get().qmDatabase.getUserRegistrationTaleDao().getEnglishRegistrationIdFromTable(eventID);
+            } else {
+                return activityReference.get().qmDatabase.getUserRegistrationTaleDao().getArabicRegistrationIdFromTable(eventID);
+            }
         }
 
         @Override
@@ -823,23 +860,35 @@ public class DetailsActivity extends AppCompatActivity implements IPullZoom, OnM
 
     public static class InsertRegisteredEventToDataBase extends AsyncTask<Void, Void, Boolean> {
         private WeakReference<DetailsActivity> activityReference;
-        private UserRegistrationDetailsTable userRegistrationDetailsTable;
+        private UserRegistrationDetailsEnglishTable userRegistrationDetailsEnglishTable;
+        private UserRegistrationDetailsArabicTable userRegistrationDetailsArabicTable;
 
         InsertRegisteredEventToDataBase(DetailsActivity context,
-                                        UserRegistrationDetailsTable userRegistrationDetailsTable) {
+                                        UserRegistrationDetailsEnglishTable userRegistrationDetailsEnglishTable) {
             activityReference = new WeakReference<>(context);
-            this.userRegistrationDetailsTable = userRegistrationDetailsTable;
+            this.userRegistrationDetailsEnglishTable = userRegistrationDetailsEnglishTable;
         }
 
         @Override
         protected Boolean doInBackground(Void... voids) {
-            userRegistrationDetailsTable = new UserRegistrationDetailsTable(
-                    activityReference.get().registrationDetailsModel.getRegistrationID(),
-                    activityReference.get().nid,
-                    activityReference.get().mainTitle,
-                    activityReference.get().registrationDetailsModel.getRegistrationCount());
-            activityReference.get().qmDatabase.getUserRegistrationTaleDao()
-                    .insertUserRegistrationTable(userRegistrationDetailsTable);
+            if (activityReference.get().appLanguage.equals(LocaleManager.LANGUAGE_ENGLISH)) {
+                userRegistrationDetailsEnglishTable = new UserRegistrationDetailsEnglishTable(
+                        activityReference.get().registrationDetailsModel.getRegistrationID(),
+                        activityReference.get().nid,
+                        activityReference.get().mainTitle,
+                        activityReference.get().registrationDetailsModel.getRegistrationCount());
+                activityReference.get().qmDatabase.getUserRegistrationTaleDao()
+                        .insertUserRegistrationTable(userRegistrationDetailsEnglishTable);
+            } else {
+                userRegistrationDetailsArabicTable = new UserRegistrationDetailsArabicTable(
+                        activityReference.get().registrationDetailsModel.getRegistrationID(),
+                        activityReference.get().nid,
+                        activityReference.get().mainTitle,
+                        activityReference.get().registrationDetailsModel.getRegistrationCount());
+                activityReference.get().qmDatabase.getUserRegistrationTaleDao()
+                        .insertArabicUserRegistrationTable(userRegistrationDetailsArabicTable);
+            }
+
             return true;
         }
 
@@ -856,41 +905,207 @@ public class DetailsActivity extends AppCompatActivity implements IPullZoom, OnM
 
         @Override
         protected Integer doInBackground(Void... voids) {
-            return activityReference.get().qmDatabase.getUserRegistrationTaleDao().deleteEventFromTable(eventID);
+            return activityReference.get().qmDatabase.getUserRegistrationTaleDao().deleteEventFromEnglishTable(eventID);
         }
 
     }
 
+    public static class deleteArabicEventsFromDatabase extends AsyncTask<Void, Void, Integer> {
 
-    public static class RetriveRegistrationDetails extends AsyncTask<Void, Void, List<UserRegistrationDetailsTable>> {
+        private WeakReference<DetailsActivity> activityReference;
+        String eventID;
+
+        deleteArabicEventsFromDatabase(DetailsActivity context, String eventID) {
+            activityReference = new WeakReference<>(context);
+            this.eventID = eventID;
+        }
+
+        @Override
+        protected Integer doInBackground(Void... voids) {
+            return activityReference.get().qmDatabase.getUserRegistrationTaleDao().deleteEventFromArabicTable(eventID);
+        }
+    }
+
+    public static class RetriveArabicRegistrationDetails extends AsyncTask<Void, Void, List<UserRegistrationDetailsArabicTable>> {
         private WeakReference<DetailsActivity> activityReference;
         String eventID;
         Boolean isTour;
 
-        RetriveRegistrationDetails(DetailsActivity context, String eventID, Boolean isTour) {
+        RetriveArabicRegistrationDetails(DetailsActivity context, String eventID, Boolean isTour) {
             activityReference = new WeakReference<>(context);
             this.eventID = eventID;
             this.isTour = isTour;
         }
 
         @Override
-        protected List<UserRegistrationDetailsTable> doInBackground(Void... voids) {
+        protected List<UserRegistrationDetailsArabicTable> doInBackground(Void... voids) {
             if (isTour)
-                return activityReference.get().qmDatabase.getUserRegistrationTaleDao().getAllDataFromTable();
+                return activityReference.get().qmDatabase.getUserRegistrationTaleDao().getAllArabicDataFromTable();
             else
-                return activityReference.get().qmDatabase.getUserRegistrationTaleDao().getEventFromTable(eventID);
+                return activityReference.get().qmDatabase.getUserRegistrationTaleDao().getArabicEventFromTable(eventID);
 
         }
 
         @SuppressLint("SetTextI18n")
         @Override
-        protected void onPostExecute(List<UserRegistrationDetailsTable> userRegistrationDetailsTableList) {
+        protected void onPostExecute(List<UserRegistrationDetailsArabicTable> userRegistrationDetailsArabicTables) {
             int count = 0;
             if (isTour) {
-                if (userRegistrationDetailsTableList.size() > 0) {
+                if (userRegistrationDetailsArabicTables.size() > 0) {
+                    activityReference.get().registrationDetailsMapArabic.clear();
+                    for (int i = 0; i < userRegistrationDetailsArabicTables.size(); i++) {
+                        activityReference.get().registrationDetailsArabic = userRegistrationDetailsArabicTables.get(i);
+                        activityReference.get().registrationDetailsMapArabic.put(
+                                activityReference.get().registrationDetailsArabic.getEventId(),
+                                activityReference.get().registrationDetailsArabic);
+                    }
+                    if (activityReference.get().registrationDetailsMapArabic.get(eventID) != null) {
+                        if (activityReference.get().registrationDetailsMapArabic.get(eventID).
+                                getNumberOfReservations() != null)
+                            count = Integer.parseInt(activityReference.get().registrationDetailsMapArabic.get(eventID).
+                                    getNumberOfReservations());
+                        activityReference.get().registerButton.setBackground(
+                                activityReference.get().getResources().getDrawable(R.drawable.round_corner_red));
+                        activityReference.get().registerButton.setText(R.string.not_interested);
+                        if (count == 0) {
+                            activityReference.get().registerUregisterCount.setText(
+                                    activityReference.get().getResources().getString(R.string.warning_no_seat_available));
+                            activityReference.get().registerButton.setEnabled(false);
+                            activityReference.get().registerButton.setText(R.string.interested);
+                            activityReference.get().registerButton.setBackground(
+                                    activityReference.get().getResources().getDrawable(R.drawable.rounded_corner_grey));
+                        } else if (count > 1)
+                            activityReference.get().registerUregisterCount.setText(
+                                    activityReference.get().getResources().getString(R.string.you_have_registered) + count +
+                                            activityReference.get().getResources().getString(R.string.seats_for_this_tour));
+                        else
+                            activityReference.get().registerUregisterCount.setText(
+                                    activityReference.get().getResources().getString(R.string.you_have_registered) + count +
+                                            activityReference.get().getResources().getString(R.string.seat_for_this_tour));
+
+
+                    } else {
+                        if (activityReference.get().seatsRemaining != null)
+                            count = Integer.parseInt(activityReference.get().seatsRemaining);
+                        activityReference.get().registerButton.setBackground(
+                                activityReference.get().getResources().getDrawable(R.drawable.round_corner_green));
+                        activityReference.get().registerButton.setText(R.string.interested);
+                        if (count == 0) {
+                            activityReference.get().registerUregisterCount.setText(
+                                    activityReference.get().getResources().getString(R.string.warning_no_seat_available));
+                            activityReference.get().registerButton.setEnabled(false);
+                            activityReference.get().registerButton.setBackground(
+                                    activityReference.get().getResources().getDrawable(R.drawable.rounded_corner_grey));
+                        } else if (count > 1)
+                            activityReference.get().registerUregisterCount.setText(
+                                    activityReference.get().getResources().getString(R.string.hurry_up_only) + count +
+                                            activityReference.get().getResources().getString(R.string.seats_for_this_tour));
+                        else
+                            activityReference.get().registerUregisterCount.setText(
+                                    activityReference.get().getResources().getString(R.string.hurry_up_only) + count +
+                                            activityReference.get().getResources().getString(R.string.seat_for_this_tour));
+                    }
+                } else {
+                    if (activityReference.get().seatsRemaining != null)
+                        count = Integer.parseInt(activityReference.get().seatsRemaining);
+                    activityReference.get().registerButton.setBackground(
+                            activityReference.get().getResources().getDrawable(R.drawable.round_corner_green));
+                    activityReference.get().registerButton.setText(R.string.interested);
+                    if (count == 0) {
+                        activityReference.get().registerUregisterCount.setText(
+                                activityReference.get().getResources().getString(R.string.warning_no_seat_available));
+                        activityReference.get().registerButton.setEnabled(false);
+                        activityReference.get().registerButton.setBackground(
+                                activityReference.get().getResources().getDrawable(R.drawable.rounded_corner_grey));
+                    } else if (count > 1)
+                        activityReference.get().registerUregisterCount.setText(
+                                activityReference.get().getResources().getString(R.string.hurry_up_only) + count +
+                                        activityReference.get().getResources().getString(R.string.seats_for_this_tour));
+                    else
+                        activityReference.get().registerUregisterCount.setText(
+                                activityReference.get().getResources().getString(R.string.hurry_up_only) + count +
+                                        activityReference.get().getResources().getString(R.string.seat_for_this_tour));
+                }
+            } else {
+                if (userRegistrationDetailsArabicTables.size() > 0) {
+                    if (activityReference.get().registrationDetailsMapArabic.get(eventID).
+                            getNumberOfReservations() != null)
+                        count = Integer.parseInt(activityReference.get().registrationDetailsMapArabic.get(eventID).
+                                getNumberOfReservations());
+                    activityReference.get().registerButton.setBackground(
+                            activityReference.get().getResources().getDrawable(R.drawable.round_corner_red));
+                    activityReference.get().registerButton.setText(R.string.not_interested);
+                    if (count == 0) {
+                        activityReference.get().registerUregisterCount.setText(
+                                activityReference.get().getResources().getString(R.string.warning_no_seat_available));
+                        activityReference.get().registerButton.setEnabled(false);
+                        activityReference.get().registerButton.setText(R.string.interested);
+                        activityReference.get().registerButton.setBackground(
+                                activityReference.get().getResources().getDrawable(R.drawable.rounded_corner_grey));
+                    } else if (count > 1)
+                        activityReference.get().registerUregisterCount.setText(
+                                activityReference.get().getResources().getString(R.string.you_have_registered) + count +
+                                        activityReference.get().getResources().getString(R.string.seats_for_this_tour));
+                    else
+                        activityReference.get().registerUregisterCount.setText(
+                                activityReference.get().getResources().getString(R.string.you_have_registered) + count +
+                                        activityReference.get().getResources().getString(R.string.seat_for_this_tour));
+
+                } else {
+                    if (activityReference.get().seatsRemaining != null)
+                        count = Integer.parseInt(activityReference.get().seatsRemaining);
+                    activityReference.get().registerButton.setBackground(
+                            activityReference.get().getResources().getDrawable(R.drawable.round_corner_green));
+                    activityReference.get().registerButton.setText(R.string.interested);
+                    if (count == 0) {
+                        activityReference.get().registerUregisterCount.setText(
+                                activityReference.get().getResources().getString(R.string.warning_no_seat_available));
+                        activityReference.get().registerButton.setEnabled(false);
+                        activityReference.get().registerButton.setBackground(
+                                activityReference.get().getResources().getDrawable(R.drawable.rounded_corner_grey));
+                    } else if (count > 1)
+                        activityReference.get().registerUregisterCount.setText(
+                                activityReference.get().getResources().getString(R.string.hurry_up_only) + count +
+                                        activityReference.get().getResources().getString(R.string.seats_for_this_tour));
+                    else
+                        activityReference.get().registerUregisterCount.setText(
+                                activityReference.get().getResources().getString(R.string.hurry_up_only) + count +
+                                        activityReference.get().getResources().getString(R.string.seat_for_this_tour));
+                }
+            }
+        }
+    }
+
+
+    public static class RetriveEnglishRegistrationDetails extends AsyncTask<Void, Void, List<UserRegistrationDetailsEnglishTable>> {
+        private WeakReference<DetailsActivity> activityReference;
+        String eventID;
+        Boolean isTour;
+
+        RetriveEnglishRegistrationDetails(DetailsActivity context, String eventID, Boolean isTour) {
+            activityReference = new WeakReference<>(context);
+            this.eventID = eventID;
+            this.isTour = isTour;
+        }
+
+        @Override
+        protected List<UserRegistrationDetailsEnglishTable> doInBackground(Void... voids) {
+            if (isTour)
+                return activityReference.get().qmDatabase.getUserRegistrationTaleDao().getAllEnglishDataFromTable();
+            else
+                return activityReference.get().qmDatabase.getUserRegistrationTaleDao().getEnglishEventFromTable(eventID);
+
+        }
+
+        @SuppressLint("SetTextI18n")
+        @Override
+        protected void onPostExecute(List<UserRegistrationDetailsEnglishTable> userRegistrationDetailsEnglishTableList) {
+            int count = 0;
+            if (isTour) {
+                if (userRegistrationDetailsEnglishTableList.size() > 0) {
                     activityReference.get().registrationDetailsMap.clear();
-                    for (int i = 0; i < userRegistrationDetailsTableList.size(); i++) {
-                        activityReference.get().registrationDetails = userRegistrationDetailsTableList.get(i);
+                    for (int i = 0; i < userRegistrationDetailsEnglishTableList.size(); i++) {
+                        activityReference.get().registrationDetails = userRegistrationDetailsEnglishTableList.get(i);
                         activityReference.get().registrationDetailsMap.put(
                                 activityReference.get().registrationDetails.getEventId(),
                                 activityReference.get().registrationDetails);
@@ -963,7 +1178,7 @@ public class DetailsActivity extends AppCompatActivity implements IPullZoom, OnM
                                         activityReference.get().getResources().getString(R.string.seat_for_this_tour));
                 }
             } else {
-                if (userRegistrationDetailsTableList.size() > 0) {
+                if (userRegistrationDetailsEnglishTableList.size() > 0) {
                     if (activityReference.get().registrationDetailsMap.get(eventID).
                             getNumberOfReservations() != null)
                         count = Integer.parseInt(activityReference.get().registrationDetailsMap.get(eventID).
@@ -1380,7 +1595,7 @@ public class DetailsActivity extends AppCompatActivity implements IPullZoom, OnM
                         registerButton.setText(R.string.not_interested);
                         showCalendarDialog(mainTitle, description, eventDate);
                         new InsertRegisteredEventToDataBase(DetailsActivity.this,
-                                userRegistrationDetailsTable).execute();
+                                userRegistrationDetailsEnglishTable).execute();
                     }
                 }
                 registrationLoader.setVisibility(View.GONE);
@@ -1598,6 +1813,7 @@ public class DetailsActivity extends AppCompatActivity implements IPullZoom, OnM
             public void onResponse(Call<String> call, Response<String> response) {
                 if (response.isSuccessful()) {
                     new deleteEventFromDataBase(DetailsActivity.this, myNid).execute();
+                    new deleteArabicEventsFromDatabase(DetailsActivity.this, myNid).execute();
                     registerButton.setBackground(getResources().getDrawable(R.drawable.round_corner_green));
                     registerButton.setText(R.string.interested);
                     seatsCount = Integer.parseInt(seatsRemaining);

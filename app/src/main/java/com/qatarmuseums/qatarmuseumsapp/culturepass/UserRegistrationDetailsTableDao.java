@@ -9,29 +9,47 @@ import java.util.List;
 
 @Dao
 public interface UserRegistrationDetailsTableDao {
-    @Query("SELECT * FROM userRegistrationTable")
-    List<UserRegistrationDetailsTable> getAllDataFromTable();
+    @Query("SELECT * FROM userRegistrationDetailsEnglishTable")
+    List<UserRegistrationDetailsEnglishTable> getAllEnglishDataFromTable();
 
-    @Query("SELECT * FROM userRegistrationTable WHERE eventId = :eventID")
-    List<UserRegistrationDetailsTable> getEventFromTable(String eventID);
+    @Query("SELECT * FROM userRegistrationDetailsArabicTable")
+    List<UserRegistrationDetailsArabicTable> getAllArabicDataFromTable();
 
-    @Query("SELECT registrationID FROM userRegistrationTable WHERE eventId = :eventID")
-    String getRegistrationIdFromTable(String eventID);
+    @Query("SELECT * FROM userRegistrationDetailsEnglishTable WHERE eventId = :eventID")
+    List<UserRegistrationDetailsEnglishTable> getEnglishEventFromTable(String eventID);
+
+    @Query("SELECT * FROM userRegistrationDetailsArabicTable WHERE eventId = :eventID")
+    List<UserRegistrationDetailsArabicTable> getArabicEventFromTable(String eventID);
+
+    @Query("SELECT registrationID FROM userRegistrationDetailsEnglishTable WHERE eventId = :eventID")
+    String getEnglishRegistrationIdFromTable(String eventID);
+
+    @Query("SELECT registrationID FROM userRegistrationDetailsArabicTable WHERE eventId = :eventID")
+    String getArabicRegistrationIdFromTable(String eventID);
 
     @Insert
-    void insertUserRegistrationTable(UserRegistrationDetailsTable userRegistrationDetailsTable);
+    void insertUserRegistrationTable(UserRegistrationDetailsEnglishTable userRegistrationDetailsEnglishTable);
 
-    @Query("DELETE FROM userRegistrationTable")
-    void nukeRegistrationTable();
+    @Insert
+    void insertArabicUserRegistrationTable(UserRegistrationDetailsArabicTable userRegistrationDetailsArabicTable);
 
-    @Query("DELETE FROM userRegistrationTable WHERE eventId = :eventID")
-    int deleteEventFromTable(String eventID);
+    @Query("DELETE FROM userRegistrationDetailsEnglishTable")
+    void nukeEnglishRegistrationTable();
+
+    @Query("DELETE FROM userRegistrationDetailsArabicTable")
+    void nukeArabicRegistrationTable();
+
+    @Query("DELETE FROM userRegistrationDetailsEnglishTable WHERE eventId = :eventID")
+    int deleteEventFromEnglishTable(String eventID);
+
+    @Query("DELETE FROM userRegistrationDetailsArabicTable WHERE eventId = :eventID")
+    int deleteEventFromArabicTable(String eventID);
 
     @Delete
-    void deleteEnglishBannerTable(UserRegistrationDetailsTable userRegistrationDetailsTable);
+    void deleteEnglishBannerTable(UserRegistrationDetailsEnglishTable userRegistrationDetailsEnglishTable);
 
     @Delete
-    void deleteEnglishBannerTable(UserRegistrationDetailsTable... userRegistrationDetailsTables);
+    void deleteEnglishBannerTable(UserRegistrationDetailsEnglishTable... userRegistrationDetailsEnglishTables);
     // Note... is varargs, here note is an array
 
 

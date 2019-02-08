@@ -430,7 +430,8 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
 
         @Override
         protected Void doInBackground(Void... voids) {
-            activityReference.get().qmDatabase.getUserRegistrationTaleDao().nukeRegistrationTable();
+            activityReference.get().qmDatabase.getUserRegistrationTaleDao().nukeEnglishRegistrationTable();
+            activityReference.get().qmDatabase.getUserRegistrationTaleDao().nukeArabicRegistrationTable();
             return null;
         }
     }
