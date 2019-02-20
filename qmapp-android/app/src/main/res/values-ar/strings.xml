@@ -52,7 +52,7 @@
     <string name="details_page_timing_details">يستمر من ! إل</string>
     <string name="details_page_location_details">متحف: المتحف العربي للف</string>
     <string name="knowledge_in_action">المعرفة في العمل</string>
-    <string name="education_short_description">Our numerous programmes are designed for families, university students and adults.\n\nFind out what\'s on offer and register ahead to secure your place.</string>
+    <string name="education_short_description">تم تصميم برامجنا العديدة والمتنوعة لتتناسب مع العائلات وطلاب الجامعات والكبار. تعرَّف على ما يقدمه المتحف من برامج تعليمية وسارع بالتسجيل للاستفادة من هذه البرامج.</string>
     <string name="education_long_description">"تُتيح جميع برامج التعليم لدينا فرص تفاعلية. نحن نأمل بأن ترسخ هذه البرامج في ذاكرة المشاركين وتؤدي إلى تطوير مهاراتهم وقدراتهم الإبداعية.\nأما بالنسبة لمعلمي المدارس، فقد أعددنا ورش عمل ومنتديات ودورات تدريبية حسب الطلب والتي تتناسب مع إحتياجاتهم. نحن نركز أيضا على العمل مع الأطفال لتشجيعهم على إستكشاف العالم من حولهم، والانخراط والمشاركة فيه والتعبير عن أنفسهم من خلال الأنشطة الإبداعية.\nوتتماشى جميع أنشطتنا مع المعايير المهنية للمجلس الأعلى للتعليم الخاصة بالمعلمين وبمعايير المناهج الوطنية.";</string>
     <string name="discover_txt">الاستكشاف</string>
     <string name="coming_soon_content_map">نحن نعمل بجد لجعل التفاصيل متاحة. \n\nستكون خرائط المتحف و تفاصيل القطع الخاصة بالمتحف متوفرة عما قريب \n\nترقّب</string>
@@ -124,14 +124,14 @@
     <string name="use_qr_scanner"><u>استخدم ماسح QR</u></string>
     <string name="use_the_keypad"><u>استخدم لوحة المفاتيح</u></string>
 
-    <string name="any">أي</string>
+    <string name="any">الكل</string>
     <string name="years">التبادل الثقافي</string>
     <string name="public_art">تعليم الفن الشعبي</string>
     <string name="cultural">تعليم التراث الثقافي</string>
     <string name="mia_education">تعليم متحف الفن الإسلامي</string>
     <string name="mathaf">تعليم المتحف</string>
     <string name="national">المتحف الوطني</string>
-    <string name="qosm">تعليم المتحف الرياضي</string>
+    <string name="qosm">التعليم بمتحف قطر الأولمبي والرياضي</string>
     <string name="family">تقويم برامج الأسرة والمدرسة</string>
 
     <string name="all_ages">جميع الفئات العمرية</string>
@@ -256,30 +256,30 @@
     <!-- Strings related to Object preview -->
     <string name="gallery_label">, المعرض </string>
     <string name="floor_label">المستوى </string>
-    <string name="download_brochure_for_more_information"><u>Download Brochure for More Information</u></string>
-    <string name="interested">Register</string>
-    <string name="not_interested">Unregister</string>
-    <string name="date">Date</string>
-    <string name="offer_code">Special offer</string>
-    <string name="claim_offer">Claim Offer</string>
-    <string name="venue">Venue</string>
-    <string name="thankyou_interest">Thank you for registering.\n\nYou will receive an email with further information.\n\n
-        Any questions, please contact info@qm.org.qa or \n+974 4452 5555</string>
-    <string name="decline_content_tour">Are you sure you want to cancel this tour?</string>
+    <string name="download_brochure_for_more_information"><u>تحميل الكتيب لمزيد من المعلومات</u></string>
+    <string name="interested">احجز جولة</string>
+    <string name="not_interested">إلغاء الحجز</string>
+    <string name="date">التاريخ</string>
+    <string name="offer_code">عرض خاص</string>
+    <string name="claim_offer">طلب العرض</string>
+    <string name="venue">المكان / الموقع</string>
+    <string name="thankyou_interest">شكرا لك على حجز هذه الجولة. سوف تتلقى رسالة بريد إلكتروني مع مزيد من المعلومات. لأي أسئلة ، يرجى التواصل على booking@qm.org.qa أو 5554 4452 974+</string>
+    <string name="decline_content_tour">هل أنت متأكد من أنك تريد إلغاء هذه الجولة؟</string>
     <string name="event_date">Event Date</string>
     <!-- Strings related to Museum Launch -->
     <string name="museum_about_launch">عن</string>
-    <string name="museum_tours">Tours</string>
-    <string name="museum_travel">Travel</string>
-    <string name="museum_discussion">Activities</string>
+    <string name="museum_tours">الجولات</string>
+    <string name="museum_travel">السياحة</string>
+    <string name="museum_discussion">الأنشطة</string>
     <string name="mia_floors">طوابق متحف الفن الإسلامي</string>
     <string name="warning_no_end_time">NO END TIME AVAILABLE</string>
     <string name="warning_no_seat_available">Sorry, no seats available for the specific tour.</string>
     <string name="warning_selection_not_available">Sorry, no seats available for the specific tour.</string>
-    <string name="you_have_registered">You have registered&#160;</string>
-    <string name="hurry_up_only">Hurry up only&#160;</string>
-    <string name="seat_for_this_tour">&#160;seat for this tour.</string>
-    <string name="seats_for_this_tour">&#160;seats for this tour.</string>
+    <string name="you_have_registered">قمت بحجز&#160;</string>
+    <string name="seat_for_this_tour">&#160;مكان</string>
+    <string name="seats_for_this_tour">&#160;أماكن</string>
+    <string name="space_available">&#160;مكان متاح</string>
+    <string name="spaces_available">&#160;الأماكن المتاحة / أماكن متاحة</string>
     <string name="number_of_visitors">Number of Visitors</string>
     <string name="done">Done</string>
 

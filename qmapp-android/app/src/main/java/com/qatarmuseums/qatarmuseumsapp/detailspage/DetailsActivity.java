@@ -465,7 +465,7 @@ public class DetailsActivity extends AppCompatActivity implements IPullZoom, OnM
                     navigation_intent.putExtra("url", claimOfferURL);
                     startActivity(navigation_intent);
                 } else
-                    util. showComingSoonDialog(DetailsActivity.this, R.string.coming_soon_content);
+                    util.showComingSoonDialog(DetailsActivity.this, R.string.coming_soon_content);
             } else
                 util.showToast(getResources().getString(R.string.check_network), getApplicationContext());
         });
@@ -520,27 +520,30 @@ public class DetailsActivity extends AppCompatActivity implements IPullZoom, OnM
                 downloadAction());
         registerButton.setOnClickListener(v -> {
             if (registerButton.getText().toString().equals(getResources().getString(R.string.interested))) {
-                if (registrationDetailsMap.size() > 0 && tourDetailsMap.size() > 0) {
-                    myVeryOwnIterator = tourDetailsMap.keySet().iterator();
-                    isTimeSlotAvailable = true;
-                    while (myVeryOwnIterator.hasNext()) {
-                        final String key = myVeryOwnIterator.next();
-                        if (registrationDetailsMap.get(key) != null) {
-                            if (tourDetailsMap.get(key).getEventTimeStampDiff().equals(currentEventTimeStampDiff))
-                                isTimeSlotAvailable = false;
-                            else if (!((tourDetailsMap.get(key).getStartTimeStamp() >= currentEventEndTimeStamp) ||
-                                    (tourDetailsMap.get(key).getEndTimeStamp() <= currentEventStartTimeStamp))) {
-                                isTimeSlotAvailable = false;
-                            }
-                        }
-                    }
-                    if (isTimeSlotAvailable) {
-                        showNumberPicker();
-                    } else {
-                        util.showNormalDialog(DetailsActivity.this, R.string.time_slot_not_available);
-                    }
-                } else
-                    showNumberPicker();
+
+                // Overlapping check commented temporarily
+
+//                if (registrationDetailsMap.size() > 0 && tourDetailsMap.size() > 0) {
+//                    myVeryOwnIterator = tourDetailsMap.keySet().iterator();
+//                    isTimeSlotAvailable = true;
+//                    while (myVeryOwnIterator.hasNext()) {
+//                        final String key = myVeryOwnIterator.next();
+//                        if (registrationDetailsMap.get(key) != null) {
+//                            if (tourDetailsMap.get(key).getEventTimeStampDiff().equals(currentEventTimeStampDiff))
+//                                isTimeSlotAvailable = false;
+//                            else if (!((tourDetailsMap.get(key).getStartTimeStamp() >= currentEventEndTimeStamp) ||
+//                                    (tourDetailsMap.get(key).getEndTimeStamp() <= currentEventStartTimeStamp))) {
+//                                isTimeSlotAvailable = false;
+//                            }
+//                        }
+//                    }
+//                    if (isTimeSlotAvailable) {
+//                        showNumberPicker();
+//                    } else {
+//                        util.showNormalDialog(DetailsActivity.this, R.string.time_slot_not_available);
+//                    }
+//                } else
+                showNumberPicker();
 
             } else
                 showDeclineDialog();
@@ -934,12 +937,10 @@ public class DetailsActivity extends AppCompatActivity implements IPullZoom, OnM
                                     activityReference.get().getResources().getDrawable(R.drawable.rounded_corner_grey));
                         } else if (count > 1)
                             activityReference.get().registerUregisterCount.setText(
-                                    activityReference.get().getResources().getString(R.string.hurry_up_only) + count +
-                                            activityReference.get().getResources().getString(R.string.seats_for_this_tour));
+                                    count + activityReference.get().getResources().getString(R.string.spaces_available));
                         else
-                            activityReference.get().registerUregisterCount.setText(
-                                    activityReference.get().getResources().getString(R.string.hurry_up_only) + count +
-                                            activityReference.get().getResources().getString(R.string.seat_for_this_tour));
+                            activityReference.get().registerUregisterCount.setText(count +
+                                    activityReference.get().getResources().getString(R.string.space_available));
                     }
                 } else {
                     if (activityReference.get().seatsRemaining != null)
@@ -954,13 +955,11 @@ public class DetailsActivity extends AppCompatActivity implements IPullZoom, OnM
                         activityReference.get().registerButton.setBackground(
                                 activityReference.get().getResources().getDrawable(R.drawable.rounded_corner_grey));
                     } else if (count > 1)
-                        activityReference.get().registerUregisterCount.setText(
-                                activityReference.get().getResources().getString(R.string.hurry_up_only) + count +
-                                        activityReference.get().getResources().getString(R.string.seats_for_this_tour));
+                        activityReference.get().registerUregisterCount.setText(count +
+                                activityReference.get().getResources().getString(R.string.spaces_available));
                     else
-                        activityReference.get().registerUregisterCount.setText(
-                                activityReference.get().getResources().getString(R.string.hurry_up_only) + count +
-                                        activityReference.get().getResources().getString(R.string.seat_for_this_tour));
+                        activityReference.get().registerUregisterCount.setText(count +
+                                activityReference.get().getResources().getString(R.string.space_available));
                 }
             } else {
                 if (userRegistrationDetailsTableList.size() > 0) {
@@ -1000,13 +999,11 @@ public class DetailsActivity extends AppCompatActivity implements IPullZoom, OnM
                         activityReference.get().registerButton.setBackground(
                                 activityReference.get().getResources().getDrawable(R.drawable.rounded_corner_grey));
                     } else if (count > 1)
-                        activityReference.get().registerUregisterCount.setText(
-                                activityReference.get().getResources().getString(R.string.hurry_up_only) + count +
-                                        activityReference.get().getResources().getString(R.string.seats_for_this_tour));
+                        activityReference.get().registerUregisterCount.setText(count +
+                                activityReference.get().getResources().getString(R.string.spaces_available));
                     else
-                        activityReference.get().registerUregisterCount.setText(
-                                activityReference.get().getResources().getString(R.string.hurry_up_only) + count +
-                                        activityReference.get().getResources().getString(R.string.seat_for_this_tour));
+                        activityReference.get().registerUregisterCount.setText(count +
+                                activityReference.get().getResources().getString(R.string.space_available));
                 }
             }
         }
@@ -1607,13 +1604,11 @@ public class DetailsActivity extends AppCompatActivity implements IPullZoom, OnM
                         registerButton.setEnabled(false);
                         registerButton.setBackground(getResources().getDrawable(R.drawable.rounded_corner_grey));
                     } else if (seatsCount > 1)
-                        registerUregisterCount.setText(
-                                getResources().getString(R.string.hurry_up_only) + seatsCount +
-                                        getResources().getString(R.string.seats_for_this_tour));
+                        registerUregisterCount.setText(seatsCount +
+                                getResources().getString(R.string.spaces_available));
                     else
-                        registerUregisterCount.setText(
-                                getResources().getString(R.string.hurry_up_only) + seatsCount +
-                                        getResources().getString(R.string.seat_for_this_tour));
+                        registerUregisterCount.setText(seatsCount +
+                                getResources().getString(R.string.space_available));
 
 
                 }
