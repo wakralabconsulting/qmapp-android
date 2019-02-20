@@ -262,11 +262,11 @@ They exemplify the external influences and internal creativity that inspired thi
     <string name="event_date">Event Date</string>
     <string name="download_brochure_for_more_information"><u>Download Brochure for More Information</u></string>
     <string name="seporater"> - </string>
-    <string name="interested">Register</string>
-    <string name="not_interested">UnRegister</string>
+    <string name="interested">Book Tour</string>
+    <string name="not_interested">Cancel Booking</string>
     <string name="date">Date</string>
-    <string name="thankyou_interest">Thank you for registering.\n\nYou will receive an email with further information.\n\n
-        Any questions, please contact info@qm.org.qa or +974 4452 5555</string>
+    <string name="thankyou_interest">"Thank you for booking this tour. You receive an email with further information.\n\n
+Any questions, please contact booking@qm.org.qa or +974 4452 5555"</string>
     <string name="offer_code">Special offer</string>
     <string name="claim_offer">Claim Offer</string>
     <string name="venue">Venue</string>
@@ -274,12 +274,13 @@ They exemplify the external influences and internal creativity that inspired thi
     <string name="visit_qatar_url">http://visitqatar.qa/</string>
     <string name="mia_floors">MIA Floors</string>
     <string name="warning_no_end_time">NO END TIME AVAILABLE</string>
-    <string name="warning_no_seat_available">Sorry, no seats available for the specific tour.</string>
+    <string name="warning_no_seat_available">Fully booked</string>
     <string name="warning_selection_not_available">Sorry, no seats available for the specific tour.</string>
-    <string name="you_have_registered">You have registered&#160;</string>
-    <string name="hurry_up_only">Hurry up only&#160;</string>
-    <string name="seat_for_this_tour">&#160;seat for this tour.</string>
-    <string name="seats_for_this_tour">&#160;seats for this tour.</string>
+    <string name="you_have_registered">You have booked&#160;</string>
+    <string name="seat_for_this_tour">&#160;space</string>
+    <string name="seats_for_this_tour">&#160;spaces</string>
+    <string name="space_available">&#160;space available</string>
+    <string name="spaces_available">&#160;spaces available</string>
     <string name="number_of_visitors">Number of Visitors</string>
     <string name="done">Done</string>
 
