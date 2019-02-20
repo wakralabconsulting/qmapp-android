@@ -274,7 +274,7 @@ Any questions, please contact booking@qm.org.qa or +974 4452 5555"</string>
     <string name="visit_qatar_url">http://visitqatar.qa/</string>
     <string name="mia_floors">MIA Floors</string>
     <string name="warning_no_end_time">NO END TIME AVAILABLE</string>
-    <string name="warning_no_seat_available">Sorry, no seats available for the specific tour.</string>
+    <string name="warning_no_seat_available">Fully booked</string>
     <string name="warning_selection_not_available">Sorry, no seats available for the specific tour.</string>
     <string name="you_have_registered">You have booked&#160;</string>
     <string name="seat_for_this_tour">&#160;space</string>
