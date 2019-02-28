@@ -51,7 +51,7 @@ import com.qatarmuseums.qatarmuseumsapp.utils.IPullZoom;
 import com.qatarmuseums.qatarmuseumsapp.utils.PixelUtil;
 import com.qatarmuseums.qatarmuseumsapp.utils.PullToZoomCoordinatorLayout;
 import com.qatarmuseums.qatarmuseumsapp.utils.Util;
-import com.qatarmuseums.qatarmuseumsapp.webview.WebviewActivity;
+import com.qatarmuseums.qatarmuseumsapp.webview.WebViewActivity;
 
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
@@ -78,9 +78,7 @@ public class DiningActivity extends AppCompatActivity implements IPullZoom, OnMa
             locationDetails;
     private Util util;
     private Animation zoomOutAnimation;
-    private PullToZoomCoordinatorLayout coordinatorLayout;
     private View zoomView;
-    private AppBarLayout appBarLayout;
     private int headerOffSetSize;
     private String latitude, longitude;
     Intent intent;
@@ -91,22 +89,17 @@ public class DiningActivity extends AppCompatActivity implements IPullZoom, OnMa
     TextView noResultFoundTxt;
     SharedPreferences qmPreferences;
     LinearLayout timingLayout, locationLayout, diningContent, retryLayout;
-    private Integer diningTableRowCount;
     private ArrayList<DiningDetailModel> diningDetailModels = new ArrayList<>();
     private QMDatabase qmDatabase;
     Button retryButton;
     MapView mapDetails;
     private static final String MAP_VIEW_BUNDLE_KEY = "MapViewBundleKey";
-    private GoogleMap gmap, gvalue;
-    LinearLayout mapView;
+    private GoogleMap gMap, gValue;
     ImageView mapImageView, direction;
     int iconView = 0;
     ArrayList<String> imageList = new ArrayList<String>();
     private InfiniteIndicator circleIndicator;
     private ArrayList ads;
-    private GlideLoaderForMuseum glideLoader;
-    private IndicatorConfiguration configuration;
-    private String appLanguage;
 
     @Override
     protected void attachBaseContext(Context base) {
@@ -123,41 +116,41 @@ public class DiningActivity extends AppCompatActivity implements IPullZoom, OnMa
         mainTitle = intent.getStringExtra("MAIN_TITLE");
         id = intent.getStringExtra("ID");
         isFavourite = intent.getBooleanExtra("IS_FAVOURITE", false);
-        toolbar = (Toolbar) findViewById(R.id.toolbar);
-        timingLayout = (LinearLayout) findViewById(R.id.timing_layout);
-        locationLayout = (LinearLayout) findViewById(R.id.location_layout);
-        diningContent = (LinearLayout) findViewById(R.id.dining_content);
-        progressBar = (ProgressBar) findViewById(R.id.progressBarLoading);
-        noResultFoundTxt = (TextView) findViewById(R.id.noResultFoundTxt);
+        toolbar = findViewById(R.id.toolbar);
+        timingLayout = findViewById(R.id.timing_layout);
+        locationLayout = findViewById(R.id.location_layout);
+        diningContent = findViewById(R.id.dining_content);
+        progressBar = findViewById(R.id.progressBarLoading);
+        noResultFoundTxt = findViewById(R.id.noResultFoundTxt);
         retryLayout = findViewById(R.id.retry_layout);
         retryButton = findViewById(R.id.retry_btn);
         qmPreferences = PreferenceManager.getDefaultSharedPreferences(this);
-        appLanguage = LocaleManager.getLanguage(this);
+        String appLanguage = LocaleManager.getLanguage(this);
         if (appLanguage.equals(LocaleManager.LANGUAGE_ENGLISH))
             language = 1;
         else
             language = 2;
         qmDatabase = QMDatabase.getInstance(DiningActivity.this);
         setSupportActionBar(toolbar);
-        toolbarClose = (ImageView) findViewById(R.id.toolbar_close);
-        headerImageView = (ImageView) findViewById(R.id.header_img);
-        title = (TextView) findViewById(R.id.main_title);
-        shortDescription = (TextView) findViewById(R.id.short_description);
-        longDescription = (TextView) findViewById(R.id.long_description);
-        timingDetails = (TextView) findViewById(R.id.timing_info);
-        locationDetails = (TextView) findViewById(R.id.location_info);
+        toolbarClose = findViewById(R.id.toolbar_close);
+        headerImageView = findViewById(R.id.header_img);
+        title = findViewById(R.id.main_title);
+        shortDescription = findViewById(R.id.short_description);
+        longDescription = findViewById(R.id.long_description);
+        timingDetails = findViewById(R.id.timing_info);
+        locationDetails = findViewById(R.id.location_info);
         mapImageView = findViewById(R.id.map_view);
         direction = findViewById(R.id.direction);
-        mapDetails = (MapView) findViewById(R.id.map_info);
+        mapDetails = findViewById(R.id.map_info);
         Bundle mapViewBundle = null;
         if (savedInstanceState != null) {
             mapViewBundle = savedInstanceState.getBundle(MAP_VIEW_BUNDLE_KEY);
         }
         mapDetails.onCreate(mapViewBundle);
         mapDetails.getMapAsync(this);
-        favIcon = (ImageView) findViewById(R.id.favourite);
-        shareIcon = (ImageView) findViewById(R.id.share);
-        circleIndicator = (InfiniteIndicator) findViewById(R.id.carousel_indicator);
+        favIcon = findViewById(R.id.favourite);
+        shareIcon = findViewById(R.id.share);
+        circleIndicator = findViewById(R.id.carousel_indicator);
         util = new Util();
         GlideApp.with(this)
                 .load(headerImage)
@@ -175,7 +168,7 @@ public class DiningActivity extends AppCompatActivity implements IPullZoom, OnMa
             @Override
             public void onClick(View textView) {
                 url = "http://www.mia.org.qa/en/visiting/idam";
-                navigation_intent = new Intent(DiningActivity.this, WebviewActivity.class);
+                navigation_intent = new Intent(DiningActivity.this, WebViewActivity.class);
                 navigation_intent.putExtra("url", url);
                 startActivity(navigation_intent);
             }
@@ -195,128 +188,99 @@ public class DiningActivity extends AppCompatActivity implements IPullZoom, OnMa
         else
             favIcon.setImageResource(R.drawable.heart_empty);
 
-        toolbarClose.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                onBackPressed();
-            }
-        });
-        favIcon.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (util.checkImageResource(DiningActivity.this, favIcon, R.drawable.heart_fill)) {
-                    favIcon.setImageResource(R.drawable.heart_empty);
-                } else
-                    favIcon.setImageResource(R.drawable.heart_fill);
-            }
+        toolbarClose.setOnClickListener(v -> onBackPressed());
+        favIcon.setOnClickListener(v -> {
+            if (util.checkImageResource(DiningActivity.this, favIcon, R.drawable.heart_fill)) {
+                favIcon.setImageResource(R.drawable.heart_empty);
+            } else
+                favIcon.setImageResource(R.drawable.heart_fill);
         });
         initViews();
 
         zoomOutAnimation = AnimationUtils.loadAnimation(getApplicationContext(),
                 R.anim.zoom_out_more);
 
-        retryButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                getDiningDetailsFromAPI(id, language);
-                progressBar.setVisibility(View.VISIBLE);
-                retryLayout.setVisibility(View.GONE);
-            }
+        retryButton.setOnClickListener(v -> {
+            getDiningDetailsFromAPI(id, language);
+            progressBar.setVisibility(View.VISIBLE);
+            retryLayout.setVisibility(View.GONE);
         });
 
-        retryButton.setOnTouchListener(new View.OnTouchListener() {
-            @Override
-            public boolean onTouch(View v, MotionEvent event) {
-                switch (event.getAction()) {
-                    case MotionEvent.ACTION_DOWN:
-                        retryButton.startAnimation(zoomOutAnimation);
-                        break;
-                }
-                return false;
+        retryButton.setOnTouchListener((v, event) -> {
+            switch (event.getAction()) {
+                case MotionEvent.ACTION_DOWN:
+                    retryButton.startAnimation(zoomOutAnimation);
+                    break;
             }
+            return false;
         });
-        toolbarClose.setOnTouchListener(new View.OnTouchListener() {
-            @Override
-            public boolean onTouch(View v, MotionEvent event) {
-                switch (event.getAction()) {
-                    case MotionEvent.ACTION_DOWN:
-                        toolbarClose.startAnimation(zoomOutAnimation);
-                        break;
-                }
-                return false;
+        toolbarClose.setOnTouchListener((v, event) -> {
+            switch (event.getAction()) {
+                case MotionEvent.ACTION_DOWN:
+                    toolbarClose.startAnimation(zoomOutAnimation);
+                    break;
             }
+            return false;
         });
-        favIcon.setOnTouchListener(new View.OnTouchListener() {
-            @Override
-            public boolean onTouch(View v, MotionEvent event) {
-                switch (event.getAction()) {
-                    case MotionEvent.ACTION_DOWN:
-                        favIcon.startAnimation(zoomOutAnimation);
-                        break;
-                }
-                return false;
+        favIcon.setOnTouchListener((v, event) -> {
+            switch (event.getAction()) {
+                case MotionEvent.ACTION_DOWN:
+                    favIcon.startAnimation(zoomOutAnimation);
+                    break;
             }
+            return false;
         });
-        shareIcon.setOnTouchListener(new View.OnTouchListener() {
-            @Override
-            public boolean onTouch(View v, MotionEvent event) {
-                switch (event.getAction()) {
-                    case MotionEvent.ACTION_DOWN:
-                        shareIcon.startAnimation(zoomOutAnimation);
-                        break;
-                }
-                return false;
+        shareIcon.setOnTouchListener((v, event) -> {
+            switch (event.getAction()) {
+                case MotionEvent.ACTION_DOWN:
+                    shareIcon.startAnimation(zoomOutAnimation);
+                    break;
             }
+            return false;
         });
 
-        mapImageView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                if (iconView == 0) {
-                    if (latitude == null || latitude.equals("")) {
-                        util.showLocationAlertDialog(DiningActivity.this);
-                    } else {
-                        gmap = gvalue;
-                        iconView = 1;
-                        mapImageView.setImageResource(R.drawable.ic_map);
-                        gmap.setMapType(GoogleMap.MAP_TYPE_HYBRID);
-                        gmap.setMapStyle(MapStyleOptions.loadRawResourceStyle(DiningActivity.this, R.raw.map_style));
-
-                        gmap.addMarker(new MarkerOptions()
-                                .position(new LatLng(Double.parseDouble(latitude), Double.parseDouble(longitude)))
-                                .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED)));
-                        gmap.animateCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(Double.parseDouble(latitude), Double.parseDouble(longitude)), 10));
-                    }
-                } else {
-                    if (latitude == null || latitude.equals("")) {
-                        util.showLocationAlertDialog(DiningActivity.this);
-                    } else {
-                        iconView = 0;
-                        mapImageView.setImageResource(R.drawable.ic_satellite);
-                        gmap = gvalue;
-                        gmap.setMapType(GoogleMap.MAP_TYPE_NORMAL);
-                        gmap.setMapStyle(MapStyleOptions.loadRawResourceStyle(DiningActivity.this, R.raw.map_style));
-
-                        gmap.addMarker(new MarkerOptions()
-                                .position(new LatLng(Double.parseDouble(latitude), Double.parseDouble(longitude)))
-                                .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED)));
-                        gmap.animateCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(Double.parseDouble(latitude), Double.parseDouble(longitude)), 10));
-                    }
-                }
-            }
-        });
-
-        direction.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
+        mapImageView.setOnClickListener(view -> {
+            if (iconView == 0) {
                 if (latitude == null || latitude.equals("")) {
                     util.showLocationAlertDialog(DiningActivity.this);
                 } else {
-                    Intent intent = new Intent(android.content.Intent.ACTION_VIEW,
-                            Uri.parse("http://maps.google.com/maps?daddr=" + latitude + "," + longitude + "&basemap=satellite"));
-                    if (intent.resolveActivity(getPackageManager()) != null) {
-                        startActivity(intent);
-                    }
+                    gMap = gValue;
+                    iconView = 1;
+                    mapImageView.setImageResource(R.drawable.ic_map);
+                    gMap.setMapType(GoogleMap.MAP_TYPE_HYBRID);
+                    gMap.setMapStyle(MapStyleOptions.loadRawResourceStyle(DiningActivity.this, R.raw.map_style));
+
+                    gMap.addMarker(new MarkerOptions()
+                            .position(new LatLng(Double.parseDouble(latitude), Double.parseDouble(longitude)))
+                            .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED)));
+                    gMap.animateCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(Double.parseDouble(latitude), Double.parseDouble(longitude)), 10));
+                }
+            } else {
+                if (latitude == null || latitude.equals("")) {
+                    util.showLocationAlertDialog(DiningActivity.this);
+                } else {
+                    iconView = 0;
+                    mapImageView.setImageResource(R.drawable.ic_satellite);
+                    gMap = gValue;
+                    gMap.setMapType(GoogleMap.MAP_TYPE_NORMAL);
+                    gMap.setMapStyle(MapStyleOptions.loadRawResourceStyle(DiningActivity.this, R.raw.map_style));
+
+                    gMap.addMarker(new MarkerOptions()
+                            .position(new LatLng(Double.parseDouble(latitude), Double.parseDouble(longitude)))
+                            .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED)));
+                    gMap.animateCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(Double.parseDouble(latitude), Double.parseDouble(longitude)), 10));
+                }
+            }
+        });
+
+        direction.setOnClickListener(view -> {
+            if (latitude == null || latitude.equals("")) {
+                util.showLocationAlertDialog(DiningActivity.this);
+            } else {
+                Intent intent = new Intent(Intent.ACTION_VIEW,
+                        Uri.parse("http://maps.google.com/maps?daddr=" + latitude + "," + longitude + "&basemap=satellite"));
+                if (intent.resolveActivity(getPackageManager()) != null) {
+                    startActivity(intent);
                 }
             }
         });
@@ -372,18 +336,13 @@ public class DiningActivity extends AppCompatActivity implements IPullZoom, OnMa
     }
 
     private void initViews() {
-        coordinatorLayout = (PullToZoomCoordinatorLayout) findViewById(R.id.main_content);
+        PullToZoomCoordinatorLayout coordinatorLayout = findViewById(R.id.main_content);
         zoomView = findViewById(R.id.header_img);
-        appBarLayout = (AppBarLayout) findViewById(R.id.app_bar);
+        AppBarLayout appBarLayout = findViewById(R.id.app_bar);
 
         coordinatorLayout.setPullZoom(zoomView, PixelUtil.dp2px(this, 232),
                 PixelUtil.dp2px(this, 332), this);
-        appBarLayout.addOnOffsetChangedListener(new AppBarLayout.OnOffsetChangedListener() {
-            @Override
-            public void onOffsetChanged(AppBarLayout appBarLayout, int verticalOffset) {
-                headerOffSetSize = verticalOffset;
-            }
-        });
+        appBarLayout.addOnOffsetChangedListener((appBarLayout1, verticalOffset) -> headerOffSetSize = verticalOffset);
     }
 
     public void showCarouselView() {
@@ -419,7 +378,8 @@ public class DiningActivity extends AppCompatActivity implements IPullZoom, OnMa
             ads.add(new Page("", imageList.get(i),
                     null));
         }
-        glideLoader = new GlideLoaderForMuseum();
+        GlideLoaderForMuseum glideLoader = new GlideLoaderForMuseum();
+        IndicatorConfiguration configuration;
         if (language == 1)
             configuration = new IndicatorConfiguration.Builder()
                     .imageLoader(glideLoader)
@@ -442,9 +402,9 @@ public class DiningActivity extends AppCompatActivity implements IPullZoom, OnMa
         diningContent.setVisibility(View.INVISIBLE);
         final String appLanguage;
         if (language == 1) {
-            appLanguage = "en";
+            appLanguage = LocaleManager.LANGUAGE_ENGLISH;
         } else {
-            appLanguage = "ar";
+            appLanguage = LocaleManager.LANGUAGE_ARABIC;
         }
 
         APIInterface apiService =
@@ -457,6 +417,7 @@ public class DiningActivity extends AppCompatActivity implements IPullZoom, OnMa
                     if (response.body() != null && response.body().size() > 0) {
                         diningContent.setVisibility(View.VISIBLE);
                         diningDetailModels = response.body();
+                        removeHtmlTags(diningDetailModels);
                         for (int i = 0; i < diningDetailModels.get(0).getImages().size(); i++) {
                             imageList.add(i, diningDetailModels.get(0).getImages().get(i));
                         }
@@ -492,11 +453,17 @@ public class DiningActivity extends AppCompatActivity implements IPullZoom, OnMa
         });
     }
 
+    public void removeHtmlTags(ArrayList<DiningDetailModel> models) {
+        for (int i = 0; i < models.size(); i++) {
+            models.get(i).setDescription(new Util().html2string(models.get(i).getDescription()));
+        }
+    }
+
     private void getDiningDetailsFromDatabase(String id, int appLanguage) {
         if (appLanguage == 1) {
-            new RetriveEnglishDiningData(DiningActivity.this, appLanguage, id).execute();
+            new RetrieveEnglishDiningData(DiningActivity.this, appLanguage, id).execute();
         } else {
-            new RetriveArabicDiningData(DiningActivity.this, appLanguage, id).execute();
+            new RetrieveArabicDiningData(DiningActivity.this, appLanguage, id).execute();
         }
     }
 
@@ -519,23 +486,23 @@ public class DiningActivity extends AppCompatActivity implements IPullZoom, OnMa
         }
 
         if (latitude != null && !latitude.equals("") && latitude.contains("°")) {
-            latitude = convertDegreetoDecimalMeasure(latitude);
-            longitude = convertDegreetoDecimalMeasure(longitude);
+            latitude = convertDegreeToDecimalMeasure(latitude);
+            longitude = convertDegreeToDecimalMeasure(longitude);
         }
         if (latitude != null && !latitude.equals("")) {
-            gmap = gvalue;
-            gmap.setMinZoomPreference(12);
+            gMap = gValue;
+            gMap.setMinZoomPreference(12);
             LatLng ny = new LatLng(Double.valueOf(latitude), Double.valueOf(longitude));
-            UiSettings uiSettings = gmap.getUiSettings();
+            UiSettings uiSettings = gMap.getUiSettings();
             uiSettings.setMyLocationButtonEnabled(true);
             MarkerOptions markerOptions = new MarkerOptions();
             markerOptions.position(ny);
-            gmap.addMarker(markerOptions);
-            gmap.moveCamera(CameraUpdateFactory.newLatLng(ny));
+            gMap.addMarker(markerOptions);
+            gMap.moveCamera(CameraUpdateFactory.newLatLng(ny));
         }
     }
 
-    private String convertDegreetoDecimalMeasure(String degreeValue) {
+    private String convertDegreeToDecimalMeasure(String degreeValue) {
         String value = degreeValue.trim();
         String[] latParts = value.split("°");
         float degree = Float.parseFloat(latParts[0]);
@@ -552,7 +519,7 @@ public class DiningActivity extends AppCompatActivity implements IPullZoom, OnMa
 
     @Override
     public void onMapReady(GoogleMap googleMap) {
-        gvalue = googleMap;
+        gValue = googleMap;
         googleMap.getUiSettings().setMapToolbarEnabled(false);
     }
 
@@ -586,7 +553,7 @@ public class DiningActivity extends AppCompatActivity implements IPullZoom, OnMa
 
         @Override
         protected Integer doInBackground(Void... voids) {
-            if (language.equals("en"))
+            if (language.equals(LocaleManager.LANGUAGE_ENGLISH))
                 return activityReference.get().qmDatabase.getDiningTableDao().getNumberOfRowsEnglish();
             else
                 return activityReference.get().qmDatabase.getDiningTableDao().getNumberOfRowsArabic();
@@ -619,7 +586,7 @@ public class DiningActivity extends AppCompatActivity implements IPullZoom, OnMa
         protected Void doInBackground(Void... voids) {
 
             if (activityReference.get().diningDetailModels.size() > 0) {
-                if (language.equals("en")) {
+                if (language.equals(LocaleManager.LANGUAGE_ENGLISH)) {
                     for (int i = 0; i < activityReference.get().diningDetailModels.size(); i++) {
                         int n = activityReference.get().qmDatabase.getDiningTableDao().checkEnglishIdExist(
                                 Integer.parseInt(activityReference.get().diningDetailModels.get(i).getId()));
@@ -659,7 +626,7 @@ public class DiningActivity extends AppCompatActivity implements IPullZoom, OnMa
 
         @Override
         protected Void doInBackground(Void... voids) {
-            if (language.equals("en")) {
+            if (language.equals(LocaleManager.LANGUAGE_ENGLISH)) {
                 // updateEnglishTable table with english name
                 activityReference.get().qmDatabase.getDiningTableDao().updateDiningDetailsEnglish(
                         activityReference.get().diningDetailModels.get(position).getName(),
@@ -695,12 +662,12 @@ public class DiningActivity extends AppCompatActivity implements IPullZoom, OnMa
         }
     }
 
-    public static class RetriveEnglishDiningData extends AsyncTask<Void, Void, List<DiningTableEnglish>> {
+    public static class RetrieveEnglishDiningData extends AsyncTask<Void, Void, List<DiningTableEnglish>> {
         private WeakReference<DiningActivity> activityReference;
         int language;
         String diningId;
 
-        RetriveEnglishDiningData(DiningActivity context, int appLanguage, String diningId) {
+        RetrieveEnglishDiningData(DiningActivity context, int appLanguage, String diningId) {
             activityReference = new WeakReference<>(context);
             language = appLanguage;
             this.diningId = diningId;
@@ -731,12 +698,12 @@ public class DiningActivity extends AppCompatActivity implements IPullZoom, OnMa
         }
     }
 
-    public static class RetriveArabicDiningData extends AsyncTask<Void, Void, List<DiningTableArabic>> {
+    public static class RetrieveArabicDiningData extends AsyncTask<Void, Void, List<DiningTableArabic>> {
         private WeakReference<DiningActivity> activityReference;
         int language;
         String diningId;
 
-        RetriveArabicDiningData(DiningActivity context, int appLanguage, String diningId) {
+        RetrieveArabicDiningData(DiningActivity context, int appLanguage, String diningId) {
             activityReference = new WeakReference<>(context);
             language = appLanguage;
             this.diningId = diningId;

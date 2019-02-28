@@ -23,7 +23,6 @@ public class Und {
     private String safeValue;
 
 
-
     public Und(String value) {
         this.value = value;
     }

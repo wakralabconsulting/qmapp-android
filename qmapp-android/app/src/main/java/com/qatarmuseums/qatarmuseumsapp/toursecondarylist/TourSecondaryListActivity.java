@@ -44,11 +44,6 @@ import retrofit2.Response;
 public class TourSecondaryListActivity extends AppCompatActivity {
 
     private ProgressBar progressBar;
-    private Intent intent;
-    private String mainTitle;
-    private Toolbar toolbar;
-    private TextView title, toolbarTitle;
-    private TextView shortDescription;
     private ImageView toolbarBack;
     private Animation zoomOutAnimation;
     private Button retryButton;
@@ -78,21 +73,19 @@ public class TourSecondaryListActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_tour_secondary_list);
         language = LocaleManager.getLanguage(this);
-        progressBar = (ProgressBar) findViewById(R.id.progressBarLoading);
-        intent = getIntent();
-        mainTitle = intent.getStringExtra("MAIN_TITLE");
+        progressBar = findViewById(R.id.progressBarLoading);
+        Intent intent = getIntent();
+        String mainTitle = intent.getStringExtra("MAIN_TITLE");
         comingFrom = intent.getStringExtra("COMING_FROM");
         tourId = intent.getStringExtra("ID");
-        toolbar = (Toolbar) findViewById(R.id.toolbar);
+        Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-        toolbarBack = (ImageView) findViewById(R.id.toolbar_back);
-        toolbarTitle = (TextView) findViewById(R.id.toolbar_title);
-        title = (TextView) findViewById(R.id.main_title);
-        shortDescription = (TextView) findViewById(R.id.short_description);
-        retryLayout = (LinearLayout) findViewById(R.id.retry_layout);
+        toolbarBack = findViewById(R.id.toolbar_back);
+        TextView toolbarTitle = findViewById(R.id.toolbar_title);
+        retryLayout = findViewById(R.id.retry_layout);
         noResultsLayout = findViewById(R.id.no_result_layout);
-        retryButton = (Button) findViewById(R.id.retry_btn);
-        recyclerView = (RecyclerView) findViewById(R.id.tour_recycler_view);
+        retryButton = findViewById(R.id.retry_btn);
+        recyclerView = findViewById(R.id.tour_recycler_view);
         qmDatabase = QMDatabase.getInstance(TourSecondaryListActivity.this);
         util = new Util();
         mAdapter = new TourSecondaryListAdapter(this, tourDetailsList, position -> {
@@ -215,9 +208,9 @@ public class TourSecondaryListActivity extends AppCompatActivity {
     public void getTourDetailsFromDatabase(String id) {
         if (language.equals(LocaleManager.LANGUAGE_ENGLISH)) {
             progressBar.setVisibility(View.VISIBLE);
-            new RetriveTourDetailsEnglish(TourSecondaryListActivity.this, id).execute();
+            new RetrieveTourDetailsEnglish(TourSecondaryListActivity.this, id).execute();
         } else {
-            new RetriveTourDetailsArabic(TourSecondaryListActivity.this, id).execute();
+            new RetrieveTourDetailsArabic(TourSecondaryListActivity.this, id).execute();
         }
     }
 
@@ -252,7 +245,7 @@ public class TourSecondaryListActivity extends AppCompatActivity {
 
         @Override
         protected Integer doInBackground(Void... voids) {
-            if (language.equals("en")) {
+            if (language.equals(LocaleManager.LANGUAGE_ENGLISH)) {
                 return activityReference.get().qmDatabase.getTourDetailsTaleDao().getNumberOfRowsEnglish();
             } else {
                 return activityReference.get().qmDatabase.getTourDetailsTaleDao().getNumberOfRowsArabic();
@@ -273,7 +266,7 @@ public class TourSecondaryListActivity extends AppCompatActivity {
         @Override
         protected Void doInBackground(Void... voids) {
             if (activityReference.get().tourDetailsList.size() > 0) {
-                if (language.equals("en")) {
+                if (language.equals(LocaleManager.LANGUAGE_ENGLISH)) {
                     int n = activityReference.get().qmDatabase.getTourDetailsTaleDao().checkEnglishIdExist(
                             tourId);
                     if (n > 0) {
@@ -322,7 +315,7 @@ public class TourSecondaryListActivity extends AppCompatActivity {
         @Override
         protected Boolean doInBackground(Void... voids) {
             if (activityReference.get().tourDetailsList != null) {
-                if (language.equals("en")) {
+                if (language.equals(LocaleManager.LANGUAGE_ENGLISH)) {
                     for (int i = 0; i < activityReference.get().tourDetailsList.size(); i++) {
                         Convertor converters = new Convertor();
                         tourDetailsTableEnglish = new TourDetailsTableEnglish(
@@ -386,7 +379,7 @@ public class TourSecondaryListActivity extends AppCompatActivity {
 
         @Override
         protected Void doInBackground(Void... voids) {
-            if (language.equals("en")) {
+            if (language.equals(LocaleManager.LANGUAGE_ENGLISH)) {
                 activityReference.get().qmDatabase.getTourDetailsTaleDao().deleteEnglishTourDetailsWithId(
                         tourId
                 );
@@ -409,11 +402,11 @@ public class TourSecondaryListActivity extends AppCompatActivity {
         }
     }
 
-    public static class RetriveTourDetailsEnglish extends AsyncTask<Void, Void, List<TourDetailsTableEnglish>> {
+    public static class RetrieveTourDetailsEnglish extends AsyncTask<Void, Void, List<TourDetailsTableEnglish>> {
         private WeakReference<TourSecondaryListActivity> activityReference;
         String tourId;
 
-        RetriveTourDetailsEnglish(TourSecondaryListActivity context, String tourId) {
+        RetrieveTourDetailsEnglish(TourSecondaryListActivity context, String tourId) {
             activityReference = new WeakReference<>(context);
             this.tourId = tourId;
         }
@@ -457,11 +450,11 @@ public class TourSecondaryListActivity extends AppCompatActivity {
         }
     }
 
-    public static class RetriveTourDetailsArabic extends AsyncTask<Void, Void, List<TourDetailsTableArabic>> {
+    public static class RetrieveTourDetailsArabic extends AsyncTask<Void, Void, List<TourDetailsTableArabic>> {
         private WeakReference<TourSecondaryListActivity> activityReference;
         String tourId;
 
-        RetriveTourDetailsArabic(TourSecondaryListActivity context, String tourId) {
+        RetrieveTourDetailsArabic(TourSecondaryListActivity context, String tourId) {
             activityReference = new WeakReference<>(context);
             this.tourId = tourId;
         }

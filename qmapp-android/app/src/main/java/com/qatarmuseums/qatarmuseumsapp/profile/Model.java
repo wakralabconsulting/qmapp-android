@@ -16,9 +16,5 @@ public class Model extends UserData {
         return und;
     }
 
-    public void setUnd(List<Und> und) {
-        this.und = und;
-    }
-
 }
 

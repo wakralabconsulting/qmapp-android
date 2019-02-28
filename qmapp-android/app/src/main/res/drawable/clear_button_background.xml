@@ -4,6 +4,6 @@
 
     <corners android:radius="1000dp" />
 
-    <solid android:color="@color/event_titile_color" />
+    <solid android:color="@color/event_title_color" />
 
 </shape>

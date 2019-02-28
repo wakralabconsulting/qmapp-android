@@ -3,7 +3,6 @@ package com.qatarmuseums.qatarmuseumsapp.floormap;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -14,7 +13,6 @@ import android.media.MediaPlayer;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
-import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.BottomSheetBehavior;
@@ -76,20 +74,12 @@ import retrofit2.Response;
 public class FloorMapActivity extends AppCompatActivity implements OnMapReadyCallback,
         GoogleMap.OnGroundOverlayClickListener, MediaPlayer.OnBufferingUpdateListener, MediaPlayer.OnCompletionListener, SeekBar.OnSeekBarChangeListener {
 
-    private final int TRANSPARENCY_MAX = 100;
     private int normalMapIconWidth = 53;
     private int normalMapIconHeight = 67;
-    private int largeMapIconWidth = 75;
-    private int largeMapIconHeight = 93;
 
     //    private static final LatLng QM = new LatLng(25.295033, 51.538970);
     private static final LatLng QM = new LatLng(25.294730, 51.539021);
     private static final LatLng QM_CENTER = new LatLng(25.295300, 51.539195);
-
-    LatLng G6_SC2 = new LatLng(25.295193, 51.539105);
-    LatLng G6_SC16 = new LatLng(25.295132, 51.539102);
-    LatLng G6_14 = new LatLng(25.295093, 51.539125);
-    LatLng G10 = new LatLng(25.295245, 51.539210);
 
     // Science Tour
     LatLng L2_G1_SC3 = new LatLng(25.295141, 51.539185);
@@ -150,7 +140,6 @@ public class FloorMapActivity extends AppCompatActivity implements OnMapReadyCal
     LatLng L3_G17_9 = new LatLng(25.295490, 51.538850);
     LatLng L3_G18_1 = new LatLng(25.295555, 51.538892);
     LatLng L3_G18_2 = new LatLng(25.295557, 51.538906);
-    LatLng L3_G18_3 = new LatLng(25.295567, 51.538920);
     LatLng L3_G18_11 = new LatLng(25.295613, 51.538914);
 
     String markerTitle = "";
@@ -163,7 +152,6 @@ public class FloorMapActivity extends AppCompatActivity implements OnMapReadyCal
     Marker selectedMarker;
 
 
-    private int mCurrentEntry = 0;
     private CameraPosition position;
     GoogleMap googleMap;
     private LinearLayout level2, level1, levelG;
@@ -175,36 +163,30 @@ public class FloorMapActivity extends AppCompatActivity implements OnMapReadyCal
             l2_g3_sc14_2, l2_g4_sc3, l2_g4_sc5, l2_g5_sc11, l2_g5_sc5, l2_g7_sc4, l2_g7_sc8,
             l2_g7_sc13, l3_g10_podium9, l3_g10_podium14, l3_g10_wr2_1, l3_g10_wr2_2, l3_g11_14,
             l3_g12_11, l3_g12_12, l3_g12_17, l3_g12_wr5, l3_g13_2, l3_g13_15, l3_g14_13, l3_g14_7,
-            l3_g15_13, l3_g16_wr5, l3_g18_1, l3_g18_2, l3_g18_3, l3_g17_8, l3_g17_9, l3_g18_11;
+            l3_g15_13, l3_g16_wr5, l3_g18_1, l3_g18_2, l3_g17_8, l3_g17_9, l3_g18_11;
 
     private int selectedLevel = 2;
 
     // BottomSheetBehavior variable
     BottomSheetBehavior mBottomSheetBehavior;
     TextView viewDetails, popupTitle, popupProduction, popupProductionDate, popupPeriodStyle,
-            noDataTxt, maiTtitle, shortDescription, image1Description, historyTitle, historyDescription, image2Description;
+            noDataTxt, maiTitle, shortDescription, image1Description, historyTitle, historyDescription, image2Description;
     ImageView numberPad, popupImage, image1, image2, image3, image4;
-    private boolean pickerInAboveState = false;
     ImageView qrCode;
     View bottomSheet;
-    LinearLayout popupShortlayout, popupLongLayout, retryLayout;
-    private Handler mHandler;
-    private Runnable mRunnable;
+    LinearLayout popupShortLayout, popupLongLayout, retryLayout;
 
-    private RelativeLayout levelPickerRelative, floorMapRootLayout;
-    private RelativeLayout.LayoutParams params;
+    private RelativeLayout floorMapRootLayout;
     private ImageView imageToZoom;
-    private SharedPreferences qmPreferences;
-    private APIInterface apiService;
     private String language;
     LinearLayout progressBar;
     private HashMap<String, ArtifactDetails> artifactDetailsMap;
     private HashMap<String, Marker> markerHashMap;
     private Util utils;
     private ArtifactDetails artifactDetails;
-    private CoordinatorLayout floormapLayout;
+    private CoordinatorLayout floorMapLayout;
     private Snackbar snackbar;
-    private String artifactPosition, floorLevel;
+    private String artifactPosition;
     private ArrayList<ArtifactDetails> artifactList;
 
     private SeekBar seekBar;
@@ -216,12 +198,7 @@ public class FloorMapActivity extends AppCompatActivity implements OnMapReadyCal
     String audioURL;
     private ImageView btn_play;
     private final Handler handler = new Handler();
-    private final Runnable r = new Runnable() {
-        @Override
-        public void run() {
-            updateSeekProgress();
-        }
-    };
+    private final Runnable r = () -> updateSeekProgress();
     private LinearLayout audioLayout, audioLayoutDetails;
     private Iterator<String> myVeryOwnIterator;
     private boolean playPause;
@@ -233,10 +210,7 @@ public class FloorMapActivity extends AppCompatActivity implements OnMapReadyCal
     private static Convertor converters;
     Button retryButton;
     private Animation zoomOutAnimation, zoomOutAnimationMore;
-    private ImageView mMarkerImageView;
     private Bitmap resizedBitmap;
-    private Call<ArrayList<ArtifactDetails>> call;
-    private Toolbar toolbar;
     private ImageView backArrow;
 
     @Override
@@ -248,24 +222,23 @@ public class FloorMapActivity extends AppCompatActivity implements OnMapReadyCal
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_floor_map);
-        toolbar = (Toolbar) findViewById(R.id.common_toolbar);
+        Toolbar toolbar = findViewById(R.id.common_toolbar);
         setSupportActionBar(toolbar);
-        backArrow = (ImageView) findViewById(R.id.toolbar_back);
-        floormapLayout = findViewById(R.id.floor_map_activity);
+        backArrow = findViewById(R.id.toolbar_back);
+        floorMapLayout = findViewById(R.id.floor_map_activity);
         floorMapRootLayout = findViewById(R.id.floor_map_root);
-        levelPicker = (LinearLayout) findViewById(R.id.level_picker);
-        level2 = (LinearLayout) findViewById(R.id.level_3);
-        level1 = (LinearLayout) findViewById(R.id.level_2);
-        levelG = (LinearLayout) findViewById(R.id.level_1);
-        levelPickerRelative = (RelativeLayout) findViewById(R.id.level_picker_relative);
-        popupLongLayout = (LinearLayout) findViewById(R.id.details_popup_long);
-        popupShortlayout = (LinearLayout) findViewById(R.id.details_popup_short);
+        levelPicker = findViewById(R.id.level_picker);
+        level2 = findViewById(R.id.level_3);
+        level1 = findViewById(R.id.level_2);
+        levelG = findViewById(R.id.level_1);
+        popupLongLayout = findViewById(R.id.details_popup_long);
+        popupShortLayout = findViewById(R.id.details_popup_short);
         popupTitle = findViewById(R.id.popup_title);
         popupImage = findViewById(R.id.popup_image);
         popupProduction = findViewById(R.id.production_txt);
         popupProductionDate = findViewById(R.id.production_date);
         popupPeriodStyle = findViewById(R.id.period_style);
-        maiTtitle = findViewById(R.id.title);
+        maiTitle = findViewById(R.id.title);
         shortDescription = findViewById(R.id.short_description);
         image1 = findViewById(R.id.image_1);
         image1Description = findViewById(R.id.image_desc1);
@@ -276,12 +249,11 @@ public class FloorMapActivity extends AppCompatActivity implements OnMapReadyCal
         image4 = findViewById(R.id.image_4);
         image2Description = findViewById(R.id.image_desc2);
         noDataTxt = findViewById(R.id.no_data_text);
-        viewDetails = (TextView) findViewById(R.id.view_details_text);
-        imageToZoom = (ImageView) findViewById(R.id.image_to_zoom);
+        viewDetails = findViewById(R.id.view_details_text);
+        imageToZoom = findViewById(R.id.image_to_zoom);
         bottomSheet = findViewById(R.id.bottomSheetLayout);
-        numberPad = (ImageView) findViewById(R.id.number_pad);
-        params = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.WRAP_CONTENT, RelativeLayout.LayoutParams.WRAP_CONTENT);
-        qrCode = (ImageView) findViewById(R.id.scanner);
+        numberPad = findViewById(R.id.number_pad);
+        qrCode = findViewById(R.id.scanner);
         progressBar = findViewById(R.id.progress_bar_loading);
         retryLayout = findViewById(R.id.retry_layout);
         retryButton = findViewById(R.id.retry_btn);
@@ -290,7 +262,6 @@ public class FloorMapActivity extends AppCompatActivity implements OnMapReadyCal
 
         artifactDetailsMap = new HashMap<String, ArtifactDetails>();
         markerHashMap = new HashMap<String, Marker>();
-        qmPreferences = PreferenceManager.getDefaultSharedPreferences(this);
         language = LocaleManager.getLanguage(this);
         artifactList = new ArrayList<ArtifactDetails>();
         tourId = getIntent().getStringExtra("TourId");
@@ -328,13 +299,13 @@ public class FloorMapActivity extends AppCompatActivity implements OnMapReadyCal
                 switch (newState) {
                     case BottomSheetBehavior.STATE_COLLAPSED:
                         disableLevelPicker();
-                        popupShortlayout.setVisibility(View.VISIBLE);
+                        popupShortLayout.setVisibility(View.VISIBLE);
                         break;
                     case BottomSheetBehavior.STATE_DRAGGING:
                         disableLevelPicker();
                         break;
                     case BottomSheetBehavior.STATE_EXPANDED:
-                        popupShortlayout.setVisibility(View.GONE);
+                        popupShortLayout.setVisibility(View.GONE);
                         disableLevelPicker();
                         break;
                     case BottomSheetBehavior.STATE_HIDDEN:
@@ -359,12 +330,7 @@ public class FloorMapActivity extends AppCompatActivity implements OnMapReadyCal
 
 
         mBottomSheetBehavior.setState(BottomSheetBehavior.STATE_HIDDEN);
-        popupShortlayout.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                mBottomSheetBehavior.setState(BottomSheetBehavior.STATE_EXPANDED);
-            }
-        });
+        popupShortLayout.setOnClickListener(view -> mBottomSheetBehavior.setState(BottomSheetBehavior.STATE_EXPANDED));
 
 
         level2.setOnClickListener(v -> {
@@ -444,7 +410,7 @@ public class FloorMapActivity extends AppCompatActivity implements OnMapReadyCal
     public void fetchComingData() {
         artifactList.clear();
         artifactList = getIntent().getParcelableArrayListExtra("RESPONSE");
-        addDatasToHashMap();
+        addDataToHashMap();
         floorMapRootLayout.setVisibility(View.VISIBLE);
         retryLayout.setVisibility(View.GONE);
     }
@@ -604,10 +570,11 @@ public class FloorMapActivity extends AppCompatActivity implements OnMapReadyCal
 
     public void fetchArtifactsFromAPI() {
         progressBar.setVisibility(View.VISIBLE);
-        apiService = APIClient.getClient().create(APIInterface.class);
+        APIInterface apiService = APIClient.getClient().create(APIInterface.class);
 
         // Commented for temporary
 //        Call<ArrayList<ArtifactDetails>> call = apiService.getArtifactList(language);
+        Call<ArrayList<ArtifactDetails>> call;
         if (language.equals(LocaleManager.LANGUAGE_ARABIC))
             call = apiService.getObjectPreviewDetails(language, "12916");   // Temporary
         else
@@ -619,7 +586,7 @@ public class FloorMapActivity extends AppCompatActivity implements OnMapReadyCal
                 if (response.isSuccessful()) {
                     if (response.body().size() > 0) {
                         artifactList.addAll(response.body());
-                        addDatasToHashMap();
+                        addDataToHashMap();
                         new RowCount(FloorMapActivity.this, language, artifactList).execute();
                     }
                     floorMapRootLayout.setVisibility(View.VISIBLE);
@@ -640,7 +607,7 @@ public class FloorMapActivity extends AppCompatActivity implements OnMapReadyCal
         });
     }
 
-    public void addDatasToHashMap() {
+    public void addDataToHashMap() {
         artifactDetailsMap.clear();
         for (int i = 0; i < artifactList.size(); i++) {
             artifactDetails = artifactList.get(i);
@@ -650,7 +617,7 @@ public class FloorMapActivity extends AppCompatActivity implements OnMapReadyCal
 
     public void checkForHighlight() {
         artifactPosition = getIntent().getStringExtra("Position");
-        floorLevel = getIntent().getStringExtra("Level");
+        String floorLevel = getIntent().getStringExtra("Level");
         if (artifactPosition != null) {
             if (floorLevel.equals("2"))
                 level1.performClick();
@@ -750,23 +717,21 @@ public class FloorMapActivity extends AppCompatActivity implements OnMapReadyCal
         googleMap.getUiSettings().setIndoorLevelPickerEnabled(false);
         googleMap.setMapType(GoogleMap.MAP_TYPE_NORMAL);
         googleMap.setMapStyle(MapStyleOptions.loadRawResourceStyle(getApplicationContext(), R.raw.map_style));
-        googleMap.setOnCameraMoveListener(new GoogleMap.OnCameraMoveListener() {
-            @Override
-            public void onCameraMove() {
-                position = googleMap.getCameraPosition();
-                if (position.zoom <= 17.0) {
-                    mGroundOverlay.setVisible(false);
-                    levelPicker.setVisibility(View.GONE);
-                } else {
-                    mGroundOverlay.setVisible(true);
-                    levelPicker.setVisibility(View.VISIBLE);
-                }
+        googleMap.setOnCameraMoveListener(() -> {
+            position = googleMap.getCameraPosition();
+            if (position.zoom <= 17.0) {
+                mGroundOverlay.setVisible(false);
+                levelPicker.setVisibility(View.GONE);
+            } else {
+                mGroundOverlay.setVisible(true);
+                levelPicker.setVisibility(View.VISIBLE);
             }
         });
 
         googleMap.setOnGroundOverlayClickListener(this);
         mImages.clear();
         mImages.add(BitmapDescriptorFactory.fromResource(R.drawable.qm_level_1));
+        int mCurrentEntry = 0;
         mGroundOverlay = googleMap.addGroundOverlay(new GroundOverlayOptions()
                 .image(mImages.get(mCurrentEntry)).anchor(0, 1)
                 .position(QM, 93f, 106f)
@@ -779,30 +744,25 @@ public class FloorMapActivity extends AppCompatActivity implements OnMapReadyCal
         checkForHighlight();
 
         googleMap.setContentDescription("Google Map with ground overlay.");
-        googleMap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
-            @Override
-            public boolean onMarkerClick(Marker marker) {
+        googleMap.setOnMarkerClickListener(marker -> {
 
-                if (markerTitle.equals(marker.getTitle())) {
-//                    Toast.makeText(FloorMapActivity.this, "same Name", Toast.LENGTH_SHORT).show();
-                } else {
-                    markerTitle = marker.getTitle();
-                    if (selectedMarker != null) {
-                        mBottomSheetBehavior.setState(BottomSheetBehavior.STATE_HIDDEN);
-                        selectedMarker = null;
-                    }
-                    historyTitle.setVisibility(View.GONE);
-                    image1.setVisibility(View.GONE);
-                    image2.setVisibility(View.GONE);
-                    image3.setVisibility(View.GONE);
-                    image4.setVisibility(View.GONE);
-                    historyDescription.setVisibility(View.GONE);
-                    image2Description.setVisibility(View.GONE);
-                    if (artifactDetailsMap != null)
-                        markerClick(marker);
+            if (!markerTitle.equals(marker.getTitle())) {
+                markerTitle = marker.getTitle();
+                if (selectedMarker != null) {
+                    mBottomSheetBehavior.setState(BottomSheetBehavior.STATE_HIDDEN);
+                    selectedMarker = null;
                 }
-                return true;
+                historyTitle.setVisibility(View.GONE);
+                image1.setVisibility(View.GONE);
+                image2.setVisibility(View.GONE);
+                image3.setVisibility(View.GONE);
+                image4.setVisibility(View.GONE);
+                historyDescription.setVisibility(View.GONE);
+                image2Description.setVisibility(View.GONE);
+                if (artifactDetailsMap != null)
+                    markerClick(marker);
             }
+            return true;
         });
         LatLngBounds QM = new LatLngBounds(
                 new LatLng(25.294616, 51.538288), new LatLng(25.296323, 51.540369));
@@ -1314,7 +1274,7 @@ public class FloorMapActivity extends AppCompatActivity implements OnMapReadyCal
                 showAudioControllerDetailsPage();
                 audioURL = artifactDetails.getAudioFile();
             }
-            maiTtitle.setText(utils.html2string(artifactDetails.getMainTitle()));
+            maiTitle.setText(utils.html2string(artifactDetails.getMainTitle()));
             shortDescription.setText(artifactDetails.getCuratorialDescription());
             GlideApp.with(FloorMapActivity.this)
                     .load(artifactDetails.getImage())
@@ -1366,9 +1326,9 @@ public class FloorMapActivity extends AppCompatActivity implements OnMapReadyCal
             selectedMarker = marker;
             mBottomSheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
         } else if (utils.isNetworkAvailable(this)) {
-            snackbar = Snackbar.make(floormapLayout, R.string.coming_soon_txt, Snackbar.LENGTH_SHORT);
+            snackbar = Snackbar.make(floorMapLayout, R.string.coming_soon_txt, Snackbar.LENGTH_SHORT);
             View sbView = snackbar.getView();
-            TextView textView = (TextView) sbView.findViewById(android.support.design.R.id.snackbar_text);
+            TextView textView = sbView.findViewById(android.support.design.R.id.snackbar_text);
             textView.setTextColor(Color.BLACK);
             sbView.setBackgroundColor(Color.WHITE);
             snackbar.show();
@@ -1496,9 +1456,9 @@ public class FloorMapActivity extends AppCompatActivity implements OnMapReadyCal
     }
 
     public void checkMarkerStatus() {
-        popupShortlayout.setVisibility(View.VISIBLE);
-        mHandler = new Handler();
-        mRunnable = new Runnable() {
+        popupShortLayout.setVisibility(View.VISIBLE);
+        Handler mHandler = new Handler();
+        Runnable mRunnable = new Runnable() {
 
             @Override
             public void run() {
@@ -1546,7 +1506,7 @@ public class FloorMapActivity extends AppCompatActivity implements OnMapReadyCal
 
         @Override
         protected Integer doInBackground(Void... voids) {
-            if (language.equals("en"))
+            if (language.equals(LocaleManager.LANGUAGE_ENGLISH))
                 return activityReference.get().qmDatabase.getArtifactTableDao().getNumberOfRowsEnglish();
             else
                 return activityReference.get().qmDatabase.getArtifactTableDao().getNumberOfRowsArabic();
@@ -1563,7 +1523,6 @@ public class FloorMapActivity extends AppCompatActivity implements OnMapReadyCal
                 new CheckDBRowExist(activityReference.get(), language, artifactList.get()).execute();
 
             } else {
-                //create databse
                 ArtifactTableEnglish artifactTableEnglish = null;
                 ArtifactTableArabic artifactTableArabic = null;
                 new InsertDatabaseTask(activityReference.get(), artifactTableEnglish,
@@ -1590,7 +1549,7 @@ public class FloorMapActivity extends AppCompatActivity implements OnMapReadyCal
         @Override
         protected Void doInBackground(Void... voids) {
             if (artifactList.get().size() > 0) {
-                if (language.equals("en")) {
+                if (language.equals(LocaleManager.LANGUAGE_ENGLISH)) {
                     for (int i = 0; i < artifactList.get().size(); i++) {
                         int n = activityReference.get().qmDatabase.getArtifactTableDao().checkNidExistEnglish(
                                 Integer.parseInt(artifactList.get().get(i).getNid()));
@@ -1691,7 +1650,7 @@ public class FloorMapActivity extends AppCompatActivity implements OnMapReadyCal
         @Override
         protected Boolean doInBackground(Void... voids) {
             if (artifactList != null) {
-                if (language.equals("en")) {
+                if (language.equals(LocaleManager.LANGUAGE_ENGLISH)) {
                     for (int i = 0; i < artifactList.get().size(); i++) {
                         artifactTableEnglish = new ArtifactTableEnglish(Long.parseLong(artifactList.get().get(i).getNid()),
                                 artifactList.get().get(i).getTitle(),
@@ -1773,7 +1732,7 @@ public class FloorMapActivity extends AppCompatActivity implements OnMapReadyCal
 
         @Override
         protected Void doInBackground(Void... voids) {
-            if (language.equals("en")) {
+            if (language.equals(LocaleManager.LANGUAGE_ENGLISH)) {
                 // updateEnglishTable table with english name
                 activityReference.get().qmDatabase.getArtifactTableDao().updateArtifactEnglish(
                         artifactList.get().get(position).getNid(),
@@ -1839,10 +1798,10 @@ public class FloorMapActivity extends AppCompatActivity implements OnMapReadyCal
         }
     }
 
-    public static class RetriveEnglishTableData extends AsyncTask<Void, Void, List<ArtifactTableEnglish>> {
+    public static class RetrieveEnglishTableData extends AsyncTask<Void, Void, List<ArtifactTableEnglish>> {
         private WeakReference<FloorMapActivity> activityReference;
 
-        RetriveEnglishTableData(FloorMapActivity context) {
+        RetrieveEnglishTableData(FloorMapActivity context) {
             activityReference = new WeakReference<>(context);
         }
 
@@ -1883,7 +1842,7 @@ public class FloorMapActivity extends AppCompatActivity implements OnMapReadyCal
                             artifactDetailsList.get(i).getThumbImage());
                     activityReference.get().artifactList.add(i, artifactDetails);
                 }
-                activityReference.get().addDatasToHashMap();
+                activityReference.get().addDataToHashMap();
 
                 activityReference.get().floorMapRootLayout.setVisibility(View.VISIBLE);
                 activityReference.get().retryLayout.setVisibility(View.GONE);
@@ -1898,10 +1857,10 @@ public class FloorMapActivity extends AppCompatActivity implements OnMapReadyCal
         }
     }
 
-    public static class RetriveArabicTableData extends AsyncTask<Void, Void, List<ArtifactTableArabic>> {
+    public static class RetrieveArabicTableData extends AsyncTask<Void, Void, List<ArtifactTableArabic>> {
         private WeakReference<FloorMapActivity> activityReference;
 
-        RetriveArabicTableData(FloorMapActivity context) {
+        RetrieveArabicTableData(FloorMapActivity context) {
             activityReference = new WeakReference<>(context);
         }
 
@@ -1941,7 +1900,7 @@ public class FloorMapActivity extends AppCompatActivity implements OnMapReadyCal
                             artifactDetailsList.get(i).getThumbImage());
                     activityReference.get().artifactList.add(i, artifactDetails);
                 }
-                activityReference.get().addDatasToHashMap();
+                activityReference.get().addDataToHashMap();
                 activityReference.get().progressBar.setVisibility(View.GONE);
                 activityReference.get().floorMapRootLayout.setVisibility(View.VISIBLE);
                 activityReference.get().retryLayout.setVisibility(View.GONE);
@@ -1957,9 +1916,9 @@ public class FloorMapActivity extends AppCompatActivity implements OnMapReadyCal
     public void fetchArtifactsFromDB() {
         progressBar.setVisibility(View.VISIBLE);
         if (language.equals(LocaleManager.LANGUAGE_ENGLISH))
-            new RetriveEnglishTableData(FloorMapActivity.this).execute();
+            new RetrieveEnglishTableData(FloorMapActivity.this).execute();
         else
-            new RetriveArabicTableData(FloorMapActivity.this).execute();
+            new RetrieveArabicTableData(FloorMapActivity.this).execute();
     }
 
     @Override

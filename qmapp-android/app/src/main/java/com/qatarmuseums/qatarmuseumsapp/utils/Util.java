@@ -20,6 +20,7 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.Toast;
 
+import com.qatarmuseums.qatarmuseumsapp.LocaleManager;
 import com.qatarmuseums.qatarmuseumsapp.R;
 import com.qatarmuseums.qatarmuseumsapp.home.GlideApp;
 
@@ -34,22 +35,20 @@ import java.util.Locale;
 
 public class Util {
     private CustomDialogClass customDialog;
-    private String lang;
-    private Dialog tokenDialog;
-    private LayoutInflater layoutInflater;
-    private View closeBtn;
-    private EditText mTokenView;
+
+    public Util() {
+    }
 
     public long getTimeStamp(String dateVal) {
         SimpleDateFormat format = new SimpleDateFormat("dd/MM/yyyy HH:mm");
-        long datevalue = 0;
+        long dateValue = 0;
         try {
             Date date = format.parse(dateVal);
-            datevalue = date.getTime();
+            dateValue = date.getTime();
         } catch (ParseException e) {
             e.printStackTrace();
         }
-        return datevalue;
+        return dateValue;
     }
 
     public boolean checkImageResource(Context ctx, ImageView imageView,
@@ -139,20 +138,17 @@ public class Util {
         ConnectivityManager connectivityManager
                 = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
         NetworkInfo activeNetworkInfo = connectivityManager.getActiveNetworkInfo();
-        if (activeNetworkInfo != null && activeNetworkInfo.isConnected())
-            return true;
-        else {
-            return false;
-        }
+        return activeNetworkInfo != null && activeNetworkInfo.isConnected();
 
 
     }
 
     public void setLocale(Context context, int language) {
+        String lang;
         if (language == 1)
-            lang = "en";
+            lang = LocaleManager.LANGUAGE_ENGLISH;
         else
-            lang = "ar";
+            lang = LocaleManager.LANGUAGE_ARABIC;
         Configuration configuration = context.getResources().getConfiguration();
         configuration.setLayoutDirection(new Locale(lang));
         context.getResources().updateConfiguration(configuration, context.getResources().getDisplayMetrics());
@@ -178,7 +174,7 @@ public class Util {
     }
 
     public static void setupItem(final View view, final LibraryObject libraryObject, Context mContext) {
-        final ImageView img = (ImageView) view.findViewById(R.id.img_item);
+        final ImageView img = view.findViewById(R.id.img_item);
         GlideApp.with(mContext)
                 .load(libraryObject.getRes())
                 .placeholder(R.drawable.placeholder)
@@ -201,26 +197,6 @@ public class Util {
         public void setRes(final String res) {
             mRes = res;
         }
-    }
-
-    public String convertDegreeToDecimalMeasure(String degreeValue) {
-
-        String value = degreeValue.trim();
-        String[] latParts = value.split("°");
-        float degree = Float.parseFloat(latParts[0]);
-        if (degree == 0.0) {
-            return null;
-        }
-        value = latParts[1].trim();
-        latParts = value.split("'");
-        float min = Float.parseFloat(latParts[0]);
-        value = latParts[1].trim();
-        latParts = value.split("\"");
-        float sec = Float.parseFloat(latParts[0]);
-        String result;
-        result = String.valueOf(degree + (min / 60) + (sec / 3600));
-        return result;
-
     }
 
     public String formatDateFromDateString(String inputDate) throws ParseException {

@@ -27,7 +27,7 @@ public class CommonModel {
     private String latitude;
     @SerializedName(value = "SORT_ID", alternate = {"sort_id", "Sort_Id"})
     private String sortId;
-    private Boolean isOpen, isfavourite;
+    private Boolean isOpen, isFavourite;
     @SerializedName("opening_time")
     private String openingTime;
     @SerializedName("close_time")
@@ -35,7 +35,7 @@ public class CommonModel {
     @SerializedName(value = "Description", alternate = {"collection_description", "Introduction_Text"})
     private String description;
     @SerializedName("Museums_reference")
-    private String museumReferance;
+    private String museumReference;
     @SerializedName(value = "museum_id", alternate = {"museums"})
     private String museumId;
     @SerializedName("category")
@@ -50,7 +50,7 @@ public class CommonModel {
     @SerializedName("email")
     private String email;
     @SerializedName("contact_number")
-    private String contactnumber;
+    private String contactNumber;
     @SerializedName("Promotional_code")
     private String promotionalCode;
     @SerializedName("claim_offer")
@@ -66,15 +66,15 @@ public class CommonModel {
 
     private Boolean isTour;
     private Boolean isTravel;
-    int rowHeight;
+    private int rowHeight;
 
     public CommonModel() {
 
     }
 
 
-    public CommonModel(String id, String name, String location, String image, String exhibitionStatus,
-                       String exhibitionDisplayDate) {
+    CommonModel(String id, String name, String location, String image, String exhibitionStatus,
+                String exhibitionDisplayDate) {
         this.id = id;
         this.name = name;
         this.location = location;
@@ -85,8 +85,8 @@ public class CommonModel {
     }
 
 
-    public CommonModel(String id, String name, String image, String latitude,
-                       String longitude) {
+    CommonModel(String id, String name, String image, String latitude,
+                String longitude) {
         this.id = id;
         this.name = name;
         this.image = image;
@@ -94,38 +94,30 @@ public class CommonModel {
         this.longitude = longitude;
     }
 
-    public CommonModel(String name, String image, String description, String museumId
-    ) {
+    CommonModel(String name, String image, String museumReference) {
         this.name = name;
         this.image = image;
-        this.description = description;
-        this.museumId = museumId;
-    }
-
-    public CommonModel(String name, String image, String museumReferance) {
-        this.name = name;
-        this.image = image;
-        this.museumReferance = museumReferance;
+        this.museumReference = museumReference;
 
     }
 
-    public CommonModel(String name, String image, String description, String email, String contactnumber,
-                       String promotionalCode, String claimOffer, String contentId,
-                       boolean isTravel) {
+    CommonModel(String name, String image, String description, String email, String contactNumber,
+                String promotionalCode, String claimOffer, String contentId,
+                boolean isTravel) {
         this.name = name;
         this.image = image;
         this.description = description;
         this.email = email;
-        this.contactnumber = contactnumber;
+        this.contactNumber = contactNumber;
         this.promotionalCode = promotionalCode;
         this.claimOffer = claimOffer;
         this.id = contentId;
         this.isTravel = isTravel;
     }
 
-    public CommonModel(String name, String id, String location, String image,
-                       String sortId, String openingTime, String closingTime,
-                       String description) {
+    CommonModel(String name, String id, String location, String image,
+                String sortId, String openingTime, String closingTime,
+                String description) {
         this.name = name;
         this.id = id;
         this.location = location;
@@ -136,8 +128,8 @@ public class CommonModel {
         this.description = description;
     }
 
-    public CommonModel(String id, String eventDay, String eventDate, String name,
-                       ArrayList<String> images, boolean isTour) {
+    CommonModel(String id, String eventDay, String eventDate, String name,
+                ArrayList<String> images, boolean isTour) {
         this.id = id;
         this.name = name;
         this.images = images;
@@ -210,12 +202,12 @@ public class CommonModel {
         isOpen = open;
     }
 
-    public Boolean getIsfavourite() {
-        return isfavourite;
+    public Boolean getIsFavourite() {
+        return isFavourite;
     }
 
-    public void setIsfavourite(Boolean isfavourite) {
-        this.isfavourite = isfavourite;
+    public void setIsFavourite(Boolean isFavourite) {
+        this.isFavourite = isFavourite;
     }
 
     public void setEndDate(String endDate) {
@@ -278,8 +270,8 @@ public class CommonModel {
         this.description = description;
     }
 
-    public String getMuseumReferance() {
-        return museumReferance;
+    public String getMuseumReference() {
+        return museumReference;
     }
 
 
@@ -327,8 +319,8 @@ public class CommonModel {
         return email;
     }
 
-    public String getContactnumber() {
-        return contactnumber;
+    public String getContactNumber() {
+        return contactNumber;
     }
 
     public String getPromotionalCode() {
