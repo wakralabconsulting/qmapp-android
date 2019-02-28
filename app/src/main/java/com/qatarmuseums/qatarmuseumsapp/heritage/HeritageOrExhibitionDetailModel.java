@@ -17,17 +17,14 @@ public class HeritageOrExhibitionDetailModel {
     private String longitude;
     @SerializedName("Latitude")
     private String latitude;
-    @SerializedName(value="short_description", alternate={"Short_description"})
+    @SerializedName(value = "short_description", alternate = {"Short_description"})
     private String shortDescription;
-    @SerializedName(value="long_description", alternate={"Long_description"})
+    @SerializedName(value = "long_description", alternate = {"Long_description"})
     private String longDescription;
     @SerializedName("start_Date")
     private String startDate;
     @SerializedName("end_Date")
     private String endDate;
-
-    public HeritageOrExhibitionDetailModel() {
-    }
 
     public HeritageOrExhibitionDetailModel(String name, String id,
                                            String location, ArrayList<String> image,

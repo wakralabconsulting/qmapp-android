@@ -21,19 +21,16 @@ public class ParkList {
     private String timingInfo;
 
 
-    public ParkList() {
-        }
-
-    public ParkList(String mainTitle, String shortDescription, String image,
-                    String latitude, String longitude, String timingInfo,
-                    String sortId) {
+    ParkList(String mainTitle, String shortDescription, String image,
+             String latitude, String longitude, String timingInfo,
+             String sortId) {
         this.mainTitle = mainTitle;
         this.shortDescription = shortDescription;
         this.image = image;
         this.latitude = latitude;
         this.longitude = longitude;
         this.timingInfo = timingInfo;
-        this.sortId =sortId;
+        this.sortId = sortId;
     }
 
     public String getMainTitle() {
@@ -58,11 +55,6 @@ public class ParkList {
 
     public void setShortDescription(String shortDescription) {
         this.shortDescription = shortDescription;
-    }
-
-
-    public void setLongDescription(String longDescription) {
-        longDescription = longDescription;
     }
 
     public String getLatitude() {

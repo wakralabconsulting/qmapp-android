@@ -65,20 +65,20 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:gravity="center"
+                android:layoutDirection="ltr"
                 android:orientation="horizontal"
+                android:paddingBottom="@dimen/padding_5"
                 android:paddingEnd="@dimen/pading_25"
                 android:paddingStart="@dimen/pading_25"
-                android:layoutDirection="ltr"
                 android:paddingTop="@dimen/pading_10"
-                android:paddingBottom="@dimen/padding_5"
                 android:visibility="gone">
 
                 <ImageView
                     android:id="@+id/play_button"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:src="@drawable/play_black"
-                    android:gravity="center" />
+                    android:gravity="center"
+                    android:src="@drawable/play_black" />
 
                 <SeekBar
                     android:id="@+id/seek_bar"

@@ -139,8 +139,8 @@
                 android:id="@+id/age_group_image"
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
-                android:layout_weight=".1"
                 android:layout_gravity="end"
+                android:layout_weight=".1"
                 android:src="@drawable/down_arrow_icon" />
 
             <Spinner
@@ -185,8 +185,8 @@
                 android:id="@+id/programme_type_image"
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
-                android:layout_weight=".1"
                 android:layout_gravity="end"
+                android:layout_weight=".1"
                 android:src="@drawable/down_arrow_icon" />
 
             <Spinner

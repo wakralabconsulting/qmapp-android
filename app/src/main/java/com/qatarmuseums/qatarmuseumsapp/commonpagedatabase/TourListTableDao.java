@@ -32,13 +32,16 @@ public interface TourListTableDao {
     @Query("SELECT * FROM tourlistenglish WHERE isTour = :isTourFromAPI")
     List<TourListTableEnglish> getTourListEnglish(int isTourFromAPI);
 
+    @Query("SELECT * FROM tourlistarabic WHERE isTour = :isTourFromAPI")
+    List<TourListTableArabic> getTourListArabic(int isTourFromAPI);
+
     @Query("UPDATE tourlistenglish SET tourDay = :tourDayFromApi," +
             "tourEventDate = :tourEventDateFromApi," +
             "tourSubtitle = :tourSubtitleFromApi," +
             "tourImages = :tourImagesFromApi," +
             "tourSortId = :tourSortIdFromApi," +
             "tourDescription = :tourDescriptionFromApi WHERE tourNid=:idFromApi")
-    void updateTourlistenglish(String tourDayFromApi, String tourEventDateFromApi,
+    void updateTourListEnglish(String tourDayFromApi, String tourEventDateFromApi,
                                String tourSubtitleFromApi, String tourImagesFromApi,
                                String tourSortIdFromApi, String tourDescriptionFromApi,
                                String idFromApi);
@@ -49,17 +52,17 @@ public interface TourListTableDao {
             "tourImages = :tourImagesFromApi," +
             "tourSortId = :tourSortIdFromApi," +
             "tourDescription = :tourDescriptionFromApi WHERE tourNid=:idFromApi")
-    void updateTourlistarabic(String tourDayFromApi, String tourEventDateFromApi,
+    void updateTourListArabic(String tourDayFromApi, String tourEventDateFromApi,
                               String tourSubtitleFromApi, String tourImagesFromApi,
                               String tourSortIdFromApi, String tourDescriptionFromApi,
                               String idFromApi);
 
 
     @Insert
-    void insert(TourListTableEnglish tourListTableEnglish);
+    void insertEnglish(TourListTableEnglish tourListTableEnglish);
 
     @Insert
-    void insert(TourListTableArabic tourListTableArabic);
+    void insertArabic(TourListTableArabic tourListTableArabic);
 
     /*
      * updateEnglishTable the object in database

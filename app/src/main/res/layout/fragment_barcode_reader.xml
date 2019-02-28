@@ -10,11 +10,12 @@
         android:id="@+id/preview"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
+
         <com.qatarmuseums.qatarmuseumsapp.floormap.camera.GraphicOverlay
             android:id="@+id/graphicOverlay"
-            android:background="#40FFFFFf"
             android:layout_width="match_parent"
-            android:layout_height="match_parent" />
+            android:layout_height="match_parent"
+            android:background="#40FFFFFf" />
     </com.qatarmuseums.qatarmuseumsapp.floormap.camera.CameraSourcePreview>
 
 </LinearLayout>

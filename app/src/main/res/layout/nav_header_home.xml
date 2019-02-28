@@ -14,16 +14,16 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="0dp"
+            android:layout_marginTop="@dimen/pading_15"
             android:layout_weight="1"
             android:baselineAligned="false"
             android:gravity="center"
-            android:orientation="horizontal"
-            android:layout_marginTop="@dimen/pading_15">
+            android:orientation="horizontal">
 
             <LinearLayout
+                android:id="@+id/sidemenu_exibition_layout"
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
-                android:id="@+id/sidemenu_exibition_layout"
                 android:layout_weight="1"
                 android:gravity="center"
                 android:orientation="vertical">
@@ -47,9 +47,9 @@
             </LinearLayout>
 
             <LinearLayout
+                android:id="@+id/sidemenu_event_layout"
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
-                android:id="@+id/sidemenu_event_layout"
                 android:layout_weight="1"
                 android:gravity="center"
                 android:orientation="vertical">
@@ -73,9 +73,9 @@
             </LinearLayout>
 
             <LinearLayout
+                android:id="@+id/sidemenu_education_layout"
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
-                android:id="@+id/sidemenu_education_layout"
                 android:layout_weight="1"
                 android:gravity="center"
                 android:orientation="vertical">
@@ -104,13 +104,13 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="0dp"
-            android:layout_weight="1"
-            android:layout_marginTop="@dimen/pading_15">
+            android:layout_marginTop="@dimen/pading_15"
+            android:layout_weight="1">
 
             <LinearLayout
+                android:id="@+id/sidemenu_tour_guide_layout"
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
-                android:id="@+id/sidemenu_tour_guide_layout"
                 android:layout_weight="1"
                 android:gravity="center"
                 android:orientation="vertical"
@@ -135,9 +135,9 @@
             </LinearLayout>
 
             <LinearLayout
+                android:id="@+id/sidemenu_heritage_layout"
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
-                android:id="@+id/sidemenu_heritage_layout"
                 android:layout_weight="1"
                 android:gravity="center"
                 android:orientation="vertical"
@@ -162,9 +162,9 @@
             </LinearLayout>
 
             <LinearLayout
+                android:id="@+id/sidemenu_public_arts_layout"
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
-                android:id="@+id/sidemenu_public_arts_layout"
                 android:layout_weight="1"
                 android:gravity="center"
                 android:orientation="vertical"
@@ -192,14 +192,14 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="0dp"
+            android:layout_marginTop="@dimen/pading_15"
             android:layout_weight="1"
-            android:gravity="center"
-            android:layout_marginTop="@dimen/pading_15">
+            android:gravity="center">
 
             <LinearLayout
+                android:id="@+id/sidemenu_dining_layout"
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
-                android:id="@+id/sidemenu_dining_layout"
                 android:layout_weight="1"
                 android:gravity="center"
                 android:orientation="vertical"
@@ -224,9 +224,9 @@
             </LinearLayout>
 
             <LinearLayout
+                android:id="@+id/sidemenu_gift_shop_layout"
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
-                android:id="@+id/sidemenu_gift_shop_layout"
                 android:layout_weight="1"
                 android:gravity="center"
                 android:orientation="vertical"
@@ -251,9 +251,9 @@
             </LinearLayout>
 
             <LinearLayout
+                android:id="@+id/sidemenu_park_layout"
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
-                android:id="@+id/sidemenu_park_layout"
                 android:layout_weight="1"
                 android:gravity="center"
                 android:orientation="vertical"
@@ -326,9 +326,9 @@
 
 
             <LinearLayout
+                android:id="@+id/sidemenu_settings_layout"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:id="@+id/sidemenu_settings_layout"
                 android:layout_marginEnd="@dimen/pading_10"
                 android:layout_weight=".5"
                 android:gravity="bottom"

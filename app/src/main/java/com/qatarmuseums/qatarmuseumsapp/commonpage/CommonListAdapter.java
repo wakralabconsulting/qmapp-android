@@ -28,24 +28,24 @@ public class CommonListAdapter extends RecyclerView.Adapter<CommonListAdapter.My
     private final RecyclerTouchListener.ItemClickListener listener;
     private List<CommonModel> commonModelList;
     private Animation zoomOutAnimation;
-    Util util;
+    private Util util;
 
     public class MyViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
-        public TextView name, dateDetails, locationDetails, statusTag, tourDayTxt, tourDateTxt,
+        TextView name, statusTag, tourDayTxt, tourDateTxt,
                 tourTitleTxt, dateAndTime;
-        public ImageView imageView, favIcon;
-        public RelativeLayout commonTitleLayout, tourTitleLayout, recyclerRowItem;
+        ImageView imageView, favIcon;
+        RelativeLayout commonTitleLayout, tourTitleLayout, recyclerRowItem;
 
         private WeakReference<RecyclerTouchListener.ItemClickListener> listenerRef;
 
         public MyViewHolder(View view, RecyclerTouchListener.ItemClickListener listener) {
             super(view);
             listenerRef = new WeakReference<>(listener);
-            imageView = (ImageView) view.findViewById(R.id.common_image_view);
-            name = (TextView) view.findViewById(R.id.name_text);
-            dateAndTime = (TextView) view.findViewById(R.id.date_and_time);
-            favIcon = (ImageView) view.findViewById(R.id.favourite);
-            statusTag = (TextView) view.findViewById(R.id.open_close_tag);
+            imageView = view.findViewById(R.id.common_image_view);
+            name = view.findViewById(R.id.name_text);
+            dateAndTime = view.findViewById(R.id.date_and_time);
+            favIcon = view.findViewById(R.id.favourite);
+            statusTag = view.findViewById(R.id.open_close_tag);
             commonTitleLayout = view.findViewById(R.id.common_title_layout);
             tourTitleLayout = view.findViewById(R.id.tour_title_layout);
             tourDayTxt = view.findViewById(R.id.tour_day_text);
@@ -73,10 +73,10 @@ public class CommonListAdapter extends RecyclerView.Adapter<CommonListAdapter.My
             if (v.getId() == favIcon.getId()) {
                 if (util.checkImageResource(mContext, favIcon, R.drawable.heart_fill)) {
                     favIcon.setImageResource(R.drawable.heart_empty);
-                    model.setIsfavourite(false);
+                    model.setIsFavourite(false);
                 } else {
                     favIcon.setImageResource(R.drawable.heart_fill);
-                    model.setIsfavourite(true);
+                    model.setIsFavourite(true);
                 }
             } else {
                 listenerRef.get().onPositionClicked(getAdapterPosition());
@@ -85,7 +85,7 @@ public class CommonListAdapter extends RecyclerView.Adapter<CommonListAdapter.My
         }
     }
 
-    public CommonListAdapter(Context context, List<CommonModel> commonModelList, RecyclerTouchListener.ItemClickListener listener) {
+    CommonListAdapter(Context context, List<CommonModel> commonModelList, RecyclerTouchListener.ItemClickListener listener) {
         this.commonModelList = commonModelList;
         this.mContext = context;
         this.listener = listener;
@@ -125,9 +125,9 @@ public class CommonListAdapter extends RecyclerView.Adapter<CommonListAdapter.My
         } else
             holder.name.setText(model.getName());
 
-        if (model.getIsfavourite() != null) {
+        if (model.getIsFavourite() != null) {
             holder.favIcon.setVisibility(View.VISIBLE);
-            if (model.getIsfavourite())
+            if (model.getIsFavourite())
                 holder.favIcon.setImageResource(R.drawable.heart_fill);
             else
                 holder.favIcon.setImageResource(R.drawable.heart_empty);

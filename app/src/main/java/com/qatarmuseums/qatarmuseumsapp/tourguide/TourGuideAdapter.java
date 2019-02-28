@@ -13,15 +13,14 @@ import com.qatarmuseums.qatarmuseumsapp.R;
 import com.qatarmuseums.qatarmuseumsapp.home.GlideApp;
 import com.qatarmuseums.qatarmuseumsapp.home.HomeList;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public class TourGuideAdapter extends RecyclerView.Adapter<TourGuideAdapter.MyViewHolder> {
     private final Context mContext;
     private List<HomeList> tourGuideList;
-    String comingFrom;
+    private String comingFrom;
 
-    public TourGuideAdapter(Context context, List<HomeList> tourGuideList, String comingFrom) {
+    TourGuideAdapter(Context context, List<HomeList> tourGuideList, String comingFrom) {
         this.tourGuideList = tourGuideList;
         this.mContext = context;
         this.comingFrom = comingFrom;
@@ -40,7 +39,7 @@ public class TourGuideAdapter extends RecyclerView.Adapter<TourGuideAdapter.MyVi
     public void onBindViewHolder(@NonNull MyViewHolder holder, int position) {
         HomeList tgList = tourGuideList.get(position);
         holder.name.setText(tgList.getName());
-        if (tgList.getTourguideAvailable().equalsIgnoreCase("true")){
+        if (tgList.getTourGuideAvailable().equalsIgnoreCase("true")) {
             holder.headphoneIcon.setVisibility(View.VISIBLE);
             holder.headphoneIcon.setImageResource(R.drawable.floor_map_circle);
         } else {
@@ -55,8 +54,8 @@ public class TourGuideAdapter extends RecyclerView.Adapter<TourGuideAdapter.MyVi
         } else {
             holder.headphoneIcon.setVisibility(View.VISIBLE);
             holder.headphoneIcon.setImageResource(R.drawable.audio_circle);
-            if(tgList.getName().equals(mContext.getString(R.string.coming_soon_txt)))
-                holder.headphoneIcon.setColorFilter(mContext.getResources().getColor(R.color.grey));
+            if (tgList.getName().equals(mContext.getString(R.string.coming_soon_txt)))
+                holder.headphoneIcon.setColorFilter(mContext.getResources().getColor(R.color.semi_transparent_grey));
             GlideApp.with(mContext)
                     .load(tgList.getImage())
                     .placeholder(R.drawable.placeholder)
@@ -71,13 +70,13 @@ public class TourGuideAdapter extends RecyclerView.Adapter<TourGuideAdapter.MyVi
 
     public class MyViewHolder extends RecyclerView.ViewHolder {
         public TextView name;
-        public ImageView imageView, headphoneIcon;
+        ImageView imageView, headphoneIcon;
 
         public MyViewHolder(View view) {
             super(view);
-            imageView = (ImageView) view.findViewById(R.id.image_view);
-            name = (TextView) view.findViewById(R.id.name_text);
-            headphoneIcon = (ImageView) view.findViewById(R.id.headphone_icon);
+            imageView = view.findViewById(R.id.image_view);
+            name = view.findViewById(R.id.name_text);
+            headphoneIcon = view.findViewById(R.id.headphone_icon);
         }
     }
 }

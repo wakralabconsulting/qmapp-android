@@ -16,7 +16,6 @@ public class StepIndicatorAdapter extends RecyclerView.Adapter<StepIndicatorAdap
     private int count;
     private List<CurrentIndicatorPosition> currentIndicatorPosition;
     private int screenWidth, listItemsSize;
-    private int endController;
 
 
     @NonNull
@@ -33,11 +32,11 @@ public class StepIndicatorAdapter extends RecyclerView.Adapter<StepIndicatorAdap
 
     @Override
     public void onBindViewHolder(@NonNull MyViewHolder holder, int position) {
-        endController = listItemsSize - 1 - currentIndicatorPosition.get(0).getOriginalPosition();
+        int endController = listItemsSize - 1 - currentIndicatorPosition.get(0).getOriginalPosition();
 
         if (currentIndicatorPosition.get(0).getOriginalPosition() < 5 && position == 0) {
             holder.firstLine.setVisibility(View.INVISIBLE);
-        } else if (endController <= (listItemsSize - 1) % 5 && position > (listItemsSize - 1) % 5 ) {
+        } else if (endController <= (listItemsSize - 1) % 5 && position > (listItemsSize - 1) % 5) {
             holder.lastLine.setVisibility(View.INVISIBLE);
             holder.firstLine.setVisibility(View.INVISIBLE);
             holder.indicatorImage.setVisibility(View.INVISIBLE);
@@ -88,17 +87,17 @@ public class StepIndicatorAdapter extends RecyclerView.Adapter<StepIndicatorAdap
 
         public MyViewHolder(View view) {
             super(view);
-            indicatorImage = (ImageView) view.findViewById(R.id.indicator_image);
-            firstLine = (View) view.findViewById(R.id.first_line);
-            lastLine = (View) view.findViewById(R.id.last_line);
+            indicatorImage = view.findViewById(R.id.indicator_image);
+            firstLine = view.findViewById(R.id.first_line);
+            lastLine = view.findViewById(R.id.last_line);
 
 
         }
 
     }
 
-    public StepIndicatorAdapter(List<CurrentIndicatorPosition> currentIndicatorPosition,
-                                int count, int screenWidth, int listItemsSize) {
+    StepIndicatorAdapter(List<CurrentIndicatorPosition> currentIndicatorPosition,
+                         int count, int screenWidth, int listItemsSize) {
         this.currentIndicatorPosition = currentIndicatorPosition;
         this.count = count;
         this.screenWidth = screenWidth;

@@ -23,7 +23,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:background="#40FFFFFf"
-        app:line_color="@color/grey"
+        app:line_color="@color/semi_transparent_grey"
         app:line_speed="6"
         app:line_width="4"
         app:square_height="200"

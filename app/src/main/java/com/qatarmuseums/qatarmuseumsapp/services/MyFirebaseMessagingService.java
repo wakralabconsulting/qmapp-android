@@ -2,11 +2,8 @@ package com.qatarmuseums.qatarmuseumsapp.services;
 
 import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
-import android.preference.PreferenceManager;
 import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
-import android.widget.Toast;
 
 import com.google.firebase.messaging.FirebaseMessagingService;
 import com.google.firebase.messaging.RemoteMessage;
@@ -17,7 +14,6 @@ import com.qatarmuseums.qatarmuseumsapp.apicall.APIInterface;
 import com.qatarmuseums.qatarmuseumsapp.culturepass.LoginData;
 import com.qatarmuseums.qatarmuseumsapp.culturepass.TokenForPushNotification;
 import com.qatarmuseums.qatarmuseumsapp.home.HomeActivity;
-import com.qatarmuseums.qatarmuseumsapp.notification.NotificationActivity;
 import com.qatarmuseums.qatarmuseumsapp.profile.ProfileDetails;
 import com.qatarmuseums.qatarmuseumsapp.utils.NotificationUtils;
 
@@ -31,10 +27,6 @@ import retrofit2.Response;
 import static android.content.ContentValues.TAG;
 
 public class MyFirebaseMessagingService extends FirebaseMessagingService {
-    private NotificationUtils notificationUtils;
-    private SharedPreferences qmPreferences;
-    int appLanguage;
-    private SharedPreferences.Editor editor;
 
     @Override
     public void onNewToken(String token) {
@@ -116,7 +108,7 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
      * Showing notification with text only
      */
     private void showNotificationMessage(Context context, String title, String message, Intent intent) {
-        notificationUtils = new NotificationUtils(context);
+        NotificationUtils notificationUtils = new NotificationUtils(context);
         notificationUtils.showNotificationMessage(title, message, intent);
     }
 
@@ -125,7 +117,7 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
 
     }
 
-    private void getLoginToken(String lan, String firebaseToken) {
+    private void getLoginToken(String lan, String fireBaseToken) {
         LoginData loginData = new LoginData("", "");
         APIInterface apiService =
                 APIClient.getClient().create(APIInterface.class);
@@ -137,7 +129,7 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
                 if (response.isSuccessful()) {
                     if (response.body() != null) {
                         loginToken = response.body().getToken();
-                        sendFireBaseToken(loginToken, firebaseToken, lan);
+                        sendFireBaseToken(loginToken, fireBaseToken, lan);
                     }
                 }
             }
@@ -149,8 +141,8 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
         });
     }
 
-    private void sendFireBaseToken(String loginToken, String firebaseToken, String lan) {
-        TokenForPushNotification tokenForPushNotification = new TokenForPushNotification(firebaseToken, "android");
+    private void sendFireBaseToken(String loginToken, String fireBaseToken, String lan) {
+        TokenForPushNotification tokenForPushNotification = new TokenForPushNotification(fireBaseToken, "android");
         APIInterface apiService =
                 APIClient.getClient().create(APIInterface.class);
         Call<Void> call = apiService.sendTokenToServer(lan, loginToken, tokenForPushNotification);

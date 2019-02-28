@@ -1,16 +1,10 @@
 package com.qatarmuseums.qatarmuseumsapp.education;
 
-import android.arch.persistence.room.TypeConverter;
-
-import com.google.gson.Gson;
 import com.google.gson.annotations.SerializedName;
-import com.google.gson.reflect.TypeToken;
 
-import java.lang.reflect.Type;
 import java.util.ArrayList;
 
 public class EducationEvents {
-
     @SerializedName("item_id")
     private String eid;
     @SerializedName("institution")
@@ -50,14 +44,13 @@ public class EducationEvents {
     @SerializedName("Museum_Department")
     private String museumDepartment;
 
-
-
-    public EducationEvents(String eid, String filter, String title, String short_desc, String long_desc,
-                           String location, String institution, ArrayList<String> start_time, ArrayList<String> end_time,
-                           String max_group_size, String age_group,
-                           String program_type, String category,
-                           String registration, String date, ArrayList<String> fieldVal,
-                           ArrayList<String> age, ArrayList<String> topics,String museum) {
+    public EducationEvents(String eid, String filter, String title, String short_desc,
+                           String long_desc, String location, String institution,
+                           ArrayList<String> start_time, ArrayList<String> end_time,
+                           String max_group_size, String age_group, String program_type,
+                           String category, String registration, String date,
+                           ArrayList<String> fieldVal, ArrayList<String> age,
+                           ArrayList<String> topics, String museum) {
         this.eid = eid;
         this.filter = filter;
         this.title = title;
@@ -74,12 +67,10 @@ public class EducationEvents {
         this.registration = registration;
         this.date = date;
         this.field = fieldVal;
-        this.age=age;
-        this.associatedTopics=topics;
-        this.museumDepartment=museum;
-
+        this.age = age;
+        this.associatedTopics = topics;
+        this.museumDepartment = museum;
     }
-
 
     public String getEid() {
         return eid;

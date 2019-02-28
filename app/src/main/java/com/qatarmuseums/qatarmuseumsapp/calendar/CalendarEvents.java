@@ -44,11 +44,12 @@ public class CalendarEvents {
     @SerializedName("Museum_Department")
     private String museumDepartment;
 
-    public CalendarEvents(long eid, String institution, String title, String shortDescription, String eventDetails,
-                          ArrayList<String> startTime, ArrayList<String> endTime, boolean registration, long eventDate,
+    public CalendarEvents(long eid, String institution, String title, String shortDescription,
+                          String eventDetails, ArrayList<String> startTime,
+                          ArrayList<String> endTime, boolean registration, long eventDate,
                           String filter, String location, long maxGroupSize, String category,
-                          String programType, String ageGroup,ArrayList<String> filedVal,
-                          ArrayList<String> age, ArrayList<String> topics,String museum) {
+                          String programType, String ageGroup, ArrayList<String> filedVal,
+                          ArrayList<String> age, ArrayList<String> topics, String museum) {
         this.institution = institution;
         this.eventTitle = title;
         this.eventTimings = shortDescription;
@@ -64,10 +65,10 @@ public class CalendarEvents {
         this.eventCategory = category;
         this.programType = programType;
         this.ageGroup = ageGroup;
-        this.field=filedVal;
-        this.age=age;
-        this.associatedTopics=topics;
-        this.museumDepartment=museum;
+        this.field = filedVal;
+        this.age = age;
+        this.associatedTopics = topics;
+        this.museumDepartment = museum;
     }
 
     public String getInstitution() {
