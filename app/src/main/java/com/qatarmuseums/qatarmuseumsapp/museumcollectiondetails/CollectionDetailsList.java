@@ -37,6 +37,10 @@ public class CollectionDetailsList {
         this.mainTitle = mainTitle;
     }
 
+    public void setAbout(String about) {
+        this.about = about;
+    }
+
     public String getCategoryName() {
         return categoryName;
     }

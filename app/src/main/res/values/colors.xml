@@ -10,8 +10,6 @@
     <color name="semi_transparent_grey">#aa989898</color>
     <color name="recycler_background">#CCCCCC</color>
     <color name="number_pad_bg">#e6e6e5</color>
-    <color name="settings_reset_button_color">#EC3D89</color>
-    <color name="settings_apply_button_color">#81A6D7</color>
     <color name="settings_switch_on_color">#39B44A</color>
     <color name="green">#009147</color>
     <color name="settings_switch_off_color">#EC1E24</color>
@@ -24,11 +22,8 @@
     <color name="grey">#808080</color>
     <color name="floor_map_background">#E6E6E5</color>
     <color name="floor_map_buttonbg">#CDD7E0</color>
-    <color name="scanner_line">#00ceff</color>
-    <color name="object_preview_image_bg">#CDD9D5</color>
     <color name="object_preview_bg">#e5e5e3</color>
     <color name="object_preview_line_color">#b3bdc2</color>
     <color name="divider">#1d1f30</color>
-    <color name="confirm_password_box_color">#e6e7e8</color>
     <color name="link_color">#097FFE</color>
 </resources>

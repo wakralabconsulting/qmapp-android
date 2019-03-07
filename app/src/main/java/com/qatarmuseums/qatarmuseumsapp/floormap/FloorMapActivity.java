@@ -172,7 +172,6 @@ public class FloorMapActivity extends AppCompatActivity implements OnMapReadyCal
     TextView viewDetails, popupTitle, popupProduction, popupProductionDate, popupPeriodStyle,
             noDataTxt, maiTitle, shortDescription, image1Description, historyTitle, historyDescription, image2Description;
     ImageView numberPad, popupImage, image1, image2, image3, image4;
-    ImageView qrCode;
     View bottomSheet;
     LinearLayout popupShortLayout, popupLongLayout, retryLayout;
 
@@ -253,7 +252,6 @@ public class FloorMapActivity extends AppCompatActivity implements OnMapReadyCal
         imageToZoom = findViewById(R.id.image_to_zoom);
         bottomSheet = findViewById(R.id.bottomSheetLayout);
         numberPad = findViewById(R.id.number_pad);
-        qrCode = findViewById(R.id.scanner);
         progressBar = findViewById(R.id.progress_bar_loading);
         retryLayout = findViewById(R.id.retry_layout);
         retryButton = findViewById(R.id.retry_btn);
@@ -283,12 +281,6 @@ public class FloorMapActivity extends AppCompatActivity implements OnMapReadyCal
             startActivity(numberPadIntent);
         });
         imageToZoom.setOnClickListener(view -> openDialogForZoomingImage());
-
-        qrCode.setOnClickListener(view -> {
-            Intent qrCodeIntent = new Intent(FloorMapActivity.this, BarCodeCaptureActivity.class);
-            startActivity(qrCodeIntent);
-        });
-
 
         mBottomSheetBehavior = BottomSheetBehavior.from(bottomSheet);
         mBottomSheetBehavior.setPeekHeight(dpToPx(160));
@@ -880,7 +872,7 @@ public class FloorMapActivity extends AppCompatActivity implements OnMapReadyCal
                 .title("PO.308")
                 .snippet("l3_g10_sc1_2")
                 .visible(false)
-                .icon(BitmapDescriptorFactory.fromBitmap(resizeMapIcons("po_308", normalMapIconWidth, normalMapIconHeight))));
+                .icon(BitmapDescriptorFactory.fromBitmap(resizeMapIcons("default_map_marker", normalMapIconWidth, normalMapIconHeight))));
         markerHashMap.put("l3_g10_sc1_2", l3_g10_sc1_2);
         l3_g11_wr15 = googleMap.addMarker(new MarkerOptions()
                 .position(L3_G11_WR15)
