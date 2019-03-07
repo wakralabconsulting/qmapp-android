@@ -19,7 +19,6 @@ public class PullToZoomCoordinatorLayout extends CoordinatorLayout {
     private float mLastMotionY;
     private float mLastMotionX;
     private float mInitialMotionY;
-    private float mInitialMotionX;
     private boolean isZooming = false;
 
     private View mZoomView;
@@ -31,11 +30,9 @@ public class PullToZoomCoordinatorLayout extends CoordinatorLayout {
 
     private OnPullZoomListener onPullZoomListener;
 
-    private static final Interpolator sInterpolator = new Interpolator() {
-        public float getInterpolation(float paramAnonymousFloat) {
-            float f = paramAnonymousFloat - 1.0F;
-            return 1.0F + f * (f * (f * (f * f)));
-        }
+    private static final Interpolator sInterpolator = paramAnonymousFloat -> {
+        float f = paramAnonymousFloat - 1.0F;
+        return 1.0F + f * (f * (f * (f * f)));
     };
 
     public PullToZoomCoordinatorLayout(Context context) {
@@ -102,7 +99,7 @@ public class PullToZoomCoordinatorLayout extends CoordinatorLayout {
             case MotionEvent.ACTION_DOWN: {
                 if (isReadyForPullStart()) {
                     mLastMotionY = mInitialMotionY = event.getY();
-                    mLastMotionX = mInitialMotionX = event.getX();
+                    mLastMotionX = event.getX();
                     mIsBeingDragged = false;
                 } else {
                     mIsBeingDragged = false;
@@ -139,7 +136,7 @@ public class PullToZoomCoordinatorLayout extends CoordinatorLayout {
             case MotionEvent.ACTION_DOWN: {
                 if (isReadyForPullStart()) {
                     mLastMotionY = mInitialMotionY = event.getY();
-                    mLastMotionX = mInitialMotionX = event.getX();
+                    mLastMotionX = event.getX();
                     return true;
                 }
                 break;
@@ -207,10 +204,6 @@ public class PullToZoomCoordinatorLayout extends CoordinatorLayout {
         mZoomView.setClickable(true);
     }
 
-    public void setOnPullZoomListener(OnPullZoomListener onPullZoomListener) {
-        this.onPullZoomListener = onPullZoomListener;
-    }
-
     private void pullHeaderToZoom(int newScrollValue) {
         if (mScalingRunnable != null && !mScalingRunnable.isFinished()) {
             mScalingRunnable.abortAnimation();
@@ -230,9 +223,9 @@ public class PullToZoomCoordinatorLayout extends CoordinatorLayout {
     }
 
     public interface OnPullZoomListener {
-        public void onPullZooming(int newScrollValue);
+        void onPullZooming(int newScrollValue);
 
-        public void onPullZoomEnd();
+        void onPullZoomEnd();
     }
 
     class ScalingRunnable implements Runnable {
@@ -244,11 +237,11 @@ public class PullToZoomCoordinatorLayout extends CoordinatorLayout {
         ScalingRunnable() {
         }
 
-        public void abortAnimation() {
+        void abortAnimation() {
             mIsFinished = true;
         }
 
-        public boolean isFinished() {
+        boolean isFinished() {
             return mIsFinished;
         }
 

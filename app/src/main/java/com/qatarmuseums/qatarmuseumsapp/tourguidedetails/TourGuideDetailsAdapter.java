@@ -18,9 +18,9 @@ import java.util.List;
 public class TourGuideDetailsAdapter extends RecyclerView.Adapter<TourGuideDetailsAdapter.MyViewHolder> {
     private final Context mContext;
     private List<SelfGuideStarterModel> tourGuideList;
-    String comingFrom;
+    private String comingFrom;
 
-    public TourGuideDetailsAdapter(Context context, List<SelfGuideStarterModel> tourGuideList, String comingFrom) {
+    TourGuideDetailsAdapter(Context context, List<SelfGuideStarterModel> tourGuideList, String comingFrom) {
         this.tourGuideList = tourGuideList;
         this.mContext = context;
         this.comingFrom = comingFrom;
@@ -53,7 +53,7 @@ public class TourGuideDetailsAdapter extends RecyclerView.Adapter<TourGuideDetai
                 holder.headphoneIcon.setVisibility(View.GONE);
 
             if (tgList.getTitle().equals(mContext.getString(R.string.coming_soon_txt)))
-                holder.headphoneIcon.setColorFilter(mContext.getResources().getColor(R.color.grey));
+                holder.headphoneIcon.setColorFilter(mContext.getResources().getColor(R.color.semi_transparent_grey));
             GlideApp.with(mContext)
                     .load(tgList.getFirstImage())
                     .placeholder(R.drawable.placeholder)
@@ -69,13 +69,13 @@ public class TourGuideDetailsAdapter extends RecyclerView.Adapter<TourGuideDetai
 
     public class MyViewHolder extends RecyclerView.ViewHolder {
         public TextView name;
-        public ImageView imageView, headphoneIcon;
+        ImageView imageView, headphoneIcon;
 
         public MyViewHolder(View view) {
             super(view);
-            imageView = (ImageView) view.findViewById(R.id.image_view);
-            name = (TextView) view.findViewById(R.id.name_text);
-            headphoneIcon = (ImageView) view.findViewById(R.id.headphone_icon);
+            imageView = view.findViewById(R.id.image_view);
+            name = view.findViewById(R.id.name_text);
+            headphoneIcon = view.findViewById(R.id.headphone_icon);
         }
     }
 }

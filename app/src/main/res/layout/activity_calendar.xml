@@ -82,7 +82,7 @@
                 app:selectedItem_textColor="@android:color/white"
                 app:textColor="@android:color/black"
                 app:todayItem_background="@drawable/circle_white_stroke_background"
-                app:todayItem_textColor="@android:color/white"></com.shrikanthravi.collapsiblecalendarview.widget.CollapsibleCalendar>
+                app:todayItem_textColor="@android:color/white" />
         </LinearLayout>
 
         <LinearLayout

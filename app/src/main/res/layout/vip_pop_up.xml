@@ -8,11 +8,10 @@
     <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginStart="@dimen/padding_40"
         android:layout_marginEnd="@dimen/pading_25"
+        android:layout_marginStart="@dimen/padding_40"
         android:gravity="center"
         android:orientation="vertical">
-
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -69,6 +68,7 @@
                 android:textAllCaps="false"
                 android:textColor="@color/white"
                 android:textSize="@dimen/settings_page_list_item_text_size" />
+
             <Button
                 android:id="@+id/accept_later_btn"
                 android:layout_width="match_parent"

@@ -2,7 +2,6 @@ package com.qatarmuseums.qatarmuseumsapp.webview;
 
 import android.content.Context;
 import android.graphics.Bitmap;
-import android.graphics.Typeface;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
@@ -28,7 +27,7 @@ import com.qatarmuseums.qatarmuseumsapp.R;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
-public class WebviewActivity extends AppCompatActivity {
+public class WebViewActivity extends AppCompatActivity {
 
     @BindView(R.id.webViewProgress)
     ProgressBar webViewProgressBar;
@@ -45,8 +44,7 @@ public class WebviewActivity extends AppCompatActivity {
     @BindView(R.id.retry_btn)
     Button retryButton;
 
-    private String url, toolbarTittleText;
-    Typeface mTypeFace;
+    private String url;
     private Animation zoomOutAnimation;
 
     @Override
@@ -59,7 +57,6 @@ public class WebviewActivity extends AppCompatActivity {
         if (TextUtils.isEmpty(url)) {
             finish();
         }
-//        toolbarTitle.setText(getString(R.string.web_view_title));
         setUpWebView();
         webView.loadUrl(url);
         setUpCloseButtonClickListener();
@@ -119,43 +116,29 @@ public class WebviewActivity extends AppCompatActivity {
     }
 
     public void setUpCloseButtonClickListener() {
-        webViewCloseBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                finish();
-            }
-        });
+        webViewCloseBtn.setOnClickListener(view -> finish());
         zoomOutAnimation = AnimationUtils.loadAnimation(getApplicationContext(),
                 R.anim.zoom_out_more);
-        retryButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                webView.loadUrl(url);
-                webViewProgressBar.setVisibility(View.VISIBLE);
-                retryLayout.setVisibility(View.GONE);
-            }
+        retryButton.setOnClickListener(v -> {
+            webView.loadUrl(url);
+            webViewProgressBar.setVisibility(View.VISIBLE);
+            retryLayout.setVisibility(View.GONE);
         });
-        retryButton.setOnTouchListener(new View.OnTouchListener() {
-            @Override
-            public boolean onTouch(View v, MotionEvent event) {
-                switch (event.getAction()) {
-                    case MotionEvent.ACTION_DOWN:
-                        retryButton.startAnimation(zoomOutAnimation);
-                        break;
-                }
-                return false;
+        retryButton.setOnTouchListener((v, event) -> {
+            switch (event.getAction()) {
+                case MotionEvent.ACTION_DOWN:
+                    retryButton.startAnimation(zoomOutAnimation);
+                    break;
             }
+            return false;
         });
-        webViewCloseBtn.setOnTouchListener(new View.OnTouchListener() {
-            @Override
-            public boolean onTouch(View v, MotionEvent event) {
-                switch (event.getAction()) {
-                    case MotionEvent.ACTION_DOWN:
-                        webViewCloseBtn.startAnimation(zoomOutAnimation);
-                        break;
-                }
-                return false;
+        webViewCloseBtn.setOnTouchListener((v, event) -> {
+            switch (event.getAction()) {
+                case MotionEvent.ACTION_DOWN:
+                    webViewCloseBtn.startAnimation(zoomOutAnimation);
+                    break;
             }
+            return false;
         });
     }
 }

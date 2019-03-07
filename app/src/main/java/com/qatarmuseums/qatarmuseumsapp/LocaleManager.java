@@ -35,13 +35,13 @@ public class LocaleManager {
     public static String getLanguage(Context context) {
         SharedPreferences prefs;
         prefs = PreferenceManager.getDefaultSharedPreferences(context);
-        String laguage;
+        String language;
         if (Locale.getDefault().getLanguage().equals("ur") ||
                 Locale.getDefault().getLanguage().equals("ar"))
-            laguage = LANGUAGE_ARABIC;
+            language = LANGUAGE_ARABIC;
         else
-            laguage = LANGUAGE_ENGLISH;
-        return prefs.getString(LANGUAGE_KEY, laguage);
+            language = LANGUAGE_ENGLISH;
+        return prefs.getString(LANGUAGE_KEY, language);
     }
 
     @SuppressLint("ApplySharedPref")

@@ -43,8 +43,8 @@ import retrofit2.Callback;
 import retrofit2.Response;
 
 public class TourGuideActivity extends AppCompatActivity {
-    TextView tourguideMainTitle, tourguideSubTitle, tourguideMainDesc, tourguideSubDesc;
-    LinearLayout exploreLayout, tourguideSubtitleLayout, retryLayout;
+    TextView tourGuideMainTitle, tourGuideSubTitle, tourGuideMainDesc, tourGuideSubDesc;
+    LinearLayout exploreLayout, tourGuideSubtitleLayout, retryLayout;
     Toolbar toolbar;
     RecyclerView recyclerView;
     Intent intent;
@@ -52,7 +52,6 @@ public class TourGuideActivity extends AppCompatActivity {
     private Animation zoomOutAnimation;
     private TourGuideAdapter mAdapter;
     private ArrayList<HomeList> tourGuideList = new ArrayList<>();
-    TourGuideList tourguideObject;
     private Intent navigationIntent;
     Button retryButton;
     private ProgressBar progressBar;
@@ -73,28 +72,28 @@ public class TourGuideActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_tour_guide_common);
-        toolbar = (Toolbar) findViewById(R.id.toolbar);
+        toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         intent = getIntent();
 
-        tourguideMainTitle = (TextView) findViewById(R.id.tourguide_tittle);
-        tourguideSubTitle = (TextView) findViewById(R.id.tourguide_subtittle);
-        tourguideMainDesc = (TextView) findViewById(R.id.tourguide_title_desc);
-        tourguideSubDesc = (TextView) findViewById(R.id.tourguide_subtitle_desc);
-        exploreLayout = (LinearLayout) findViewById(R.id.explore_layout);
-        tourguideSubtitleLayout = (LinearLayout) findViewById(R.id.tourguide_subtitle_layout);
-        recyclerView = (RecyclerView) findViewById(R.id.tourguide_recycler_view);
-        backButton = (ImageView) findViewById(R.id.toolbar_close);
+        tourGuideMainTitle = findViewById(R.id.tourguide_tittle);
+        tourGuideSubTitle = findViewById(R.id.tourguide_subtittle);
+        tourGuideMainDesc = findViewById(R.id.tourguide_title_desc);
+        tourGuideSubDesc = findViewById(R.id.tourguide_subtitle_desc);
+        exploreLayout = findViewById(R.id.explore_layout);
+        tourGuideSubtitleLayout = findViewById(R.id.tourguide_subtitle_layout);
+        recyclerView = findViewById(R.id.tourguide_recycler_view);
+        backButton = findViewById(R.id.toolbar_close);
         retryLayout = findViewById(R.id.retry_layout);
         retryButton = findViewById(R.id.retry_btn);
         progressBar = findViewById(R.id.progressBarLoading);
         noResultFoundLayout = findViewById(R.id.no_result_layout);
         scrollviewContainer = findViewById(R.id.scroll_view_container);
 
-        tourguideSubtitleLayout.setVisibility(View.GONE);
+        tourGuideSubtitleLayout.setVisibility(View.GONE);
         exploreLayout.setVisibility(View.GONE);
-        tourguideMainTitle.setText(getString(R.string.tourguide_sidemenu_title));
-        tourguideMainDesc.setText(getString(R.string.tourguide_sidemenu_title_desc));
+        tourGuideMainTitle.setText(getString(R.string.tourguide_sidemenu_title));
+        tourGuideMainDesc.setText(getString(R.string.tourguide_sidemenu_title_desc));
 
         mAdapter = new TourGuideAdapter(this, tourGuideList, getString(R.string.tourguide_sidemenu_title));
         qmDatabase = QMDatabase.getInstance(TourGuideActivity.this);
@@ -127,44 +126,30 @@ public class TourGuideActivity extends AppCompatActivity {
                     }
                 }));
 
-        backButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                onBackPressed();
-            }
-        });
+        backButton.setOnClickListener(v -> onBackPressed());
         zoomOutAnimation = AnimationUtils.loadAnimation(getApplicationContext(),
                 R.anim.zoom_out_more);
-        retryButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                getTourGuidePageAPIData();
-                progressBar.setVisibility(View.VISIBLE);
-                retryLayout.setVisibility(View.GONE);
-            }
+        retryButton.setOnClickListener(v -> {
+            getTourGuidePageAPIData();
+            progressBar.setVisibility(View.VISIBLE);
+            retryLayout.setVisibility(View.GONE);
         });
-        retryButton.setOnTouchListener(new View.OnTouchListener() {
-            @Override
-            public boolean onTouch(View v, MotionEvent event) {
-                switch (event.getAction()) {
-                    case MotionEvent.ACTION_DOWN:
-                        retryButton.startAnimation(zoomOutAnimation);
-                        break;
-                }
-                return false;
+        retryButton.setOnTouchListener((v, event) -> {
+            switch (event.getAction()) {
+                case MotionEvent.ACTION_DOWN:
+                    retryButton.startAnimation(zoomOutAnimation);
+                    break;
             }
+            return false;
         });
 
-        backButton.setOnTouchListener(new View.OnTouchListener() {
-            @Override
-            public boolean onTouch(View v, MotionEvent event) {
-                switch (event.getAction()) {
-                    case MotionEvent.ACTION_DOWN:
-                        backButton.startAnimation(zoomOutAnimation);
-                        break;
-                }
-                return false;
+        backButton.setOnTouchListener((v, event) -> {
+            switch (event.getAction()) {
+                case MotionEvent.ACTION_DOWN:
+                    backButton.startAnimation(zoomOutAnimation);
+                    break;
             }
+            return false;
         });
         appLanguage = LocaleManager.getLanguage(this);
         if (new Util().isNetworkAvailable(this))
@@ -225,7 +210,7 @@ public class TourGuideActivity extends AppCompatActivity {
 
         @Override
         protected Integer doInBackground(Void... voids) {
-            if (language.equals("en"))
+            if (language.equals(LocaleManager.LANGUAGE_ENGLISH))
                 return activityReference.get().qmDatabase.getHomePageTableDao().getNumberOfRowsEnglish();
             else
                 return activityReference.get().qmDatabase.getHomePageTableDao().getNumberOfRowsArabic();
@@ -262,7 +247,7 @@ public class TourGuideActivity extends AppCompatActivity {
         @Override
         protected Void doInBackground(Void... voids) {
             if (activityReference.get().tourGuideList.size() > 0) {
-                if (language.equals("en")) {
+                if (language.equals(LocaleManager.LANGUAGE_ENGLISH)) {
                     for (int i = 0; i < activityReference.get().tourGuideList.size(); i++) {
                         int n = activityReference.get().qmDatabase.getHomePageTableDao().checkIdExistEnglish(
                                 Integer.parseInt(activityReference.get().tourGuideList.get(i).getId()));
@@ -273,7 +258,7 @@ public class TourGuideActivity extends AppCompatActivity {
                             homePageTableEnglish = new HomePageTableEnglish(
                                     Long.parseLong(activityReference.get().tourGuideList.get(i).getId()),
                                     activityReference.get().tourGuideList.get(i).getName(),
-                                    activityReference.get().tourGuideList.get(i).getTourguideAvailable(),
+                                    activityReference.get().tourGuideList.get(i).getTourGuideAvailable(),
                                     activityReference.get().tourGuideList.get(i).getImage(),
                                     activityReference.get().tourGuideList.get(i).getSortId());
                             activityReference.get().qmDatabase.getHomePageTableDao().insertEnglishTable(homePageTableEnglish);
@@ -291,7 +276,7 @@ public class TourGuideActivity extends AppCompatActivity {
                             homePageTableArabic = new HomePageTableArabic(
                                     Long.parseLong(activityReference.get().tourGuideList.get(i).getId()),
                                     activityReference.get().tourGuideList.get(i).getName(),
-                                    activityReference.get().tourGuideList.get(i).getTourguideAvailable(),
+                                    activityReference.get().tourGuideList.get(i).getTourGuideAvailable(),
                                     activityReference.get().tourGuideList.get(i).getImage(),
                                     activityReference.get().tourGuideList.get(i).getSortId());
                             activityReference.get().qmDatabase.getHomePageTableDao().insertArabicTable(homePageTableArabic);
@@ -323,12 +308,12 @@ public class TourGuideActivity extends AppCompatActivity {
         @Override
         protected Boolean doInBackground(Void... voids) {
             if (activityReference.get().tourGuideList != null) {
-                if (language.equals("en")) {
+                if (language.equals(LocaleManager.LANGUAGE_ENGLISH)) {
                     for (int i = 0; i < activityReference.get().tourGuideList.size(); i++) {
                         homePageTableEnglish = new HomePageTableEnglish(
                                 Long.parseLong(activityReference.get().tourGuideList.get(i).getId()),
                                 activityReference.get().tourGuideList.get(i).getName(),
-                                activityReference.get().tourGuideList.get(i).getTourguideAvailable(),
+                                activityReference.get().tourGuideList.get(i).getTourGuideAvailable(),
                                 activityReference.get().tourGuideList.get(i).getImage(),
                                 activityReference.get().tourGuideList.get(i).getSortId());
                         activityReference.get().qmDatabase.getHomePageTableDao().insertEnglishTable(homePageTableEnglish);
@@ -337,7 +322,7 @@ public class TourGuideActivity extends AppCompatActivity {
                     for (int i = 0; i < activityReference.get().tourGuideList.size(); i++) {
                         homePageTableArabic = new HomePageTableArabic(Long.parseLong(activityReference.get().tourGuideList.get(i).getId()),
                                 activityReference.get().tourGuideList.get(i).getName(),
-                                activityReference.get().tourGuideList.get(i).getTourguideAvailable(),
+                                activityReference.get().tourGuideList.get(i).getTourGuideAvailable(),
                                 activityReference.get().tourGuideList.get(i).getImage(),
                                 activityReference.get().tourGuideList.get(i).getSortId());
                         activityReference.get().qmDatabase.getHomePageTableDao().insertArabicTable(homePageTableArabic);
@@ -368,10 +353,10 @@ public class TourGuideActivity extends AppCompatActivity {
 
         @Override
         protected Void doInBackground(Void... voids) {
-            if (language.equals("en")) {
+            if (language.equals(LocaleManager.LANGUAGE_ENGLISH)) {
                 activityReference.get().qmDatabase.getHomePageTableDao().updateHomePageEnglish(
                         activityReference.get().tourGuideList.get(position).getName(),
-                        activityReference.get().tourGuideList.get(position).getTourguideAvailable(),
+                        activityReference.get().tourGuideList.get(position).getTourGuideAvailable(),
                         activityReference.get().tourGuideList.get(position).getImage(),
                         activityReference.get().tourGuideList.get(position).getSortId(),
                         activityReference.get().tourGuideList.get(position).getId()
@@ -380,7 +365,7 @@ public class TourGuideActivity extends AppCompatActivity {
             } else {
                 activityReference.get().qmDatabase.getHomePageTableDao().updateHomePageArabic(
                         activityReference.get().tourGuideList.get(position).getName(),
-                        activityReference.get().tourGuideList.get(position).getTourguideAvailable(),
+                        activityReference.get().tourGuideList.get(position).getTourGuideAvailable(),
                         activityReference.get().tourGuideList.get(position).getImage(),
                         activityReference.get().tourGuideList.get(position).getSortId(),
                         activityReference.get().tourGuideList.get(position).getId()
@@ -392,10 +377,10 @@ public class TourGuideActivity extends AppCompatActivity {
 
     }
 
-    public static class RetriveEnglishTableData extends AsyncTask<Void, Void, List<HomePageTableEnglish>> {
+    public static class RetrieveEnglishTableData extends AsyncTask<Void, Void, List<HomePageTableEnglish>> {
         private WeakReference<TourGuideActivity> activityReference;
 
-        RetriveEnglishTableData(TourGuideActivity context) {
+        RetrieveEnglishTableData(TourGuideActivity context) {
             activityReference = new WeakReference<>(context);
         }
 
@@ -410,12 +395,12 @@ public class TourGuideActivity extends AppCompatActivity {
             if (homePageTableEnglishes.size() > 0) {
                 activityReference.get().tourGuideList.clear();
                 for (int i = 0; i < homePageTableEnglishes.size(); i++) {
-                    HomeList exhibitonObject = new HomeList(homePageTableEnglishes.get(i).getName()
+                    HomeList exhibitionObject = new HomeList(homePageTableEnglishes.get(i).getName()
                             , String.valueOf(homePageTableEnglishes.get(i).getQatarmuseum_id()),
                             homePageTableEnglishes.get(i).getImage(),
                             homePageTableEnglishes.get(i).getTourguide_available(),
                             homePageTableEnglishes.get(i).getSortId());
-                    activityReference.get().tourGuideList.add(i, exhibitonObject);
+                    activityReference.get().tourGuideList.add(i, exhibitionObject);
                 }
 
                 Collections.sort(activityReference.get().tourGuideList);
@@ -430,11 +415,11 @@ public class TourGuideActivity extends AppCompatActivity {
         }
     }
 
-    public static class RetriveArabicTableData extends AsyncTask<Void, Void,
+    public static class RetrieveArabicTableData extends AsyncTask<Void, Void,
             List<HomePageTableArabic>> {
         private WeakReference<TourGuideActivity> activityReference;
 
-        RetriveArabicTableData(TourGuideActivity context) {
+        RetrieveArabicTableData(TourGuideActivity context) {
             activityReference = new WeakReference<>(context);
 
         }
@@ -451,12 +436,12 @@ public class TourGuideActivity extends AppCompatActivity {
             if (homePageTableArabics.size() > 0) {
                 activityReference.get().tourGuideList.clear();
                 for (int i = 0; i < homePageTableArabics.size(); i++) {
-                    HomeList exhibitonObject = new HomeList(homePageTableArabics.get(i).getName()
+                    HomeList exhibitionObject = new HomeList(homePageTableArabics.get(i).getName()
                             , String.valueOf(homePageTableArabics.get(i).getQatarmuseum_id()),
                             homePageTableArabics.get(i).getImage(),
                             homePageTableArabics.get(i).getTourguide_available(),
                             homePageTableArabics.get(i).getSortId());
-                    activityReference.get().tourGuideList.add(i, exhibitonObject);
+                    activityReference.get().tourGuideList.add(i, exhibitionObject);
                 }
 
                 Collections.sort(activityReference.get().tourGuideList);
@@ -475,9 +460,9 @@ public class TourGuideActivity extends AppCompatActivity {
     public void getDataFromDataBase() {
         progressBar.setVisibility(View.VISIBLE);
         if (appLanguage.equals(LocaleManager.LANGUAGE_ENGLISH))
-            new RetriveEnglishTableData(TourGuideActivity.this).execute();
+            new RetrieveEnglishTableData(TourGuideActivity.this).execute();
         else
-            new RetriveArabicTableData(TourGuideActivity.this).execute();
+            new RetrieveArabicTableData(TourGuideActivity.this).execute();
     }
 
 }

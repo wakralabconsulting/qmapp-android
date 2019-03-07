@@ -436,42 +436,6 @@
                 </LinearLayout>
             </LinearLayout>
 
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/padding_15"
-                android:orientation="vertical"
-                android:visibility="gone">
-
-                <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center"
-                    android:gravity="center"
-                    android:paddingBottom="@dimen/padding_5"
-                    android:text="@string/or"
-                    android:textAllCaps="true"
-                    android:textColor="@color/black"
-                    android:textSize="@dimen/font_size_16" />
-
-                <TextView
-                    android:id="@+id/qr_scanner_link"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center"
-                    android:gravity="center"
-                    android:paddingBottom="@dimen/padding_5"
-                    android:text="@string/use_qr_scanner"
-                    android:textColor="@color/black"
-                    android:textSize="@dimen/font_size_16" />
-
-                <ImageView
-                    android:id="@+id/qr_scanner"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center"
-                    android:src="@drawable/qr_button" />
-            </LinearLayout>
         </LinearLayout>
     </ScrollView>
 

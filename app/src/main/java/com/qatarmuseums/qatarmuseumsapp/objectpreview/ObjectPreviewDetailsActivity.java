@@ -6,10 +6,10 @@ import android.content.Intent;
 import android.media.AudioManager;
 import android.media.MediaPlayer;
 import android.net.Uri;
+import android.os.Bundle;
 import android.os.Handler;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.widget.ImageView;
@@ -18,12 +18,9 @@ import android.widget.SeekBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
-
 import com.github.chrisbanes.photoview.PhotoView;
-import com.google.android.gms.vision.text.Text;
 import com.qatarmuseums.qatarmuseumsapp.LocaleManager;
 import com.qatarmuseums.qatarmuseumsapp.R;
-import com.qatarmuseums.qatarmuseumsapp.floormap.FloorMapActivity;
 import com.qatarmuseums.qatarmuseumsapp.home.GlideApp;
 import com.qatarmuseums.qatarmuseumsapp.utils.Util;
 
@@ -35,12 +32,11 @@ public class ObjectPreviewDetailsActivity extends AppCompatActivity implements S
     Toolbar toolbar;
     ImageView closeBtn, image1, image2, image3, image4, imageToZoom, playButton;
 
-    TextView maiTtitle, shortDescription, image1Description, historyTitle, historyDescription,
+    TextView maiTittle, shortDescription, image1Description, historyTitle, historyDescription,
             image2Description;
     String title, description, history, summary, mainImage;
     ArrayList<String> imageList;
 
-    private Intent intent;
     private Util utils;
     private SeekBar seekBar;
     private String audioURL;
@@ -50,13 +46,7 @@ public class ObjectPreviewDetailsActivity extends AppCompatActivity implements S
     private MediaPlayer mediaPlayer;
     private int lengthOfAudio;
     private final Handler handler = new Handler();
-    private final Runnable r = new Runnable() {
-        @Override
-        public void run() {
-            updateSeekProgress();
-        }
-    };
-    private LinearLayout audioControlLayout;
+    private final Runnable r = this::updateSeekProgress;
 
     @Override
     protected void attachBaseContext(Context base) {
@@ -70,16 +60,13 @@ public class ObjectPreviewDetailsActivity extends AppCompatActivity implements S
         toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         closeBtn = findViewById(R.id.close_btn);
-        closeBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                finish();
-                stopAudio();
-            }
+        closeBtn.setOnClickListener(view -> {
+            finish();
+            stopAudio();
         });
 
         imageToZoom = findViewById(R.id.image_to_zoom);
-        maiTtitle = findViewById(R.id.title);
+        maiTittle = findViewById(R.id.title);
         shortDescription = findViewById(R.id.short_description);
         historyTitle = findViewById(R.id.history_title);
         historyDescription = findViewById(R.id.history_description);
@@ -89,11 +76,11 @@ public class ObjectPreviewDetailsActivity extends AppCompatActivity implements S
         image4 = findViewById(R.id.image_4);
         image1Description = findViewById(R.id.image_desc1);
         image2Description = findViewById(R.id.image_desc2);
-        audioControlLayout = findViewById(R.id.audio_control);
+        LinearLayout audioControlLayout = findViewById(R.id.audio_control);
         playButton = findViewById(R.id.play_button);
         seekBar = findViewById(R.id.seek_bar);
         utils = new Util();
-        intent = getIntent();
+        Intent intent = getIntent();
         title = intent.getStringExtra("Title");
         mainImage = intent.getStringExtra("Image");
         description = intent.getStringExtra("Description");
@@ -103,14 +90,9 @@ public class ObjectPreviewDetailsActivity extends AppCompatActivity implements S
         audioURL = intent.getStringExtra("Audio");
         if (audioURL != null && !audioURL.equals(""))
             audioControlLayout.setVisibility(View.VISIBLE);
-        imageToZoom.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                openDialogForZoomingImage();
-            }
-        });
+        imageToZoom.setOnClickListener(view -> openDialogForZoomingImage());
 
-        maiTtitle.setText(utils.html2string(title));
+        maiTittle.setText(utils.html2string(title));
         shortDescription.setText(description);
         GlideApp.with(this)
                 .load(mainImage)
@@ -155,31 +137,28 @@ public class ObjectPreviewDetailsActivity extends AppCompatActivity implements S
 
         seekBar.setOnSeekBarChangeListener(this);
 
-        playButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (utils.isNetworkAvailable(getApplicationContext())) {
-                    if (!playPause) {
-                        playButton.setImageDrawable(getDrawable(R.drawable.pause_black));
-                        if (initialStage) {
-                            new Player().execute(audioURL);
-                        } else {
-                            if (!mediaPlayer.isPlaying()) {
-                                playAudio();
-                                updateSeekProgress();
-                            }
-                        }
-                        playPause = true;
+        playButton.setOnClickListener(v -> {
+            if (utils.isNetworkAvailable(getApplicationContext())) {
+                if (!playPause) {
+                    playButton.setImageDrawable(getDrawable(R.drawable.pause_black));
+                    if (initialStage) {
+                        new Player().execute(audioURL);
                     } else {
-                        playButton.setImageDrawable(getDrawable(R.drawable.play_black));
-                        if (mediaPlayer.isPlaying()) {
-                            pauseAudio();
+                        if (!mediaPlayer.isPlaying()) {
+                            playAudio();
+                            updateSeekProgress();
                         }
-                        playPause = false;
                     }
+                    playPause = true;
                 } else {
-                    Toast.makeText(ObjectPreviewDetailsActivity.this, R.string.check_network, Toast.LENGTH_SHORT).show();
+                    playButton.setImageDrawable(getDrawable(R.drawable.play_black));
+                    if (mediaPlayer.isPlaying()) {
+                        pauseAudio();
+                    }
+                    playPause = false;
                 }
+            } else {
+                Toast.makeText(ObjectPreviewDetailsActivity.this, R.string.check_network, Toast.LENGTH_SHORT).show();
             }
         });
         mediaPlayer = new MediaPlayer();
@@ -322,7 +301,7 @@ public class ObjectPreviewDetailsActivity extends AppCompatActivity implements S
     }
 
     public void openDialogForZoomingImage() {
-        AlertDialog.Builder mBuilder = new AlertDialog.Builder(this/*,android.R.style.Theme_DeviceDefault_Light_NoActionBar_Fullscreen*/);
+        AlertDialog.Builder mBuilder = new AlertDialog.Builder(this);
         View mView = getLayoutInflater().inflate(R.layout.zooming_layout, null);
         PhotoView photoView = mView.findViewById(R.id.imageView);
         photoView.setImageURI(Uri.parse(mainImage));

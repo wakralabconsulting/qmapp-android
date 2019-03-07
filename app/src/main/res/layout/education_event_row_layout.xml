@@ -34,7 +34,7 @@
                     android:layout_height="wrap_content"
                     android:gravity="start"
                     android:textAllCaps="true"
-                    android:textColor="@color/event_titile_color"
+                    android:textColor="@color/event_title_color"
                     android:textSize="@dimen/text_size_11"
                     android:textStyle="bold"
                     android:visibility="gone" />
@@ -46,7 +46,7 @@
                     android:layout_below="@id/event_title"
                     android:gravity="start"
                     android:text="-"
-                    android:textColor="@color/event_titile_color"
+                    android:textColor="@color/event_title_color"
                     android:textSize="@dimen/text_size_11"
                     android:textStyle="bold"
                     android:visibility="gone" />
@@ -61,7 +61,7 @@
                     android:gravity="start"
                     android:lines="4"
                     android:textAllCaps="true"
-                    android:textColor="@color/event_titile_color"
+                    android:textColor="@color/event_title_color"
                     android:textSize="@dimen/text_size_11"
                     android:textStyle="bold" />
 

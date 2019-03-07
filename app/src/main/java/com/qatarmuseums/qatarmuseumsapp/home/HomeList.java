@@ -13,7 +13,7 @@ public class HomeList implements Comparable<HomeList> {
     @SerializedName(value = "image", alternate = {"banner_link"})
     private String image;
     @SerializedName("tourguide_available")
-    private String tourguideAvailable;
+    private String tourGuideAvailable;
     @SerializedName("SORt_ID")
     private Integer sortId;
 
@@ -21,11 +21,11 @@ public class HomeList implements Comparable<HomeList> {
 
     }
 
-    public HomeList(String name, String id, String image, String tourguideAvailable, Integer sortId) {
+    public HomeList(String name, String id, String image, String tourGuideAvailable, Integer sortId) {
         this.name = name;
         this.id = id;
         this.image = image;
-        this.tourguideAvailable = tourguideAvailable;
+        this.tourGuideAvailable = tourGuideAvailable;
         this.sortId = sortId;
     }
 
@@ -59,12 +59,12 @@ public class HomeList implements Comparable<HomeList> {
         this.image = image;
     }
 
-    public String getTourguideAvailable() {
-        return tourguideAvailable;
+    public String getTourGuideAvailable() {
+        return tourGuideAvailable;
     }
 
-    public void setTourguideAvailable(String tourguideAvailable) {
-        this.tourguideAvailable = tourguideAvailable;
+    public void setTourGuideAvailable(String tourGuideAvailable) {
+        this.tourGuideAvailable = tourGuideAvailable;
     }
 
     public Integer getSortId() {

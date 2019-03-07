@@ -1,18 +1,19 @@
 package com.qatarmuseums.qatarmuseumsapp.objectpreview;
 
-public class CurrentIndicatorPosition {
+class CurrentIndicatorPosition {
     private int currentPosition;
 
 
-    public CurrentIndicatorPosition(int currentPosition) {
+    CurrentIndicatorPosition(int currentPosition) {
         this.currentPosition = currentPosition;
     }
 
 
-    public int getOriginalPosition() {
+    int getOriginalPosition() {
         return currentPosition;
     }
-    public int getCurrentPosition() {
-        return currentPosition%5;
+
+    int getCurrentPosition() {
+        return currentPosition % 5;
     }
 }

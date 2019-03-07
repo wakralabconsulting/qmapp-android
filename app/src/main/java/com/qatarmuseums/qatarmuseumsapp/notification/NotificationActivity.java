@@ -1,7 +1,6 @@
 package com.qatarmuseums.qatarmuseumsapp.notification;
 
 import android.arch.lifecycle.ViewModelProviders;
-import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -27,15 +26,12 @@ import java.util.List;
 
 public class NotificationActivity extends AppCompatActivity {
 
-    private Toolbar toolbar;
     private RecyclerView recyclerView;
     private List<NotificationModel> models = new ArrayList<>();
     private NotificationListAdapter mAdapter;
     private View backArrow;
     private Animation zoomOutAnimation;
     private TextView emptyText;
-    private BroadcastReceiver mRegistrationBroadcastReceiver;
-    private NotificationViewModel notificationViewModel;
     private QMDatabase qmDatabase;
     private String appLanguage;
 
@@ -48,39 +44,31 @@ public class NotificationActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_notifiction);
-        toolbar = (Toolbar) findViewById(R.id.notification_toolbar);
+        Toolbar toolbar = findViewById(R.id.notification_toolbar);
         setSupportActionBar(toolbar);
         backArrow = findViewById(R.id.toolbar_back);
-        recyclerView = (RecyclerView) findViewById(R.id.notification_recycler_view);
-        emptyText = (TextView) findViewById(R.id.no_new_notification_txt);
+        recyclerView = findViewById(R.id.notification_recycler_view);
+        emptyText = findViewById(R.id.no_new_notification_txt);
         mAdapter = new NotificationListAdapter(this, models);
         RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(getApplicationContext());
         recyclerView.setLayoutManager(mLayoutManager);
         recyclerView.setItemAnimator(new DefaultItemAnimator());
         recyclerView.setAdapter(mAdapter);
-        backArrow.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                onBackPressed();
-            }
-        });
+        backArrow.setOnClickListener(v -> onBackPressed());
         zoomOutAnimation = AnimationUtils.loadAnimation(getApplicationContext(),
                 R.anim.zoom_out_more);
-        backArrow.setOnTouchListener(new View.OnTouchListener() {
-            @Override
-            public boolean onTouch(View v, MotionEvent event) {
-                switch (event.getAction()) {
-                    case MotionEvent.ACTION_DOWN:
-                        backArrow.startAnimation(zoomOutAnimation);
-                        break;
-                }
-                return false;
+        backArrow.setOnTouchListener((v, event) -> {
+            switch (event.getAction()) {
+                case MotionEvent.ACTION_DOWN:
+                    backArrow.startAnimation(zoomOutAnimation);
+                    break;
             }
+            return false;
         });
         qmDatabase = QMDatabase.getInstance(NotificationActivity.this);
         appLanguage = LocaleManager.getLanguage(this);
 
-        notificationViewModel = ViewModelProviders.of(this).get(NotificationViewModel.class);
+        NotificationViewModel notificationViewModel = ViewModelProviders.of(this).get(NotificationViewModel.class);
         if (appLanguage.equals(LocaleManager.LANGUAGE_ENGLISH))
             notificationViewModel.getAllPostsEnglish().observe(this, models -> mAdapter.setData(models));
         else
@@ -91,15 +79,15 @@ public class NotificationActivity extends AppCompatActivity {
 
     public void getDataFromDataBase() {
         if (appLanguage.equals(LocaleManager.LANGUAGE_ENGLISH))
-            new RetriveEnglishTableData(NotificationActivity.this).execute();
+            new RetrieveEnglishTableData(NotificationActivity.this).execute();
         else
-            new RetriveArabicTableData(NotificationActivity.this).execute();
+            new RetrieveArabicTableData(NotificationActivity.this).execute();
     }
 
-    public static class RetriveEnglishTableData extends AsyncTask<Void, Void, List<NotificationTableEnglish>> {
+    public static class RetrieveEnglishTableData extends AsyncTask<Void, Void, List<NotificationTableEnglish>> {
         private WeakReference<NotificationActivity> activityReference;
 
-        RetriveEnglishTableData(NotificationActivity context) {
+        RetrieveEnglishTableData(NotificationActivity context) {
             activityReference = new WeakReference<>(context);
         }
 
@@ -128,11 +116,11 @@ public class NotificationActivity extends AppCompatActivity {
         }
     }
 
-    public static class RetriveArabicTableData extends AsyncTask<Void, Void,
+    public static class RetrieveArabicTableData extends AsyncTask<Void, Void,
             List<NotificationTableArabic>> {
         private WeakReference<NotificationActivity> activityReference;
 
-        RetriveArabicTableData(NotificationActivity context) {
+        RetrieveArabicTableData(NotificationActivity context) {
             activityReference = new WeakReference<>(context);
         }
 
@@ -154,14 +142,10 @@ public class NotificationActivity extends AppCompatActivity {
 
                 Collections.reverse(activityReference.get().models);
                 activityReference.get().mAdapter.notifyDataSetChanged();
-//                progressBar.setVisibility(View.GONE);
                 activityReference.get().recyclerView.setVisibility(View.VISIBLE);
-//                retryLayout.setVisibility(View.GONE);
             } else {
                 activityReference.get().emptyText.setVisibility(View.VISIBLE);
-//                progressBar.setVisibility(View.GONE);
                 activityReference.get().recyclerView.setVisibility(View.GONE);
-//                retryLayout.setVisibility(View.VISIBLE);
             }
         }
 

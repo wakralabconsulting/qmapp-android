@@ -16,8 +16,7 @@
         <FrameLayout
             android:id="@+id/content_frame_layout"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            >
+            android:layout_height="wrap_content">
 
             <RelativeLayout
                 android:id="@+id/dialog_layout"
@@ -28,8 +27,8 @@
                 android:layout_marginEnd="@dimen/pading_20"
                 android:layout_marginStart="@dimen/pading_10"
                 android:layout_marginTop="@dimen/pading_20"
-                android:paddingBottom="@dimen/padding_10"
                 android:background="@drawable/round_corner_white"
+                android:paddingBottom="@dimen/padding_10"
                 android:paddingEnd="@dimen/pading_10"
                 android:paddingStart="@dimen/pading_10">
 

@@ -65,7 +65,7 @@ public class CollectionDetailsActivity extends AppCompatActivity {
     Button retryButton;
 
     @BindView(R.id.details_layout)
-    NestedScrollView detailLyout;
+    NestedScrollView detailLayout;
 
     private Animation zoomOutAnimation;
     private CollectionDetailsAdapter mAdapter;
@@ -115,55 +115,38 @@ public class CollectionDetailsActivity extends AppCompatActivity {
             progressBar.setVisibility(View.VISIBLE);
             retryLayout.setVisibility(View.GONE);
         });
-        retryButton.setOnTouchListener(new View.OnTouchListener() {
-            @Override
-            public boolean onTouch(View v, MotionEvent event) {
-                switch (event.getAction()) {
-                    case MotionEvent.ACTION_DOWN:
-                        retryButton.startAnimation(zoomOutAnimation);
-                        break;
-                }
-                return false;
+        retryButton.setOnTouchListener((v, event) -> {
+            switch (event.getAction()) {
+                case MotionEvent.ACTION_DOWN:
+                    retryButton.startAnimation(zoomOutAnimation);
+                    break;
             }
+            return false;
         });
-        toolbarClose.setOnTouchListener(new View.OnTouchListener() {
-            @Override
-            public boolean onTouch(View v, MotionEvent event) {
-                switch (event.getAction()) {
-                    case MotionEvent.ACTION_DOWN:
-                        toolbarClose.startAnimation(zoomOutAnimation);
-                        break;
-                }
-                return false;
+        toolbarClose.setOnTouchListener((v, event) -> {
+            switch (event.getAction()) {
+                case MotionEvent.ACTION_DOWN:
+                    toolbarClose.startAnimation(zoomOutAnimation);
+                    break;
             }
+            return false;
         });
-        toolbarClose.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                finish();
+        toolbarClose.setOnClickListener(view -> finish());
+        favIcon.setOnTouchListener((view, motionEvent) -> {
+            switch (motionEvent.getAction()) {
+                case MotionEvent.ACTION_DOWN:
+                    favIcon.startAnimation(zoomOutAnimation);
+                    break;
             }
+            return false;
         });
-        favIcon.setOnTouchListener(new View.OnTouchListener() {
-            @Override
-            public boolean onTouch(View view, MotionEvent motionEvent) {
-                switch (motionEvent.getAction()) {
-                    case MotionEvent.ACTION_DOWN:
-                        favIcon.startAnimation(zoomOutAnimation);
-                        break;
-                }
-                return false;
+        shareIcon.setOnTouchListener((view, motionEvent) -> {
+            switch (motionEvent.getAction()) {
+                case MotionEvent.ACTION_DOWN:
+                    shareIcon.startAnimation(zoomOutAnimation);
+                    break;
             }
-        });
-        shareIcon.setOnTouchListener(new View.OnTouchListener() {
-            @Override
-            public boolean onTouch(View view, MotionEvent motionEvent) {
-                switch (motionEvent.getAction()) {
-                    case MotionEvent.ACTION_DOWN:
-                        shareIcon.startAnimation(zoomOutAnimation);
-                        break;
-                }
-                return false;
-            }
+            return false;
         });
 
 
@@ -180,7 +163,7 @@ public class CollectionDetailsActivity extends AppCompatActivity {
             public void onResponse(Call<ArrayList<CollectionDetailsList>> call, Response<ArrayList<CollectionDetailsList>> response) {
                 if (response.isSuccessful()) {
                     if (response.body() != null && response.body().size() > 0) {
-                        detailLyout.setVisibility(View.VISIBLE);
+                        detailLayout.setVisibility(View.VISIBLE);
                         collectionDetailsList.addAll(response.body());
                         removeHtmlTags(collectionDetailsList);
                         mAdapter.notifyDataSetChanged();
@@ -188,11 +171,11 @@ public class CollectionDetailsActivity extends AppCompatActivity {
 
 
                     } else {
-                        detailLyout.setVisibility(View.GONE);
+                        detailLayout.setVisibility(View.GONE);
                         noResultFoundLayout.setVisibility(View.VISIBLE);
                     }
                 } else {
-                    detailLyout.setVisibility(View.GONE);
+                    detailLayout.setVisibility(View.GONE);
                     retryLayout.setVisibility(View.VISIBLE);
                 }
                 progressBar.setVisibility(View.GONE);
@@ -200,7 +183,7 @@ public class CollectionDetailsActivity extends AppCompatActivity {
 
             @Override
             public void onFailure(Call<ArrayList<CollectionDetailsList>> call, Throwable t) {
-                detailLyout.setVisibility(View.GONE);
+                detailLayout.setVisibility(View.GONE);
                 retryLayout.setVisibility(View.VISIBLE);
                 progressBar.setVisibility(View.GONE);
             }
@@ -210,16 +193,16 @@ public class CollectionDetailsActivity extends AppCompatActivity {
 
     public void getMuseumCollectionDetailFromDatabase() {
         if (appLanguage.equals(LocaleManager.LANGUAGE_ENGLISH)) {
-            new RetriveMuseumCollectionDetailDataEnglish(CollectionDetailsActivity.this).execute();
+            new RetrieveMuseumCollectionDetailDataEnglish(CollectionDetailsActivity.this).execute();
         } else {
-            new RetriveMuseumCollectionDetailDataArabic(CollectionDetailsActivity.this).execute();
+            new RetrieveMuseumCollectionDetailDataArabic(CollectionDetailsActivity.this).execute();
         }
     }
 
     public void removeHtmlTags(ArrayList<CollectionDetailsList> models) {
         for (int i = 0; i < models.size(); i++) {
             models.get(i).setMainTitle(util.html2string(models.get(i).getMainTitle()));
-
+            models.get(i).setAbout(util.html2string(models.get(i).getAbout()));
         }
     }
 
@@ -246,7 +229,6 @@ public class CollectionDetailsActivity extends AppCompatActivity {
                         activityReference.get().appLanguage).execute();
 
             } else {
-                //create databse
                 new InsertMuseumCollectionDetailListDataToDataBase(activityReference.get(),
                         activityReference.get().museumCollectionDetailTableEnglish,
                         activityReference.get().museumCollectionDetailTableArabic,
@@ -281,7 +263,7 @@ public class CollectionDetailsActivity extends AppCompatActivity {
             @Override
             protected Boolean doInBackground(Void... voids) {
                 if (activityReference.get().collectionDetailsList != null) {
-                    if (language.equals("en")) {
+                    if (language.equals(LocaleManager.LANGUAGE_ENGLISH)) {
                         for (int i = 0; i < activityReference.get().collectionDetailsList.size(); i++) {
                             museumCollectionDetailTableEnglish = new MuseumCollectionDetailTableEnglish(
                                     activityReference.get().collectionDetailsList.get(i).getCategoryName(),
@@ -325,7 +307,7 @@ public class CollectionDetailsActivity extends AppCompatActivity {
             @Override
             protected Void doInBackground(Void... voids) {
                 if (activityReference.get().collectionDetailsList.size() > 0) {
-                    if (language.equals("en")) {
+                    if (language.equals(LocaleManager.LANGUAGE_ENGLISH)) {
                         for (int i = 0; i < activityReference.get().collectionDetailsList.size(); i++) {
                             int n = activityReference.get().qmDatabase.getMuseumCollectionDetailDao().checkTitleExistEnglish(
                                     activityReference.get().collectionDetailsList.get(i).getMainTitle());
@@ -413,10 +395,10 @@ public class CollectionDetailsActivity extends AppCompatActivity {
     }
 
 
-    public static class RetriveMuseumCollectionDetailDataEnglish extends AsyncTask<Void, Void, List<MuseumCollectionDetailTableEnglish>> {
+    public static class RetrieveMuseumCollectionDetailDataEnglish extends AsyncTask<Void, Void, List<MuseumCollectionDetailTableEnglish>> {
         private WeakReference<CollectionDetailsActivity> activityReference;
 
-        RetriveMuseumCollectionDetailDataEnglish(CollectionDetailsActivity context) {
+        RetrieveMuseumCollectionDetailDataEnglish(CollectionDetailsActivity context) {
             activityReference = new WeakReference<>(context);
         }
 
@@ -444,22 +426,22 @@ public class CollectionDetailsActivity extends AppCompatActivity {
                     activityReference.get().collectionDetailsList.add(i, collectionDetailsList1);
 
                 }
-                activityReference.get().detailLyout.setVisibility(View.VISIBLE);
+                activityReference.get().detailLayout.setVisibility(View.VISIBLE);
                 activityReference.get().mAdapter.notifyDataSetChanged();
                 activityReference.get().progressBar.setVisibility(View.GONE);
             } else {
                 activityReference.get().progressBar.setVisibility(View.GONE);
-                activityReference.get().detailLyout.setVisibility(View.GONE);
+                activityReference.get().detailLayout.setVisibility(View.GONE);
                 activityReference.get().retryLayout.setVisibility(View.VISIBLE);
             }
         }
     }
 
 
-    public static class RetriveMuseumCollectionDetailDataArabic extends AsyncTask<Void, Void, List<MuseumCollectionDetailTableArabic>> {
+    public static class RetrieveMuseumCollectionDetailDataArabic extends AsyncTask<Void, Void, List<MuseumCollectionDetailTableArabic>> {
         private WeakReference<CollectionDetailsActivity> activityReference;
 
-        RetriveMuseumCollectionDetailDataArabic(CollectionDetailsActivity context) {
+        RetrieveMuseumCollectionDetailDataArabic(CollectionDetailsActivity context) {
             activityReference = new WeakReference<>(context);
         }
 
@@ -486,12 +468,12 @@ public class CollectionDetailsActivity extends AppCompatActivity {
                     activityReference.get().collectionDetailsList.add(i, collectionDetailsList1);
 
                 }
-                activityReference.get().detailLyout.setVisibility(View.VISIBLE);
+                activityReference.get().detailLayout.setVisibility(View.VISIBLE);
                 activityReference.get().mAdapter.notifyDataSetChanged();
                 activityReference.get().progressBar.setVisibility(View.GONE);
             } else {
                 activityReference.get().progressBar.setVisibility(View.GONE);
-                activityReference.get().detailLyout.setVisibility(View.GONE);
+                activityReference.get().detailLayout.setVisibility(View.GONE);
                 activityReference.get().retryLayout.setVisibility(View.VISIBLE);
             }
         }
