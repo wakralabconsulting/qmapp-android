@@ -2,14 +2,10 @@ package com.qatarmuseums.qatarmuseumsapp.museum;
 
 import android.content.Context;
 
-/**
- * Created by Exalture on 26-07-2018.
- */
-
 public class MuseumHScrollModel {
-    Context context;
-    String textName;
-    int resId;
+    private Context context;
+    private String textName;
+    private int resId;
 
 
     public Context getContext() {
@@ -26,14 +22,8 @@ public class MuseumHScrollModel {
 
     public MuseumHScrollModel(Context context, String textName, int resId) {
         this.context = context;
-        this.textName =textName;
-        this.resId =resId;
-
-
-    }
-
-    public MuseumHScrollModel() {
-
+        this.textName = textName;
+        this.resId = resId;
     }
 
 }

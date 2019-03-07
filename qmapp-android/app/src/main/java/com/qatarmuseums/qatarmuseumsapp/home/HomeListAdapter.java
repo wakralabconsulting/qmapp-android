@@ -21,17 +21,17 @@ public class HomeListAdapter extends RecyclerView.Adapter<HomeListAdapter.MyView
 
     public class MyViewHolder extends RecyclerView.ViewHolder {
         public TextView name;
-        public ImageView imageView, headphoneIcon;
+        ImageView imageView, headphoneIcon;
 
         public MyViewHolder(View view) {
             super(view);
-            imageView = (ImageView) view.findViewById(R.id.image_view);
-            name = (TextView) view.findViewById(R.id.name_text);
-            headphoneIcon = (ImageView) view.findViewById(R.id.headphone_icon);
+            imageView = view.findViewById(R.id.image_view);
+            name = view.findViewById(R.id.name_text);
+            headphoneIcon = view.findViewById(R.id.headphone_icon);
         }
     }
 
-    public HomeListAdapter(Context context, List<HomeList> homeLists) {
+    HomeListAdapter(Context context, List<HomeList> homeLists) {
         this.homeLists = homeLists;
         this.mContext = context;
     }
@@ -49,7 +49,7 @@ public class HomeListAdapter extends RecyclerView.Adapter<HomeListAdapter.MyView
     public void onBindViewHolder(@NonNull HomeListAdapter.MyViewHolder holder, int position) {
         HomeList homeList = homeLists.get(position);
         holder.name.setText(homeList.getName());
-        if (homeList.getTourguideAvailable().equalsIgnoreCase("true"))
+        if (homeList.getTourGuideAvailable().equalsIgnoreCase("true"))
             holder.headphoneIcon.setVisibility(View.VISIBLE);
         else
             holder.headphoneIcon.setVisibility(View.GONE);

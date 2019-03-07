@@ -38,9 +38,9 @@ public class HorizontalLayoutFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        FrameLayout frameLayout = (FrameLayout) view.findViewById(R.id.layout_frame);
+        FrameLayout frameLayout = view.findViewById(R.id.layout_frame);
         final HorizontalInfiniteCycleViewPager horizontalInfiniteCycleViewPager =
-                (HorizontalInfiniteCycleViewPager) view.findViewById(R.id.hicvp);
+                view.findViewById(R.id.hicvp);
         horizontalInfiniteCycleViewPager.setAdapter(new HorizontalPagerAdapter(getContext(), HorizontalLayoutFragment.this, images));
     }
 

@@ -1,6 +1,7 @@
 package com.qatarmuseums.qatarmuseumsapp.education;
 
 import android.Manifest;
+import android.annotation.SuppressLint;
 import android.app.Dialog;
 import android.content.ContentResolver;
 import android.content.ContentValues;
@@ -8,9 +9,9 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.content.res.ColorStateList;
+import android.database.Cursor;
 import android.net.Uri;
 import android.os.AsyncTask;
-import android.os.Build;
 import android.os.Bundle;
 import android.provider.CalendarContract;
 import android.provider.Settings;
@@ -24,6 +25,7 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.util.DisplayMetrics;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
@@ -37,6 +39,7 @@ import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.qatarmuseums.qatarmuseumsapp.Convertor;
 import com.qatarmuseums.qatarmuseumsapp.LocaleManager;
@@ -53,12 +56,10 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.List;
 import java.util.Locale;
-import java.util.TimeZone;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -95,22 +96,20 @@ public class EducationCalendarActivity extends AppCompatActivity {
     Button retryButton;
     RecyclerView.LayoutManager layoutManager;
     ArrayList<EducationEvents> educationEvents = new ArrayList<>();
-    Intent intent;
     String institutionFilter, ageGroupFilter, programmeTypeFilter;
-    long selectedDate, todayDate;
+    long selectedDate;
     boolean isDateSelected = false;
     Util util;
     Calendar calendarInstance;
     ContentResolver contentResolver;
     int MY_PERMISSIONS_REQUEST_CALENDAR = 100;
     int REQUEST_PERMISSION_SETTING = 110;
-    ContentValues cv;
+    ContentValues contentValues;
     private Dialog dialog;
     private QMDatabase qmDatabase;
     private Integer eventsTableRowCount;
     EducationalCalendarEventsTableEnglish educationalCalendarEventsTableEnglish;
     EducationalCalendarEventsTableArabic educationalCalendarEventsTableArabic;
-    private String language;
     public static final String FILTERPREFS = "FilterPref";
     public static final String INSTITUTEPREFS = "InstitutionPref";
     public static final String AGEGROUPPREFS = "AgeGroupPref";
@@ -134,8 +133,8 @@ public class EducationCalendarActivity extends AppCompatActivity {
         ButterKnife.bind(this);
         setSupportActionBar(toolbar);
         toolbar_title.setText(getResources().getString(R.string.education_calendar_activity_tittle));
-        collapsibleCalendar = (CollapsibleCalendar) findViewById(R.id.collapsibleCalendarView);
-        eventListView = (RecyclerView) findViewById(R.id.event_list);
+        collapsibleCalendar = findViewById(R.id.collapsibleCalendarView);
+        eventListView = findViewById(R.id.event_list);
         dayDateFormat = new SimpleDateFormat("d", Locale.US);
         monthDateFormat = new SimpleDateFormat("M", Locale.US);
         yearDateFormat = new SimpleDateFormat("yyyy", Locale.US);
@@ -145,56 +144,36 @@ public class EducationCalendarActivity extends AppCompatActivity {
         qmDatabase = QMDatabase.getInstance(EducationCalendarActivity.this);
         zoomOutAnimation = AnimationUtils.loadAnimation(getApplicationContext(),
                 R.anim.zoom_out_more);
-        retryButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                getDataOnline();
-                progressBar.setVisibility(View.VISIBLE);
-                retryLayout.setVisibility(View.GONE);
-            }
+        retryButton.setOnClickListener(v -> {
+            getDataOnline();
+            progressBar.setVisibility(View.VISIBLE);
+            retryLayout.setVisibility(View.GONE);
         });
-        retryButton.setOnTouchListener(new View.OnTouchListener() {
-            @Override
-            public boolean onTouch(View v, MotionEvent event) {
-                switch (event.getAction()) {
-                    case MotionEvent.ACTION_DOWN:
-                        retryButton.startAnimation(zoomOutAnimation);
-                        break;
-                }
-                return false;
+        retryButton.setOnTouchListener((v, event) -> {
+            switch (event.getAction()) {
+                case MotionEvent.ACTION_DOWN:
+                    retryButton.startAnimation(zoomOutAnimation);
+                    break;
             }
+            return false;
         });
-        backArrow.setOnTouchListener(new View.OnTouchListener() {
-            @Override
-            public boolean onTouch(View v, MotionEvent event) {
-                switch (event.getAction()) {
-                    case MotionEvent.ACTION_DOWN:
-                        backArrow.startAnimation(zoomOutAnimation);
-                        break;
-                }
-                return false;
+        backArrow.setOnTouchListener((v, event) -> {
+            switch (event.getAction()) {
+                case MotionEvent.ACTION_DOWN:
+                    backArrow.startAnimation(zoomOutAnimation);
+                    break;
             }
+            return false;
         });
 
-        backArrow.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                onBackPressed();
-            }
-        });
+        backArrow.setOnClickListener(v -> onBackPressed());
 
-        toolbar_filter.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intent intent = new Intent(EducationCalendarActivity.this, EducationFilterActivity.class);
-                startActivity(intent);
-            }
+        toolbar_filter.setOnClickListener(view -> {
+            Intent intent = new Intent(EducationCalendarActivity.this, EducationFilterActivity.class);
+            startActivity(intent);
         });
-        progress.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
+        progress.setOnClickListener(view -> {
 
-            }
         });
 
         if (institutionFilter == null) {
@@ -300,19 +279,16 @@ public class EducationCalendarActivity extends AppCompatActivity {
             }
         });
 
-        eventListView.setOnTouchListener(new View.OnTouchListener() {
-            @Override
-            public boolean onTouch(View view, MotionEvent motionEvent) {
-                // Scrolling up
-                if (collapsibleCalendar.expanded) {
-                    collapsibleCalendar.collapse(400);
-                } else {
-                    // Scrolling down
-                    collapsibleCalendar.expand(400);
-                    collapsibleCalendar.expanded = true;
-                }
-                return false;
+        eventListView.setOnTouchListener((view, motionEvent) -> {
+            // Scrolling up
+            if (collapsibleCalendar.expanded) {
+                collapsibleCalendar.collapse(400);
+            } else {
+                // Scrolling down
+                collapsibleCalendar.expand(400);
+                collapsibleCalendar.expanded = true;
             }
+            return false;
         });
     }
 
@@ -393,7 +369,7 @@ public class EducationCalendarActivity extends AppCompatActivity {
                         removeHtmlTags(educationEvents);
                         updateTimeStamp(timeStamp);
                         updateStartAndEndTime();
-                        convertToTimstamp(day, month, year);
+                        convertToTimestamp(day, month, year);
                         sortEventsWithStartTime();
                         educationAdapter.notifyDataSetChanged();
                         new EventsRowCount(EducationCalendarActivity.this, appLanguage,
@@ -420,9 +396,9 @@ public class EducationCalendarActivity extends AppCompatActivity {
 
     public void removeHtmlTags(ArrayList<EducationEvents> models) {
         for (int i = 0; i < models.size(); i++) {
-            ArrayList<String> fieldval = models.get(i).getField();
-            fieldval.set(0, util.html2string(fieldval.get(0)));
-            models.get(i).setField(fieldval);
+            ArrayList<String> fieldValue = models.get(i).getField();
+            fieldValue.set(0, util.html2string(fieldValue.get(0)));
+            models.get(i).setField(fieldValue);
             ArrayList<String> startDateVal = models.get(i).getStart_time();
             startDateVal.set(0, util.html2string(startDateVal.get(0)));
             models.get(i).setStart_time(startDateVal);
@@ -462,10 +438,10 @@ public class EducationCalendarActivity extends AppCompatActivity {
                     new CheckEventRowExist(activityReference.get(), language, timeStamp).execute();
                 else {
                     if (language.equals(LocaleManager.LANGUAGE_ENGLISH)) {
-                        new RetriveEnglishTableData(activityReference.get(), 1,
+                        new RetrieveEnglishTableData(activityReference.get(), 1,
                                 timeStamp).execute();
                     } else {
-                        new RetriveArabicTableData(activityReference.get(), 2,
+                        new RetrieveArabicTableData(activityReference.get(), 2,
                                 timeStamp).execute();
                     }
                 }
@@ -598,8 +574,6 @@ public class EducationCalendarActivity extends AppCompatActivity {
             if (language.equals(LocaleManager.LANGUAGE_ENGLISH)) {
                 // updateEnglishTable table with english name
 
-                ArrayList<String> fieldval = new ArrayList<String>();
-                fieldval = activityReference.get().educationEvents.get(position).getField();
                 ArrayList<String> startDate = new ArrayList<String>();
                 startDate = activityReference.get().educationEvents.get(position).getStart_time();
                 ArrayList<String> endDate = new ArrayList<String>();
@@ -618,8 +592,6 @@ public class EducationCalendarActivity extends AppCompatActivity {
                 );
 
             } else {
-                ArrayList<String> fieldval = new ArrayList<String>();
-                fieldval = activityReference.get().educationEvents.get(position).getField();
                 ArrayList<String> startDate = new ArrayList<String>();
                 startDate = activityReference.get().educationEvents.get(position).getStart_time();
                 ArrayList<String> endDate = new ArrayList<String>();
@@ -677,8 +649,8 @@ public class EducationCalendarActivity extends AppCompatActivity {
             if (activityReference.get().educationEvents != null) {
                 if (language.equals(LocaleManager.LANGUAGE_ENGLISH)) {
                     Convertor converters = new Convertor();
-                    ArrayList<String> fieldval = new ArrayList<String>();
-                    fieldval = activityReference.get().educationEvents.get(position).getField();
+                    ArrayList<String> fieldValue = new ArrayList<String>();
+                    fieldValue = activityReference.get().educationEvents.get(position).getField();
                     ArrayList<String> startDate = new ArrayList<String>();
                     startDate = activityReference.get().educationEvents.get(position).getStart_time();
                     ArrayList<String> endDate = new ArrayList<String>();
@@ -699,7 +671,7 @@ public class EducationCalendarActivity extends AppCompatActivity {
                             activityReference.get().educationEvents.get(position).getLocation(),
                             activityReference.get().educationEvents.get(position).getCategory(),
                             activityReference.get().educationEvents.get(position).getFilter(),
-                            activityReference.get().util.html2string(fieldval.get(0)),
+                            activityReference.get().util.html2string(fieldValue.get(0)),
                             converters.fromArrayList(activityReference.get().educationEvents.get(position).getAge()),
                             converters.fromArrayList(activityReference.get().educationEvents.get(position).getAssociatedTopics()),
                             activityReference.get().educationEvents.get(position).getMuseumDepartment()
@@ -709,8 +681,8 @@ public class EducationCalendarActivity extends AppCompatActivity {
 
                 } else {
                     Convertor converters = new Convertor();
-                    ArrayList<String> fieldval = new ArrayList<String>();
-                    fieldval = activityReference.get().educationEvents.get(position).getField();
+                    ArrayList<String> fieldValue = new ArrayList<String>();
+                    fieldValue = activityReference.get().educationEvents.get(position).getField();
                     ArrayList<String> startDate = new ArrayList<String>();
                     startDate = activityReference.get().educationEvents.get(position).getStart_time();
                     ArrayList<String> endDate = new ArrayList<String>();
@@ -731,7 +703,7 @@ public class EducationCalendarActivity extends AppCompatActivity {
                             activityReference.get().educationEvents.get(position).getLocation(),
                             activityReference.get().educationEvents.get(position).getCategory(),
                             activityReference.get().educationEvents.get(position).getFilter(),
-                            activityReference.get().util.html2string(fieldval.get(0)),
+                            activityReference.get().util.html2string(fieldValue.get(0)),
                             converters.fromArrayList(activityReference.get().educationEvents.get(position).getAge()),
                             converters.fromArrayList(activityReference.get().educationEvents.get(position).getAssociatedTopics()),
                             activityReference.get().educationEvents.get(position).getMuseumDepartment()
@@ -779,8 +751,8 @@ public class EducationCalendarActivity extends AppCompatActivity {
                 if (language.equals(LocaleManager.LANGUAGE_ENGLISH)) {
                     Convertor converters = new Convertor();
                     for (int i = 0; i < activityReference.get().educationEvents.size(); i++) {
-                        ArrayList<String> fieldval = new ArrayList<String>();
-                        fieldval = activityReference.get().educationEvents.get(i).getField();
+                        ArrayList<String> fieldValue = new ArrayList<String>();
+                        fieldValue = activityReference.get().educationEvents.get(i).getField();
                         ArrayList<String> startDate = new ArrayList<String>();
                         startDate = activityReference.get().educationEvents.get(i).getStart_time();
                         ArrayList<String> endDate = new ArrayList<String>();
@@ -801,7 +773,7 @@ public class EducationCalendarActivity extends AppCompatActivity {
                                 activityReference.get().educationEvents.get(i).getLocation(),
                                 activityReference.get().educationEvents.get(i).getCategory(),
                                 activityReference.get().educationEvents.get(i).getFilter(),
-                                activityReference.get().util.html2string(fieldval.get(0)),
+                                activityReference.get().util.html2string(fieldValue.get(0)),
                                 converters.fromArrayList(activityReference.get().educationEvents.get(i).getAge()),
                                 converters.fromArrayList(activityReference.get().educationEvents.get(i).getAssociatedTopics()),
                                 activityReference.get().educationEvents.get(i).getMuseumDepartment()
@@ -813,8 +785,8 @@ public class EducationCalendarActivity extends AppCompatActivity {
                 } else {
                     Convertor converters = new Convertor();
                     for (int i = 0; i < activityReference.get().educationEvents.size(); i++) {
-                        ArrayList<String> fieldval = new ArrayList<String>();
-                        fieldval = activityReference.get().educationEvents.get(i).getField();
+                        ArrayList<String> fieldValue = new ArrayList<String>();
+                        fieldValue = activityReference.get().educationEvents.get(i).getField();
                         ArrayList<String> startDate = new ArrayList<String>();
                         startDate = activityReference.get().educationEvents.get(i).getStart_time();
                         ArrayList<String> endDate = new ArrayList<String>();
@@ -835,7 +807,7 @@ public class EducationCalendarActivity extends AppCompatActivity {
                                 activityReference.get().educationEvents.get(i).getLocation(),
                                 activityReference.get().educationEvents.get(i).getCategory(),
                                 activityReference.get().educationEvents.get(i).getFilter(),
-                                activityReference.get().util.html2string(fieldval.get(0)),
+                                activityReference.get().util.html2string(fieldValue.get(0)),
                                 converters.fromArrayList(activityReference.get().educationEvents.get(i).getAge()),
                                 converters.fromArrayList(activityReference.get().educationEvents.get(i).getAssociatedTopics()),
                                 activityReference.get().educationEvents.get(i).getMuseumDepartment()
@@ -850,13 +822,13 @@ public class EducationCalendarActivity extends AppCompatActivity {
         }
     }
 
-    public static class RetriveEnglishTableData extends AsyncTask<Void, Void, List<EducationalCalendarEventsTableEnglish>> {
+    public static class RetrieveEnglishTableData extends AsyncTask<Void, Void, List<EducationalCalendarEventsTableEnglish>> {
 
         private WeakReference<EducationCalendarActivity> activityReference;
         int language;
         long eventDate;
 
-        RetriveEnglishTableData(EducationCalendarActivity context, int appLanguage, long eventDate) {
+        RetrieveEnglishTableData(EducationCalendarActivity context, int appLanguage, long eventDate) {
             activityReference = new WeakReference<>(context);
             language = appLanguage;
             this.eventDate = eventDate;
@@ -870,7 +842,7 @@ public class EducationCalendarActivity extends AppCompatActivity {
         @Override
         protected void onPostExecute(List<EducationalCalendarEventsTableEnglish> educationalCalendarEventsTableEnglish) {
             activityReference.get().educationEvents.clear();
-            ArrayList<String> fieldval = new ArrayList<String>();
+            ArrayList<String> fieldValue = new ArrayList<String>();
             ArrayList<String> startDate = new ArrayList<String>();
             ArrayList<String> endDate = new ArrayList<String>();
             Convertor converters = new Convertor();
@@ -878,7 +850,7 @@ public class EducationCalendarActivity extends AppCompatActivity {
                 for (int i = 0; i < educationalCalendarEventsTableEnglish.size(); i++) {
                     startDate.add(0, educationalCalendarEventsTableEnglish.get(i).getEvent_start_time());
                     endDate.add(0, educationalCalendarEventsTableEnglish.get(i).getEvent_end_time());
-                    fieldval.add(0, educationalCalendarEventsTableEnglish.get(i).getField());
+                    fieldValue.add(0, educationalCalendarEventsTableEnglish.get(i).getField());
                     EducationEvents educationEventsList = new EducationEvents(
                             educationalCalendarEventsTableEnglish.get(i).getEvent_id(),
                             educationalCalendarEventsTableEnglish.get(i).getFilter(),
@@ -895,7 +867,7 @@ public class EducationCalendarActivity extends AppCompatActivity {
                             educationalCalendarEventsTableEnglish.get(i).getCategory(),
                             educationalCalendarEventsTableEnglish.get(i).getEvent_registration(),
                             educationalCalendarEventsTableEnglish.get(i).getEvent_date(),
-                            fieldval,
+                            fieldValue,
                             converters.fromString(educationalCalendarEventsTableEnglish.get(i).getAge()),
                             converters.fromString(educationalCalendarEventsTableEnglish.get(i).getAssociatedTopics()),
                             educationalCalendarEventsTableEnglish.get(i).getMuseum()
@@ -944,13 +916,13 @@ public class EducationCalendarActivity extends AppCompatActivity {
         }
     }
 
-    public static class RetriveArabicTableData extends AsyncTask<Void, Void, List<EducationalCalendarEventsTableArabic>> {
+    public static class RetrieveArabicTableData extends AsyncTask<Void, Void, List<EducationalCalendarEventsTableArabic>> {
 
         private WeakReference<EducationCalendarActivity> activityReference;
         int language;
         long eventDate;
 
-        RetriveArabicTableData(EducationCalendarActivity context, int appLanguage, long eventDate) {
+        RetrieveArabicTableData(EducationCalendarActivity context, int appLanguage, long eventDate) {
             activityReference = new WeakReference<>(context);
             language = appLanguage;
             this.eventDate = eventDate;
@@ -964,7 +936,7 @@ public class EducationCalendarActivity extends AppCompatActivity {
         @Override
         protected void onPostExecute(List<EducationalCalendarEventsTableArabic> educationalCalendarEventsTableArabic) {
             activityReference.get().educationEvents.clear();
-            ArrayList<String> fieldval = new ArrayList<String>();
+            ArrayList<String> fieldValue = new ArrayList<String>();
             ArrayList<String> startDate = new ArrayList<String>();
             ArrayList<String> endDate = new ArrayList<String>();
             Convertor converters = new Convertor();
@@ -972,7 +944,7 @@ public class EducationCalendarActivity extends AppCompatActivity {
                 for (int i = 0; i < educationalCalendarEventsTableArabic.size(); i++) {
                     startDate.add(0, educationalCalendarEventsTableArabic.get(i).getEvent_start_time());
                     endDate.add(0, educationalCalendarEventsTableArabic.get(i).getEvent_end_time());
-                    fieldval.add(0, educationalCalendarEventsTableArabic.get(i).getField());
+                    fieldValue.add(0, educationalCalendarEventsTableArabic.get(i).getField());
                     EducationEvents educationEventsList = new EducationEvents(
                             educationalCalendarEventsTableArabic.get(i).getEvent_id(),
                             educationalCalendarEventsTableArabic.get(i).getFilter(),
@@ -989,7 +961,7 @@ public class EducationCalendarActivity extends AppCompatActivity {
                             educationalCalendarEventsTableArabic.get(i).getCategory(),
                             educationalCalendarEventsTableArabic.get(i).getEvent_registration(),
                             educationalCalendarEventsTableArabic.get(i).getEvent_date(),
-                            fieldval,
+                            fieldValue,
                             converters.fromString(educationalCalendarEventsTableArabic.get(i).getAge()),
                             converters.fromString(educationalCalendarEventsTableArabic.get(i).getAssociatedTopics()),
                             educationalCalendarEventsTableArabic.get(i).getMuseum()
@@ -1041,8 +1013,8 @@ public class EducationCalendarActivity extends AppCompatActivity {
         }
     }
 
-    public void convertToTimstamp(String day, String month, String year) {
-//        converting time to timstamp and updating
+    public void convertToTimestamp(String day, String month, String year) {
+//        converting time to timestamp and updating
         for (int i = 0; i < educationEvents.size(); i++) {
             String str_start_date = day + "-" + month + "-" + year + " " + educationEvents.get(i).getStart_time().get(0);
             String str_end_date = day + "-" + month + "-" + year + " " + educationEvents.get(i).getEnd_time().get(0);
@@ -1059,7 +1031,7 @@ public class EducationCalendarActivity extends AppCompatActivity {
         SimpleDateFormat formatter = new SimpleDateFormat("dd-MM-yyyy HH:mm");
         Date date = null;
         try {
-            date = (Date) formatter.parse(dateVal);
+            date = formatter.parse(dateVal);
         } catch (ParseException e) {
             e.printStackTrace();
         }
@@ -1070,13 +1042,13 @@ public class EducationCalendarActivity extends AppCompatActivity {
         //extracting time from text and updating the time field
         for (int i = 0; i < educationEvents.size(); i++) {
             String start = educationEvents.get(i).getStart_time().get(0);
-            String svalue = start.substring(start.lastIndexOf("-") + 1);
-            String[] stimeArray = svalue.trim().split("-");
-            String startTime = stimeArray[0].trim();
+            String startValue = start.substring(start.lastIndexOf("-") + 1);
+            String[] startTimeArray = startValue.trim().split("-");
+            String startTime = startTimeArray[0].trim();
             String end = educationEvents.get(i).getEnd_time().get(0);
-            String evalue = end.substring(end.lastIndexOf("-") + 1);
-            String[] etimeArray = evalue.trim().split("-");
-            String endTime = etimeArray[0].trim();
+            String endValue = end.substring(end.lastIndexOf("-") + 1);
+            String[] endTimeArray = endValue.trim().split("-");
+            String endTime = endTimeArray[0].trim();
             ArrayList<String> startDateVal = new ArrayList<String>();
             startDateVal.add(0, startTime);
             ArrayList<String> endDateVal = new ArrayList<String>();
@@ -1088,12 +1060,7 @@ public class EducationCalendarActivity extends AppCompatActivity {
     }
 
     public void sortEventsWithStartTime() {
-        Collections.sort(educationEvents, new Comparator<EducationEvents>() {
-            @Override
-            public int compare(EducationEvents o1, EducationEvents o2) {
-                return o1.getStart_time().get(0).compareTo(o2.getStart_time().get(0));
-            }
-        });
+        Collections.sort(educationEvents, (o1, o2) -> o1.getStart_time().get(0).compareTo(o2.getStart_time().get(0)));
     }
 
     public void showDialog(final String buttonText
@@ -1103,74 +1070,102 @@ public class EducationCalendarActivity extends AppCompatActivity {
         dialog.setCancelable(true);
         dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
 
-        LayoutInflater layoutInflater = (LayoutInflater) this.getSystemService(this.LAYOUT_INFLATER_SERVICE);
+        LayoutInflater layoutInflater = (LayoutInflater) this.getSystemService(LAYOUT_INFLATER_SERVICE);
         View view = layoutInflater.inflate(R.layout.calendar_popup, null);
         dialog.setContentView(view);
-        FrameLayout contentLayout = (FrameLayout) view.findViewById(R.id.content_frame_layout);
-        ImageView closeBtn = (ImageView) view.findViewById(R.id.close_dialog);
-        final Button registerNowBtn = (Button) view.findViewById(R.id.doneBtn);
-        TextView dialogTitle = (TextView) view.findViewById(R.id.dialog_tittle);
-        TextView dialogContent = (TextView) view.findViewById(R.id.dialog_content);
-        int heightValue = getScreenheight();
+        FrameLayout contentLayout = view.findViewById(R.id.content_frame_layout);
+        ImageView closeBtn = view.findViewById(R.id.close_dialog);
+        final Button registerNowBtn = view.findViewById(R.id.doneBtn);
+        TextView dialogTitle = view.findViewById(R.id.dialog_tittle);
+        TextView dialogContent = view.findViewById(R.id.dialog_content);
+        int heightValue = getScreenHeight();
         contentLayout.setLayoutParams(new FrameLayout.LayoutParams(FrameLayout.LayoutParams.MATCH_PARENT, heightValue));
-//        ArrayList<String> descriptionVal = ;
         dialogTitle.setText(educationEvents.get(position).getTitle());
         registerNowBtn.setText(buttonText);
         if (buttonText.equalsIgnoreCase(getResources().getString(R.string.register_now))) {
             registerNowBtn.setEnabled(false);
             registerNowBtn.setTextColor(getResources().getColor(R.color.white));
-            registerNowBtn.setBackgroundTintList(ColorStateList.valueOf(getResources().getColor(R.color.grey)));
+            registerNowBtn.setBackgroundTintList(ColorStateList.valueOf(getResources().getColor(R.color.semi_transparent_grey)));
         }
         dialogContent.setText(educationEvents.get(position).getLong_desc());
 
-        registerNowBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                //Do something
-                if (buttonText.equalsIgnoreCase(getResources().getString(R.string.register_now))) {
-                    new Util().showComingSoonDialog(EducationCalendarActivity.this, R.string.coming_soon_content);
-                    dialog.dismiss();
-                } else {
-                    addToCalendar(educationEvents, position);
-                    dialog.dismiss();
-                }
-
-            }
-        });
-        closeBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                //Do something
+        registerNowBtn.setOnClickListener(view1 -> {
+            //Do something
+            if (buttonText.equalsIgnoreCase(getResources().getString(R.string.register_now))) {
+                new Util().showComingSoonDialog(EducationCalendarActivity.this, R.string.coming_soon_content);
                 dialog.dismiss();
-
+            } else {
+                addToCalendar(educationEvents, position);
+                dialog.dismiss();
             }
+
+        });
+        closeBtn.setOnClickListener(view12 -> {
+            //Do something
+            dialog.dismiss();
+
         });
         dialog.show();
 
 
     }
 
+    @SuppressLint("MissingPermission")
+    private int getCalendarId(Context context) {
+        Cursor cursor = null;
+        ContentResolver contentResolver = context.getContentResolver();
+        Uri calendars = CalendarContract.Calendars.CONTENT_URI;
+
+        String[] EVENT_PROJECTION = new String[]{
+                CalendarContract.Calendars._ID,                           // 0
+                CalendarContract.Calendars.ACCOUNT_NAME,                  // 1
+                CalendarContract.Calendars.CALENDAR_DISPLAY_NAME,         // 2
+                CalendarContract.Calendars.OWNER_ACCOUNT,                 // 3
+                CalendarContract.Calendars.IS_PRIMARY                     // 4
+        };
+
+        int PROJECTION_ID_INDEX = 0;
+        int PROJECTION_ACCOUNT_NAME_INDEX = 1;
+        int PROJECTION_DISPLAY_NAME_INDEX = 2;
+        int PROJECTION_OWNER_ACCOUNT_INDEX = 3;
+        int PROJECTION_VISIBLE = 4;
+
+        cursor = contentResolver.query(calendars, EVENT_PROJECTION, null, null, null);
+
+        if (cursor != null && cursor.moveToFirst()) {
+            String calName;
+            long calId = 0;
+            String visible;
+
+            do {
+                calName = cursor.getString(PROJECTION_DISPLAY_NAME_INDEX);
+                calId = cursor.getLong(PROJECTION_ID_INDEX);
+                visible = cursor.getString(PROJECTION_VISIBLE);
+                if (visible.equals("1")) {
+                    return (int) calId;
+                }
+                Log.e("Calendar Id : ", "" + calId + " : " + calName + " : " + visible);
+            } while (cursor.moveToNext());
+
+            return (int) calId;
+        }
+        return 1;
+    }
+
     public void addToCalendar(final ArrayList<EducationEvents> educationEvents, final int position) {
         contentResolver = getContentResolver();
 
-        cv = new ContentValues();
-        cv.put(CalendarContract.Events.TITLE, educationEvents.get(position).getTitle());
-        cv.put(CalendarContract.Events.DESCRIPTION, educationEvents.get(position).getLong_desc());
-        cv.put(CalendarContract.Events.DTSTART, educationEvents.get(position).getStart_time().get(0));
-        cv.put(CalendarContract.Events.DTEND, educationEvents.get(position).getEnd_time().get(0));
-        // Default calendar
-        if (Build.VERSION.SDK_INT > Build.VERSION_CODES.M) {
-            cv.put(CalendarContract.Events.CALENDAR_ID, 3);
-        } else {
-            cv.put(CalendarContract.Events.CALENDAR_ID, 1);
-        }
-        TimeZone timeZone = TimeZone.getDefault();
-        cv.put(CalendarContract.Events.EVENT_TIMEZONE, Calendar.getInstance().getTimeZone().getID());
+        contentValues = new ContentValues();
+        contentValues.put(CalendarContract.Events.TITLE, educationEvents.get(position).getTitle());
+        contentValues.put(CalendarContract.Events.DESCRIPTION, educationEvents.get(position).getLong_desc());
+        contentValues.put(CalendarContract.Events.DTSTART, educationEvents.get(position).getStart_time().get(0));
+        contentValues.put(CalendarContract.Events.DTEND, educationEvents.get(position).getEnd_time().get(0));
+        contentValues.put(CalendarContract.Events.EVENT_TIMEZONE, Calendar.getInstance().getTimeZone().getID());
         if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.M) {
             if (ContextCompat.checkSelfPermission(this,
                     Manifest.permission.WRITE_CALENDAR)
                     != PackageManager.PERMISSION_GRANTED) {
-                ActivityCompat.requestPermissions((EducationCalendarActivity) this,
+                ActivityCompat.requestPermissions(this,
                         new String[]{Manifest.permission.WRITE_CALENDAR},
                         MY_PERMISSIONS_REQUEST_CALENDAR);
 
@@ -1184,10 +1179,17 @@ public class EducationCalendarActivity extends AppCompatActivity {
     }
 
     public void insertEventToCalendar() {
-        Uri uri = contentResolver.insert(CalendarContract.Events.CONTENT_URI, cv);
-        Snackbar snackbar = Snackbar
-                .make(layoutContainer, R.string.event_added, Snackbar.LENGTH_LONG);
-        snackbar.show();
+        try {
+            contentValues.put(CalendarContract.Events.CALENDAR_ID, getCalendarId(this));
+            @SuppressLint("MissingPermission")
+            Uri uri = contentResolver.insert(CalendarContract.Events.CONTENT_URI, contentValues);
+            Snackbar snackbar = Snackbar
+                    .make(layoutContainer, R.string.event_added, Snackbar.LENGTH_LONG);
+            snackbar.show();
+        } catch (Exception ex) {
+            Toast.makeText(this, "Error in adding event on calendar : " + ex.getMessage(),
+                    Toast.LENGTH_SHORT).show();
+        }
     }
 
     @Override
@@ -1221,29 +1223,20 @@ public class EducationCalendarActivity extends AppCompatActivity {
         View view = layoutInflater.inflate(R.layout.common_popup, null);
 
         dialog.setContentView(view);
-        ImageView closeBtn = (ImageView) view.findViewById(R.id.close_dialog);
-        Button dialogActionButton = (Button) view.findViewById(R.id.doneBtn);
-        TextView dialogTitle = (TextView) view.findViewById(R.id.dialog_tittle);
-        TextView dialogContent = (TextView) view.findViewById(R.id.dialog_content);
+        ImageView closeBtn = view.findViewById(R.id.close_dialog);
+        Button dialogActionButton = view.findViewById(R.id.doneBtn);
+        TextView dialogTitle = view.findViewById(R.id.dialog_tittle);
+        TextView dialogContent = view.findViewById(R.id.dialog_content);
         dialogTitle.setText(title);
         dialogActionButton.setText(getResources().getString(R.string.open_settings));
         dialogContent.setText(details);
 
-        dialogActionButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                navigateToSettings();
-                dialog.dismiss();
+        dialogActionButton.setOnClickListener(view1 -> {
+            navigateToSettings();
+            dialog.dismiss();
 
-            }
         });
-        closeBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                dialog.dismiss();
-
-            }
-        });
+        closeBtn.setOnClickListener(view12 -> dialog.dismiss());
         dialog.show();
     }
 
@@ -1264,7 +1257,7 @@ public class EducationCalendarActivity extends AppCompatActivity {
         }
     }
 
-    public int getScreenheight() {
+    public int getScreenHeight() {
         DisplayMetrics displayMetrics = new DisplayMetrics();
         getWindowManager().getDefaultDisplay().getMetrics(displayMetrics);
         double height = displayMetrics.heightPixels;

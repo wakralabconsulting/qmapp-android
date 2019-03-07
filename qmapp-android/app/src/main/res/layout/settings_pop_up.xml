@@ -8,8 +8,8 @@
     <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginStart="@dimen/padding_40"
         android:layout_marginEnd="@dimen/pading_25"
+        android:layout_marginStart="@dimen/padding_40"
         android:gravity="center"
         android:orientation="vertical">
 

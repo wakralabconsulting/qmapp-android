@@ -57,7 +57,7 @@ public class SettingsActivity extends AppCompatActivity implements View.OnClickL
         setContentView(R.layout.activity_settings);
         ButterKnife.bind(this);
         setSupportActionBar(toolbar);
-        setClicklistenerforButtons();
+        setClickListenerforButtons();
         languageChangeButton.setOnTouchListener((v, event) -> {
             if (language.equals(LocaleManager.LANGUAGE_ENGLISH))
                 showDialog(LocaleManager.LANGUAGE_ARABIC);
@@ -69,7 +69,7 @@ public class SettingsActivity extends AppCompatActivity implements View.OnClickL
         language = LocaleManager.getLanguage(this);
 
         toolbar_title.setText(getResources().getString(R.string.settings_activity_tittle));
-        settingsPageListAdapter = new SettingsPageListAdapter(this, settingsPageModelList);
+        settingsPageListAdapter = new SettingsPageListAdapter(settingsPageModelList);
         RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(getApplicationContext());
         recyclerView.setLayoutManager(mLayoutManager);
         recyclerView.setItemAnimator(new DefaultItemAnimator());
@@ -87,31 +87,28 @@ public class SettingsActivity extends AppCompatActivity implements View.OnClickL
         }));
         zoomOutAnimation = AnimationUtils.loadAnimation(getApplicationContext(),
                 R.anim.zoom_out_more);
-        backArrow.setOnTouchListener(new View.OnTouchListener() {
-            @Override
-            public boolean onTouch(View v, MotionEvent event) {
-                switch (event.getAction()) {
-                    case MotionEvent.ACTION_DOWN:
-                        backArrow.startAnimation(zoomOutAnimation);
-                        break;
-                }
-                return false;
+        backArrow.setOnTouchListener((v, event) -> {
+            switch (event.getAction()) {
+                case MotionEvent.ACTION_DOWN:
+                    backArrow.startAnimation(zoomOutAnimation);
+                    break;
             }
+            return false;
         });
 
         prepareRecyclerViewData();
     }
 
     public void prepareRecyclerViewData() {
-        SettingsPageModel model = new SettingsPageModel(getString(R.string.notification_event_updates), true);
+        SettingsPageModel model = new SettingsPageModel(getString(R.string.notification_event_updates));
         settingsPageModelList.add(model);
-        model = new SettingsPageModel(getString(R.string.notification_exhibition_updates), true);
+        model = new SettingsPageModel(getString(R.string.notification_exhibition_updates));
         settingsPageModelList.add(model);
-        model = new SettingsPageModel(getString(R.string.notification_museum_updates), true);
+        model = new SettingsPageModel(getString(R.string.notification_museum_updates));
         settingsPageModelList.add(model);
-        model = new SettingsPageModel(getString(R.string.notification_culturepass_updates), true);
+        model = new SettingsPageModel(getString(R.string.notification_culturepass_updates));
         settingsPageModelList.add(model);
-        model = new SettingsPageModel(getString(R.string.notification_tourguide_updates), true);
+        model = new SettingsPageModel(getString(R.string.notification_tourguide_updates));
         settingsPageModelList.add(model);
 
         settingsPageListAdapter.notifyDataSetChanged();
@@ -122,7 +119,6 @@ public class SettingsActivity extends AppCompatActivity implements View.OnClickL
         switch (v.getId()) {
 
             case R.id.toolbar_back:
-                // topbar back action
                 onBackPressed();
                 break;
 
@@ -159,7 +155,7 @@ public class SettingsActivity extends AppCompatActivity implements View.OnClickL
         overridePendingTransition(0, 0);
     }
 
-    public void setClicklistenerforButtons() {
+    public void setClickListenerforButtons() {
         toolbar.setOnClickListener(this);
         backArrow.setOnClickListener(this);
         toolbar_title.setOnClickListener(this);
@@ -176,30 +172,24 @@ public class SettingsActivity extends AppCompatActivity implements View.OnClickL
         View view = getLayoutInflater().inflate(R.layout.settings_pop_up, null);
         dialog.setContentView(view);
 
-        ImageView closeBtn = (ImageView) view.findViewById(R.id.close_dialog);
-        Button changeLanguageBtn = (Button) view.findViewById(R.id.doneBtn);
-        TextView dialogTitle = (TextView) view.findViewById(R.id.dialog_tittle);
-        TextView dialogContent = (TextView) view.findViewById(R.id.dialog_content);
+        ImageView closeBtn = view.findViewById(R.id.close_dialog);
+        Button changeLanguageBtn = view.findViewById(R.id.doneBtn);
+        TextView dialogTitle = view.findViewById(R.id.dialog_tittle);
+        TextView dialogContent = view.findViewById(R.id.dialog_content);
         dialogTitle.setText(getResources().getString(R.string.change_language_dialog_title));
         changeLanguageBtn.setText(getResources().getString(R.string.change_language_button_text));
         dialogContent.setText(getResources().getString(R.string.change_language_content_text));
 
-        changeLanguageBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                //Do something
-                setLocale(language);
-                dialog.dismiss();
+        changeLanguageBtn.setOnClickListener(view1 -> {
+            //Do something
+            setLocale(language);
+            dialog.dismiss();
 
-            }
         });
-        closeBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                //Do something
-                dialog.dismiss();
+        closeBtn.setOnClickListener(view12 -> {
+            //Do something
+            dialog.dismiss();
 
-            }
         });
         dialog.show();
     }

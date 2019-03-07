@@ -44,11 +44,11 @@
                     android:layout_height="wrap_content"
                     android:ellipsize="end"
                     android:lines="1"
-                    android:textSize="@dimen/font_size_16"
                     android:paddingEnd="10dp"
                     android:paddingStart="10dp"
                     android:text="@string/alberallo"
                     android:textColor="@android:color/black"
+                    android:textSize="@dimen/font_size_16"
                     android:textStyle="bold" />
             </RelativeLayout>
 
@@ -213,8 +213,8 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:gravity="center"
-                android:orientation="horizontal"
                 android:layoutDirection="ltr"
+                android:orientation="horizontal"
                 android:visibility="visible">
 
             </LinearLayout>

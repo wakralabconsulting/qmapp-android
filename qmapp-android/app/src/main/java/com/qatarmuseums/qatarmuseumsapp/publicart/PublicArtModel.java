@@ -22,15 +22,15 @@ public class PublicArtModel {
     private String latitude;
 
 
-    public PublicArtModel(String name, String id, ArrayList<String> image, String shortDescription, String longDescription,String latitude,
+    public PublicArtModel(String name, String id, ArrayList<String> image, String shortDescription, String longDescription, String latitude,
                           String longitude) {
         this.name = name;
         this.id = id;
         this.image = image;
         this.shortDescription = shortDescription;
         this.longDescription = longDescription;
-        this.latitude=latitude;
-        this.longitude=longitude;
+        this.latitude = latitude;
+        this.longitude = longitude;
     }
 
     public String getName() {

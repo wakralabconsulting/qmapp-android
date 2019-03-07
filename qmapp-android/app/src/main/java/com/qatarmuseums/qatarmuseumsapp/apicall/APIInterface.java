@@ -39,11 +39,11 @@ public interface APIInterface {
     Call<ArrayList<HomeList>> getHomepageDetails(@Path("language") String language);
 
     @GET("{language}/mobile_api/{pageName}")
-    Call<ArrayList<CommonModel>> getCommonpageList(@Path("language") String language,
+    Call<ArrayList<CommonModel>> getCommonPageList(@Path("language") String language,
                                                    @Path("pageName") String pageName);
 
     @GET("{language}/mobile_api/{pageName}")
-    Call<ArrayList<CommonModel>> getCommonpageListWithID(@Path("language") String language,
+    Call<ArrayList<CommonModel>> getCommonPageListWithID(@Path("language") String language,
                                                          @Path("pageName") String pageName,
                                                          @Query("museum_id") String museumId);
 
@@ -52,7 +52,7 @@ public interface APIInterface {
                                                          @Query("nid") String nid);
 
     @GET("{language}/mobile_api/{pageName}")
-    Call<ArrayList<HeritageOrExhibitionDetailModel>> getHeritageOrExhebitionDetails(@Path("language") String language,
+    Call<ArrayList<HeritageOrExhibitionDetailModel>> getHeritageOrExhibitionDetails(@Path("language") String language,
                                                                                     @Path("pageName") String pageName,
                                                                                     @Query("nid") String nid);
 
@@ -177,5 +177,4 @@ public interface APIInterface {
                                                                @Header("X-CSRF-Token") String token,
                                                                @Path("registration_id") String registrationId,
                                                                @Body RegistrationDetailsModel model);
-
 }

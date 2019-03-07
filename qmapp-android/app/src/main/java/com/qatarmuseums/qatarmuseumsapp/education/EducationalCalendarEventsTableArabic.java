@@ -49,15 +49,15 @@ public class EducationalCalendarEventsTableArabic {
     @ColumnInfo()
     private String museum;
 
-    public EducationalCalendarEventsTableArabic( String event_id,
-                                                String event_title, String event_date,
-                                                String event_institution, String event_age_group,
-                                                String event_program_type, String event_start_time,
-                                                String event_end_time, String event_registration,
-                                                String max_group_size, String event_short_description,
-                                                String event_long_description,
-                                                String location, String category, String filter,String field,
-                                                 String age,String associatedTopics,String museum) {
+    EducationalCalendarEventsTableArabic(String event_id,
+                                         String event_title, String event_date,
+                                         String event_institution, String event_age_group,
+                                         String event_program_type, String event_start_time,
+                                         String event_end_time, String event_registration,
+                                         String max_group_size, String event_short_description,
+                                         String event_long_description,
+                                         String location, String category, String filter, String field,
+                                         String age, String associatedTopics, String museum) {
         this.event_id = event_id;
         this.event_title = event_title;
         this.event_date = event_date;
@@ -73,10 +73,10 @@ public class EducationalCalendarEventsTableArabic {
         this.location = location;
         this.category = category;
         this.filter = filter;
-        this.field=field;
-        this.age=age;
-        this.associatedTopics=associatedTopics;
-        this.museum=museum;
+        this.field = field;
+        this.age = age;
+        this.associatedTopics = associatedTopics;
+        this.museum = museum;
 
     }
 

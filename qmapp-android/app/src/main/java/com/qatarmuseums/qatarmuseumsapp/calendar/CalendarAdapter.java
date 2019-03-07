@@ -16,17 +16,12 @@ import java.util.ArrayList;
 
 
 public class CalendarAdapter extends RecyclerView.Adapter<CalendarAdapter.CalendarAdapterViewHolder> {
-    Context context;
-    ArrayList<CalendarEvents> calendarEventsList;
-    ArrayList<String> descriptionVal;
+    private Context context;
+    private ArrayList<CalendarEvents> calendarEventsList;
 
     public CalendarAdapter(Context context, ArrayList<CalendarEvents> calendarEventsList) {
         this.context = context;
         this.calendarEventsList = calendarEventsList;
-    }
-
-    public CalendarAdapter(Context context) {
-        this.context = context;
     }
 
     @NonNull
@@ -56,15 +51,10 @@ public class CalendarAdapter extends RecyclerView.Adapter<CalendarAdapter.Calend
         } else {
             holder.layoutHolder.setBackgroundColor(Color.parseColor("#FFf2f2f2"));
         }
-        holder.layoutHolder.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                ((CalendarActivity) context).onClickCalled(calendarEventsList.get(position).getRegistration(),
-                        holder.eventSubTitle.getText().toString(),
-                        calendarEventsList.get(position).getEventDetails(), calendarEventsList.get(position).getStartTime().get(0),
-                        calendarEventsList.get(position).getEndTime().get(0));
-            }
-        });
+        holder.layoutHolder.setOnClickListener(view -> ((CalendarActivity) context).onClickCalled(calendarEventsList.get(position).getRegistration(),
+                holder.eventSubTitle.getText().toString(),
+                calendarEventsList.get(position).getEventDetails(), calendarEventsList.get(position).getStartTime().get(0),
+                calendarEventsList.get(position).getEndTime().get(0)));
     }
 
     @Override
@@ -79,13 +69,12 @@ public class CalendarAdapter extends RecyclerView.Adapter<CalendarAdapter.Calend
 
         public CalendarAdapterViewHolder(View itemView) {
             super(itemView);
-            eventTitle = (TextView) itemView.findViewById(R.id.event_title);
-            titleHiphen = (TextView) itemView.findViewById(R.id.event_hiphen);
-            eventSubTitle = (TextView) itemView.findViewById(R.id.event_subtitle);
-            eventTiming = (TextView) itemView.findViewById(R.id.event_timing);
-            viewDetails = (TextView) itemView.findViewById(R.id.event_view_details);
-            layoutHolder = (LinearLayout) itemView.findViewById(R.id.layout_holder);
-
+            eventTitle = itemView.findViewById(R.id.event_title);
+            titleHiphen = itemView.findViewById(R.id.event_hiphen);
+            eventSubTitle = itemView.findViewById(R.id.event_subtitle);
+            eventTiming = itemView.findViewById(R.id.event_timing);
+            viewDetails = itemView.findViewById(R.id.event_view_details);
+            layoutHolder = itemView.findViewById(R.id.layout_holder);
         }
     }
 
@@ -95,7 +84,6 @@ public class CalendarAdapter extends RecyclerView.Adapter<CalendarAdapter.Calend
             for (int i = 0; i < size; i++) {
                 calendarEventsList.remove(0);
             }
-
             notifyItemRangeRemoved(0, size);
         }
     }

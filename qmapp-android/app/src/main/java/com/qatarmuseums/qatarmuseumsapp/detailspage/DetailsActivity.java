@@ -76,15 +76,11 @@ import com.qatarmuseums.qatarmuseumsapp.profile.Model;
 import com.qatarmuseums.qatarmuseumsapp.profile.Und;
 import com.qatarmuseums.qatarmuseumsapp.publicart.PublicArtModel;
 import com.qatarmuseums.qatarmuseumsapp.tourdetails.TourDetailsModel;
-import com.qatarmuseums.qatarmuseumsapp.tourdetails.TourDetailsTableArabic;
-import com.qatarmuseums.qatarmuseumsapp.tourdetails.TourDetailsTableEnglish;
 import com.qatarmuseums.qatarmuseumsapp.utils.IPullZoom;
 import com.qatarmuseums.qatarmuseumsapp.utils.PixelUtil;
 import com.qatarmuseums.qatarmuseumsapp.utils.PullToZoomCoordinatorLayout;
 import com.qatarmuseums.qatarmuseumsapp.utils.Util;
-import com.qatarmuseums.qatarmuseumsapp.webview.WebviewActivity;
-
-import org.json.JSONStringer;
+import com.qatarmuseums.qatarmuseumsapp.webview.WebViewActivity;
 
 import java.lang.ref.WeakReference;
 import java.text.ParseException;
@@ -126,11 +122,8 @@ public class DetailsActivity extends AppCompatActivity implements IPullZoom, OnM
             timingTitle, timingDetails, locationDetails, contactPhone, contactEmail;
     private Util util;
     private Animation zoomOutAnimation;
-    private PullToZoomCoordinatorLayout coordinatorLayout;
-    //    private FrameLayout frameLayout;
     private View zoomView;
     ArrayList<String> imageList = new ArrayList<String>();
-    private AppBarLayout appBarLayout;
     private int headerOffSetSize;
     String appLanguage;
     private LinearLayout secondTitleLayout, timingLayout, contactLayout, retryLayout, videoLayout,
@@ -140,15 +133,9 @@ public class DetailsActivity extends AppCompatActivity implements IPullZoom, OnM
     int language;
     String token, startTime, endTime;
     long start, end;
-    String type, entity_id, entity_type, anon_mail, user_uid, count, author_uid, state, created,
-            updated, field_confirm_attendance, field_number_of_attendees, field_first_name_,
-            field_nmoq_last_name, field_qma_edu_reg_date, time_zone;
+    String user_uid, field_first_name_, field_nmoq_last_name, time_zone;
     int field_membership_number;
-    JSONStringer jsonStringer = null;
-    JSONStringer completionjsonStringer = null;
     QMDatabase qmDatabase;
-    PublicArtsTableEnglish publicArtsTableEnglish;
-    PublicArtsTableArabic publicArtsTableArabic;
     MuseumAboutTableEnglish museumAboutTableEnglish;
     MuseumAboutTableArabic museumAboutTableArabic;
     int publicArtsTableRowCount, heritageTableRowCount,
@@ -162,10 +149,9 @@ public class DetailsActivity extends AppCompatActivity implements IPullZoom, OnM
     boolean fromMuseumAbout = false;
     String first_description;
     String long_description;
-    int imageItemPosition;
     MapView mapDetails;
     private static final String MAP_VIEW_BUNDLE_KEY = "MapViewBundleKey";
-    private GoogleMap gmap, gvalue;
+    private GoogleMap gMap, gValue;
     LinearLayout mapView;
     ImageView mapImageView, direction;
     int iconView = 0;
@@ -176,20 +162,14 @@ public class DetailsActivity extends AppCompatActivity implements IPullZoom, OnM
     Button retryButton;
     private InfiniteIndicator circleIndicator;
     private ArrayList ads;
-    private GlideLoaderForMuseum glideLoader;
-    private IndicatorConfiguration configuration;
     private LinearLayout eventDateLayout;
     private TextView eventDateTxt;
-    private TextView downloadText, speakerName, speakerInfo, locationTitle, registerUregisterCount;
+    private TextView registerUnregisterCount;
     private View downloadButton;
     private ConstraintLayout interestLayout;
-    private Boolean interested = false;
     private LinearLayout locationLayout;
     private LinearLayout offerLayout;
     private View claimButton;
-    private LinearLayout speakerLayout;
-    private ImageView speakerImage;
-    private float curveRadius = 30F;
     private String description;
     private String contactNumber, contactMail;
     private String promotionCode;
@@ -199,9 +179,6 @@ public class DetailsActivity extends AppCompatActivity implements IPullZoom, OnM
     private ArrayList<TourDetailsModel> tourDetailsList = new ArrayList<>();
     private String register, registered;
     private String eventDate, nid;
-    TourDetailsTableEnglish tourDetailsTableEnglish;
-    TourDetailsTableArabic tourDetailsTableArabic;
-    ArrayList<RegistrationDetailsModel> registrationDetailsModels = new ArrayList<>();
     String registrationId;
     RegistrationDetailsModel registrationDetailsModel;
     private UserRegistrationDetailsTable registrationDetails;
@@ -222,7 +199,7 @@ public class DetailsActivity extends AppCompatActivity implements IPullZoom, OnM
     private LayoutInflater layoutInflater;
     private ImageView closeBtn;
     private Button dialogActionButton;
-    private TextView dialogTitle, dialogContent;
+    private TextView dialogContent;
     int MY_PERMISSIONS_REQUEST_CALENDAR = 100;
     int REQUEST_PERMISSION_SETTING = 110;
     String seatsRemaining = "0";
@@ -250,7 +227,7 @@ public class DetailsActivity extends AppCompatActivity implements IPullZoom, OnM
         field_first_name_ = qmPreferences.getString("FIRST_NAME", null);
         field_membership_number = qmPreferences.getInt("MEMBERSHIP", 0);
         time_zone = qmPreferences.getString("TIMEZONE", null);
-        progressBar = (ProgressBar) findViewById(R.id.progressBarLoading);
+        progressBar = findViewById(R.id.progressBarLoading);
         intent = getIntent();
         mainTitle = intent.getStringExtra("MAIN_TITLE");
         comingFrom = intent.getStringExtra("COMING_FROM");
@@ -293,62 +270,57 @@ public class DetailsActivity extends AppCompatActivity implements IPullZoom, OnM
             }
         }
         qmDatabase = QMDatabase.getInstance(DetailsActivity.this);
-        toolbar = (Toolbar) findViewById(R.id.toolbar);
+        toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-        toolbarClose = (ImageView) findViewById(R.id.toolbar_close);
-        headerImageView = (ImageView) findViewById(R.id.header_img);
-        title = (TextView) findViewById(R.id.main_title);
-        subTitle = (TextView) findViewById(R.id.sub_title);
-        shortDescription = (TextView) findViewById(R.id.short_description);
-        longDescription = (TextView) findViewById(R.id.long_description);
-        secondTitle = (TextView) findViewById(R.id.second_title);
-        secondTitleDescription = (TextView) findViewById(R.id.second_short_description);
-        timingTitle = (TextView) findViewById(R.id.timing_title);
-        timingDetails = (TextView) findViewById(R.id.timing_info);
-        locationDetails = (TextView) findViewById(R.id.location_info);
+        toolbarClose = findViewById(R.id.toolbar_close);
+        headerImageView = findViewById(R.id.header_img);
+        title = findViewById(R.id.main_title);
+        subTitle = findViewById(R.id.sub_title);
+        shortDescription = findViewById(R.id.short_description);
+        longDescription = findViewById(R.id.long_description);
+        secondTitle = findViewById(R.id.second_title);
+        secondTitleDescription = findViewById(R.id.second_short_description);
+        timingTitle = findViewById(R.id.timing_title);
+        timingDetails = findViewById(R.id.timing_info);
+        locationDetails = findViewById(R.id.location_info);
         mapImageView = findViewById(R.id.map_view);
         direction = findViewById(R.id.direction);
-        imagePlaceHolder = (ImageView) findViewById(R.id.video_place_holder);
-        jzvdStd = (JzvdStd) findViewById(R.id.videoplayer);
-        mapView = (LinearLayout) findViewById(R.id.map_layout);
-        mapDetails = (MapView) findViewById(R.id.map_info);
+        imagePlaceHolder = findViewById(R.id.video_place_holder);
+        jzvdStd = findViewById(R.id.videoplayer);
+        mapView = findViewById(R.id.map_layout);
+        mapDetails = findViewById(R.id.map_info);
         Bundle mapViewBundle = null;
         if (savedInstanceState != null) {
             mapViewBundle = savedInstanceState.getBundle(MAP_VIEW_BUNDLE_KEY);
         }
         mapDetails.onCreate(mapViewBundle);
         mapDetails.getMapAsync(this);
-        contactPhone = (TextView) findViewById(R.id.contact_phone);
-        contactEmail = (TextView) findViewById(R.id.contact_mail);
-        favIcon = (ImageView) findViewById(R.id.favourite);
-        shareIcon = (ImageView) findViewById(R.id.share);
-        secondTitleLayout = (LinearLayout) findViewById(R.id.second_title_layout);
-        timingLayout = (LinearLayout) findViewById(R.id.timing_layout);
-        contactLayout = (LinearLayout) findViewById(R.id.contact_layout);
-        commonContentLayout = (LinearLayout) findViewById(R.id.common_content_layout);
-        noResultFoundTxt = (TextView) findViewById(R.id.noResultFoundTxt);
-        retryLayout = (LinearLayout) findViewById(R.id.retry_layout_about);
-        retryButton = (Button) findViewById(R.id.retry_btn);
-        circleIndicator = (InfiniteIndicator) findViewById(R.id.carousel_indicator);
-        registrationLoader = (RelativeLayout) findViewById(R.id.registration_loader);
+        contactPhone = findViewById(R.id.contact_phone);
+        contactEmail = findViewById(R.id.contact_mail);
+        favIcon = findViewById(R.id.favourite);
+        shareIcon = findViewById(R.id.share);
+        secondTitleLayout = findViewById(R.id.second_title_layout);
+        timingLayout = findViewById(R.id.timing_layout);
+        contactLayout = findViewById(R.id.contact_layout);
+        commonContentLayout = findViewById(R.id.common_content_layout);
+        noResultFoundTxt = findViewById(R.id.noResultFoundTxt);
+        retryLayout = findViewById(R.id.retry_layout_about);
+        retryButton = findViewById(R.id.retry_btn);
+        circleIndicator = findViewById(R.id.carousel_indicator);
+        registrationLoader = findViewById(R.id.registration_loader);
         eventDateLayout = findViewById(R.id.event_date_layout);
         eventDateTxt = findViewById(R.id.event_date);
         videoLayout = findViewById(R.id.video_layout);
         downloadLayout = findViewById(R.id.download_layout);
-        downloadText = findViewById(R.id.download_text);
+        TextView downloadText = findViewById(R.id.download_text);
         downloadButton = findViewById(R.id.download_button);
         interestLayout = findViewById(R.id.interest_layout);
-        registerUregisterCount = findViewById(R.id.register_unregister_label);
+        registerUnregisterCount = findViewById(R.id.register_unregister_label);
         registerButton = findViewById(R.id.register_button);
         locationLayout = findViewById(R.id.location_layout);
         offerLayout = findViewById(R.id.offer_layout);
         offerCode = findViewById(R.id.offer_code);
         claimButton = findViewById(R.id.claim_offer_button);
-        speakerLayout = findViewById(R.id.speaker_layout);
-        speakerImage = findViewById(R.id.speaker_img);
-        speakerName = findViewById(R.id.name_of_the_speaker);
-        speakerInfo = findViewById(R.id.information_of_the_speaker);
-        locationTitle = findViewById(R.id.location_title);
         util = new Util();
         title.setText(mainTitle);
         getData();
@@ -461,7 +433,7 @@ public class DetailsActivity extends AppCompatActivity implements IPullZoom, OnM
         claimButton.setOnClickListener(v -> {
             if (util.isNetworkAvailable(this)) {
                 if (!claimOfferURL.equals("")) {
-                    navigation_intent = new Intent(DetailsActivity.this, WebviewActivity.class);
+                    navigation_intent = new Intent(DetailsActivity.this, WebViewActivity.class);
                     navigation_intent.putExtra("url", claimOfferURL);
                     startActivity(navigation_intent);
                 } else
@@ -476,13 +448,13 @@ public class DetailsActivity extends AppCompatActivity implements IPullZoom, OnM
                 } else {
                     iconView = 1;
                     mapImageView.setImageResource(R.drawable.ic_map);
-                    gmap.setMapType(GoogleMap.MAP_TYPE_HYBRID);
-                    gmap.setMapStyle(MapStyleOptions.loadRawResourceStyle(DetailsActivity.this, R.raw.map_style));
+                    gMap.setMapType(GoogleMap.MAP_TYPE_HYBRID);
+                    gMap.setMapStyle(MapStyleOptions.loadRawResourceStyle(DetailsActivity.this, R.raw.map_style));
 
-                    gmap.addMarker(new MarkerOptions()
+                    gMap.addMarker(new MarkerOptions()
                             .position(new LatLng(Double.parseDouble(latitude), Double.parseDouble(longitude)))
                             .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED)));
-                    gmap.animateCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(Double.parseDouble(latitude), Double.parseDouble(longitude)), 10));
+                    gMap.animateCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(Double.parseDouble(latitude), Double.parseDouble(longitude)), 10));
                 }
             } else {
                 if (latitude == null || latitude.equals("")) {
@@ -490,13 +462,13 @@ public class DetailsActivity extends AppCompatActivity implements IPullZoom, OnM
                 } else {
                     iconView = 0;
                     mapImageView.setImageResource(R.drawable.ic_satellite);
-                    gmap.setMapType(GoogleMap.MAP_TYPE_NORMAL);
-                    gmap.setMapStyle(MapStyleOptions.loadRawResourceStyle(DetailsActivity.this, R.raw.map_style));
+                    gMap.setMapType(GoogleMap.MAP_TYPE_NORMAL);
+                    gMap.setMapStyle(MapStyleOptions.loadRawResourceStyle(DetailsActivity.this, R.raw.map_style));
 
-                    gmap.addMarker(new MarkerOptions()
+                    gMap.addMarker(new MarkerOptions()
                             .position(new LatLng(Double.parseDouble(latitude), Double.parseDouble(longitude)))
                             .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED)));
-                    gmap.animateCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(Double.parseDouble(latitude), Double.parseDouble(longitude)), 10));
+                    gMap.animateCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(Double.parseDouble(latitude), Double.parseDouble(longitude)), 10));
                 }
             }
         });
@@ -635,12 +607,12 @@ public class DetailsActivity extends AppCompatActivity implements IPullZoom, OnM
         View view = getLayoutInflater().inflate(R.layout.vip_pop_up, null);
         dialog.setContentView(view);
 
-        View line = (View) view.findViewById(R.id.view);
-        Button yes = (Button) view.findViewById(R.id.acceptbtn);
-        Button no = (Button) view.findViewById(R.id.accept_later_btn);
+        View line = view.findViewById(R.id.view);
+        Button yes = view.findViewById(R.id.acceptbtn);
+        Button no = view.findViewById(R.id.accept_later_btn);
         no.setVisibility(View.GONE);
-        TextView dialogTitle = (TextView) view.findViewById(R.id.dialog_tittle);
-        TextView dialogContent = (TextView) view.findViewById(R.id.dialog_content);
+        TextView dialogTitle = view.findViewById(R.id.dialog_tittle);
+        TextView dialogContent = view.findViewById(R.id.dialog_content);
         line.setVisibility(View.GONE);
         dialogTitle.setVisibility(View.GONE);
         yes.setText(getResources().getString(R.string.ok));
@@ -658,11 +630,11 @@ public class DetailsActivity extends AppCompatActivity implements IPullZoom, OnM
         View view = getLayoutInflater().inflate(R.layout.vip_pop_up, null);
         dialog.setContentView(view);
 
-        View line = (View) view.findViewById(R.id.view);
-        Button yes = (Button) view.findViewById(R.id.acceptbtn);
-        Button no = (Button) view.findViewById(R.id.accept_later_btn);
-        TextView dialogTitle = (TextView) view.findViewById(R.id.dialog_tittle);
-        TextView dialogContent = (TextView) view.findViewById(R.id.dialog_content);
+        View line = view.findViewById(R.id.view);
+        Button yes = view.findViewById(R.id.acceptbtn);
+        Button no = view.findViewById(R.id.accept_later_btn);
+        TextView dialogTitle = view.findViewById(R.id.dialog_tittle);
+        TextView dialogContent = view.findViewById(R.id.dialog_content);
         line.setVisibility(View.GONE);
         dialogTitle.setVisibility(View.GONE);
         yes.setText(getResources().getString(R.string.yes));
@@ -672,9 +644,9 @@ public class DetailsActivity extends AppCompatActivity implements IPullZoom, OnM
         yes.setOnClickListener(view1 -> {
             registrationLoader.setVisibility(View.VISIBLE);
             if (comingFrom.equals(getString(R.string.museum_discussion))) {
-                new RetriveRegistrationId(DetailsActivity.this, nid).execute();
+                new RetrieveRegistrationId(DetailsActivity.this, nid).execute();
             } else {
-                new RetriveRegistrationId(DetailsActivity.this, nid).execute();
+                new RetrieveRegistrationId(DetailsActivity.this, nid).execute();
             }
             dialog.dismiss();
         });
@@ -736,8 +708,8 @@ public class DetailsActivity extends AppCompatActivity implements IPullZoom, OnM
     @Override
     protected void onDestroy() {
         mapDetails.onDestroy();
-        gmap = null;
-        gvalue = null;
+        gMap = null;
+        gValue = null;
         super.onDestroy();
     }
 
@@ -780,7 +752,7 @@ public class DetailsActivity extends AppCompatActivity implements IPullZoom, OnM
     }
 
     public void setTourDetailsData() {
-        new RetriveRegistrationDetails(DetailsActivity.this, nid, true).execute();
+        new RetrieveRegistrationDetails(DetailsActivity.this, nid, true).execute();
         commonContentLayout.setVisibility(View.VISIBLE);
         interestLayout.setVisibility(View.VISIBLE);
         videoLayout.setVisibility(View.GONE);
@@ -803,11 +775,11 @@ public class DetailsActivity extends AppCompatActivity implements IPullZoom, OnM
                 true, null);
     }
 
-    public static class RetriveRegistrationId extends AsyncTask<Void, Void, String> {
+    public static class RetrieveRegistrationId extends AsyncTask<Void, Void, String> {
         private WeakReference<DetailsActivity> activityReference;
         String eventID;
 
-        RetriveRegistrationId(DetailsActivity context, String eventID) {
+        RetrieveRegistrationId(DetailsActivity context, String eventID) {
             activityReference = new WeakReference<>(context);
             this.eventID = eventID;
         }
@@ -865,12 +837,12 @@ public class DetailsActivity extends AppCompatActivity implements IPullZoom, OnM
     }
 
 
-    public static class RetriveRegistrationDetails extends AsyncTask<Void, Void, List<UserRegistrationDetailsTable>> {
+    public static class RetrieveRegistrationDetails extends AsyncTask<Void, Void, List<UserRegistrationDetailsTable>> {
         private WeakReference<DetailsActivity> activityReference;
         String eventID;
         Boolean isTour;
 
-        RetriveRegistrationDetails(DetailsActivity context, String eventID, Boolean isTour) {
+        RetrieveRegistrationDetails(DetailsActivity context, String eventID, Boolean isTour) {
             activityReference = new WeakReference<>(context);
             this.eventID = eventID;
             this.isTour = isTour;
@@ -907,18 +879,18 @@ public class DetailsActivity extends AppCompatActivity implements IPullZoom, OnM
                                 activityReference.get().getResources().getDrawable(R.drawable.round_corner_red));
                         activityReference.get().registerButton.setText(R.string.not_interested);
                         if (count == 0) {
-                            activityReference.get().registerUregisterCount.setText(
+                            activityReference.get().registerUnregisterCount.setText(
                                     activityReference.get().getResources().getString(R.string.warning_no_seat_available));
                             activityReference.get().registerButton.setEnabled(false);
                             activityReference.get().registerButton.setText(R.string.interested);
                             activityReference.get().registerButton.setBackground(
                                     activityReference.get().getResources().getDrawable(R.drawable.rounded_corner_grey));
                         } else if (count > 1)
-                            activityReference.get().registerUregisterCount.setText(
+                            activityReference.get().registerUnregisterCount.setText(
                                     activityReference.get().getResources().getString(R.string.you_have_registered) + count +
                                             activityReference.get().getResources().getString(R.string.seats_for_this_tour));
                         else
-                            activityReference.get().registerUregisterCount.setText(
+                            activityReference.get().registerUnregisterCount.setText(
                                     activityReference.get().getResources().getString(R.string.you_have_registered) + count +
                                             activityReference.get().getResources().getString(R.string.seat_for_this_tour));
 
@@ -930,16 +902,16 @@ public class DetailsActivity extends AppCompatActivity implements IPullZoom, OnM
                                 activityReference.get().getResources().getDrawable(R.drawable.round_corner_green));
                         activityReference.get().registerButton.setText(R.string.interested);
                         if (count == 0) {
-                            activityReference.get().registerUregisterCount.setText(
+                            activityReference.get().registerUnregisterCount.setText(
                                     activityReference.get().getResources().getString(R.string.warning_no_seat_available));
                             activityReference.get().registerButton.setEnabled(false);
                             activityReference.get().registerButton.setBackground(
                                     activityReference.get().getResources().getDrawable(R.drawable.rounded_corner_grey));
                         } else if (count > 1)
-                            activityReference.get().registerUregisterCount.setText(
+                            activityReference.get().registerUnregisterCount.setText(
                                     count + activityReference.get().getResources().getString(R.string.spaces_available));
                         else
-                            activityReference.get().registerUregisterCount.setText(count +
+                            activityReference.get().registerUnregisterCount.setText(count +
                                     activityReference.get().getResources().getString(R.string.space_available));
                     }
                 } else {
@@ -949,16 +921,16 @@ public class DetailsActivity extends AppCompatActivity implements IPullZoom, OnM
                             activityReference.get().getResources().getDrawable(R.drawable.round_corner_green));
                     activityReference.get().registerButton.setText(R.string.interested);
                     if (count == 0) {
-                        activityReference.get().registerUregisterCount.setText(
+                        activityReference.get().registerUnregisterCount.setText(
                                 activityReference.get().getResources().getString(R.string.warning_no_seat_available));
                         activityReference.get().registerButton.setEnabled(false);
                         activityReference.get().registerButton.setBackground(
                                 activityReference.get().getResources().getDrawable(R.drawable.rounded_corner_grey));
                     } else if (count > 1)
-                        activityReference.get().registerUregisterCount.setText(count +
+                        activityReference.get().registerUnregisterCount.setText(count +
                                 activityReference.get().getResources().getString(R.string.spaces_available));
                     else
-                        activityReference.get().registerUregisterCount.setText(count +
+                        activityReference.get().registerUnregisterCount.setText(count +
                                 activityReference.get().getResources().getString(R.string.space_available));
                 }
             } else {
@@ -971,18 +943,18 @@ public class DetailsActivity extends AppCompatActivity implements IPullZoom, OnM
                             activityReference.get().getResources().getDrawable(R.drawable.round_corner_red));
                     activityReference.get().registerButton.setText(R.string.not_interested);
                     if (count == 0) {
-                        activityReference.get().registerUregisterCount.setText(
+                        activityReference.get().registerUnregisterCount.setText(
                                 activityReference.get().getResources().getString(R.string.warning_no_seat_available));
                         activityReference.get().registerButton.setEnabled(false);
                         activityReference.get().registerButton.setText(R.string.interested);
                         activityReference.get().registerButton.setBackground(
                                 activityReference.get().getResources().getDrawable(R.drawable.rounded_corner_grey));
                     } else if (count > 1)
-                        activityReference.get().registerUregisterCount.setText(
+                        activityReference.get().registerUnregisterCount.setText(
                                 activityReference.get().getResources().getString(R.string.you_have_registered) + count +
                                         activityReference.get().getResources().getString(R.string.seats_for_this_tour));
                     else
-                        activityReference.get().registerUregisterCount.setText(
+                        activityReference.get().registerUnregisterCount.setText(
                                 activityReference.get().getResources().getString(R.string.you_have_registered) + count +
                                         activityReference.get().getResources().getString(R.string.seat_for_this_tour));
 
@@ -993,16 +965,16 @@ public class DetailsActivity extends AppCompatActivity implements IPullZoom, OnM
                             activityReference.get().getResources().getDrawable(R.drawable.round_corner_green));
                     activityReference.get().registerButton.setText(R.string.interested);
                     if (count == 0) {
-                        activityReference.get().registerUregisterCount.setText(
+                        activityReference.get().registerUnregisterCount.setText(
                                 activityReference.get().getResources().getString(R.string.warning_no_seat_available));
                         activityReference.get().registerButton.setEnabled(false);
                         activityReference.get().registerButton.setBackground(
                                 activityReference.get().getResources().getDrawable(R.drawable.rounded_corner_grey));
                     } else if (count > 1)
-                        activityReference.get().registerUregisterCount.setText(count +
+                        activityReference.get().registerUnregisterCount.setText(count +
                                 activityReference.get().getResources().getString(R.string.spaces_available));
                     else
-                        activityReference.get().registerUregisterCount.setText(count +
+                        activityReference.get().registerUnregisterCount.setText(count +
                                 activityReference.get().getResources().getString(R.string.space_available));
                 }
             }
@@ -1025,29 +997,29 @@ public class DetailsActivity extends AppCompatActivity implements IPullZoom, OnM
 
     private void getCommonListAPIDataFromDatabase(String id, int appLanguage) {
         if (appLanguage == 1) {
-            new RetriveEnglishPublicArtsData(DetailsActivity.this, appLanguage, id).execute();
+            new RetrieveEnglishPublicArtsData(DetailsActivity.this, appLanguage, id).execute();
         } else {
-            new RetriveArabicPublicArtsData(DetailsActivity.this, appLanguage, id).execute();
+            new RetrieveArabicPublicArtsData(DetailsActivity.this, appLanguage, id).execute();
         }
     }
 
     private void getHeritageAPIDataFromDatabase(String id, int appLanguage) {
         if (appLanguage == 1) {
-            new RetriveEnglishHeritageData(DetailsActivity.this, appLanguage, id).execute();
+            new RetrieveEnglishHeritageData(DetailsActivity.this, appLanguage, id).execute();
         } else {
-            new RetriveArabicHeritageData(DetailsActivity.this, appLanguage, id).execute();
+            new RetrieveArabicHeritageData(DetailsActivity.this, appLanguage, id).execute();
         }
     }
 
     private void getExhibitionAPIDataFromDatabase(String id, int appLanguage) {
         if (appLanguage == 1) {
-            new RetriveEnglishExhibitionData(DetailsActivity.this, appLanguage, id).execute();
+            new RetrieveEnglishExhibitionData(DetailsActivity.this, appLanguage, id).execute();
         } else {
-            new RetriveArabicExhibitionData(DetailsActivity.this, appLanguage, id).execute();
+            new RetrieveArabicExhibitionData(DetailsActivity.this, appLanguage, id).execute();
         }
     }
 
-    private String convertDegreetoDecimalMeasure(String degreeValue) {
+    private String convertDegreeToDecimalMeasure(String degreeValue) {
         String value = degreeValue.trim();
         String[] latParts = value.split("°");
         float degree = Float.parseFloat(latParts[0]);
@@ -1066,19 +1038,14 @@ public class DetailsActivity extends AppCompatActivity implements IPullZoom, OnM
     }
 
     private void initViews() {
-        frameLayout = (FrameLayout) findViewById(R.id.fragment_frame);
-        coordinatorLayout = (PullToZoomCoordinatorLayout) findViewById(R.id.main_content);
+        frameLayout = findViewById(R.id.fragment_frame);
+        PullToZoomCoordinatorLayout coordinatorLayout = findViewById(R.id.main_content);
         zoomView = findViewById(R.id.header_img);
-        appBarLayout = (AppBarLayout) findViewById(R.id.app_bar);
+        AppBarLayout appBarLayout = findViewById(R.id.app_bar);
 
         coordinatorLayout.setPullZoom(zoomView, PixelUtil.dp2px(this, 232),
                 PixelUtil.dp2px(this, 332), this);
-        appBarLayout.addOnOffsetChangedListener(new AppBarLayout.OnOffsetChangedListener() {
-            @Override
-            public void onOffsetChanged(AppBarLayout appBarLayout, int verticalOffset) {
-                headerOffSetSize = verticalOffset;
-            }
-        });
+        appBarLayout.addOnOffsetChangedListener((appBarLayout1, verticalOffset) -> headerOffSetSize = verticalOffset);
     }
 
     public void showCarouselView() {
@@ -1110,15 +1077,15 @@ public class DetailsActivity extends AppCompatActivity implements IPullZoom, OnM
     public void loadData(String subTitle, String shortDescription, String longDescription,
                          String secondTitle, String secondTitleDescription, String openingTime,
                          String closingTime, String locationInfo, String contactNumber, String contactMail,
-                         String latitudefromApi, String longitudefromApi, boolean museumAboutStatus, String videoFile) {
+                         String latitudeFromApi, String longitudeFromApi, boolean museumAboutStatus, String videoFile) {
         if (shortDescription != null) {
             commonContentLayout.setVisibility(View.VISIBLE);
             retryLayout.setVisibility(View.GONE);
             progressBar.setVisibility(View.GONE);
             this.title.setText(mainTitle);
             if (museumAboutStatus) {
-                latitude = latitudefromApi;
-                longitude = longitudefromApi;
+                latitude = latitudeFromApi;
+                longitude = longitudeFromApi;
             } else {
                 latitude = intent.getStringExtra("LATITUDE");
                 longitude = intent.getStringExtra("LONGITUDE");
@@ -1182,20 +1149,20 @@ public class DetailsActivity extends AppCompatActivity implements IPullZoom, OnM
             }
             if (latitude != null) {
                 if (latitude.contains("°")) {
-                    latitude = convertDegreetoDecimalMeasure(latitude);
-                    longitude = convertDegreetoDecimalMeasure(longitude);
+                    latitude = convertDegreeToDecimalMeasure(latitude);
+                    longitude = convertDegreeToDecimalMeasure(longitude);
                 }
             }
-            if (latitude != null && !latitude.equals("") && gvalue != null) {
-                gmap = gvalue;
-                gmap.setMinZoomPreference(12);
+            if (latitude != null && !latitude.equals("") && gValue != null) {
+                gMap = gValue;
+                gMap.setMinZoomPreference(12);
                 LatLng ny = new LatLng(Double.valueOf(latitude), Double.valueOf(longitude));
-                UiSettings uiSettings = gmap.getUiSettings();
+                UiSettings uiSettings = gMap.getUiSettings();
                 uiSettings.setMyLocationButtonEnabled(true);
                 MarkerOptions markerOptions = new MarkerOptions();
                 markerOptions.position(ny);
-                gmap.addMarker(markerOptions);
-                gmap.moveCamera(CameraUpdateFactory.newLatLng(ny));
+                gMap.addMarker(markerOptions);
+                gMap.moveCamera(CameraUpdateFactory.newLatLng(ny));
             }
         } else {
             progressBar.setVisibility(View.GONE);
@@ -1272,21 +1239,21 @@ public class DetailsActivity extends AppCompatActivity implements IPullZoom, OnM
             }
             if (latitude != null) {
                 if (latitude.contains("°")) {
-                    latitude = convertDegreetoDecimalMeasure(latitude);
-                    longitude = convertDegreetoDecimalMeasure(longitude);
+                    latitude = convertDegreeToDecimalMeasure(latitude);
+                    longitude = convertDegreeToDecimalMeasure(longitude);
 
                 }
             }
             if (latitude != null && !latitude.equals("")) {
-                gmap = gvalue;
-                gmap.setMinZoomPreference(12);
+                gMap = gValue;
+                gMap.setMinZoomPreference(12);
                 LatLng ny = new LatLng(Double.valueOf(latitude), Double.valueOf(longitude));
-                UiSettings uiSettings = gmap.getUiSettings();
+                UiSettings uiSettings = gMap.getUiSettings();
                 uiSettings.setMyLocationButtonEnabled(true);
                 MarkerOptions markerOptions = new MarkerOptions();
                 markerOptions.position(ny);
-                gmap.addMarker(markerOptions);
-                gmap.moveCamera(CameraUpdateFactory.newLatLng(ny));
+                gMap.addMarker(markerOptions);
+                gMap.moveCamera(CameraUpdateFactory.newLatLng(ny));
             }
 
         } else {
@@ -1365,11 +1332,11 @@ public class DetailsActivity extends AppCompatActivity implements IPullZoom, OnM
                         registrationDetailsModel = response.body();
                         seatsCount = Integer.parseInt(registrationDetailsModel.getRegistrationCount());
                         if (seatsCount > 1)
-                            registerUregisterCount.setText(
+                            registerUnregisterCount.setText(
                                     getResources().getString(R.string.you_have_registered) + seatsCount +
                                             getResources().getString(R.string.seats_for_this_tour));
                         else
-                            registerUregisterCount.setText(
+                            registerUnregisterCount.setText(
                                     getResources().getString(R.string.you_have_registered) + seatsCount +
                                             getResources().getString(R.string.seat_for_this_tour));
 
@@ -1401,9 +1368,9 @@ public class DetailsActivity extends AppCompatActivity implements IPullZoom, OnM
         layoutInflater = (LayoutInflater) getSystemService(LAYOUT_INFLATER_SERVICE);
         View view = layoutInflater.inflate(R.layout.registration_success_popup, null);
         dialog.setContentView(view);
-        closeBtn = (ImageView) view.findViewById(R.id.close_dialog);
-        dialogActionButton = (Button) view.findViewById(R.id.doneBtn);
-        dialogContent = (TextView) view.findViewById(R.id.dialog_content);
+        closeBtn = view.findViewById(R.id.close_dialog);
+        dialogActionButton = view.findViewById(R.id.doneBtn);
+        dialogContent = view.findViewById(R.id.dialog_content);
 
         dialogActionButton.setText(getResources().getString(R.string.add_to_calendar));
         dialogContent.setText(getResources().getString(R.string.thankyou_interest));
@@ -1423,8 +1390,8 @@ public class DetailsActivity extends AppCompatActivity implements IPullZoom, OnM
         SimpleDateFormat formatter = new SimpleDateFormat("MM/dd/yyyy HH:mm");
         Date startDate = null, endDate = null;
         try {
-            startDate = (Date) formatter.parse(dateTimeArray[0].trim() + " " + dateTimeArray[1].trim());
-            endDate = (Date) formatter.parse(dateTimeArray[0].trim() + " " + dateTimeArray[2].trim());
+            startDate = formatter.parse(dateTimeArray[0].trim() + " " + dateTimeArray[1].trim());
+            endDate = formatter.parse(dateTimeArray[0].trim() + " " + dateTimeArray[2].trim());
         } catch (ParseException e) {
             e.printStackTrace();
         }
@@ -1441,7 +1408,7 @@ public class DetailsActivity extends AppCompatActivity implements IPullZoom, OnM
             if (ContextCompat.checkSelfPermission(this,
                     Manifest.permission.WRITE_CALENDAR)
                     != PackageManager.PERMISSION_GRANTED) {
-                ActivityCompat.requestPermissions((DetailsActivity) this,
+                ActivityCompat.requestPermissions(this,
                         new String[]{Manifest.permission.WRITE_CALENDAR, Manifest.permission.READ_CALENDAR},
                         MY_PERMISSIONS_REQUEST_CALENDAR);
 
@@ -1456,6 +1423,7 @@ public class DetailsActivity extends AppCompatActivity implements IPullZoom, OnM
     public void insertEventToCalendar() {
         try {
             contentValues.put(CalendarContract.Events.CALENDAR_ID, getCalendarId(this));
+            @SuppressLint("MissingPermission")
             Uri uri = contentResolver.insert(CalendarContract.Events.CONTENT_URI, contentValues);
             Toast.makeText(this, R.string.event_added, Toast.LENGTH_SHORT).show();
         } catch (Exception ex) {
@@ -1538,10 +1506,10 @@ public class DetailsActivity extends AppCompatActivity implements IPullZoom, OnM
         View view = layoutInflater.inflate(R.layout.common_popup, null);
 
         dialog.setContentView(view);
-        closeBtn = (ImageView) view.findViewById(R.id.close_dialog);
-        dialogActionButton = (Button) view.findViewById(R.id.doneBtn);
-        dialogTitle = (TextView) view.findViewById(R.id.dialog_tittle);
-        dialogContent = (TextView) view.findViewById(R.id.dialog_content);
+        closeBtn = view.findViewById(R.id.close_dialog);
+        dialogActionButton = view.findViewById(R.id.doneBtn);
+        TextView dialogTitle = view.findViewById(R.id.dialog_tittle);
+        dialogContent = view.findViewById(R.id.dialog_content);
         dialogTitle.setText(title);
         dialogActionButton.setText(getResources().getString(R.string.open_settings));
         dialogContent.setText(details);
@@ -1599,15 +1567,15 @@ public class DetailsActivity extends AppCompatActivity implements IPullZoom, OnM
                     registerButton.setText(R.string.interested);
                     seatsCount = Integer.parseInt(seatsRemaining);
                     if (seatsCount == 0) {
-                        registerUregisterCount.setText(
+                        registerUnregisterCount.setText(
                                 getResources().getString(R.string.warning_no_seat_available));
                         registerButton.setEnabled(false);
                         registerButton.setBackground(getResources().getDrawable(R.drawable.rounded_corner_grey));
                     } else if (seatsCount > 1)
-                        registerUregisterCount.setText(seatsCount +
+                        registerUnregisterCount.setText(seatsCount +
                                 getResources().getString(R.string.spaces_available));
                     else
-                        registerUregisterCount.setText(seatsCount +
+                        registerUnregisterCount.setText(seatsCount +
                                 getResources().getString(R.string.space_available));
 
 
@@ -1631,14 +1599,14 @@ public class DetailsActivity extends AppCompatActivity implements IPullZoom, OnM
         progressBar.setVisibility(View.VISIBLE);
         final String appLanguage;
         if (language == 1) {
-            appLanguage = "en";
+            appLanguage = LocaleManager.LANGUAGE_ENGLISH;
         } else {
-            appLanguage = "ar";
+            appLanguage = LocaleManager.LANGUAGE_ARABIC;
         }
 
         APIInterface apiService =
                 APIClient.getClient().create(APIInterface.class);
-        Call<ArrayList<HeritageOrExhibitionDetailModel>> call = apiService.getHeritageOrExhebitionDetails(appLanguage,
+        Call<ArrayList<HeritageOrExhibitionDetailModel>> call = apiService.getHeritageOrExhibitionDetails(appLanguage,
                 pageName, id);
         call.enqueue(new Callback<ArrayList<HeritageOrExhibitionDetailModel>>() {
             @Override
@@ -1713,7 +1681,8 @@ public class DetailsActivity extends AppCompatActivity implements IPullZoom, OnM
             ads.add(new Page("", imageList.get(0),
                     null));
         }
-        glideLoader = new GlideLoaderForMuseum();
+        GlideLoaderForMuseum glideLoader = new GlideLoaderForMuseum();
+        IndicatorConfiguration configuration;
         if (language == 1)
             configuration = new IndicatorConfiguration.Builder()
                     .imageLoader(glideLoader)
@@ -1751,18 +1720,18 @@ public class DetailsActivity extends AppCompatActivity implements IPullZoom, OnM
 
     @Override
     public void onMapReady(GoogleMap googleMap) {
-        gvalue = googleMap;
+        gValue = googleMap;
         googleMap.getUiSettings().setMapToolbarEnabled(false);
         if (latitude != null && !latitude.equals("")) {
-            gmap = gvalue;
-            gmap.setMinZoomPreference(12);
+            gMap = gValue;
+            gMap.setMinZoomPreference(12);
             LatLng ny = new LatLng(Double.valueOf(latitude), Double.valueOf(longitude));
-            UiSettings uiSettings = gmap.getUiSettings();
+            UiSettings uiSettings = gMap.getUiSettings();
             uiSettings.setMyLocationButtonEnabled(true);
             MarkerOptions markerOptions = new MarkerOptions();
             markerOptions.position(ny);
-            gmap.addMarker(markerOptions);
-            gmap.moveCamera(CameraUpdateFactory.newLatLng(ny));
+            gMap.addMarker(markerOptions);
+            gMap.moveCamera(CameraUpdateFactory.newLatLng(ny));
         }
     }
 
@@ -1794,7 +1763,7 @@ public class DetailsActivity extends AppCompatActivity implements IPullZoom, OnM
 
         @Override
         protected Integer doInBackground(Void... voids) {
-            if (language.equals("en")) {
+            if (language.equals(LocaleManager.LANGUAGE_ENGLISH)) {
                 return activityReference.get().qmDatabase.getExhibitionTableDao().getNumberOfRowsEnglish();
             } else {
                 return activityReference.get().qmDatabase.getExhibitionTableDao().getNumberOfRowsArabic();
@@ -1825,7 +1794,7 @@ public class DetailsActivity extends AppCompatActivity implements IPullZoom, OnM
         @Override
         protected Void doInBackground(Void... voids) {
             if (activityReference.get().heritageOrExhibitionDetailModel.size() > 0) {
-                if (language.equals("en")) {
+                if (language.equals(LocaleManager.LANGUAGE_ENGLISH)) {
                     for (int i = 0; i < activityReference.get().heritageOrExhibitionDetailModel.size(); i++) {
                         int n = activityReference.get().qmDatabase.getExhibitionTableDao().checkEnglishIdExist(
                                 Integer.parseInt(activityReference.get().heritageOrExhibitionDetailModel.get(i).getId()));
@@ -1876,7 +1845,7 @@ public class DetailsActivity extends AppCompatActivity implements IPullZoom, OnM
         @Override
         protected Void doInBackground(Void... voids) {
             Convertor converters = new Convertor();
-            if (language.equals("en")) {
+            if (language.equals(LocaleManager.LANGUAGE_ENGLISH)) {
                 // updateEnglishTable table with english name
 
                 activityReference.get().qmDatabase.getExhibitionTableDao().updateExhibitionDetailEnglish(
@@ -1908,13 +1877,13 @@ public class DetailsActivity extends AppCompatActivity implements IPullZoom, OnM
         }
     }
 
-    public static class RetriveEnglishExhibitionData extends AsyncTask<Void, Void, List<ExhibitionListTableEnglish>> {
+    public static class RetrieveEnglishExhibitionData extends AsyncTask<Void, Void, List<ExhibitionListTableEnglish>> {
 
         private WeakReference<DetailsActivity> activityReference;
         int language;
         String exhibitionId;
 
-        RetriveEnglishExhibitionData(DetailsActivity context, int appLanguage, String id) {
+        RetrieveEnglishExhibitionData(DetailsActivity context, int appLanguage, String id) {
             activityReference = new WeakReference<>(context);
             language = appLanguage;
             exhibitionId = id;
@@ -1965,13 +1934,13 @@ public class DetailsActivity extends AppCompatActivity implements IPullZoom, OnM
         }
     }
 
-    public static class RetriveArabicExhibitionData extends AsyncTask<Void, Void, List<ExhibitionListTableArabic>> {
+    public static class RetrieveArabicExhibitionData extends AsyncTask<Void, Void, List<ExhibitionListTableArabic>> {
 
         private WeakReference<DetailsActivity> activityReference;
         int language;
         String heritageId;
 
-        RetriveArabicExhibitionData(DetailsActivity context, int appLanguage, String id) {
+        RetrieveArabicExhibitionData(DetailsActivity context, int appLanguage, String id) {
             activityReference = new WeakReference<>(context);
             language = appLanguage;
             heritageId = id;
@@ -2048,7 +2017,7 @@ public class DetailsActivity extends AppCompatActivity implements IPullZoom, OnM
 
         @Override
         protected Integer doInBackground(Void... voids) {
-            if (language.equals("en")) {
+            if (language.equals(LocaleManager.LANGUAGE_ENGLISH)) {
                 return activityReference.get().qmDatabase.getHeritageListTableDao().getNumberOfRowsEnglish();
             } else {
                 return activityReference.get().qmDatabase.getHeritageListTableDao().getNumberOfRowsArabic();
@@ -2080,7 +2049,7 @@ public class DetailsActivity extends AppCompatActivity implements IPullZoom, OnM
         @Override
         protected Void doInBackground(Void... voids) {
             if (activityReference.get().heritageOrExhibitionDetailModel.size() > 0) {
-                if (language.equals("en")) {
+                if (language.equals(LocaleManager.LANGUAGE_ENGLISH)) {
                     for (int i = 0; i < activityReference.get().heritageOrExhibitionDetailModel.size(); i++) {
                         int n = activityReference.get().qmDatabase.getHeritageListTableDao().checkEnglishIdExist(
                                 Integer.parseInt(activityReference.get().heritageOrExhibitionDetailModel.get(i).getId()));
@@ -2131,7 +2100,7 @@ public class DetailsActivity extends AppCompatActivity implements IPullZoom, OnM
         @Override
         protected Void doInBackground(Void... voids) {
             Convertor convertor = new Convertor();
-            if (language.equals("en")) {
+            if (language.equals(LocaleManager.LANGUAGE_ENGLISH)) {
                 // updateEnglishTable table with english name
                 activityReference.get().qmDatabase.getHeritageListTableDao().updateHeritageDetailEnglish(
                         activityReference.get().latitude, activityReference.get().longitude,
@@ -2155,13 +2124,13 @@ public class DetailsActivity extends AppCompatActivity implements IPullZoom, OnM
         }
     }
 
-    public static class RetriveEnglishHeritageData extends AsyncTask<Void, Void, List<HeritageListTableEnglish>> {
+    public static class RetrieveEnglishHeritageData extends AsyncTask<Void, Void, List<HeritageListTableEnglish>> {
 
         private WeakReference<DetailsActivity> activityReference;
         int language;
         String heritageId;
 
-        RetriveEnglishHeritageData(DetailsActivity context, int appLanguage, String id) {
+        RetrieveEnglishHeritageData(DetailsActivity context, int appLanguage, String id) {
             activityReference = new WeakReference<>(context);
             language = appLanguage;
             heritageId = id;
@@ -2208,13 +2177,13 @@ public class DetailsActivity extends AppCompatActivity implements IPullZoom, OnM
         }
     }
 
-    public static class RetriveArabicHeritageData extends AsyncTask<Void, Void, List<HeritageListTableArabic>> {
+    public static class RetrieveArabicHeritageData extends AsyncTask<Void, Void, List<HeritageListTableArabic>> {
 
         private WeakReference<DetailsActivity> activityReference;
         int language;
         String heritageId;
 
-        RetriveArabicHeritageData(DetailsActivity context, int appLanguage, String id) {
+        RetrieveArabicHeritageData(DetailsActivity context, int appLanguage, String id) {
             activityReference = new WeakReference<>(context);
             language = appLanguage;
             heritageId = id;
@@ -2268,9 +2237,9 @@ public class DetailsActivity extends AppCompatActivity implements IPullZoom, OnM
         progressBar.setVisibility(View.VISIBLE);
         final String language;
         if (appLanguage == 1) {
-            language = "en";
+            language = LocaleManager.LANGUAGE_ENGLISH;
         } else {
-            language = "ar";
+            language = LocaleManager.LANGUAGE_ARABIC;
         }
         APIInterface apiService =
                 APIClient.getClient().create(APIInterface.class);
@@ -2347,7 +2316,7 @@ public class DetailsActivity extends AppCompatActivity implements IPullZoom, OnM
 
         @Override
         protected Integer doInBackground(Void... voids) {
-            if (language.equals("en")) {
+            if (language.equals(LocaleManager.LANGUAGE_ENGLISH)) {
                 return activityReference.get().qmDatabase.getPublicArtsTableDao().getNumberOfRowsEnglish();
             } else {
                 return activityReference.get().qmDatabase.getPublicArtsTableDao().getNumberOfRowsArabic();
@@ -2382,7 +2351,7 @@ public class DetailsActivity extends AppCompatActivity implements IPullZoom, OnM
         @Override
         protected Void doInBackground(Void... voids) {
             if (activityReference.get().publicArtModel.size() > 0) {
-                if (language.equals("en")) {
+                if (language.equals(LocaleManager.LANGUAGE_ENGLISH)) {
                     for (int i = 0; i < activityReference.get().publicArtModel.size(); i++) {
                         int n = activityReference.get().qmDatabase.getPublicArtsTableDao().checkEnglishIdExist(
                                 Integer.parseInt(activityReference.get().publicArtModel.get(i).getId()));
@@ -2434,7 +2403,7 @@ public class DetailsActivity extends AppCompatActivity implements IPullZoom, OnM
         @Override
         protected Void doInBackground(Void... voids) {
             Convertor converters = new Convertor();
-            if (language.equals("en")) {
+            if (language.equals(LocaleManager.LANGUAGE_ENGLISH)) {
                 // updateEnglishTable table with english name
                 activityReference.get().qmDatabase.getPublicArtsTableDao().updatePublicArtsDetailEnglish(
                         activityReference.get().publicArtModel.get(position).getName(),
@@ -2460,13 +2429,13 @@ public class DetailsActivity extends AppCompatActivity implements IPullZoom, OnM
         }
     }
 
-    public static class RetriveEnglishPublicArtsData extends AsyncTask<Void, Void, List<PublicArtsTableEnglish>> {
+    public static class RetrieveEnglishPublicArtsData extends AsyncTask<Void, Void, List<PublicArtsTableEnglish>> {
 
         private WeakReference<DetailsActivity> activityReference;
         int language;
         String publicArtsId;
 
-        RetriveEnglishPublicArtsData(DetailsActivity context, int appLanguage, String id) {
+        RetrieveEnglishPublicArtsData(DetailsActivity context, int appLanguage, String id) {
             activityReference = new WeakReference<>(context);
             language = appLanguage;
             publicArtsId = id;
@@ -2517,13 +2486,13 @@ public class DetailsActivity extends AppCompatActivity implements IPullZoom, OnM
         }
     }
 
-    public static class RetriveArabicPublicArtsData extends AsyncTask<Void, Void, List<PublicArtsTableArabic>> {
+    public static class RetrieveArabicPublicArtsData extends AsyncTask<Void, Void, List<PublicArtsTableArabic>> {
 
         private WeakReference<DetailsActivity> activityReference;
         int language;
         String publicArtsId;
 
-        RetriveArabicPublicArtsData(DetailsActivity context, int appLanguage, String id) {
+        RetrieveArabicPublicArtsData(DetailsActivity context, int appLanguage, String id) {
             activityReference = new WeakReference<>(context);
             language = appLanguage;
             publicArtsId = id;
@@ -2580,9 +2549,9 @@ public class DetailsActivity extends AppCompatActivity implements IPullZoom, OnM
         Call<ArrayList<MuseumAboutModel>> call;
         final String language;
         if (appLanguage == 1) {
-            language = "en";
+            language = LocaleManager.LANGUAGE_ENGLISH;
         } else {
-            language = "ar";
+            language = LocaleManager.LANGUAGE_ARABIC;
         }
         APIInterface apiService =
                 APIClient.getClient().create(APIInterface.class);
@@ -2718,7 +2687,7 @@ public class DetailsActivity extends AppCompatActivity implements IPullZoom, OnM
     public void getMuseumAboutDetailsFromDatabase(String id, int language, boolean isLaunchEvent) {
         if (language == 1) {
             progressBar.setVisibility(View.VISIBLE);
-            new RetriveMuseumAboutDataEnglish(DetailsActivity.this, language, id, isLaunchEvent).execute();
+            new RetrieveMuseumAboutDataEnglish(DetailsActivity.this, language, id, isLaunchEvent).execute();
         } else {
             new RetriveMuseumAboutDataArabic(DetailsActivity.this, language, id, isLaunchEvent).execute();
         }
@@ -2747,7 +2716,6 @@ public class DetailsActivity extends AppCompatActivity implements IPullZoom, OnM
                 //updateEnglishTable or add row to database
                 new CheckMuseumAboutDBRowExist(activityReference.get(), language).execute();
             } else {
-                //create databse
                 new InsertMuseumAboutDatabaseTask(activityReference.get(), activityReference.get().museumAboutTableEnglish,
                         activityReference.get().museumAboutTableArabic, language).execute();
 
@@ -2756,7 +2724,7 @@ public class DetailsActivity extends AppCompatActivity implements IPullZoom, OnM
 
         @Override
         protected Integer doInBackground(Void... voids) {
-            if (language.equals("en")) {
+            if (language.equals(LocaleManager.LANGUAGE_ENGLISH)) {
                 return activityReference.get().qmDatabase.getMuseumAboutDao().getNumberOfRowsEnglish();
             } else {
                 return activityReference.get().qmDatabase.getMuseumAboutDao().getNumberOfRowsArabic();
@@ -2791,7 +2759,7 @@ public class DetailsActivity extends AppCompatActivity implements IPullZoom, OnM
         @Override
         protected Void doInBackground(Void... voids) {
             if (activityReference.get().museumAboutModels.size() > 0) {
-                if (language.equals("en")) {
+                if (language.equals(LocaleManager.LANGUAGE_ENGLISH)) {
                     for (int i = 0; i < activityReference.get().museumAboutModels.size(); i++) {
                         int n = activityReference.get().qmDatabase.getMuseumAboutDao().checkEnglishIdExist(
                                 Integer.parseInt(activityReference.get().museumAboutModels.get(i).getMuseumId()));
@@ -2872,7 +2840,7 @@ public class DetailsActivity extends AppCompatActivity implements IPullZoom, OnM
         protected Boolean doInBackground(Void... voids) {
             if (activityReference.get().museumAboutModels != null) {
                 Convertor converters = new Convertor();
-                if (language.equals("en")) {
+                if (language.equals(LocaleManager.LANGUAGE_ENGLISH)) {
                     for (int i = 0; i < activityReference.get().museumAboutModels.size(); i++) {
                         museumAboutTableEnglish = new MuseumAboutTableEnglish(
                                 activityReference.get().museumAboutModels.get(i).getName(),
@@ -2948,7 +2916,7 @@ public class DetailsActivity extends AppCompatActivity implements IPullZoom, OnM
         @Override
         protected Void doInBackground(Void... voids) {
             Convertor converters = new Convertor();
-            if (language.equals("en")) {
+            if (language.equals(LocaleManager.LANGUAGE_ENGLISH)) {
                 // updateEnglishTable table with english name
                 activityReference.get().qmDatabase.getMuseumAboutDao().updateMuseumAboutDataEnglish(
                         activityReference.get().museumAboutModels.get(position).getName(),
@@ -2986,13 +2954,13 @@ public class DetailsActivity extends AppCompatActivity implements IPullZoom, OnM
         }
     }
 
-    public static class RetriveMuseumAboutDataEnglish extends AsyncTask<Void, Void, MuseumAboutTableEnglish> {
+    public static class RetrieveMuseumAboutDataEnglish extends AsyncTask<Void, Void, MuseumAboutTableEnglish> {
         private WeakReference<DetailsActivity> activityReference;
         int language;
         String museumId;
         boolean isLaunchEvent;
 
-        RetriveMuseumAboutDataEnglish(DetailsActivity context, int appLanguage, String museumId, boolean isLaunchEvent) {
+        RetrieveMuseumAboutDataEnglish(DetailsActivity context, int appLanguage, String museumId, boolean isLaunchEvent) {
             activityReference = new WeakReference<>(context);
             language = appLanguage;
             this.museumId = museumId;

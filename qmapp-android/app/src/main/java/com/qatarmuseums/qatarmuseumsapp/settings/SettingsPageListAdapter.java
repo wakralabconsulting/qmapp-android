@@ -1,29 +1,19 @@
 package com.qatarmuseums.qatarmuseumsapp.settings;
 
-import android.content.Context;
 import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SwitchCompat;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.TextView;
 
 import com.qatarmuseums.qatarmuseumsapp.R;
 
 import java.util.List;
 
-import butterknife.BindView;
-import butterknife.ButterKnife;
-
-/**
- * Created by Exalture on 23-07-2018.
- */
 
 public class SettingsPageListAdapter extends RecyclerView.Adapter<SettingsPageListAdapter.MyViewHolder> {
-    private Context mContext;
     private List<SettingsPageModel> settingsPageModelList;
 
     @NonNull
@@ -53,13 +43,12 @@ public class SettingsPageListAdapter extends RecyclerView.Adapter<SettingsPageLi
 
         public MyViewHolder(View view) {
             super(view);
-            settingsItemName = (TextView) view.findViewById(R.id.settings_page_item_name);
-            settingsItemStatusBtn = (SwitchCompat) view.findViewById(R.id.settings_page_item_status_btn);
+            settingsItemName = view.findViewById(R.id.settings_page_item_name);
+            settingsItemStatusBtn = view.findViewById(R.id.settings_page_item_status_btn);
         }
     }
 
-    public SettingsPageListAdapter(Context context, List<SettingsPageModel> settingsPageModelList) {
-        this.mContext = context;
+    SettingsPageListAdapter(List<SettingsPageModel> settingsPageModelList) {
         this.settingsPageModelList = settingsPageModelList;
     }
 }

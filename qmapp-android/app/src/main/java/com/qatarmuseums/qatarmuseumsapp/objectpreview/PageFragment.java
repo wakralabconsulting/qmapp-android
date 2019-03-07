@@ -35,8 +35,13 @@ import io.fabric.sdk.android.services.concurrency.AsyncTask;
 public class PageFragment extends Fragment implements SeekBar.OnSeekBarChangeListener,
         MediaPlayer.OnBufferingUpdateListener, MediaPlayer.OnCompletionListener, ViewPager.OnPageChangeListener {
 
-    private TextView positionInfo, artifactName, acessionText, shortDescription, image1Description,
-            historyTitle, historyDescription, image2Description;
+    private TextView positionInfo;
+    private TextView artifactName;
+    private TextView accessionText;
+    private TextView shortDescription;
+    private TextView historyTitle;
+    private TextView historyDescription;
+    private TextView image2Description;
     ImageView image1, image2, image3, image4, playButton;
     private SeekBar seekBar;
     private ImageView mainImageView;
@@ -49,12 +54,7 @@ public class PageFragment extends Fragment implements SeekBar.OnSeekBarChangeLis
     private MediaPlayer mediaPlayer;
     private int lengthOfAudio;
     private final Handler handler = new Handler();
-    private final Runnable r = new Runnable() {
-        @Override
-        public void run() {
-            updateSeekProgress();
-        }
-    };
+    private final Runnable r = this::updateSeekProgress;
     private Util utils;
     ViewPager pager;
 
@@ -92,14 +92,9 @@ public class PageFragment extends Fragment implements SeekBar.OnSeekBarChangeLis
         positionInfo = view.findViewById(R.id.floor_gallery);
 
         mainImageView = view.findViewById(R.id.image_to_zoom);
-        mainImageView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                openDialogForZoomingImage();
-            }
-        });
+        mainImageView.setOnClickListener(view1 -> openDialogForZoomingImage());
         artifactName = view.findViewById(R.id.title);
-        acessionText = view.findViewById(R.id.acession_number);
+        accessionText = view.findViewById(R.id.acession_number);
         shortDescription = view.findViewById(R.id.short_description);
         historyTitle = view.findViewById(R.id.history_title);
         historyDescription = view.findViewById(R.id.history_description);
@@ -107,7 +102,6 @@ public class PageFragment extends Fragment implements SeekBar.OnSeekBarChangeLis
         image2 = view.findViewById(R.id.image_2);
         image3 = view.findViewById(R.id.image_3);
         image4 = view.findViewById(R.id.image_4);
-        image1Description = view.findViewById(R.id.image_desc1);
         image2Description = view.findViewById(R.id.image_desc2);
         audioControlLayout = view.findViewById(R.id.audio_control);
         playButton = view.findViewById(R.id.play_button);
@@ -138,7 +132,7 @@ public class PageFragment extends Fragment implements SeekBar.OnSeekBarChangeLis
         if (audioURL != null && !audioURL.equals(""))
             audioControlLayout.setVisibility(View.VISIBLE);
         artifactName.setText(title);
-        acessionText.setText(getArguments().getString("ACCESIONNUMBER"));
+        accessionText.setText(getArguments().getString("ACCESIONNUMBER"));
         GlideApp.with(this)
                 .load(mainImage)
                 .centerInside()
@@ -179,7 +173,7 @@ public class PageFragment extends Fragment implements SeekBar.OnSeekBarChangeLis
         initialize_Controls();
     }
 
-    private boolean checkNetworkAvailable(){
+    private boolean checkNetworkAvailable() {
         ConnectivityManager connectivityManager
                 = (ConnectivityManager) getContext().getSystemService(Context.CONNECTIVITY_SERVICE);
         NetworkInfo activeNetworkInfo = connectivityManager.getActiveNetworkInfo();
@@ -194,31 +188,28 @@ public class PageFragment extends Fragment implements SeekBar.OnSeekBarChangeLis
 
         seekBar.setOnSeekBarChangeListener(this);
 
-        playButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (checkNetworkAvailable()) {
-                    if (!playPause) {
-                        playButton.setImageDrawable(getContext().getDrawable(R.drawable.pause_black));
-                        if (initialStage) {
-                            new Player().execute(audioURL);
-                        } else {
-                            if (!mediaPlayer.isPlaying()) {
-                                playAudio();
-                                updateSeekProgress();
-                            }
-                        }
-                        playPause = true;
+        playButton.setOnClickListener(v -> {
+            if (checkNetworkAvailable()) {
+                if (!playPause) {
+                    playButton.setImageDrawable(getContext().getDrawable(R.drawable.pause_black));
+                    if (initialStage) {
+                        new Player().execute(audioURL);
                     } else {
-                        playButton.setImageDrawable(getContext().getDrawable(R.drawable.play_black));
-                        if (mediaPlayer.isPlaying()) {
-                            pauseAudio();
+                        if (!mediaPlayer.isPlaying()) {
+                            playAudio();
+                            updateSeekProgress();
                         }
-                        playPause = false;
                     }
+                    playPause = true;
                 } else {
-                    Toast.makeText(getActivity(), R.string.check_network, Toast.LENGTH_SHORT).show();
+                    playButton.setImageDrawable(getContext().getDrawable(R.drawable.play_black));
+                    if (mediaPlayer.isPlaying()) {
+                        pauseAudio();
+                    }
+                    playPause = false;
                 }
+            } else {
+                Toast.makeText(getActivity(), R.string.check_network, Toast.LENGTH_SHORT).show();
             }
         });
         mediaPlayer = new MediaPlayer();

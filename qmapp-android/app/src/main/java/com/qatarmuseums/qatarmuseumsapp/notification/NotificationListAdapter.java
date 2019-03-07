@@ -24,12 +24,9 @@ import java.util.List;
 
 public class NotificationListAdapter extends RecyclerView.Adapter<NotificationListAdapter.MyViewHolder> {
 
-    private final Context mContext;
     private List<NotificationModel> notificationModelList;
     private Animation zoomOutAnimation;
-    SharedPreferences qmPreferences;
-    private int badgeCount;
-    private SharedPreferences.Editor editor;
+    private SharedPreferences qmPreferences;
 
     public class MyViewHolder extends RecyclerView.ViewHolder {
         public TextView information;
@@ -38,20 +35,17 @@ public class NotificationListAdapter extends RecyclerView.Adapter<NotificationLi
 
         public MyViewHolder(View view) {
             super(view);
-            notificationHolder = (RelativeLayout) view.findViewById(R.id.notification_holder);
-            bellIcon = (ImageView) view.findViewById(R.id.bell_icon);
-            information = (TextView) view.findViewById(R.id.notification_text);
-            nextIcon = (ImageView) view.findViewById(R.id.next_icon);
-            nextIcon.setOnTouchListener(new View.OnTouchListener() {
-                @Override
-                public boolean onTouch(View v, MotionEvent event) {
-                    switch (event.getAction()) {
-                        case MotionEvent.ACTION_DOWN:
-                            nextIcon.startAnimation(zoomOutAnimation);
-                            break;
-                    }
-                    return false;
+            notificationHolder = view.findViewById(R.id.notification_holder);
+            bellIcon = view.findViewById(R.id.bell_icon);
+            information = view.findViewById(R.id.notification_text);
+            nextIcon = view.findViewById(R.id.next_icon);
+            nextIcon.setOnTouchListener((v, event) -> {
+                switch (event.getAction()) {
+                    case MotionEvent.ACTION_DOWN:
+                        nextIcon.startAnimation(zoomOutAnimation);
+                        break;
                 }
+                return false;
             });
 
 
@@ -61,8 +55,8 @@ public class NotificationListAdapter extends RecyclerView.Adapter<NotificationLi
 
     public void setData(List<NotificationModel> newData) {
         // All notifications are viewed so badgeCount set as zero
-        badgeCount = 0;
-        editor = qmPreferences.edit();
+        int badgeCount = 0;
+        SharedPreferences.Editor editor = qmPreferences.edit();
         editor.putInt("BADGE_COUNT", badgeCount);
         editor.commit();
 
@@ -72,12 +66,11 @@ public class NotificationListAdapter extends RecyclerView.Adapter<NotificationLi
 
     }
 
-    public NotificationListAdapter(Context context, List<NotificationModel> notificationModelList) {
+    NotificationListAdapter(Context context, List<NotificationModel> notificationModelList) {
         this.notificationModelList = notificationModelList;
-        this.mContext = context;
-        zoomOutAnimation = AnimationUtils.loadAnimation(mContext.getApplicationContext(),
+        zoomOutAnimation = AnimationUtils.loadAnimation(context.getApplicationContext(),
                 R.anim.zoom_out_more);
-        qmPreferences = PreferenceManager.getDefaultSharedPreferences(mContext);
+        qmPreferences = PreferenceManager.getDefaultSharedPreferences(context);
     }
 
     @NonNull
