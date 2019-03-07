@@ -202,7 +202,7 @@ public class CollectionDetailsActivity extends AppCompatActivity {
     public void removeHtmlTags(ArrayList<CollectionDetailsList> models) {
         for (int i = 0; i < models.size(); i++) {
             models.get(i).setMainTitle(util.html2string(models.get(i).getMainTitle()));
-
+            models.get(i).setAbout(util.html2string(models.get(i).getAbout()));
         }
     }
 

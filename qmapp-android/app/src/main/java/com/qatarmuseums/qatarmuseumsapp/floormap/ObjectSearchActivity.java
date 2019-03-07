@@ -45,10 +45,6 @@ public class ObjectSearchActivity extends AppCompatActivity implements View.OnCl
     TextView toolbar_title;
     @BindView(R.id.number_pad_text)
     TextView numberPadDisplay;
-    @BindView(R.id.qr_scanner)
-    ImageView qrScanner;
-    @BindView(R.id.qr_scanner_link)
-    TextView qrScannerLink;
     @BindView(R.id.clear_button)
     ImageView displayClearButton;
     @BindView(R.id.done_button)
@@ -144,16 +140,6 @@ public class ObjectSearchActivity extends AppCompatActivity implements View.OnCl
         });
 
         toolbarClose.setOnClickListener(v -> onBackPressed());
-
-        qrScanner.setOnClickListener(view -> {
-            Intent imageIntent = new Intent(ObjectSearchActivity.this, BarCodeCaptureActivity.class);
-            startActivity(imageIntent);
-        });
-
-        qrScannerLink.setOnClickListener(view -> {
-            Intent imageIntent = new Intent(ObjectSearchActivity.this, BarCodeCaptureActivity.class);
-            startActivity(imageIntent);
-        });
 
     }
 
