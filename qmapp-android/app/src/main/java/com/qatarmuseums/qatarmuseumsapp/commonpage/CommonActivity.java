@@ -50,6 +50,7 @@ import com.qatarmuseums.qatarmuseumsapp.utils.Util;
 
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import retrofit2.Call;
@@ -391,28 +392,33 @@ public class CommonActivity extends AppCompatActivity {
 
     public void getCommonListDataFromDatabase(String apiParts) {
 
-        if (apiParts.equals("Heritage_List_Page.json")) {
-            if (appLanguage.equals(LocaleManager.LANGUAGE_ENGLISH)) {
-                new RetrieveHeritageDataEnglish(CommonActivity.this).execute();
-            } else {
-                new RetrieveHeritageDataArabic(CommonActivity.this).execute();
-            }
+        switch (apiParts) {
+            case "Heritage_List_Page.json":
+                if (appLanguage.equals(LocaleManager.LANGUAGE_ENGLISH)) {
+                    new RetrieveHeritageDataEnglish(CommonActivity.this).execute();
+                } else {
+                    new RetrieveHeritageDataArabic(CommonActivity.this).execute();
+                }
 
-        } else if (apiParts.equals("Public_Arts_List_Page.json")) {
-            if (appLanguage.equals(LocaleManager.LANGUAGE_ENGLISH)) {
-                new RetrieveEnglishPublicArtsData(CommonActivity.this).execute();
-            } else {
-                new RetrieveArabicPublicArtsData(CommonActivity.this).execute();
-            }
+                break;
+            case "Public_Arts_List_Page.json":
+                if (appLanguage.equals(LocaleManager.LANGUAGE_ENGLISH)) {
+                    new RetrieveEnglishPublicArtsData(CommonActivity.this).execute();
+                } else {
+                    new RetrieveArabicPublicArtsData(CommonActivity.this).execute();
+                }
 
-        } else if (apiParts.equals("Exhibition_List_Page.json")) {
-            if (appLanguage.equals(LocaleManager.LANGUAGE_ENGLISH)) {
-                new RetrieveExhibitionDataEnglish(CommonActivity.this).execute();
-            } else {
-                new RetrieveExhibitionDataArabic(CommonActivity.this).execute();
-            }
-        } else if (apiParts.equals("getDiningList.json")) {
-            new DiningRowCount(CommonActivity.this, appLanguage).execute();
+                break;
+            case "Exhibition_List_Page.json":
+                if (appLanguage.equals(LocaleManager.LANGUAGE_ENGLISH)) {
+                    new RetrieveExhibitionDataEnglish(CommonActivity.this).execute();
+                } else {
+                    new RetrieveExhibitionDataArabic(CommonActivity.this).execute();
+                }
+                break;
+            case "getDiningList.json":
+                new DiningRowCount(CommonActivity.this, appLanguage).execute();
+                break;
         }
     }
 
@@ -478,6 +484,7 @@ public class CommonActivity extends AppCompatActivity {
                         recyclerView.setVisibility(View.VISIBLE);
                         models.addAll(response.body());
                         removeHtmlTags(models);
+                        Collections.sort(models);
                         mAdapter.notifyDataSetChanged();
                         if (pageName.equals("Heritage_List_Page.json")) {
                             new HeritageRowCount(CommonActivity.this, appLanguage).execute();
@@ -1380,6 +1387,7 @@ public class CommonActivity extends AppCompatActivity {
                     activityReference.get().models.add(i, commonModel);
 
                 }
+                Collections.sort(activityReference.get().models);
                 activityReference.get().mAdapter.notifyDataSetChanged();
             } else {
                 activityReference.get().recyclerView.setVisibility(View.GONE);
@@ -1426,6 +1434,7 @@ public class CommonActivity extends AppCompatActivity {
                     activityReference.get().models.add(i, commonModel);
 
                 }
+                Collections.sort(activityReference.get().models);
                 activityReference.get().mAdapter.notifyDataSetChanged();
             } else {
                 activityReference.get().recyclerView.setVisibility(View.GONE);
@@ -1672,6 +1681,7 @@ public class CommonActivity extends AppCompatActivity {
                     activityReference.get().models.add(i, commonModel);
 
                 }
+                Collections.sort(activityReference.get().models);
                 activityReference.get().mAdapter.notifyDataSetChanged();
                 activityReference.get().progressBar.setVisibility(View.GONE);
             } else {
@@ -1711,6 +1721,7 @@ public class CommonActivity extends AppCompatActivity {
                     activityReference.get().models.add(i, commonModel);
 
                 }
+                Collections.sort(activityReference.get().models);
                 activityReference.get().mAdapter.notifyDataSetChanged();
                 activityReference.get().progressBar.setVisibility(View.GONE);
             } else {
@@ -1942,6 +1953,7 @@ public class CommonActivity extends AppCompatActivity {
                     activityReference.get().models.add(i, commonModel);
 
                 }
+                Collections.sort(activityReference.get().models);
                 activityReference.get().mAdapter.notifyDataSetChanged();
                 activityReference.get().progressBar.setVisibility(View.GONE);
             } else {
@@ -1979,6 +1991,7 @@ public class CommonActivity extends AppCompatActivity {
                     activityReference.get().models.add(i, commonModel);
 
                 }
+                Collections.sort(activityReference.get().models);
                 activityReference.get().mAdapter.notifyDataSetChanged();
                 activityReference.get().progressBar.setVisibility(View.GONE);
             } else {

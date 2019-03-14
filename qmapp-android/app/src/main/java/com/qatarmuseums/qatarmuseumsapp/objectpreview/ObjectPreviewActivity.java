@@ -54,7 +54,7 @@ public class ObjectPreviewActivity extends AppCompatActivity {
     LinearLayout commonContentLayout;
     TextView noResultFoundTxt;
     Intent intent;
-    String tourId;
+    String tourId, museumId;
     String language;
     ViewPager pager;
     ArrayList<ArtifactDetails> artifactList = new ArrayList<>();
@@ -85,6 +85,7 @@ public class ObjectPreviewActivity extends AppCompatActivity {
 
         Util util = new Util();
         tourId = intent.getStringExtra("TOUR_ID");
+        museumId = intent.getStringExtra("MUSEUM_ID");
         toolbar = findViewById(R.id.toolbar);
         backBtn = findViewById(R.id.back_btn);
         shareBtn = findViewById(R.id.share_btn);
@@ -260,7 +261,8 @@ public class ObjectPreviewActivity extends AppCompatActivity {
 
     public void setupAdapter() {
         commonContentLayout.setVisibility(View.VISIBLE);
-        locationBtn.setVisibility(View.VISIBLE);
+        if (museumId.equals("63") || museumId.equals("96"))
+            locationBtn.setVisibility(View.VISIBLE);
         if (artifactList.size() == 1)
             stepIndicatorRecyclerView.setVisibility(View.GONE);
         if (artifactList.size() < 6)

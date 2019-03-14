@@ -98,6 +98,7 @@ public class SelfGuidedStartPageActivity extends AppCompatActivity implements
         startBtn.setOnClickListener(v -> {
             Intent i = new Intent(SelfGuidedStartPageActivity.this, ObjectPreviewActivity.class);
             i.putExtra("TOUR_ID", tourId);
+            i.putExtra("MUSEUM_ID", museumId);
             startActivity(i);
         });
         startBtn.setOnTouchListener((v, event) -> {
