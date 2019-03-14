@@ -133,6 +133,8 @@ public class TourGuideDetailsActivity extends AppCompatActivity {
             tourGuideSubTitle.setText(getString(R.string.tourguide_title));
             tourGuideSubDesc.setText(getString(R.string.tourguide_subtitle_desc));
             tourGuideList.clear();
+        } else if (museumId.equals("66") || museumId.equals("638")) {
+            exploreLayout.setVisibility(View.GONE);
         }
         backButton.setOnClickListener(v -> onBackPressed());
         zoomOutAnimation = AnimationUtils.loadAnimation(getApplicationContext(),

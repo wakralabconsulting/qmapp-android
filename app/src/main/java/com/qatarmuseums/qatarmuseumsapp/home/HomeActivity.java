@@ -2,6 +2,7 @@ package com.qatarmuseums.qatarmuseumsapp.home;
 
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
+import android.annotation.SuppressLint;
 import android.app.Dialog;
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -13,6 +14,7 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
 import android.preference.PreferenceManager;
+import android.support.annotation.NonNull;
 import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.TextInputLayout;
 import android.support.v4.content.LocalBroadcastManager;
@@ -31,7 +33,6 @@ import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
-import android.widget.Button;
 import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
@@ -64,6 +65,7 @@ import com.qatarmuseums.qatarmuseumsapp.notification.NotificationActivity;
 import com.qatarmuseums.qatarmuseumsapp.profile.ProfileActivity;
 import com.qatarmuseums.qatarmuseumsapp.profile.ProfileDetails;
 import com.qatarmuseums.qatarmuseumsapp.profile.UserData;
+import com.qatarmuseums.qatarmuseumsapp.toursecondarylist.TourSecondaryListActivity;
 import com.qatarmuseums.qatarmuseumsapp.utils.Util;
 import com.qatarmuseums.qatarmuseumsapp.webview.WebViewActivity;
 
@@ -71,6 +73,7 @@ import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 
 import okhttp3.OkHttpClient;
 import okhttp3.logging.HttpLoggingInterceptor;
@@ -81,7 +84,7 @@ import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
 public class HomeActivity extends BaseActivity {
-    RelativeLayout diningNavigation, giftShopNavigation, culturePassNavigation, moreNavigation;
+    View diningNavigation, giftShopNavigation, culturePassNavigation, moreNavigation;
     Animation zoomOutAnimation, fadeOutAnimation;
     private RecyclerView recyclerView;
     private HomeListAdapter mAdapter;
@@ -99,7 +102,7 @@ public class HomeActivity extends BaseActivity {
     HomePageBannerTableArabic homePageBannerTableArabic;
     private Intent navigationIntent;
     private LinearLayout retryLayout;
-    private Button retryButton;
+    private View retryButton;
     private String name;
     private SharedPreferences.Editor editor;
     private int badgeCount;
@@ -123,6 +126,7 @@ public class HomeActivity extends BaseActivity {
     private LoginData loginData;
 
 
+    @SuppressLint("ClickableViewAccessibility")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -207,6 +211,14 @@ public class HomeActivity extends BaseActivity {
                     navigationIntent = new Intent(HomeActivity.this, CommonActivity.class);
                     navigationIntent.putExtra(getString(R.string.toolbar_title_key), getString(R.string.sidemenu_exhibition_text));
                     startActivity(navigationIntent);
+                } else if (homeList.getName().trim().toUpperCase().contains("PANELS AND TALKS") ||
+                        homeList.getName().trim().toUpperCase().contains("ندوات و محاورات")) {
+                    navigationIntent = new Intent(HomeActivity.this,
+                            TourSecondaryListActivity.class);
+                    navigationIntent.putExtra("MAIN_TITLE", homeList.getName());
+                    navigationIntent.putExtra("ID", homeList.getId());
+                    navigationIntent.putExtra("COMING_FROM", getString(R.string.museum_discussion));
+                    startActivity(navigationIntent);
                 } else {
                     navigationIntent = new Intent(HomeActivity.this, MuseumActivity.class);
                     navigationIntent.putExtra("MUSEUMTITLE", homeList.getName());
@@ -224,7 +236,7 @@ public class HomeActivity extends BaseActivity {
             showLoginDialog();
             editor = qmPreferences.edit();
             editor.putBoolean("FIRST_LAUNCH", false);
-            editor.commit();
+            editor.apply();
         }
         language = LocaleManager.getLanguage(this);
         if (util.isNetworkAvailable(this)) {
@@ -289,7 +301,7 @@ public class HomeActivity extends BaseActivity {
             @Override
             public void onReceive(Context context, Intent intent) {
 
-                if (intent.getAction().equals(Config.PUSH_NOTIFICATION)) {
+                if (Objects.equals(intent.getAction(), Config.PUSH_NOTIFICATION)) {
                     // new push notification is received
 
                     notificationMessage = intent.getStringExtra("ALERT");
@@ -299,7 +311,7 @@ public class HomeActivity extends BaseActivity {
                     badgeCount = badgeCount + 1;
                     editor = qmPreferences.edit();
                     editor.putInt("BADGE_COUNT", badgeCount);
-                    editor.commit();
+                    editor.apply();
                     if (badgeCount > 0) {
                         setBadge(badgeCount);
                     }
@@ -352,11 +364,14 @@ public class HomeActivity extends BaseActivity {
 
     @Override
     public void onBackPressed() {
-        if (drawer.isDrawerOpen(GravityCompat.END)) {
+        if (drawer != null && drawer.isDrawerOpen(GravityCompat.END)) {
+            assert navigationView != null;
             navigationView.startAnimation(fadeOutAnimation);
+            assert topBarSideMenu != null;
             topBarSideMenu.setImageDrawable(getResources().getDrawable(R.drawable.side_menu_icon));
             showToolBarOptions();
             drawer.closeDrawer(GravityCompat.END, false);
+            assert toolbar != null;
             toolbar.setBackgroundColor(Color.parseColor("#000000"));
         } else {
             if (doubleBackToExitPressedOnce) {
@@ -375,11 +390,13 @@ public class HomeActivity extends BaseActivity {
         Call<ArrayList<HomeList>> call = apiService.getHomepageDetails(language);
         call.enqueue(new Callback<ArrayList<HomeList>>() {
             @Override
-            public void onResponse(Call<ArrayList<HomeList>> call, Response<ArrayList<HomeList>> response) {
+            public void onResponse(@NonNull Call<ArrayList<HomeList>> call, @NonNull Response<ArrayList<HomeList>> response) {
                 if (response.isSuccessful()) {
                     if (response.body() != null) {
                         recyclerView.setVisibility(View.VISIBLE);
                         homeLists.addAll(response.body());
+                        AddPanelDiscussion();
+                        Collections.sort(homeLists);
                         mAdapter.notifyDataSetChanged();
                         new RowCount(HomeActivity.this, language, homeLists).execute();
                     } else {
@@ -394,12 +411,41 @@ public class HomeActivity extends BaseActivity {
             }
 
             @Override
-            public void onFailure(Call<ArrayList<HomeList>> call, Throwable t) {
+            public void onFailure(@NonNull Call<ArrayList<HomeList>> call, @NonNull Throwable t) {
                 recyclerView.setVisibility(View.GONE);
                 progressBar.setVisibility(View.GONE);
                 retryLayout.setVisibility(View.VISIBLE);
             }
         });
+    }
+
+    private void AddPanelDiscussion() {
+        Boolean isPanelDiscussionAvailable = false;
+        for (int i = 0; i < homeLists.size(); i++) {
+            if (homeLists.get(i).getName().trim().toUpperCase().contains("PANELS AND TALKS") ||
+                    homeLists.get(i).getName().trim().toUpperCase().contains("ندوات و محاورات")) {
+                isPanelDiscussionAvailable = true;
+            }
+        }
+        if (!isPanelDiscussionAvailable) {
+            HomeList homeList = null;
+            if (language.equals(LocaleManager.LANGUAGE_ENGLISH)) {
+                homeList = new HomeList(
+                        "PANELS AND TALKS",
+                        "13976",
+                        "https://www.qm.org.qa/sites/default/files/qlibrary.jpeg",
+                        "false",
+                        10);
+            } else {
+                homeList = new HomeList(
+                        "ندوات و محاورات",
+                        "13976",
+                        "https://www.qm.org.qa/sites/default/files/qlibrary.jpeg",
+                        "false",
+                        10);
+            }
+            homeLists.add(homeList);
+        }
     }
 
     public void getBannerAPIData() {
@@ -408,7 +454,7 @@ public class HomeActivity extends BaseActivity {
         Call<ArrayList<HomeList>> call = apiService.getBannerDetails(language);
         call.enqueue(new Callback<ArrayList<HomeList>>() {
             @Override
-            public void onResponse(Call<ArrayList<HomeList>> call, Response<ArrayList<HomeList>> response) {
+            public void onResponse(@NonNull Call<ArrayList<HomeList>> call, @NonNull Response<ArrayList<HomeList>> response) {
                 if (response.isSuccessful()) {
                     if (response.body() != null) {
                         bannerLists.addAll(response.body());
@@ -422,7 +468,7 @@ public class HomeActivity extends BaseActivity {
             }
 
             @Override
-            public void onFailure(Call<ArrayList<HomeList>> call, Throwable t) {
+            public void onFailure(@NonNull Call<ArrayList<HomeList>> call, @NonNull Throwable t) {
             }
         });
     }
@@ -450,7 +496,8 @@ public class HomeActivity extends BaseActivity {
         Call<ArrayList<UserRegistrationModel>> call = apiService.getUserRegistrationDetails(LocaleManager.LANGUAGE_ENGLISH, userID);
         call.enqueue(new Callback<ArrayList<UserRegistrationModel>>() {
             @Override
-            public void onResponse(Call<ArrayList<UserRegistrationModel>> call, Response<ArrayList<UserRegistrationModel>> response) {
+            public void onResponse(@NonNull Call<ArrayList<UserRegistrationModel>> call,
+                                   @NonNull Response<ArrayList<UserRegistrationModel>> response) {
                 if (response.isSuccessful()) {
                     if (response.body() != null && response.body().size() > 0) {
                         registeredEventLists.addAll(response.body());
@@ -461,7 +508,7 @@ public class HomeActivity extends BaseActivity {
             }
 
             @Override
-            public void onFailure(Call<ArrayList<UserRegistrationModel>> call, Throwable t) {
+            public void onFailure(@NonNull Call<ArrayList<UserRegistrationModel>> call, @NonNull Throwable t) {
             }
         });
     }
@@ -525,7 +572,7 @@ public class HomeActivity extends BaseActivity {
         Call<ProfileDetails> call = apiService.generateToken(language, loginData);
         call.enqueue(new Callback<ProfileDetails>() {
             @Override
-            public void onResponse(Call<ProfileDetails> call, final Response<ProfileDetails> response) {
+            public void onResponse(@NonNull Call<ProfileDetails> call, @NonNull final Response<ProfileDetails> response) {
                 if (response.isSuccessful()) {
                     if (response.body() != null) {
                         performLogin(response.body().getToken());
@@ -534,7 +581,7 @@ public class HomeActivity extends BaseActivity {
             }
 
             @Override
-            public void onFailure(Call<ProfileDetails> call, Throwable t) {
+            public void onFailure(@NonNull Call<ProfileDetails> call, @NonNull Throwable t) {
                 util.showToast(getResources().getString(R.string.check_network),
                         HomeActivity.this);
                 showProgress(false);
@@ -564,7 +611,7 @@ public class HomeActivity extends BaseActivity {
         Call<ProfileDetails> callLogin = apiService.login(language, token, loginData);
         callLogin.enqueue(new Callback<ProfileDetails>() {
             @Override
-            public void onResponse(Call<ProfileDetails> call, Response<ProfileDetails> response) {
+            public void onResponse(@NonNull Call<ProfileDetails> call, @NonNull Response<ProfileDetails> response) {
                 if (response.isSuccessful()) {
                     if (response.body() != null) {
                         profileDetails = response.body();
@@ -586,7 +633,7 @@ public class HomeActivity extends BaseActivity {
                         editor.putString("LAST_NAME", profileDetails.getUser().getLastName().getUnd().get(0).getValue());
                         editor.putInt("MEMBERSHIP", (Integer.parseInt(profileDetails.getUser().getuId()) + 6000));
                         editor.putString("TIMEZONE", profileDetails.getUser().getTimeZone());
-                        editor.commit();
+                        editor.apply();
                     }
                 } else {
                     if (response.code() == 401)
@@ -600,7 +647,7 @@ public class HomeActivity extends BaseActivity {
             }
 
             @Override
-            public void onFailure(Call<ProfileDetails> call, Throwable t) {
+            public void onFailure(@NonNull Call<ProfileDetails> call, @NonNull Throwable t) {
                 if (t.getMessage().contains("timeout"))
                     util.showToast(t.getMessage(), HomeActivity.this);
                 else
@@ -634,7 +681,7 @@ public class HomeActivity extends BaseActivity {
         Call<UserData> call = apiService.getRSVP(language, uid, token);
         call.enqueue(new Callback<UserData>() {
             @Override
-            public void onResponse(Call<UserData> call, Response<UserData> response) {
+            public void onResponse(@NonNull Call<UserData> call, @NonNull Response<UserData> response) {
                 if (response.isSuccessful()) {
                     if (response.body() != null) {
                         if (response.body().getRsvpAttendance() != null) {
@@ -642,7 +689,7 @@ public class HomeActivity extends BaseActivity {
                                     response.body().getRsvpAttendance()).get("und")).get(0)).get("value").toString();
                             editor = qmPreferences.edit();
                             editor.putString("RSVP", RSVP);
-                            editor.commit();
+                            editor.apply();
                             showBanner();
                             getUserRegistrationDetails(uid);
                         }
@@ -653,19 +700,20 @@ public class HomeActivity extends BaseActivity {
             }
 
             @Override
-            public void onFailure(Call<UserData> call, Throwable t) {
+            public void onFailure(@NonNull Call<UserData> call, @NonNull Throwable t) {
                 new Util().showToast(getResources().getString(R.string.check_network), HomeActivity.this);
                 showProgress(false);
             }
         });
     }
 
+    @SuppressLint("ClickableViewAccessibility")
     protected void showLoginDialog() {
         loginDialog = new Dialog(this, R.style.DialogNoAnimation);
         loginDialog.setCancelable(true);
         loginDialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
         LayoutInflater layoutInflater = (LayoutInflater) getSystemService(LAYOUT_INFLATER_SERVICE);
-        View view = layoutInflater.inflate(R.layout.login_popup, null);
+        @SuppressLint("InflateParams") View view = layoutInflater.inflate(R.layout.login_popup, null);
         loginDialog.setContentView(view);
         ImageView closeBtn = view.findViewById(R.id.close_dialog);
         dialogLoginButton = view.findViewById(R.id.dialog_login_button);
@@ -814,7 +862,7 @@ public class HomeActivity extends BaseActivity {
         Call<ProfileDetails> call = apiService.generateToken(language, loginData);
         call.enqueue(new Callback<ProfileDetails>() {
             @Override
-            public void onResponse(Call<ProfileDetails> call, final Response<ProfileDetails> response) {
+            public void onResponse(@NonNull Call<ProfileDetails> call, @NonNull final Response<ProfileDetails> response) {
                 if (response.isSuccessful()) {
                     if (response.body() != null) {
                         forgotPasswordAction(response.body().getToken());
@@ -823,7 +871,7 @@ public class HomeActivity extends BaseActivity {
             }
 
             @Override
-            public void onFailure(Call<ProfileDetails> call, Throwable t) {
+            public void onFailure(@NonNull Call<ProfileDetails> call, @NonNull Throwable t) {
                 util.showToast(getResources().getString(R.string.check_network),
                         HomeActivity.this);
                 showProgress(false);
@@ -837,7 +885,7 @@ public class HomeActivity extends BaseActivity {
         Call<ArrayList<String>> callLogin = apiService.forgotPassword(language, token, loginData);
         callLogin.enqueue(new Callback<ArrayList<String>>() {
             @Override
-            public void onResponse(Call<ArrayList<String>> call, Response<ArrayList<String>> response) {
+            public void onResponse(@NonNull Call<ArrayList<String>> call, @NonNull Response<ArrayList<String>> response) {
                 if (response.isSuccessful()) {
                     if (response.body() != null) {
                         loginDialog.dismiss();
@@ -854,7 +902,7 @@ public class HomeActivity extends BaseActivity {
             }
 
             @Override
-            public void onFailure(Call<ArrayList<String>> call, Throwable t) {
+            public void onFailure(@NonNull Call<ArrayList<String>> call, @NonNull Throwable t) {
                 util.showToast(getResources().getString(R.string.check_network),
                         HomeActivity.this);
                 showProgress(false);
