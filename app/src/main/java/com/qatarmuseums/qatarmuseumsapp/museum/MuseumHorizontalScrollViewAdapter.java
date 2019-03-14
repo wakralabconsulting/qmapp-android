@@ -63,6 +63,7 @@ public class MuseumHorizontalScrollViewAdapter extends RecyclerView.Adapter<Muse
                 mContext.startActivity(navigationIntent);
             } else if (museumHScrollModelList.get(position).getTextName().equals(mContext.getResources().getString(R.string.sidemenu_tour_guide_text))) {
                 if (museumId.equals("66") || museumId.equals("638"))
+                    // Tour guides for NMoQ won't be available before NMoQ launch
                     util.showComingSoonDialog((Activity) mContext, R.string.coming_soon_content);
                 else {
                     navigationIntent = new Intent(mContext, TourGuideDetailsActivity.class);
@@ -81,6 +82,7 @@ public class MuseumHorizontalScrollViewAdapter extends RecyclerView.Adapter<Muse
                 mContext.startActivity(navigationIntent);
             } else if (museumHScrollModelList.get(position).getTextName().equals(mContext.getResources().getString(R.string.sidemenu_parks_text))) {
                 if (museumId.equals("66") || museumId.equals("638")) {
+                    // Park for NMoQ 
                     util.showComingSoonDialog((Activity) mContext, R.string.coming_soon_content);
                 } else {
                     navigationIntent = new Intent(mContext, ParkActivity.class);
@@ -106,6 +108,21 @@ public class MuseumHorizontalScrollViewAdapter extends RecyclerView.Adapter<Muse
                 navigationIntent.putExtra(mContext.getString(R.string.toolbar_title_key), mContext.getString(R.string.museum_discussion));
                 navigationIntent.putExtra("ID", museumId);
                 mContext.startActivity(navigationIntent);
+            } else if ((museumId.equals("66") || museumId.equals("638"))) {
+                switch (position) {
+                    case 1:
+                        // Facilities for NMoQ
+                        util.showComingSoonDialog((Activity) mContext, R.string.coming_soon_content);
+                        break;
+                    case 3:
+                        // Experience for NMoQ won't be available before NMoQ launch
+                        util.showComingSoonDialog((Activity) mContext, R.string.coming_soon_content);
+                        break;
+                    case 5:
+                        // Event for NMoQ won't be available before NMoQ launch
+                        util.showComingSoonDialog((Activity) mContext, R.string.coming_soon_content);
+                        break;
+                }
             } else
                 util.showComingSoonDialog((Activity) mContext, R.string.coming_soon_content);
         });
