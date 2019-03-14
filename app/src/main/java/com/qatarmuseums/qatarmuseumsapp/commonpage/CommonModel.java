@@ -1,11 +1,13 @@
 package com.qatarmuseums.qatarmuseumsapp.commonpage;
 
 
+import android.support.annotation.NonNull;
+
 import com.google.gson.annotations.SerializedName;
 
 import java.util.ArrayList;
 
-public class CommonModel {
+public class CommonModel implements Comparable<CommonModel> {
 
     @SerializedName(value = "name", alternate = {"Name", "Title", "subtitle"})
     private String name;
@@ -19,13 +21,11 @@ public class CommonModel {
     private String startDate;
     @SerializedName("end_Date")
     private String endDate;
-    @SerializedName("sort_coefficient")
-    private String sortCoefficient;
     @SerializedName("Longitude")
     private String longitude;
     @SerializedName("Latitude")
     private String latitude;
-    @SerializedName(value = "SORT_ID", alternate = {"sort_id", "Sort_Id"})
+    @SerializedName(value = "SORT_ID", alternate = {"sort_id", "Sort_Id", "sort_coefficient"})
     private String sortId;
     private Boolean isOpen, isFavourite;
     @SerializedName("opening_time")
@@ -214,14 +214,6 @@ public class CommonModel {
         this.endDate = endDate;
     }
 
-    public String getSortCoefficient() {
-        return sortCoefficient;
-    }
-
-    public void setSortCoefficient(String sortCoefficient) {
-        this.sortCoefficient = sortCoefficient;
-    }
-
     public String getLongitude() {
         return longitude;
     }
@@ -353,6 +345,14 @@ public class CommonModel {
 
     public String getDisplayDate() {
         return exhibitionDisplayDate;
+    }
+
+    @Override
+    public int compareTo(@NonNull CommonModel commonModel) {
+        if (commonModel.sortId != null)
+            return this.sortId.compareTo(commonModel.sortId);
+        else
+            return 0;
     }
 }
 
