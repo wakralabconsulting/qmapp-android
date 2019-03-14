@@ -220,5 +220,9 @@ Any questions, please contact booking@qm.org.qa or +974 4452 5555"</string>
     <string name="spaces_available">&#160;spaces available</string>
     <string name="number_of_visitors">Number of Visitors</string>
     <string name="done">Done</string>
+    <!-- Strings related to NMoQ Landing -->
+    <string name="facilities_txt">Facilities</string>
+    <string name="experience_txt">Experience</string>
+    <string name="highlights_tour_txt">Highlights Tour</string>
 
 </resources>

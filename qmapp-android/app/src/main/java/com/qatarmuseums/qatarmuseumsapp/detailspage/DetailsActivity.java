@@ -732,16 +732,19 @@ public class DetailsActivity extends AppCompatActivity implements IPullZoom, OnM
             else
                 getCommonListAPIDataFromDatabase(id, language);
 
-        } else if (comingFrom.equals(getString(R.string.museum_about))) {
-            if (util.isNetworkAvailable(DetailsActivity.this))
-                getMuseumAboutDetailsFromAPI(id, language, false);
-            else
-                getMuseumAboutDetailsFromDatabase(id, language, false);
-        } else if (comingFrom.equals(getString(R.string.museum_about_launch))) {
-            if (util.isNetworkAvailable(DetailsActivity.this))
-                getMuseumAboutDetailsFromAPI(id, language, true);
-            else
-                getMuseumAboutDetailsFromDatabase(id, language, true);
+        }
+        else if (comingFrom.equals(getString(R.string.museum_about_text))) {
+            if (util.isNetworkAvailable(DetailsActivity.this)) {
+                if (id.equals("13376"))
+                    getMuseumAboutDetailsFromAPI(id, language, true);
+                else
+                    getMuseumAboutDetailsFromAPI(id, language, false);
+            } else {
+                if (id.equals("13376"))
+                    getMuseumAboutDetailsFromDatabase(id, language, true);
+                else
+                    getMuseumAboutDetailsFromDatabase(id, language, false);
+            }
         } else if (comingFrom.equals(getString(R.string.museum_travel))) {
             getTravelsDetails();
         } else if (comingFrom.equals(getString(R.string.museum_tours))) {
@@ -2555,7 +2558,7 @@ public class DetailsActivity extends AppCompatActivity implements IPullZoom, OnM
         }
         APIInterface apiService =
                 APIClient.getClient().create(APIInterface.class);
-        if (isLaunchEvent)
+        if (isLaunchEvent && !(Objects.equals(id, "66") || Objects.equals(id, "638")))
             call = apiService.getLaunchMuseumAboutDetails(language, id);
         else
             call = apiService.getMuseumAboutDetails(language, id);

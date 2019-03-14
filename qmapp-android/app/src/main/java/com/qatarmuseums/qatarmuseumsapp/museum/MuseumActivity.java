@@ -133,10 +133,19 @@ public class MuseumActivity extends BaseActivity implements
         if (museumId.equals("63") || museumId.equals("96") || museumId.equals("61") || museumId.equals("66") ||
                 museumId.equals("635") || museumId.equals("638")) {
 
-            if (museumId.equals("63") || museumId.equals("96"))
-                prepareRecyclerViewDataForMIA();
-            else
-                prepareRecyclerViewDataFor5();
+            switch (museumId) {
+                case "63":
+                case "96":
+                    prepareRecyclerViewDataForMIA();
+                    break;
+                case "66":
+                case "638":
+                    prepareRecyclerViewDataForNMoQ();
+                    break;
+                default:
+                    prepareRecyclerViewDataFor5();
+                    break;
+            }
 
             recyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
                 @Override
@@ -186,10 +195,18 @@ public class MuseumActivity extends BaseActivity implements
             }
 
             scrollBarNextIconLayout.setOnClickListener(view -> {
-                if (museumId.equals("63") || museumId.equals("96"))
-                    recyclerViewLayoutManager.scrollToPosition(5);
-                else {
-                    recyclerViewLayoutManager.smoothScrollToPosition(recyclerView, null, 4);
+                switch (museumId) {
+                    case "63":
+                    case "96":
+                        recyclerViewLayoutManager.scrollToPosition(5);
+                        break;
+                    case "66":
+                    case "638":
+                        recyclerViewLayoutManager.scrollToPosition(6);
+                        break;
+                    default:
+                        recyclerViewLayoutManager.smoothScrollToPosition(recyclerView, null, 4);
+                        break;
                 }
 
             });
@@ -292,6 +309,7 @@ public class MuseumActivity extends BaseActivity implements
         museumHScrollModelList.add(model);
         model = new MuseumHScrollModel(this,
                 getResources().getString(R.string.sidemenu_tour_guide_text), R.drawable.audio_circle);
+
         museumHScrollModelList.add(model);
         model = new MuseumHScrollModel(this,
                 getResources().getString(R.string.sidemenu_exhibition_text), R.drawable.exhibition_black);
@@ -307,6 +325,38 @@ public class MuseumActivity extends BaseActivity implements
 
         model = new MuseumHScrollModel(this,
                 getResources().getString(R.string.sidemenu_dining_text), R.drawable.dining);
+        museumHScrollModelList.add(model);
+        museumHorizontalScrollViewAdapter.notifyDataSetChanged();
+    }
+
+    public void prepareRecyclerViewDataForNMoQ() {
+        museumHScrollModelList.clear();
+        MuseumHScrollModel model = new MuseumHScrollModel(this,
+                getResources().getString(R.string.museum_about_text), R.drawable.about_launch);
+        museumHScrollModelList.add(model);
+
+        model = new MuseumHScrollModel(this,
+                getResources().getString(R.string.facilities_txt), R.drawable.facilities_icon);
+        museumHScrollModelList.add(model);
+
+        model = new MuseumHScrollModel(this,
+                getResources().getString(R.string.sidemenu_exhibition_text), R.drawable.exhibition_black);
+        museumHScrollModelList.add(model);
+
+        model = new MuseumHScrollModel(this,
+                getResources().getString(R.string.experience_txt), R.drawable.experience_icon);
+        museumHScrollModelList.add(model);
+
+        model = new MuseumHScrollModel(this,
+                getResources().getString(R.string.sidemenu_tour_guide_text), R.drawable.audio_circle);
+        museumHScrollModelList.add(model);
+
+        model = new MuseumHScrollModel(this,
+                getResources().getString(R.string.sidemenu_events_text), R.drawable.events_icon);
+        museumHScrollModelList.add(model);
+
+        model = new MuseumHScrollModel(this,
+                getResources().getString(R.string.sidemenu_parks_text), R.drawable.park_black);
         museumHScrollModelList.add(model);
         museumHorizontalScrollViewAdapter.notifyDataSetChanged();
     }
