@@ -159,6 +159,13 @@ public class CommonListAdapter extends RecyclerView.Adapter<CommonListAdapter.My
                         .placeholder(R.drawable.placeholder)
                         .into(holder.imageView);
             }
+        }
+        if (model.isImageTypeIsArray()) {
+            GlideApp.with(mContext)
+                    .load(model.getImages().get(0))
+                    .centerCrop()
+                    .placeholder(R.drawable.placeholder)
+                    .into(holder.imageView);
         } else {
             GlideApp.with(mContext)
                     .load(model.getImage())

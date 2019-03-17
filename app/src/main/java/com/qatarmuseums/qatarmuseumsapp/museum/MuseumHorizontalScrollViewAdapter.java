@@ -112,7 +112,11 @@ public class MuseumHorizontalScrollViewAdapter extends RecyclerView.Adapter<Muse
                 switch (position) {
                     case 1:
                         // Facilities for NMoQ
-                        util.showComingSoonDialog((Activity) mContext, R.string.coming_soon_content);
+                        //util.showComingSoonDialog((Activity) mContext, R.string.coming_soon_content);
+                        navigationIntent = new Intent(mContext, CommonActivity.class);
+                        navigationIntent.putExtra(mContext.getString(R.string.toolbar_title_key), mContext.getString(R.string.facilities_txt));
+                        navigationIntent.putExtra("ID", museumId);
+                        mContext.startActivity(navigationIntent);
                         break;
                     case 3:
                         // Experience for NMoQ won't be available before NMoQ launch

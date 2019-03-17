@@ -45,7 +45,7 @@ public class CommonModel implements Comparable<CommonModel> {
     private String eventDate;
     @SerializedName("Day")
     private String eventDay;
-    @SerializedName("Images")
+    @SerializedName(value = "Images", alternate = {"images", "images "})
     private ArrayList<String> images;
     @SerializedName("email")
     private String email;
@@ -68,10 +68,19 @@ public class CommonModel implements Comparable<CommonModel> {
     private Boolean isTravel;
     private int rowHeight;
 
+    boolean imageTypeIsArray = false;
+
     public CommonModel() {
 
     }
 
+
+    CommonModel(String name, String sortId, String id, ArrayList<String> images) {
+        this.name = name;
+        this.sortId = sortId;
+        this.id = id;
+        this.images = images;
+    }
 
     CommonModel(String id, String name, String location, String image, String exhibitionStatus,
                 String exhibitionDisplayDate) {
@@ -137,6 +146,7 @@ public class CommonModel implements Comparable<CommonModel> {
         this.eventDate = eventDate;
         this.isTour = isTour;
     }
+
 
     public String getName() {
         return name;
@@ -353,6 +363,14 @@ public class CommonModel implements Comparable<CommonModel> {
             return this.sortId.compareTo(commonModel.sortId);
         else
             return 0;
+    }
+
+    public boolean isImageTypeIsArray() {
+        return imageTypeIsArray;
+    }
+
+    public void setImageTypeIsArray(boolean imageTypeIsArray) {
+        this.imageTypeIsArray = imageTypeIsArray;
     }
 }
 
