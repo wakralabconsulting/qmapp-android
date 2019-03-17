@@ -1,0 +1,134 @@
+package com.qatarmuseums.qatarmuseumsapp.facilities;
+
+import com.google.gson.annotations.SerializedName;
+
+import java.util.ArrayList;
+
+public class FacilitiesDetailModel {
+
+    @SerializedName("Title")
+    private String facilitiesTitle;
+    @SerializedName("images")
+    private ArrayList<String> facilityImage;
+    @SerializedName("Subtitle")
+    private String facilitiesSubtitle;
+    @SerializedName("Description")
+    private String facilityDescription;
+    @SerializedName("timing")
+    private String facilitiesTiming;
+    @SerializedName("title_timing")
+    private String facilityTitleTiming;
+    @SerializedName("nid")
+    private String facilitiesId;
+    @SerializedName("longtitude")
+    private String longitude;
+
+    @SerializedName("category")
+    private String facilitiesCategoryId;
+    @SerializedName("latitude")
+    private String lattitude;
+    @SerializedName("location title")
+    private String locationTitle;
+
+
+    public FacilitiesDetailModel(String facilitiesTitle, ArrayList<String> facilityImage, String facilitiesSubtitle,
+                                 String facilityDescription, String facilitiesTiming, String facilityTitleTiming, String facilitiesId,
+                                 String longitude, String facilitiesCategoryId, String lattitude, String locationTitle) {
+        this.facilitiesTitle = facilitiesTitle;
+        this.facilityImage = facilityImage;
+        this.facilitiesSubtitle = facilitiesSubtitle;
+        this.facilityDescription = facilityDescription;
+        this.facilitiesTiming = facilitiesTiming;
+        this.facilityTitleTiming = facilityTitleTiming;
+        this.facilitiesId = facilitiesId;
+        this.longitude = longitude;
+        this.facilitiesCategoryId = facilitiesCategoryId;
+        this.lattitude = lattitude;
+        this.locationTitle = locationTitle;
+    }
+
+
+    public String getFacilitiesTitle() {
+        return facilitiesTitle;
+    }
+
+    public ArrayList<String> getFacilityImage() {
+        return facilityImage;
+    }
+
+    public String getFacilitiesSubtitle() {
+        return facilitiesSubtitle;
+    }
+
+    public String getFacilityDescription() {
+        return facilityDescription;
+    }
+
+    public String getFacilitiesTiming() {
+        return facilitiesTiming;
+    }
+
+    public String getFacilityTitleTiming() {
+        return facilityTitleTiming;
+    }
+
+    public String getFacilitiesId() {
+        return facilitiesId;
+    }
+
+    public String getLongitude() {
+        return longitude;
+    }
+
+    public String getFacilitiesCategoryId() {
+        return facilitiesCategoryId;
+    }
+
+    public String getLattitude() {
+        return lattitude;
+    }
+
+    public String getLocationTitle() {
+        return locationTitle;
+    }
+
+    public void setFacilitiesTitle(String facilitiesTitle) {
+        this.facilitiesTitle = facilitiesTitle;
+    }
+
+    public void setFacilitiesSubtitle(String facilitiesSubtitle) {
+        this.facilitiesSubtitle = facilitiesSubtitle;
+    }
+
+    public void setFacilityDescription(String facilityDescription) {
+        this.facilityDescription = facilityDescription;
+    }
+
+    public void setFacilitiesTiming(String facilitiesTiming) {
+        this.facilitiesTiming = facilitiesTiming;
+    }
+
+    public void setFacilityTitleTiming(String facilityTitleTiming) {
+        this.facilityTitleTiming = facilityTitleTiming;
+    }
+
+    public void setFacilitiesId(String facilitiesId) {
+        this.facilitiesId = facilitiesId;
+    }
+
+    public void setLongitude(String longitude) {
+        this.longitude = longitude;
+    }
+
+    public void setFacilitiesCategoryId(String facilitiesCategoryId) {
+        this.facilitiesCategoryId = facilitiesCategoryId;
+    }
+
+    public void setLattitude(String lattitude) {
+        this.lattitude = lattitude;
+    }
+
+    public void setLocationTitle(String locationTitle) {
+        this.locationTitle = locationTitle;
+    }
+}

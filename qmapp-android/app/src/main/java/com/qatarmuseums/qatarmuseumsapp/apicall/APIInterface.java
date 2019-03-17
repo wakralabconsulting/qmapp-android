@@ -8,6 +8,7 @@ import com.qatarmuseums.qatarmuseumsapp.culturepass.TokenForPushNotification;
 import com.qatarmuseums.qatarmuseumsapp.detailspage.RegistrationDetailsModel;
 import com.qatarmuseums.qatarmuseumsapp.dining.DiningDetailModel;
 import com.qatarmuseums.qatarmuseumsapp.education.EducationEvents;
+import com.qatarmuseums.qatarmuseumsapp.facilities.FacilitiesDetailModel;
 import com.qatarmuseums.qatarmuseumsapp.floormap.ArtifactDetails;
 import com.qatarmuseums.qatarmuseumsapp.heritage.HeritageOrExhibitionDetailModel;
 import com.qatarmuseums.qatarmuseumsapp.home.HomeList;
@@ -148,6 +149,8 @@ public interface APIInterface {
 
     @GET("{language}/mobile_api/nmoq_list_day.json")
     Call<ArrayList<CommonModel>> getTourList(@Path("language") String language);
+    @GET("{language}/mobile_api/list_facility_category.json")
+    Call<ArrayList<CommonModel>> getFacilityList(@Path("language") String language);
 
     @GET("{language}/mobile_api/nmoq_list_partner.json")
     Call<ArrayList<CommonModel>> getTravelData(@Path("language") String language);
@@ -158,6 +161,9 @@ public interface APIInterface {
     @GET("{language}/mobile_api/list_tour_per_day.json")
     Call<ArrayList<TourDetailsModel>> getTourDetails(@Path("language") String language,
                                                      @Query("event_id") String evetId);
+    @GET("{language}/mobile_api/facility-detail_by_category.json")
+    Call<ArrayList<FacilitiesDetailModel>> getFacilityDetails(@Path("language") String language,
+                                                              @Query("category_id") String facilityId);
 
     @GET("{language}/mobile_api/user_registeration_event.json")
     Call<ArrayList<UserRegistrationModel>> getUserRegistrationDetails(@Path("language") String language,

@@ -42,6 +42,7 @@ import com.qatarmuseums.qatarmuseumsapp.commonpagedatabase.TravelDetailsTableAra
 import com.qatarmuseums.qatarmuseumsapp.commonpagedatabase.TravelDetailsTableEnglish;
 import com.qatarmuseums.qatarmuseumsapp.detailspage.DetailsActivity;
 import com.qatarmuseums.qatarmuseumsapp.detailspage.DiningActivity;
+import com.qatarmuseums.qatarmuseumsapp.facilities.FacilitiesSecondaryActivity;
 import com.qatarmuseums.qatarmuseumsapp.museum.MuseumCollectionListTableArabic;
 import com.qatarmuseums.qatarmuseumsapp.museum.MuseumCollectionListTableEnglish;
 import com.qatarmuseums.qatarmuseumsapp.museumcollectiondetails.CollectionDetailsActivity;
@@ -94,6 +95,8 @@ public class CommonActivity extends AppCompatActivity {
     String id;
     private APIInterface apiService;
     private Call<ArrayList<CommonModel>> call;
+
+
     LinearLayout retryLayout;
     Button retryButton;
     private Integer travelTableRowCount;
@@ -137,6 +140,9 @@ public class CommonActivity extends AppCompatActivity {
                     toolbarTitle.equals(getString(R.string.museum_discussion)))
                 navigationIntent = new Intent(CommonActivity.this,
                         TourSecondaryListActivity.class);
+            else if (models.get(position).getName().equals(getString(R.string.nmoq_cafe_dining)))
+                navigationIntent = new Intent(CommonActivity.this,
+                        FacilitiesSecondaryActivity.class);
             else
                 navigationIntent = new Intent(CommonActivity.this, DetailsActivity.class);
             if (toolbarTitle.equals(getString(R.string.museum_tours)) ||
@@ -146,6 +152,7 @@ public class CommonActivity extends AppCompatActivity {
                 }
             } else
                 navigationIntent.putExtra("HEADER_IMAGE", models.get(position).getImage());
+
             navigationIntent.putExtra("MAIN_TITLE", models.get(position).getName());
             navigationIntent.putExtra("LONG_DESC", models.get(position).getDescription());
             navigationIntent.putExtra("ID", models.get(position).getId());
@@ -246,6 +253,11 @@ public class CommonActivity extends AppCompatActivity {
             else
                 getSpecialEventFromDatabase();
 
+        } else if (toolbarTitle.equals(getString(R.string.facilities_txt))) {
+            if (util.isNetworkAvailable(CommonActivity.this))
+                getFacilityListFromAPI();
+            else
+                getTourListFromDatabase();
         }
     }
 
@@ -263,6 +275,44 @@ public class CommonActivity extends AppCompatActivity {
         } else {
             new RetrieveArabicTourData(CommonActivity.this, 0).execute();
         }
+    }
+
+    private void getFacilityListFromAPI() {
+        progressBar.setVisibility(View.VISIBLE);
+        apiService = APIClient.getClient().create(APIInterface.class);
+        Call<ArrayList<CommonModel>> call = apiService.getFacilityList(appLanguage);
+        call.enqueue(new Callback<ArrayList<CommonModel>>() {
+            @Override
+            public void onResponse(Call<ArrayList<CommonModel>> call, Response<ArrayList<CommonModel>> response) {
+                if (response.isSuccessful()) {
+                    if (response.body() != null && response.body().size() > 0) {
+                        models.addAll(response.body());
+                        for (int i = 0; i < models.size(); i++) {
+                            models.get(i).setImageTypeIsArray(true);
+                        }
+                        removeHtmlTags(models);
+                        mAdapter.notifyDataSetChanged();
+
+                    } else {
+                        recyclerView.setVisibility(View.GONE);
+                        noResultFoundLayout.setVisibility(View.VISIBLE);
+                    }
+
+                } else {
+                    recyclerView.setVisibility(View.GONE);
+                    retryLayout.setVisibility(View.VISIBLE);
+                }
+                progressBar.setVisibility(View.GONE);
+            }
+
+            @Override
+            public void onFailure(Call<ArrayList<CommonModel>> call, Throwable t) {
+                recyclerView.setVisibility(View.GONE);
+                retryLayout.setVisibility(View.VISIBLE);
+                progressBar.setVisibility(View.GONE);
+            }
+        });
+
     }
 
     private void getTourListFromAPI() {
