@@ -23,7 +23,6 @@ public class FacilityListTableEnglish {
     private String facilityDescription;
     @ColumnInfo()
     private String facilityTiming;
-
     @ColumnInfo()
     private String facilityTitleTiming;
     @ColumnInfo()
@@ -34,6 +33,7 @@ public class FacilityListTableEnglish {
     private String facilityLatitude;
     @ColumnInfo()
     private String facilityLocationTitle;
+
 
     public FacilityListTableEnglish(@NonNull String facilityNid, String sortId, String facilityTitle,
                                     String facilityImage, String facilitySubtitle, String facilityDescription,
@@ -51,6 +51,7 @@ public class FacilityListTableEnglish {
         this.facilityCategoryId = facilityCategoryId;
         this.facilityLatitude = facilityLatitude;
         this.facilityLocationTitle = facilityLocationTitle;
+
     }
 
     @NonNull
