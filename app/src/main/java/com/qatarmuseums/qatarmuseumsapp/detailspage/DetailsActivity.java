@@ -66,6 +66,7 @@ import com.qatarmuseums.qatarmuseumsapp.commonpagedatabase.PublicArtsTableArabic
 import com.qatarmuseums.qatarmuseumsapp.commonpagedatabase.PublicArtsTableEnglish;
 import com.qatarmuseums.qatarmuseumsapp.culturepass.AddCookiesInterceptor;
 import com.qatarmuseums.qatarmuseumsapp.culturepass.UserRegistrationDetailsTable;
+import com.qatarmuseums.qatarmuseumsapp.facilities.FacilitiesDetailModel;
 import com.qatarmuseums.qatarmuseumsapp.heritage.HeritageOrExhibitionDetailModel;
 import com.qatarmuseums.qatarmuseumsapp.home.GlideApp;
 import com.qatarmuseums.qatarmuseumsapp.museum.GlideLoaderForMuseum;
@@ -204,6 +205,7 @@ public class DetailsActivity extends AppCompatActivity implements IPullZoom, OnM
     int REQUEST_PERMISSION_SETTING = 110;
     String seatsRemaining = "0";
     private int seatsCount;
+    private ArrayList<FacilitiesDetailModel> facilitiesDetailModels = new ArrayList<>();
 
     @Override
     protected void attachBaseContext(Context base) {
@@ -268,6 +270,14 @@ public class DetailsActivity extends AppCompatActivity implements IPullZoom, OnM
                         seatsRemaining = tourDetailsModel.getSeatsRemaining();
                 }
             }
+        }
+
+        if (comingFrom.equals(getString(R.string.facility_sublist))) {
+            mainTitle = intent.getStringExtra("MAIN_TITLE");
+            description = intent.getStringExtra("DESCRIPTION");
+            latitude = intent.getStringExtra("LATITUDE");
+            longitude = intent.getStringExtra("LONGITUDE");
+
         }
         qmDatabase = QMDatabase.getInstance(DetailsActivity.this);
         toolbar = findViewById(R.id.toolbar);
@@ -522,6 +532,68 @@ public class DetailsActivity extends AppCompatActivity implements IPullZoom, OnM
         });
     }
 
+    private void getFacilityDetailsFromAPI(String id, int appLanguage) {
+
+        commonContentLayout.setVisibility(View.INVISIBLE);
+        retryLayout.setVisibility(View.GONE);
+        interestLayout.setVisibility(View.VISIBLE);
+        videoLayout.setVisibility(View.GONE);
+        progressBar.setVisibility(View.VISIBLE);
+        final String language;
+        if (appLanguage == 1) {
+            language = LocaleManager.LANGUAGE_ENGLISH;
+        } else {
+            language = LocaleManager.LANGUAGE_ARABIC;
+        }
+
+        APIInterface apiService = APIClient.getClient().create(APIInterface.class);
+        Call<ArrayList<FacilitiesDetailModel>> call = apiService.getFacilityDetails(language, id);
+        call.enqueue(new Callback<ArrayList<FacilitiesDetailModel>>() {
+            @Override
+            public void onResponse(Call<ArrayList<FacilitiesDetailModel>> call, Response<ArrayList<FacilitiesDetailModel>> response) {
+                if (response.isSuccessful()) {
+                    if (response.body() != null && response.body().size() > 0) {
+                        facilitiesDetailModels.addAll(response.body());
+                        removeHtmlTagsforFacilities(facilitiesDetailModels);
+                        GlideApp.with(DetailsActivity.this)
+                                .load(facilitiesDetailModels.get(0).getFacilityImage().get(0))
+                                .centerCrop()
+                                .placeholder(R.drawable.placeholder)
+                                .into(headerImageView);
+                        mainTitle = facilitiesDetailModels.get(0).getFacilitiesTitle();
+                        timingTitle.setText(facilitiesDetailModels.get(0).getFacilityTitleTiming());
+                        loadData(null, facilitiesDetailModels.get(0).getFacilityDescription(),
+                                null, null, null,
+                                facilitiesDetailModels.get(0).getFacilitiesTiming(), null, null, null, null,
+                                facilitiesDetailModels.get(0).getLattitude(), facilitiesDetailModels.get(0).getLongitude(),
+                                true, null);
+
+                    } else {
+                        commonContentLayout.setVisibility(View.GONE);
+                        retryLayout.setVisibility(View.VISIBLE);
+                    }
+
+                } else {
+                    commonContentLayout.setVisibility(View.GONE);
+                    retryLayout.setVisibility(View.VISIBLE);
+                }
+                progressBar.setVisibility(View.GONE);
+            }
+
+            @Override
+            public void onFailure(Call<ArrayList<FacilitiesDetailModel>> call, Throwable t) {
+                commonContentLayout.setVisibility(View.GONE);
+                retryLayout.setVisibility(View.VISIBLE);
+                progressBar.setVisibility(View.GONE);
+            }
+        });
+
+    }
+
+    private void getFacilityDetailsFromDataBase(String id, int language) {
+
+    }
+
     public void registerButtonAction(String registrationCount) {
         if (util.isNetworkAvailable(DetailsActivity.this)) {
             entryJsonarray(registrationCount);
@@ -732,8 +804,7 @@ public class DetailsActivity extends AppCompatActivity implements IPullZoom, OnM
             else
                 getCommonListAPIDataFromDatabase(id, language);
 
-        }
-        else if (comingFrom.equals(getString(R.string.museum_about_text))) {
+        } else if (comingFrom.equals(getString(R.string.museum_about_text))) {
             if (util.isNetworkAvailable(DetailsActivity.this)) {
                 if (id.equals("13376"))
                     getMuseumAboutDetailsFromAPI(id, language, true);
@@ -745,10 +816,18 @@ public class DetailsActivity extends AppCompatActivity implements IPullZoom, OnM
                 else
                     getMuseumAboutDetailsFromDatabase(id, language, false);
             }
+        } else if (comingFrom.equals(getString(R.string.facilities_txt))) {
+            if (util.isNetworkAvailable(DetailsActivity.this))
+                getFacilityDetailsFromAPI(id, language);
+            else
+                getFacilityDetailsFromDataBase(id, language);
+
         } else if (comingFrom.equals(getString(R.string.museum_travel))) {
             getTravelsDetails();
         } else if (comingFrom.equals(getString(R.string.museum_tours))) {
             setTourDetailsData();
+        } else if (comingFrom.equals(getString(R.string.facility_sublist))) {
+            setFacilitiesdetails();
         } else if (comingFrom.equals(getString(R.string.museum_discussion))) {
             setSpecialEventDetailsData();
         }
@@ -764,6 +843,17 @@ public class DetailsActivity extends AppCompatActivity implements IPullZoom, OnM
         loadData(null, description,
                 null, null, null,
                 eventDate, null, null, contactNumber, contactMail, latitude, longitude,
+                true, null);
+    }
+
+    public void setFacilitiesdetails() {
+        commonContentLayout.setVisibility(View.VISIBLE);
+        interestLayout.setVisibility(View.VISIBLE);
+        videoLayout.setVisibility(View.GONE);
+        timingTitle.setText(intent.getStringExtra("TITLE_TIMING"));
+        loadData(null, description,
+                null, null, null,
+                intent.getStringExtra("TIMING"), null, null, null, null, latitude, longitude,
                 true, null);
     }
 
@@ -1123,10 +1213,15 @@ public class DetailsActivity extends AppCompatActivity implements IPullZoom, OnM
                 this.secondTitleDescription.setText(secondTitleDescription);
             }
             if (comingFrom.equals(getString(R.string.museum_tours)) ||
-                    comingFrom.equals(getString(R.string.museum_discussion)))
+                    comingFrom.equals(getString(R.string.museum_discussion))) {
                 timingTitle.setText(R.string.date);
-            else
+            } else if (comingFrom.equals(getString(R.string.facility_sublist)) ||
+                    comingFrom.equals(getString(R.string.facilities_txt))) {
+                timingTitle.setText(R.string.opening_timings);
+                registerButton.setVisibility(View.GONE);
+            } else
                 timingTitle.setText(R.string.museum_timings);
+
             if (openingTime != null) {
                 this.timingLayout.setVisibility(View.VISIBLE);
                 String time = /* getResources().getString(R.string.everyday_from) +" " + */
@@ -1708,6 +1803,17 @@ public class DetailsActivity extends AppCompatActivity implements IPullZoom, OnM
             models.get(i).setStartDate(util.html2string(models.get(i).getStartDate()));
             models.get(i).setEndDate(util.html2string(models.get(i).getEndDate()));
             models.get(i).setLongDescription(util.html2string(models.get(i).getLongDescription()));
+        }
+    }
+
+    public void removeHtmlTagsforFacilities(ArrayList<FacilitiesDetailModel> models) {
+        for (int i = 0; i < models.size(); i++) {
+            models.get(i).setFacilitiesSubtitle(util.html2string(models.get(i).getFacilitiesSubtitle()));
+            models.get(i).setFacilitiesTitle(util.html2string(models.get(i).getFacilitiesTitle()));
+            models.get(i).setFacilityDescription(util.html2string(models.get(i).getFacilityDescription()));
+            models.get(i).setFacilitiesTiming(util.html2string(models.get(i).getFacilitiesTiming()));
+
+
         }
     }
 
@@ -3121,4 +3227,6 @@ public class DetailsActivity extends AppCompatActivity implements IPullZoom, OnM
         }
         super.onBackPressed();
     }
+
+
 }

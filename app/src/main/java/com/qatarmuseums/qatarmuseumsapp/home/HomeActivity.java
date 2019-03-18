@@ -439,7 +439,7 @@ public class HomeActivity extends BaseActivity {
             } else {
                 homeList = new HomeList(
                         "ندوات و محاورات",
-                        "13976",
+                        "15246",
                         "https://www.qm.org.qa/sites/default/files/qlibrary.jpeg",
                         "false",
                         10);
