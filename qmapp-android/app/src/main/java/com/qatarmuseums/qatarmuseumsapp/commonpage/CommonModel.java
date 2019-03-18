@@ -81,6 +81,12 @@ public class CommonModel implements Comparable<CommonModel> {
         this.id = id;
         this.images = images;
     }
+    CommonModel(String name, String sortId, String id, String images) {
+        this.name = name;
+        this.sortId = sortId;
+        this.id = id;
+        this.image = images;
+    }
 
     CommonModel(String id, String name, String location, String image, String exhibitionStatus,
                 String exhibitionDisplayDate) {
