@@ -21,9 +21,9 @@ public class CommonModel implements Comparable<CommonModel> {
     private String startDate;
     @SerializedName("end_Date")
     private String endDate;
-    @SerializedName("Longitude")
+    @SerializedName(value = "Longitude",alternate = {"longtitude"})
     private String longitude;
-    @SerializedName("Latitude")
+    @SerializedName(value = "Latitude",alternate = {"latitude "})
     private String latitude;
     @SerializedName(value = "SORT_ID", alternate = {"sort_id", "Sort_Id", "sort_coefficient"})
     private String sortId;

@@ -20,12 +20,12 @@ public class FacilitiesDetailModel {
     private String facilityTitleTiming;
     @SerializedName("nid")
     private String facilitiesId;
-    @SerializedName("longtitude")
+    @SerializedName(value = "Longitude",alternate = {"longtitude"})
     private String longitude;
 
     @SerializedName("category")
     private String facilitiesCategoryId;
-    @SerializedName("latitude")
+    @SerializedName(value = "Latitude",alternate = {"latitude "})
     private String lattitude;
     @SerializedName("location title")
     private String locationTitle;

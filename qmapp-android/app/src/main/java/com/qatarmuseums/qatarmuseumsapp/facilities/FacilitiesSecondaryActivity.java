@@ -90,7 +90,7 @@ public class FacilitiesSecondaryActivity extends AppCompatActivity {
             navigationIntent.putExtra("TIMING", facilitiesDetailList.get(position).getFacilitiesTiming());
             navigationIntent.putExtra("TITLE_TIMING", facilitiesDetailList.get(position).getFacilityTitleTiming());
             navigationIntent.putExtra("ID", facilitiesDetailList.get(position).getFacilitiesId());
-            navigationIntent.putExtra("COMING_FROM", comingFrom);
+            navigationIntent.putExtra("COMING_FROM", getString(R.string.facility_sublist));
             navigationIntent.putExtra("LONGITUDE", facilitiesDetailList.get(position).getLongitude());
             navigationIntent.putExtra("LATITUDE", facilitiesDetailList.get(position).getLattitude());
             navigationIntent.putExtra("CATEGORY_ID", facilitiesDetailList.get(position).getFacilitiesCategoryId());
