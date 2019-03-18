@@ -752,7 +752,7 @@ public class CommonActivity extends AppCompatActivity {
                         activityReference.get().models.get(0).getImages().get(0),
                         "", "", "",
                         "", "", "",
-                        "",
+                        "","",
                         activityReference.get().models.get(0).getId()
                 );
 
@@ -763,7 +763,7 @@ public class CommonActivity extends AppCompatActivity {
                         activityReference.get().models.get(0).getImages().get(0),
                         "", "", "",
                         "", "", "",
-                        "",
+                        "","",
                         activityReference.get().models.get(0).getId()
                 );
 

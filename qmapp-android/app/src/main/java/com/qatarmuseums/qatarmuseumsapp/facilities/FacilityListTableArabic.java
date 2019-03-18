@@ -24,7 +24,6 @@ public class FacilityListTableArabic {
     private String facilityDescription;
     @ColumnInfo()
     private String facilityTiming;
-
     @ColumnInfo()
     private String facilityTitleTiming;
     @ColumnInfo()
@@ -35,6 +34,8 @@ public class FacilityListTableArabic {
     private String facilityLatitude;
     @ColumnInfo()
     private String facilityLocationTitle;
+
+
 
     public FacilityListTableArabic(@NonNull String facilityNid, String sortId, String facilityTitle,
                                     String facilityImage, String facilitySubtitle, String facilityDescription,
@@ -150,4 +151,6 @@ public class FacilityListTableArabic {
     public void setFacilityLocationTitle(String facilityLocationTitle) {
         this.facilityLocationTitle = facilityLocationTitle;
     }
+
+
 }

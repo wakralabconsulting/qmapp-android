@@ -45,12 +45,14 @@ public interface FacilityListTableDao {
             "facilityLongitude = :facilityLongitudeFromApi," +
             "facilityCategoryId = :facilityCategoryIdFromApi," +
             "facilityLatitude = :facilityLatitudeFromApi," +
-            "facilityLocationTitle = :facilityLocationTitleFromApi WHERE facilityNid=:idFromApi")
+            "facilityLocationTitle = :facilityLocationTitleFromApi," +
+            "facilityTitleTiming = :facilityTimingTitle WHERE facilityNid=:idFromApi")
     void updateFacilityListEnglish(String sortIdFromApi, String facilityTitleFromApi,
                                    String facilityImageFromApi, String facilitySubtitleFromApi,
                                    String facilityDescriptionFromApi, String facilityTimingFromApi,
                                    String facilityLongitudeFromApi, String facilityCategoryIdFromApi,
                                    String facilityLatitudeFromApi, String facilityLocationTitleFromApi,
+                                   String facilityTimingTitle,
                                    String idFromApi);
 
 
@@ -63,12 +65,14 @@ public interface FacilityListTableDao {
             "facilityLongitude = :facilityLongitudeFromApi," +
             "facilityCategoryId = :facilityCategoryIdFromApi," +
             "facilityLatitude = :facilityLatitudeFromApi," +
-            "facilityLocationTitle = :facilityLocationTitleFromApi WHERE facilityNid=:idFromApi")
+            "facilityLocationTitle = :facilityLocationTitleFromApi," +
+            "facilityTitleTiming = :facilityTimingTitle WHERE facilityNid=:idFromApi")
     void updateFacilityListArabic(String sortIdFromApi, String facilityTitleFromApi,
                                   String facilityImageFromApi, String facilitySubtitleFromApi,
                                   String facilityDescriptionFromApi, String facilityTimingFromApi,
                                   String facilityLongitudeFromApi, String facilityCategoryIdFromApi,
                                   String facilityLatitudeFromApi, String facilityLocationTitleFromApi,
+                                  String facilityTimingTitle,
                                   String idFromApi);
 
 
