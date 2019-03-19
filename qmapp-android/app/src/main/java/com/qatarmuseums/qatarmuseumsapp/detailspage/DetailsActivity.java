@@ -67,6 +67,8 @@ import com.qatarmuseums.qatarmuseumsapp.commonpagedatabase.PublicArtsTableEnglis
 import com.qatarmuseums.qatarmuseumsapp.culturepass.AddCookiesInterceptor;
 import com.qatarmuseums.qatarmuseumsapp.culturepass.UserRegistrationDetailsTable;
 import com.qatarmuseums.qatarmuseumsapp.facilities.FacilitiesDetailModel;
+import com.qatarmuseums.qatarmuseumsapp.facilities.FacilityDetailTableArabic;
+import com.qatarmuseums.qatarmuseumsapp.facilities.FacilityDetailTableEnglish;
 import com.qatarmuseums.qatarmuseumsapp.heritage.HeritageOrExhibitionDetailModel;
 import com.qatarmuseums.qatarmuseumsapp.home.GlideApp;
 import com.qatarmuseums.qatarmuseumsapp.museum.GlideLoaderForMuseum;
@@ -206,6 +208,9 @@ public class DetailsActivity extends AppCompatActivity implements IPullZoom, OnM
     String seatsRemaining = "0";
     private int seatsCount;
     private ArrayList<FacilitiesDetailModel> facilitiesDetailModels = new ArrayList<>();
+    FacilityDetailTableEnglish facilityDetailTableEnglish;
+    FacilityDetailTableArabic facilityDetailTableArabic;
+
 
     @Override
     protected void attachBaseContext(Context base) {
@@ -567,10 +572,11 @@ public class DetailsActivity extends AppCompatActivity implements IPullZoom, OnM
                                 facilitiesDetailModels.get(0).getFacilitiesTiming(), null, null, null, null,
                                 facilitiesDetailModels.get(0).getLattitude(), facilitiesDetailModels.get(0).getLongitude(),
                                 true, null);
+                        new FacilityRowCount(DetailsActivity.this, language).execute();
 
                     } else {
                         commonContentLayout.setVisibility(View.GONE);
-                        retryLayout.setVisibility(View.VISIBLE);
+                        noResultFoundTxt.setVisibility(View.VISIBLE);
                     }
 
                 } else {
@@ -590,7 +596,19 @@ public class DetailsActivity extends AppCompatActivity implements IPullZoom, OnM
 
     }
 
-    private void getFacilityDetailsFromDataBase(String id, int language) {
+    private void getFacilityDetailsFromDataBase(String id, String appLanguage) {
+
+        if (appLanguage.equals(LocaleManager.LANGUAGE_ENGLISH))
+            language = 1;
+        else
+            language = 2;
+
+        if (appLanguage.equals(LocaleManager.LANGUAGE_ENGLISH)) {
+            new RetrieveEnglishFacilityData(DetailsActivity.this, Integer.valueOf(id), language).execute();
+        } else {
+            new RetrieveArabicFacilityData(DetailsActivity.this, Integer.valueOf(id), language).execute();
+        }
+
 
     }
 
@@ -820,7 +838,7 @@ public class DetailsActivity extends AppCompatActivity implements IPullZoom, OnM
             if (util.isNetworkAvailable(DetailsActivity.this))
                 getFacilityDetailsFromAPI(id, language);
             else
-                getFacilityDetailsFromDataBase(id, language);
+                getFacilityDetailsFromDataBase(id, appLanguage);
 
         } else if (comingFrom.equals(getString(R.string.museum_travel))) {
             getTravelsDetails();
@@ -3226,6 +3244,339 @@ public class DetailsActivity extends AppCompatActivity implements IPullZoom, OnM
             return;
         }
         super.onBackPressed();
+    }
+
+
+    public static class FacilityRowCount extends AsyncTask<Void, Void, Integer> {
+        private WeakReference<DetailsActivity> activityReference;
+        String language;
+
+        public FacilityRowCount(DetailsActivity context, String language) {
+            this.activityReference = new WeakReference<>(context);
+            this.language = language;
+        }
+
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+        }
+
+        @Override
+        protected Integer doInBackground(Void... voids) {
+            if (language.equals(LocaleManager.LANGUAGE_ENGLISH))
+                return activityReference.get().qmDatabase.getFacilitiesDetailTableDao().getNumberOfRowsEnglish();
+            else
+                return activityReference.get().qmDatabase.getFacilitiesDetailTableDao().getNumberOfRowsArabic();
+
+        }
+
+        @Override
+        protected void onPostExecute(Integer integer) {
+            if (integer > 0) {
+                new CheckFacilityDBRowExist(activityReference.get(), language).execute();
+            } else {
+                new InsertFacilityDataToDataBase(activityReference.get(), activityReference.get().facilityDetailTableEnglish,
+                        activityReference.get().facilityDetailTableArabic, language).execute();
+            }
+        }
+    }
+
+    public static class CheckFacilityDBRowExist extends AsyncTask<Void, Void, Void> {
+        private WeakReference<DetailsActivity> activityReference;
+        private FacilityDetailTableEnglish facilityDetailTableEnglish;
+        private FacilityDetailTableArabic facilityDetailTableArabic;
+        String language;
+
+        CheckFacilityDBRowExist(DetailsActivity context, String apiLanguage) {
+            activityReference = new WeakReference<>(context);
+            language = apiLanguage;
+        }
+
+        @Override
+        protected Void doInBackground(Void... voids) {
+            if (activityReference.get().facilitiesDetailModels.size() > 0) {
+                if (language.equals(LocaleManager.LANGUAGE_ENGLISH)) {
+                    for (int i = 0; i < activityReference.get().facilitiesDetailModels.size(); i++) {
+                        int n = activityReference.get().qmDatabase.getFacilitiesDetailTableDao().checkEnglishIdExist(
+                                Integer.parseInt(activityReference.get().facilitiesDetailModels.get(i).getFacilitiesId()));
+                        if (n > 0) {
+                            new UpdateFacilityTable(activityReference.get(), language).execute();
+                        } else {
+
+                            facilityDetailTableEnglish = new FacilityDetailTableEnglish(
+                                    activityReference.get().facilitiesDetailModels.get(i).getFacilitiesId(),
+                                    "",
+                                    activityReference.get().facilitiesDetailModels.get(i).getFacilitiesTitle(),
+                                    activityReference.get().facilitiesDetailModels.get(i).getFacilityImage().get(0),
+                                    activityReference.get().facilitiesDetailModels.get(i).getFacilitiesSubtitle(),
+                                    activityReference.get().facilitiesDetailModels.get(i).getFacilityDescription(),
+                                    activityReference.get().facilitiesDetailModels.get(i).getFacilitiesTiming(),
+                                    activityReference.get().facilitiesDetailModels.get(i).getFacilityTitleTiming(),
+                                    activityReference.get().facilitiesDetailModels.get(i).getLongitude(),
+                                    activityReference.get().facilitiesDetailModels.get(i).getFacilitiesCategoryId(),
+                                    activityReference.get().facilitiesDetailModels.get(i).getLattitude(),
+                                    activityReference.get().facilitiesDetailModels.get(i).getLocationTitle());
+
+                            activityReference.get().qmDatabase.getFacilitiesDetailTableDao().insertEnglish(facilityDetailTableEnglish);
+                        }
+                    }
+                } else {
+                    for (int i = 0; i < activityReference.get().facilitiesDetailModels.size(); i++) {
+                        int n = activityReference.get().qmDatabase.getFacilitiesDetailTableDao().checkArabicIdExist(
+                                Integer.parseInt(activityReference.get().facilitiesDetailModels.get(i).getFacilitiesId()));
+                        if (n > 0) {
+                            new UpdateFacilityTable(activityReference.get(), language).execute();
+                        } else {
+
+                            facilityDetailTableArabic = new FacilityDetailTableArabic(
+                                    activityReference.get().facilitiesDetailModels.get(i).getFacilitiesId(),
+                                    "",
+                                    activityReference.get().facilitiesDetailModels.get(i).getFacilitiesTitle(),
+                                    activityReference.get().facilitiesDetailModels.get(i).getFacilityImage().get(0),
+                                    activityReference.get().facilitiesDetailModels.get(i).getFacilitiesSubtitle(),
+                                    activityReference.get().facilitiesDetailModels.get(i).getFacilityDescription(),
+                                    activityReference.get().facilitiesDetailModels.get(i).getFacilitiesTiming(),
+                                    activityReference.get().facilitiesDetailModels.get(i).getFacilityTitleTiming(),
+                                    activityReference.get().facilitiesDetailModels.get(i).getLongitude(),
+                                    activityReference.get().facilitiesDetailModels.get(i).getFacilitiesCategoryId(),
+                                    activityReference.get().facilitiesDetailModels.get(i).getLattitude(),
+                                    activityReference.get().facilitiesDetailModels.get(i).getLocationTitle());
+
+                            activityReference.get().qmDatabase.getFacilitiesDetailTableDao().insertArabic(facilityDetailTableArabic);
+                        }
+                    }
+
+                }
+            }
+            return null;
+        }
+    }
+
+    public static class UpdateFacilityTable extends AsyncTask<Void, Void, Void> {
+        private WeakReference<DetailsActivity> activityReference;
+        String language;
+
+        UpdateFacilityTable(DetailsActivity context, String apiLanguage) {
+            activityReference = new WeakReference<>(context);
+            language = apiLanguage;
+
+        }
+
+        @Override
+        protected Void doInBackground(Void... voids) {
+            if (language.equals(LocaleManager.LANGUAGE_ENGLISH)) {
+
+                activityReference.get().qmDatabase.getFacilitiesDetailTableDao().updateFacilityDetailEnglish(
+                        "",
+                        activityReference.get().facilitiesDetailModels.get(0).getFacilitiesTitle(),
+                        activityReference.get().facilitiesDetailModels.get(0).getFacilityImage().get(0),
+                        activityReference.get().facilitiesDetailModels.get(0).getFacilitiesId(),
+                        activityReference.get().facilitiesDetailModels.get(0).getFacilityDescription(),
+                        activityReference.get().facilitiesDetailModels.get(0).getFacilitiesTiming(),
+                        activityReference.get().facilitiesDetailModels.get(0).getLongitude(),
+                        activityReference.get().facilitiesDetailModels.get(0).getFacilitiesCategoryId(),
+                        activityReference.get().facilitiesDetailModels.get(0).getLattitude(),
+                        activityReference.get().facilitiesDetailModels.get(0).getLocationTitle(),
+                        activityReference.get().facilitiesDetailModels.get(0).getFacilityTitleTiming(),
+                        activityReference.get().facilitiesDetailModels.get(0).getFacilitiesId()
+                );
+
+            } else {
+                activityReference.get().qmDatabase.getFacilitiesDetailTableDao().updateFacilityDetailArabic(
+                        "",
+                        activityReference.get().facilitiesDetailModels.get(0).getFacilitiesTitle(),
+                        activityReference.get().facilitiesDetailModels.get(0).getFacilityImage().get(0),
+                        activityReference.get().facilitiesDetailModels.get(0).getFacilitiesId(),
+                        activityReference.get().facilitiesDetailModels.get(0).getFacilityDescription(),
+                        activityReference.get().facilitiesDetailModels.get(0).getFacilitiesTiming(),
+                        activityReference.get().facilitiesDetailModels.get(0).getLongitude(),
+                        activityReference.get().facilitiesDetailModels.get(0).getFacilitiesCategoryId(),
+                        activityReference.get().facilitiesDetailModels.get(0).getLattitude(),
+                        activityReference.get().facilitiesDetailModels.get(0).getLocationTitle(),
+                        activityReference.get().facilitiesDetailModels.get(0).getFacilityTitleTiming(),
+                        activityReference.get().facilitiesDetailModels.get(0).getFacilitiesId()
+                );
+
+            }
+            return null;
+        }
+    }
+
+    public static class InsertFacilityDataToDataBase extends AsyncTask<Void, Void, Boolean> {
+
+        private WeakReference<DetailsActivity> activityReference;
+        private FacilityDetailTableEnglish facilityDetailTableEnglish;
+        private FacilityDetailTableArabic facilityDetailTableArabic;
+        String language;
+
+        InsertFacilityDataToDataBase(DetailsActivity context, FacilityDetailTableEnglish facilityDetailTableEnglish,
+                                     FacilityDetailTableArabic facilityDetailTableArabic, String apiLanguage) {
+            activityReference = new WeakReference<>(context);
+            this.facilityDetailTableEnglish = facilityDetailTableEnglish;
+            this.facilityDetailTableArabic = facilityDetailTableArabic;
+            this.language = apiLanguage;
+        }
+
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+        }
+
+        @Override
+        protected Boolean doInBackground(Void... voids) {
+            if (language.equals(LocaleManager.LANGUAGE_ENGLISH)) {
+                if (activityReference.get().facilitiesDetailModels != null && activityReference.get().facilitiesDetailModels.size() > 0) {
+                    for (int i = 0; i < activityReference.get().facilitiesDetailModels.size(); i++) {
+
+                        facilityDetailTableEnglish = new FacilityDetailTableEnglish(activityReference.get().facilitiesDetailModels.get(i).getFacilitiesId(),
+                                "",
+                                activityReference.get().facilitiesDetailModels.get(i).getFacilitiesTitle(),
+                                activityReference.get().facilitiesDetailModels.get(i).getFacilityImage().get(0),
+                                activityReference.get().facilitiesDetailModels.get(i).getFacilitiesSubtitle(),
+                                activityReference.get().facilitiesDetailModels.get(i).getFacilityDescription(),
+                                activityReference.get().facilitiesDetailModels.get(i).getFacilitiesTiming(),
+                                activityReference.get().facilitiesDetailModels.get(i).getFacilityTitleTiming(),
+                                activityReference.get().facilitiesDetailModels.get(i).getLongitude(),
+                                activityReference.get().facilitiesDetailModels.get(i).getFacilitiesCategoryId(),
+                                activityReference.get().facilitiesDetailModels.get(i).getLattitude(),
+                                activityReference.get().facilitiesDetailModels.get(i).getLocationTitle());
+                        activityReference.get().qmDatabase.getFacilitiesDetailTableDao().insertEnglish(facilityDetailTableEnglish);
+                    }
+                }
+            } else {
+                for (int i = 0; i < activityReference.get().facilitiesDetailModels.size(); i++) {
+
+                    facilityDetailTableArabic = new FacilityDetailTableArabic(activityReference.get().facilitiesDetailModels.get(i).getFacilitiesId(),
+                            "",
+                            activityReference.get().facilitiesDetailModels.get(i).getFacilitiesTitle(),
+                            activityReference.get().facilitiesDetailModels.get(i).getFacilityImage().get(0),
+                            activityReference.get().facilitiesDetailModels.get(i).getFacilitiesSubtitle(),
+                            activityReference.get().facilitiesDetailModels.get(i).getFacilityDescription(),
+                            activityReference.get().facilitiesDetailModels.get(i).getFacilitiesTiming(),
+                            activityReference.get().facilitiesDetailModels.get(i).getFacilityTitleTiming(),
+                            activityReference.get().facilitiesDetailModels.get(i).getLongitude(),
+                            activityReference.get().facilitiesDetailModels.get(i).getFacilitiesCategoryId(),
+                            activityReference.get().facilitiesDetailModels.get(i).getLattitude(),
+                            activityReference.get().facilitiesDetailModels.get(i).getLocationTitle());
+                    activityReference.get().qmDatabase.getFacilitiesDetailTableDao().insertArabic(facilityDetailTableArabic);
+                }
+
+            }
+            return true;
+        }
+
+        @Override
+        protected void onPostExecute(Boolean aBoolean) {
+            super.onPostExecute(aBoolean);
+        }
+    }
+
+    public static class RetrieveEnglishFacilityData extends AsyncTask<Void, Void, List<FacilityDetailTableEnglish>> {
+        private WeakReference<DetailsActivity> activityReference;
+
+        int id, language;
+
+        public RetrieveEnglishFacilityData(DetailsActivity context, int id, int language) {
+            this.activityReference = new WeakReference<>(context);
+            this.id = id;
+            this.language = language;
+        }
+
+        @Override
+        protected void onPreExecute() {
+            activityReference.get().progressBar.setVisibility(View.VISIBLE);
+        }
+
+        @Override
+        protected List<FacilityDetailTableEnglish> doInBackground(Void... voids) {
+            return activityReference.get().qmDatabase.getFacilitiesDetailTableDao().getFacilityDetailEnglish(id);
+        }
+
+        @Override
+        protected void onPostExecute(List<FacilityDetailTableEnglish> facilityDetailTableEnglishes) {
+            FacilitiesDetailModel facilitiesDetailModel;
+            activityReference.get().facilitiesDetailModels.clear();
+            if (facilityDetailTableEnglishes.size() > 0) {
+                for (int i = 0; i < facilityDetailTableEnglishes.size(); i++) {
+                    ArrayList<String> image = new ArrayList<>();
+                    image.add(facilityDetailTableEnglishes.get(i).getFacilityImage());
+
+                    activityReference.get().loadData(facilityDetailTableEnglishes.get(i).getFacilitySubtitle(),
+                            facilityDetailTableEnglishes.get(i).getFacilityDescription(),
+                            null, null, null,
+                            facilityDetailTableEnglishes.get(i).getFacilityTiming(),
+                            null, null, null, null,
+                            facilityDetailTableEnglishes.get(i).getFacilityLatitude(), facilityDetailTableEnglishes.get(i).getFacilityLongitude(),
+                            true, null);
+                    activityReference.get().videoLayout.setVisibility(View.GONE);
+
+                }
+                activityReference.get().progressBar.setVisibility(View.GONE);
+
+
+            } else {
+                activityReference.get().progressBar.setVisibility(View.GONE);
+                activityReference.get().retryLayout.setVisibility(View.VISIBLE);
+            }
+        }
+
+
+    }
+
+    public static class RetrieveArabicFacilityData extends AsyncTask<Void, Void, List<FacilityDetailTableArabic>> {
+        private WeakReference<DetailsActivity> activityReference;
+
+        int id, language;
+
+        public RetrieveArabicFacilityData(DetailsActivity context, int id, int language) {
+            this.activityReference = new WeakReference<>(context);
+            this.id = id;
+            this.language = language;
+        }
+
+
+        @Override
+        protected void onPreExecute() {
+            activityReference.get().progressBar.setVisibility(View.VISIBLE);
+
+
+        }
+
+        @Override
+        protected List<FacilityDetailTableArabic> doInBackground(Void... voids) {
+            return activityReference.get().qmDatabase.getFacilitiesDetailTableDao().getFacilityDetailArabic(id);
+        }
+
+        @Override
+        protected void onPostExecute(List<FacilityDetailTableArabic> facilityDetailTableArabics) {
+            FacilitiesDetailModel facilitiesDetailModel;
+            activityReference.get().facilitiesDetailModels.clear();
+            if (facilityDetailTableArabics.size() > 0) {
+                for (int i = 0; i < facilityDetailTableArabics.size(); i++) {
+                    ArrayList<String> image = new ArrayList<>();
+                    image.add(facilityDetailTableArabics.get(i).getFacilityImage());
+
+                    activityReference.get().loadData(facilityDetailTableArabics.get(i).getFacilitySubtitle(),
+                            facilityDetailTableArabics.get(i).getFacilityDescription(),
+                            null, null, null,
+                            facilityDetailTableArabics.get(i).getFacilityTiming(),
+                            null, null, null, null,
+                            facilityDetailTableArabics.get(i).getFacilityLatitude(), facilityDetailTableArabics.get(i).getFacilityLongitude(),
+                            true, null);
+                    activityReference.get().videoLayout.setVisibility(View.GONE);
+                }
+
+                activityReference.get().progressBar.setVisibility(View.GONE);
+
+
+            } else {
+                activityReference.get().progressBar.setVisibility(View.GONE);
+
+                activityReference.get().retryLayout.setVisibility(View.VISIBLE);
+            }
+        }
+
+
     }
 
 

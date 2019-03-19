@@ -975,6 +975,7 @@ public class HomeActivity extends BaseActivity {
         String language;
         private ArrayList<HomeList> bannerLists;
 
+
         RowCountBanner(HomeActivity context, String apiLanguage, ArrayList<HomeList> bannerLists) {
             activityReference = new WeakReference<>(context);
             language = apiLanguage;

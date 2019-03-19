@@ -144,7 +144,8 @@ public class CommonActivity extends AppCompatActivity {
                     toolbarTitle.equals(getString(R.string.museum_discussion)))
                 navigationIntent = new Intent(CommonActivity.this,
                         TourSecondaryListActivity.class);
-            else if (models.get(position).getName().equals(getString(R.string.nmoq_cafe_dining)))
+            else if (models.get(position).getName().toLowerCase().equals(getString(R.string.nmoq_cafe_dining))||
+                    models.get(position).getName().toLowerCase().equals(getString(R.string.nmoq_cafe_dining)))
                 navigationIntent = new Intent(CommonActivity.this,
                         FacilitiesSecondaryActivity.class);
             else
@@ -169,6 +170,8 @@ public class CommonActivity extends AppCompatActivity {
             navigationIntent.putExtra("CLAIM_OFFER", models.get(position).getClaimOffer());
             navigationIntent.putExtra("CONTACT_PHONE", models.get(position).getContactNumber());
             navigationIntent.putExtra("CONTACT_MAIL", models.get(position).getEmail());
+
+
             startActivity(navigationIntent);
 
         });
@@ -644,10 +647,7 @@ public class CommonActivity extends AppCompatActivity {
                         facilityListTableEnglish = new FacilityListTableEnglish(activityReference.get().models.get(i).getId(),
                                 activityReference.get().models.get(i).getSortId(),
                                 activityReference.get().models.get(i).getName(),
-                                activityReference.get().models.get(i).getImages().get(0),
-                                "",
-                                "",
-                                "", "", "", "", "", "");
+                                activityReference.get().models.get(i).getImages().get(0));
                         activityReference.get().qmDatabase.getFacilitiesListTableDao().insertEnglish(facilityListTableEnglish);
                     }
                 }
@@ -657,10 +657,7 @@ public class CommonActivity extends AppCompatActivity {
                     facilityListTableArabic = new FacilityListTableArabic(activityReference.get().models.get(i).getId(),
                             activityReference.get().models.get(i).getSortId(),
                             activityReference.get().models.get(i).getName(),
-                            activityReference.get().models.get(i).getImages().get(0),
-                            "",
-                            "",
-                            "", "", "", "", "", "");
+                            activityReference.get().models.get(i).getImages().get(0));
                     activityReference.get().qmDatabase.getFacilitiesListTableDao().insertArabic(facilityListTableArabic);
                 }
 
@@ -699,10 +696,7 @@ public class CommonActivity extends AppCompatActivity {
                             facilityListTableEnglish = new FacilityListTableEnglish(activityReference.get().models.get(i).getId(),
                                     activityReference.get().models.get(i).getSortId(),
                                     activityReference.get().models.get(i).getName(),
-                                    activityReference.get().models.get(i).getImages().get(0),
-                                    "",
-                                    "",
-                                    "", "", "", "", "", "");
+                                    activityReference.get().models.get(i).getImages().get(0));
 
                             activityReference.get().qmDatabase.getFacilitiesListTableDao().insertEnglish(facilityListTableEnglish);
                         }
@@ -718,10 +712,7 @@ public class CommonActivity extends AppCompatActivity {
                             facilityListTableArabic = new FacilityListTableArabic(activityReference.get().models.get(i).getId(),
                                     activityReference.get().models.get(i).getSortId(),
                                     activityReference.get().models.get(i).getName(),
-                                    activityReference.get().models.get(i).getImages().get(0),
-                                    "",
-                                    "",
-                                    "", "", "", "", "", "");
+                                    activityReference.get().models.get(i).getImages().get(0));
 
                             activityReference.get().qmDatabase.getFacilitiesListTableDao().insertArabic(facilityListTableArabic);
                         }
@@ -750,9 +741,6 @@ public class CommonActivity extends AppCompatActivity {
                         activityReference.get().models.get(0).getSortId(),
                         activityReference.get().models.get(0).getName(),
                         activityReference.get().models.get(0).getImages().get(0),
-                        "", "", "",
-                        "", "", "",
-                        "","",
                         activityReference.get().models.get(0).getId()
                 );
 
@@ -761,9 +749,6 @@ public class CommonActivity extends AppCompatActivity {
                         activityReference.get().models.get(0).getSortId(),
                         activityReference.get().models.get(0).getName(),
                         activityReference.get().models.get(0).getImages().get(0),
-                        "", "", "",
-                        "", "", "",
-                        "","",
                         activityReference.get().models.get(0).getId()
                 );
 
