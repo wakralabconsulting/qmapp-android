@@ -56,8 +56,8 @@ public class FacilitiesSecondaryActivity extends AppCompatActivity {
     private String[] splitArray;
     private String startTime, endTime;
     private long startTimeStamp, endTimeStamp;
-    FacilityListTableEnglish facilityListTableEnglish;
-    FacilityListTableArabic facilityListTableArabic;
+    FacilityDetailTableEnglish facilityDetailTableEnglish;
+    FacilityDetailTableArabic facilityDetailTableArabic;
 
     @Override
     protected void attachBaseContext(Context base) {
@@ -74,6 +74,8 @@ public class FacilitiesSecondaryActivity extends AppCompatActivity {
         String mainTitle = intent.getStringExtra("MAIN_TITLE");
         comingFrom = intent.getStringExtra("COMING_FROM");
         facilityId = intent.getStringExtra("ID");
+
+
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         toolbarBack = findViewById(R.id.toolbar_back);
@@ -139,13 +141,14 @@ public class FacilitiesSecondaryActivity extends AppCompatActivity {
         if (util.isNetworkAvailable(this))
             getFacilityDetailsFromAPI(facilityId);
         else
-            getFacilityListFromDataBase();
+            getFacilityDetailFromDataBase(facilityId);
 
 
     }
 
 
     public void getFacilityDetailsFromAPI(String id) {
+        progressBar.setVisibility(View.VISIBLE);
         APIInterface apiService =
                 APIClient.getClient().create(APIInterface.class);
         Call<ArrayList<FacilitiesDetailModel>> call = apiService.getFacilityDetails(language, id);
@@ -182,11 +185,11 @@ public class FacilitiesSecondaryActivity extends AppCompatActivity {
 
     }
 
-    public void getFacilityListFromDataBase() {
+    public void getFacilityDetailFromDataBase( String facilityId) {
         if (language.equals(LocaleManager.LANGUAGE_ENGLISH)) {
-            new RetrieveEnglishFacilityData(FacilitiesSecondaryActivity.this).execute();
+            new RetrieveEnglishFacilityData(FacilitiesSecondaryActivity.this,facilityId).execute();
         } else {
-            new RetrieveArabicFacilityData(FacilitiesSecondaryActivity.this).execute();
+            new RetrieveArabicFacilityData(FacilitiesSecondaryActivity.this,facilityId).execute();
         }
     }
 
@@ -218,9 +221,9 @@ public class FacilitiesSecondaryActivity extends AppCompatActivity {
         @Override
         protected Integer doInBackground(Void... voids) {
             if (language.equals(LocaleManager.LANGUAGE_ENGLISH))
-                return activityReference.get().qmDatabase.getFacilitiesListTableDao().getNumberOfRowsEnglish();
+                return activityReference.get().qmDatabase.getFacilitiesDetailTableDao().getNumberOfRowsEnglish();
             else
-                return activityReference.get().qmDatabase.getFacilitiesListTableDao().getNumberOfRowsArabic();
+                return activityReference.get().qmDatabase.getFacilitiesDetailTableDao().getNumberOfRowsArabic();
 
         }
 
@@ -229,16 +232,16 @@ public class FacilitiesSecondaryActivity extends AppCompatActivity {
             if (integer > 0) {
                 new CheckFacilityDBRowExist(activityReference.get(), language).execute();
             } else {
-                new InsertFacilityDataToDataBase(activityReference.get(), activityReference.get().facilityListTableEnglish,
-                        activityReference.get().facilityListTableArabic, language).execute();
+                new InsertFacilityDataToDataBase(activityReference.get(), activityReference.get().facilityDetailTableEnglish,
+                        activityReference.get().facilityDetailTableArabic, language).execute();
             }
         }
     }
 
     public static class CheckFacilityDBRowExist extends AsyncTask<Void, Void, Void> {
         private WeakReference<FacilitiesSecondaryActivity> activityReference;
-        private FacilityListTableEnglish facilityListTableEnglish;
-        private FacilityListTableArabic facilityListTableArabic;
+        private FacilityDetailTableEnglish facilityDetailTableEnglish;
+        private FacilityDetailTableArabic facilityDetailTableArabic;
         String language;
 
         CheckFacilityDBRowExist(FacilitiesSecondaryActivity context, String apiLanguage) {
@@ -251,13 +254,13 @@ public class FacilitiesSecondaryActivity extends AppCompatActivity {
             if (activityReference.get().facilitiesDetailList.size() > 0) {
                 if (language.equals(LocaleManager.LANGUAGE_ENGLISH)) {
                     for (int i = 0; i < activityReference.get().facilitiesDetailList.size(); i++) {
-                        int n = activityReference.get().qmDatabase.getFacilitiesListTableDao().checkEnglishIdExist(
+                        int n = activityReference.get().qmDatabase.getFacilitiesDetailTableDao().checkEnglishIdExist(
                                 Integer.parseInt(activityReference.get().facilitiesDetailList.get(i).getFacilitiesId()));
                         if (n > 0) {
                             new UpdateFacilityTable(activityReference.get(), language).execute();
                         } else {
 
-                            facilityListTableEnglish = new FacilityListTableEnglish(
+                            facilityDetailTableEnglish = new FacilityDetailTableEnglish(
                                     activityReference.get().facilitiesDetailList.get(i).getFacilitiesId(),
                                     "",
                                     activityReference.get().facilitiesDetailList.get(i).getFacilitiesTitle(),
@@ -271,7 +274,7 @@ public class FacilitiesSecondaryActivity extends AppCompatActivity {
                                     activityReference.get().facilitiesDetailList.get(i).getLattitude(),
                                     activityReference.get().facilitiesDetailList.get(i).getLocationTitle());
 
-                            activityReference.get().qmDatabase.getFacilitiesListTableDao().insertEnglish(facilityListTableEnglish);
+                            activityReference.get().qmDatabase.getFacilitiesDetailTableDao().insertEnglish(facilityDetailTableEnglish);
                         }
                     }
                 } else {
@@ -282,7 +285,8 @@ public class FacilitiesSecondaryActivity extends AppCompatActivity {
                             new UpdateFacilityTable(activityReference.get(), language).execute();
                         } else {
 
-                            facilityListTableArabic = new FacilityListTableArabic(activityReference.get().facilitiesDetailList.get(i).getFacilitiesId(),
+                            facilityDetailTableArabic = new FacilityDetailTableArabic(
+                                    activityReference.get().facilitiesDetailList.get(i).getFacilitiesId(),
                                     "",
                                     activityReference.get().facilitiesDetailList.get(i).getFacilitiesTitle(),
                                     activityReference.get().facilitiesDetailList.get(i).getFacilityImage().get(0),
@@ -295,7 +299,7 @@ public class FacilitiesSecondaryActivity extends AppCompatActivity {
                                     activityReference.get().facilitiesDetailList.get(i).getLattitude(),
                                     activityReference.get().facilitiesDetailList.get(i).getLocationTitle());
 
-                            activityReference.get().qmDatabase.getFacilitiesListTableDao().insertArabic(facilityListTableArabic);
+                            activityReference.get().qmDatabase.getFacilitiesDetailTableDao().insertArabic(facilityDetailTableArabic);
                         }
                     }
 
@@ -319,11 +323,11 @@ public class FacilitiesSecondaryActivity extends AppCompatActivity {
         protected Void doInBackground(Void... voids) {
             if (language.equals(LocaleManager.LANGUAGE_ENGLISH)) {
 
-                activityReference.get().qmDatabase.getFacilitiesListTableDao().updateFacilityListEnglish(
+                activityReference.get().qmDatabase.getFacilitiesDetailTableDao().updateFacilityDetailEnglish(
                         "",
                         activityReference.get().facilitiesDetailList.get(0).getFacilitiesTitle(),
                         activityReference.get().facilitiesDetailList.get(0).getFacilityImage().get(0),
-                        activityReference.get().facilitiesDetailList.get(0).getFacilitiesSubtitle(),
+                        activityReference.get().facilitiesDetailList.get(0).getFacilitiesId(),
                         activityReference.get().facilitiesDetailList.get(0).getFacilityDescription(),
                         activityReference.get().facilitiesDetailList.get(0).getFacilitiesTiming(),
                         activityReference.get().facilitiesDetailList.get(0).getLongitude(),
@@ -335,12 +339,11 @@ public class FacilitiesSecondaryActivity extends AppCompatActivity {
                 );
 
             } else {
-                activityReference.get().qmDatabase.getFacilitiesListTableDao().updateFacilityListArabic(
-
+                activityReference.get().qmDatabase.getFacilitiesDetailTableDao().updateFacilityDetailArabic(
                         "",
                         activityReference.get().facilitiesDetailList.get(0).getFacilitiesTitle(),
                         activityReference.get().facilitiesDetailList.get(0).getFacilityImage().get(0),
-                        activityReference.get().facilitiesDetailList.get(0).getFacilitiesSubtitle(),
+                        activityReference.get().facilitiesDetailList.get(0).getFacilitiesId(),
                         activityReference.get().facilitiesDetailList.get(0).getFacilityDescription(),
                         activityReference.get().facilitiesDetailList.get(0).getFacilitiesTiming(),
                         activityReference.get().facilitiesDetailList.get(0).getLongitude(),
@@ -359,15 +362,15 @@ public class FacilitiesSecondaryActivity extends AppCompatActivity {
     public static class InsertFacilityDataToDataBase extends AsyncTask<Void, Void, Boolean> {
 
         private WeakReference<FacilitiesSecondaryActivity> activityReference;
-        private FacilityListTableEnglish facilityListTableEnglish;
-        private FacilityListTableArabic facilityListTableArabic;
+        private FacilityDetailTableEnglish facilityDetailTableEnglish;
+        private FacilityDetailTableArabic facilityDetailTableArabic;
         String language;
 
-        InsertFacilityDataToDataBase(FacilitiesSecondaryActivity context, FacilityListTableEnglish facilityListTableEnglish,
-                                     FacilityListTableArabic facilityListTableArabic, String apiLanguage) {
+        InsertFacilityDataToDataBase(FacilitiesSecondaryActivity context, FacilityDetailTableEnglish facilityDetailTableEnglish,
+                                     FacilityDetailTableArabic facilityDetailTableArabic, String apiLanguage) {
             activityReference = new WeakReference<>(context);
-            this.facilityListTableEnglish = facilityListTableEnglish;
-            this.facilityListTableArabic = facilityListTableArabic;
+            this.facilityDetailTableEnglish = facilityDetailTableEnglish;
+            this.facilityDetailTableArabic = facilityDetailTableArabic;
             this.language = apiLanguage;
         }
 
@@ -382,8 +385,7 @@ public class FacilitiesSecondaryActivity extends AppCompatActivity {
                 if (activityReference.get().facilitiesDetailList != null && activityReference.get().facilitiesDetailList.size() > 0) {
                     for (int i = 0; i < activityReference.get().facilitiesDetailList.size(); i++) {
 
-                        facilityListTableEnglish = new FacilityListTableEnglish(
-                                activityReference.get().facilitiesDetailList.get(i).getFacilitiesId(),
+                        facilityDetailTableEnglish = new FacilityDetailTableEnglish(activityReference.get().facilitiesDetailList.get(i).getFacilitiesId(),
                                 "",
                                 activityReference.get().facilitiesDetailList.get(i).getFacilitiesTitle(),
                                 activityReference.get().facilitiesDetailList.get(i).getFacilityImage().get(0),
@@ -395,14 +397,13 @@ public class FacilitiesSecondaryActivity extends AppCompatActivity {
                                 activityReference.get().facilitiesDetailList.get(i).getFacilitiesCategoryId(),
                                 activityReference.get().facilitiesDetailList.get(i).getLattitude(),
                                 activityReference.get().facilitiesDetailList.get(i).getLocationTitle());
-                        activityReference.get().qmDatabase.getFacilitiesListTableDao().insertEnglish(facilityListTableEnglish);
+                        activityReference.get().qmDatabase.getFacilitiesDetailTableDao().insertEnglish(facilityDetailTableEnglish);
                     }
                 }
             } else {
                 for (int i = 0; i < activityReference.get().facilitiesDetailList.size(); i++) {
 
-                    facilityListTableArabic = new FacilityListTableArabic(
-                            activityReference.get().facilitiesDetailList.get(i).getFacilitiesId(),
+                    facilityDetailTableArabic = new FacilityDetailTableArabic(activityReference.get().facilitiesDetailList.get(i).getFacilitiesId(),
                             "",
                             activityReference.get().facilitiesDetailList.get(i).getFacilitiesTitle(),
                             activityReference.get().facilitiesDetailList.get(i).getFacilityImage().get(0),
@@ -414,7 +415,7 @@ public class FacilitiesSecondaryActivity extends AppCompatActivity {
                             activityReference.get().facilitiesDetailList.get(i).getFacilitiesCategoryId(),
                             activityReference.get().facilitiesDetailList.get(i).getLattitude(),
                             activityReference.get().facilitiesDetailList.get(i).getLocationTitle());
-                    activityReference.get().qmDatabase.getFacilitiesListTableDao().insertArabic(facilityListTableArabic);
+                    activityReference.get().qmDatabase.getFacilitiesDetailTableDao().insertArabic(facilityDetailTableArabic);
                 }
 
             }
@@ -427,11 +428,13 @@ public class FacilitiesSecondaryActivity extends AppCompatActivity {
         }
     }
 
-    public static class RetrieveEnglishFacilityData extends AsyncTask<Void, Void, List<FacilityListTableEnglish>> {
+    public static class RetrieveEnglishFacilityData extends AsyncTask<Void, Void, List<FacilityDetailTableEnglish>> {
         private WeakReference<FacilitiesSecondaryActivity> activityReference;
+        int id;
 
-        public RetrieveEnglishFacilityData(FacilitiesSecondaryActivity context) {
+        public RetrieveEnglishFacilityData(FacilitiesSecondaryActivity context, String id) {
             this.activityReference = new WeakReference<>(context);
+            this.id =Integer.valueOf(id);
         }
 
         @Override
@@ -440,31 +443,31 @@ public class FacilitiesSecondaryActivity extends AppCompatActivity {
         }
 
         @Override
-        protected List<FacilityListTableEnglish> doInBackground(Void... voids) {
-            return activityReference.get().qmDatabase.getFacilitiesListTableDao().getAllEnglish();
+        protected List<FacilityDetailTableEnglish> doInBackground(Void... voids) {
+            return activityReference.get().qmDatabase.getFacilitiesDetailTableDao().getFacilityDetailEnglish(id);
         }
 
         @Override
-        protected void onPostExecute(List<FacilityListTableEnglish> facilityListTableEnglishes) {
+        protected void onPostExecute(List<FacilityDetailTableEnglish> facilityDetailTableEnglishes) {
             FacilitiesDetailModel facilitiesDetailModel;
             activityReference.get().facilitiesDetailList.clear();
-            if (facilityListTableEnglishes.size() > 0) {
-                for (int i = 0; i < facilityListTableEnglishes.size(); i++) {
+            if (facilityDetailTableEnglishes.size() > 0) {
+                for (int i = 0; i < facilityDetailTableEnglishes.size(); i++) {
                     ArrayList<String> image = new ArrayList<>();
-                    image.add(facilityListTableEnglishes.get(i).getFacilityImage());
+                    image.add(facilityDetailTableEnglishes.get(i).getFacilityImage());
 
                     facilitiesDetailModel = new FacilitiesDetailModel(
-                            facilityListTableEnglishes.get(i).getFacilityTitle(),
+                            facilityDetailTableEnglishes.get(i).getFacilityTitle(),
                             image,
-                            facilityListTableEnglishes.get(i).getFacilitySubtitle(),
-                            facilityListTableEnglishes.get(i).getFacilityDescription(),
-                            facilityListTableEnglishes.get(i).getFacilityTiming(),
-                            facilityListTableEnglishes.get(i).getFacilityTitleTiming(),
-                            facilityListTableEnglishes.get(i).getFacilityNid(),
-                            facilityListTableEnglishes.get(i).getFacilityLongitude(),
-                            facilityListTableEnglishes.get(i).getFacilityCategoryId(),
-                            facilityListTableEnglishes.get(i).getFacilityLatitude(),
-                            facilityListTableEnglishes.get(i).getFacilityLocationTitle());
+                            facilityDetailTableEnglishes.get(i).getFacilitySubtitle(),
+                            facilityDetailTableEnglishes.get(i).getFacilityDescription(),
+                            facilityDetailTableEnglishes.get(i).getFacilityTiming(),
+                            facilityDetailTableEnglishes.get(i).getFacilityTitleTiming(),
+                            facilityDetailTableEnglishes.get(i).getFacilityNid(),
+                            facilityDetailTableEnglishes.get(i).getFacilityLongitude(),
+                            facilityDetailTableEnglishes.get(i).getFacilityCategoryId(),
+                            facilityDetailTableEnglishes.get(i).getFacilityLatitude(),
+                            facilityDetailTableEnglishes.get(i).getFacilityLocationTitle());
                     activityReference.get().facilitiesDetailList.add(i, facilitiesDetailModel);
                 }
                 activityReference.get().recyclerView.setVisibility(View.VISIBLE);
@@ -482,11 +485,14 @@ public class FacilitiesSecondaryActivity extends AppCompatActivity {
 
     }
 
-    public static class RetrieveArabicFacilityData extends AsyncTask<Void, Void, List<FacilityListTableArabic>> {
+    public static class RetrieveArabicFacilityData extends AsyncTask<Void, Void, List<FacilityDetailTableArabic>> {
         private WeakReference<FacilitiesSecondaryActivity> activityReference;
 
-        public RetrieveArabicFacilityData(FacilitiesSecondaryActivity context) {
+        int id;
+
+        public RetrieveArabicFacilityData(FacilitiesSecondaryActivity context, String id) {
             this.activityReference = new WeakReference<>(context);
+            this.id =Integer.valueOf(id);
         }
 
         @Override
@@ -495,31 +501,31 @@ public class FacilitiesSecondaryActivity extends AppCompatActivity {
         }
 
         @Override
-        protected List<FacilityListTableArabic> doInBackground(Void... voids) {
-            return activityReference.get().qmDatabase.getFacilitiesListTableDao().getAllArabic();
+        protected List<FacilityDetailTableArabic> doInBackground(Void... voids) {
+            return activityReference.get().qmDatabase.getFacilitiesDetailTableDao().getFacilityDetailArabic(id);
         }
 
         @Override
-        protected void onPostExecute(List<FacilityListTableArabic> facilityListTableArabics) {
+        protected void onPostExecute(List<FacilityDetailTableArabic> facilityDetailTableArabics) {
             FacilitiesDetailModel facilitiesDetailModel;
             activityReference.get().facilitiesDetailList.clear();
-            if (facilityListTableArabics.size() > 0) {
-                for (int i = 0; i < facilityListTableArabics.size(); i++) {
+            if (facilityDetailTableArabics.size() > 0) {
+                for (int i = 0; i < facilityDetailTableArabics.size(); i++) {
                     ArrayList<String> image = new ArrayList<>();
-                    image.add(facilityListTableArabics.get(i).getFacilityImage());
+                    image.add(facilityDetailTableArabics.get(i).getFacilityImage());
 
                     facilitiesDetailModel = new FacilitiesDetailModel(
-                            facilityListTableArabics.get(i).getFacilityTitle(),
+                            facilityDetailTableArabics.get(i).getFacilityTitle(),
                             image,
-                            facilityListTableArabics.get(i).getFacilitySubtitle(),
-                            facilityListTableArabics.get(i).getFacilityDescription(),
-                            facilityListTableArabics.get(i).getFacilityTiming(),
-                            facilityListTableArabics.get(i).getFacilityTitleTiming(),
-                            facilityListTableArabics.get(i).getFacilityNid(),
-                            facilityListTableArabics.get(i).getFacilityLongitude(),
-                            facilityListTableArabics.get(i).getFacilityCategoryId(),
-                            facilityListTableArabics.get(i).getFacilityLatitude(),
-                            facilityListTableArabics.get(i).getFacilityLocationTitle());
+                            facilityDetailTableArabics.get(i).getFacilitySubtitle(),
+                            facilityDetailTableArabics.get(i).getFacilityDescription(),
+                            facilityDetailTableArabics.get(i).getFacilityTiming(),
+                            facilityDetailTableArabics.get(i).getFacilityTitleTiming(),
+                            facilityDetailTableArabics.get(i).getFacilityNid(),
+                            facilityDetailTableArabics.get(i).getFacilityLongitude(),
+                            facilityDetailTableArabics.get(i).getFacilityCategoryId(),
+                            facilityDetailTableArabics.get(i).getFacilityLatitude(),
+                            facilityDetailTableArabics.get(i).getFacilityLocationTitle());
                     activityReference.get().facilitiesDetailList.add(i, facilitiesDetailModel);
                 }
                 activityReference.get().recyclerView.setVisibility(View.VISIBLE);

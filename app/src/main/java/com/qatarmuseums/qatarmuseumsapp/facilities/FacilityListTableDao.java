@@ -30,49 +30,24 @@ public interface FacilityListTableDao {
     int checkArabicIdExist(int idFromAPI);
 
 
-    @Query("SELECT * FROM facilitylisttableenglish WHERE facilityNid = :isTourFromAPI")
-    List<FacilityListTableEnglish> getFacilityListEnglish(int isTourFromAPI);
+    @Query("SELECT * FROM facilitylisttableenglish WHERE facilityNid = :facilityNidFromAPI")
+    List<FacilityListTableEnglish> getFacilityListEnglish(int facilityNidFromAPI);
 
-    @Query("SELECT * FROM facilitylisttablearabic WHERE facilityNid = :isTourFromAPI")
-    List<FacilityListTableArabic> getFacilityListArabic(int isTourFromAPI);
+    @Query("SELECT * FROM facilitylisttablearabic WHERE facilityNid = :facilityNidFromAPI")
+    List<FacilityListTableArabic> getFacilityListArabic(int facilityNidFromAPI);
 
     @Query("UPDATE facilitylisttableenglish SET sortId = :sortIdFromApi," +
             "facilityTitle = :facilityTitleFromApi," +
-            "facilityImage = :facilityImageFromApi," +
-            "facilitySubtitle = :facilitySubtitleFromApi," +
-            "facilityDescription = :facilityDescriptionFromApi," +
-            "facilityTiming = :facilityTimingFromApi," +
-            "facilityLongitude = :facilityLongitudeFromApi," +
-            "facilityCategoryId = :facilityCategoryIdFromApi," +
-            "facilityLatitude = :facilityLatitudeFromApi," +
-            "facilityLocationTitle = :facilityLocationTitleFromApi," +
-            "facilityTitleTiming = :facilityTimingTitle WHERE facilityNid=:idFromApi")
+            "facilityImage = :facilityImageFromApi WHERE facilityNid=:idFromApi")
     void updateFacilityListEnglish(String sortIdFromApi, String facilityTitleFromApi,
-                                   String facilityImageFromApi, String facilitySubtitleFromApi,
-                                   String facilityDescriptionFromApi, String facilityTimingFromApi,
-                                   String facilityLongitudeFromApi, String facilityCategoryIdFromApi,
-                                   String facilityLatitudeFromApi, String facilityLocationTitleFromApi,
-                                   String facilityTimingTitle,
-                                   String idFromApi);
+                                   String facilityImageFromApi,String idFromApi);
 
 
     @Query("UPDATE facilitylisttablearabic SET sortId = :sortIdFromApi," +
             "facilityTitle = :facilityTitleFromApi," +
-            "facilityImage = :facilityImageFromApi," +
-            "facilitySubtitle = :facilitySubtitleFromApi," +
-            "facilityDescription = :facilityDescriptionFromApi," +
-            "facilityTiming = :facilityTimingFromApi," +
-            "facilityLongitude = :facilityLongitudeFromApi," +
-            "facilityCategoryId = :facilityCategoryIdFromApi," +
-            "facilityLatitude = :facilityLatitudeFromApi," +
-            "facilityLocationTitle = :facilityLocationTitleFromApi," +
-            "facilityTitleTiming = :facilityTimingTitle WHERE facilityNid=:idFromApi")
+            "facilityImage = :facilityImageFromApi WHERE facilityNid=:idFromApi")
     void updateFacilityListArabic(String sortIdFromApi, String facilityTitleFromApi,
-                                  String facilityImageFromApi, String facilitySubtitleFromApi,
-                                  String facilityDescriptionFromApi, String facilityTimingFromApi,
-                                  String facilityLongitudeFromApi, String facilityCategoryIdFromApi,
-                                  String facilityLatitudeFromApi, String facilityLocationTitleFromApi,
-                                  String facilityTimingTitle,
+                                  String facilityImageFromApi,
                                   String idFromApi);
 
 
