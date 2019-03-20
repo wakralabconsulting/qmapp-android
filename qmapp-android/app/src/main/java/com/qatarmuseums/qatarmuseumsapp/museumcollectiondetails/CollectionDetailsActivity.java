@@ -46,6 +46,8 @@ public class CollectionDetailsActivity extends AppCompatActivity {
     ImageView toolbarClose;
     @BindView(R.id.collection_title)
     TextView collectionTitle;
+    @BindView(R.id.collection_title_divider)
+    View collectionTitleDivider;
     @BindView(R.id.long_description)
     TextView longDescription;
     @BindView(R.id.details_recycler_view)
@@ -95,9 +97,16 @@ public class CollectionDetailsActivity extends AppCompatActivity {
         categoryName = intent.getStringExtra("MAIN_TITLE");
         zoomOutAnimation = AnimationUtils.loadAnimation(getApplicationContext(),
                 R.anim.zoom_out_more);
-        collectionTitle.setText(categoryName);
-        longDescription.setText(intent.getStringExtra("LONG_DESC"));
-        mAdapter = new CollectionDetailsAdapter(this, collectionDetailsList);
+        if (intent.getStringExtra("COMING_FROM").equals(this.getString(R.string.sidemenu_parks_text))) {
+            mAdapter = new CollectionDetailsAdapter(this, collectionDetailsList, true);
+            collectionTitle.setVisibility(View.GONE);
+            collectionTitleDivider.setVisibility(View.GONE);
+            longDescription.setVisibility(View.GONE);
+        } else {
+            mAdapter = new CollectionDetailsAdapter(this, collectionDetailsList, false);
+            collectionTitle.setText(categoryName);
+            longDescription.setText(intent.getStringExtra("LONG_DESC"));
+        }
         RecyclerView.LayoutManager layoutManager =
                 new LinearLayoutManager(getApplicationContext());
         recyclerView.setLayoutManager(layoutManager);
@@ -106,7 +115,10 @@ public class CollectionDetailsActivity extends AppCompatActivity {
         recyclerView.setFocusable(false);
         appLanguage = LocaleManager.getLanguage(this);
         if (util.isNetworkAvailable(CollectionDetailsActivity.this))
-            getMuseumCollectionDetailFromAPI();
+            if (intent.getStringExtra("COMING_FROM").equals(this.getString(R.string.sidemenu_parks_text)))
+                getNMoQParkDetail();
+            else
+                getMuseumCollectionDetailFromAPI();
         else
             getMuseumCollectionDetailFromDatabase();
 
@@ -150,6 +162,20 @@ public class CollectionDetailsActivity extends AppCompatActivity {
         });
 
 
+    }
+
+    private void getNMoQParkDetail() {
+        detailLayout.setVisibility(View.VISIBLE);
+        CollectionDetailsList collectionList = new CollectionDetailsList("Adventure Ship",
+                "", "Description");
+        collectionDetailsList.add(collectionList);
+        collectionList = new CollectionDetailsList("Cave Of Wonders",
+                "", "Description");
+        collectionDetailsList.add(collectionList);
+        collectionList = new CollectionDetailsList("Oil Refinery",
+                "", "Description");
+        collectionDetailsList.add(collectionList);
+        mAdapter.notifyDataSetChanged();
     }
 
 

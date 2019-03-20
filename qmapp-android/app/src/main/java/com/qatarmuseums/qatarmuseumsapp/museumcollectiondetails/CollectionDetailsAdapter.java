@@ -17,6 +17,7 @@ import java.util.List;
 public class CollectionDetailsAdapter extends RecyclerView.Adapter<CollectionDetailsAdapter.MyViewHolder> {
     private Context mContext;
     private List<CollectionDetailsList> collectionDetailsList = null;
+    boolean isNMoQPlayground;
 
     @NonNull
     @Override
@@ -31,7 +32,12 @@ public class CollectionDetailsAdapter extends RecyclerView.Adapter<CollectionDet
     public void onBindViewHolder(@NonNull MyViewHolder holder, int position) {
         CollectionDetailsList cdl = collectionDetailsList.get(position);
         holder.mainTitle.setText(cdl.getMainTitle());
-        holder.subTitle.setText(cdl.getAbout());
+        if (isNMoQPlayground) {
+            holder.imageDescription.setVisibility(View.VISIBLE);
+            holder.imageDescription.setText(cdl.getAbout());
+            holder.subTitle.setVisibility(View.GONE);
+        } else
+            holder.subTitle.setText(cdl.getAbout());
         GlideApp.with(mContext)
                 .load(cdl.getImage1())
                 .into(holder.image1);
@@ -44,7 +50,7 @@ public class CollectionDetailsAdapter extends RecyclerView.Adapter<CollectionDet
     }
 
     public class MyViewHolder extends RecyclerView.ViewHolder {
-        public TextView mainTitle, subTitle;
+        public TextView mainTitle, subTitle, imageDescription;
         public ImageView image1;
 
         public MyViewHolder(View view) {
@@ -52,11 +58,13 @@ public class CollectionDetailsAdapter extends RecyclerView.Adapter<CollectionDet
             image1 = view.findViewById(R.id.collection_image1);
             mainTitle = view.findViewById(R.id.main_title);
             subTitle = view.findViewById(R.id.sub_title);
+            imageDescription = view.findViewById(R.id.second_description);
         }
     }
 
-    public CollectionDetailsAdapter(Context context, List<CollectionDetailsList> collectionDetailsList) {
+    public CollectionDetailsAdapter(Context context, List<CollectionDetailsList> collectionDetailsList, boolean isNMoQPlayground) {
         this.collectionDetailsList = collectionDetailsList;
         this.mContext = context;
+        this.isNMoQPlayground = isNMoQPlayground;
     }
 }

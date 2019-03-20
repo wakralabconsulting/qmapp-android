@@ -44,14 +44,14 @@
 
     <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        android:background="@color/collection_detail_page_background">
 
         <android.support.v4.widget.NestedScrollView
             android:id="@+id/details_layout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="@color/collection_detail_page_background"
-            android:visibility="gone">
+            android:visibility="visible">
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -71,14 +71,13 @@
                     android:textColor="@color/black"
                     android:textSize="@dimen/font_size_21" />
 
-                <LinearLayout
+                <View
+                    android:id="@+id/collection_title_divider"
                     android:layout_width="@dimen/collection_detail_underline"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center"
                     android:layout_marginTop="@dimen/padding_5"
-                    android:background="@drawable/divider_black_thick">
-
-                </LinearLayout>
+                    android:background="@drawable/divider_black_thick" />
 
                 <TextView
                     android:id="@+id/long_description"
