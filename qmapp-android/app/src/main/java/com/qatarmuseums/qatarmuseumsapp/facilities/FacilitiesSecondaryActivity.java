@@ -279,7 +279,7 @@ public class FacilitiesSecondaryActivity extends AppCompatActivity {
                     }
                 } else {
                     for (int i = 0; i < activityReference.get().facilitiesDetailList.size(); i++) {
-                        int n = activityReference.get().qmDatabase.getFacilitiesListTableDao().checkArabicIdExist(
+                        int n = activityReference.get().qmDatabase.getFacilitiesDetailTableDao().checkArabicIdExist(
                                 Integer.parseInt(activityReference.get().facilitiesDetailList.get(i).getFacilitiesId()));
                         if (n > 0) {
                             new UpdateFacilityTable(activityReference.get(), language).execute();
