@@ -141,7 +141,7 @@ public class DetailsActivity extends AppCompatActivity implements IPullZoom, OnM
     int publicArtsTableRowCount, heritageTableRowCount,
             exhibitionRowCount, museumAboutRowCount;
     SharedPreferences qmPreferences;
-    LinearLayout commonContentLayout;
+    LinearLayout commonContentLayout, dateLocationLayout;
     TextView noResultFoundTxt;
     ArrayList<PublicArtModel> publicArtModel = new ArrayList<>();
     ArrayList<MuseumAboutModel> museumAboutModels = new ArrayList<>();
@@ -303,6 +303,7 @@ public class DetailsActivity extends AppCompatActivity implements IPullZoom, OnM
         timingLayout = findViewById(R.id.timing_layout);
         contactLayout = findViewById(R.id.contact_layout);
         commonContentLayout = findViewById(R.id.common_content_layout);
+        dateLocationLayout = findViewById(R.id.date_and_location_layout);
         noResultFoundTxt = findViewById(R.id.noResultFoundTxt);
         retryLayout = findViewById(R.id.retry_layout_about);
         retryButton = findViewById(R.id.retry_btn);
@@ -355,16 +356,12 @@ public class DetailsActivity extends AppCompatActivity implements IPullZoom, OnM
                 getApplicationContext(),
 
                 R.anim.zoom_out_more);
-        retryButton.setOnClickListener(v ->
-
-        {
+        retryButton.setOnClickListener(v -> {
             getData();
             progressBar.setVisibility(View.VISIBLE);
             retryLayout.setVisibility(View.GONE);
         });
-        retryButton.setOnTouchListener((v, event) ->
-
-        {
+        retryButton.setOnTouchListener((v, event) -> {
             switch (event.getAction()) {
                 case MotionEvent.ACTION_DOWN:
                     retryButton.startAnimation(zoomOutAnimation);
@@ -372,9 +369,7 @@ public class DetailsActivity extends AppCompatActivity implements IPullZoom, OnM
             }
             return false;
         });
-        toolbarClose.setOnTouchListener((v, event) ->
-
-        {
+        toolbarClose.setOnTouchListener((v, event) -> {
             switch (event.getAction()) {
                 case MotionEvent.ACTION_DOWN:
                     toolbarClose.startAnimation(zoomOutAnimation);
@@ -382,9 +377,7 @@ public class DetailsActivity extends AppCompatActivity implements IPullZoom, OnM
             }
             return false;
         });
-        favIcon.setOnTouchListener((v, event) ->
-
-        {
+        favIcon.setOnTouchListener((v, event) -> {
             switch (event.getAction()) {
                 case MotionEvent.ACTION_DOWN:
                     favIcon.startAnimation(zoomOutAnimation);
@@ -392,9 +385,7 @@ public class DetailsActivity extends AppCompatActivity implements IPullZoom, OnM
             }
             return false;
         });
-        shareIcon.setOnTouchListener((v, event) ->
-
-        {
+        shareIcon.setOnTouchListener((v, event) -> {
             switch (event.getAction()) {
                 case MotionEvent.ACTION_DOWN:
                     shareIcon.startAnimation(zoomOutAnimation);
@@ -402,9 +393,7 @@ public class DetailsActivity extends AppCompatActivity implements IPullZoom, OnM
             }
             return false;
         });
-        downloadText.setOnTouchListener((v, event) ->
-
-        {
+        downloadText.setOnTouchListener((v, event) -> {
             switch (event.getAction()) {
                 case MotionEvent.ACTION_DOWN:
                     downloadButton.startAnimation(zoomOutAnimation);
@@ -485,14 +474,11 @@ public class DetailsActivity extends AppCompatActivity implements IPullZoom, OnM
             }
         });
         downloadButton.setOnClickListener(v ->
-
                 downloadAction());
         downloadText.setOnClickListener(v ->
-
                 downloadAction());
         registerButton.setOnClickListener(v -> {
             if (registerButton.getText().toString().equals(getResources().getString(R.string.interested))) {
-
                 // Overlapping check commented temporarily
 
 //                if (registrationDetailsMap.size() > 0 && tourDetailsMap.size() > 0) {
@@ -732,8 +718,7 @@ public class DetailsActivity extends AppCompatActivity implements IPullZoom, OnM
             else
                 getCommonListAPIDataFromDatabase(id, language);
 
-        }
-        else if (comingFrom.equals(getString(R.string.museum_about_text))) {
+        } else if (comingFrom.equals(getString(R.string.museum_about_text))) {
             if (util.isNetworkAvailable(DetailsActivity.this)) {
                 if (id.equals("13376"))
                     getMuseumAboutDetailsFromAPI(id, language, true);
@@ -751,7 +736,31 @@ public class DetailsActivity extends AppCompatActivity implements IPullZoom, OnM
             setTourDetailsData();
         } else if (comingFrom.equals(getString(R.string.museum_discussion))) {
             setSpecialEventDetailsData();
+        } else if (comingFrom.equals(getString(R.string.sidemenu_parks_text))) {
+            setNMoQParkDetailsData();
         }
+    }
+
+    private void setNMoQParkDetailsData() {
+        commonContentLayout.setVisibility(View.VISIBLE);
+        dateLocationLayout.setVisibility(View.GONE);
+        shortDescription.setTextAlignment(View.TEXT_ALIGNMENT_VIEW_START);
+        description = "DETAILS-----\n// Date: Friday 29 March\n// " +
+                "Time: 5.00pm-6.30pm\n// Location: Mathaf, Arab Museum of Modern Art\n// " +
+                "Registration not required\n\n\n\nABOUT THIS PANEL\n-----" +
+                "\nWorks of Arab artists have been gaining progressively more recognition in " +
+                "recent decades, promoting the field of Arab art defined by its geographic and " +
+                "cultural identity. The panelists will engage in conversation about developments " +
+                "in the art scene of the MENA region and explore shifting trends, while reflecting " +
+                "on generational differences. They will discuss the relationship between Arab and " +
+                "global art scenes, and what it means to be an Arab artist today.\n\n// " +
+                "Moderator: Reem Al Thani\n// Speakers to be announced\n\n\n";
+        loadData(null, description,
+                null, null, null,
+                null, null, null, null,
+                null, null, null,
+                true, null);
+
     }
 
     public void setTourDetailsData() {
@@ -1247,7 +1256,7 @@ public class DetailsActivity extends AppCompatActivity implements IPullZoom, OnM
 
                 }
             }
-            if (latitude != null && !latitude.equals("")) {
+            if (latitude != null && !latitude.equals("") && gValue != null) {
                 gMap = gValue;
                 gMap.setMinZoomPreference(12);
                 LatLng ny = new LatLng(Double.valueOf(latitude), Double.valueOf(longitude));
@@ -1725,7 +1734,7 @@ public class DetailsActivity extends AppCompatActivity implements IPullZoom, OnM
     public void onMapReady(GoogleMap googleMap) {
         gValue = googleMap;
         googleMap.getUiSettings().setMapToolbarEnabled(false);
-        if (latitude != null && !latitude.equals("")) {
+        if (latitude != null && !latitude.equals("") && gValue != null) {
             gMap = gValue;
             gMap.setMinZoomPreference(12);
             LatLng ny = new LatLng(Double.valueOf(latitude), Double.valueOf(longitude));

@@ -224,5 +224,6 @@ Any questions, please contact booking@qm.org.qa or +974 4452 5555"</string>
     <string name="facilities_txt">Facilities</string>
     <string name="experience_txt">Experience</string>
     <string name="highlights_tour_txt">Highlights Tour</string>
+    <string name="park_hours">Park Hours</string>
 
 </resources>
