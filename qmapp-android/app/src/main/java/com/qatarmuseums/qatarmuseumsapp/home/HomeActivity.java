@@ -428,7 +428,7 @@ public class HomeActivity extends BaseActivity {
             }
         }
         if (!isPanelDiscussionAvailable) {
-            HomeList homeList = null;
+            HomeList homeList;
             if (language.equals(LocaleManager.LANGUAGE_ENGLISH)) {
                 homeList = new HomeList(
                         "PANELS AND TALKS",
@@ -974,6 +974,7 @@ public class HomeActivity extends BaseActivity {
         private WeakReference<HomeActivity> activityReference;
         String language;
         private ArrayList<HomeList> bannerLists;
+
 
         RowCountBanner(HomeActivity context, String apiLanguage, ArrayList<HomeList> bannerLists) {
             activityReference = new WeakReference<>(context);
