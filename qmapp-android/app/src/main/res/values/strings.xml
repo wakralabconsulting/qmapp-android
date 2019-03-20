@@ -224,5 +224,8 @@ Any questions, please contact booking@qm.org.qa or +974 4452 5555"</string>
     <string name="facilities_txt">Facilities</string>
     <string name="experience_txt">Experience</string>
     <string name="highlights_tour_txt">Highlights Tour</string>
+    <string name="nmoq_cafe_dining">nmoq - cafe and dining</string>
+    <string name="facility_sublist">Facility Sublist</string>
 
+    facility_sublist
 </resources>
