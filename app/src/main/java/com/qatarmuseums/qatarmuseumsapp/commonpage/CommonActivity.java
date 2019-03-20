@@ -144,8 +144,8 @@ public class CommonActivity extends AppCompatActivity {
                     toolbarTitle.equals(getString(R.string.museum_discussion)))
                 navigationIntent = new Intent(CommonActivity.this,
                         TourSecondaryListActivity.class);
-            else if (models.get(position).getName().toLowerCase().equals(getString(R.string.nmoq_cafe_dining))||
-                    models.get(position).getName().toLowerCase().equals(getString(R.string.nmoq_cafe_dining)))
+            else if (models.get(position).getId().equals("15256") ||
+                    models.get(position).getId().equals("15341"))
                 navigationIntent = new Intent(CommonActivity.this,
                         FacilitiesSecondaryActivity.class);
             else
@@ -307,6 +307,7 @@ public class CommonActivity extends AppCompatActivity {
                             models.get(i).setImageTypeIsArray(true);
                         }
                         removeHtmlTags(models);
+                        Collections.sort(models);
                         mAdapter.notifyDataSetChanged();
                         new FacilityRowCount(CommonActivity.this, appLanguage).execute();
 
@@ -761,7 +762,7 @@ public class CommonActivity extends AppCompatActivity {
         private WeakReference<CommonActivity> activityReference;
 
         public RetrieveEnglishFacilityData(CommonActivity context) {
-            this.activityReference =  new WeakReference<>(context);
+            this.activityReference = new WeakReference<>(context);
         }
 
         @Override
@@ -787,6 +788,7 @@ public class CommonActivity extends AppCompatActivity {
                             facilityListTableEnglishes.get(i).getFacilityImage());
                     activityReference.get().models.add(i, commonModel);
                 }
+                Collections.sort(activityReference.get().models);
                 activityReference.get().mAdapter.notifyDataSetChanged();
                 activityReference.get().progressBar.setVisibility(View.GONE);
 
@@ -805,7 +807,7 @@ public class CommonActivity extends AppCompatActivity {
         private WeakReference<CommonActivity> activityReference;
 
         public RetrieveArabicFacilityData(CommonActivity context) {
-            this.activityReference =  new WeakReference<>(context);
+            this.activityReference = new WeakReference<>(context);
         }
 
         @Override
@@ -831,6 +833,7 @@ public class CommonActivity extends AppCompatActivity {
                             facilityListTableArabics.get(i).getFacilityImage());
                     activityReference.get().models.add(i, commonModel);
                 }
+                Collections.sort(activityReference.get().models);
                 activityReference.get().mAdapter.notifyDataSetChanged();
                 activityReference.get().progressBar.setVisibility(View.GONE);
 
