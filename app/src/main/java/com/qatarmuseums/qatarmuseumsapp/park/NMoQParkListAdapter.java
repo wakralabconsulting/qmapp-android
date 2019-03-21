@@ -75,7 +75,7 @@ public class NMoQParkListAdapter extends RecyclerView.Adapter<NMoQParkListAdapte
         holder.itemContainer.setLayoutParams(params);
         holder.name.setText(nMoQParkList.getMainTitle());
         GlideApp.with(mContext)
-                .load(nMoQParkList.getImage())
+                .load(nMoQParkList.getImage().get(0))
                 .centerCrop()
                 .placeholder(R.drawable.placeholder)
                 .into(holder.imageView);

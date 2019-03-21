@@ -3,25 +3,19 @@ package com.qatarmuseums.qatarmuseumsapp.park;
 
 import com.google.gson.annotations.SerializedName;
 
+import java.util.ArrayList;
+
 public class NMoQParkList {
 
-    @SerializedName("Title")
+    @SerializedName(value = "Title", alternate = "title")
     private String mainTitle;
-    @SerializedName("id")
-    private String id;
-    @SerializedName("image")
-    private String image;
+    @SerializedName("Nid")
+    private String nid;
+    @SerializedName(value = "images", alternate = "images ")
+    private ArrayList<String> image;
     @SerializedName("sort_id")
     private String sortId;
 
-
-    NMoQParkList(String id, String mainTitle, String image,
-                 String sortId) {
-        this.mainTitle = mainTitle;
-        this.id = id;
-        this.image = image;
-        this.sortId = sortId;
-    }
 
     public String getMainTitle() {
         return mainTitle;
@@ -31,16 +25,16 @@ public class NMoQParkList {
         this.mainTitle = mainTitle;
     }
 
-    public String getImage() {
+    public ArrayList<String> getImage() {
         return image;
     }
 
-    public void setImage(String image) {
+    public void setImage(ArrayList<String> image) {
         this.image = image;
     }
 
-    public String getId() {
-        return id;
+    public String getNid() {
+        return nid;
     }
 
     public String getSortId() {

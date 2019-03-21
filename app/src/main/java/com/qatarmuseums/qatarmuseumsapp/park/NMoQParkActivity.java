@@ -3,9 +3,10 @@ package com.qatarmuseums.qatarmuseumsapp.park;
 import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.net.Uri;
+import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.v4.widget.NestedScrollView;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -28,8 +29,10 @@ import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MapStyleOptions;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.qatarmuseums.qatarmuseumsapp.LocaleManager;
 import com.qatarmuseums.qatarmuseumsapp.R;
-import com.qatarmuseums.qatarmuseumsapp.commonpage.RecyclerTouchListener;
+import com.qatarmuseums.qatarmuseumsapp.apicall.APIClient;
+import com.qatarmuseums.qatarmuseumsapp.apicall.APIInterface;
 import com.qatarmuseums.qatarmuseumsapp.detailspage.DetailsActivity;
 import com.qatarmuseums.qatarmuseumsapp.museumcollectiondetails.CollectionDetailsActivity;
 import com.qatarmuseums.qatarmuseumsapp.utils.Util;
@@ -39,6 +42,9 @@ import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 public class NMoQParkActivity extends AppCompatActivity implements OnMapReadyCallback {
     @BindView(R.id.toolbar)
@@ -75,7 +81,6 @@ public class NMoQParkActivity extends AppCompatActivity implements OnMapReadyCal
     ImageView mapViewToggle;
     @BindView(R.id.direction)
     ImageView mapDirection;
-    private NMoQParkListAdapter mAdapter;
     private List<NMoQParkList> parkLists = new ArrayList<>();
     private static final String MAP_VIEW_BUNDLE_KEY = "MapViewBundleKey";
     private GoogleMap gMap, gValue;
@@ -83,6 +88,9 @@ public class NMoQParkActivity extends AppCompatActivity implements OnMapReadyCal
     private Util util;
     int iconView = 0;
     private Intent navigationIntent;
+    private List<NMoQPark> nmoqPark = new ArrayList<>();
+    private String language;
+    private NMoQParkListAdapter mAdapter;
 
     @SuppressLint("ClickableViewAccessibility")
     @Override
@@ -92,6 +100,7 @@ public class NMoQParkActivity extends AppCompatActivity implements OnMapReadyCal
         ButterKnife.bind(this);
         setSupportActionBar(toolbar);
         util = new Util();
+        language = LocaleManager.getLanguage(this);
         Animation zoomOutAnimation = AnimationUtils.loadAnimation(getApplicationContext(),
                 R.anim.zoom_out_more);
 
@@ -104,21 +113,21 @@ public class NMoQParkActivity extends AppCompatActivity implements OnMapReadyCal
             return false;
         });
         toolbarBack.setOnClickListener(view -> finish());
-        setData();
-        setParkList();
-        mAdapter = new NMoQParkListAdapter(this, parkLists, new RecyclerTouchListener.ItemClickListener() {
-            @Override
-            public void onPositionClicked(int position) {
-                if (parkLists.get(position).getMainTitle().toLowerCase().equals("playground")) {
-                    navigationIntent = new Intent(NMoQParkActivity.this, CollectionDetailsActivity.class);
-                } else {
-                    navigationIntent = new Intent(NMoQParkActivity.this, DetailsActivity.class);
-                }
-                navigationIntent.putExtra("MAIN_TITLE", parkLists.get(position).getMainTitle());
-                navigationIntent.putExtra("COMING_FROM", getIntent().getStringExtra(getString(R.string.toolbar_title_key)));
-                navigationIntent.putExtra("NID", parkLists.get(position).getId());
-                startActivity(navigationIntent);
+        if (util.isNetworkAvailable(this)) {
+            getNMoQParkFromAPI();
+            getNMoQParkListFromAPI();
+        }
+        mAdapter = new NMoQParkListAdapter(this, parkLists, position -> {
+            if (parkLists.get(position).getNid().equals("15616") ||
+                    parkLists.get(position).getNid().equals("15616")) {
+                navigationIntent = new Intent(NMoQParkActivity.this, CollectionDetailsActivity.class);
+            } else {
+                navigationIntent = new Intent(NMoQParkActivity.this, DetailsActivity.class);
             }
+            navigationIntent.putExtra("MAIN_TITLE", parkLists.get(position).getMainTitle());
+            navigationIntent.putExtra("COMING_FROM", getIntent().getStringExtra(getString(R.string.toolbar_title_key)));
+            navigationIntent.putExtra("NID", parkLists.get(position).getNid());
+            startActivity(navigationIntent);
         });
         RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(getApplicationContext());
         parksRecyclerView.setLayoutManager(mLayoutManager);
@@ -178,22 +187,108 @@ public class NMoQParkActivity extends AppCompatActivity implements OnMapReadyCal
 
     }
 
-    private void setData() {
-        // Need to update with API
-        toolbarTitle.setText("NMoQ Park");
-        mainDescription.setText("The National Museum of Qatar Park.");
-        parkTitleLabel.setText("cafe/food available at park");
-        parkDescription.setText("cafe/food available at park desc");
-        parkTimingLabel.setText("Park Hours");
-        parkTimings.setText("7:30 to 8:30");
-        parkLocationTitle.setText("Location");
+    private void setData(NMoQPark nmoqPark) {
+        toolbarTitle.setText(nmoqPark.getMainTitle());
+        mainDescription.setText(nmoqPark.getMainDescription());
+        parkTitleLabel.setText(nmoqPark.getParkTitle());
+        parkDescription.setText(nmoqPark.getParkDescription());
+        parkTimingLabel.setText(nmoqPark.getParkHoursTitle());
+        parkTimings.setText(nmoqPark.getParksHoursDescription());
+        parkLocationTitle.setText(nmoqPark.getLocationTitle());
+        latitude = nmoqPark.getLatitudeNMoQ();
+        longitude = nmoqPark.getLongitudeNMoQ();
+        if (latitude != null && !latitude.equals("") && gValue != null) {
+            gMap = gValue;
+            gMap.setMinZoomPreference(12);
+            LatLng ny = new LatLng(Double.valueOf(latitude), Double.valueOf(longitude));
+            UiSettings uiSettings = gMap.getUiSettings();
+            uiSettings.setMyLocationButtonEnabled(true);
+            MarkerOptions markerOptions = new MarkerOptions();
+            markerOptions.position(ny);
+            gMap.addMarker(markerOptions);
+            gMap.moveCamera(CameraUpdateFactory.newLatLng(ny));
+        }
+
     }
 
-    private void setParkList() {
-        NMoQParkList nMoQParkList = new NMoQParkList("123", "Playground", "", "1");
-        parkLists.add(nMoQParkList);
-        nMoQParkList = new NMoQParkList("134", "Heritage Garden", "", "2");
-        parkLists.add(nMoQParkList);
+    public void getNMoQParkFromAPI() {
+        progressLoading.setVisibility(View.VISIBLE);
+        APIInterface apiService =
+                APIClient.getClient().create(APIInterface.class);
+        Call<ArrayList<NMoQPark>> call = apiService.getNMoQPark(language);
+        call.enqueue(new Callback<ArrayList<NMoQPark>>() {
+            @Override
+            public void onResponse(@NonNull Call<ArrayList<NMoQPark>> call,
+                                   @NonNull Response<ArrayList<NMoQPark>> response) {
+                if (response.isSuccessful()) {
+                    if (response.body() != null && response.body().size() > 0) {
+                        detailsLayout.setVisibility(View.VISIBLE);
+                        nmoqPark.addAll(response.body());
+                        removeHtmlTags(nmoqPark);
+                        setData(nmoqPark.get(0));
+                    } else {
+                        detailsLayout.setVisibility(View.GONE);
+                        noResultFoundTxt.setVisibility(View.VISIBLE);
+                    }
+
+                } else {
+                    detailsLayout.setVisibility(View.GONE);
+                    retryLayoutPark.setVisibility(View.VISIBLE);
+                }
+                progressLoading.setVisibility(View.GONE);
+            }
+
+            @Override
+            public void onFailure(@NonNull Call<ArrayList<NMoQPark>> call, @NonNull Throwable t) {
+                detailsLayout.setVisibility(View.GONE);
+                retryLayoutPark.setVisibility(View.VISIBLE);
+                progressLoading.setVisibility(View.GONE);
+            }
+        });
+
+    }
+
+    public void getNMoQParkListFromAPI() {
+        APIInterface apiService =
+                APIClient.getClient().create(APIInterface.class);
+        Call<ArrayList<NMoQParkList>> call = apiService.getNMoQParkList(language);
+        call.enqueue(new Callback<ArrayList<NMoQParkList>>() {
+            @Override
+            public void onResponse(@NonNull Call<ArrayList<NMoQParkList>> call,
+                                   @NonNull Response<ArrayList<NMoQParkList>> response) {
+                if (response.isSuccessful()) {
+                    if (response.body() != null && response.body().size() > 0) {
+                        detailsLayout.setVisibility(View.VISIBLE);
+                        parksRecyclerView.setVisibility(View.VISIBLE);
+                        parkLists.addAll(response.body());
+                        removeListHtmlTags(parkLists);
+                        mAdapter.notifyDataSetChanged();
+                    }
+                }
+            }
+
+            @Override
+            public void onFailure(@NonNull Call<ArrayList<NMoQParkList>> call, @NonNull Throwable t) {
+            }
+        });
+
+    }
+
+    private void removeListHtmlTags(List<NMoQParkList> parkLists) {
+        for (int i = 0; i < parkLists.size(); i++) {
+            parkLists.get(i).setMainTitle(util.html2string(parkLists.get(i).getMainTitle()));
+        }
+
+    }
+
+    private void removeHtmlTags(List<NMoQPark> nMoQParks) {
+        for (int i = 0; i < nMoQParks.size(); i++) {
+            nMoQParks.get(i).setMainTitle(util.html2string(nMoQParks.get(i).getMainTitle()));
+            nMoQParks.get(i).setMainDescription(util.html2string(nMoQParks.get(i).getMainDescription()));
+            nMoQParks.get(i).setParkDescription(util.html2string(nMoQParks.get(i).getParkDescription()));
+            nMoQParks.get(i).setParkTitle(util.html2string(nMoQParks.get(i).getParkTitle()));
+        }
+
     }
 
     @Override
