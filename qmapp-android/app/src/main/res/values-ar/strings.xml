@@ -218,7 +218,7 @@
     <string name="done">Done</string>
     <!-- Strings related to NMoQ Landing -->
     <string name="facilities_txt">المرافق</string>
-    <string name="experience_txt">التجربة</string>
+    <string name="experience_txt">المحتويات</string>
     <string name="facility_sublist">Facility Sublist</string>
 
 </resources>

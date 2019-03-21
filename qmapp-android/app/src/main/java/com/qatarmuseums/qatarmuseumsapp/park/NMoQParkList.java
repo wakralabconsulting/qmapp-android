@@ -1,11 +1,13 @@
 package com.qatarmuseums.qatarmuseumsapp.park;
 
 
+import android.support.annotation.NonNull;
+
 import com.google.gson.annotations.SerializedName;
 
 import java.util.ArrayList;
 
-public class NMoQParkList {
+public class NMoQParkList implements Comparable<NMoQParkList> {
 
     @SerializedName(value = "Title", alternate = "title")
     private String mainTitle;
@@ -43,5 +45,15 @@ public class NMoQParkList {
 
     public void setSortId(String sortId) {
         this.sortId = sortId;
+    }
+
+    @Override
+    public int compareTo(@NonNull NMoQParkList nMoQParkList) {
+        if (nMoQParkList.sortId != null)
+            return Integer.valueOf(this.sortId).compareTo(Integer.valueOf(nMoQParkList.sortId));
+        else
+            return 0;
+
+
     }
 }

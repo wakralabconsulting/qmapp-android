@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.v4.widget.NestedScrollView;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
@@ -30,6 +31,7 @@ import com.qatarmuseums.qatarmuseumsapp.utils.Util;
 
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import butterknife.BindView;
@@ -71,8 +73,10 @@ public class CollectionDetailsActivity extends AppCompatActivity {
 
     private Animation zoomOutAnimation;
     private CollectionDetailsAdapter mAdapter;
+    private NMoQParkListDetailsAdapter mAdapterPark;
     private ArrayList<CollectionDetailsList> collectionDetailsList = new ArrayList<>();
-    private String categoryName;
+    private ArrayList<NMoQParkListDetails> nMoQParkListDetails = new ArrayList<>();
+    private String categoryName, nid;
     Util util;
     String appLanguage;
     int collectionDetailRowCount;
@@ -95,28 +99,31 @@ public class CollectionDetailsActivity extends AppCompatActivity {
         qmDatabase = QMDatabase.getInstance(CollectionDetailsActivity.this);
         util = new Util();
         categoryName = intent.getStringExtra("MAIN_TITLE");
+        nid = intent.getStringExtra("NID");
         zoomOutAnimation = AnimationUtils.loadAnimation(getApplicationContext(),
                 R.anim.zoom_out_more);
         if (intent.getStringExtra("COMING_FROM").equals(this.getString(R.string.sidemenu_parks_text))) {
-            mAdapter = new CollectionDetailsAdapter(this, collectionDetailsList, true);
+            mAdapterPark = new NMoQParkListDetailsAdapter(this, nMoQParkListDetails);
             collectionTitle.setVisibility(View.GONE);
             collectionTitleDivider.setVisibility(View.GONE);
             longDescription.setVisibility(View.GONE);
+            recyclerView.setAdapter(mAdapterPark);
         } else {
-            mAdapter = new CollectionDetailsAdapter(this, collectionDetailsList, false);
+            mAdapter = new CollectionDetailsAdapter(this, collectionDetailsList);
             collectionTitle.setText(categoryName);
             longDescription.setText(intent.getStringExtra("LONG_DESC"));
+            recyclerView.setAdapter(mAdapter);
         }
         RecyclerView.LayoutManager layoutManager =
                 new LinearLayoutManager(getApplicationContext());
         recyclerView.setLayoutManager(layoutManager);
         recyclerView.setNestedScrollingEnabled(false);
-        recyclerView.setAdapter(mAdapter);
+
         recyclerView.setFocusable(false);
         appLanguage = LocaleManager.getLanguage(this);
         if (util.isNetworkAvailable(CollectionDetailsActivity.this))
             if (intent.getStringExtra("COMING_FROM").equals(this.getString(R.string.sidemenu_parks_text)))
-                getNMoQParkDetail();
+                getNMoQParkDetailsFromAPI();
             else
                 getMuseumCollectionDetailFromAPI();
         else
@@ -164,20 +171,43 @@ public class CollectionDetailsActivity extends AppCompatActivity {
 
     }
 
-    private void getNMoQParkDetail() {
-        detailLayout.setVisibility(View.VISIBLE);
-        CollectionDetailsList collectionList = new CollectionDetailsList("Adventure Ship",
-                "", "Description");
-        collectionDetailsList.add(collectionList);
-        collectionList = new CollectionDetailsList("Cave Of Wonders",
-                "", "Description");
-        collectionDetailsList.add(collectionList);
-        collectionList = new CollectionDetailsList("Oil Refinery",
-                "", "Description");
-        collectionDetailsList.add(collectionList);
-        mAdapter.notifyDataSetChanged();
-    }
+    private void getNMoQParkDetailsFromAPI() {
+        progressBar.setVisibility(View.VISIBLE);
+        APIInterface apiService =
+                APIClient.getClient().create(APIInterface.class);
+        Call<ArrayList<NMoQParkListDetails>> call = apiService.getNMoQParkListDetails(appLanguage, nid);
+        call.enqueue(new Callback<ArrayList<NMoQParkListDetails>>() {
+            @Override
+            public void onResponse(@NonNull Call<ArrayList<NMoQParkListDetails>> call,
+                                   @NonNull Response<ArrayList<NMoQParkListDetails>> response) {
+                if (response.isSuccessful()) {
+                    if (response.body() != null && response.body().size() > 0) {
+                        detailLayout.setVisibility(View.VISIBLE);
+                        nMoQParkListDetails.addAll(response.body());
+                        removeParkHtmlTags(nMoQParkListDetails);
+                        Collections.sort(nMoQParkListDetails);
+                        mAdapterPark.notifyDataSetChanged();
 
+                    } else {
+                        detailLayout.setVisibility(View.GONE);
+                        noResultFoundLayout.setVisibility(View.VISIBLE);
+                    }
+                } else {
+                    detailLayout.setVisibility(View.GONE);
+                    retryLayout.setVisibility(View.VISIBLE);
+                }
+                progressBar.setVisibility(View.GONE);
+            }
+
+            @Override
+            public void onFailure(@NonNull Call<ArrayList<NMoQParkListDetails>> call, @NonNull Throwable t) {
+                detailLayout.setVisibility(View.GONE);
+                retryLayout.setVisibility(View.VISIBLE);
+                progressBar.setVisibility(View.GONE);
+            }
+        });
+
+    }
 
     public void getMuseumCollectionDetailFromAPI() {
         progressBar.setVisibility(View.VISIBLE);
@@ -186,7 +216,8 @@ public class CollectionDetailsActivity extends AppCompatActivity {
         Call<ArrayList<CollectionDetailsList>> call = apiService.getMuseumCollectionDetails(appLanguage, categoryName);
         call.enqueue(new Callback<ArrayList<CollectionDetailsList>>() {
             @Override
-            public void onResponse(Call<ArrayList<CollectionDetailsList>> call, Response<ArrayList<CollectionDetailsList>> response) {
+            public void onResponse(@NonNull Call<ArrayList<CollectionDetailsList>> call,
+                                   @NonNull Response<ArrayList<CollectionDetailsList>> response) {
                 if (response.isSuccessful()) {
                     if (response.body() != null && response.body().size() > 0) {
                         detailLayout.setVisibility(View.VISIBLE);
@@ -208,7 +239,8 @@ public class CollectionDetailsActivity extends AppCompatActivity {
             }
 
             @Override
-            public void onFailure(Call<ArrayList<CollectionDetailsList>> call, Throwable t) {
+            public void onFailure(@NonNull Call<ArrayList<CollectionDetailsList>> call,
+                                  @NonNull Throwable t) {
                 detailLayout.setVisibility(View.GONE);
                 retryLayout.setVisibility(View.VISIBLE);
                 progressBar.setVisibility(View.GONE);
@@ -229,6 +261,13 @@ public class CollectionDetailsActivity extends AppCompatActivity {
         for (int i = 0; i < models.size(); i++) {
             models.get(i).setMainTitle(util.html2string(models.get(i).getMainTitle()));
             models.get(i).setAbout(util.html2string(models.get(i).getAbout()));
+        }
+    }
+
+    private void removeParkHtmlTags(ArrayList<NMoQParkListDetails> models) {
+        for (int i = 0; i < models.size(); i++) {
+            models.get(i).setMainTitle(util.html2string(models.get(i).getMainTitle()));
+            models.get(i).setDescription(util.html2string(models.get(i).getDescription()));
         }
     }
 
