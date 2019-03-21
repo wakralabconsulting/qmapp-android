@@ -38,6 +38,7 @@ import com.qatarmuseums.qatarmuseumsapp.museumcollectiondetails.CollectionDetail
 import com.qatarmuseums.qatarmuseumsapp.utils.Util;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import butterknife.BindView;
@@ -262,6 +263,7 @@ public class NMoQParkActivity extends AppCompatActivity implements OnMapReadyCal
                         parksRecyclerView.setVisibility(View.VISIBLE);
                         parkLists.addAll(response.body());
                         removeListHtmlTags(parkLists);
+                        Collections.sort(parkLists);
                         mAdapter.notifyDataSetChanged();
                     }
                 }

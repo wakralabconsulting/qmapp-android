@@ -16,6 +16,7 @@ import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.provider.CalendarContract;
 import android.provider.Settings;
+import android.support.annotation.NonNull;
 import android.support.constraint.ConstraintLayout;
 import android.support.design.widget.AppBarLayout;
 import android.support.v4.app.ActivityCompat;
@@ -75,6 +76,7 @@ import com.qatarmuseums.qatarmuseumsapp.museum.GlideLoaderForMuseum;
 import com.qatarmuseums.qatarmuseumsapp.museumabout.MuseumAboutModel;
 import com.qatarmuseums.qatarmuseumsapp.museumabout.MuseumAboutTableArabic;
 import com.qatarmuseums.qatarmuseumsapp.museumabout.MuseumAboutTableEnglish;
+import com.qatarmuseums.qatarmuseumsapp.museumcollectiondetails.NMoQParkListDetails;
 import com.qatarmuseums.qatarmuseumsapp.profile.Model;
 import com.qatarmuseums.qatarmuseumsapp.profile.Und;
 import com.qatarmuseums.qatarmuseumsapp.publicart.PublicArtModel;
@@ -208,6 +210,7 @@ public class DetailsActivity extends AppCompatActivity implements IPullZoom, OnM
     String seatsRemaining = "0";
     private int seatsCount;
     private ArrayList<FacilitiesDetailModel> facilitiesDetailModels = new ArrayList<>();
+    private ArrayList<NMoQParkListDetails> nMoQParkListDetails = new ArrayList<>();
     FacilityDetailTableEnglish facilityDetailTableEnglish;
     FacilityDetailTableArabic facilityDetailTableArabic;
 
@@ -831,33 +834,62 @@ public class DetailsActivity extends AppCompatActivity implements IPullZoom, OnM
         } else if (comingFrom.equals(getString(R.string.museum_tours))) {
             setTourDetailsData();
         } else if (comingFrom.equals(getString(R.string.facility_sublist))) {
-            setFacilitiesdetails();
+            setFacilitiesDetails();
         } else if (comingFrom.equals(getString(R.string.museum_discussion))) {
             setSpecialEventDetailsData();
         } else if (comingFrom.equals(getString(R.string.sidemenu_parks_text))) {
-            setNMoQParkDetailsData();
+            getNMoQParkListDetailsFromAPI(intent.getStringExtra("NID"));
         }
     }
 
-    private void setNMoQParkDetailsData() {
-        commonContentLayout.setVisibility(View.VISIBLE);
-        dateLocationLayout.setVisibility(View.GONE);
-        shortDescription.setTextAlignment(View.TEXT_ALIGNMENT_VIEW_START);
-        description = "DETAILS-----\n// Date: Friday 29 March\n// " +
-                "Time: 5.00pm-6.30pm\n// Location: Mathaf, Arab Museum of Modern Art\n// " +
-                "Registration not required\n\n\n\nABOUT THIS PANEL\n-----" +
-                "\nWorks of Arab artists have been gaining progressively more recognition in " +
-                "recent decades, promoting the field of Arab art defined by its geographic and " +
-                "cultural identity. The panelists will engage in conversation about developments " +
-                "in the art scene of the MENA region and explore shifting trends, while reflecting " +
-                "on generational differences. They will discuss the relationship between Arab and " +
-                "global art scenes, and what it means to be an Arab artist today.\n\n// " +
-                "Moderator: Reem Al Thani\n// Speakers to be announced\n\n\n";
-        loadData(null, description,
-                null, null, null,
-                null, null, null, null,
-                null, null, null,
-                true, null);
+    private void getNMoQParkListDetailsFromAPI(String nid) {
+        commonContentLayout.setVisibility(View.INVISIBLE);
+        retryLayout.setVisibility(View.GONE);
+        progressBar.setVisibility(View.VISIBLE);
+        APIInterface apiService = APIClient.getClient().create(APIInterface.class);
+        Call<ArrayList<NMoQParkListDetails>> call = apiService.getNMoQParkListDetails(appLanguage, nid);
+        call.enqueue(new Callback<ArrayList<NMoQParkListDetails>>() {
+            @Override
+            public void onResponse(@NonNull Call<ArrayList<NMoQParkListDetails>> call,
+                                   @NonNull Response<ArrayList<NMoQParkListDetails>> response) {
+                if (response.isSuccessful()) {
+                    if (response.body() != null && response.body().size() > 0) {
+                        nMoQParkListDetails.addAll(response.body());
+                        removeHtmlTagsForParkDetails(nMoQParkListDetails);
+                        GlideApp.with(DetailsActivity.this)
+                                .load(nMoQParkListDetails.get(0).getImages().get(0))
+                                .centerCrop()
+                                .placeholder(R.drawable.placeholder)
+                                .into(headerImageView);
+                        mainTitle = nMoQParkListDetails.get(0).getMainTitle();
+                        commonContentLayout.setVisibility(View.VISIBLE);
+                        dateLocationLayout.setVisibility(View.GONE);
+                        shortDescription.setTextAlignment(View.TEXT_ALIGNMENT_VIEW_START);
+                        loadData(null, nMoQParkListDetails.get(0).getDescription(),
+                                null, null, null,
+                                null, null, null, null,
+                                null, null, null,
+                                true, null);
+
+                    } else {
+                        commonContentLayout.setVisibility(View.GONE);
+                        noResultFoundTxt.setVisibility(View.VISIBLE);
+                    }
+
+                } else {
+                    commonContentLayout.setVisibility(View.GONE);
+                    retryLayout.setVisibility(View.VISIBLE);
+                }
+                progressBar.setVisibility(View.GONE);
+            }
+
+            @Override
+            public void onFailure(Call<ArrayList<NMoQParkListDetails>> call, Throwable t) {
+                commonContentLayout.setVisibility(View.GONE);
+                retryLayout.setVisibility(View.VISIBLE);
+                progressBar.setVisibility(View.GONE);
+            }
+        });
 
     }
 
@@ -874,7 +906,7 @@ public class DetailsActivity extends AppCompatActivity implements IPullZoom, OnM
                 true, null);
     }
 
-    public void setFacilitiesdetails() {
+    public void setFacilitiesDetails() {
         commonContentLayout.setVisibility(View.VISIBLE);
         interestLayout.setVisibility(View.VISIBLE);
         videoLayout.setVisibility(View.GONE);
@@ -1844,6 +1876,14 @@ public class DetailsActivity extends AppCompatActivity implements IPullZoom, OnM
 
         }
     }
+
+    public void removeHtmlTagsForParkDetails(ArrayList<NMoQParkListDetails> models) {
+        for (int i = 0; i < models.size(); i++) {
+            models.get(i).setMainTitle(util.html2string(models.get(i).getMainTitle()));
+            models.get(i).setDescription(util.html2string(models.get(i).getDescription()));
+        }
+    }
+
 
     public void removeHtmlTagsPublicArts(ArrayList<PublicArtModel> models) {
         for (int i = 0; i < models.size(); i++) {

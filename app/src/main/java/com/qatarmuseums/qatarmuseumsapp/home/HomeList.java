@@ -65,6 +65,9 @@ public class HomeList implements Comparable<HomeList> {
 
     @Override
     public int compareTo(@NonNull HomeList homeList) {
-        return this.sortId.compareTo(homeList.sortId);
+        if (homeList.sortId != null)
+            return this.sortId.compareTo(homeList.sortId);
+        else
+            return 0;
     }
 }

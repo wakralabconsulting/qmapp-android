@@ -15,6 +15,7 @@ import com.qatarmuseums.qatarmuseumsapp.home.HomeList;
 import com.qatarmuseums.qatarmuseumsapp.home.UserRegistrationModel;
 import com.qatarmuseums.qatarmuseumsapp.museumabout.MuseumAboutModel;
 import com.qatarmuseums.qatarmuseumsapp.museumcollectiondetails.CollectionDetailsList;
+import com.qatarmuseums.qatarmuseumsapp.museumcollectiondetails.NMoQParkListDetails;
 import com.qatarmuseums.qatarmuseumsapp.park.NMoQPark;
 import com.qatarmuseums.qatarmuseumsapp.park.NMoQParkList;
 import com.qatarmuseums.qatarmuseumsapp.park.ParkList;
@@ -193,5 +194,9 @@ public interface APIInterface {
 
     @GET("{language}/mobile_api/nmoq_list_parks.json")
     Call<ArrayList<NMoQParkList>> getNMoQParkList(@Path("language") String language);
+
+    @GET("{language}/mobile_api/nmoq_list_playground_by_park.json")
+    Call<ArrayList<NMoQParkListDetails>> getNMoQParkListDetails(@Path("language") String language,
+                                                                @Query("nid") String nid);
 
 }
