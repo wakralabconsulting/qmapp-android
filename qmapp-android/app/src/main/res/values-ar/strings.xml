@@ -217,11 +217,8 @@
     <string name="number_of_visitors">Number of Visitors</string>
     <string name="done">Done</string>
     <!-- Strings related to NMoQ Landing -->
-    <string name="facilities_txt">Facilities</string>
-    <string name="experience_txt">Experience</string>
-    <string name="highlights_tour_txt">جولة على أهم القطع</string>
-    <string name="park_hours">Park Hours</string>
-    <string name="nmoq_cafe_dining">cafe and dining - ar</string>
+    <string name="facilities_txt">المرافق</string>
+    <string name="experience_txt">التجربة</string>
     <string name="facility_sublist">Facility Sublist</string>
 
 </resources>
