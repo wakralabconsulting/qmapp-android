@@ -27,6 +27,8 @@ import com.qatarmuseums.qatarmuseumsapp.apicall.APIClient;
 import com.qatarmuseums.qatarmuseumsapp.apicall.APIInterface;
 import com.qatarmuseums.qatarmuseumsapp.museum.MuseumCollectionDetailTableArabic;
 import com.qatarmuseums.qatarmuseumsapp.museum.MuseumCollectionDetailTableEnglish;
+import com.qatarmuseums.qatarmuseumsapp.park.NMoQParkListDetailsTableArabic;
+import com.qatarmuseums.qatarmuseumsapp.park.NMoQParkListDetailsTableEnglish;
 import com.qatarmuseums.qatarmuseumsapp.utils.Util;
 
 import java.lang.ref.WeakReference;
@@ -83,6 +85,8 @@ public class CollectionDetailsActivity extends AppCompatActivity {
     QMDatabase qmDatabase;
     MuseumCollectionDetailTableEnglish museumCollectionDetailTableEnglish;
     MuseumCollectionDetailTableArabic museumCollectionDetailTableArabic;
+    private NMoQParkListDetailsTableEnglish nMoQParkListDetailsTableEnglish;
+    private NMoQParkListDetailsTableArabic nMoQParkListDetailsTableArabic;
 
     @Override
     protected void attachBaseContext(Context base) {
@@ -121,16 +125,22 @@ public class CollectionDetailsActivity extends AppCompatActivity {
 
         recyclerView.setFocusable(false);
         appLanguage = LocaleManager.getLanguage(this);
-        if (util.isNetworkAvailable(CollectionDetailsActivity.this))
+        if (util.isNetworkAvailable(CollectionDetailsActivity.this)) {
             if (intent.getStringExtra("COMING_FROM").equals(this.getString(R.string.sidemenu_parks_text)))
-                getNMoQParkDetailsFromAPI();
+                getNMoQParkDetailsFromAPI(nid);
             else
                 getMuseumCollectionDetailFromAPI();
-        else
-            getMuseumCollectionDetailFromDatabase();
-
+        } else {
+            if (intent.getStringExtra("COMING_FROM").equals(this.getString(R.string.sidemenu_parks_text)))
+                getNMoQParkListDetailsFromDataBase(nid);
+            else
+                getMuseumCollectionDetailFromDatabase();
+        }
         retryButton.setOnClickListener(v -> {
-            getMuseumCollectionDetailFromAPI();
+            if (intent.getStringExtra("COMING_FROM").equals(this.getString(R.string.sidemenu_parks_text)))
+                getNMoQParkDetailsFromAPI(nid);
+            else
+                getMuseumCollectionDetailFromAPI();
             progressBar.setVisibility(View.VISIBLE);
             retryLayout.setVisibility(View.GONE);
         });
@@ -171,7 +181,7 @@ public class CollectionDetailsActivity extends AppCompatActivity {
 
     }
 
-    private void getNMoQParkDetailsFromAPI() {
+    private void getNMoQParkDetailsFromAPI(String nid) {
         progressBar.setVisibility(View.VISIBLE);
         APIInterface apiService =
                 APIClient.getClient().create(APIInterface.class);
@@ -188,6 +198,8 @@ public class CollectionDetailsActivity extends AppCompatActivity {
                         Collections.sort(nMoQParkListDetails);
                         mAdapterPark.notifyDataSetChanged();
 
+                        // Commented for Nid issue in park list details API
+//                        new NMoQParkListDetailsRowCount(CollectionDetailsActivity.this, appLanguage).execute();
                     } else {
                         detailLayout.setVisibility(View.GONE);
                         noResultFoundLayout.setVisibility(View.VISIBLE);
@@ -270,6 +282,304 @@ public class CollectionDetailsActivity extends AppCompatActivity {
             models.get(i).setDescription(util.html2string(models.get(i).getDescription()));
         }
     }
+
+    public static class NMoQParkListDetailsRowCount extends AsyncTask<Void, Void, Integer> {
+        private WeakReference<CollectionDetailsActivity> activityReference;
+        String language;
+
+        NMoQParkListDetailsRowCount(CollectionDetailsActivity context, String language) {
+            this.activityReference = new WeakReference<>(context);
+            this.language = language;
+        }
+
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+        }
+
+        @Override
+        protected Integer doInBackground(Void... voids) {
+            if (language.equals(LocaleManager.LANGUAGE_ENGLISH))
+                return activityReference.get().qmDatabase.getNMoQParkListDetailsTableDao().getNumberOfRowsEnglish();
+            else
+                return activityReference.get().qmDatabase.getNMoQParkListDetailsTableDao().getNumberOfRowsArabic();
+
+        }
+
+        @Override
+        protected void onPostExecute(Integer integer) {
+            if (integer > 0) {
+                new CheckNMoQParkListDetailsDBRowExist(activityReference.get(), language).execute();
+            } else {
+                new InsertNMoQParkListDetailsDataToDataBase(
+                        activityReference.get(),
+                        activityReference.get().nMoQParkListDetailsTableEnglish,
+                        activityReference.get().nMoQParkListDetailsTableArabic, language).execute();
+            }
+        }
+    }
+
+    public static class CheckNMoQParkListDetailsDBRowExist extends AsyncTask<Void, Void, Void> {
+        private WeakReference<CollectionDetailsActivity> activityReference;
+        private NMoQParkListDetailsTableArabic nMoQParkListDetailsTableArabic;
+        String language;
+        private NMoQParkListDetailsTableEnglish nMoQParkListDetailsTableEnglish;
+
+        CheckNMoQParkListDetailsDBRowExist(CollectionDetailsActivity context, String apiLanguage) {
+            activityReference = new WeakReference<>(context);
+            language = apiLanguage;
+        }
+
+        @Override
+        protected Void doInBackground(Void... voids) {
+            if (activityReference.get().nMoQParkListDetails.size() > 0) {
+                if (language.equals(LocaleManager.LANGUAGE_ENGLISH)) {
+                    for (int i = 0; i < activityReference.get().nMoQParkListDetails.size(); i++) {
+                        int n = activityReference.get().qmDatabase.getNMoQParkListDetailsTableDao().checkIdExistEnglish(
+                                Integer.parseInt(activityReference.get().nMoQParkListDetails.get(i).getNid()));
+                        if (n > 0) {
+                            new UpdateNMoQParkListDetailsTable(activityReference.get(), language).execute();
+                        } else {
+                            nMoQParkListDetailsTableEnglish = new NMoQParkListDetailsTableEnglish(
+                                    activityReference.get().nMoQParkListDetails.get(i).getNid(),
+                                    activityReference.get().nMoQParkListDetails.get(i).getMainTitle(),
+                                    activityReference.get().nMoQParkListDetails.get(i).getSortId(),
+                                    activityReference.get().nMoQParkListDetails.get(i).getImages().get(0),
+                                    activityReference.get().nMoQParkListDetails.get(i).getDescription());
+
+                            activityReference.get().qmDatabase.getNMoQParkListDetailsTableDao().
+                                    insertEnglishTable(nMoQParkListDetailsTableEnglish);
+                        }
+                    }
+                } else {
+                    for (int i = 0; i < activityReference.get().nMoQParkListDetails.size(); i++) {
+                        int n = activityReference.get().qmDatabase.getNMoQParkListDetailsTableDao().checkIdExistArabic(
+                                Integer.parseInt(activityReference.get().nMoQParkListDetails.get(i).getNid()));
+                        if (n > 0) {
+                            new UpdateNMoQParkListDetailsTable(activityReference.get(), language).execute();
+                        } else {
+
+                            nMoQParkListDetailsTableArabic = new NMoQParkListDetailsTableArabic(
+                                    activityReference.get().nMoQParkListDetails.get(i).getNid(),
+                                    activityReference.get().nMoQParkListDetails.get(i).getMainTitle(),
+                                    activityReference.get().nMoQParkListDetails.get(i).getSortId(),
+                                    activityReference.get().nMoQParkListDetails.get(i).getImages().get(0),
+                                    activityReference.get().nMoQParkListDetails.get(i).getDescription());
+
+                            activityReference.get().qmDatabase.getNMoQParkListDetailsTableDao().
+                                    insertArabicTable(nMoQParkListDetailsTableArabic);
+                        }
+                    }
+
+                }
+            }
+            return null;
+        }
+    }
+
+    public static class UpdateNMoQParkListDetailsTable extends AsyncTask<Void, Void, Void> {
+        private WeakReference<CollectionDetailsActivity> activityReference;
+        String language;
+
+        UpdateNMoQParkListDetailsTable(CollectionDetailsActivity context, String apiLanguage) {
+            activityReference = new WeakReference<>(context);
+            language = apiLanguage;
+
+        }
+
+        @Override
+        protected Void doInBackground(Void... voids) {
+            if (language.equals(LocaleManager.LANGUAGE_ENGLISH)) {
+                activityReference.get().qmDatabase.getNMoQParkListDetailsTableDao().updateNMoQParkListDetailsEnglish(
+                        activityReference.get().nMoQParkListDetails.get(0).getMainTitle(),
+                        activityReference.get().nMoQParkListDetails.get(0).getImages(),
+                        activityReference.get().nMoQParkListDetails.get(0).getSortId(),
+                        activityReference.get().nMoQParkListDetails.get(0).getNid(),
+                        activityReference.get().nMoQParkListDetails.get(0).getDescription()
+                );
+
+            } else {
+                activityReference.get().qmDatabase.getNMoQParkListDetailsTableDao().updateNMoQParkListDetailsArabic(
+                        activityReference.get().nMoQParkListDetails.get(0).getMainTitle(),
+                        activityReference.get().nMoQParkListDetails.get(0).getImages(),
+                        activityReference.get().nMoQParkListDetails.get(0).getSortId(),
+                        activityReference.get().nMoQParkListDetails.get(0).getNid(),
+                        activityReference.get().nMoQParkListDetails.get(0).getDescription()
+                );
+
+            }
+            return null;
+        }
+    }
+
+    public static class InsertNMoQParkListDetailsDataToDataBase extends AsyncTask<Void, Void, Boolean> {
+
+        private WeakReference<CollectionDetailsActivity> activityReference;
+        private NMoQParkListDetailsTableEnglish nMoQParkListDetailsTableEnglish;
+        private NMoQParkListDetailsTableArabic nMoQParkListDetailsTableArabic;
+        String language;
+
+        InsertNMoQParkListDetailsDataToDataBase(CollectionDetailsActivity context,
+                                                NMoQParkListDetailsTableEnglish nMoQParkListDetailsTableEnglish,
+                                                NMoQParkListDetailsTableArabic nMoQParkListDetailsTableArabic, String apiLanguage) {
+            activityReference = new WeakReference<>(context);
+            this.nMoQParkListDetailsTableEnglish = nMoQParkListDetailsTableEnglish;
+            this.nMoQParkListDetailsTableArabic = nMoQParkListDetailsTableArabic;
+            this.language = apiLanguage;
+        }
+
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+        }
+
+        @Override
+        protected Boolean doInBackground(Void... voids) {
+            if (language.equals(LocaleManager.LANGUAGE_ENGLISH)) {
+                if (activityReference.get().nMoQParkListDetails != null &&
+                        activityReference.get().nMoQParkListDetails.size() > 0) {
+                    for (int i = 0; i < activityReference.get().nMoQParkListDetails.size(); i++) {
+                        nMoQParkListDetailsTableEnglish = new NMoQParkListDetailsTableEnglish(
+                                activityReference.get().nMoQParkListDetails.get(i).getNid(),
+                                activityReference.get().nMoQParkListDetails.get(i).getMainTitle(),
+                                activityReference.get().nMoQParkListDetails.get(i).getSortId(),
+                                activityReference.get().nMoQParkListDetails.get(i).getImages().get(0),
+                                activityReference.get().nMoQParkListDetails.get(i).getDescription());
+                        activityReference.get().qmDatabase.getNMoQParkListDetailsTableDao().
+                                insertEnglishTable(nMoQParkListDetailsTableEnglish);
+                    }
+                }
+            } else {
+                if (activityReference.get().nMoQParkListDetails != null &&
+                        activityReference.get().nMoQParkListDetails.size() > 0) {
+                    for (int i = 0; i < activityReference.get().nMoQParkListDetails.size(); i++) {
+                        nMoQParkListDetailsTableArabic = new NMoQParkListDetailsTableArabic(
+                                activityReference.get().nMoQParkListDetails.get(i).getNid(),
+                                activityReference.get().nMoQParkListDetails.get(i).getMainTitle(),
+                                activityReference.get().nMoQParkListDetails.get(i).getSortId(),
+                                activityReference.get().nMoQParkListDetails.get(i).getImages().get(0),
+                                activityReference.get().nMoQParkListDetails.get(i).getDescription());
+                        activityReference.get().qmDatabase.getNMoQParkListDetailsTableDao().
+                                insertArabicTable(nMoQParkListDetailsTableArabic);
+                    }
+                }
+            }
+            return true;
+        }
+
+        @Override
+        protected void onPostExecute(Boolean aBoolean) {
+            super.onPostExecute(aBoolean);
+        }
+    }
+
+    public void getNMoQParkListDetailsFromDataBase(String nid) {
+        if (appLanguage.equals(LocaleManager.LANGUAGE_ENGLISH)) {
+            new RetrieveEnglishNMoQParkListDetailsData(CollectionDetailsActivity.this, nid).execute();
+        } else {
+            new RetrieveArabicNMoQParkListDetailsData(CollectionDetailsActivity.this, nid).execute();
+        }
+    }
+
+    public static class RetrieveEnglishNMoQParkListDetailsData extends AsyncTask<Void, Void,
+            List<NMoQParkListDetailsTableEnglish>> {
+        private WeakReference<CollectionDetailsActivity> activityReference;
+        private int nid;
+
+        RetrieveEnglishNMoQParkListDetailsData(CollectionDetailsActivity context, String nid) {
+            this.activityReference = new WeakReference<>(context);
+            this.nid = Integer.parseInt(nid);
+        }
+
+        @Override
+        protected void onPreExecute() {
+            activityReference.get().progressBar.setVisibility(View.VISIBLE);
+        }
+
+        @Override
+        protected List<NMoQParkListDetailsTableEnglish> doInBackground(Void... voids) {
+            return activityReference.get().qmDatabase.getNMoQParkListDetailsTableDao().
+                    getNMoQParkListDetailsEnglishTable(nid);
+        }
+
+        @Override
+        protected void onPostExecute(List<NMoQParkListDetailsTableEnglish> nMoQParkListDetailsTableEnglishes) {
+            NMoQParkListDetails nMoQParkListDetails;
+            if (nMoQParkListDetailsTableEnglishes.size() > 0) {
+                for (int i = 0; i < nMoQParkListDetailsTableEnglishes.size(); i++) {
+                    ArrayList<String> image = new ArrayList<>();
+                    image.add(nMoQParkListDetailsTableEnglishes.get(i).getParkImages());
+
+                    nMoQParkListDetails = new NMoQParkListDetails(
+                            nMoQParkListDetailsTableEnglishes.get(i).getParkNid(),
+                            nMoQParkListDetailsTableEnglishes.get(i).getParkTitle(),
+                            image,
+                            nMoQParkListDetailsTableEnglishes.get(i).getParkDescription(),
+                            nMoQParkListDetailsTableEnglishes.get(i).getParkSortId());
+                    activityReference.get().nMoQParkListDetails.add(i, nMoQParkListDetails);
+                }
+                activityReference.get().recyclerView.setVisibility(View.VISIBLE);
+                activityReference.get().progressBar.setVisibility(View.GONE);
+                Collections.sort(activityReference.get().nMoQParkListDetails);
+                activityReference.get().mAdapterPark.notifyDataSetChanged();
+            } else {
+                activityReference.get().progressBar.setVisibility(View.GONE);
+                activityReference.get().retryLayout.setVisibility(View.VISIBLE);
+            }
+        }
+
+
+    }
+
+    public static class RetrieveArabicNMoQParkListDetailsData extends AsyncTask<Void, Void,
+            List<NMoQParkListDetailsTableArabic>> {
+        private WeakReference<CollectionDetailsActivity> activityReference;
+        private int nid;
+
+        RetrieveArabicNMoQParkListDetailsData(CollectionDetailsActivity context, String nid) {
+            this.activityReference = new WeakReference<>(context);
+            this.nid = Integer.parseInt(nid);
+        }
+
+        @Override
+        protected void onPreExecute() {
+            activityReference.get().progressBar.setVisibility(View.VISIBLE);
+        }
+
+        @Override
+        protected List<NMoQParkListDetailsTableArabic> doInBackground(Void... voids) {
+            return activityReference.get().qmDatabase.getNMoQParkListDetailsTableDao().
+                    getNMoQParkListDetailsArabicTable(nid);
+        }
+
+        @Override
+        protected void onPostExecute(List<NMoQParkListDetailsTableArabic> nMoQParkListDetailsTableArabics) {
+            NMoQParkListDetails nMoQParkListDetails;
+            if (nMoQParkListDetailsTableArabics.size() > 0) {
+                for (int i = 0; i < nMoQParkListDetailsTableArabics.size(); i++) {
+                    ArrayList<String> image = new ArrayList<>();
+                    image.add(nMoQParkListDetailsTableArabics.get(i).getParkImages());
+                    nMoQParkListDetails = new NMoQParkListDetails(
+                            nMoQParkListDetailsTableArabics.get(i).getParkNid(),
+                            nMoQParkListDetailsTableArabics.get(i).getParkTitle(),
+                            image,
+                            nMoQParkListDetailsTableArabics.get(i).getParkDescription(),
+                            nMoQParkListDetailsTableArabics.get(i).getParkSortId());
+                    activityReference.get().nMoQParkListDetails.add(i, nMoQParkListDetails);
+                }
+                activityReference.get().recyclerView.setVisibility(View.VISIBLE);
+                Collections.sort(activityReference.get().nMoQParkListDetails);
+                activityReference.get().mAdapterPark.notifyDataSetChanged();
+                activityReference.get().progressBar.setVisibility(View.GONE);
+            } else {
+                activityReference.get().progressBar.setVisibility(View.GONE);
+                activityReference.get().retryLayout.setVisibility(View.VISIBLE);
+            }
+        }
+
+
+    }
+
 
     public static class CollectionDetailRowCount extends AsyncTask<Void, Void, Integer> {
 

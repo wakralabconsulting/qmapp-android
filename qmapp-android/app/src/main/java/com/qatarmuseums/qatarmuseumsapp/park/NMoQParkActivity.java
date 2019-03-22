@@ -683,7 +683,7 @@ public class NMoQParkActivity extends AppCompatActivity implements OnMapReadyCal
 
         @Override
         protected Void doInBackground(Void... voids) {
-            if (activityReference.get().nMoQPark.size() > 0) {
+            if (activityReference.get().parkLists.size() > 0) {
                 if (language.equals(LocaleManager.LANGUAGE_ENGLISH)) {
                     for (int i = 0; i < activityReference.get().parkLists.size(); i++) {
                         int n = activityReference.get().qmDatabase.getNMoQParkListTableDao().checkIdExistEnglish(
@@ -701,11 +701,11 @@ public class NMoQParkActivity extends AppCompatActivity implements OnMapReadyCal
                         }
                     }
                 } else {
-                    for (int i = 0; i < activityReference.get().nMoQPark.size(); i++) {
-                        int n = activityReference.get().qmDatabase.getNMoQParkTableDao().checkIdExistArabic(
-                                Integer.parseInt(activityReference.get().nMoQPark.get(i).getNid()));
+                    for (int i = 0; i < activityReference.get().parkLists.size(); i++) {
+                        int n = activityReference.get().qmDatabase.getNMoQParkListTableDao().checkIdExistArabic(
+                                Integer.parseInt(activityReference.get().parkLists.get(i).getNid()));
                         if (n > 0) {
-                            new UpdateNMoQParkTable(activityReference.get(), language).execute();
+                            new UpdateNMoQParkListTable(activityReference.get(), language).execute();
                         } else {
 
                             nMoQParkListTableArabic = new NMoQParkListTableArabic(
@@ -780,7 +780,7 @@ public class NMoQParkActivity extends AppCompatActivity implements OnMapReadyCal
         @Override
         protected Boolean doInBackground(Void... voids) {
             if (language.equals(LocaleManager.LANGUAGE_ENGLISH)) {
-                if (activityReference.get().nMoQPark != null && activityReference.get().nMoQPark.size() > 0) {
+                if (activityReference.get().parkLists != null && activityReference.get().parkLists.size() > 0) {
                     for (int i = 0; i < activityReference.get().parkLists.size(); i++) {
                         nMoQParkListTableEnglish = new NMoQParkListTableEnglish(
                                 activityReference.get().parkLists.get(i).getNid(),
@@ -791,7 +791,7 @@ public class NMoQParkActivity extends AppCompatActivity implements OnMapReadyCal
                     }
                 }
             } else {
-                if (activityReference.get().nMoQPark != null && activityReference.get().nMoQPark.size() > 0) {
+                if (activityReference.get().parkLists != null && activityReference.get().parkLists.size() > 0) {
                     for (int i = 0; i < activityReference.get().parkLists.size(); i++) {
                         nMoQParkListTableArabic = new NMoQParkListTableArabic(
                                 activityReference.get().parkLists.get(i).getNid(),
