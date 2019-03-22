@@ -287,6 +287,7 @@
             </LinearLayout>
 
             <LinearLayout
+                android:id="@+id/date_and_location_layout"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_margin="@dimen/text_margin"

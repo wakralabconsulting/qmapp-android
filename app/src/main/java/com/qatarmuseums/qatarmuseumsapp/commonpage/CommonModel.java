@@ -21,9 +21,9 @@ public class CommonModel implements Comparable<CommonModel> {
     private String startDate;
     @SerializedName("end_Date")
     private String endDate;
-    @SerializedName(value = "Longitude",alternate = {"longtitude"})
+    @SerializedName(value = "Longitude", alternate = {"longtitude"})
     private String longitude;
-    @SerializedName(value = "Latitude",alternate = {"latitude "})
+    @SerializedName(value = "Latitude", alternate = {"latitude "})
     private String latitude;
     @SerializedName(value = "SORT_ID", alternate = {"sort_id", "Sort_Id", "sort_coefficient"})
     private String sortId;
@@ -81,6 +81,7 @@ public class CommonModel implements Comparable<CommonModel> {
         this.id = id;
         this.images = images;
     }
+
     CommonModel(String name, String sortId, String id, String images) {
         this.name = name;
         this.sortId = sortId;
@@ -366,7 +367,7 @@ public class CommonModel implements Comparable<CommonModel> {
     @Override
     public int compareTo(@NonNull CommonModel commonModel) {
         if (commonModel.sortId != null)
-            return this.sortId.compareTo(commonModel.sortId);
+            return Integer.valueOf(this.sortId).compareTo(Integer.valueOf(commonModel.sortId));
         else
             return 0;
     }
