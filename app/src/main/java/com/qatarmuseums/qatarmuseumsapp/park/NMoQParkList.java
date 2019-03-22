@@ -9,15 +9,21 @@ import java.util.ArrayList;
 
 public class NMoQParkList implements Comparable<NMoQParkList> {
 
-    @SerializedName(value = "Title", alternate = "title")
-    private String mainTitle;
     @SerializedName("Nid")
     private String nid;
-    @SerializedName(value = "images", alternate = "images ")
-    private ArrayList<String> image;
+    @SerializedName(value = "Title", alternate = "title")
+    private String mainTitle;
     @SerializedName("sort_id")
     private String sortId;
+    @SerializedName(value = "images", alternate = "images ")
+    private ArrayList<String> image;
 
+    NMoQParkList(String nid, String mainTitle, String sortId, ArrayList<String> image) {
+        this.nid = nid;
+        this.mainTitle = mainTitle;
+        this.sortId = sortId;
+        this.image = image;
+    }
 
     public String getMainTitle() {
         return mainTitle;

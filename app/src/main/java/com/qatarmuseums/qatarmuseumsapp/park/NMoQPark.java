@@ -5,10 +5,10 @@ import com.google.gson.annotations.SerializedName;
 
 public class NMoQPark {
 
-    @SerializedName("title")
-    private String mainTitle;
     @SerializedName("nid")
     private String nid;
+    @SerializedName("title")
+    private String mainTitle;
     @SerializedName("Main_description")
     private String mainDescription;
     @SerializedName(value = "park_title", alternate = "park_title ")
@@ -26,6 +26,18 @@ public class NMoQPark {
     @SerializedName("longtitude_nmoq")
     private String longitudeNMoQ;
 
+    public NMoQPark(String nid, String mainTitle, String mainDescription, String parkTitle, String parkDescription, String parkHoursTitle, String parksHoursDescription, String locationTitle, String latitudeNMoQ, String longitudeNMoQ) {
+        this.nid = nid;
+        this.mainTitle = mainTitle;
+        this.mainDescription = mainDescription;
+        this.parkTitle = parkTitle;
+        this.parkDescription = parkDescription;
+        this.parkHoursTitle = parkHoursTitle;
+        this.parksHoursDescription = parksHoursDescription;
+        this.locationTitle = locationTitle;
+        this.latitudeNMoQ = latitudeNMoQ;
+        this.longitudeNMoQ = longitudeNMoQ;
+    }
 
     public String getMainTitle() {
         return mainTitle;
