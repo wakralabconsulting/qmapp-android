@@ -10,23 +10,23 @@ import com.qatarmuseums.qatarmuseumsapp.home.HomeActivity;
 import java.io.IOException;
 
 import pl.droidsonroids.gif.GifDrawable;
+import pl.droidsonroids.gif.GifImageView;
 
 
 public class SplashActivity extends Activity {
     Intent intent;
+    private GifImageView gifImageView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
         setContentView(R.layout.activity_splash);
-        GifDrawable gifFromResource = null;
-        try {
-            gifFromResource = new GifDrawable(getResources(), R.raw.qm_logo);
+        gifImageView = findViewById(R.id.gif_image_view);
 
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        GifDrawable gifFromResource;
+        gifFromResource = (GifDrawable) gifImageView.getDrawable();
+
         if (gifFromResource != null) {
             gifFromResource.setLoopCount(1);
             gifFromResource.addAnimationListener(loopNumber -> {

@@ -15,6 +15,9 @@ import com.qatarmuseums.qatarmuseumsapp.home.HomeList;
 import com.qatarmuseums.qatarmuseumsapp.home.UserRegistrationModel;
 import com.qatarmuseums.qatarmuseumsapp.museumabout.MuseumAboutModel;
 import com.qatarmuseums.qatarmuseumsapp.museumcollectiondetails.CollectionDetailsList;
+import com.qatarmuseums.qatarmuseumsapp.museumcollectiondetails.NMoQParkListDetails;
+import com.qatarmuseums.qatarmuseumsapp.park.NMoQPark;
+import com.qatarmuseums.qatarmuseumsapp.park.NMoQParkList;
 import com.qatarmuseums.qatarmuseumsapp.park.ParkList;
 import com.qatarmuseums.qatarmuseumsapp.profile.ProfileDetails;
 import com.qatarmuseums.qatarmuseumsapp.profile.RsvpData;
@@ -149,6 +152,7 @@ public interface APIInterface {
 
     @GET("{language}/mobile_api/nmoq_list_day.json")
     Call<ArrayList<CommonModel>> getTourList(@Path("language") String language);
+
     @GET("{language}/mobile_api/list_facility_category.json")
     Call<ArrayList<CommonModel>> getFacilityList(@Path("language") String language);
 
@@ -161,6 +165,7 @@ public interface APIInterface {
     @GET("{language}/mobile_api/list_tour_per_day.json")
     Call<ArrayList<TourDetailsModel>> getTourDetails(@Path("language") String language,
                                                      @Query("event_id") String evetId);
+
     @GET("{language}/mobile_api/facility-detail_by_category.json")
     Call<ArrayList<FacilitiesDetailModel>> getFacilityDetails(@Path("language") String language,
                                                               @Query("category_id") String facilityId);
@@ -183,4 +188,15 @@ public interface APIInterface {
                                                                @Header("X-CSRF-Token") String token,
                                                                @Path("registration_id") String registrationId,
                                                                @Body RegistrationDetailsModel model);
+
+    @GET("{language}/mobile_api/nmoq_category.json")
+    Call<ArrayList<NMoQPark>> getNMoQPark(@Path("language") String language);
+
+    @GET("{language}/mobile_api/nmoq_list_parks.json")
+    Call<ArrayList<NMoQParkList>> getNMoQParkList(@Path("language") String language);
+
+    @GET("{language}/mobile_api/nmoq_list_playground_by_park.json")
+    Call<ArrayList<NMoQParkListDetails>> getNMoQParkListDetails(@Path("language") String language,
+                                                                @Query("nid") String nid);
+
 }

@@ -14,9 +14,9 @@ import com.qatarmuseums.qatarmuseumsapp.home.GlideApp;
 
 import java.util.List;
 
-public class CollectionDetailsAdapter extends RecyclerView.Adapter<CollectionDetailsAdapter.MyViewHolder> {
+public class NMoQParkListDetailsAdapter extends RecyclerView.Adapter<NMoQParkListDetailsAdapter.MyViewHolder> {
     private Context mContext;
-    private List<CollectionDetailsList> collectionDetailsList = null;
+    private List<NMoQParkListDetails> nMoQParkListDetails = null;
 
     @NonNull
     @Override
@@ -29,22 +29,26 @@ public class CollectionDetailsAdapter extends RecyclerView.Adapter<CollectionDet
 
     @Override
     public void onBindViewHolder(@NonNull MyViewHolder holder, int position) {
-        CollectionDetailsList cdl = collectionDetailsList.get(position);
-        holder.mainTitle.setText(cdl.getMainTitle());
-        holder.subTitle.setText(cdl.getAbout());
+        NMoQParkListDetails listDetails = nMoQParkListDetails.get(position);
+        holder.mainTitle.setText(listDetails.getMainTitle());
+
+        holder.imageDescription.setVisibility(View.VISIBLE);
+        holder.imageDescription.setText(listDetails.getDescription());
+        holder.subTitle.setVisibility(View.GONE);
+
         GlideApp.with(mContext)
-                .load(cdl.getImage1())
+                .load(listDetails.getImages().get(0))
                 .into(holder.image1);
 
     }
 
     @Override
     public int getItemCount() {
-        return collectionDetailsList.size();
+        return nMoQParkListDetails.size();
     }
 
     public class MyViewHolder extends RecyclerView.ViewHolder {
-        TextView mainTitle, subTitle;
+        TextView mainTitle, subTitle, imageDescription;
         ImageView image1;
 
         public MyViewHolder(View view) {
@@ -52,11 +56,12 @@ public class CollectionDetailsAdapter extends RecyclerView.Adapter<CollectionDet
             image1 = view.findViewById(R.id.collection_image1);
             mainTitle = view.findViewById(R.id.main_title);
             subTitle = view.findViewById(R.id.sub_title);
+            imageDescription = view.findViewById(R.id.second_description);
         }
     }
 
-    CollectionDetailsAdapter(Context context, List<CollectionDetailsList> collectionDetailsList) {
-        this.collectionDetailsList = collectionDetailsList;
+    public NMoQParkListDetailsAdapter(Context context, List<NMoQParkListDetails> nMoQParkListDetails) {
+        this.nMoQParkListDetails = nMoQParkListDetails;
         this.mContext = context;
     }
 }

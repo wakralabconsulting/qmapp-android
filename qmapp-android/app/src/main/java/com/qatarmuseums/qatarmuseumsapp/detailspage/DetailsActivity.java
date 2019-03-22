@@ -16,6 +16,7 @@ import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.provider.CalendarContract;
 import android.provider.Settings;
+import android.support.annotation.NonNull;
 import android.support.constraint.ConstraintLayout;
 import android.support.design.widget.AppBarLayout;
 import android.support.v4.app.ActivityCompat;
@@ -75,6 +76,10 @@ import com.qatarmuseums.qatarmuseumsapp.museum.GlideLoaderForMuseum;
 import com.qatarmuseums.qatarmuseumsapp.museumabout.MuseumAboutModel;
 import com.qatarmuseums.qatarmuseumsapp.museumabout.MuseumAboutTableArabic;
 import com.qatarmuseums.qatarmuseumsapp.museumabout.MuseumAboutTableEnglish;
+import com.qatarmuseums.qatarmuseumsapp.museumcollectiondetails.CollectionDetailsActivity;
+import com.qatarmuseums.qatarmuseumsapp.museumcollectiondetails.NMoQParkListDetails;
+import com.qatarmuseums.qatarmuseumsapp.park.NMoQParkListDetailsTableArabic;
+import com.qatarmuseums.qatarmuseumsapp.park.NMoQParkListDetailsTableEnglish;
 import com.qatarmuseums.qatarmuseumsapp.profile.Model;
 import com.qatarmuseums.qatarmuseumsapp.profile.Und;
 import com.qatarmuseums.qatarmuseumsapp.publicart.PublicArtModel;
@@ -144,7 +149,7 @@ public class DetailsActivity extends AppCompatActivity implements IPullZoom, OnM
     int publicArtsTableRowCount, heritageTableRowCount,
             exhibitionRowCount, museumAboutRowCount;
     SharedPreferences qmPreferences;
-    LinearLayout commonContentLayout;
+    LinearLayout commonContentLayout, dateLocationLayout;
     TextView noResultFoundTxt;
     ArrayList<PublicArtModel> publicArtModel = new ArrayList<>();
     ArrayList<MuseumAboutModel> museumAboutModels = new ArrayList<>();
@@ -208,8 +213,11 @@ public class DetailsActivity extends AppCompatActivity implements IPullZoom, OnM
     String seatsRemaining = "0";
     private int seatsCount;
     private ArrayList<FacilitiesDetailModel> facilitiesDetailModels = new ArrayList<>();
+    private ArrayList<NMoQParkListDetails> nMoQParkListDetails = new ArrayList<>();
     FacilityDetailTableEnglish facilityDetailTableEnglish;
     FacilityDetailTableArabic facilityDetailTableArabic;
+    private NMoQParkListDetailsTableEnglish nMoQParkListDetailsTableEnglish;
+    private NMoQParkListDetailsTableArabic nMoQParkListDetailsTableArabic;
 
 
     @Override
@@ -318,6 +326,7 @@ public class DetailsActivity extends AppCompatActivity implements IPullZoom, OnM
         timingLayout = findViewById(R.id.timing_layout);
         contactLayout = findViewById(R.id.contact_layout);
         commonContentLayout = findViewById(R.id.common_content_layout);
+        dateLocationLayout = findViewById(R.id.date_and_location_layout);
         noResultFoundTxt = findViewById(R.id.noResultFoundTxt);
         retryLayout = findViewById(R.id.retry_layout_about);
         retryButton = findViewById(R.id.retry_btn);
@@ -370,16 +379,12 @@ public class DetailsActivity extends AppCompatActivity implements IPullZoom, OnM
                 getApplicationContext(),
 
                 R.anim.zoom_out_more);
-        retryButton.setOnClickListener(v ->
-
-        {
+        retryButton.setOnClickListener(v -> {
             getData();
             progressBar.setVisibility(View.VISIBLE);
             retryLayout.setVisibility(View.GONE);
         });
-        retryButton.setOnTouchListener((v, event) ->
-
-        {
+        retryButton.setOnTouchListener((v, event) -> {
             switch (event.getAction()) {
                 case MotionEvent.ACTION_DOWN:
                     retryButton.startAnimation(zoomOutAnimation);
@@ -387,9 +392,7 @@ public class DetailsActivity extends AppCompatActivity implements IPullZoom, OnM
             }
             return false;
         });
-        toolbarClose.setOnTouchListener((v, event) ->
-
-        {
+        toolbarClose.setOnTouchListener((v, event) -> {
             switch (event.getAction()) {
                 case MotionEvent.ACTION_DOWN:
                     toolbarClose.startAnimation(zoomOutAnimation);
@@ -397,9 +400,7 @@ public class DetailsActivity extends AppCompatActivity implements IPullZoom, OnM
             }
             return false;
         });
-        favIcon.setOnTouchListener((v, event) ->
-
-        {
+        favIcon.setOnTouchListener((v, event) -> {
             switch (event.getAction()) {
                 case MotionEvent.ACTION_DOWN:
                     favIcon.startAnimation(zoomOutAnimation);
@@ -407,9 +408,7 @@ public class DetailsActivity extends AppCompatActivity implements IPullZoom, OnM
             }
             return false;
         });
-        shareIcon.setOnTouchListener((v, event) ->
-
-        {
+        shareIcon.setOnTouchListener((v, event) -> {
             switch (event.getAction()) {
                 case MotionEvent.ACTION_DOWN:
                     shareIcon.startAnimation(zoomOutAnimation);
@@ -417,9 +416,7 @@ public class DetailsActivity extends AppCompatActivity implements IPullZoom, OnM
             }
             return false;
         });
-        downloadText.setOnTouchListener((v, event) ->
-
-        {
+        downloadText.setOnTouchListener((v, event) -> {
             switch (event.getAction()) {
                 case MotionEvent.ACTION_DOWN:
                     downloadButton.startAnimation(zoomOutAnimation);
@@ -500,14 +497,11 @@ public class DetailsActivity extends AppCompatActivity implements IPullZoom, OnM
             }
         });
         downloadButton.setOnClickListener(v ->
-
                 downloadAction());
         downloadText.setOnClickListener(v ->
-
                 downloadAction());
         registerButton.setOnClickListener(v -> {
             if (registerButton.getText().toString().equals(getResources().getString(R.string.interested))) {
-
                 // Overlapping check commented temporarily
 
 //                if (registrationDetailsMap.size() > 0 && tourDetailsMap.size() > 0) {
@@ -845,10 +839,363 @@ public class DetailsActivity extends AppCompatActivity implements IPullZoom, OnM
         } else if (comingFrom.equals(getString(R.string.museum_tours))) {
             setTourDetailsData();
         } else if (comingFrom.equals(getString(R.string.facility_sublist))) {
-            setFacilitiesdetails();
+            setFacilitiesDetails();
         } else if (comingFrom.equals(getString(R.string.museum_discussion))) {
             setSpecialEventDetailsData();
+        } else if (comingFrom.equals(getString(R.string.sidemenu_parks_text))) {
+            if (util.isNetworkAvailable(DetailsActivity.this))
+                getNMoQParkListDetailsFromAPI(intent.getStringExtra("NID"));
+            else
+                getNMoQParkListDetailsFromDataBase(intent.getStringExtra("NID"));
         }
+    }
+
+    private void getNMoQParkListDetailsFromAPI(String nid) {
+        commonContentLayout.setVisibility(View.INVISIBLE);
+        retryLayout.setVisibility(View.GONE);
+        progressBar.setVisibility(View.VISIBLE);
+        APIInterface apiService = APIClient.getClient().create(APIInterface.class);
+        Call<ArrayList<NMoQParkListDetails>> call = apiService.getNMoQParkListDetails(appLanguage, nid);
+        call.enqueue(new Callback<ArrayList<NMoQParkListDetails>>() {
+            @Override
+            public void onResponse(@NonNull Call<ArrayList<NMoQParkListDetails>> call,
+                                   @NonNull Response<ArrayList<NMoQParkListDetails>> response) {
+                if (response.isSuccessful()) {
+                    if (response.body() != null && response.body().size() > 0) {
+                        nMoQParkListDetails.addAll(response.body());
+                        removeHtmlTagsForParkDetails(nMoQParkListDetails);
+                        GlideApp.with(DetailsActivity.this)
+                                .load(nMoQParkListDetails.get(0).getImages().get(0))
+                                .centerCrop()
+                                .placeholder(R.drawable.placeholder)
+                                .into(headerImageView);
+                        mainTitle = nMoQParkListDetails.get(0).getMainTitle();
+                        commonContentLayout.setVisibility(View.VISIBLE);
+                        dateLocationLayout.setVisibility(View.GONE);
+                        shortDescription.setTextAlignment(View.TEXT_ALIGNMENT_VIEW_START);
+                        loadData(null, nMoQParkListDetails.get(0).getDescription(),
+                                null, null, null,
+                                null, null, null, null,
+                                null, null, null,
+                                true, null);
+
+                        // Commented for Nid issue in park list details API
+//                        new NMoQParkListDetailsRowCount(DetailsActivity.this, appLanguage).execute();
+
+                    } else {
+                        commonContentLayout.setVisibility(View.GONE);
+                        noResultFoundTxt.setVisibility(View.VISIBLE);
+                    }
+
+                } else {
+                    commonContentLayout.setVisibility(View.GONE);
+                    retryLayout.setVisibility(View.VISIBLE);
+                }
+                progressBar.setVisibility(View.GONE);
+            }
+
+            @Override
+            public void onFailure(Call<ArrayList<NMoQParkListDetails>> call, Throwable t) {
+                commonContentLayout.setVisibility(View.GONE);
+                retryLayout.setVisibility(View.VISIBLE);
+                progressBar.setVisibility(View.GONE);
+            }
+        });
+
+    }
+
+    public static class NMoQParkListDetailsRowCount extends AsyncTask<Void, Void, Integer> {
+        private WeakReference<DetailsActivity> activityReference;
+        String language;
+
+        NMoQParkListDetailsRowCount(DetailsActivity context, String language) {
+            this.activityReference = new WeakReference<>(context);
+            this.language = language;
+        }
+
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+        }
+
+        @Override
+        protected Integer doInBackground(Void... voids) {
+            if (language.equals(LocaleManager.LANGUAGE_ENGLISH))
+                return activityReference.get().qmDatabase.getNMoQParkListDetailsTableDao().getNumberOfRowsEnglish();
+            else
+                return activityReference.get().qmDatabase.getNMoQParkListDetailsTableDao().getNumberOfRowsArabic();
+
+        }
+
+        @Override
+        protected void onPostExecute(Integer integer) {
+            if (integer > 0) {
+                new CheckNMoQParkListDetailsDBRowExist(activityReference.get(), language).execute();
+            } else {
+                new InsertNMoQParkListDetailsDataToDataBase(
+                        activityReference.get(),
+                        activityReference.get().nMoQParkListDetailsTableEnglish,
+                        activityReference.get().nMoQParkListDetailsTableArabic, language).execute();
+            }
+        }
+    }
+
+    public static class CheckNMoQParkListDetailsDBRowExist extends AsyncTask<Void, Void, Void> {
+        private WeakReference<DetailsActivity> activityReference;
+        private NMoQParkListDetailsTableArabic nMoQParkListDetailsTableArabic;
+        String language;
+        private NMoQParkListDetailsTableEnglish nMoQParkListDetailsTableEnglish;
+
+        CheckNMoQParkListDetailsDBRowExist(DetailsActivity context, String apiLanguage) {
+            activityReference = new WeakReference<>(context);
+            language = apiLanguage;
+        }
+
+        @Override
+        protected Void doInBackground(Void... voids) {
+            if (activityReference.get().nMoQParkListDetails.size() > 0) {
+                if (language.equals(LocaleManager.LANGUAGE_ENGLISH)) {
+                    for (int i = 0; i < activityReference.get().nMoQParkListDetails.size(); i++) {
+                        int n = activityReference.get().qmDatabase.getNMoQParkListDetailsTableDao().checkIdExistEnglish(
+                                Integer.parseInt(activityReference.get().nMoQParkListDetails.get(i).getNid()));
+                        if (n > 0) {
+                            new UpdateNMoQParkListDetailsTable(activityReference.get(), language).execute();
+                        } else {
+                            nMoQParkListDetailsTableEnglish = new NMoQParkListDetailsTableEnglish(
+                                    activityReference.get().nMoQParkListDetails.get(i).getNid(),
+                                    activityReference.get().nMoQParkListDetails.get(i).getMainTitle(),
+                                    activityReference.get().nMoQParkListDetails.get(i).getSortId(),
+                                    activityReference.get().nMoQParkListDetails.get(i).getImages().get(0),
+                                    activityReference.get().nMoQParkListDetails.get(i).getDescription());
+
+                            activityReference.get().qmDatabase.getNMoQParkListDetailsTableDao().
+                                    insertEnglishTable(nMoQParkListDetailsTableEnglish);
+                        }
+                    }
+                } else {
+                    for (int i = 0; i < activityReference.get().nMoQParkListDetails.size(); i++) {
+                        int n = activityReference.get().qmDatabase.getNMoQParkListDetailsTableDao().checkIdExistArabic(
+                                Integer.parseInt(activityReference.get().nMoQParkListDetails.get(i).getNid()));
+                        if (n > 0) {
+                            new UpdateNMoQParkListDetailsTable(activityReference.get(), language).execute();
+                        } else {
+
+                            nMoQParkListDetailsTableArabic = new NMoQParkListDetailsTableArabic(
+                                    activityReference.get().nMoQParkListDetails.get(i).getNid(),
+                                    activityReference.get().nMoQParkListDetails.get(i).getMainTitle(),
+                                    activityReference.get().nMoQParkListDetails.get(i).getSortId(),
+                                    activityReference.get().nMoQParkListDetails.get(i).getImages().get(0),
+                                    activityReference.get().nMoQParkListDetails.get(i).getDescription());
+
+                            activityReference.get().qmDatabase.getNMoQParkListDetailsTableDao().
+                                    insertArabicTable(nMoQParkListDetailsTableArabic);
+                        }
+                    }
+
+                }
+            }
+            return null;
+        }
+    }
+
+    public static class UpdateNMoQParkListDetailsTable extends AsyncTask<Void, Void, Void> {
+        private WeakReference<DetailsActivity> activityReference;
+        String language;
+
+        UpdateNMoQParkListDetailsTable(DetailsActivity context, String apiLanguage) {
+            activityReference = new WeakReference<>(context);
+            language = apiLanguage;
+
+        }
+
+        @Override
+        protected Void doInBackground(Void... voids) {
+            if (language.equals(LocaleManager.LANGUAGE_ENGLISH)) {
+                activityReference.get().qmDatabase.getNMoQParkListDetailsTableDao().updateNMoQParkListDetailsEnglish(
+                        activityReference.get().nMoQParkListDetails.get(0).getMainTitle(),
+                        activityReference.get().nMoQParkListDetails.get(0).getImages(),
+                        activityReference.get().nMoQParkListDetails.get(0).getSortId(),
+                        activityReference.get().nMoQParkListDetails.get(0).getNid(),
+                        activityReference.get().nMoQParkListDetails.get(0).getDescription()
+                );
+
+            } else {
+                activityReference.get().qmDatabase.getNMoQParkListDetailsTableDao().updateNMoQParkListDetailsArabic(
+                        activityReference.get().nMoQParkListDetails.get(0).getMainTitle(),
+                        activityReference.get().nMoQParkListDetails.get(0).getImages(),
+                        activityReference.get().nMoQParkListDetails.get(0).getSortId(),
+                        activityReference.get().nMoQParkListDetails.get(0).getNid(),
+                        activityReference.get().nMoQParkListDetails.get(0).getDescription()
+                );
+
+            }
+            return null;
+        }
+    }
+
+    public static class InsertNMoQParkListDetailsDataToDataBase extends AsyncTask<Void, Void, Boolean> {
+
+        private WeakReference<DetailsActivity> activityReference;
+        private NMoQParkListDetailsTableEnglish nMoQParkListDetailsTableEnglish;
+        private NMoQParkListDetailsTableArabic nMoQParkListDetailsTableArabic;
+        String language;
+
+        InsertNMoQParkListDetailsDataToDataBase(DetailsActivity context,
+                                                NMoQParkListDetailsTableEnglish nMoQParkListDetailsTableEnglish,
+                                                NMoQParkListDetailsTableArabic nMoQParkListDetailsTableArabic, String apiLanguage) {
+            activityReference = new WeakReference<>(context);
+            this.nMoQParkListDetailsTableEnglish = nMoQParkListDetailsTableEnglish;
+            this.nMoQParkListDetailsTableArabic = nMoQParkListDetailsTableArabic;
+            this.language = apiLanguage;
+        }
+
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+        }
+
+        @Override
+        protected Boolean doInBackground(Void... voids) {
+            if (language.equals(LocaleManager.LANGUAGE_ENGLISH)) {
+                if (activityReference.get().nMoQParkListDetails != null &&
+                        activityReference.get().nMoQParkListDetails.size() > 0) {
+                    for (int i = 0; i < activityReference.get().nMoQParkListDetails.size(); i++) {
+                        nMoQParkListDetailsTableEnglish = new NMoQParkListDetailsTableEnglish(
+                                activityReference.get().nMoQParkListDetails.get(i).getNid(),
+                                activityReference.get().nMoQParkListDetails.get(i).getMainTitle(),
+                                activityReference.get().nMoQParkListDetails.get(i).getSortId(),
+                                activityReference.get().nMoQParkListDetails.get(i).getImages().get(0),
+                                activityReference.get().nMoQParkListDetails.get(i).getDescription());
+                        activityReference.get().qmDatabase.getNMoQParkListDetailsTableDao().
+                                insertEnglishTable(nMoQParkListDetailsTableEnglish);
+                    }
+                }
+            } else {
+                if (activityReference.get().nMoQParkListDetails != null &&
+                        activityReference.get().nMoQParkListDetails.size() > 0) {
+                    for (int i = 0; i < activityReference.get().nMoQParkListDetails.size(); i++) {
+                        nMoQParkListDetailsTableArabic = new NMoQParkListDetailsTableArabic(
+                                activityReference.get().nMoQParkListDetails.get(i).getNid(),
+                                activityReference.get().nMoQParkListDetails.get(i).getMainTitle(),
+                                activityReference.get().nMoQParkListDetails.get(i).getSortId(),
+                                activityReference.get().nMoQParkListDetails.get(i).getImages().get(0),
+                                activityReference.get().nMoQParkListDetails.get(i).getDescription());
+                        activityReference.get().qmDatabase.getNMoQParkListDetailsTableDao().
+                                insertArabicTable(nMoQParkListDetailsTableArabic);
+                    }
+                }
+            }
+            return true;
+        }
+
+        @Override
+        protected void onPostExecute(Boolean aBoolean) {
+            super.onPostExecute(aBoolean);
+        }
+    }
+
+    public void getNMoQParkListDetailsFromDataBase(String nid) {
+        if (appLanguage.equals(LocaleManager.LANGUAGE_ENGLISH)) {
+            new RetrieveEnglishNMoQParkListDetailsData(DetailsActivity.this, nid).execute();
+        } else {
+            new RetrieveArabicNMoQParkListDetailsData(DetailsActivity.this, nid).execute();
+        }
+    }
+
+    public static class RetrieveEnglishNMoQParkListDetailsData extends AsyncTask<Void, Void,
+            List<NMoQParkListDetailsTableEnglish>> {
+        private WeakReference<DetailsActivity> activityReference;
+        private int nid;
+
+        RetrieveEnglishNMoQParkListDetailsData(DetailsActivity context, String nid) {
+            this.activityReference = new WeakReference<>(context);
+            this.nid = Integer.parseInt(nid);
+        }
+
+        @Override
+        protected void onPreExecute() {
+            activityReference.get().progressBar.setVisibility(View.VISIBLE);
+        }
+
+        @Override
+        protected List<NMoQParkListDetailsTableEnglish> doInBackground(Void... voids) {
+            return activityReference.get().qmDatabase.getNMoQParkListDetailsTableDao().
+                    getNMoQParkListDetailsEnglishTable(nid);
+        }
+
+        @Override
+        protected void onPostExecute(List<NMoQParkListDetailsTableEnglish> nMoQParkListDetailsTableEnglishes) {
+            if (nMoQParkListDetailsTableEnglishes.size() > 0) {
+                GlideApp.with(activityReference.get())
+                        .load(nMoQParkListDetailsTableEnglishes.get(0).getParkImages())
+                        .centerCrop()
+                        .placeholder(R.drawable.placeholder)
+                        .into(activityReference.get().headerImageView);
+                activityReference.get().mainTitle = nMoQParkListDetailsTableEnglishes.get(0).getParkTitle();
+                activityReference.get().commonContentLayout.setVisibility(View.VISIBLE);
+                activityReference.get().dateLocationLayout.setVisibility(View.GONE);
+                activityReference.get().shortDescription.setTextAlignment(View.TEXT_ALIGNMENT_VIEW_START);
+                activityReference.get().loadData(null, nMoQParkListDetailsTableEnglishes.get(0).getParkDescription(),
+                        null, null, null,
+                        null, null, null, null,
+                        null, null, null,
+                        true, null);
+                activityReference.get().progressBar.setVisibility(View.GONE);
+            } else {
+                activityReference.get().progressBar.setVisibility(View.GONE);
+                activityReference.get().retryLayout.setVisibility(View.VISIBLE);
+            }
+        }
+
+
+    }
+
+    public static class RetrieveArabicNMoQParkListDetailsData extends AsyncTask<Void, Void,
+            List<NMoQParkListDetailsTableArabic>> {
+        private WeakReference<DetailsActivity> activityReference;
+        private int nid;
+
+        RetrieveArabicNMoQParkListDetailsData(DetailsActivity context, String nid) {
+            this.activityReference = new WeakReference<>(context);
+            this.nid = Integer.parseInt(nid);
+        }
+
+        @Override
+        protected void onPreExecute() {
+            activityReference.get().progressBar.setVisibility(View.VISIBLE);
+        }
+
+        @Override
+        protected List<NMoQParkListDetailsTableArabic> doInBackground(Void... voids) {
+            return activityReference.get().qmDatabase.getNMoQParkListDetailsTableDao().
+                    getNMoQParkListDetailsArabicTable(nid);
+        }
+
+        @Override
+        protected void onPostExecute(List<NMoQParkListDetailsTableArabic> nMoQParkListDetailsTableArabics) {
+            if (nMoQParkListDetailsTableArabics.size() > 0) {
+                GlideApp.with(activityReference.get())
+                        .load(nMoQParkListDetailsTableArabics.get(0).getParkImages())
+                        .centerCrop()
+                        .placeholder(R.drawable.placeholder)
+                        .into(activityReference.get().headerImageView);
+                activityReference.get().mainTitle = nMoQParkListDetailsTableArabics.get(0).getParkTitle();
+                activityReference.get().commonContentLayout.setVisibility(View.VISIBLE);
+                activityReference.get().dateLocationLayout.setVisibility(View.GONE);
+                activityReference.get().shortDescription.setTextAlignment(View.TEXT_ALIGNMENT_VIEW_START);
+                activityReference.get().loadData(null, nMoQParkListDetailsTableArabics.get(0).getParkDescription(),
+                        null, null, null,
+                        null, null, null, null,
+                        null, null, null,
+                        true, null);
+                activityReference.get().progressBar.setVisibility(View.GONE);
+            } else {
+                activityReference.get().progressBar.setVisibility(View.GONE);
+                activityReference.get().retryLayout.setVisibility(View.VISIBLE);
+            }
+        }
+
+
     }
 
     public void setTourDetailsData() {
@@ -864,7 +1211,7 @@ public class DetailsActivity extends AppCompatActivity implements IPullZoom, OnM
                 true, null);
     }
 
-    public void setFacilitiesdetails() {
+    public void setFacilitiesDetails() {
         commonContentLayout.setVisibility(View.VISIBLE);
         interestLayout.setVisibility(View.VISIBLE);
         videoLayout.setVisibility(View.GONE);
@@ -1360,7 +1707,7 @@ public class DetailsActivity extends AppCompatActivity implements IPullZoom, OnM
 
                 }
             }
-            if (latitude != null && !latitude.equals("")) {
+            if (latitude != null && !latitude.equals("") && gValue != null) {
                 gMap = gValue;
                 gMap.setMinZoomPreference(12);
                 LatLng ny = new LatLng(Double.valueOf(latitude), Double.valueOf(longitude));
@@ -1835,6 +2182,14 @@ public class DetailsActivity extends AppCompatActivity implements IPullZoom, OnM
         }
     }
 
+    public void removeHtmlTagsForParkDetails(ArrayList<NMoQParkListDetails> models) {
+        for (int i = 0; i < models.size(); i++) {
+            models.get(i).setMainTitle(util.html2string(models.get(i).getMainTitle()));
+            models.get(i).setDescription(util.html2string(models.get(i).getDescription()));
+        }
+    }
+
+
     public void removeHtmlTagsPublicArts(ArrayList<PublicArtModel> models) {
         for (int i = 0; i < models.size(); i++) {
             models.get(i).setLongDescription(util.html2string(models.get(i).getLongDescription()));
@@ -1849,7 +2204,7 @@ public class DetailsActivity extends AppCompatActivity implements IPullZoom, OnM
     public void onMapReady(GoogleMap googleMap) {
         gValue = googleMap;
         googleMap.getUiSettings().setMapToolbarEnabled(false);
-        if (latitude != null && !latitude.equals("")) {
+        if (latitude != null && !latitude.equals("") && gValue != null) {
             gMap = gValue;
             gMap.setMinZoomPreference(12);
             LatLng ny = new LatLng(Double.valueOf(latitude), Double.valueOf(longitude));

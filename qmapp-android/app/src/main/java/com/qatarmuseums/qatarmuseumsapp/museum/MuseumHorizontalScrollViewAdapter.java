@@ -18,6 +18,7 @@ import android.widget.TextView;
 import com.qatarmuseums.qatarmuseumsapp.R;
 import com.qatarmuseums.qatarmuseumsapp.commonpage.CommonActivity;
 import com.qatarmuseums.qatarmuseumsapp.detailspage.DetailsActivity;
+import com.qatarmuseums.qatarmuseumsapp.park.NMoQParkActivity;
 import com.qatarmuseums.qatarmuseumsapp.park.ParkActivity;
 import com.qatarmuseums.qatarmuseumsapp.tourguidedetails.TourGuideDetailsActivity;
 import com.qatarmuseums.qatarmuseumsapp.utils.Util;
@@ -82,8 +83,10 @@ public class MuseumHorizontalScrollViewAdapter extends RecyclerView.Adapter<Muse
                 mContext.startActivity(navigationIntent);
             } else if (museumHScrollModelList.get(position).getTextName().equals(mContext.getResources().getString(R.string.sidemenu_parks_text))) {
                 if (museumId.equals("66") || museumId.equals("638")) {
-                    // Park for NMoQ 
-                    util.showComingSoonDialog((Activity) mContext, R.string.coming_soon_content);
+                    // Park for NMoQ
+                    navigationIntent = new Intent(mContext, NMoQParkActivity.class);
+                    navigationIntent.putExtra(mContext.getString(R.string.toolbar_title_key), mContext.getString(R.string.sidemenu_parks_text));
+                    mContext.startActivity(navigationIntent);
                 } else {
                     navigationIntent = new Intent(mContext, ParkActivity.class);
                     mContext.startActivity(navigationIntent);

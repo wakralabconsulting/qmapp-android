@@ -20,6 +20,12 @@ public class CollectionDetailsList {
         this.categoryName = categoryName;
     }
 
+    public CollectionDetailsList(String mainTitle, String image1, String about) {
+        this.mainTitle = mainTitle;
+        this.image1 = image1;
+        this.about = about;
+    }
+
     public String getMainTitle() {
         return mainTitle;
     }

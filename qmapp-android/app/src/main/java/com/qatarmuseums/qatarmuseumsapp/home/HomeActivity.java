@@ -428,7 +428,7 @@ public class HomeActivity extends BaseActivity {
             }
         }
         if (!isPanelDiscussionAvailable) {
-            HomeList homeList = null;
+            HomeList homeList;
             if (language.equals(LocaleManager.LANGUAGE_ENGLISH)) {
                 homeList = new HomeList(
                         "PANELS AND TALKS",
@@ -439,7 +439,7 @@ public class HomeActivity extends BaseActivity {
             } else {
                 homeList = new HomeList(
                         "ندوات و محاورات",
-                        "15246",
+                        "15631",
                         "https://www.qm.org.qa/sites/default/files/qlibrary.jpeg",
                         "false",
                         10);
