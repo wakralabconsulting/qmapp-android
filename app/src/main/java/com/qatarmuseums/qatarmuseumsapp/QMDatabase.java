@@ -60,9 +60,13 @@ import com.qatarmuseums.qatarmuseumsapp.museum.MuseumCollectionListTableEnglish;
 import com.qatarmuseums.qatarmuseumsapp.museumabout.MuseumAboutTableArabic;
 import com.qatarmuseums.qatarmuseumsapp.museumabout.MuseumAboutTableDao;
 import com.qatarmuseums.qatarmuseumsapp.museumabout.MuseumAboutTableEnglish;
+import com.qatarmuseums.qatarmuseumsapp.museumcollectiondetails.NMoQParkListDetails;
 import com.qatarmuseums.qatarmuseumsapp.notification.NotificationTableArabic;
 import com.qatarmuseums.qatarmuseumsapp.notification.NotificationTableDao;
 import com.qatarmuseums.qatarmuseumsapp.notification.NotificationTableEnglish;
+import com.qatarmuseums.qatarmuseumsapp.park.NMoQParkListDetailsTableArabic;
+import com.qatarmuseums.qatarmuseumsapp.park.NMoQParkListDetailsTableDao;
+import com.qatarmuseums.qatarmuseumsapp.park.NMoQParkListDetailsTableEnglish;
 import com.qatarmuseums.qatarmuseumsapp.park.NMoQParkListTableArabic;
 import com.qatarmuseums.qatarmuseumsapp.park.NMoQParkListTableDao;
 import com.qatarmuseums.qatarmuseumsapp.park.NMoQParkListTableEnglish;
@@ -97,7 +101,8 @@ import com.qatarmuseums.qatarmuseumsapp.tourguidestartpage.TourGuideStartPageEng
         FacilityListTableEnglish.class, FacilityListTableArabic.class,
         FacilityDetailTableEnglish.class, FacilityDetailTableArabic.class,
         NMoQParkTableEnglish.class, NMoQParkTableArabic.class,
-        NMoQParkListTableEnglish.class, NMoQParkListTableArabic.class},
+        NMoQParkListTableEnglish.class, NMoQParkListTableArabic.class,
+        NMoQParkListDetailsTableEnglish.class, NMoQParkListDetailsTableArabic.class},
         version = 2, exportSchema = false)
 @TypeConverters({Convertor.class})
 
@@ -149,6 +154,8 @@ public abstract class QMDatabase extends RoomDatabase {
     public abstract NMoQParkTableDao getNMoQParkTableDao();
 
     public abstract NMoQParkListTableDao getNMoQParkListTableDao();
+
+    public abstract NMoQParkListDetailsTableDao getNMoQParkListDetailsTableDao();
 
     private static QMDatabase qmDatabase;
 

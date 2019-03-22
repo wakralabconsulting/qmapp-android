@@ -7,16 +7,24 @@ import com.google.gson.annotations.SerializedName;
 import java.util.ArrayList;
 
 public class NMoQParkListDetails implements Comparable<NMoQParkListDetails> {
-    @SerializedName("title")
-    private String mainTitle;
     @SerializedName("Nid")
     private String nid;
+    @SerializedName("title")
+    private String mainTitle;
     @SerializedName("images")
     private ArrayList<String> images;
     @SerializedName("Description")
     private String Description;
     @SerializedName("sort_id")
-    private String sort_id;
+    private String sortId;
+
+    public NMoQParkListDetails(String nid, String mainTitle, ArrayList<String> images, String description, String sortId) {
+        this.nid = nid;
+        this.mainTitle = mainTitle;
+        this.images = images;
+        Description = description;
+        this.sortId = sortId;
+    }
 
     public String getMainTitle() {
         return mainTitle;
@@ -50,18 +58,18 @@ public class NMoQParkListDetails implements Comparable<NMoQParkListDetails> {
         Description = description;
     }
 
-    public String getSort_id() {
-        return sort_id;
+    public String getSortId() {
+        return sortId;
     }
 
-    public void setSort_id(String sort_id) {
-        this.sort_id = sort_id;
+    public void setSortId(String sortId) {
+        this.sortId = sortId;
     }
 
     @Override
     public int compareTo(@NonNull NMoQParkListDetails nMoQParkListDetails) {
-        if (nMoQParkListDetails.getSort_id() != null)
-            return Integer.valueOf(this.sort_id).compareTo(Integer.valueOf(nMoQParkListDetails.getSort_id()));
+        if (nMoQParkListDetails.getSortId() != null)
+            return Integer.valueOf(this.sortId).compareTo(Integer.valueOf(nMoQParkListDetails.getSortId()));
         else
             return 0;
     }
