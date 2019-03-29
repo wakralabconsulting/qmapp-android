@@ -554,11 +554,12 @@ public class DetailsActivity extends AppCompatActivity implements IPullZoom, OnM
                     if (response.body() != null && response.body().size() > 0) {
                         facilitiesDetailModels.addAll(response.body());
                         removeHtmlTagsforFacilities(facilitiesDetailModels);
-                        GlideApp.with(DetailsActivity.this)
-                                .load(facilitiesDetailModels.get(0).getFacilityImage().get(0))
-                                .centerCrop()
-                                .placeholder(R.drawable.placeholder)
-                                .into(headerImageView);
+                        if (!DetailsActivity.this.isFinishing())
+                            GlideApp.with(DetailsActivity.this)
+                                    .load(facilitiesDetailModels.get(0).getFacilityImage().get(0))
+                                    .centerCrop()
+                                    .placeholder(R.drawable.placeholder)
+                                    .into(headerImageView);
                         mainTitle = facilitiesDetailModels.get(0).getFacilitiesTitle();
                         timingTitle.setText(facilitiesDetailModels.get(0).getFacilityTitleTiming());
                         loadData(null, facilitiesDetailModels.get(0).getFacilityDescription(),
@@ -864,11 +865,12 @@ public class DetailsActivity extends AppCompatActivity implements IPullZoom, OnM
                     if (response.body() != null && response.body().size() > 0) {
                         nMoQParkListDetails.addAll(response.body());
                         removeHtmlTagsForParkDetails(nMoQParkListDetails);
-                        GlideApp.with(DetailsActivity.this)
-                                .load(nMoQParkListDetails.get(0).getImages().get(0))
-                                .centerCrop()
-                                .placeholder(R.drawable.placeholder)
-                                .into(headerImageView);
+                        if (!DetailsActivity.this.isFinishing())
+                            GlideApp.with(DetailsActivity.this)
+                                    .load(nMoQParkListDetails.get(0).getImages().get(0))
+                                    .centerCrop()
+                                    .placeholder(R.drawable.placeholder)
+                                    .into(headerImageView);
                         mainTitle = nMoQParkListDetails.get(0).getMainTitle();
                         commonContentLayout.setVisibility(View.VISIBLE);
                         dateLocationLayout.setVisibility(View.GONE);
@@ -1126,11 +1128,12 @@ public class DetailsActivity extends AppCompatActivity implements IPullZoom, OnM
         @Override
         protected void onPostExecute(List<NMoQParkListDetailsTableEnglish> nMoQParkListDetailsTableEnglishes) {
             if (nMoQParkListDetailsTableEnglishes.size() > 0) {
-                GlideApp.with(activityReference.get())
-                        .load(nMoQParkListDetailsTableEnglishes.get(0).getParkImages())
-                        .centerCrop()
-                        .placeholder(R.drawable.placeholder)
-                        .into(activityReference.get().headerImageView);
+                if (!activityReference.get().isFinishing())
+                    GlideApp.with(activityReference.get())
+                            .load(nMoQParkListDetailsTableEnglishes.get(0).getParkImages())
+                            .centerCrop()
+                            .placeholder(R.drawable.placeholder)
+                            .into(activityReference.get().headerImageView);
                 activityReference.get().mainTitle = nMoQParkListDetailsTableEnglishes.get(0).getParkTitle();
                 activityReference.get().commonContentLayout.setVisibility(View.VISIBLE);
                 activityReference.get().dateLocationLayout.setVisibility(View.GONE);
@@ -1174,11 +1177,12 @@ public class DetailsActivity extends AppCompatActivity implements IPullZoom, OnM
         @Override
         protected void onPostExecute(List<NMoQParkListDetailsTableArabic> nMoQParkListDetailsTableArabics) {
             if (nMoQParkListDetailsTableArabics.size() > 0) {
-                GlideApp.with(activityReference.get())
-                        .load(nMoQParkListDetailsTableArabics.get(0).getParkImages())
-                        .centerCrop()
-                        .placeholder(R.drawable.placeholder)
-                        .into(activityReference.get().headerImageView);
+                if (!activityReference.get().isFinishing())
+                    GlideApp.with(activityReference.get())
+                            .load(nMoQParkListDetailsTableArabics.get(0).getParkImages())
+                            .centerCrop()
+                            .placeholder(R.drawable.placeholder)
+                            .into(activityReference.get().headerImageView);
                 activityReference.get().mainTitle = nMoQParkListDetailsTableArabics.get(0).getParkTitle();
                 activityReference.get().commonContentLayout.setVisibility(View.VISIBLE);
                 activityReference.get().dateLocationLayout.setVisibility(View.GONE);
@@ -3467,12 +3471,12 @@ public class DetailsActivity extends AppCompatActivity implements IPullZoom, OnM
                         activityReference.get().imageList.add(i, list.get(i));
                     }
                 }
-
-                GlideApp.with(activityReference.get())
-                        .load(activityReference.get().imageList.get(0))
-                        .centerCrop()
-                        .placeholder(R.drawable.placeholder)
-                        .into(activityReference.get().headerImageView);
+                if (!activityReference.get().isFinishing())
+                    GlideApp.with(activityReference.get())
+                            .load(activityReference.get().imageList.get(0))
+                            .centerCrop()
+                            .placeholder(R.drawable.placeholder)
+                            .into(activityReference.get().headerImageView);
 
                 if (activityReference.get().imageList.size() > 0) {
                     activityReference.get().zoomView.setOnClickListener(view -> activityReference.get().showCarouselView());
@@ -3550,11 +3554,12 @@ public class DetailsActivity extends AppCompatActivity implements IPullZoom, OnM
                         activityReference.get().imageList.add(i, list.get(i));
                     }
                 }
-                GlideApp.with(activityReference.get())
-                        .load(activityReference.get().imageList.get(0))
-                        .centerCrop()
-                        .placeholder(R.drawable.placeholder)
-                        .into(activityReference.get().headerImageView);
+                if (!activityReference.get().isFinishing())
+                    GlideApp.with(activityReference.get())
+                            .load(activityReference.get().imageList.get(0))
+                            .centerCrop()
+                            .placeholder(R.drawable.placeholder)
+                            .into(activityReference.get().headerImageView);
                 String description1 = museumAboutTableArabic.getShort_description();
                 String description2 = museumAboutTableArabic.getLong_description();
                 if (activityReference.get().imageList.size() > 0) {

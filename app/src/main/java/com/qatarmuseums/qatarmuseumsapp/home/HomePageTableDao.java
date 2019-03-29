@@ -33,13 +33,13 @@ public interface HomePageTableDao {
             "tourguide_available = :tourGideFromApi,image = :imageFromApi, sortId = :sortIdFromAPI " +
             "WHERE qatarmuseum_id=:id")
     void updateHomePageEnglish(String nameFromApi, String tourGideFromApi,
-                               String imageFromApi, Integer sortIdFromAPI, String id);
+                               String imageFromApi, String sortIdFromAPI, String id);
 
     @Query("UPDATE homepagetableArabic SET name=:arabicNameFromApi," +
             "tourguide_available = :tourGideFromApi,image = :imageFromApi, sortId = :sortIdFromAPI" +
             " WHERE qatarmuseum_id=:id")
     void updateHomePageArabic(String arabicNameFromApi, String tourGideFromApi,
-                              String imageFromApi, Integer sortIdFromAPI, String id);
+                              String imageFromApi, String sortIdFromAPI, String id);
 
 
     /*
