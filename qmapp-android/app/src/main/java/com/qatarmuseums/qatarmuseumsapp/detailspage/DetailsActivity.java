@@ -818,6 +818,7 @@ public class DetailsActivity extends AppCompatActivity implements IPullZoom, OnM
                 getCommonListAPIDataFromDatabase(id, language);
 
         } else if (comingFrom.equals(getString(R.string.museum_about_text))) {
+            videoLayout.setVisibility(View.VISIBLE);
             if (util.isNetworkAvailable(DetailsActivity.this)) {
                 if (id.equals("13376"))
                     getMuseumAboutDetailsFromAPI(id, language, true);

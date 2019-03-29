@@ -302,7 +302,7 @@
                     android:layout_height="200dp"
                     android:layout_marginBottom="@dimen/padding_15"
                     android:orientation="vertical"
-                    android:visibility="visible">
+                    android:visibility="gone">
 
                     <cn.jzvd.JzvdStd
                         android:id="@+id/videoplayer"
