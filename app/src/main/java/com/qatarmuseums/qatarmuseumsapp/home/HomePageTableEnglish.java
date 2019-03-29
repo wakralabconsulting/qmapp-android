@@ -26,10 +26,10 @@ public class HomePageTableEnglish {
     @ColumnInfo()
     private String image;
     @ColumnInfo()
-    private Integer sortId;
+    private String sortId;
 
 
-    public HomePageTableEnglish(long qatarmuseum_id, String name, String tourguide_available, String image, Integer sortId) {
+    public HomePageTableEnglish(long qatarmuseum_id, String name, String tourguide_available, String image, String sortId) {
         this.qatarmuseum_id = qatarmuseum_id;
         this.name = name;
         this.tourguide_available = tourguide_available;
@@ -62,7 +62,7 @@ public class HomePageTableEnglish {
         this.image = image;
     }
 
-    public Integer getSortId() {
+    public String getSortId() {
         return sortId;
     }
 

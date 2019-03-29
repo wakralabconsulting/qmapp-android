@@ -366,7 +366,7 @@ public class CommonModel implements Comparable<CommonModel> {
 
     @Override
     public int compareTo(@NonNull CommonModel commonModel) {
-        if (commonModel.sortId != null)
+        if (commonModel.sortId != null && !this.sortId.trim().equals(""))
             return Integer.valueOf(this.sortId).compareTo(Integer.valueOf(commonModel.sortId));
         else
             return 0;

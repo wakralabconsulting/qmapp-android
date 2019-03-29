@@ -66,11 +66,6 @@ public class HomeListAdapter extends RecyclerView.Adapter<HomeListAdapter.MyView
         else
             holder.headphoneIcon.setVisibility(View.GONE);
 
-        // Temporary
-        if (homeList.getId().equals("61") || homeList.getId().equals("66") ||
-                homeList.getId().equals("635") || homeList.getId().equals("638"))
-            holder.headphoneIcon.setVisibility(View.VISIBLE);
-
         GlideApp.with(mContext)
                 .load(homeList.getImage())
                 .centerCrop()

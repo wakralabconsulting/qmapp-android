@@ -55,7 +55,7 @@ public class NMoQParkList implements Comparable<NMoQParkList> {
 
     @Override
     public int compareTo(@NonNull NMoQParkList nMoQParkList) {
-        if (nMoQParkList.sortId != null)
+        if (nMoQParkList.sortId != null && !this.sortId.trim().equals(""))
             return Integer.valueOf(this.sortId).compareTo(Integer.valueOf(nMoQParkList.sortId));
         else
             return 0;

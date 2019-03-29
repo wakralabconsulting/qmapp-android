@@ -145,6 +145,20 @@ public class CommonListAdapter extends RecyclerView.Adapter<CommonListAdapter.My
             holder.dateAndTime.setVisibility(View.VISIBLE);
             holder.dateAndTime.setText(model.getDisplayDate());
         }
+        if (model.isImageTypeIsArray()) {
+            GlideApp.with(mContext)
+                    .load(model.getImages().get(0))
+                    .centerCrop()
+                    .placeholder(R.drawable.placeholder)
+                    .into(holder.imageView);
+        } else {
+            GlideApp.with(mContext)
+                    .load(model.getImage())
+                    .centerCrop()
+                    .placeholder(R.drawable.placeholder)
+                    .into(holder.imageView);
+
+        }
         if (model.getEventDate() != null) {
             if (model.getImages().size() > 0 && (model.getImages().get(0) != null)) {
                 GlideApp.with(mContext)
@@ -159,20 +173,6 @@ public class CommonListAdapter extends RecyclerView.Adapter<CommonListAdapter.My
                         .placeholder(R.drawable.placeholder)
                         .into(holder.imageView);
             }
-        }
-        if (model.isImageTypeIsArray()) {
-            GlideApp.with(mContext)
-                    .load(model.getImages().get(0))
-                    .centerCrop()
-                    .placeholder(R.drawable.placeholder)
-                    .into(holder.imageView);
-        } else {
-            GlideApp.with(mContext)
-                    .load(model.getImage())
-                    .centerCrop()
-                    .placeholder(R.drawable.placeholder)
-                    .into(holder.imageView);
-
         }
     }
 

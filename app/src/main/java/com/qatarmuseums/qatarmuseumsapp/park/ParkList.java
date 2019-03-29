@@ -1,9 +1,11 @@
 package com.qatarmuseums.qatarmuseumsapp.park;
 
 
+import android.support.annotation.NonNull;
+
 import com.google.gson.annotations.SerializedName;
 
-public class ParkList {
+public class ParkList implements Comparable<ParkList> {
 
     @SerializedName("Title")
     private String mainTitle;
@@ -87,5 +89,13 @@ public class ParkList {
 
     public void setSortId(String sortId) {
         this.sortId = sortId;
+    }
+
+    @Override
+    public int compareTo(@NonNull ParkList parkList) {
+        if (parkList.sortId != null && !this.sortId.trim().equals(""))
+            return Integer.valueOf(this.sortId).compareTo(Integer.valueOf(parkList.sortId));
+        else
+            return 0;
     }
 }
