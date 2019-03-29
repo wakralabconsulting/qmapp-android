@@ -32,6 +32,8 @@ import com.qatarmuseums.qatarmuseumsapp.utils.Util;
 
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 
 import retrofit2.Call;
@@ -176,6 +178,7 @@ public class ParkActivity extends AppCompatActivity implements IPullZoom {
                                     .placeholder(R.drawable.placeholder)
                                     .into(headerImageView);
                         }
+                        Collections.sort(parkLists);
                         mAdapter.notifyDataSetChanged();
                         new RowCount(ParkActivity.this, appLanguage).execute();
                     } else {
@@ -454,8 +457,7 @@ public class ParkActivity extends AppCompatActivity implements IPullZoom {
                             String.valueOf(parkTableEnglishes.get(i).getSortId()));
                     activityReference.get().parkLists.add(i, parkObject);
                 }
-
-
+                Collections.sort(activityReference.get().parkLists);
                 activityReference.get().mAdapter.notifyDataSetChanged();
                 activityReference.get().progressBar.setVisibility(View.GONE);
             } else {
@@ -494,8 +496,7 @@ public class ParkActivity extends AppCompatActivity implements IPullZoom {
                             String.valueOf(parkTableArabics.get(i).getSortId()));
                     activityReference.get().parkLists.add(i, parkObject);
                 }
-
-
+                Collections.sort(activityReference.get().parkLists);
                 activityReference.get().mAdapter.notifyDataSetChanged();
                 activityReference.get().progressBar.setVisibility(View.GONE);
             } else {

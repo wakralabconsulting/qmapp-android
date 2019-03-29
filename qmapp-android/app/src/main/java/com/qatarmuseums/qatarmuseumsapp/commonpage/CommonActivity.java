@@ -145,7 +145,7 @@ public class CommonActivity extends AppCompatActivity {
                 navigationIntent = new Intent(CommonActivity.this,
                         TourSecondaryListActivity.class);
             else if (models.get(position).getId().equals("15256") ||
-                    models.get(position).getId().equals("15341"))
+                    models.get(position).getId().equals("15826"))
                 navigationIntent = new Intent(CommonActivity.this,
                         FacilitiesSecondaryActivity.class);
             else

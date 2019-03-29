@@ -212,7 +212,10 @@ public class CulturePassActivity extends AppCompatActivity {
                 if (response.isSuccessful()) {
                     if (response.body() != null) {
                         profileDetails = response.body();
-                        checkRSVP(profileDetails.getUser().getuId(), profileDetails.getToken());
+
+                        // Commenting VIP user check for temporary
+//                        checkRSVP(profileDetails.getUser().getuId(), profileDetails.getToken());
+
                         editor = qmPreferences.edit();
                         editor.putString("TOKEN", profileDetails.getToken());
                         editor.putString("UID", profileDetails.getUser().getuId());
@@ -231,6 +234,9 @@ public class CulturePassActivity extends AppCompatActivity {
                         editor.putInt("MEMBERSHIP", (Integer.parseInt(profileDetails.getUser().getuId()) + 6000));
                         editor.putString("TIMEZONE", profileDetails.getUser().getTimeZone());
                         editor.commit();
+
+                        // Remove this navigation if VIP user check is enabled
+                        navigateToProfile(RSVP);
                     }
                 } else {
                     if (response.code() == 401)

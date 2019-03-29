@@ -6,6 +6,7 @@ import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.constraint.ConstraintLayout;
 import android.support.v4.widget.NestedScrollView;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.DefaultItemAnimator;
@@ -72,10 +73,14 @@ public class NMoQParkActivity extends AppCompatActivity implements OnMapReadyCal
     LinearLayout retryLayoutPark;
     @BindView(R.id.retry_btn)
     View retryButton;
+    @BindView(R.id.about_park_layout)
+    ConstraintLayout aboutParkLayout;
     @BindView(R.id.park_title_label)
     TextView parkTitleLabel;
     @BindView(R.id.park_description)
     TextView parkDescription;
+    @BindView(R.id.park_timing_layout)
+    ConstraintLayout parkTimingLayout;
     @BindView(R.id.park_timing_label)
     TextView parkTimingLabel;
     @BindView(R.id.park_timings)
@@ -135,7 +140,7 @@ public class NMoQParkActivity extends AppCompatActivity implements OnMapReadyCal
         }
         mAdapter = new NMoQParkListAdapter(this, parkLists, position -> {
             if (parkLists.get(position).getNid().equals("15616") ||
-                    parkLists.get(position).getNid().equals("15616")) {
+                    parkLists.get(position).getNid().equals("15851")) {
                 navigationIntent = new Intent(NMoQParkActivity.this, CollectionDetailsActivity.class);
             } else {
                 navigationIntent = new Intent(NMoQParkActivity.this, DetailsActivity.class);
@@ -220,10 +225,18 @@ public class NMoQParkActivity extends AppCompatActivity implements OnMapReadyCal
     private void setData(NMoQPark nmoqPark) {
         toolbarTitle.setText(nmoqPark.getMainTitle());
         mainDescription.setText(nmoqPark.getMainDescription());
-        parkTitleLabel.setText(nmoqPark.getParkTitle());
-        parkDescription.setText(nmoqPark.getParkDescription());
-        parkTimingLabel.setText(nmoqPark.getParkHoursTitle());
-        parkTimings.setText(nmoqPark.getParksHoursDescription());
+        if (nmoqPark.getParkTitle().trim().equals(""))
+            aboutParkLayout.setVisibility(View.GONE);
+        else {
+            parkTitleLabel.setText(nmoqPark.getParkTitle());
+            parkDescription.setText(nmoqPark.getParkDescription());
+        }
+        if (nmoqPark.getParkHoursTitle().trim().equals(""))
+            parkTimingLayout.setVisibility(View.GONE);
+        else {
+            parkTimingLabel.setText(nmoqPark.getParkHoursTitle());
+            parkTimings.setText(nmoqPark.getParksHoursDescription());
+        }
         parkLocationTitle.setText(nmoqPark.getLocationTitle());
         latitude = nmoqPark.getLatitudeNMoQ();
         longitude = nmoqPark.getLongitudeNMoQ();
