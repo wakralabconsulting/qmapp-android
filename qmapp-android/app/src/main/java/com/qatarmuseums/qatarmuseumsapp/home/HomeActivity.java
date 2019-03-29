@@ -211,8 +211,8 @@ public class HomeActivity extends BaseActivity {
                     navigationIntent = new Intent(HomeActivity.this, CommonActivity.class);
                     navigationIntent.putExtra(getString(R.string.toolbar_title_key), getString(R.string.sidemenu_exhibition_text));
                     startActivity(navigationIntent);
-                } else if (homeList.getName().trim().toUpperCase().contains("PANELS AND TALKS") ||
-                        homeList.getName().trim().toUpperCase().contains("ندوات و محاورات")) {
+                } else if (homeList.getName().trim().toUpperCase().contains("QATAR CREATES: EVENTS FOR THE OPENING OF NMOQ") ||
+                        homeList.getName().trim().toUpperCase().contains("قطر تبدع: فعاليات افتتاح متحف قطر الوطني")) {
                     navigationIntent = new Intent(HomeActivity.this,
                             TourSecondaryListActivity.class);
                     navigationIntent.putExtra("MAIN_TITLE", homeList.getName());
@@ -231,6 +231,9 @@ public class HomeActivity extends BaseActivity {
             public void onLongClick(View view, int position) {
             }
         }));
+
+        /*
+        // Temporarley Commenting Login popup for the first Launch
         boolean isFirstLaunch = qmPreferences.getBoolean("FIRST_LAUNCH", true);
         if (isFirstLaunch) {
             showLoginDialog();
@@ -238,6 +241,8 @@ public class HomeActivity extends BaseActivity {
             editor.putBoolean("FIRST_LAUNCH", false);
             editor.apply();
         }
+        */
+
         language = LocaleManager.getLanguage(this);
         if (util.isNetworkAvailable(this)) {
             getHomePageAPIData(language);
@@ -395,7 +400,10 @@ public class HomeActivity extends BaseActivity {
                     if (response.body() != null) {
                         recyclerView.setVisibility(View.VISIBLE);
                         homeLists.addAll(response.body());
-                        AddPanelDiscussion();
+
+                        // Commenting Panel & Talks temporary for this release
+//                        AddPanelDiscussion();
+
                         Collections.sort(homeLists);
                         mAdapter.notifyDataSetChanged();
                         new RowCount(HomeActivity.this, language, homeLists).execute();
@@ -422,8 +430,8 @@ public class HomeActivity extends BaseActivity {
     private void AddPanelDiscussion() {
         Boolean isPanelDiscussionAvailable = false;
         for (int i = 0; i < homeLists.size(); i++) {
-            if (homeLists.get(i).getName().trim().toUpperCase().contains("PANELS AND TALKS") ||
-                    homeLists.get(i).getName().trim().toUpperCase().contains("ندوات و محاورات")) {
+            if (homeLists.get(i).getName().trim().toUpperCase().contains("QATAR CREATES: EVENTS FOR THE OPENING OF NMoQ") ||
+                    homeLists.get(i).getName().trim().toUpperCase().contains("قطر تبدع: فعاليات افتتاح متحف قطر الوطني")) {
                 isPanelDiscussionAvailable = true;
             }
         }
@@ -431,18 +439,18 @@ public class HomeActivity extends BaseActivity {
             HomeList homeList;
             if (language.equals(LocaleManager.LANGUAGE_ENGLISH)) {
                 homeList = new HomeList(
-                        "PANELS AND TALKS",
+                        "QATAR CREATES: EVENTS FOR THE OPENING OF NMoQ",
                         "13976",
                         "https://www.qm.org.qa/sites/default/files/qlibrary.jpeg",
                         "false",
-                        10);
+                        "10");
             } else {
                 homeList = new HomeList(
-                        "ندوات و محاورات",
+                        "قطر تبدع: فعاليات افتتاح متحف قطر الوطني",
                         "15631",
                         "https://www.qm.org.qa/sites/default/files/qlibrary.jpeg",
                         "false",
-                        10);
+                        "10");
             }
             homeLists.add(homeList);
         }
@@ -615,7 +623,10 @@ public class HomeActivity extends BaseActivity {
                 if (response.isSuccessful()) {
                     if (response.body() != null) {
                         profileDetails = response.body();
-                        checkRSVP(profileDetails.getUser().getuId(), profileDetails.getToken());
+
+                        // Commenting VIP user check for temporary
+//                        checkRSVP(profileDetails.getUser().getuId(), profileDetails.getToken());
+
                         editor = qmPreferences.edit();
                         editor.putString("TOKEN", profileDetails.getToken());
                         editor.putString("UID", profileDetails.getUser().getuId());

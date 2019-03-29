@@ -17,11 +17,11 @@ public class HomePageTableArabic {
     @ColumnInfo()
     private String image;
     @ColumnInfo()
-    private Integer sortId;
+    private String sortId;
 
 
     public HomePageTableArabic(@NonNull long qatarmuseum_id, String name,
-                               String tourguide_available, String image,Integer sortId) {
+                               String tourguide_available, String image, String sortId) {
         this.qatarmuseum_id = qatarmuseum_id;
         this.name = name;
         this.tourguide_available = tourguide_available;
@@ -58,7 +58,7 @@ public class HomePageTableArabic {
         return image;
     }
 
-    public Integer getSortId() {
+    public String getSortId() {
         return sortId;
     }
 

@@ -130,8 +130,11 @@ public class MuseumActivity extends BaseActivity implements
         recyclerView.setItemAnimator(new DefaultItemAnimator());
         recyclerView.setAdapter(museumHorizontalScrollViewAdapter);
 
-        if (museumId.equals("63") || museumId.equals("96") || museumId.equals("61") || museumId.equals("66") ||
-                museumId.equals("635") || museumId.equals("638")) {
+        if (museumId.equals("63") || museumId.equals("96") || museumId.equals("61") ||
+                museumId.equals("635")
+            // Commented for temporary
+            /* || museumId.equals("66") || museumId.equals("638")*/
+                ) {
 
             switch (museumId) {
                 case "63":
@@ -146,7 +149,7 @@ public class MuseumActivity extends BaseActivity implements
                     prepareRecyclerViewDataFor5();
                     break;
             }
-
+            showRightArrow();
             recyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
                 @Override
                 public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
@@ -213,6 +216,9 @@ public class MuseumActivity extends BaseActivity implements
             scrollBarPreviousIconLayout.setOnClickListener(view -> recyclerViewLayoutManager.smoothScrollToPosition(recyclerView, null, 0));
         } else if (isBanner)
             prepareRecyclerViewDataForLaunch();
+            // For temporary
+        else if (museumId.equals("66") || museumId.equals("638"))
+            prepareRecyclerViewDataForNMoQ();
         else
             prepareRecyclerViewData();
         getMuseumSliderImageFromDatabase();
@@ -256,10 +262,10 @@ public class MuseumActivity extends BaseActivity implements
 
 
     public void showRightArrow() {
-        scrollBarNextIcon.setVisibility(View.VISIBLE);
         scrollBarPreviousIcon.setVisibility(View.GONE);
         scrollBarPreviousIconLayout.setVisibility(View.INVISIBLE);
         scrollBarNextIconLayout.setVisibility(View.VISIBLE);
+        scrollBarNextIcon.setVisibility(View.VISIBLE);
     }
 
     public void prepareRecyclerViewData() {
@@ -343,17 +349,19 @@ public class MuseumActivity extends BaseActivity implements
                 getResources().getString(R.string.sidemenu_exhibition_text), R.drawable.exhibition_black);
         museumHScrollModelList.add(model);
 
-        model = new MuseumHScrollModel(this,
-                getResources().getString(R.string.experience_txt), R.drawable.experience_icon);
-        museumHScrollModelList.add(model);
+        // Commented for temporary due to no data
 
-        model = new MuseumHScrollModel(this,
-                getResources().getString(R.string.sidemenu_tour_guide_text), R.drawable.audio_circle);
-        museumHScrollModelList.add(model);
-
-        model = new MuseumHScrollModel(this,
-                getResources().getString(R.string.sidemenu_events_text), R.drawable.events_icon);
-        museumHScrollModelList.add(model);
+//        model = new MuseumHScrollModel(this,
+//                getResources().getString(R.string.experience_txt), R.drawable.experience_icon);
+//        museumHScrollModelList.add(model);
+//
+//        model = new MuseumHScrollModel(this,
+//                getResources().getString(R.string.sidemenu_tour_guide_text), R.drawable.audio_circle);
+//        museumHScrollModelList.add(model);
+//
+//        model = new MuseumHScrollModel(this,
+//                getResources().getString(R.string.sidemenu_events_text), R.drawable.events_icon);
+//        museumHScrollModelList.add(model);
 
         model = new MuseumHScrollModel(this,
                 getResources().getString(R.string.sidemenu_parks_text), R.drawable.park_black);
@@ -499,14 +507,9 @@ public class MuseumActivity extends BaseActivity implements
                                 if (noDataInDB) {
                                     int imageSliderSize;
                                     ArrayList<String> sliderList = new ArrayList<>();
-                                    if (museumAboutModels.get(0).getImageList().size() >= 4) {
-                                        imageSliderSize = 4;
-                                    } else {
-                                        imageSliderSize = museumAboutModels.get(0).getImageList().size();
-                                    }
-
-                                    for (int i = 1; i < imageSliderSize; i++) {
-                                        sliderList.add(i - 1, museumAboutModels.get(0).getImageList().get(i));
+                                    imageSliderSize = museumAboutModels.get(0).getImageList().size();
+                                    for (int i = 0; i < imageSliderSize; i++) {
+                                        sliderList.add(i, museumAboutModels.get(0).getImageList().get(i));
                                     }
                                     setSliderImages(sliderList);
                                     sliderPlaceholderImage.setVisibility(View.GONE);
@@ -843,14 +846,10 @@ public class MuseumActivity extends BaseActivity implements
                         converters.fromString(museumAboutTableEnglish.getMuseum_image()).size() > 0) {
                     int imageSliderSize;
                     ArrayList<String> sliderList = new ArrayList<>();
-                    if (converters.fromString(museumAboutTableEnglish.getMuseum_image()).size() >= 4) {
-                        imageSliderSize = 4;
-                    } else {
-                        imageSliderSize = converters.fromString(museumAboutTableEnglish.getMuseum_image()).size();
-                    }
+                    imageSliderSize = converters.fromString(museumAboutTableEnglish.getMuseum_image()).size();
 
-                    for (int i = 1; i < imageSliderSize; i++) {
-                        sliderList.add(i - 1, converters.fromString(museumAboutTableEnglish.getMuseum_image()).get(i));
+                    for (int i = 0; i < imageSliderSize; i++) {
+                        sliderList.add(i, converters.fromString(museumAboutTableEnglish.getMuseum_image()).get(i));
                     }
 
                     activityReference.get().setSliderImages(sliderList);
@@ -893,14 +892,10 @@ public class MuseumActivity extends BaseActivity implements
                         converters.fromString(museumAboutTableArabic.getMuseum_image()).size() > 0) {
                     int imageSliderSize;
                     ArrayList<String> sliderList = new ArrayList<>();
-                    if (converters.fromString(museumAboutTableArabic.getMuseum_image()).size() >= 4) {
-                        imageSliderSize = 4;
-                    } else {
-                        imageSliderSize = converters.fromString(museumAboutTableArabic.getMuseum_image()).size();
-                    }
+                    imageSliderSize = converters.fromString(museumAboutTableArabic.getMuseum_image()).size();
 
-                    for (int i = 1; i < imageSliderSize; i++) {
-                        sliderList.add(i - 1, converters.fromString(museumAboutTableArabic.getMuseum_image()).get(i));
+                    for (int i = 0; i < imageSliderSize; i++) {
+                        sliderList.add(i, converters.fromString(museumAboutTableArabic.getMuseum_image()).get(i));
                     }
 
                     activityReference.get().setSliderImages(sliderList);
