@@ -68,13 +68,13 @@
             android:id="@+id/container"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_marginTop="@dimen/text_margin"
             android:paddingBottom="@dimen/text_margin">
 
             <TextView
                 android:id="@+id/main_description"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/text_margin"
                 android:fontFamily="@font/din_next_lt_pro_regular"
                 android:padding="@dimen/text_margin"
                 android:textAlignment="center"
