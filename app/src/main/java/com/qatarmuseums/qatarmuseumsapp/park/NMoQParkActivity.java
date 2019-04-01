@@ -224,7 +224,10 @@ public class NMoQParkActivity extends AppCompatActivity implements OnMapReadyCal
 
     private void setData(NMoQPark nmoqPark) {
         toolbarTitle.setText(nmoqPark.getMainTitle());
-        mainDescription.setText(nmoqPark.getMainDescription());
+        if (nmoqPark.getMainDescription().trim().equals(""))
+            mainDescription.setVisibility(View.GONE);
+        else
+            mainDescription.setText(nmoqPark.getMainDescription());
         if (nmoqPark.getParkTitle().trim().equals(""))
             aboutParkLayout.setVisibility(View.GONE);
         else {
