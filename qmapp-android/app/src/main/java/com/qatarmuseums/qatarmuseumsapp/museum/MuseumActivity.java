@@ -131,10 +131,7 @@ public class MuseumActivity extends BaseActivity implements
         recyclerView.setAdapter(museumHorizontalScrollViewAdapter);
 
         if (museumId.equals("63") || museumId.equals("96") || museumId.equals("61") ||
-                museumId.equals("635")
-            // Commented for temporary
-            /* || museumId.equals("66") || museumId.equals("638")*/
-                ) {
+                museumId.equals("635") || museumId.equals("66") || museumId.equals("638")) {
 
             switch (museumId) {
                 case "63":
@@ -203,10 +200,10 @@ public class MuseumActivity extends BaseActivity implements
                     case "96":
                         recyclerViewLayoutManager.scrollToPosition(5);
                         break;
-                    case "66":
-                    case "638":
-                        recyclerViewLayoutManager.scrollToPosition(6);
-                        break;
+//                    case "66":
+//                    case "638":
+//                        recyclerViewLayoutManager.scrollToPosition(6);
+//                        break;
                     default:
                         recyclerViewLayoutManager.smoothScrollToPosition(recyclerView, null, 4);
                         break;
@@ -216,9 +213,6 @@ public class MuseumActivity extends BaseActivity implements
             scrollBarPreviousIconLayout.setOnClickListener(view -> recyclerViewLayoutManager.smoothScrollToPosition(recyclerView, null, 0));
         } else if (isBanner)
             prepareRecyclerViewDataForLaunch();
-            // For temporary
-        else if (museumId.equals("66") || museumId.equals("638"))
-            prepareRecyclerViewDataForNMoQ();
         else
             prepareRecyclerViewData();
         getMuseumSliderImageFromDatabase();
@@ -355,9 +349,9 @@ public class MuseumActivity extends BaseActivity implements
 //                getResources().getString(R.string.experience_txt), R.drawable.experience_icon);
 //        museumHScrollModelList.add(model);
 //
-//        model = new MuseumHScrollModel(this,
-//                getResources().getString(R.string.sidemenu_tour_guide_text), R.drawable.audio_circle);
-//        museumHScrollModelList.add(model);
+        model = new MuseumHScrollModel(this,
+                getResources().getString(R.string.sidemenu_tour_guide_text), R.drawable.audio_circle);
+        museumHScrollModelList.add(model);
 //
 //        model = new MuseumHScrollModel(this,
 //                getResources().getString(R.string.sidemenu_events_text), R.drawable.events_icon);
