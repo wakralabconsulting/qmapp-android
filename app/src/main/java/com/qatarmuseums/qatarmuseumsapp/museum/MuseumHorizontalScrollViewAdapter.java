@@ -63,14 +63,9 @@ public class MuseumHorizontalScrollViewAdapter extends RecyclerView.Adapter<Muse
                 navigationIntent.putExtra("ID", museumId);
                 mContext.startActivity(navigationIntent);
             } else if (museumHScrollModelList.get(position).getTextName().equals(mContext.getResources().getString(R.string.sidemenu_tour_guide_text))) {
-                if (museumId.equals("66") || museumId.equals("638"))
-                    // Tour guides for NMoQ won't be available before NMoQ launch
-                    util.showComingSoonDialog((Activity) mContext, R.string.coming_soon_content);
-                else {
-                    navigationIntent = new Intent(mContext, TourGuideDetailsActivity.class);
-                    navigationIntent.putExtra("ID", museumId);
-                    mContext.startActivity(navigationIntent);
-                }
+                navigationIntent = new Intent(mContext, TourGuideDetailsActivity.class);
+                navigationIntent.putExtra("ID", museumId);
+                mContext.startActivity(navigationIntent);
             } else if (museumHScrollModelList.get(position).getTextName().equals(mContext.getResources().getString(R.string.sidemenu_exhibition_text))) {
                 navigationIntent = new Intent(mContext, CommonActivity.class);
                 navigationIntent.putExtra(mContext.getString(R.string.toolbar_title_key), mContext.getString(R.string.sidemenu_exhibition_text));

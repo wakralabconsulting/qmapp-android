@@ -110,7 +110,9 @@ public class TourGuideActivity extends AppCompatActivity {
                         if (tourGuideList.get(position).getId().equals("63") ||
                                 tourGuideList.get(position).getId().equals("96") ||
                                 tourGuideList.get(position).getId().equals("61") ||
-                                tourGuideList.get(position).getId().equals("635")) {
+                                tourGuideList.get(position).getId().equals("635")||
+                                tourGuideList.get(position).getId().equals("66") ||
+                                tourGuideList.get(position).getId().equals("638")) {
                             navigationIntent = new Intent(TourGuideActivity.this,
                                     TourGuideDetailsActivity.class);
                             navigationIntent.putExtra("ID", tourGuideList.get(position).getId());
