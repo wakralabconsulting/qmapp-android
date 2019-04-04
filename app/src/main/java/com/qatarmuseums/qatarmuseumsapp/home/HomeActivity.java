@@ -254,11 +254,14 @@ public class HomeActivity extends BaseActivity {
             getHomePageAPIData(language);
             progressBar.setVisibility(View.VISIBLE);
             retryLayout.setVisibility(View.GONE);
-            RSVP = qmPreferences.getString("RSVP", null);
+            /*
+            // Hiding Banner temporary
+           RSVP = qmPreferences.getString("RSVP", null);
             if (RSVP != null) {
                 if (bannerLayout.getVisibility() != View.VISIBLE)
                     showBanner();
             }
+            */
         });
         retryButton.setOnTouchListener((v, event) -> {
             switch (event.getAction()) {
@@ -529,6 +532,8 @@ public class HomeActivity extends BaseActivity {
             getDataFromDataBase(language);
         }
         updateBadge();
+        /*
+        // Hiding Banner temporary
         RSVP = qmPreferences.getString("RSVP", null);
         if (RSVP != null) {
             if (bannerLayout.getVisibility() != View.VISIBLE)
@@ -536,6 +541,7 @@ public class HomeActivity extends BaseActivity {
         } else {
             bannerLayout.setVisibility(View.GONE);
         }
+        */
     }
 
     public void showBanner() {
