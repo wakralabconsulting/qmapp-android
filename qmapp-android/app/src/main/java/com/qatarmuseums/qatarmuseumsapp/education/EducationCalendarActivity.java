@@ -41,7 +41,7 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.qatarmuseums.qatarmuseumsapp.Convertor;
+import com.qatarmuseums.qatarmuseumsapp.Converter;
 import com.qatarmuseums.qatarmuseumsapp.LocaleManager;
 import com.qatarmuseums.qatarmuseumsapp.QMDatabase;
 import com.qatarmuseums.qatarmuseumsapp.R;
@@ -648,7 +648,7 @@ public class EducationCalendarActivity extends AppCompatActivity {
         protected Boolean doInBackground(Void... voids) {
             if (activityReference.get().educationEvents != null) {
                 if (language.equals(LocaleManager.LANGUAGE_ENGLISH)) {
-                    Convertor converters = new Convertor();
+                    Converter converters = new Converter();
                     ArrayList<String> fieldValue = new ArrayList<String>();
                     fieldValue = activityReference.get().educationEvents.get(position).getField();
                     ArrayList<String> startDate = new ArrayList<String>();
@@ -680,7 +680,7 @@ public class EducationCalendarActivity extends AppCompatActivity {
                             insertEventsTableEnglish(educationalCalendarEventsTableEnglish);
 
                 } else {
-                    Convertor converters = new Convertor();
+                    Converter converters = new Converter();
                     ArrayList<String> fieldValue = new ArrayList<String>();
                     fieldValue = activityReference.get().educationEvents.get(position).getField();
                     ArrayList<String> startDate = new ArrayList<String>();
@@ -749,7 +749,7 @@ public class EducationCalendarActivity extends AppCompatActivity {
         protected Boolean doInBackground(Void... voids) {
             if (activityReference.get().educationEvents != null) {
                 if (language.equals(LocaleManager.LANGUAGE_ENGLISH)) {
-                    Convertor converters = new Convertor();
+                    Converter converters = new Converter();
                     for (int i = 0; i < activityReference.get().educationEvents.size(); i++) {
                         ArrayList<String> fieldValue = new ArrayList<String>();
                         fieldValue = activityReference.get().educationEvents.get(i).getField();
@@ -783,7 +783,7 @@ public class EducationCalendarActivity extends AppCompatActivity {
 
                     }
                 } else {
-                    Convertor converters = new Convertor();
+                    Converter converters = new Converter();
                     for (int i = 0; i < activityReference.get().educationEvents.size(); i++) {
                         ArrayList<String> fieldValue = new ArrayList<String>();
                         fieldValue = activityReference.get().educationEvents.get(i).getField();
@@ -845,7 +845,7 @@ public class EducationCalendarActivity extends AppCompatActivity {
             ArrayList<String> fieldValue = new ArrayList<String>();
             ArrayList<String> startDate = new ArrayList<String>();
             ArrayList<String> endDate = new ArrayList<String>();
-            Convertor converters = new Convertor();
+            Converter converters = new Converter();
             if (educationalCalendarEventsTableEnglish.size() > 0) {
                 for (int i = 0; i < educationalCalendarEventsTableEnglish.size(); i++) {
                     startDate.add(0, educationalCalendarEventsTableEnglish.get(i).getEvent_start_time());
@@ -939,7 +939,7 @@ public class EducationCalendarActivity extends AppCompatActivity {
             ArrayList<String> fieldValue = new ArrayList<String>();
             ArrayList<String> startDate = new ArrayList<String>();
             ArrayList<String> endDate = new ArrayList<String>();
-            Convertor converters = new Convertor();
+            Converter converters = new Converter();
             if (educationalCalendarEventsTableArabic.size() > 0) {
                 for (int i = 0; i < educationalCalendarEventsTableArabic.size(); i++) {
                     startDate.add(0, educationalCalendarEventsTableArabic.get(i).getEvent_start_time());

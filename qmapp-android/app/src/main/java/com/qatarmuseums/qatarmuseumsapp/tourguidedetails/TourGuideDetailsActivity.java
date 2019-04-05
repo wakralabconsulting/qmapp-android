@@ -21,7 +21,7 @@ import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
-import com.qatarmuseums.qatarmuseumsapp.Convertor;
+import com.qatarmuseums.qatarmuseumsapp.Converter;
 import com.qatarmuseums.qatarmuseumsapp.LocaleManager;
 import com.qatarmuseums.qatarmuseumsapp.QMDatabase;
 import com.qatarmuseums.qatarmuseumsapp.R;
@@ -64,7 +64,7 @@ public class TourGuideDetailsActivity extends AppCompatActivity {
     QMDatabase qmDatabase;
     TourGuideStartPageEnglish tourGuideStartPageEnglish;
     TourGuideStartPageArabic tourGuideStartPageArabic;
-    private Convertor converters;
+    private Converter converters;
 
     @Override
     protected void attachBaseContext(Context base) {
@@ -190,7 +190,7 @@ public class TourGuideDetailsActivity extends AppCompatActivity {
 
             }
         });
-        converters = new Convertor();
+        converters = new Converter();
         appLanguage = LocaleManager.getLanguage(this);
         if (new Util().isNetworkAvailable(this))
             getTourGuideDetailsPageAPIData();

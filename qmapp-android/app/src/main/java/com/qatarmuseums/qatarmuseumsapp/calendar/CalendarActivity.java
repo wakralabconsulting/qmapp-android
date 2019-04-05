@@ -15,6 +15,7 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.provider.CalendarContract;
 import android.provider.Settings;
+import android.support.annotation.NonNull;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
@@ -40,7 +41,7 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.qatarmuseums.qatarmuseumsapp.Convertor;
+import com.qatarmuseums.qatarmuseumsapp.Converter;
 import com.qatarmuseums.qatarmuseumsapp.LocaleManager;
 import com.qatarmuseums.qatarmuseumsapp.QMDatabase;
 import com.qatarmuseums.qatarmuseumsapp.R;
@@ -55,7 +56,6 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.List;
@@ -77,7 +77,7 @@ public class CalendarActivity extends AppCompatActivity {
     @BindView(R.id.common_toolbar)
     Toolbar toolbar;
     @BindView(R.id.toolbar_back)
-    ImageView backArrow;
+    View backArrow;
     @BindView(R.id.toolbar_title)
     TextView toolbar_title;
     @BindView(R.id.no_events_txt)
@@ -85,7 +85,7 @@ public class CalendarActivity extends AppCompatActivity {
     @BindView(R.id.retry_layout)
     LinearLayout retryLayout;
     @BindView(R.id.retry_btn)
-    Button retryButton;
+    View retryButton;
     @BindView(R.id.progressBarLoading)
     ProgressBar progressBar;
     @BindView(R.id.progress)
@@ -114,12 +114,15 @@ public class CalendarActivity extends AppCompatActivity {
     String monthNumber;
     String year;
     private SimpleDateFormat dayDateFormat, monthDateFormat, yearDateFormat;
+    @SuppressWarnings("FieldCanBeLocal")
+    private View eventView;
 
     @Override
     protected void attachBaseContext(Context base) {
         super.attachBaseContext(LocaleManager.setLocale(base));
     }
 
+    @SuppressLint("ClickableViewAccessibility")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -205,7 +208,7 @@ public class CalendarActivity extends AppCompatActivity {
             }
         });
 
-        calendarEventList = new ArrayList<CalendarEvents>();
+        calendarEventList = new ArrayList<>();
         calendarAdapter = new CalendarAdapter(CalendarActivity.this, calendarEventList);
         layoutManager = new LinearLayoutManager(getApplication());
         eventListView.setLayoutManager(layoutManager);
@@ -233,8 +236,8 @@ public class CalendarActivity extends AppCompatActivity {
                 }
             }
         });
-
-        eventListView.setOnTouchListener((view, motionEvent) -> {
+        eventView = eventListView;
+        eventView.setOnTouchListener((view, motionEvent) -> {
             // Scrolling up
             if (collapsibleCalendar.expanded) {
                 collapsibleCalendar.collapse(400);
@@ -245,6 +248,7 @@ public class CalendarActivity extends AppCompatActivity {
             }
             return false;
         });
+
         today = new GregorianCalendar();
         today.set(Calendar.HOUR_OF_DAY, 0);
         today.set(Calendar.MINUTE, 0);
@@ -272,13 +276,13 @@ public class CalendarActivity extends AppCompatActivity {
                 "All", "All", "All", month, day, year, "field_eduprog_date");
         call.enqueue(new Callback<ArrayList<CalendarEvents>>() {
             @Override
-            public void onResponse(Call<ArrayList<CalendarEvents>> call, Response<ArrayList<CalendarEvents>> response) {
+            public void onResponse(@NonNull Call<ArrayList<CalendarEvents>> call,
+                                   @NonNull Response<ArrayList<CalendarEvents>> response) {
                 if (response.isSuccessful()) {
                     if (response.body().size() > 0) {
                         noEventsTxt.setVisibility(View.GONE);
                         calendarEventList.addAll(response.body());
                         removeHtmlTags(calendarEventList);
-                        updateTimeStamp(timeStamp);
                         updateStartAndEndTime();
                         convertToTimestamp(day, month, year);
                         sortEventsWithStartTime();
@@ -296,7 +300,7 @@ public class CalendarActivity extends AppCompatActivity {
             }
 
             @Override
-            public void onFailure(Call<ArrayList<CalendarEvents>> call, Throwable t) {
+            public void onFailure(@NonNull Call<ArrayList<CalendarEvents>> call, @NonNull Throwable t) {
                 retryLayout.setVisibility(View.VISIBLE);
                 progress.setVisibility(View.GONE);
             }
@@ -322,12 +326,6 @@ public class CalendarActivity extends AppCompatActivity {
         }
     }
 
-    public void updateTimeStamp(long timestamp) {
-        for (int i = 0; i < calendarEventList.size(); i++) {
-            calendarEventList.get(i).setEventDate(timestamp / 1000);
-        }
-    }
-
     public void updateStartAndEndTime() {
         //extracting time from text and updating the time field
         for (int i = 0; i < calendarEventList.size(); i++) {
@@ -339,9 +337,9 @@ public class CalendarActivity extends AppCompatActivity {
             String endValue = end.substring(end.lastIndexOf("-") + 1);
             String[] endTimeArray = endValue.trim().split("-");
             String endTime = endTimeArray[0].trim();
-            ArrayList<String> startDateVal = new ArrayList<String>();
+            ArrayList<String> startDateVal = new ArrayList<>();
             startDateVal.add(0, startTime);
-            ArrayList<String> endDateVal = new ArrayList<String>();
+            ArrayList<String> endDateVal = new ArrayList<>();
             endDateVal.add(0, endTime);
             calendarEventList.get(i).setStartTime(startDateVal);
             calendarEventList.get(i).setEndTime(endDateVal);
@@ -353,9 +351,9 @@ public class CalendarActivity extends AppCompatActivity {
         for (int i = 0; i < calendarEventList.size(); i++) {
             String str_start_date = day + "-" + month + "-" + year + " " + calendarEventList.get(i).getStartTime().get(0);
             String str_end_date = day + "-" + month + "-" + year + " " + calendarEventList.get(i).getEndTime().get(0);
-            ArrayList<String> startTime = new ArrayList<String>();
+            ArrayList<String> startTime = new ArrayList<>();
             startTime.add(0, String.valueOf(convertDate(str_start_date)));
-            ArrayList<String> endTime = new ArrayList<String>();
+            ArrayList<String> endTime = new ArrayList<>();
             endTime.add(0, String.valueOf(convertDate(str_end_date)));
             calendarEventList.get(i).setStartTime(startTime);
             calendarEventList.get(i).setEndTime(endTime);
@@ -363,6 +361,7 @@ public class CalendarActivity extends AppCompatActivity {
     }
 
     public long convertDate(String dateVal) {
+        @SuppressLint("SimpleDateFormat")
         SimpleDateFormat formatter = new SimpleDateFormat("dd-MM-yyyy HH:mm");
         Date date = null;
         try {
@@ -374,12 +373,7 @@ public class CalendarActivity extends AppCompatActivity {
     }
 
     public void sortEventsWithStartTime() {
-        Collections.sort(calendarEventList, new Comparator<CalendarEvents>() {
-            @Override
-            public int compare(CalendarEvents o1, CalendarEvents o2) {
-                return o1.getStartTime().get(0).compareTo(o2.getStartTime().get(0));
-            }
-        });
+        Collections.sort(calendarEventList, (o1, o2) -> o1.getStartTime().get(0).compareTo(o2.getStartTime().get(0)));
     }
 
     public void onClickCalled(Boolean registrationRequired, String title, String details, String startDate, String endDate) {
@@ -404,6 +398,7 @@ public class CalendarActivity extends AppCompatActivity {
         dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
 
         layoutInflater = (LayoutInflater) getSystemService(LAYOUT_INFLATER_SERVICE);
+        @SuppressLint("InflateParams")
         View view = layoutInflater.inflate(R.layout.calendar_popup, null);
         dialog.setContentView(view);
         FrameLayout contentLayout = view.findViewById(R.id.content_frame_layout);
@@ -434,6 +429,7 @@ public class CalendarActivity extends AppCompatActivity {
         dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
 
         layoutInflater = (LayoutInflater) getSystemService(LAYOUT_INFLATER_SERVICE);
+        @SuppressLint("InflateParams")
         View view = layoutInflater.inflate(R.layout.calendar_popup, null);
 
         dialog.setContentView(view);
@@ -459,7 +455,7 @@ public class CalendarActivity extends AppCompatActivity {
 
     @SuppressLint("MissingPermission")
     private int getCalendarId(Context context) {
-        Cursor cursor = null;
+        Cursor cursor;
         ContentResolver contentResolver = context.getContentResolver();
         Uri calendars = CalendarContract.Calendars.CONTENT_URI;
 
@@ -472,16 +468,14 @@ public class CalendarActivity extends AppCompatActivity {
         };
 
         int PROJECTION_ID_INDEX = 0;
-        int PROJECTION_ACCOUNT_NAME_INDEX = 1;
         int PROJECTION_DISPLAY_NAME_INDEX = 2;
-        int PROJECTION_OWNER_ACCOUNT_INDEX = 3;
         int PROJECTION_VISIBLE = 4;
 
         cursor = contentResolver.query(calendars, EVENT_PROJECTION, null, null, null);
 
         if (cursor != null && cursor.moveToFirst()) {
             String calName;
-            long calId = 0;
+            long calId;
             String visible;
 
             do {
@@ -496,6 +490,7 @@ public class CalendarActivity extends AppCompatActivity {
 
             return (int) calId;
         }
+        cursor.close();
         return 1;
     }
 
@@ -524,11 +519,11 @@ public class CalendarActivity extends AppCompatActivity {
 
     }
 
+    @SuppressLint("MissingPermission")
     public void insertEventToCalendar() {
         try {
             contentValues.put(CalendarContract.Events.CALENDAR_ID, getCalendarId(this));
-            @SuppressLint("MissingPermission")
-            Uri uri = contentResolver.insert(CalendarContract.Events.CONTENT_URI, contentValues);
+            contentResolver.insert(CalendarContract.Events.CONTENT_URI, contentValues);
             Snackbar snackbar = Snackbar
                     .make(layoutContainer, R.string.event_added, Snackbar.LENGTH_LONG);
             snackbar.show();
@@ -540,7 +535,7 @@ public class CalendarActivity extends AppCompatActivity {
 
     @Override
     public void onRequestPermissionsResult(int requestCode,
-                                           String permissions[], int[] grantResults) {
+                                           @NonNull String permissions[], @NonNull int[] grantResults) {
         switch (requestCode) {
             case 100: {
                 // If request is cancelled, the result arrays are empty.
@@ -567,6 +562,7 @@ public class CalendarActivity extends AppCompatActivity {
         dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
 
         layoutInflater = (LayoutInflater) getSystemService(LAYOUT_INFLATER_SERVICE);
+        @SuppressLint("InflateParams")
         View view = layoutInflater.inflate(R.layout.common_popup, null);
 
         dialog.setContentView(view);
@@ -717,13 +713,13 @@ public class CalendarActivity extends AppCompatActivity {
             if (activityReference.get().calendarEventList != null) {
                 if (language.equals("en")) {
                     for (int i = 0; i < activityReference.get().calendarEventList.size(); i++) {
-                        ArrayList<String> fieldValue = new ArrayList<String>();
+                        ArrayList<String> fieldValue;
                         fieldValue = activityReference.get().calendarEventList.get(i).getField();
-                        ArrayList<String> startDate = new ArrayList<String>();
+                        ArrayList<String> startDate;
                         startDate = activityReference.get().calendarEventList.get(i).getStartTime();
-                        ArrayList<String> endDate = new ArrayList<String>();
+                        ArrayList<String> endDate;
                         endDate = activityReference.get().calendarEventList.get(i).getEndTime();
-                        Convertor converters = new Convertor();
+                        Converter converters = new Converter();
                         calendarEventsTableEnglish = new CalendarEventsTableEnglish(
                                 activityReference.get().calendarEventList.get(i).getEventId(),
                                 activityReference.get().calendarEventList.get(i).getEventTitle(),
@@ -752,13 +748,13 @@ public class CalendarActivity extends AppCompatActivity {
                 } else {
                     for (int i = 0; i < activityReference.get().calendarEventList.size(); i++) {
 
-                        ArrayList<String> fieldValue = new ArrayList<String>();
+                        ArrayList<String> fieldValue;
                         fieldValue = activityReference.get().calendarEventList.get(i).getField();
-                        ArrayList<String> startDate = new ArrayList<String>();
+                        ArrayList<String> startDate;
                         startDate = activityReference.get().calendarEventList.get(i).getStartTime();
-                        ArrayList<String> endDate = new ArrayList<String>();
+                        ArrayList<String> endDate;
                         endDate = activityReference.get().calendarEventList.get(i).getEndTime();
-                        Convertor converters = new Convertor();
+                        Converter converters = new Converter();
                         calendarEventsTableArabic = new CalendarEventsTableArabic(
                                 activityReference.get().calendarEventList.get(i).getEventId(),
                                 activityReference.get().calendarEventList.get(i).getEventTitle(),
@@ -844,10 +840,10 @@ public class CalendarActivity extends AppCompatActivity {
         @Override
         protected void onPostExecute(List<CalendarEventsTableEnglish> eventsTableEnglishList) {
             activityReference.get().calendarEventList.clear();
-            ArrayList<String> fieldValue = new ArrayList<String>();
-            ArrayList<String> startDate = new ArrayList<String>();
-            ArrayList<String> endDate = new ArrayList<String>();
-            Convertor converters = new Convertor();
+            ArrayList<String> fieldValue = new ArrayList<>();
+            ArrayList<String> startDate = new ArrayList<>();
+            ArrayList<String> endDate = new ArrayList<>();
+            Converter converters = new Converter();
             if (eventsTableEnglishList.size() > 0) {
                 for (int i = 0; i < eventsTableEnglishList.size(); i++) {
                     startDate.add(0, eventsTableEnglishList.get(i).getEvent_start_time());
@@ -862,7 +858,6 @@ public class CalendarActivity extends AppCompatActivity {
                             startDate,
                             endDate,
                             eventsTableEnglishList.get(i).getEvent_registration(),
-                            eventsTableEnglishList.get(i).getEvent_date(),
                             eventsTableEnglishList.get(i).getFilter(),
                             eventsTableEnglishList.get(i).getLocation(),
                             eventsTableEnglishList.get(i).getMax_group_size(),
@@ -905,15 +900,15 @@ public class CalendarActivity extends AppCompatActivity {
         @Override
         protected void onPostExecute(List<CalendarEventsTableArabic> eventsTableArabicList) {
             activityReference.get().calendarEventList.clear();
-            ArrayList<String> fieldval = new ArrayList<String>();
-            ArrayList<String> startDate = new ArrayList<String>();
-            ArrayList<String> endDate = new ArrayList<String>();
-            Convertor converters = new Convertor();
+            ArrayList<String> fieldValue = new ArrayList<>();
+            ArrayList<String> startDate = new ArrayList<>();
+            ArrayList<String> endDate = new ArrayList<>();
+            Converter converters = new Converter();
             if (eventsTableArabicList.size() > 0) {
                 for (int i = 0; i < eventsTableArabicList.size(); i++) {
                     startDate.add(0, eventsTableArabicList.get(i).getEvent_start_time());
                     endDate.add(0, eventsTableArabicList.get(i).getEvent_end_time());
-                    fieldval.add(0, eventsTableArabicList.get(i).getField());
+                    fieldValue.add(0, eventsTableArabicList.get(i).getField());
                     CalendarEvents calendarEvents = new CalendarEvents(
                             eventsTableArabicList.get(i).getEvent_id(),
                             eventsTableArabicList.get(i).getEvent_institution(),
@@ -923,14 +918,13 @@ public class CalendarActivity extends AppCompatActivity {
                             startDate,
                             endDate,
                             eventsTableArabicList.get(i).getEvent_registration(),
-                            eventsTableArabicList.get(i).getEvent_date(),
                             eventsTableArabicList.get(i).getFilter(),
                             eventsTableArabicList.get(i).getLocation(),
                             eventsTableArabicList.get(i).getMax_group_size(),
                             eventsTableArabicList.get(i).getCategory(),
                             eventsTableArabicList.get(i).getEvent_age_group(),
                             eventsTableArabicList.get(i).getEvent_program_type(),
-                            fieldval,
+                            fieldValue,
                             converters.fromString(eventsTableArabicList.get(i).getAge()),
                             converters.fromString(eventsTableArabicList.get(i).getAssociatedTopics()),
                             eventsTableArabicList.get(i).getMuseum()

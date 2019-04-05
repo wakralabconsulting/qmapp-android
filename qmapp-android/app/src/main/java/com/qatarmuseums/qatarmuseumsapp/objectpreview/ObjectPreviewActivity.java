@@ -21,7 +21,7 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.booking.rtlviewpager.RtlViewPager;
-import com.qatarmuseums.qatarmuseumsapp.Convertor;
+import com.qatarmuseums.qatarmuseumsapp.Converter;
 import com.qatarmuseums.qatarmuseumsapp.LocaleManager;
 import com.qatarmuseums.qatarmuseumsapp.QMDatabase;
 import com.qatarmuseums.qatarmuseumsapp.R;
@@ -67,7 +67,7 @@ public class ObjectPreviewActivity extends AppCompatActivity {
     private static AsyncTask update;
 
 
-    private static Convertor converters;
+    private static Converter converters;
     LinearLayout retryLayout;
     Button retryButton;
 
@@ -195,7 +195,7 @@ public class ObjectPreviewActivity extends AppCompatActivity {
             return false;
         });
 
-        converters = new Convertor();
+        converters = new Converter();
     }
 
     public class RecyclerViewDisablre implements RecyclerView.OnItemTouchListener {

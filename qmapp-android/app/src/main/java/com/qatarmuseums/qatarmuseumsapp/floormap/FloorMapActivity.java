@@ -51,7 +51,7 @@ import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.MapStyleOptions;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
-import com.qatarmuseums.qatarmuseumsapp.Convertor;
+import com.qatarmuseums.qatarmuseumsapp.Converter;
 import com.qatarmuseums.qatarmuseumsapp.LocaleManager;
 import com.qatarmuseums.qatarmuseumsapp.QMDatabase;
 import com.qatarmuseums.qatarmuseumsapp.R;
@@ -206,7 +206,7 @@ public class FloorMapActivity extends AppCompatActivity implements OnMapReadyCal
     private String tourId;
     private QMDatabase qmDatabase;
 
-    private static Convertor converters;
+    private static Converter converters;
     Button retryButton;
     private Animation zoomOutAnimation, zoomOutAnimationMore;
     private Bitmap resizedBitmap;
@@ -396,7 +396,7 @@ public class FloorMapActivity extends AppCompatActivity implements OnMapReadyCal
 
         });
         initialize_Controls();
-        converters = new Convertor();
+        converters = new Converter();
     }
 
     public void fetchComingData() {
