@@ -20,7 +20,6 @@ import com.qatarmuseums.qatarmuseumsapp.park.NMoQPark;
 import com.qatarmuseums.qatarmuseumsapp.park.NMoQParkList;
 import com.qatarmuseums.qatarmuseumsapp.park.ParkList;
 import com.qatarmuseums.qatarmuseumsapp.profile.ProfileDetails;
-import com.qatarmuseums.qatarmuseumsapp.profile.RsvpData;
 import com.qatarmuseums.qatarmuseumsapp.profile.UserData;
 import com.qatarmuseums.qatarmuseumsapp.publicart.PublicArtModel;
 import com.qatarmuseums.qatarmuseumsapp.tourdetails.TourDetailsModel;
@@ -138,10 +137,6 @@ public interface APIInterface {
     @GET("{language}/mobile_api/user/{uid}.json")
     Call<UserData> getRSVP(@Path("language") String language, @Path("uid") String uid,
                            @Header("X-CSRF-Token") String token);
-
-    @PUT("{language}/mobile_api/user/{uid}.json")
-    Call<UserData> setRSVP(@Path("language") String language, @Path("uid") String uid,
-                           @Header("X-CSRF-Token") String token, @Body RsvpData rsvpData);
 
     @GET("{language}/mobile_api/nmoq_banner_banner.json")
     Call<ArrayList<HomeList>> getBannerDetails(@Path("language") String language);

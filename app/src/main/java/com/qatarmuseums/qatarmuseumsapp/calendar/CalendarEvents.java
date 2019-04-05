@@ -25,8 +25,6 @@ public class CalendarEvents {
     private String ageGroup;
     @SerializedName("Programme_type")
     private String programType;
-    @SerializedName("date")
-    private long eventDate;
     @SerializedName("filter")
     private String filter;
     @SerializedName("location")
@@ -44,12 +42,12 @@ public class CalendarEvents {
     @SerializedName("Museum_Department")
     private String museumDepartment;
 
-    public CalendarEvents(long eid, String institution, String title, String shortDescription,
-                          String eventDetails, ArrayList<String> startTime,
-                          ArrayList<String> endTime, boolean registration, long eventDate,
-                          String filter, String location, long maxGroupSize, String category,
-                          String programType, String ageGroup, ArrayList<String> filedVal,
-                          ArrayList<String> age, ArrayList<String> topics, String museum) {
+    CalendarEvents(long eid, String institution, String title, String shortDescription,
+                   String eventDetails, ArrayList<String> startTime,
+                   ArrayList<String> endTime, boolean registration,
+                   String filter, String location, long maxGroupSize, String category,
+                   String programType, String ageGroup, ArrayList<String> filedVal,
+                   ArrayList<String> age, ArrayList<String> topics, String museum) {
         this.institution = institution;
         this.eventTitle = title;
         this.eventTimings = shortDescription;
@@ -57,7 +55,6 @@ public class CalendarEvents {
         this.startTime = startTime;
         this.endTime = endTime;
         this.registration = registration;
-        this.eventDate = eventDate;
         this.eventId = eid;
         this.filter = filter;
         this.eventLocation = location;
@@ -75,88 +72,64 @@ public class CalendarEvents {
         return institution;
     }
 
-    public void setInstitution(String institution) {
-        this.institution = institution;
-    }
-
-    public String getEventTitle() {
+    String getEventTitle() {
         return eventTitle;
     }
 
-    public void setEventTitle(String eventTitle) {
+    void setEventTitle(String eventTitle) {
         this.eventTitle = eventTitle;
     }
 
-    public String getEventTimings() {
+    String getEventTimings() {
         return eventTimings;
     }
 
-    public void setEventTimings(String eventTimings) {
+    void setEventTimings(String eventTimings) {
         this.eventTimings = eventTimings;
     }
 
-    public String getEventDetails() {
+    String getEventDetails() {
         return eventDetails;
     }
 
-    public void setEventDetails(String eventDetails) {
+    void setEventDetails(String eventDetails) {
         this.eventDetails = eventDetails;
     }
 
-    public Boolean getRegistration() {
+    Boolean getRegistration() {
         return registration;
     }
 
-    public void setRegistration(Boolean registration) {
-        this.registration = registration;
-    }
-
-    public long getEventId() {
+    long getEventId() {
         return eventId;
     }
 
-    public void setEventId(long eventId) {
-        this.eventId = eventId;
-    }
-
-    public ArrayList<String> getStartTime() {
+    ArrayList<String> getStartTime() {
         return startTime;
     }
 
-    public void setStartTime(ArrayList<String> startTime) {
+    void setStartTime(ArrayList<String> startTime) {
         this.startTime = startTime;
     }
 
-    public ArrayList<String> getEndTime() {
+    ArrayList<String> getEndTime() {
         return endTime;
     }
 
-    public void setEndTime(ArrayList<String> endTime) {
+    void setEndTime(ArrayList<String> endTime) {
         this.endTime = endTime;
     }
 
-    public String getAgeGroup() {
+    String getAgeGroup() {
         return ageGroup;
     }
 
-    public void setAgeGroup(String ageGroup) {
-        this.ageGroup = ageGroup;
-    }
-
-    public String getProgramType() {
+    String getProgramType() {
         return programType;
     }
 
-    public void setProgramType(String programType) {
+    void setProgramType(String programType) {
         this.programType = programType;
-    }
-
-    public long getEventDate() {
-        return eventDate;
-    }
-
-    public void setEventDate(long eventDate) {
-        this.eventDate = eventDate;
     }
 
     public String getFilter() {
@@ -167,28 +140,16 @@ public class CalendarEvents {
         this.filter = filter;
     }
 
-    public String getEventLocation() {
+    String getEventLocation() {
         return eventLocation;
     }
 
-    public void setEventLocation(String eventLocation) {
-        this.eventLocation = eventLocation;
-    }
-
-    public long getMaxGroupSize() {
+    long getMaxGroupSize() {
         return maxGroupSize;
     }
 
-    public void setMaxGroupSize(long maxGroupSize) {
-        this.maxGroupSize = maxGroupSize;
-    }
-
-    public String getEventCategory() {
+    String getEventCategory() {
         return eventCategory;
-    }
-
-    public void setEventCategory(String eventCategory) {
-        this.eventCategory = eventCategory;
     }
 
     public ArrayList<String> getField() {
@@ -215,11 +176,8 @@ public class CalendarEvents {
         this.associatedTopics = associatedTopics;
     }
 
-    public String getMuseumDepartment() {
+    String getMuseumDepartment() {
         return museumDepartment;
     }
 
-    public void setMuseumDepartment(String museumDepartment) {
-        this.museumDepartment = museumDepartment;
-    }
 }

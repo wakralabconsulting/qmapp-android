@@ -24,7 +24,7 @@ import android.widget.TextView;
 
 import com.github.rubensousa.gravitysnaphelper.GravitySnapHelper;
 import com.qatarmuseums.qatarmuseumsapp.Config;
-import com.qatarmuseums.qatarmuseumsapp.Convertor;
+import com.qatarmuseums.qatarmuseumsapp.Converter;
 import com.qatarmuseums.qatarmuseumsapp.LocaleManager;
 import com.qatarmuseums.qatarmuseumsapp.QMDatabase;
 import com.qatarmuseums.qatarmuseumsapp.R;
@@ -106,7 +106,7 @@ public class MuseumActivity extends BaseActivity implements
         museumId = intent.getStringExtra("MUSEUM_ID");
         isBanner = intent.getBooleanExtra("IS_BANNER", false);
         if (isBanner)
-            setToolbarForMuseumLaunchy();
+            setToolbarForMuseumLaunch();
         else
             setToolbarForMuseumActivity();
         animCircleIndicator = findViewById(R.id.main_indicator_default_circle);
@@ -626,7 +626,7 @@ public class MuseumActivity extends BaseActivity implements
 
         @Override
         protected Void doInBackground(Void... voids) {
-            Convertor converters = new Convertor();
+            Converter converters = new Converter();
             if (activityReference.get().museumAboutModels.size() > 0) {
                 if (language.equals(LocaleManager.LANGUAGE_ENGLISH)) {
                     for (int i = 0; i < activityReference.get().museumAboutModels.size(); i++) {
@@ -708,7 +708,7 @@ public class MuseumActivity extends BaseActivity implements
         @Override
         protected Boolean doInBackground(Void... voids) {
             if (activityReference.get().museumAboutModels != null) {
-                Convertor converters = new Convertor();
+                Converter converters = new Converter();
                 if (language.equals(LocaleManager.LANGUAGE_ENGLISH)) {
                     for (int i = 0; i < activityReference.get().museumAboutModels.size(); i++) {
                         museumAboutTableEnglish = new MuseumAboutTableEnglish(
@@ -784,7 +784,7 @@ public class MuseumActivity extends BaseActivity implements
 
         @Override
         protected Void doInBackground(Void... voids) {
-            Convertor converters = new Convertor();
+            Converter converters = new Converter();
             if (language.equals(LocaleManager.LANGUAGE_ENGLISH)) {
                 // updateEnglishTable table with english name
                 activityReference.get().qmDatabase.getMuseumAboutDao().updateMuseumAboutDataEnglish(
@@ -840,7 +840,7 @@ public class MuseumActivity extends BaseActivity implements
 
         @Override
         protected void onPostExecute(MuseumAboutTableEnglish museumAboutTableEnglish) {
-            Convertor converters = new Convertor();
+            Converter converters = new Converter();
             if (museumAboutTableEnglish != null) {
                 if (converters.fromString(museumAboutTableEnglish.getMuseum_image()) != null &&
                         converters.fromString(museumAboutTableEnglish.getMuseum_image()).size() > 0) {
@@ -887,7 +887,7 @@ public class MuseumActivity extends BaseActivity implements
         @Override
         protected void onPostExecute(MuseumAboutTableArabic museumAboutTableArabic) {
             if (museumAboutTableArabic != null) {
-                Convertor converters = new Convertor();
+                Converter converters = new Converter();
                 if (converters.fromString(museumAboutTableArabic.getMuseum_image()) != null &&
                         converters.fromString(museumAboutTableArabic.getMuseum_image()).size() > 0) {
                     int imageSliderSize;

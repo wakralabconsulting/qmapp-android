@@ -20,7 +20,7 @@ import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
-import com.qatarmuseums.qatarmuseumsapp.Convertor;
+import com.qatarmuseums.qatarmuseumsapp.Converter;
 import com.qatarmuseums.qatarmuseumsapp.LocaleManager;
 import com.qatarmuseums.qatarmuseumsapp.QMDatabase;
 import com.qatarmuseums.qatarmuseumsapp.R;
@@ -317,7 +317,7 @@ public class TourSecondaryListActivity extends AppCompatActivity {
             if (activityReference.get().tourDetailsList != null) {
                 if (language.equals(LocaleManager.LANGUAGE_ENGLISH)) {
                     for (int i = 0; i < activityReference.get().tourDetailsList.size(); i++) {
-                        Convertor converters = new Convertor();
+                        Converter converters = new Converter();
                         tourDetailsTableEnglish = new TourDetailsTableEnglish(
                                 activityReference.get().tourDetailsList.get(i).getTourTitle(),
                                 converters.fromArrayList(activityReference.get().tourDetailsList.get(i).getTourImage()),
@@ -342,7 +342,7 @@ public class TourSecondaryListActivity extends AppCompatActivity {
                 } else {
                     for (int i = 0; i < activityReference.get().tourDetailsList.size(); i++) {
 
-                        Convertor converters = new Convertor();
+                        Converter converters = new Converter();
                         tourDetailsTableArabic = new TourDetailsTableArabic(
                                 activityReference.get().tourDetailsList.get(i).getTourTitle(),
                                 converters.fromArrayList(activityReference.get().tourDetailsList.get(i).getTourImage()),
@@ -419,7 +419,7 @@ public class TourSecondaryListActivity extends AppCompatActivity {
         @Override
         protected void onPostExecute(List<TourDetailsTableEnglish> tourDetailsTableEnglishList) {
             activityReference.get().tourDetailsList.clear();
-            Convertor converters = new Convertor();
+            Converter converters = new Converter();
             if (tourDetailsTableEnglishList.size() > 0) {
                 for (int i = 0; i < tourDetailsTableEnglishList.size(); i++) {
                     TourDetailsModel tourDetailsModel = new TourDetailsModel(
@@ -468,7 +468,7 @@ public class TourSecondaryListActivity extends AppCompatActivity {
         @Override
         protected void onPostExecute(List<TourDetailsTableArabic> tourDetailsTableArabicList) {
             activityReference.get().tourDetailsList.clear();
-            Convertor converters = new Convertor();
+            Converter converters = new Converter();
             if (tourDetailsTableArabicList.size() > 0) {
                 for (int i = 0; i < tourDetailsTableArabicList.size(); i++) {
                     TourDetailsModel tourDetailsModel = new TourDetailsModel(

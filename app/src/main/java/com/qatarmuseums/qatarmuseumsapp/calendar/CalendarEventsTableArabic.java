@@ -3,12 +3,10 @@ package com.qatarmuseums.qatarmuseumsapp.calendar;
 import android.arch.persistence.room.ColumnInfo;
 import android.arch.persistence.room.Entity;
 import android.arch.persistence.room.PrimaryKey;
-import android.support.annotation.NonNull;
 
 
 @Entity(tableName = "calendareventstarabic")
 public class CalendarEventsTableArabic {
-    @NonNull
     @PrimaryKey(autoGenerate = true)
     private long sl_number;
     @ColumnInfo()
@@ -49,13 +47,13 @@ public class CalendarEventsTableArabic {
     @ColumnInfo()
     private String museum;
 
-    public CalendarEventsTableArabic(@NonNull long event_id, String event_title,
-                                     String event_short_description, String event_long_description,
-                                     String event_institution, String event_age_group, String event_program_type,
-                                     String category, String location, long event_date,
-                                     String event_start_time, String event_end_time, boolean event_registration,
-                                     String filter, long max_group_size,String field,
-                                     String age,String associatedTopics,String museum) {
+    CalendarEventsTableArabic(long event_id, String event_title,
+                              String event_short_description, String event_long_description,
+                              String event_institution, String event_age_group, String event_program_type,
+                              String category, String location, long event_date,
+                              String event_start_time, String event_end_time, boolean event_registration,
+                              String filter, long max_group_size, String field,
+                              String age, String associatedTopics, String museum) {
         this.event_id = event_id;
         this.event_title = event_title;
         this.event_short_description = event_short_description;
@@ -71,27 +69,25 @@ public class CalendarEventsTableArabic {
         this.event_registration = event_registration;
         this.filter = filter;
         this.max_group_size = max_group_size;
-        this.field=field;
-        this.age=age;
-        this.associatedTopics=associatedTopics;
-        this.museum=museum;
+        this.field = field;
+        this.age = age;
+        this.associatedTopics = associatedTopics;
+        this.museum = museum;
     }
 
-    @NonNull
     public long getSl_number() {
         return sl_number;
     }
 
-    public void setSl_number(@NonNull long sl_number) {
+    public void setSl_number(long sl_number) {
         this.sl_number = sl_number;
     }
 
-    @NonNull
     public long getEvent_id() {
         return event_id;
     }
 
-    public void setEvent_id(@NonNull long event_id) {
+    public void setEvent_id(long event_id) {
         this.event_id = event_id;
     }
 

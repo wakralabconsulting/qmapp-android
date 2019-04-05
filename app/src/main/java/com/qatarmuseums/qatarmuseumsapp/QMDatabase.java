@@ -60,7 +60,6 @@ import com.qatarmuseums.qatarmuseumsapp.museum.MuseumCollectionListTableEnglish;
 import com.qatarmuseums.qatarmuseumsapp.museumabout.MuseumAboutTableArabic;
 import com.qatarmuseums.qatarmuseumsapp.museumabout.MuseumAboutTableDao;
 import com.qatarmuseums.qatarmuseumsapp.museumabout.MuseumAboutTableEnglish;
-import com.qatarmuseums.qatarmuseumsapp.museumcollectiondetails.NMoQParkListDetails;
 import com.qatarmuseums.qatarmuseumsapp.notification.NotificationTableArabic;
 import com.qatarmuseums.qatarmuseumsapp.notification.NotificationTableDao;
 import com.qatarmuseums.qatarmuseumsapp.notification.NotificationTableEnglish;
@@ -104,7 +103,7 @@ import com.qatarmuseums.qatarmuseumsapp.tourguidestartpage.TourGuideStartPageEng
         NMoQParkListTableEnglish.class, NMoQParkListTableArabic.class,
         NMoQParkListDetailsTableEnglish.class, NMoQParkListDetailsTableArabic.class},
         version = 3, exportSchema = false)
-@TypeConverters({Convertor.class})
+@TypeConverters({Converter.class})
 
 
 public abstract class QMDatabase extends RoomDatabase {

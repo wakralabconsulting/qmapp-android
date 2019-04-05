@@ -22,7 +22,7 @@ import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
-import com.qatarmuseums.qatarmuseumsapp.Convertor;
+import com.qatarmuseums.qatarmuseumsapp.Converter;
 import com.qatarmuseums.qatarmuseumsapp.LocaleManager;
 import com.qatarmuseums.qatarmuseumsapp.QMDatabase;
 import com.qatarmuseums.qatarmuseumsapp.R;
@@ -104,7 +104,7 @@ public class CommonActivity extends AppCompatActivity {
     LinearLayout retryLayout;
     Button retryButton;
     private Integer travelTableRowCount;
-    private Convertor convertor;
+    private Converter converter;
 
     @Override
     protected void attachBaseContext(Context base) {
@@ -205,7 +205,7 @@ public class CommonActivity extends AppCompatActivity {
             return false;
         });
         getData();
-        convertor = new Convertor();
+        converter = new Converter();
     }
 
     private void getTravelDataFromDataBase() {
@@ -921,7 +921,7 @@ public class CommonActivity extends AppCompatActivity {
                                     activityReference.get().models.get(i).getEventDay(),
                                     activityReference.get().models.get(i).getEventDate(),
                                     activityReference.get().models.get(i).getName(),
-                                    activityReference.get().convertor.fromArrayList(activityReference.get().models.get(i).getImages()),
+                                    activityReference.get().converter.fromArrayList(activityReference.get().models.get(i).getImages()),
                                     activityReference.get().models.get(i).getSortId(),
                                     activityReference.get().models.get(i).getDescription(), isTour);
                             activityReference.get().qmDatabase.getTourListTaleDao().insertEnglish(tourListTableEnglish);
@@ -938,7 +938,7 @@ public class CommonActivity extends AppCompatActivity {
                                     activityReference.get().models.get(i).getEventDay(),
                                     activityReference.get().models.get(i).getEventDate(),
                                     activityReference.get().models.get(i).getName(),
-                                    activityReference.get().convertor.fromArrayList(activityReference.get().models.get(i).getImages()),
+                                    activityReference.get().converter.fromArrayList(activityReference.get().models.get(i).getImages()),
                                     activityReference.get().models.get(i).getSortId(),
                                     activityReference.get().models.get(i).getDescription(), isTour);
                             activityReference.get().qmDatabase.getTourListTaleDao().insertArabic(tourListTableArabic);
@@ -968,7 +968,7 @@ public class CommonActivity extends AppCompatActivity {
                         activityReference.get().models.get(i).getEventDay(),
                         activityReference.get().models.get(i).getEventDate(),
                         activityReference.get().models.get(i).getName(),
-                        activityReference.get().convertor.fromArrayList(activityReference.get().models.get(i).getImages()),
+                        activityReference.get().converter.fromArrayList(activityReference.get().models.get(i).getImages()),
                         activityReference.get().models.get(i).getSortId(),
                         activityReference.get().models.get(i).getDescription(),
                         activityReference.get().models.get(i).getId()
@@ -979,7 +979,7 @@ public class CommonActivity extends AppCompatActivity {
                         activityReference.get().models.get(i).getEventDay(),
                         activityReference.get().models.get(i).getEventDate(),
                         activityReference.get().models.get(i).getName(),
-                        activityReference.get().convertor.fromArrayList(activityReference.get().models.get(i).getImages()),
+                        activityReference.get().converter.fromArrayList(activityReference.get().models.get(i).getImages()),
                         activityReference.get().models.get(i).getSortId(),
                         activityReference.get().models.get(i).getDescription(),
                         activityReference.get().models.get(i).getId()
@@ -1029,7 +1029,7 @@ public class CommonActivity extends AppCompatActivity {
                                 activityReference.get().models.get(i).getEventDay(),
                                 activityReference.get().models.get(i).getEventDate(),
                                 activityReference.get().models.get(i).getName(),
-                                activityReference.get().convertor.fromArrayList(activityReference.get().models.get(i).getImages()),
+                                activityReference.get().converter.fromArrayList(activityReference.get().models.get(i).getImages()),
                                 activityReference.get().models.get(i).getSortId(),
                                 activityReference.get().models.get(i).getDescription(), isTour);
                         activityReference.get().qmDatabase.getTourListTaleDao().insertEnglish(tourListTableEnglish);
@@ -1042,7 +1042,7 @@ public class CommonActivity extends AppCompatActivity {
                                 activityReference.get().models.get(i).getEventDay(),
                                 activityReference.get().models.get(i).getEventDate(),
                                 activityReference.get().models.get(i).getName(),
-                                activityReference.get().convertor.fromArrayList(activityReference.get().models.get(i).getImages()),
+                                activityReference.get().converter.fromArrayList(activityReference.get().models.get(i).getImages()),
                                 activityReference.get().models.get(i).getSortId(),
                                 activityReference.get().models.get(i).getDescription(), isTour);
                         activityReference.get().qmDatabase.getTourListTaleDao().insertArabic(tourListTableArabic);
@@ -1079,7 +1079,7 @@ public class CommonActivity extends AppCompatActivity {
                                 tourListTableEnglishes.get(i).getTourDay(),
                                 tourListTableEnglishes.get(i).getTourEventDate(),
                                 tourListTableEnglishes.get(i).getTourSubtitle(),
-                                activityReference.get().convertor.fromString(tourListTableEnglishes.get(i).getTourImages()),
+                                activityReference.get().converter.fromString(tourListTableEnglishes.get(i).getTourImages()),
                                 true);
                     else
                         commonModel = new CommonModel(
@@ -1087,7 +1087,7 @@ public class CommonActivity extends AppCompatActivity {
                                 tourListTableEnglishes.get(i).getTourDay(),
                                 tourListTableEnglishes.get(i).getTourEventDate(),
                                 tourListTableEnglishes.get(i).getTourSubtitle(),
-                                activityReference.get().convertor.fromString(tourListTableEnglishes.get(i).getTourImages()),
+                                activityReference.get().converter.fromString(tourListTableEnglishes.get(i).getTourImages()),
                                 false);
                     activityReference.get().models.add(i, commonModel);
                 }
@@ -1135,7 +1135,7 @@ public class CommonActivity extends AppCompatActivity {
                                 tourListTableArabics.get(i).getTourDay(),
                                 tourListTableArabics.get(i).getTourEventDate(),
                                 tourListTableArabics.get(i).getTourSubtitle(),
-                                activityReference.get().convertor.fromString(tourListTableArabics.get(i).getTourImages()),
+                                activityReference.get().converter.fromString(tourListTableArabics.get(i).getTourImages()),
                                 true);
                     else
                         commonModel = new CommonModel(
@@ -1143,7 +1143,7 @@ public class CommonActivity extends AppCompatActivity {
                                 tourListTableArabics.get(i).getTourDay(),
                                 tourListTableArabics.get(i).getTourEventDate(),
                                 tourListTableArabics.get(i).getTourSubtitle(),
-                                activityReference.get().convertor.fromString(tourListTableArabics.get(i).getTourImages()),
+                                activityReference.get().converter.fromString(tourListTableArabics.get(i).getTourImages()),
                                 false);
                     activityReference.get().models.add(i, commonModel);
                 }
