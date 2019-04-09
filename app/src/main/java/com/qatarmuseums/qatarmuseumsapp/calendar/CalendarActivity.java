@@ -449,8 +449,8 @@ public class CalendarActivity extends AppCompatActivity {
         dialogActionButton.setText(getResources().getString(R.string.register_now));
         dialogContent.setText(details);
         dialogActionButton.setEnabled(false);
-        dialogActionButton.setTextColor(getResources().getColor(R.color.white));
-        dialogActionButton.setBackgroundTintList(ColorStateList.valueOf(getResources().getColor(R.color.semi_transparent_grey)));
+        dialogActionButton.setTextColor(getResources().getColor(R.color.colorWhite));
+        dialogActionButton.setBackgroundTintList(ColorStateList.valueOf(getResources().getColor(R.color.colorSemiTransparentGrey)));
         dialogActionButton.setOnClickListener(view1 ->
                 new Util().showComingSoonDialog(CalendarActivity.this, R.string.coming_soon_content));
         closeBtn.setOnClickListener(view12 -> dialog.dismiss());

@@ -17,7 +17,7 @@
             android:id="@+id/common_toolbar"
             android:layout_width="match_parent"
             android:layout_height="?android:attr/actionBarSize"
-            android:background="@color/black"
+            android:background="@color/colorBlack"
             android:theme="@style/AppTheme.PopupOverlay"
             app:contentInsetEnd="0dp"
             app:contentInsetStart="0dp">
@@ -63,14 +63,14 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
-            android:padding="@dimen/pading_25">
+            android:padding="@dimen/padding_25">
 
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:fontFamily="@font/din_next_lt_pro_light"
                 android:text="@string/culture_pass_description"
-                android:textColor="@color/black"
+                android:textColor="@color/colorBlack"
                 android:textSize="@dimen/font_size_16" />
 
             <LinearLayout
@@ -78,7 +78,7 @@
                 android:layout_height="wrap_content"
                 android:gravity="center"
                 android:orientation="vertical"
-                android:paddingTop="@dimen/pading_15">
+                android:paddingTop="@dimen/padding_15">
 
                 <TextView
                     android:id="@+id/location_title"
@@ -87,15 +87,15 @@
                     android:fontFamily="@font/din_next_lt_pro_bold"
                     android:text="@string/benefits"
                     android:textAllCaps="true"
-                    android:textColor="@color/black"
+                    android:textColor="@color/colorBlack"
                     android:textSize="@dimen/font_size_18" />
 
                 <LinearLayout
                     android:layout_width="25dp"
                     android:layout_height="3dp"
                     android:layout_marginBottom="@dimen/padding_10"
-                    android:layout_marginTop="@dimen/pading_10"
-                    android:background="@color/black" />
+                    android:layout_marginTop="@dimen/padding_10"
+                    android:background="@color/colorBlack" />
             </LinearLayout>
 
             <TextView
@@ -103,55 +103,55 @@
                 android:layout_height="wrap_content"
                 android:fontFamily="@font/din_next_lt_pro_light"
                 android:text="@string/culture_pass_benefits"
-                android:textColor="@color/black" />
+                android:textColor="@color/colorBlack" />
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:gravity="center"
                 android:orientation="vertical"
-                android:paddingTop="@dimen/pading_20">
+                android:paddingTop="@dimen/padding_20">
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:fontFamily="@font/din_next_lt_pro_light"
                     android:text="@string/not_a_member_yet"
-                    android:textColor="@color/black" />
+                    android:textColor="@color/colorBlack" />
 
                 <Button
                     android:id="@+id/become_a_member_btn"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginEnd="@dimen/pading_10"
-                    android:layout_marginStart="@dimen/pading_10"
-                    android:layout_marginTop="@dimen/pading_10"
+                    android:layout_marginEnd="@dimen/padding_10"
+                    android:layout_marginStart="@dimen/padding_10"
+                    android:layout_marginTop="@dimen/padding_10"
                     android:background="@drawable/round_corner_black"
                     android:fontFamily="@font/din_next_lt_pro_bold"
                     android:text="@string/become_a_member"
-                    android:textColor="@color/white" />
+                    android:textColor="@color/colorWhite" />
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="@dimen/pading_20"
+                    android:layout_marginTop="@dimen/padding_20"
                     android:fontFamily="@font/din_next_lt_pro_light"
                     android:text="@string/already_a_member"
-                    android:textColor="@color/black" />
+                    android:textColor="@color/colorBlack" />
 
                 <Button
                     android:id="@+id/login_btn"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginBottom="@dimen/padding_15"
-                    android:layout_marginEnd="@dimen/pading_10"
-                    android:layout_marginStart="@dimen/pading_10"
-                    android:layout_marginTop="@dimen/pading_10"
+                    android:layout_marginEnd="@dimen/padding_10"
+                    android:layout_marginStart="@dimen/padding_10"
+                    android:layout_marginTop="@dimen/padding_10"
                     android:background="@drawable/round_corner_black"
                     android:fontFamily="@font/din_next_lt_pro_bold"
                     android:text="@string/log_in"
                     android:textAllCaps="true"
-                    android:textColor="@color/white" />
+                    android:textColor="@color/colorWhite" />
 
             </LinearLayout>
         </LinearLayout>

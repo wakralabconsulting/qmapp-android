@@ -8,7 +8,7 @@
     <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginEnd="@dimen/pading_25"
+        android:layout_marginEnd="@dimen/padding_25"
         android:layout_marginStart="@dimen/padding_40"
         android:gravity="center"
         android:orientation="vertical">
@@ -23,14 +23,14 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
-                android:layout_marginBottom="@dimen/pading_10"
-                android:layout_marginEnd="@dimen/pading_20"
-                android:layout_marginStart="@dimen/pading_10"
-                android:layout_marginTop="@dimen/pading_20"
+                android:layout_marginBottom="@dimen/padding_10"
+                android:layout_marginEnd="@dimen/padding_20"
+                android:layout_marginStart="@dimen/padding_10"
+                android:layout_marginTop="@dimen/padding_20"
                 android:background="@drawable/round_corner_white"
                 android:paddingBottom="@dimen/padding_10"
-                android:paddingEnd="@dimen/pading_10"
-                android:paddingStart="@dimen/pading_10">
+                android:paddingEnd="@dimen/padding_10"
+                android:paddingStart="@dimen/padding_10">
 
                 <TextView
                     android:id="@+id/dialog_content"
@@ -38,10 +38,10 @@
                     android:layout_height="wrap_content"
                     android:layout_marginEnd="@dimen/padding_25"
                     android:layout_marginStart="@dimen/padding_25"
-                    android:layout_marginTop="@dimen/pading_25"
+                    android:layout_marginTop="@dimen/padding_25"
                     android:textAlignment="center"
-                    android:textColor="@color/black"
-                    android:textSize="@dimen/settings_text_size" />
+                    android:textColor="@color/colorBlack"
+                    android:textSize="@dimen/font_size_18" />
 
                 <Button
                     android:id="@+id/doneBtn"
@@ -54,8 +54,8 @@
                     android:fontFamily="@font/din_next_lt_pro_bold"
                     android:gravity="center"
                     android:textAllCaps="false"
-                    android:textColor="@color/white"
-                    android:textSize="@dimen/settings_page_list_item_text_size" />
+                    android:textColor="@color/colorWhite"
+                    android:textSize="@dimen/font_size_21" />
 
 
             </RelativeLayout>

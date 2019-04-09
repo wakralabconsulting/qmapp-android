@@ -1,5 +1,5 @@
-<resources>
-    <string name="app_name">بطاقتك إلى الثقافة</string>
+<resources xmlns:tools="http://schemas.android.com/tools">
+    <string name="app_name" tools:ignore="PrivateResource">بطاقتك إلى الثقافة</string>
     <string name="web_view_title">متاحف قطر</string>
     <string name="view_details"><u>عرض التفاصيل</u></string>
     <string name="events">الفعاليات</string>
@@ -12,15 +12,15 @@
     <string name="title_culture_pass">بطاقتك إلى الثقافة</string>
     <string name="education_calendar_activity_tittle">التقويم التعليمي</string>
     <string name="title_more">المزيد</string>
-    <string name="sidemenu_exhibition_text">المعارض</string>
-    <string name="sidemenu_events_text">الفعاليات</string>
-    <string name="sidemenu_education_text">التعليم</string>
-    <string name="sidemenu_tour_guide_text">الدليل السياحي</string>
-    <string name="sidemenu_heritage_text">المواقع التراثية</string>
-    <string name="sidemenu_public_arts_text">الفنون العامة</string>
-    <string name="sidemenu_dining_text">الطعام</string>
-    <string name="sidemenu_gift_shop_text">محل الهدايا</string>
-    <string name="sidemenu_parks_text">الحدائق</string>
+    <string name="side_menu_exhibition_text">المعارض</string>
+    <string name="side_menu_events_text">الفعاليات</string>
+    <string name="side_menu_education_text">التعليم</string>
+    <string name="side_menu_tour_guide_text">الدليل السياحي</string>
+    <string name="side_menu_heritage_text">المواقع التراثية</string>
+    <string name="side_menu_public_arts_text">الفنون العامة</string>
+    <string name="side_menu_dining_text">الطعام</string>
+    <string name="side_menu_gift_shop_text">محل الهدايا</string>
+    <string name="side_menu_parks_text">الحدائق</string>
     <string name="toolbar_title_key">TOOLBAR_TITLE</string>
     <string name="notifications">الإشعارات</string>
     <string name="location_title">الموقع</string>
@@ -100,12 +100,12 @@
 
     <string name="all_ages">جميع الفئات العمرية</string>
     <string name="teachers">المعلمين</string>
-    <string name="nursery">الحضانة/قبل الروضة (3-5 سنوات)</string>
-    <string name="early">الابتدائية المبكرة (5-7 سنوات)</string>
-    <string name="primary">الإبتدائية (8-11 سنوات)</string>
-    <string name="preparatory">الإعدادية (12-14 سنة)</string>
-    <string name="secondary">الثانوية (15-18 سنة)</string>
-    <string name="college">الكلية والجامعة (17-24 سنة)</string>
+    <string name="nursery">الحضانة/قبل الروضة (3–5 سنوات)</string>
+    <string name="early">الابتدائية المبكرة (5–7 سنوات)</string>
+    <string name="primary">الإبتدائية (8–11 سنوات)</string>
+    <string name="preparatory">الإعدادية (12–14 سنة)</string>
+    <string name="secondary">الثانوية (15–18 سنة)</string>
+    <string name="college">الكلية والجامعة (17–24 سنة)</string>
     <string name="youth">الشباب</string>
     <string name="adults">البالغون</string>
     <string name="seniors">كبار السن</string>
@@ -148,7 +148,7 @@
     <string name="object_history">تاريخ القطعة</string>
     <string name="no_location_data">لا توجد بيانات للموقع</string>
     <string name="increase_volume">يرجى رفع الصوت</string>
-    <string name="loading">جاري التحميل...</string>
+    <string name="loading">جاري التحميل…</string>
     <string name="oops">خطأ!</string>
     <string name="there_is_no_internet">لا يوجد اتصال بالانترنت</string>
     <string name="please_check_your_internet">الرجاء التحقق من اتصال الانترنت الخاص بك</string>

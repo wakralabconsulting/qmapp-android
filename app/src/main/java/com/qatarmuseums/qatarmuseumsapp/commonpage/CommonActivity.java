@@ -134,7 +134,7 @@ public class CommonActivity extends AppCompatActivity {
         recyclerView = findViewById(R.id.common_recycler_view);
 
         mAdapter = new CommonListAdapter(this, models, position -> {
-            if (toolbarTitle.equals(getString(R.string.sidemenu_dining_text)))
+            if (toolbarTitle.equals(getString(R.string.side_menu_dining_text)))
                 navigationIntent = new Intent(CommonActivity.this,
                         DiningActivity.class);
             else if (toolbarTitle.equals(getString(R.string.museum_collection_text)))
@@ -217,24 +217,24 @@ public class CommonActivity extends AppCompatActivity {
     }
 
     public void getData() {
-        if (toolbarTitle.equals(getString(R.string.sidemenu_exhibition_text))) {
+        if (toolbarTitle.equals(getString(R.string.side_menu_exhibition_text))) {
             if (util.isNetworkAvailable(CommonActivity.this))
                 getCommonListAPIDataFromAPI("Exhibition_List_Page.json");
             else
                 getCommonListDataFromDatabase("Exhibition_List_Page.json");
-        } else if (toolbarTitle.equals(getString(R.string.sidemenu_heritage_text))) {
+        } else if (toolbarTitle.equals(getString(R.string.side_menu_heritage_text))) {
             if (util.isNetworkAvailable(CommonActivity.this))
                 getCommonListAPIDataFromAPI("Heritage_List_Page.json");
             else
                 getCommonListDataFromDatabase("Heritage_List_Page.json");
-        } else if (toolbarTitle.equals(getString(R.string.sidemenu_public_arts_text))) {
+        } else if (toolbarTitle.equals(getString(R.string.side_menu_public_arts_text))) {
 
             if (util.isNetworkAvailable(CommonActivity.this))
                 getCommonListAPIDataFromAPI("Public_Arts_List_Page.json");
             else
                 getCommonListDataFromDatabase("Public_Arts_List_Page.json");
 
-        } else if (toolbarTitle.equals(getString(R.string.sidemenu_dining_text))) {
+        } else if (toolbarTitle.equals(getString(R.string.side_menu_dining_text))) {
             if (util.isNetworkAvailable(CommonActivity.this))
                 getCommonListAPIDataFromAPI("getDiningList.json");
             else

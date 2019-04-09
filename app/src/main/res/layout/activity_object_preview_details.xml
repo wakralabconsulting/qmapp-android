@@ -41,7 +41,7 @@
         android:id="@+id/details_popup_long"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="@color/white"
+        android:background="@color/colorWhite"
         android:gravity="center"
         android:orientation="vertical"
         app:layout_behavior="@string/appbar_scrolling_view_behavior">
@@ -68,9 +68,9 @@
                 android:layoutDirection="ltr"
                 android:orientation="horizontal"
                 android:paddingBottom="@dimen/padding_5"
-                android:paddingEnd="@dimen/pading_25"
-                android:paddingStart="@dimen/pading_25"
-                android:paddingTop="@dimen/pading_10"
+                android:paddingEnd="@dimen/padding_25"
+                android:paddingStart="@dimen/padding_25"
+                android:paddingTop="@dimen/padding_10"
                 android:visibility="gone">
 
                 <ImageView
@@ -98,7 +98,7 @@
                 android:paddingStart="@dimen/padding_25"
                 android:text="Albarello"
                 android:textAlignment="textStart"
-                android:textColor="@color/black"
+                android:textColor="@color/colorBlack"
                 android:textSize="@dimen/font_size_18"
                 android:textStyle="bold" />
 
@@ -113,7 +113,7 @@
                 android:paddingStart="@dimen/padding_25"
                 android:text="@string/floormap_detail1"
                 android:textAlignment="textStart"
-                android:textColor="@color/black"
+                android:textColor="@color/colorBlack"
                 android:textSize="@dimen/font_size_15" />
 
             <ImageView
@@ -158,7 +158,7 @@
                 android:paddingStart="@dimen/padding_25"
                 android:text="@string/floormap_imagdesc1"
                 android:textAlignment="textStart"
-                android:textColor="@color/black"
+                android:textColor="@color/colorBlack"
                 android:textSize="@dimen/font_size_16"
                 android:visibility="gone" />
 
@@ -172,7 +172,7 @@
                 android:paddingStart="@dimen/padding_25"
                 android:text="@string/object_history"
                 android:textAlignment="textStart"
-                android:textColor="@color/black"
+                android:textColor="@color/colorBlack"
                 android:textSize="@dimen/font_size_18"
                 android:textStyle="bold"
                 android:visibility="gone" />
@@ -187,7 +187,7 @@
                 android:paddingStart="@dimen/padding_25"
                 android:text="@string/floormap_detail2"
                 android:textAlignment="textStart"
-                android:textColor="@color/black"
+                android:textColor="@color/colorBlack"
                 android:textSize="@dimen/font_size_15"
                 android:visibility="gone" />
 
@@ -198,7 +198,7 @@
                 android:layout_marginBottom="@dimen/padding_3"
                 android:paddingEnd="@dimen/padding_25"
                 android:paddingStart="@dimen/padding_25"
-                android:paddingTop="@dimen/pading_10"
+                android:paddingTop="@dimen/padding_10"
                 android:scaleType="fitCenter"
                 android:src="@drawable/science_tour_object2"
                 android:visibility="gone" />
@@ -213,7 +213,7 @@
                 android:paddingStart="@dimen/padding_25"
                 android:text="@string/floormap_imagdesc2"
                 android:textAlignment="textStart"
-                android:textColor="@color/black"
+                android:textColor="@color/colorBlack"
                 android:textSize="@dimen/font_size_16"
                 android:visibility="gone" />
 

@@ -332,9 +332,9 @@ public class FloorMapActivity extends AppCompatActivity implements OnMapReadyCal
             position = googleMap.getCameraPosition();
             showLevel3();
             hideLevel2();
-            level2.setBackgroundColor(getResources().getColor(R.color.white));
-            level1.setBackgroundColor(getResources().getColor(R.color.floor_map_buttonbg));
-            levelG.setBackgroundColor(getResources().getColor(R.color.floor_map_buttonbg));
+            level2.setBackgroundColor(getResources().getColor(R.color.colorWhite));
+            level1.setBackgroundColor(getResources().getColor(R.color.colorFloorMapButtonBackground));
+            levelG.setBackgroundColor(getResources().getColor(R.color.colorFloorMapButtonBackground));
             mGroundOverlay.setImage(BitmapDescriptorFactory.fromResource(R.drawable.qm_level_3));
         });
         level1.setOnClickListener(v -> {
@@ -344,9 +344,9 @@ public class FloorMapActivity extends AppCompatActivity implements OnMapReadyCal
             position = googleMap.getCameraPosition();
             showLevel2();
             hideLevel3();
-            level2.setBackgroundColor(getResources().getColor(R.color.floor_map_buttonbg));
-            level1.setBackgroundColor(getResources().getColor(R.color.white));
-            levelG.setBackgroundColor(getResources().getColor(R.color.floor_map_buttonbg));
+            level2.setBackgroundColor(getResources().getColor(R.color.colorFloorMapButtonBackground));
+            level1.setBackgroundColor(getResources().getColor(R.color.colorWhite));
+            levelG.setBackgroundColor(getResources().getColor(R.color.colorFloorMapButtonBackground));
             mGroundOverlay.setImage(BitmapDescriptorFactory.fromResource(R.drawable.qm_level_2));
         });
         levelG.setOnClickListener(v -> {
@@ -355,9 +355,9 @@ public class FloorMapActivity extends AppCompatActivity implements OnMapReadyCal
             hideLevel2();
             hideLevel3();
             showAudioControllerFloorMap(groundFloorAudioURL);
-            level2.setBackgroundColor(getResources().getColor(R.color.floor_map_buttonbg));
-            level1.setBackgroundColor(getResources().getColor(R.color.floor_map_buttonbg));
-            levelG.setBackgroundColor(getResources().getColor(R.color.white));
+            level2.setBackgroundColor(getResources().getColor(R.color.colorFloorMapButtonBackground));
+            level1.setBackgroundColor(getResources().getColor(R.color.colorFloorMapButtonBackground));
+            levelG.setBackgroundColor(getResources().getColor(R.color.colorWhite));
             mGroundOverlay.setImage(BitmapDescriptorFactory.fromResource(R.drawable.qm_level_1));
         });
         retryButton.setOnClickListener(v -> {

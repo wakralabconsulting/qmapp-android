@@ -162,7 +162,7 @@ public class TourGuideActivity extends AppCompatActivity {
         progressBar.setVisibility(View.VISIBLE);
         APIInterface apiService =
                 APIClient.getClient().create(APIInterface.class);
-        Call<ArrayList<HomeList>> call = apiService.getHomepageDetails(appLanguage);
+        Call<ArrayList<HomeList>> call = apiService.getMuseumsList(appLanguage);
         call.enqueue(new Callback<ArrayList<HomeList>>() {
             @Override
             public void onResponse(Call<ArrayList<HomeList>> call, Response<ArrayList<HomeList>> response) {

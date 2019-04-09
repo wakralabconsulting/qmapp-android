@@ -275,7 +275,7 @@ public class MuseumActivity extends BaseActivity implements
         museumHScrollModelList.add(model);
 
         model = new MuseumHScrollModel(this,
-                getResources().getString(R.string.sidemenu_exhibition_text), R.drawable.exhibition_black);
+                getResources().getString(R.string.side_menu_exhibition_text), R.drawable.exhibition_black);
         museumHScrollModelList.add(model);
 
         model = new MuseumHScrollModel(this,
@@ -283,7 +283,7 @@ public class MuseumActivity extends BaseActivity implements
         museumHScrollModelList.add(model);
 
         model = new MuseumHScrollModel(this,
-                getResources().getString(R.string.sidemenu_dining_text), R.drawable.dining);
+                getResources().getString(R.string.side_menu_dining_text), R.drawable.dining);
         museumHScrollModelList.add(model);
         museumHorizontalScrollViewAdapter.notifyDataSetChanged();
     }
@@ -314,11 +314,11 @@ public class MuseumActivity extends BaseActivity implements
                 getResources().getString(R.string.museum_about_text), R.drawable.about_icon);
         museumHScrollModelList.add(model);
         model = new MuseumHScrollModel(this,
-                getResources().getString(R.string.sidemenu_tour_guide_text), R.drawable.audio_circle);
+                getResources().getString(R.string.side_menu_tour_guide_text), R.drawable.audio_circle);
 
         museumHScrollModelList.add(model);
         model = new MuseumHScrollModel(this,
-                getResources().getString(R.string.sidemenu_exhibition_text), R.drawable.exhibition_black);
+                getResources().getString(R.string.side_menu_exhibition_text), R.drawable.exhibition_black);
         museumHScrollModelList.add(model);
 
         model = new MuseumHScrollModel(this,
@@ -326,11 +326,11 @@ public class MuseumActivity extends BaseActivity implements
         museumHScrollModelList.add(model);
 
         model = new MuseumHScrollModel(this,
-                getResources().getString(R.string.sidemenu_parks_text), R.drawable.park_black);
+                getResources().getString(R.string.side_menu_parks_text), R.drawable.park_black);
         museumHScrollModelList.add(model);
 
         model = new MuseumHScrollModel(this,
-                getResources().getString(R.string.sidemenu_dining_text), R.drawable.dining);
+                getResources().getString(R.string.side_menu_dining_text), R.drawable.dining);
         museumHScrollModelList.add(model);
         museumHorizontalScrollViewAdapter.notifyDataSetChanged();
     }
@@ -346,7 +346,7 @@ public class MuseumActivity extends BaseActivity implements
         museumHScrollModelList.add(model);
 
         model = new MuseumHScrollModel(this,
-                getResources().getString(R.string.sidemenu_exhibition_text), R.drawable.exhibition_black);
+                getResources().getString(R.string.side_menu_exhibition_text), R.drawable.exhibition_black);
         museumHScrollModelList.add(model);
 
         // Commented for temporary due to no data
@@ -364,7 +364,7 @@ public class MuseumActivity extends BaseActivity implements
 //        museumHScrollModelList.add(model);
 
         model = new MuseumHScrollModel(this,
-                getResources().getString(R.string.sidemenu_parks_text), R.drawable.park_black);
+                getResources().getString(R.string.side_menu_parks_text), R.drawable.park_black);
         museumHScrollModelList.add(model);
         museumHorizontalScrollViewAdapter.notifyDataSetChanged();
     }
@@ -375,10 +375,10 @@ public class MuseumActivity extends BaseActivity implements
                 getResources().getString(R.string.museum_about_text), R.drawable.about_icon);
         museumHScrollModelList.add(model);
         model = new MuseumHScrollModel(this,
-                getResources().getString(R.string.sidemenu_tour_guide_text), R.drawable.audio_circle);
+                getResources().getString(R.string.side_menu_tour_guide_text), R.drawable.audio_circle);
         museumHScrollModelList.add(model);
         model = new MuseumHScrollModel(this,
-                getResources().getString(R.string.sidemenu_exhibition_text), R.drawable.exhibition_black);
+                getResources().getString(R.string.side_menu_exhibition_text), R.drawable.exhibition_black);
         museumHScrollModelList.add(model);
 
         model = new MuseumHScrollModel(this,
@@ -386,7 +386,7 @@ public class MuseumActivity extends BaseActivity implements
         museumHScrollModelList.add(model);
 
         model = new MuseumHScrollModel(this,
-                getResources().getString(R.string.sidemenu_dining_text), R.drawable.dining);
+                getResources().getString(R.string.side_menu_dining_text), R.drawable.dining);
         museumHScrollModelList.add(model);
         museumHorizontalScrollViewAdapter.notifyDataSetChanged();
     }

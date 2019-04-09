@@ -1084,8 +1084,8 @@ public class EducationCalendarActivity extends AppCompatActivity {
         registerNowBtn.setText(buttonText);
         if (buttonText.equalsIgnoreCase(getResources().getString(R.string.register_now))) {
             registerNowBtn.setEnabled(false);
-            registerNowBtn.setTextColor(getResources().getColor(R.color.white));
-            registerNowBtn.setBackgroundTintList(ColorStateList.valueOf(getResources().getColor(R.color.semi_transparent_grey)));
+            registerNowBtn.setTextColor(getResources().getColor(R.color.colorWhite));
+            registerNowBtn.setBackgroundTintList(ColorStateList.valueOf(getResources().getColor(R.color.colorSemiTransparentGrey)));
         }
         dialogContent.setText(educationEvents.get(position).getLong_desc());
 

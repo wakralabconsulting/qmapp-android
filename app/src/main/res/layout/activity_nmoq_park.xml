@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/collection_detail_page_background"
+    android:background="@color/colorPageBackground"
     tools:context="com.qatarmuseums.qatarmuseumsapp.park.NMoQParkActivity">
 
     <android.support.design.widget.AppBarLayout
@@ -17,7 +17,7 @@
             android:id="@+id/toolbar"
             android:layout_width="match_parent"
             android:layout_height="?android:attr/actionBarSize"
-            android:background="@color/black"
+            android:background="@color/colorBlack"
             android:theme="@style/AppTheme.PopupOverlay"
             app:contentInsetEnd="0dp"
             app:contentInsetStart="0dp">
@@ -78,7 +78,7 @@
                 android:fontFamily="@font/din_next_lt_pro_regular"
                 android:padding="@dimen/text_margin"
                 android:textAlignment="center"
-                android:textColor="@color/black"
+                android:textColor="@color/colorBlack"
                 android:textSize="@dimen/font_size_15" />
 
             <android.support.v7.widget.RecyclerView
@@ -111,7 +111,7 @@
                     android:fontFamily="@font/din_next_lt_pro_bold"
                     android:textAlignment="center"
                     android:textAllCaps="true"
-                    android:textColor="@color/black"
+                    android:textColor="@color/colorBlack"
                     android:textSize="@dimen/font_size_18"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent" />
@@ -120,8 +120,8 @@
                     android:id="@+id/park_title_divider"
                     android:layout_width="25dp"
                     android:layout_height="2dp"
-                    android:layout_marginTop="@dimen/pading_10"
-                    android:background="@color/black"
+                    android:layout_marginTop="@dimen/padding_10"
+                    android:background="@color/colorBlack"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@id/park_title_label" />
@@ -135,7 +135,7 @@
                     android:layout_marginTop="@dimen/text_margin"
                     android:fontFamily="@font/din_next_lt_pro_regular"
                     android:textAlignment="center"
-                    android:textColor="@color/black"
+                    android:textColor="@color/colorBlack"
                     android:textSize="@dimen/font_size_15"
                     app:layout_constraintTop_toBottomOf="@id/park_title_divider" />
 
@@ -160,7 +160,7 @@
                     android:fontFamily="@font/din_next_lt_pro_bold"
                     android:textAlignment="center"
                     android:textAllCaps="true"
-                    android:textColor="@color/black"
+                    android:textColor="@color/colorBlack"
                     android:textSize="@dimen/font_size_18"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent" />
@@ -169,8 +169,8 @@
                     android:id="@+id/timing_title_divider"
                     android:layout_width="25dp"
                     android:layout_height="2dp"
-                    android:layout_marginTop="@dimen/pading_10"
-                    android:background="@color/black"
+                    android:layout_marginTop="@dimen/padding_10"
+                    android:background="@color/colorBlack"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@id/park_timing_label" />
@@ -184,7 +184,7 @@
                     android:layout_marginTop="@dimen/text_margin"
                     android:fontFamily="@font/din_next_lt_pro_regular"
                     android:textAlignment="center"
-                    android:textColor="@color/black"
+                    android:textColor="@color/colorBlack"
                     android:textSize="@dimen/font_size_15"
                     app:layout_constraintTop_toBottomOf="@id/timing_title_divider" />
 
@@ -208,7 +208,7 @@
                     android:fontFamily="@font/din_next_lt_pro_bold"
                     android:paddingTop="@dimen/text_margin"
                     android:textAllCaps="true"
-                    android:textColor="@color/black"
+                    android:textColor="@color/colorBlack"
                     android:textSize="@dimen/font_size_18"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent" />
@@ -218,8 +218,8 @@
                     android:layout_width="25dp"
                     android:layout_height="3dp"
                     android:layout_marginBottom="@dimen/padding_10"
-                    android:layout_marginTop="@dimen/pading_10"
-                    android:background="@color/black"
+                    android:layout_marginTop="@dimen/padding_10"
+                    android:background="@color/colorBlack"
                     android:padding="@dimen/padding_25"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
@@ -320,7 +320,7 @@
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/pading_15"
+            android:layout_marginTop="@dimen/padding_15"
             android:fontFamily="@font/din_next_lt_pro_light"
             android:text="@string/there_is_no_internet"
             android:textAlignment="center"
@@ -345,12 +345,12 @@
             android:background="@drawable/round_corner_black"
             android:fontFamily="@font/din_next_lt_pro_bold"
             android:gravity="center"
-            android:paddingEnd="@dimen/pading_30"
-            android:paddingStart="@dimen/pading_30"
+            android:paddingEnd="@dimen/padding_30"
+            android:paddingStart="@dimen/padding_30"
             android:text="@string/try_again"
             android:textAllCaps="false"
-            android:textColor="@color/white"
-            android:textSize="@dimen/settings_page_list_item_text_size" />
+            android:textColor="@color/colorWhite"
+            android:textSize="@dimen/font_size_21" />
 
     </LinearLayout>
 

@@ -14,7 +14,7 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="0dp"
-            android:layout_marginTop="@dimen/pading_15"
+            android:layout_marginTop="@dimen/padding_15"
             android:layout_weight="1"
             android:baselineAligned="false"
             android:gravity="center"
@@ -30,18 +30,18 @@
 
                 <ImageView
                     android:id="@+id/sidemenu_exibition_icon"
-                    android:layout_width="@dimen/sidemenu_items_size"
-                    android:layout_height="@dimen/sidemenu_items_size"
+                    android:layout_width="@dimen/side_menu_items_size"
+                    android:layout_height="@dimen/side_menu_items_size"
                     android:src="@drawable/exhibitionwhite" />
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="@dimen/pading_10"
+                    android:layout_marginTop="@dimen/padding_10"
                     android:fontFamily="@font/din_next_lt_pro_regular"
-                    android:text="@string/sidemenu_exhibition_text"
-                    android:textColor="@color/white"
-                    android:textSize="@dimen/sidemenu_text_size" />
+                    android:text="@string/side_menu_exhibition_text"
+                    android:textColor="@color/colorWhite"
+                    android:textSize="@dimen/font_size_16" />
 
 
             </LinearLayout>
@@ -56,18 +56,18 @@
 
                 <ImageView
                     android:id="@+id/sidemenu_event_icon"
-                    android:layout_width="@dimen/sidemenu_items_size"
-                    android:layout_height="@dimen/sidemenu_items_size"
+                    android:layout_width="@dimen/side_menu_items_size"
+                    android:layout_height="@dimen/side_menu_items_size"
                     android:src="@drawable/events" />
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="@dimen/pading_10"
+                    android:layout_marginTop="@dimen/padding_10"
                     android:fontFamily="@font/din_next_lt_pro_regular"
-                    android:text="@string/sidemenu_events_text"
-                    android:textColor="@color/white"
-                    android:textSize="@dimen/sidemenu_text_size" />
+                    android:text="@string/side_menu_events_text"
+                    android:textColor="@color/colorWhite"
+                    android:textSize="@dimen/font_size_16" />
 
 
             </LinearLayout>
@@ -82,18 +82,18 @@
 
                 <ImageView
                     android:id="@+id/sidemenu_education_icon"
-                    android:layout_width="@dimen/sidemenu_items_size"
-                    android:layout_height="@dimen/sidemenu_items_size"
+                    android:layout_width="@dimen/side_menu_items_size"
+                    android:layout_height="@dimen/side_menu_items_size"
                     android:src="@drawable/education" />
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="@dimen/pading_10"
+                    android:layout_marginTop="@dimen/padding_10"
                     android:fontFamily="@font/din_next_lt_pro_regular"
-                    android:text="@string/sidemenu_education_text"
-                    android:textColor="@color/white"
-                    android:textSize="@dimen/sidemenu_text_size" />
+                    android:text="@string/side_menu_education_text"
+                    android:textColor="@color/colorWhite"
+                    android:textSize="@dimen/font_size_16" />
 
 
             </LinearLayout>
@@ -104,7 +104,7 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="0dp"
-            android:layout_marginTop="@dimen/pading_15"
+            android:layout_marginTop="@dimen/padding_15"
             android:layout_weight="1">
 
             <LinearLayout
@@ -114,22 +114,22 @@
                 android:layout_weight="1"
                 android:gravity="center"
                 android:orientation="vertical"
-                android:paddingTop="@dimen/pading_15">
+                android:paddingTop="@dimen/padding_15">
 
                 <ImageView
                     android:id="@+id/sidemenu_tour_guide_icon"
-                    android:layout_width="@dimen/sidemenu_items_size"
-                    android:layout_height="@dimen/sidemenu_items_size"
+                    android:layout_width="@dimen/side_menu_items_size"
+                    android:layout_height="@dimen/side_menu_items_size"
                     android:src="@drawable/tour_guide" />
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="@dimen/pading_10"
+                    android:layout_marginTop="@dimen/padding_10"
                     android:fontFamily="@font/din_next_lt_pro_regular"
-                    android:text="@string/sidemenu_tour_guide_text"
-                    android:textColor="@color/white"
-                    android:textSize="@dimen/sidemenu_text_size" />
+                    android:text="@string/side_menu_tour_guide_text"
+                    android:textColor="@color/colorWhite"
+                    android:textSize="@dimen/font_size_16" />
 
 
             </LinearLayout>
@@ -141,22 +141,22 @@
                 android:layout_weight="1"
                 android:gravity="center"
                 android:orientation="vertical"
-                android:paddingTop="@dimen/pading_15">
+                android:paddingTop="@dimen/padding_15">
 
                 <ImageView
                     android:id="@+id/sidemenu_heritage_icon"
-                    android:layout_width="@dimen/sidemenu_items_size"
-                    android:layout_height="@dimen/sidemenu_items_size"
+                    android:layout_width="@dimen/side_menu_items_size"
+                    android:layout_height="@dimen/side_menu_items_size"
                     android:src="@drawable/heritage" />
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="@dimen/pading_10"
+                    android:layout_marginTop="@dimen/padding_10"
                     android:fontFamily="@font/din_next_lt_pro_regular"
-                    android:text="@string/sidemenu_heritage_text"
-                    android:textColor="@color/white"
-                    android:textSize="@dimen/sidemenu_text_size" />
+                    android:text="@string/side_menu_heritage_text"
+                    android:textColor="@color/colorWhite"
+                    android:textSize="@dimen/font_size_16" />
 
 
             </LinearLayout>
@@ -168,22 +168,22 @@
                 android:layout_weight="1"
                 android:gravity="center"
                 android:orientation="vertical"
-                android:paddingTop="@dimen/pading_15">
+                android:paddingTop="@dimen/padding_15">
 
                 <ImageView
                     android:id="@+id/sidemenu_public_arts_icon"
-                    android:layout_width="@dimen/sidemenu_items_size"
-                    android:layout_height="@dimen/sidemenu_items_size"
+                    android:layout_width="@dimen/side_menu_items_size"
+                    android:layout_height="@dimen/side_menu_items_size"
                     android:src="@drawable/public_arts" />
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="@dimen/pading_10"
+                    android:layout_marginTop="@dimen/padding_10"
                     android:fontFamily="@font/din_next_lt_pro_regular"
-                    android:text="@string/sidemenu_public_arts_text"
-                    android:textColor="@color/white"
-                    android:textSize="@dimen/sidemenu_text_size" />
+                    android:text="@string/side_menu_public_arts_text"
+                    android:textColor="@color/colorWhite"
+                    android:textSize="@dimen/font_size_16" />
 
 
             </LinearLayout>
@@ -192,7 +192,7 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="0dp"
-            android:layout_marginTop="@dimen/pading_15"
+            android:layout_marginTop="@dimen/padding_15"
             android:layout_weight="1"
             android:gravity="center">
 
@@ -203,22 +203,22 @@
                 android:layout_weight="1"
                 android:gravity="center"
                 android:orientation="vertical"
-                android:paddingTop="@dimen/pading_15">
+                android:paddingTop="@dimen/padding_15">
 
                 <ImageView
                     android:id="@+id/sidemenu_dining_icon"
-                    android:layout_width="@dimen/sidemenu_items_size"
-                    android:layout_height="@dimen/sidemenu_items_size"
+                    android:layout_width="@dimen/side_menu_items_size"
+                    android:layout_height="@dimen/side_menu_items_size"
                     android:src="@drawable/diningwhite" />
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="@dimen/pading_10"
+                    android:layout_marginTop="@dimen/padding_10"
                     android:fontFamily="@font/din_next_lt_pro_regular"
-                    android:text="@string/sidemenu_dining_text"
-                    android:textColor="@color/white"
-                    android:textSize="@dimen/sidemenu_text_size" />
+                    android:text="@string/side_menu_dining_text"
+                    android:textColor="@color/colorWhite"
+                    android:textSize="@dimen/font_size_16" />
 
 
             </LinearLayout>
@@ -230,22 +230,22 @@
                 android:layout_weight="1"
                 android:gravity="center"
                 android:orientation="vertical"
-                android:paddingTop="@dimen/pading_15">
+                android:paddingTop="@dimen/padding_15">
 
                 <ImageView
                     android:id="@+id/sidemenu_gift_shop_icon"
-                    android:layout_width="@dimen/sidemenu_items_size"
-                    android:layout_height="@dimen/sidemenu_items_size"
+                    android:layout_width="@dimen/side_menu_items_size"
+                    android:layout_height="@dimen/side_menu_items_size"
                     android:src="@drawable/gift_shop" />
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="@dimen/pading_10"
+                    android:layout_marginTop="@dimen/padding_10"
                     android:fontFamily="@font/din_next_lt_pro_regular"
-                    android:text="@string/sidemenu_gift_shop_text"
-                    android:textColor="@color/white"
-                    android:textSize="@dimen/sidemenu_text_size" />
+                    android:text="@string/side_menu_gift_shop_text"
+                    android:textColor="@color/colorWhite"
+                    android:textSize="@dimen/font_size_16" />
 
 
             </LinearLayout>
@@ -257,22 +257,22 @@
                 android:layout_weight="1"
                 android:gravity="center"
                 android:orientation="vertical"
-                android:paddingTop="@dimen/pading_15">
+                android:paddingTop="@dimen/padding_15">
 
                 <ImageView
                     android:id="@+id/sidemenu_park_icon"
-                    android:layout_width="@dimen/sidemenu_items_size"
-                    android:layout_height="@dimen/sidemenu_items_size"
+                    android:layout_width="@dimen/side_menu_items_size"
+                    android:layout_height="@dimen/side_menu_items_size"
                     android:src="@drawable/parkwhite" />
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="@dimen/pading_10"
+                    android:layout_marginTop="@dimen/padding_10"
                     android:fontFamily="@font/din_next_lt_pro_regular"
-                    android:text="@string/sidemenu_parks_text"
-                    android:textColor="@color/white"
-                    android:textSize="@dimen/sidemenu_text_size" />
+                    android:text="@string/side_menu_parks_text"
+                    android:textColor="@color/colorWhite"
+                    android:textSize="@dimen/font_size_16" />
 
 
             </LinearLayout>
@@ -290,14 +290,14 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_alignParentStart="true"
-            android:layout_marginTop="@dimen/pading_10"
-            android:paddingEnd="@dimen/pading_20"
-            android:paddingStart="@dimen/pading_20">
+            android:layout_marginTop="@dimen/padding_10"
+            android:paddingEnd="@dimen/padding_20"
+            android:paddingStart="@dimen/padding_20">
 
             <View
                 android:layout_width="match_parent"
                 android:layout_height="1dp"
-                android:background="@color/white" />
+                android:background="@color/colorWhite" />
         </LinearLayout>
 
 
@@ -305,7 +305,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_alignParentBottom="true"
-            android:layout_marginBottom="@dimen/pading_3"
+            android:layout_marginBottom="@dimen/padding_3"
             android:orientation="horizontal"
             android:weightSum="2">
 
@@ -329,7 +329,7 @@
                 android:id="@+id/sidemenu_settings_layout"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_marginEnd="@dimen/pading_10"
+                android:layout_marginEnd="@dimen/padding_10"
                 android:layout_weight=".5"
                 android:gravity="bottom"
                 android:orientation="vertical">
@@ -347,8 +347,8 @@
                     android:layout_gravity="center_horizontal"
                     android:fontFamily="@font/din_next_lt_pro_regular"
                     android:text="@string/action_settings"
-                    android:textColor="@color/white"
-                    android:textSize="@dimen/sidemenu_text_size" />
+                    android:textColor="@color/colorWhite"
+                    android:textSize="@dimen/font_size_16" />
 
             </LinearLayout>
 

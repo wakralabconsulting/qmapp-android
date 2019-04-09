@@ -76,7 +76,6 @@ import com.qatarmuseums.qatarmuseumsapp.museum.GlideLoaderForMuseum;
 import com.qatarmuseums.qatarmuseumsapp.museumabout.MuseumAboutModel;
 import com.qatarmuseums.qatarmuseumsapp.museumabout.MuseumAboutTableArabic;
 import com.qatarmuseums.qatarmuseumsapp.museumabout.MuseumAboutTableEnglish;
-import com.qatarmuseums.qatarmuseumsapp.museumcollectiondetails.CollectionDetailsActivity;
 import com.qatarmuseums.qatarmuseumsapp.museumcollectiondetails.NMoQParkListDetails;
 import com.qatarmuseums.qatarmuseumsapp.park.NMoQParkListDetailsTableArabic;
 import com.qatarmuseums.qatarmuseumsapp.park.NMoQParkListDetailsTableEnglish;
@@ -799,19 +798,19 @@ public class DetailsActivity extends AppCompatActivity implements IPullZoom, OnM
     }
 
     public void getData() {
-        if (comingFrom.equals(getString(R.string.sidemenu_exhibition_text))) {
+        if (comingFrom.equals(getString(R.string.side_menu_exhibition_text))) {
             if (util.isNetworkAvailable(DetailsActivity.this)) {
                 getHeritageOrExhibitionDetailsFromAPI(id, language, "Exhibition_detail_Page.json");
             } else {
                 getExhibitionAPIDataFromDatabase(id, language);
             }
-        } else if (comingFrom.equals(getString(R.string.sidemenu_heritage_text))) {
+        } else if (comingFrom.equals(getString(R.string.side_menu_heritage_text))) {
             if (util.isNetworkAvailable(DetailsActivity.this)) {
                 getHeritageOrExhibitionDetailsFromAPI(id, language, "heritage_detail_Page.json");
             } else {
                 getHeritageAPIDataFromDatabase(id, language);
             }
-        } else if (comingFrom.equals(getString(R.string.sidemenu_public_arts_text))) {
+        } else if (comingFrom.equals(getString(R.string.side_menu_public_arts_text))) {
             if (util.isNetworkAvailable(DetailsActivity.this))
                 getPublicArtDetailsFromAPI(id, language);
             else
@@ -844,7 +843,7 @@ public class DetailsActivity extends AppCompatActivity implements IPullZoom, OnM
             setFacilitiesDetails();
         } else if (comingFrom.equals(getString(R.string.museum_discussion))) {
             setSpecialEventDetailsData();
-        } else if (comingFrom.equals(getString(R.string.sidemenu_parks_text))) {
+        } else if (comingFrom.equals(getString(R.string.side_menu_parks_text))) {
             if (util.isNetworkAvailable(DetailsActivity.this))
                 getNMoQParkListDetailsFromAPI(intent.getStringExtra("NID"));
             else

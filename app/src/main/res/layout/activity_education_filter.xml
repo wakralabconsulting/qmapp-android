@@ -16,7 +16,7 @@
             android:id="@+id/common_toolbar"
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
-            android:background="@color/black"
+            android:background="@color/colorBlack"
             android:theme="@style/AppTheme.PopupOverlay"
             app:contentInsetEnd="0dp"
             app:contentInsetStart="0dp">
@@ -58,7 +58,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_below="@id/app_bar"
-        android:background="@color/white"
+        android:background="@color/colorWhite"
         android:orientation="vertical"
         android:weightSum="20">
 
@@ -73,7 +73,7 @@
             android:fontFamily="@font/din_next_lt_pro_bold"
             android:gravity="start"
             android:text="@string/institution"
-            android:textColor="@color/black"
+            android:textColor="@color/colorBlack"
             android:textSize="19sp"
             android:textStyle="bold" />
 
@@ -119,7 +119,7 @@
             android:fontFamily="@font/din_next_lt_pro_bold"
             android:gravity="start"
             android:text="@string/age_group"
-            android:textColor="@color/black"
+            android:textColor="@color/colorBlack"
             android:textSize="19sp"
             android:textStyle="bold" />
 
@@ -165,7 +165,7 @@
             android:fontFamily="@font/din_next_lt_pro_bold"
             android:gravity="start"
             android:text="@string/programme_type"
-            android:textColor="@color/black"
+            android:textColor="@color/colorBlack"
             android:textSize="19sp"
             android:textStyle="bold" />
 
@@ -225,7 +225,7 @@
                     android:paddingStart="@dimen/padding_50"
                     android:text="@string/clear"
                     android:textAllCaps="false"
-                    android:textColor="@color/white"
+                    android:textColor="@color/colorWhite"
                     android:textSize="12sp" />
             </LinearLayout>
 
@@ -251,7 +251,7 @@
                     android:paddingStart="@dimen/padding_50"
                     android:text="@string/filter"
                     android:textAllCaps="false"
-                    android:textColor="@color/white"
+                    android:textColor="@color/colorWhite"
                     android:textSize="12sp" />
             </LinearLayout>
         </LinearLayout>

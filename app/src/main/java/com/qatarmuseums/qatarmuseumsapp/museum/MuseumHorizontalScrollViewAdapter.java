@@ -62,7 +62,7 @@ public class MuseumHorizontalScrollViewAdapter extends RecyclerView.Adapter<Muse
                 navigationIntent.putExtra("COMING_FROM", mContext.getString(R.string.museum_about_text));
                 navigationIntent.putExtra("ID", museumId);
                 mContext.startActivity(navigationIntent);
-            } else if (museumHScrollModelList.get(position).getTextName().equals(mContext.getResources().getString(R.string.sidemenu_tour_guide_text))) {
+            } else if (museumHScrollModelList.get(position).getTextName().equals(mContext.getResources().getString(R.string.side_menu_tour_guide_text))) {
                 if (museumId.equals("66") || museumId.equals("638"))
                     // Tour guides for NMoQ won't be available before NMoQ launch
                     util.showComingSoonDialog((Activity) mContext, R.string.coming_soon_content);
@@ -71,9 +71,9 @@ public class MuseumHorizontalScrollViewAdapter extends RecyclerView.Adapter<Muse
                     navigationIntent.putExtra("ID", museumId);
                     mContext.startActivity(navigationIntent);
                 }
-            } else if (museumHScrollModelList.get(position).getTextName().equals(mContext.getResources().getString(R.string.sidemenu_exhibition_text))) {
+            } else if (museumHScrollModelList.get(position).getTextName().equals(mContext.getResources().getString(R.string.side_menu_exhibition_text))) {
                 navigationIntent = new Intent(mContext, CommonActivity.class);
-                navigationIntent.putExtra(mContext.getString(R.string.toolbar_title_key), mContext.getString(R.string.sidemenu_exhibition_text));
+                navigationIntent.putExtra(mContext.getString(R.string.toolbar_title_key), mContext.getString(R.string.side_menu_exhibition_text));
                 navigationIntent.putExtra("ID", museumId);
                 mContext.startActivity(navigationIntent);
             } else if (museumHScrollModelList.get(position).getTextName().equals(mContext.getResources().getString(R.string.museum_collection_text))) {
@@ -81,19 +81,19 @@ public class MuseumHorizontalScrollViewAdapter extends RecyclerView.Adapter<Muse
                 navigationIntent.putExtra(mContext.getString(R.string.toolbar_title_key), mContext.getString(R.string.museum_collection_text));
                 navigationIntent.putExtra("ID", museumId);
                 mContext.startActivity(navigationIntent);
-            } else if (museumHScrollModelList.get(position).getTextName().equals(mContext.getResources().getString(R.string.sidemenu_parks_text))) {
+            } else if (museumHScrollModelList.get(position).getTextName().equals(mContext.getResources().getString(R.string.side_menu_parks_text))) {
                 if (museumId.equals("66") || museumId.equals("638")) {
                     // Park for NMoQ
                     navigationIntent = new Intent(mContext, NMoQParkActivity.class);
-                    navigationIntent.putExtra(mContext.getString(R.string.toolbar_title_key), mContext.getString(R.string.sidemenu_parks_text));
+                    navigationIntent.putExtra(mContext.getString(R.string.toolbar_title_key), mContext.getString(R.string.side_menu_parks_text));
                     mContext.startActivity(navigationIntent);
                 } else {
                     navigationIntent = new Intent(mContext, ParkActivity.class);
                     mContext.startActivity(navigationIntent);
                 }
-            } else if (museumHScrollModelList.get(position).getTextName().equals(mContext.getResources().getString(R.string.sidemenu_dining_text))) {
+            } else if (museumHScrollModelList.get(position).getTextName().equals(mContext.getResources().getString(R.string.side_menu_dining_text))) {
                 navigationIntent = new Intent(mContext, CommonActivity.class);
-                navigationIntent.putExtra(mContext.getString(R.string.toolbar_title_key), mContext.getString(R.string.sidemenu_dining_text));
+                navigationIntent.putExtra(mContext.getString(R.string.toolbar_title_key), mContext.getString(R.string.side_menu_dining_text));
                 navigationIntent.putExtra("ID", museumId);
                 mContext.startActivity(navigationIntent);
             } else if (museumHScrollModelList.get(position).getTextName().equals(mContext.getResources().getString(R.string.museum_tours))) {

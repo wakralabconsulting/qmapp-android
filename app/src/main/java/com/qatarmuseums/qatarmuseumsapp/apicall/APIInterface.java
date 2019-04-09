@@ -40,7 +40,7 @@ import retrofit2.http.Query;
 
 public interface APIInterface {
     @GET("{language}/mobile_api/gethomeList.json")
-    Call<ArrayList<HomeList>> getHomepageDetails(@Path("language") String language);
+    Call<ArrayList<HomeList>> getMuseumsList(@Path("language") String language);
 
     @GET("{language}/mobile_api/{pageName}")
     Call<ArrayList<CommonModel>> getCommonPageList(@Path("language") String language,
