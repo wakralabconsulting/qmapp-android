@@ -1,5 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!-- Copyright (C) 2012 Jake Wharton
+<?xml version="1.0" encoding="utf-8"?><!-- Copyright (C) 2012 Jake Wharton
      Copyright (C) 2011 Patrik Åkerfeldt
 
      Licensed under the Apache License, Version 2.0 (the "License");
@@ -15,18 +14,18 @@
      limitations under the License.
 -->
 
-<resources>
-    <declare-styleable name="ViewPagerIndicator">
+<resources xmlns:tools="http://schemas.android.com/tools">
+    <declare-styleable name="ViewPagerIndicator" tools:ignore="ResourceName">
         <!-- Style of the circle indicator. -->
-        <attr name="vpiCirclePageIndicatorStyle" format="reference"/>
+        <attr name="vpiCirclePageIndicatorStyle" format="reference" />
     </declare-styleable>
 
-    <attr name="centered" format="boolean" />
-    <attr name="selectedColor" format="color" />
-    <attr name="strokeWidth" format="dimension" />
-    <attr name="unselectedColor" format="color" />
+    <attr name="centered" format="boolean" tools:ignore="ResourceName" />
+    <attr name="selectedColor" format="color" tools:ignore="ResourceName" />
+    <attr name="strokeWidth" format="dimension" tools:ignore="ResourceName" />
+    <attr name="unselectedColor" format="color" tools:ignore="ResourceName" />
 
-    <declare-styleable name="CirclePageIndicator">
+    <declare-styleable name="CirclePageIndicator" tools:ignore="ResourceName">
         <!-- Whether or not the indicators should be centered. -->
         <attr name="centered" />
         <!-- Color of the filled circle that represents the current page. -->
@@ -34,7 +33,7 @@
         <!-- Color of the filled circles that represents pages. -->
         <attr name="pageColor" format="color" />
         <!-- Orientation of the indicator. -->
-        <attr name="android:orientation"/>
+        <attr name="android:orientation" />
         <!-- Radius of the circles. This is also the spacing between circles. -->
         <attr name="radius" format="dimension" />
         <!-- Color of the open circles. -->
@@ -42,22 +41,22 @@
         <!-- Width of the stroke used to draw the circles. -->
         <attr name="strokeWidth" />
         <!-- View background -->
-        <attr name="android:background"/>
+        <attr name="android:background" />
     </declare-styleable>
 
-    <declare-styleable name="AnimIndicator">
-        <attr name="ci_width" format="dimension"/>
-        <attr name="ci_height" format="dimension"/>
-        <attr name="ci_margin" format="dimension"/>
-        <attr name="ci_animator" format="reference"/>
-        <attr name="ci_drawable" format="reference"/>
+    <declare-styleable name="AnimIndicator" tools:ignore="ResourceName">
+        <attr name="ci_width" format="dimension" />
+        <attr name="ci_height" format="dimension" />
+        <attr name="ci_margin" format="dimension" />
+        <attr name="ci_animator" format="reference" />
+        <attr name="ci_drawable" format="reference" />
     </declare-styleable>
 
-    <declare-styleable name="InfiniteIndicator">
-     <attr name="indicator_type" format="enum">
-         <enum name="indicator_default" value="0"/>
-         <enum name="indicator_anim_circle" value="1"/>
-         <enum name="indicator_anim_line" value="2"/>
-     </attr>
- </declare-styleable>
+    <declare-styleable name="InfiniteIndicator" tools:ignore="ResourceName">
+        <attr name="indicator_type" format="enum">
+            <enum name="indicator_default" value="0" />
+            <enum name="indicator_anim_circle" value="1" />
+            <enum name="indicator_anim_line" value="2" />
+        </attr>
+    </declare-styleable>
 </resources>

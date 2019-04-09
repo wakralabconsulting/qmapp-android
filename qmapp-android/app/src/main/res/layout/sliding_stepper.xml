@@ -20,7 +20,7 @@
             android:layout_height="2dp"
             android:layout_gravity="center"
             android:layout_weight="1"
-            android:background="@color/object_preview_line_color" />
+            android:background="@color/colorObjectPreviewLineColor" />
 
         <View
             android:id="@+id/last_line"
@@ -28,7 +28,7 @@
             android:layout_height="2dp"
             android:layout_gravity="center"
             android:layout_weight="1"
-            android:background="@color/object_preview_line_color" />
+            android:background="@color/colorObjectPreviewLineColor" />
 
 
     </LinearLayout>

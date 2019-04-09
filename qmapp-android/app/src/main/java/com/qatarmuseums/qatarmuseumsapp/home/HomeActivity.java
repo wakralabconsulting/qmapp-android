@@ -176,7 +176,7 @@ public class HomeActivity extends BaseActivity {
         });
         diningNavigation.setOnClickListener(v -> {
             navigation_intent = new Intent(HomeActivity.this, CommonActivity.class);
-            navigation_intent.putExtra(getString(R.string.toolbar_title_key), getString(R.string.sidemenu_dining_text));
+            navigation_intent.putExtra(getString(R.string.toolbar_title_key), getString(R.string.side_menu_dining_text));
             startActivity(navigation_intent);
         });
         giftShopNavigation.setOnClickListener(v -> {
@@ -209,7 +209,7 @@ public class HomeActivity extends BaseActivity {
                 HomeList homeList = homeLists.get(position);
                 if (homeList.getId().equals("12181") || homeList.getId().equals("12186")) {
                     navigationIntent = new Intent(HomeActivity.this, CommonActivity.class);
-                    navigationIntent.putExtra(getString(R.string.toolbar_title_key), getString(R.string.sidemenu_exhibition_text));
+                    navigationIntent.putExtra(getString(R.string.toolbar_title_key), getString(R.string.side_menu_exhibition_text));
                     startActivity(navigationIntent);
                 } else if (homeList.getName().trim().toUpperCase().contains("QATAR CREATES: EVENTS FOR THE OPENING OF NMOQ") ||
                         homeList.getName().trim().toUpperCase().contains("قطر تبدع: فعاليات افتتاح متحف قطر الوطني")) {
@@ -395,7 +395,7 @@ public class HomeActivity extends BaseActivity {
     public void getHomePageAPIData(String language) {
         APIInterface apiService =
                 APIClient.getClient().create(APIInterface.class);
-        Call<ArrayList<HomeList>> call = apiService.getHomepageDetails(language);
+        Call<ArrayList<HomeList>> call = apiService.getMuseumsList(language);
         call.enqueue(new Callback<ArrayList<HomeList>>() {
             @Override
             public void onResponse(@NonNull Call<ArrayList<HomeList>> call, @NonNull Response<ArrayList<HomeList>> response) {

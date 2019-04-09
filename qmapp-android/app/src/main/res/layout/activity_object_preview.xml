@@ -3,7 +3,7 @@
     android:id="@+id/layout_root"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/object_preview_bg"
+    android:background="@color/colorObjectPreviewBackground"
     android:orientation="vertical">
 
     <android.support.design.widget.AppBarLayout
@@ -125,7 +125,7 @@
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/pading_15"
+                android:layout_marginTop="@dimen/padding_15"
                 android:fontFamily="@font/din_next_lt_pro_light"
                 android:text="@string/there_is_no_internet"
                 android:textAlignment="center"
@@ -150,12 +150,12 @@
                 android:background="@drawable/round_corner_black"
                 android:fontFamily="@font/din_next_lt_pro_bold"
                 android:gravity="center"
-                android:paddingEnd="@dimen/pading_30"
-                android:paddingStart="@dimen/pading_30"
+                android:paddingEnd="@dimen/padding_30"
+                android:paddingStart="@dimen/padding_30"
                 android:text="@string/try_again"
                 android:textAllCaps="false"
-                android:textColor="@color/white"
-                android:textSize="@dimen/settings_page_list_item_text_size" />
+                android:textColor="@color/colorWhite"
+                android:textSize="@dimen/font_size_21" />
 
         </LinearLayout>
 

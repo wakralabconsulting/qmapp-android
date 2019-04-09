@@ -106,7 +106,7 @@ public class CollectionDetailsActivity extends AppCompatActivity {
         nid = intent.getStringExtra("NID");
         zoomOutAnimation = AnimationUtils.loadAnimation(getApplicationContext(),
                 R.anim.zoom_out_more);
-        if (intent.getStringExtra("COMING_FROM").equals(this.getString(R.string.sidemenu_parks_text))) {
+        if (intent.getStringExtra("COMING_FROM").equals(this.getString(R.string.side_menu_parks_text))) {
             mAdapterPark = new NMoQParkListDetailsAdapter(this, nMoQParkListDetails);
             collectionTitle.setVisibility(View.GONE);
             collectionTitleDivider.setVisibility(View.GONE);
@@ -126,18 +126,18 @@ public class CollectionDetailsActivity extends AppCompatActivity {
         recyclerView.setFocusable(false);
         appLanguage = LocaleManager.getLanguage(this);
         if (util.isNetworkAvailable(CollectionDetailsActivity.this)) {
-            if (intent.getStringExtra("COMING_FROM").equals(this.getString(R.string.sidemenu_parks_text)))
+            if (intent.getStringExtra("COMING_FROM").equals(this.getString(R.string.side_menu_parks_text)))
                 getNMoQParkDetailsFromAPI(nid);
             else
                 getMuseumCollectionDetailFromAPI();
         } else {
-            if (intent.getStringExtra("COMING_FROM").equals(this.getString(R.string.sidemenu_parks_text)))
+            if (intent.getStringExtra("COMING_FROM").equals(this.getString(R.string.side_menu_parks_text)))
                 getNMoQParkListDetailsFromDataBase(nid);
             else
                 getMuseumCollectionDetailFromDatabase();
         }
         retryButton.setOnClickListener(v -> {
-            if (intent.getStringExtra("COMING_FROM").equals(this.getString(R.string.sidemenu_parks_text)))
+            if (intent.getStringExtra("COMING_FROM").equals(this.getString(R.string.side_menu_parks_text)))
                 getNMoQParkDetailsFromAPI(nid);
             else
                 getMuseumCollectionDetailFromAPI();

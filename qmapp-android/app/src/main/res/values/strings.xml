@@ -1,5 +1,5 @@
-<resources>
-    <string name="app_name">Culture Pass</string>
+<resources xmlns:tools="http://schemas.android.com/tools">
+    <string name="app_name" tools:ignore="PrivateResource">Culture Pass</string>
     <string name="web_view_title">Qatar Museums</string>
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>
@@ -15,22 +15,22 @@
     <string name="title_gift_shop">Gift Shop</string>
     <string name="title_culture_pass">Culture Pass</string>
     <string name="title_more">More</string>
-    <string name="sidemenu_exhibition_text">Exhibitions</string>
-    <string name="sidemenu_events_text">Events</string>
-    <string name="sidemenu_education_text">Education</string>
-    <string name="sidemenu_tour_guide_text">Tour Guide</string>
-    <string name="sidemenu_heritage_text">Heritage Sites</string>
-    <string name="sidemenu_public_arts_text">Public Arts</string>
-    <string name="sidemenu_dining_text">Dining</string>
-    <string name="sidemenu_gift_shop_text">Gift Shop</string>
-    <string name="sidemenu_parks_text">Parks</string>
+    <string name="side_menu_exhibition_text">Exhibitions</string>
+    <string name="side_menu_events_text">Events</string>
+    <string name="side_menu_education_text">Education</string>
+    <string name="side_menu_tour_guide_text">Tour Guide</string>
+    <string name="side_menu_heritage_text">Heritage Sites</string>
+    <string name="side_menu_public_arts_text">Public Arts</string>
+    <string name="side_menu_dining_text">Dining</string>
+    <string name="side_menu_gift_shop_text">Gift Shop</string>
+    <string name="side_menu_parks_text">Parks</string>
     <string name="toolbar_title_key">TOOLBAR_TITLE</string>
     <string name="notifications">Notifications</string>
     <string name="location_title">LOCATION</string>
     <string name="contact_title">CONTACT</string>
     <string name="settings_activity_tittle">SETTINGS</string>
     <string name="calendar_activity_tittle">CALENDAR</string>
-    <string name="education_calendar_activity_tittle">EDUCATION CALENDAR</string>التقويم التعليمي
+    <string name="education_calendar_activity_tittle">EDUCATION CALENDAR</string>
     <string name="select_language_text">Select App Language</string>
     <string name="english">English</string>
     <string name="arabic">عربى</string>
@@ -76,7 +76,6 @@
     <string name="no_results_text">No results found</string>
     <string name="explore">Explore</string>
     <string name="level">Level</string>
-    <string name="alberallo">Alberallo</string>
 
     <string name="check_network">Check your internet connection</string>
     <string name="culture_pass_description">Qatar Museums Culture Pass gives you discounts, free access and exclusive opportunities across many cultural venues in Qatar and discounts at a wide range of ever expanding list of partners. Best of all, as a member you’re invited to join us in a wide range of exciting creative activities. \n\nGet access by activating your membership today.</string>
@@ -116,17 +115,17 @@
     <string name="mia_education">MIA Education</string>
     <string name="mathaf">Mathaf Education</string>
     <string name="national">National Museum</string>
-    <string name="qosm">3-2-1 QOSM Education</string>
+    <string name="qosm">3–2–1 QOSM Education</string>
     <string name="family">Family &amp; School Programmes Calendar</string>
 
     <string name="all_ages">All Ages</string>
     <string name="teachers">Teachers</string>
-    <string name="nursery">Nursery/Pre-KG(3-5 Years)</string>
-    <string name="early">Early Primary(5-7 Years)</string>
-    <string name="primary">Primary(8-11 Years)</string>
-    <string name="preparatory">Preparatory(12-14 Years)</string>
-    <string name="secondary">Secondary(15-18 Years)</string>
-    <string name="college">College &amp; University(17-24 Years)</string>
+    <string name="nursery">Nursery/Pre–KG(3–5 Years)</string>
+    <string name="early">Early Primary(5–7 Years)</string>
+    <string name="primary">Primary(8–11 Years)</string>
+    <string name="preparatory">Preparatory(12–14 Years)</string>
+    <string name="secondary">Secondary(15–18 Years)</string>
+    <string name="college">College &amp; University(17&#8211;24 Years)</string>
     <string name="youth">Youth</string>
     <string name="adults">Adults</string>
     <string name="seniors">Seniors</string>
@@ -147,7 +146,7 @@
     <string name="object_history">Object History</string>
     <string name="no_location_data">No Location Data</string>
     <string name="increase_volume">Please Increase Volume</string>
-    <string name="loading">Loading...</string>
+    <string name="loading">Loading…</string>
     <string name="oops">Oops!</string>
     <string name="there_is_no_internet">There is no Internet connection</string>
     <string name="please_check_your_internet">Please check your Internet connection</string>

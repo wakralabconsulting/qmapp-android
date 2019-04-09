@@ -36,7 +36,7 @@
     </style>
 
     <style name="AppTheme.MyActivityTheme">
-        <item name="colorAccent">@color/settings_switch_on_color</item>
+        <item name="colorAccent">@color/colorSettingsSwitchOnColor</item>
         <item name="windowActionBar">false</item>
         <item name="windowNoTitle">true</item>
     </style>

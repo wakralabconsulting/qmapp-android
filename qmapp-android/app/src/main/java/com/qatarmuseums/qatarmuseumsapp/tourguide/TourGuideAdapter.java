@@ -55,7 +55,7 @@ public class TourGuideAdapter extends RecyclerView.Adapter<TourGuideAdapter.MyVi
             holder.headphoneIcon.setVisibility(View.VISIBLE);
             holder.headphoneIcon.setImageResource(R.drawable.audio_circle);
             if (tgList.getName().equals(mContext.getString(R.string.coming_soon_txt)))
-                holder.headphoneIcon.setColorFilter(mContext.getResources().getColor(R.color.semi_transparent_grey));
+                holder.headphoneIcon.setColorFilter(mContext.getResources().getColor(R.color.colorSemiTransparentGrey));
             GlideApp.with(mContext)
                     .load(tgList.getImage())
                     .placeholder(R.drawable.placeholder)

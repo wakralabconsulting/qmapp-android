@@ -1,16 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
-<resources>
+<resources xmlns:tools="http://schemas.android.com/tools">
 
     <!--Position Style-->
 
-    <style name="Center">
+    <style name="Center" tools:ignore="ResourceName">
         <item name="android:gravity">center</item>
         <item name="android:layout_width">wrap_content</item>
         <item name="android:padding">10dp</item>
         <item name="android:layout_centerInParent">true</item>
     </style>
 
-    <style name="CenterBottom">
+    <style name="CenterBottom" tools:ignore="ResourceName">
         <item name="android:gravity">center</item>
         <item name="android:layout_width">wrap_content</item>
         <item name="android:padding">10dp</item>
@@ -18,7 +18,7 @@
         <item name="android:layout_centerHorizontal">true</item>
     </style>
 
-    <style name="BottomRight">
+    <style name="BottomRight" tools:ignore="ResourceName">
         <item name="android:gravity">center</item>
         <item name="android:layout_width">wrap_content</item>
         <item name="android:layout_alignParentBottom">true</item>
@@ -28,7 +28,7 @@
 
     <!--<item name="android:paddingBottom">10dp</item>-->
     <!--<item name="android:paddingLeft">10dp</item>-->
-    <style name="BottomLeft">
+    <style name="BottomLeft" tools:ignore="ResourceName">
         <item name="android:layout_width">wrap_content</item>
         <item name="android:gravity">center</item>
         <item name="android:padding">10dp</item>
@@ -36,7 +36,7 @@
         <item name="android:layout_alignParentLeft">true</item>
     </style>
 
-    <style name="CenterTop">
+    <style name="CenterTop" tools:ignore="ResourceName">
         <item name="android:layout_width">wrap_content</item>
         <item name="android:gravity">center</item>
         <item name="android:padding">10dp</item>
@@ -44,7 +44,7 @@
         <item name="android:layout_centerHorizontal">true</item>
     </style>
 
-    <style name="CenterTopRight">
+    <style name="CenterTopRight" tools:ignore="ResourceName">
         <item name="android:layout_width">wrap_content</item>
         <item name="android:gravity">center</item>
         <item name="android:padding">10dp</item>
@@ -52,7 +52,7 @@
         <item name="android:layout_alignParentRight">true</item>
     </style>
 
-    <style name="CenterTopLeft">
+    <style name="CenterTopLeft" tools:ignore="ResourceName">
         <item name="android:layout_width">wrap_content</item>
         <item name="android:gravity">center</item>
         <item name="android:padding">10dp</item>
@@ -60,7 +60,7 @@
         <item name="android:layout_alignParentLeft">true</item>
     </style>
 
-    <style name="AnimLineIndicator">
+    <style name="AnimLineIndicator" tools:ignore="ResourceName">
         <item name="ci_width">10dp</item>
         <item name="ci_height">4dp</item>
         <item name="ci_margin">6dp</item>
