@@ -1,13 +1,12 @@
 package com.qatarmuseums.qatarmuseumsapp.apicall;
 
 
-import com.qatarmuseums.qatarmuseumsapp.calendar.CalendarEvents;
 import com.qatarmuseums.qatarmuseumsapp.commonpage.CommonModel;
 import com.qatarmuseums.qatarmuseumsapp.culturepass.LoginData;
 import com.qatarmuseums.qatarmuseumsapp.culturepass.TokenForPushNotification;
 import com.qatarmuseums.qatarmuseumsapp.detailspage.RegistrationDetailsModel;
 import com.qatarmuseums.qatarmuseumsapp.dining.DiningDetailModel;
-import com.qatarmuseums.qatarmuseumsapp.education.EducationEvents;
+import com.qatarmuseums.qatarmuseumsapp.education.Events;
 import com.qatarmuseums.qatarmuseumsapp.facilities.FacilitiesDetailModel;
 import com.qatarmuseums.qatarmuseumsapp.floormap.ArtifactDetails;
 import com.qatarmuseums.qatarmuseumsapp.heritage.HeritageOrExhibitionDetailModel;
@@ -71,30 +70,20 @@ public interface APIInterface {
     Call<ArrayList<CommonModel>> getCollectionList(@Path("language") String language,
                                                    @Query("museum_id") String museumId);
 
-    @GET("{language}/mobile_api/new_ws_educations.json")
-    Call<ArrayList<CalendarEvents>> getCalendarDetails(@Path("language") String language,
-                                                       @Query("institution") String institution,
-                                                       @Query("age") String ageGroup,
-                                                       @Query("programe") String programType,
-                                                       @Query("field_eduprog_repeat_field_date_value[value][month]") String month,
-                                                       @Query("field_eduprog_repeat_field_date_value[value][day]") String day,
-                                                       @Query("field_eduprog_repeat_field_date_value[value][year]") String year,
-                                                       @Query("cck_multiple_field_remove_fields") String cckValue);
-
 
     @GET("{language}/mobile_api/museum-detail.json")
     Call<ArrayList<MuseumAboutModel>> getMuseumAboutDetails(@Path("language") String language,
                                                             @Query("nid") String nid);
 
     @GET("{language}/mobile_api/new_ws_educations.json")
-    Call<ArrayList<EducationEvents>> getEducationCalendarDetails(@Path("language") String language,
-                                                                 @Query("institution") String institution,
-                                                                 @Query("age") String ageGroup,
-                                                                 @Query("programe") String programType,
-                                                                 @Query("field_eduprog_repeat_field_date_value[value][month]") String month,
-                                                                 @Query("field_eduprog_repeat_field_date_value[value][day]") String day,
-                                                                 @Query("field_eduprog_repeat_field_date_value[value][year]") String year,
-                                                                 @Query("cck_multiple_field_remove_fields") String cckValue);
+    Call<ArrayList<Events>> getCalendarData(@Path("language") String language,
+                                            @Query("institution") String institution,
+                                            @Query("age") String ageGroup,
+                                            @Query("programe") String programType,
+                                            @Query("field_eduprog_repeat_field_date_value[value][month]") String month,
+                                            @Query("field_eduprog_repeat_field_date_value[value][day]") String day,
+                                            @Query("field_eduprog_repeat_field_date_value[value][year]") String year,
+                                            @Query("cck_multiple_field_remove_fields") String cckValue);
 
 
     @GET("{language}/mobile_api/collection_ws.json")
