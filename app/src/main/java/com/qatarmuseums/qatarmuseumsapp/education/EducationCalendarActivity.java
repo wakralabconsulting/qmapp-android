@@ -167,11 +167,13 @@ public class EducationCalendarActivity extends AppCompatActivity {
         });
 
         backArrow.setOnClickListener(v -> onBackPressed());
-
+        /*
+        // Disabling filter action temporary
         toolbar_filter.setOnClickListener(view -> {
             Intent intent = new Intent(EducationCalendarActivity.this, EducationFilterActivity.class);
             startActivity(intent);
         });
+        */
         progress.setOnClickListener(view -> {
 
         });
