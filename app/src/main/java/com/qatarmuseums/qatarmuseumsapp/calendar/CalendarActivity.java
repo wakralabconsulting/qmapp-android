@@ -234,17 +234,6 @@ public class CalendarActivity extends AppCompatActivity {
             }
         });
 
-        eventListView.setOnTouchListener((view, motionEvent) -> {
-            // Scrolling up
-            if (collapsibleCalendar.expanded) {
-                collapsibleCalendar.collapse(400);
-            } else {
-                // Scrolling down
-                collapsibleCalendar.expand(400);
-                collapsibleCalendar.expanded = true;
-            }
-            return false;
-        });
         today = new GregorianCalendar();
         today.set(Calendar.HOUR_OF_DAY, 0);
         today.set(Calendar.MINUTE, 0);
