@@ -22,7 +22,6 @@ import android.net.Uri;
 import android.os.Build;
 import android.provider.CalendarContract;
 import android.provider.Settings;
-import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.text.Spannable;
@@ -34,7 +33,6 @@ import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.Button;
-import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -42,7 +40,6 @@ import android.widget.Toast;
 
 import com.qatarmuseums.qatarmuseumsapp.LocaleManager;
 import com.qatarmuseums.qatarmuseumsapp.R;
-import com.qatarmuseums.qatarmuseumsapp.education.EducationCalendarActivity;
 import com.qatarmuseums.qatarmuseumsapp.education.Events;
 import com.qatarmuseums.qatarmuseumsapp.home.GlideApp;
 
@@ -425,19 +422,24 @@ public class Util {
                         MY_PERMISSIONS_REQUEST_CALENDAR);
 
             } else {
-                insertEventToCalendar(context);
+                insertEventToCalendar(context, contentValues);
             }
         } else
-            insertEventToCalendar(context);
+            insertEventToCalendar(context, contentValues);
 
 
     }
 
     @SuppressLint("MissingPermission")
-    public void insertEventToCalendar(Context context) {
+    public void insertEventToCalendar(Context context, ContentValues contentValues) {
         try {
-            contentValues.put(CalendarContract.Events.CALENDAR_ID, getCalendarId(context));
-            contentResolver.insert(CalendarContract.Events.CONTENT_URI, contentValues);
+            if (contentValues == null) {
+                this.contentValues.put(CalendarContract.Events.CALENDAR_ID, getCalendarId(context));
+                contentResolver.insert(CalendarContract.Events.CONTENT_URI, this.contentValues);
+            } else {
+                contentValues.put(CalendarContract.Events.CALENDAR_ID, getCalendarId(context));
+                contentResolver.insert(CalendarContract.Events.CONTENT_URI, contentValues);
+            }
             showToast(context.getString(R.string.event_added), context);
         } catch (Exception ex) {
             Toast.makeText(context, "Error in adding event on calendar : " + ex.getMessage(),

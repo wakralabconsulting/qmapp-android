@@ -17,6 +17,8 @@ public class ExhibitionListTableArabic {
     @ColumnInfo()
     private String exhibition_latest_image;
     @ColumnInfo()
+    private String exhibition_images;
+    @ColumnInfo()
     private String exhibition_start_date;
     @ColumnInfo()
     private String exhibition_end_date;
@@ -41,7 +43,7 @@ public class ExhibitionListTableArabic {
                                      String exhibition_short_description, String exhibition_latitude,
                                      String exhibition_longitude, String exhibition_long_description,
                                      String museum_id, String exhibition_status,
-                                     String exhibition_display_date) {
+                                     String exhibition_display_date, String exhibition_images) {
         this.exhibition_id = exhibition_id;
         this.exhibition_name = exhibition_name;
         this.exhibition_latest_image = exhibition_latest_image;
@@ -55,6 +57,7 @@ public class ExhibitionListTableArabic {
         this.museum_id = museum_id;
         this.exhibition_status = exhibition_status;
         this.exhibition_display_date = exhibition_display_date;
+        this.exhibition_images = exhibition_images;
     }
 
     @NonNull
@@ -80,6 +83,18 @@ public class ExhibitionListTableArabic {
 
     public void setExhibition_latest_image(String exhibition_latest_image) {
         this.exhibition_latest_image = exhibition_latest_image;
+    }
+
+    public String getExhibition_images() {
+        return exhibition_images;
+    }
+
+    public void setExhibition_images(String exhibition_images) {
+        this.exhibition_images = exhibition_images;
+    }
+
+    public void setExhibition_display_date(String exhibition_display_date) {
+        this.exhibition_display_date = exhibition_display_date;
     }
 
     public String getExhibition_start_date() {

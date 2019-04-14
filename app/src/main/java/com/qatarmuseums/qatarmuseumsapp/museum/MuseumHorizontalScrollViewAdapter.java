@@ -16,7 +16,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.qatarmuseums.qatarmuseumsapp.R;
-import com.qatarmuseums.qatarmuseumsapp.commonpage.CommonActivity;
+import com.qatarmuseums.qatarmuseumsapp.commonlistpage.CommonListActivity;
 import com.qatarmuseums.qatarmuseumsapp.detailspage.DetailsActivity;
 import com.qatarmuseums.qatarmuseumsapp.park.NMoQParkActivity;
 import com.qatarmuseums.qatarmuseumsapp.park.ParkActivity;
@@ -67,12 +67,12 @@ public class MuseumHorizontalScrollViewAdapter extends RecyclerView.Adapter<Muse
                 navigationIntent.putExtra("ID", museumId);
                 mContext.startActivity(navigationIntent);
             } else if (museumHScrollModelList.get(position).getTextName().equals(mContext.getResources().getString(R.string.side_menu_exhibition_text))) {
-                navigationIntent = new Intent(mContext, CommonActivity.class);
+                navigationIntent = new Intent(mContext, CommonListActivity.class);
                 navigationIntent.putExtra(mContext.getString(R.string.toolbar_title_key), mContext.getString(R.string.side_menu_exhibition_text));
                 navigationIntent.putExtra("ID", museumId);
                 mContext.startActivity(navigationIntent);
             } else if (museumHScrollModelList.get(position).getTextName().equals(mContext.getResources().getString(R.string.museum_collection_text))) {
-                navigationIntent = new Intent(mContext, CommonActivity.class);
+                navigationIntent = new Intent(mContext, CommonListActivity.class);
                 navigationIntent.putExtra(mContext.getString(R.string.toolbar_title_key), mContext.getString(R.string.museum_collection_text));
                 navigationIntent.putExtra("ID", museumId);
                 mContext.startActivity(navigationIntent);
@@ -87,22 +87,22 @@ public class MuseumHorizontalScrollViewAdapter extends RecyclerView.Adapter<Muse
                     mContext.startActivity(navigationIntent);
                 }
             } else if (museumHScrollModelList.get(position).getTextName().equals(mContext.getResources().getString(R.string.side_menu_dining_text))) {
-                navigationIntent = new Intent(mContext, CommonActivity.class);
+                navigationIntent = new Intent(mContext, CommonListActivity.class);
                 navigationIntent.putExtra(mContext.getString(R.string.toolbar_title_key), mContext.getString(R.string.side_menu_dining_text));
                 navigationIntent.putExtra("ID", museumId);
                 mContext.startActivity(navigationIntent);
             } else if (museumHScrollModelList.get(position).getTextName().equals(mContext.getResources().getString(R.string.museum_tours))) {
-                navigationIntent = new Intent(mContext, CommonActivity.class);
+                navigationIntent = new Intent(mContext, CommonListActivity.class);
                 navigationIntent.putExtra(mContext.getString(R.string.toolbar_title_key), mContext.getString(R.string.museum_tours));
                 navigationIntent.putExtra("ID", museumId);
                 mContext.startActivity(navigationIntent);
             } else if (museumHScrollModelList.get(position).getTextName().equals(mContext.getResources().getString(R.string.museum_travel))) {
-                navigationIntent = new Intent(mContext, CommonActivity.class);
+                navigationIntent = new Intent(mContext, CommonListActivity.class);
                 navigationIntent.putExtra(mContext.getString(R.string.toolbar_title_key), mContext.getString(R.string.museum_travel));
                 navigationIntent.putExtra("ID", museumId);
                 mContext.startActivity(navigationIntent);
             } else if (museumHScrollModelList.get(position).getTextName().equals(mContext.getResources().getString(R.string.museum_discussion))) {
-                navigationIntent = new Intent(mContext, CommonActivity.class);
+                navigationIntent = new Intent(mContext, CommonListActivity.class);
                 navigationIntent.putExtra(mContext.getString(R.string.toolbar_title_key), mContext.getString(R.string.museum_discussion));
                 navigationIntent.putExtra("ID", museumId);
                 mContext.startActivity(navigationIntent);
@@ -111,7 +111,7 @@ public class MuseumHorizontalScrollViewAdapter extends RecyclerView.Adapter<Muse
                     case 1:
                         // Facilities for NMoQ
                         //util.showComingSoonDialog((Activity) mContext, R.string.coming_soon_content);
-                        navigationIntent = new Intent(mContext, CommonActivity.class);
+                        navigationIntent = new Intent(mContext, CommonListActivity.class);
                         navigationIntent.putExtra(mContext.getString(R.string.toolbar_title_key), mContext.getString(R.string.facilities_txt));
                         navigationIntent.putExtra("ID", museumId);
                         mContext.startActivity(navigationIntent);

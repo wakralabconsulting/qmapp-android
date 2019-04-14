@@ -24,9 +24,6 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         tools:replace="android:allowBackup">
-        <activity android:name=".facilities.FacilitiesSecondaryActivity"
-            android:screenOrientation="portrait"
-            android:theme="@style/AppTheme.NoActionBar"/>
         <activity
             android:name=".base.BaseActivity"
             android:label="@string/app_name"
@@ -38,7 +35,7 @@
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoTitle" />
         <activity
-            android:name=".commonpage.CommonActivity"
+            android:name=".commonlistpage.CommonListActivity"
             android:launchMode="singleTask"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar" />
@@ -62,11 +59,6 @@
             android:theme="@style/AppTheme.MyActivityTheme" />
         <activity
             android:name=".education.EducationActivity"
-            android:screenOrientation="portrait"
-            android:theme="@style/AppTheme.NoActionBar" />
-        <activity
-            android:name=".detailspage.DiningActivity"
-            android:label=""
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
@@ -189,7 +181,7 @@
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
-            android:name=".toursecondarylist.TourSecondaryListActivity"
+            android:name=".commonlistsecondary.SecondaryListActivity"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity

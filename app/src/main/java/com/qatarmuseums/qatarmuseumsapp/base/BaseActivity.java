@@ -28,7 +28,7 @@ import com.qatarmuseums.qatarmuseumsapp.LocaleManager;
 import com.qatarmuseums.qatarmuseumsapp.QMDatabase;
 import com.qatarmuseums.qatarmuseumsapp.R;
 import com.qatarmuseums.qatarmuseumsapp.calendar.CalendarActivity;
-import com.qatarmuseums.qatarmuseumsapp.commonpage.CommonActivity;
+import com.qatarmuseums.qatarmuseumsapp.commonlistpage.CommonListActivity;
 import com.qatarmuseums.qatarmuseumsapp.culturepass.CulturePassActivity;
 import com.qatarmuseums.qatarmuseumsapp.education.EducationActivity;
 import com.qatarmuseums.qatarmuseumsapp.notification.NotificationActivity;
@@ -347,7 +347,7 @@ public class BaseActivity extends AppCompatActivity
             case R.id.sidemenu_exibition_layout:
             case R.id.sidemenu_exibition_icon:
                 touchListenerForLayout(sideMenuExhibitionLayout);
-                navigation_intent = new Intent(this, CommonActivity.class);
+                navigation_intent = new Intent(this, CommonListActivity.class);
                 navigation_intent.putExtra(getString(R.string.toolbar_title_key), getString(R.string.side_menu_exhibition_text));
                 startActivity(navigation_intent);
                 clearAnimations();
@@ -380,7 +380,7 @@ public class BaseActivity extends AppCompatActivity
             case R.id.sidemenu_heritage_layout:
             case R.id.sidemenu_heritage_icon:
                 touchListenerForLayout(sideMenuHeritageLayout);
-                navigation_intent = new Intent(this, CommonActivity.class);
+                navigation_intent = new Intent(this, CommonListActivity.class);
                 navigation_intent.putExtra(getString(R.string.toolbar_title_key), getString(R.string.side_menu_heritage_text));
                 startActivity(navigation_intent);
                 clearAnimations();
@@ -389,7 +389,7 @@ public class BaseActivity extends AppCompatActivity
             case R.id.sidemenu_public_arts_layout:
             case R.id.sidemenu_public_arts_icon:
                 touchListenerForLayout(sideMenuPublicArtsLayout);
-                navigation_intent = new Intent(this, CommonActivity.class);
+                navigation_intent = new Intent(this, CommonListActivity.class);
                 navigation_intent.putExtra(getString(R.string.toolbar_title_key), getString(R.string.side_menu_public_arts_text));
                 startActivity(navigation_intent);
                 clearAnimations();
@@ -398,7 +398,7 @@ public class BaseActivity extends AppCompatActivity
             case R.id.sidemenu_dining_layout:
             case R.id.sidemenu_dining_icon:
                 touchListenerForLayout(sideMenuDiningLayout);
-                navigation_intent = new Intent(this, CommonActivity.class);
+                navigation_intent = new Intent(this, CommonListActivity.class);
                 navigation_intent.putExtra(getString(R.string.toolbar_title_key), getString(R.string.side_menu_dining_text));
                 startActivity(navigation_intent);
                 clearAnimations();
