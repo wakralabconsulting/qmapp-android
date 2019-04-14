@@ -1,8 +1,10 @@
 package com.qatarmuseums.qatarmuseumsapp.facilities;
 
+import android.app.Activity;
 import android.content.Context;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
+import android.util.DisplayMetrics;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -11,7 +13,7 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.qatarmuseums.qatarmuseumsapp.R;
-import com.qatarmuseums.qatarmuseumsapp.commonpage.RecyclerTouchListener;
+import com.qatarmuseums.qatarmuseumsapp.commonlistpage.RecyclerTouchListener;
 import com.qatarmuseums.qatarmuseumsapp.home.GlideApp;
 
 import java.lang.ref.WeakReference;
@@ -37,6 +39,9 @@ public class FacilitiesSecondaryAdapter extends RecyclerView.Adapter<FacilitiesS
     public void onBindViewHolder(@NonNull MyViewHolder holder, int position) {
         FacilitiesDetailModel model = facilitiesDetailModelList.get(position);
         holder.name.setText(model.getFacilitiesTitle());
+        ViewGroup.LayoutParams params = holder.rowItem.getLayoutParams();
+        params.height = holder.height;
+        holder.rowItem.setLayoutParams(params);
 
         if (model.getFacilityImage().size() > 0) {
             GlideApp.with(mContext)
@@ -65,6 +70,8 @@ public class FacilitiesSecondaryAdapter extends RecyclerView.Adapter<FacilitiesS
         TextView tourTitleTxt;
         public ImageView imageView;
         RelativeLayout commonTitleLayout, tourTitleLayout;
+        private final int height;
+        RelativeLayout rowItem;
 
         private WeakReference<RecyclerTouchListener.ItemClickListener> listenerRef;
 
@@ -78,8 +85,13 @@ public class FacilitiesSecondaryAdapter extends RecyclerView.Adapter<FacilitiesS
             tourDayTxt = view.findViewById(R.id.tour_day_text);
             tourDateTxt = view.findViewById(R.id.tour_date_text);
             tourTitleTxt = view.findViewById(R.id.tour_title_text);
+            rowItem = view.findViewById(R.id.row_item);
             name.setAllCaps(false);
             view.setOnClickListener(this);
+            DisplayMetrics displayMetrics = new DisplayMetrics();
+            ((Activity) mContext).getWindowManager().getDefaultDisplay().getMetrics(displayMetrics);
+            height = (int) (displayMetrics.heightPixels * 0.27);
+
         }
 
         @Override
@@ -88,7 +100,7 @@ public class FacilitiesSecondaryAdapter extends RecyclerView.Adapter<FacilitiesS
         }
     }
 
-    FacilitiesSecondaryAdapter(Context context, List<FacilitiesDetailModel> facilitiesDetailModelList, RecyclerTouchListener.ItemClickListener listener) {
+    public FacilitiesSecondaryAdapter(Context context, List<FacilitiesDetailModel> facilitiesDetailModelList, RecyclerTouchListener.ItemClickListener listener) {
         this.facilitiesDetailModelList = facilitiesDetailModelList;
         this.mContext = context;
         this.listener = listener;

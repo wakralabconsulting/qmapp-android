@@ -2,15 +2,11 @@ package com.qatarmuseums.qatarmuseumsapp.calendar;
 
 import android.Manifest;
 import android.app.Dialog;
-import android.content.ContentResolver;
-import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.provider.Settings;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.DefaultItemAnimator;
@@ -20,7 +16,6 @@ import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
-import android.view.Window;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.Button;
@@ -82,15 +77,13 @@ public class CalendarActivity extends AppCompatActivity {
     RecyclerView.LayoutManager layoutManager;
     APIInterface apiService;
     Calendar calendarInstance;
-    int MY_PERMISSIONS_REQUEST_CALENDAR = 100;
+
     int REQUEST_PERMISSION_SETTING = 110;
     private LayoutInflater layoutInflater;
     private Dialog dialog;
     private ImageView closeBtn;
     private Button dialogActionButton;
     private TextView dialogTitle, dialogContent;
-    private ContentResolver contentResolver;
-    private ContentValues contentValues;
     private String language;
     private QMDatabase qmDatabase;
     CalendarEventsTableEnglish calendarEventsTableEnglish;
@@ -292,51 +285,18 @@ public class CalendarActivity extends AppCompatActivity {
                 // If request is cancelled, the result arrays are empty.
                 if (grantResults.length > 0
                         && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                    util.insertEventToCalendar(this);
+                    util.insertEventToCalendar(this, null);
                 } else {
                     boolean showRationale = false;
                     if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.M) {
                         showRationale = shouldShowRequestPermissionRationale(permissions[0]);
                     }
                     if (!showRationale) {
-                        showNavigationDialog(getString(R.string.permission_required), getString(R.string.runtime_permission));
+                        util.showNavigationDialog(this, getString(R.string.permission_required), getString(R.string.runtime_permission));
                     }
                 }
             }
         }
-    }
-
-    protected void showNavigationDialog(String title, final String details) {
-        dialog = new Dialog(this, R.style.DialogNoAnimation);
-        dialog.setCancelable(true);
-        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
-
-        layoutInflater = (LayoutInflater) getSystemService(LAYOUT_INFLATER_SERVICE);
-        View view = layoutInflater.inflate(R.layout.common_popup, null);
-
-        dialog.setContentView(view);
-        closeBtn = view.findViewById(R.id.close_dialog);
-        dialogActionButton = view.findViewById(R.id.doneBtn);
-        dialogTitle = view.findViewById(R.id.dialog_tittle);
-        dialogContent = view.findViewById(R.id.dialog_content);
-        dialogTitle.setText(title);
-        dialogActionButton.setText(getResources().getString(R.string.open_settings));
-        dialogContent.setText(details);
-
-        dialogActionButton.setOnClickListener(view1 -> {
-            navigateToSettings();
-            dialog.dismiss();
-
-        });
-        closeBtn.setOnClickListener(view12 -> dialog.dismiss());
-        dialog.show();
-    }
-
-    public void navigateToSettings() {
-        Intent intent = new Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS);
-        Uri uri = Uri.fromParts("package", getPackageName(), null);
-        intent.setData(uri);
-        startActivityForResult(intent, REQUEST_PERMISSION_SETTING);
     }
 
     @Override
@@ -345,7 +305,7 @@ public class CalendarActivity extends AppCompatActivity {
         if (ContextCompat.checkSelfPermission(this,
                 Manifest.permission.WRITE_CALENDAR)
                 == PackageManager.PERMISSION_GRANTED) {
-            util.insertEventToCalendar(this);
+            util.insertEventToCalendar(this, null);
         }
     }
 

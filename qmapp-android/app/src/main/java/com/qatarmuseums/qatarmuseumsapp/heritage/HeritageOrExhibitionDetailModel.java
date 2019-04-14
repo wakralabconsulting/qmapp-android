@@ -12,7 +12,9 @@ public class HeritageOrExhibitionDetailModel {
     @SerializedName("Location")
     private String location;
     @SerializedName("images")
-    private ArrayList<String> image;
+    private ArrayList<String> images;
+    @SerializedName("LATEST_IMAGE")
+    private String image;
     @SerializedName("Longitude")
     private String longitude;
     @SerializedName("Latitude")
@@ -27,14 +29,14 @@ public class HeritageOrExhibitionDetailModel {
     private String endDate;
 
     public HeritageOrExhibitionDetailModel(String name, String id,
-                                           String location, ArrayList<String> image,
+                                           String location, ArrayList<String> images,
                                            String longitude, String latitude,
                                            String shortDescription, String longDescription,
                                            String startDate, String endDate) {
         this.name = name;
         this.id = id;
         this.location = location;
-        this.image = image;
+        this.images = images;
         this.longitude = longitude;
         this.latitude = latitude;
         this.shortDescription = shortDescription;
@@ -67,11 +69,19 @@ public class HeritageOrExhibitionDetailModel {
         this.location = location;
     }
 
-    public ArrayList<String> getImage() {
+    public ArrayList<String> getImages() {
+        return images;
+    }
+
+    public void setImages(ArrayList<String> images) {
+        this.images = images;
+    }
+
+    public String getImage() {
         return image;
     }
 
-    public void setImage(ArrayList image) {
+    public void setImage(String image) {
         this.image = image;
     }
 

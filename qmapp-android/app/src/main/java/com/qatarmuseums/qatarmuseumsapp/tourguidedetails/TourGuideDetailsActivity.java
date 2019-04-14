@@ -27,7 +27,7 @@ import com.qatarmuseums.qatarmuseumsapp.QMDatabase;
 import com.qatarmuseums.qatarmuseumsapp.R;
 import com.qatarmuseums.qatarmuseumsapp.apicall.APIClient;
 import com.qatarmuseums.qatarmuseumsapp.apicall.APIInterface;
-import com.qatarmuseums.qatarmuseumsapp.commonpage.RecyclerTouchListener;
+import com.qatarmuseums.qatarmuseumsapp.commonlistpage.RecyclerTouchListener;
 import com.qatarmuseums.qatarmuseumsapp.floormap.FloorMapActivity;
 import com.qatarmuseums.qatarmuseumsapp.tourguidestartpage.SelfGuideStarterModel;
 import com.qatarmuseums.qatarmuseumsapp.tourguidestartpage.SelfGuidedStartPageActivity;

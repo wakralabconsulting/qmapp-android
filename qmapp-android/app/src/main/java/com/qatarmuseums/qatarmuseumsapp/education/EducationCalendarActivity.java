@@ -1,13 +1,9 @@
 package com.qatarmuseums.qatarmuseumsapp.education;
 
 import android.Manifest;
-import android.app.Dialog;
-import android.content.ContentResolver;
-import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.graphics.Color;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -963,7 +959,7 @@ public class EducationCalendarActivity extends AppCompatActivity {
                 // If request is cancelled, the result arrays are empty.
                 if (grantResults.length > 0
                         && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                    util.insertEventToCalendar(this);
+                    util.insertEventToCalendar(this, null);
                 } else {
                     boolean showRationale = false;
                     if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.M) {
@@ -984,7 +980,7 @@ public class EducationCalendarActivity extends AppCompatActivity {
         if (ContextCompat.checkSelfPermission(this,
                 Manifest.permission.WRITE_CALENDAR)
                 == PackageManager.PERMISSION_GRANTED) {
-            util.insertEventToCalendar(this);
+            util.insertEventToCalendar(this, null);
         }
     }
 
