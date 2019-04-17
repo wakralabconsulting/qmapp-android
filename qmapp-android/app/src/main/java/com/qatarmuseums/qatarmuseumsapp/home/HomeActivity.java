@@ -10,6 +10,7 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.graphics.Color;
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
@@ -17,6 +18,7 @@ import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.TextInputLayout;
+import android.support.v4.content.FileProvider;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v4.view.GravityCompat;
 import android.support.v7.widget.DefaultItemAnimator;
@@ -69,12 +71,14 @@ import com.qatarmuseums.qatarmuseumsapp.profile.UserData;
 import com.qatarmuseums.qatarmuseumsapp.utils.Util;
 import com.qatarmuseums.qatarmuseumsapp.webview.WebViewActivity;
 
+import java.io.File;
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 
+import ir.mahdi.mzip.zip.ZipArchive;
 import okhttp3.OkHttpClient;
 import okhttp3.logging.HttpLoggingInterceptor;
 import retrofit2.Call;
@@ -331,6 +335,35 @@ public class HomeActivity extends BaseActivity {
                 new IntentFilter(Config.PUSH_NOTIFICATION));
 
         checkForNotification(getIntent());
+
+        sendLogs();
+    }
+
+    private void sendLogs() {
+        Intent emailIntent = new Intent(Intent.ACTION_SEND_MULTIPLE);
+        emailIntent.setType("vnd.android.cursor.dir/email");
+        String to[] = {"testingfourexalture@gmail.com"};
+        emailIntent.putExtra(Intent.EXTRA_EMAIL, to);
+        emailIntent.putExtra(android.content.Intent.EXTRA_SUBJECT, "Your subject");
+        emailIntent.putExtra(android.content.Intent.EXTRA_TEXT, "Your message");
+
+        ArrayList<Uri> uris = new ArrayList<Uri>();
+        File filePath = new File(this.getFilesDir(), "logs");
+
+        File logFile = new File(filePath, "my-log-latest.html");
+
+        ZipArchive.zip(logFile.getPath(), filePath.getPath() + "/log_latest.zip", "11");
+        File shareFile = new File(filePath, "log_latest.zip");
+
+        Uri contentUri = FileProvider.getUriForFile(getApplicationContext(),
+                "com.qatarmuseums.qatarmuseumsapp.fileprovider", shareFile);
+        uris.add(contentUri);
+        emailIntent.putParcelableArrayListExtra(Intent.EXTRA_STREAM, uris);
+
+        // Grant temporary read permission to the content URI
+        emailIntent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+
+        startActivity(emailIntent);
     }
 
     public void navigateToLaunchPage() {

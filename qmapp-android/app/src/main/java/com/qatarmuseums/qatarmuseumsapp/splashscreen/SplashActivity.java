@@ -11,6 +11,7 @@ import java.io.IOException;
 
 import pl.droidsonroids.gif.GifDrawable;
 import pl.droidsonroids.gif.GifImageView;
+import timber.log.Timber;
 
 
 public class SplashActivity extends Activity {
@@ -21,6 +22,7 @@ public class SplashActivity extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
+        Timber.i("Splash screen initialised ...");
         setContentView(R.layout.activity_splash);
         gifImageView = findViewById(R.id.gif_image_view);
 
