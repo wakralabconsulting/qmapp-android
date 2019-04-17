@@ -9,6 +9,10 @@ import android.content.res.Configuration;
 import android.os.Build;
 import android.util.Log;
 
+import com.qatarmuseums.qatarmuseumsapp.timber.FileLoggingTree;
+
+import timber.log.Timber;
+
 
 public class MyApp extends Application {
     private final String TAG = "App";
@@ -16,6 +20,10 @@ public class MyApp extends Application {
     @Override
     public void onCreate() {
         super.onCreate();
+        // For log integration
+        Timber.plant(new Timber.DebugTree());
+        Timber.plant(new FileLoggingTree(getApplicationContext()));
+
 //        if (LeakCanary.isInAnalyzerProcess(this)) {
 //            // This process is dedicated to LeakCanary for heap analysis.
 //            // You should not init your app in this process.
