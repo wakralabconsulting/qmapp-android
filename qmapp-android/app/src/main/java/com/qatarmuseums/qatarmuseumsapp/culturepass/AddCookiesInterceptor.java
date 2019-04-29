@@ -11,9 +11,9 @@ import okhttp3.Request;
 import okhttp3.Response;
 
 public class AddCookiesInterceptor implements Interceptor {
-    public static final String PREF_COOKIES = "PREF_COOKIES";
-    // We're storing our stuff in a database made just for cookies called PREF_COOKIES.
-    // I reccomend you do this, and don't change this default value.
+    private static final String PREF_COOKIES = "PREF_COOKIES";
+    // Storing stuff in a database made just for cookies called PREF_COOKIES.
+    // Recommend to do this, and don't change this default value.
     private Context context;
 
     public AddCookiesInterceptor(Context context) {

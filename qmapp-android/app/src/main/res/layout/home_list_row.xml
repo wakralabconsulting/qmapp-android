@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/item_container"
     android:layout_width="match_parent"
     android:layout_height="wrap_content">
 
@@ -14,8 +15,8 @@
         android:layout_alignParentBottom="true"
         android:background="@drawable/gradiant"
         android:gravity="center_vertical"
-        android:paddingBottom="@dimen/pading_10"
-        android:padding="@dimen/pading_15">
+        android:padding="@dimen/padding_15"
+        android:paddingBottom="@dimen/padding_10">
 
         <TextView
             android:id="@+id/name_text"
@@ -25,15 +26,16 @@
             android:layout_toStartOf="@id/headphone_icon"
             android:fontFamily="@font/din_medium_alternate"
             android:textColor="@android:color/white"
-            android:textSize="@dimen/home_list_item_name" />
+            android:textSize="@dimen/font_size_21" />
 
         <ImageView
             android:id="@+id/headphone_icon"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginEnd="@dimen/padding_5dp"
-            android:layout_centerVertical="true"
             android:layout_alignParentEnd="true"
-            android:src="@drawable/audio_circle" />
+            android:layout_centerVertical="true"
+            android:layout_marginEnd="@dimen/padding_5"
+            android:src="@drawable/audio_circle"
+            android:visibility="gone" />
     </RelativeLayout>
 </RelativeLayout>

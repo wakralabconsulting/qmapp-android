@@ -12,7 +12,7 @@
         android:id="@+id/floor_map_root"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="@color/floor_map_background">
+        android:background="@color/colorPageBackground">
 
         <android.support.design.widget.AppBarLayout
             android:id="@+id/app_bar"
@@ -24,7 +24,7 @@
                 android:id="@+id/common_toolbar"
                 android:layout_width="match_parent"
                 android:layout_height="?android:attr/actionBarSize"
-                android:background="@color/black"
+                android:background="@color/colorBlack"
                 android:theme="@style/AppTheme.PopupOverlay"
                 app:contentInsetEnd="0dp"
                 app:contentInsetStart="0dp">
@@ -51,8 +51,8 @@
                         android:layout_marginStart="50dp"
                         android:fontFamily="@font/din_next_lt_pro_regular"
                         android:gravity="center"
-                        android:textAllCaps="true"
                         android:text="@string/mia_floors"
+                        android:textAllCaps="true"
                         android:textColor="@android:color/white"
                         android:textSize="@dimen/toolbar_title"
                         android:textStyle="bold" />
@@ -119,7 +119,7 @@
                     android:layout_marginEnd="@dimen/padding_15"
                     android:layout_marginStart="@dimen/padding_15"
                     android:layout_marginTop="@dimen/padding_15"
-                    android:background="@color/white"
+                    android:background="@color/colorWhite"
                     android:elevation="@dimen/padding_5"
                     android:gravity="end"
                     android:orientation="vertical">
@@ -129,7 +129,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="0dp"
                         android:layout_weight="1"
-                        android:background="@color/floor_map_buttonbg"
+                        android:background="@color/colorFloorMapButtonBackground"
                         android:gravity="center"
                         android:orientation="vertical">
 
@@ -155,8 +155,8 @@
 
                     <View
                         android:layout_width="match_parent"
-                        android:layout_height="@dimen/pading_1"
-                        android:background="@color/floor_map_background" />
+                        android:layout_height="@dimen/padding_1"
+                        android:background="@color/colorPageBackground" />
 
 
                     <LinearLayout
@@ -164,7 +164,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="0dp"
                         android:layout_weight="1"
-                        android:background="@color/floor_map_buttonbg"
+                        android:background="@color/colorFloorMapButtonBackground"
                         android:gravity="center"
                         android:orientation="vertical">
 
@@ -190,15 +190,15 @@
 
                     <View
                         android:layout_width="match_parent"
-                        android:layout_height="@dimen/pading_1"
-                        android:background="@color/floor_map_background" />
+                        android:layout_height="@dimen/padding_1"
+                        android:background="@color/colorPageBackground" />
 
                     <LinearLayout
                         android:id="@+id/level_1"
                         android:layout_width="match_parent"
                         android:layout_height="0dp"
                         android:layout_weight="1"
-                        android:background="@color/floor_map_buttonbg"
+                        android:background="@color/colorFloorMapButtonBackground"
                         android:gravity="center"
                         android:orientation="vertical">
 
@@ -231,9 +231,9 @@
                 android:gravity="center"
                 android:layoutDirection="ltr"
                 android:orientation="horizontal"
-                android:paddingBottom="@dimen/pading_30"
-                android:paddingEnd="@dimen/pading_15"
-                android:paddingStart="@dimen/pading_15"
+                android:paddingBottom="@dimen/padding_30"
+                android:paddingEnd="@dimen/padding_15"
+                android:paddingStart="@dimen/padding_15"
                 android:visibility="visible">
 
             </LinearLayout>
@@ -288,7 +288,7 @@
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/pading_15"
+            android:layout_marginTop="@dimen/padding_15"
             android:fontFamily="@font/din_next_lt_pro_light"
             android:text="@string/there_is_no_internet"
             android:textAlignment="center"
@@ -313,12 +313,12 @@
             android:background="@drawable/round_corner_black"
             android:fontFamily="@font/din_next_lt_pro_bold"
             android:gravity="center"
-            android:paddingEnd="@dimen/pading_30"
-            android:paddingStart="@dimen/pading_30"
+            android:paddingEnd="@dimen/padding_30"
+            android:paddingStart="@dimen/padding_30"
             android:text="@string/try_again"
             android:textAllCaps="false"
-            android:textColor="@color/white"
-            android:textSize="@dimen/settings_page_list_item_text_size" />
+            android:textColor="@color/colorWhite"
+            android:textSize="@dimen/font_size_21" />
 
     </LinearLayout>
 

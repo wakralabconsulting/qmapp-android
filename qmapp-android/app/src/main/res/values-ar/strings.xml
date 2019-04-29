@@ -1,8 +1,6 @@
-<resources>
-    <string name="app_name">بطاقتك إلى الثقافة</string>
+<resources xmlns:tools="http://schemas.android.com/tools">
+    <string name="app_name" tools:ignore="PrivateResource">بطاقتك إلى الثقافة</string>
     <string name="web_view_title">متاحف قطر</string>
-    <string name="navigation_drawer_open">Open navigation drawer</string>
-    <string name="navigation_drawer_close">Close navigation drawer</string>
     <string name="view_details"><u>عرض التفاصيل</u></string>
     <string name="events">الفعاليات</string>
     <string name="details">التفاصيل</string>
@@ -14,18 +12,16 @@
     <string name="title_culture_pass">بطاقتك إلى الثقافة</string>
     <string name="education_calendar_activity_tittle">التقويم التعليمي</string>
     <string name="title_more">المزيد</string>
-    <string name="sidemenu_exhibition_text">المعارض</string>
-    <string name="sidemenu_events_text">الفعاليات</string>
-    <string name="sidemenu_education_text">التعليم</string>
-    <string name="sidemenu_tour_guide_text">الدليل السياحي</string>
-    <string name="sidemenu_heritage_text">المواقع التراثية</string>
-    <string name="sidemenu_public_arts_text">الفنون العامة</string>
-    <string name="sidemenu_dining_text">الطعام</string>
-    <string name="sidemenu_gift_shop_text">محل الهدايا</string>
-    <string name="sidemenu_parks_text">الحدائق</string>
+    <string name="side_menu_exhibition_text">المعارض</string>
+    <string name="side_menu_events_text">الفعاليات</string>
+    <string name="side_menu_education_text">التعليم</string>
+    <string name="side_menu_tour_guide_text">الدليل السياحي</string>
+    <string name="side_menu_heritage_text">المواقع التراثية</string>
+    <string name="side_menu_public_arts_text">الفنون العامة</string>
+    <string name="side_menu_dining_text">الطعام</string>
+    <string name="side_menu_gift_shop_text">محل الهدايا</string>
+    <string name="side_menu_parks_text">الحدائق</string>
     <string name="toolbar_title_key">TOOLBAR_TITLE</string>
-    <string name="new_open">مفتوح الأن</string>
-    <string name="closed">مغلق</string>
     <string name="notifications">الإشعارات</string>
     <string name="location_title">الموقع</string>
     <string name="contact_title">الاتصال</string>
@@ -39,44 +35,28 @@
     <string name="apply">تقديم</string>
     <string name="add_to_calendar">أضف إلى التقويم</string>
     <string name="register_now">سجل الأن</string>
-    <string name="calendar_dialog_title">اسم الفعالية</string>
     <string name="change_language_content_text">سيتم تحويلك إلى الصفحة الرئيسية بعد تغيير اللغة، هل تريد المتابعة؟</string>
-    <string name="home_page_mia_title">متحف الفن الإ</string>
-    <string name="home_page_national_museum_title">متحف قطر الو</string>
-    <string name="home_page_mathaf_title">متحف: المتحف العربي للف</string>
-    <string name="home_page_fire_station_title">كراج جالري، م</string>
-    <string name="home_page_exhibition_title">المعارض</string>
-    <string name="home_page_sports_museum_title">3–2–1 متحف قطر الأولمبي وا</string>
-    <string name="details_page_short_description">\"أصداء\" هو امتداد لأبحاث المفتاح حول تجميع الذكريات والقصص التي وثقتها بالصور والكتابة من ذويها ومن لقاءاتها بمحيطها فهي بمثاب</string>
-    <string name="details_page_long_description">&#160;تحاور بثينة المفتاح (المولودة عام 1987)&#160; في أعمالها قصصاً وممارسات من التراث الثقافي القطري حيث تقوم بأرشفة الذكريات الجماعية واللقاءات الشخصية باستخدام أساليب فنية مختلفة بما في ذلك الرسومات ، والطباعة، والتراكيب الفنية.\r\n\r\n\"أصداء\" هو امتداد لأبحاث المفتاح حول تجميع الذكريات والقصص التي وثقتها بالصور والكتابة من ذويها ومن لقاءاتها بمحيطها فهي بمثابة سير ذاتية جماعية ممتدة. تشير الفنانة في هذه التجربة بشكل خاص إلى التغيرات الإجتماعية والثقافية السريعة التي حدثت في محيطها&#160; في فترة قصيرة من الزمن حيث تثير المفتاح الذكريات المحلية المشتركة وتستجوب الممارسات الثقافية المحلية الحالية المتأثرة بشكل ملحوظ بالتكنولوجيا مع التركيز المتزايد على الفردية. ومن أجل تسليط الضوء على هذا الموضوع المليء بالتحدي ، تقوم الفنانة بتأطير اللعبة التقليدية \"طاق طاق طاقية\"، وتفكيك أشكالها لإعادة صياغة السرد الثقافي، ولتقديم تجربة رمزية في هذا الفضاء الذي يتقاطع فيه الماضي مع الحاضر.\r\n\r\nفي هذا المشروع التجريبي، تمنح الفنانة الأولوية للمنهجية والمعالجة الفنية. وما يزيد من التركيز على هذا، استخدام الفنانة لوسائط مختلفة في تنفيذ المشروع، كالمرايا الجدارية والأرضية القماشية، والتي من خلالها تستجوب المفتاح&#160; الإدراك المفاهيمي و القصص الجماعية القديمة في سياق&#160; الزمن المعاصر.\r\n\r\n\"طاق طاق طاقية\" هي الجملة الأولى من أغنية لعبة جماعية تقليدية للفتيان والفتيات في مختلف أرجاء منطقة الخليج ال الزمن المعاصر.\r\n\r\n\"طاق طاق طاقية\" هي الجملة الأولى من أغنية لعبة جماعية تقليدية للفتيان والفتيات في مختلف أرجاء منطقة الخليج ال</string>
-    <string name="details_page_timing_details">يستمر من ! إل</string>
-    <string name="details_page_location_details">متحف: المتحف العربي للف</string>
     <string name="knowledge_in_action">المعرفة في العمل</string>
-    <string name="education_short_description">Our numerous programmes are designed for families, university students and adults.\n\nFind out what\'s on offer and register ahead to secure your place.</string>
+    <string name="education_short_description">تم تصميم برامجنا العديدة والمتنوعة لتتناسب مع العائلات وطلاب الجامعات والكبار. تعرَّف على ما يقدمه المتحف من برامج تعليمية وسارع بالتسجيل للاستفادة من هذه البرامج.</string>
     <string name="education_long_description">"تُتيح جميع برامج التعليم لدينا فرص تفاعلية. نحن نأمل بأن ترسخ هذه البرامج في ذاكرة المشاركين وتؤدي إلى تطوير مهاراتهم وقدراتهم الإبداعية.\nأما بالنسبة لمعلمي المدارس، فقد أعددنا ورش عمل ومنتديات ودورات تدريبية حسب الطلب والتي تتناسب مع إحتياجاتهم. نحن نركز أيضا على العمل مع الأطفال لتشجيعهم على إستكشاف العالم من حولهم، والانخراط والمشاركة فيه والتعبير عن أنفسهم من خلال الأنشطة الإبداعية.\nوتتماشى جميع أنشطتنا مع المعايير المهنية للمجلس الأعلى للتعليم الخاصة بالمعلمين وبمعايير المناهج الوطنية.";</string>
     <string name="discover_txt">الاستكشاف</string>
     <string name="coming_soon_content_map">نحن نعمل بجد لجعل التفاصيل متاحة. \n\nستكون خرائط المتحف و تفاصيل القطع الخاصة بالمتحف متوفرة عما قريب \n\nترقّب</string>
     <string name="coming_soon_content">نحن نعمل بجد لجعل التفاصيل متاحة. \n\nترقّب</string>
     <string name="coming_soon_txt">قريباً</string>
     <string name="close">مغلق</string>
-    <string name="register_now_content">شكراً لك للتسجيل معنا. المزيد من التفاصيل ستصل إليك على طريق البريد الإلكتروني</string>
     <string name="opening_timings">أوقات العمل</string>
     <string name="exhibition_timings">أوقات المعرض</string>
     <string name="institution">المعهد -</string>
     <string name="age_group">الفئة العمرية -</string>
     <string name="programme_type">نوع البرنامج -</string>
-    <string name="clear">أغلق</string>
+    <string name="clear">مسح</string>
     <string name="filter">بحث</string>
     <string name="gift_shop_url">https://inq-online.com/</string>
     <string name="touch_again">اضغط مرة أخرى للخروج</string>
-    <string name="map_navigation_api">http://maps.google.com/maps?q=loc:</string>
     <string name="museum_about">عن المتحف</string>
     <string name="museum_timings">مواعيد عمل المتحف</string>
-    <string name="no_results_text">قريباً</string>
+    <string name="no_results_text">لم يتم العثور على أي نتائج</string>
     <string name="check_network">تفقد اتصالك بالانترنت</string>
-    <string name="collection_details_main_text">"بالإضافة إلى كونها موضوعًا للعمر الرائع والجمال ، كان من المفترض أيضًا استخدام السيراميك في المتحف. \ n \ n
-من المطبخ المتواضع إلى وضع لوحات البلاط ، كان السيراميك جزءًا حيويًا من الحياة اليومية في العالم الإسلامي. \ n \ n
-إنها تجسد التأثيرات الخارجية والإبداع الداخلي الذي ألهم هذا الازدهار في تصميم السيراميك على مدى 12 قرنا ."</string>
     <string name="culture_pass_description">يمنحك برنامج "ممر متاحف قطر للثقافة" خصومات ودخول مجاني وفرص حصرية عبر العديد من الأماكن الثقافية في قطر والخصومات على مجموعة واسعة من قائمة الشركاء المتزايدة. أفضل ما في الأمر ، كعضو انت مدعو للانضمام إلينا في مجموعة واسعة من الأنشطة الإبداعية المثيرة. \n\n يمكنك الدخول عن طريق تفعيل عضويتك اليوم</string>
     <string name="benefits">المزايا</string>
     <string name="culture_pass_benefits">- خصم بنسبة 15٪ في QM CAFÉ\'S على جميع المنتجات \n\n- خصم بنسبة 10٪ على العناصر في جميع متاجر هدايا QM (بدون حد أدنى من الشراء) \n\n - خصم بنسبة 10٪ في مطعم IDAM في وقت الغداء \n\n- استلام النشرة الإخبارية الشهرية للبقاء على إطلاع على عروض متاحف قطر والشركاء \n\n- الحصول على وصول أولي إلى مناقشات وحلقات الأعضاء فقط \n\n- الحصول على دعوات حصرية إلى مركز اتصال متاحف قطر ذو المواصفات العالمية من 8 صباحًا إلى 8 مساءً يوميًا></string>
@@ -84,26 +64,12 @@
     <string name="become_a_member">أنضم إلينا الأن</string>
     <string name="already_a_member"><u>عضو سابق؟</u></string>
     <string name="log_in">تسجيل الدخول</string>
-    <string name="unable_to_fetch_details">غير فادر على جلب التفاصيل</string>
     <string name="no_new_notification_yet">لا توجد إشعارات بعد</string>
     <string name="no_events">لا توجد فعاليات</string>
     <string name="open_settings">الإعدادات</string>
     <string name="permission_required">الإذن مطلوب</string>
     <string name="runtime_permission">لإضافة فعاليات للتقويم، قم بالسماح لتطبيق متاحف قطر بالولوج للتقويم على جهازك. /n/n اضغط على الإعدادات > الصلاحيات، ثم قم بتفعيل التقويم</string>
-    <string name="camera_runtime_permission">To scan QR Code, allow <b>Qatar Museum App</b> access to your device\'s Camera.\n\n Tap Settings > Permissions, and turn Camera on.</string>
     <string name="event_added">تم إضافة الفعالية للتقويم</string>
-    <string name="local_event_institution">MIA</string>
-    <string name="local_event_title">جولات دون حجز</string>
-    <string name="local_event_short_description"> نضموا إلى مرشدي المتحف في جولة على مجموعة مقتنيات متحف الفن الإسلامي الرائعة التي تغطي 1400 سنة، وثلاث قارات. الحجز غير ضروري للمشاركة في الجولة.</string>
-    <string name="local_event_long_description">الاثنين – جولة العلوم
-
-الثلاثاء - جولة علمية
-
-الخميس – جوله متعلقه بالهندسة المعماريه للمتحف
-
-الجمعة - جولة في قاعات العرض الدائم
-
-السبت- جولة في قاعات العرض الدائم</string>
     <string name="notification_event_updates">تحديثات الفعالية</string>
     <string name="notification_exhibition_updates">تحديثات المعرض</string>
     <string name="notification_museum_updates">تحديثات المتحف</string>
@@ -111,7 +77,6 @@
     <string name="notification_tourguide_updates">تحديثات الدليل السياحي</string>
     <string name="museum_about_text">عن</string>
     <string name="museum_collection_text">المجموعات</string>
-    <string name="open_in_google_maps">أضغط هنا للعرض في خرائط جووجل</string>
     <string name="alert_txt">تنبيه</string>
     <string name="error_content">رجاءاً! ادخل رقم القطعة</string>
     <string name="location_alert_txt">حدث خطأ ما</string>
@@ -122,26 +87,25 @@
     <string name="obj_text_three">لرؤية التفاصيل</string>
     <string name="or">أو</string>
     <string name="use_qr_scanner"><u>استخدم ماسح QR</u></string>
-    <string name="use_the_keypad"><u>استخدم لوحة المفاتيح</u></string>
 
-    <string name="any">أي</string>
+    <string name="any">الكل</string>
     <string name="years">التبادل الثقافي</string>
     <string name="public_art">تعليم الفن الشعبي</string>
     <string name="cultural">تعليم التراث الثقافي</string>
     <string name="mia_education">تعليم متحف الفن الإسلامي</string>
     <string name="mathaf">تعليم المتحف</string>
     <string name="national">المتحف الوطني</string>
-    <string name="qosm">تعليم المتحف الرياضي</string>
+    <string name="qosm">التعليم بمتحف قطر الأولمبي والرياضي</string>
     <string name="family">تقويم برامج الأسرة والمدرسة</string>
 
     <string name="all_ages">جميع الفئات العمرية</string>
     <string name="teachers">المعلمين</string>
-    <string name="nursery">الحضانة/قبل الروضة (3-5 سنوات)</string>
-    <string name="early">الابتدائية المبكرة (5-7 سنوات)</string>
-    <string name="primary">الإبتدائية (8-11 سنوات)</string>
-    <string name="preparatory">الإعدادية (12-14 سنة)</string>
-    <string name="secondary">الثانوية (15-18 سنة)</string>
-    <string name="college">الكلية والجامعة (17-24 سنة)</string>
+    <string name="nursery">الحضانة/قبل الروضة (3–5 سنوات)</string>
+    <string name="early">الابتدائية المبكرة (5–7 سنوات)</string>
+    <string name="primary">الإبتدائية (8–11 سنوات)</string>
+    <string name="preparatory">الإعدادية (12–14 سنة)</string>
+    <string name="secondary">الثانوية (15–18 سنة)</string>
+    <string name="college">الكلية والجامعة (17–24 سنة)</string>
     <string name="youth">الشباب</string>
     <string name="adults">البالغون</string>
     <string name="seniors">كبار السن</string>
@@ -164,20 +128,14 @@
     <string name="tourguide_sidemenu_title_desc">اغمر نفسك في تفاصيل القطع التي اختيرت خصيصا لك من قبل خبرائنا</string>
     <string name="tourguide_title_desc">Welcome to Qatar Museum Premises. \n Explore the architrcture and the \nobjects on display. \n Scan the QR codes available on the \ngalleries for more information.</string>
     <!--////////////////////// check-->
-    <string name="sidemenu_text">Sidemenu</string>
     <string name="change_language_dialog_title">تغيير اللغة</string>
     <string name="change_language_button_text">المتابعة</string>
     <string name="contact_mail">info@mia.org.qa</string>
     <string name="alberallo">Alberallo</string>
     <string name="tourguide_title">تجول كما يحلو لك</string>
-    <string name="tourguide_subtitle">تجول كما يحلو لك</string>
     <string name="tourguide_subtitle_desc">ربما تريد أن تجرب جولاتنا كما يحلو لك \n اغمر نفسك في تفاصيل القطعة التي اختيرت خصيصا لك من قبل خبرائنا..</string>
     <string name="mia_tour_guide">دليل متحف الفن الإسلامي</string>
-    <string name="title_activity_floor_map">Map</string>
-    <string name="transparency">Transparency</string>
-    <string name="switch_image">Switch Image</string>
-    <string name="clickable">Clickable</string>
-    <color name="light_gray">#D3D3D3</color>
+    <string name="nmoq_tour_guide">الدليل السياحي متحف قطر الوطني</string>
     <string name="floormap_detail1">This example is a rare example of the Mamluk production of albarelli in Damascus, primarily produced for the European market. The albarello (pl. albarelli) was used as a medicinal jar for holding apothecary ointments and dried herbal drugs. Its elongated shape helps us to recognize the nature and function of this typical object. The Italain word albarello has a quite controversial etymology: sometimes said to be derivng from the Latin albaris, meaning \"in wood\" or \"white\", sometimes from the Arabic al-barmil, which designates a barrel. Albarelli have been produced in the Middle East and Central Asia since the 11th-century and later on in 15th-century Spain and Italy, although they are believed to have been first produced in Syria before making their way to Europe through Spain and Italy. Indeed, many European paintings and archives in France, Italy and Spain refer to vessels produced or imported from Syria.</string>
     <string name="floormap_imagdesc1">Saint Jerome in His Study \nDomenico Ghirlandaio (1449 en dash1494) \nChurch of Ognissanti, Florence, 1480</string>
     <string name="floormap_detail2">According to the Medici Archival records in Florence, this vas is possibly one of the three \'alberegli domaschini\' owned by Piero di Cosimo de Medici (1416-59), the de-facto ruler of Florence from 1464-69."
@@ -187,15 +145,11 @@
     <string name="production_text">الانتاج:</string>
     <string name="production_dates">تاريخ الإنتاج:</string>
     <string name="period_style">الفترة/النمط:</string>
-    <string name="technique_materials">التقنيات والمواد:</string>
-    <string name="dimension">الأبعاد:</string>
 
     <string name="object_history">تاريخ القطعة</string>
-    <string name="science_tour">جولة علمية</string>
     <string name="no_location_data">لا توجد بيانات للموقع</string>
     <string name="increase_volume">يرجى رفع الصوت</string>
-    <string name="highlight_tour">الجولة الاستطلاعية</string>
-    <string name="loading">جاري التحميل...</string>
+    <string name="loading">جاري التحميل…</string>
     <string name="oops">خطأ!</string>
     <string name="there_is_no_internet">لا يوجد اتصال بالانترنت</string>
     <string name="please_check_your_internet">الرجاء التحقق من اتصال الانترنت الخاص بك</string>
@@ -204,7 +158,6 @@
     <!-- Strings related to login -->
     <string name="prompt_email">‏اسم المستخدم</string>
     <string name="prompt_password">كلمة المرور</string>
-    <string name="action_sign_in_short">Sign in</string>
     <string name="forgot_password"><u>هل نسيت كلمة؟</u></string>
     <string name="culture_pass_login">تسجيل الدخول لبطاقتك إلى الثقافة</string>
     <string name="error_password_required">حقل "كلمة المرور" ضروري.</string>
@@ -225,28 +178,11 @@
     <string name="logout_success_message">تم تسجيل الخروج بنجاح</string>
     <string name="ok">تم</string>
     <!-- Strings related to Create Account -->
-    <string name="create_your_account">إنشاء حساب جديد</string>
-    <string name="username">اسم المستخدم *</string>
-    <string name="password">كلمة المرور *</string>
-    <string name="confirm_password">تأكيد كلمة المرور *</string>
-    <string name="tell_us_more_about_you">اخبرنا بالمزيد عن نفسك</string>
-    <string name="select_a_value">-اختيار القيمة-</string>
-    <string name="title">اللقب</string>
-    <string name="first_name">الاسم الأول *</string>
-    <string name="last_name">اسم العائلة *</string>
-    <string name="mobile_number">رقم الجوال *</string>
-    <string name="create_account">إنشاء حساب جديد</string>
     <string name="error_logout">هناك مشكلة بتسجيل الخروج</string>
     <string name="password_reset_successful">لقد تم إرسال الرمز السري الجديد الى بريدك الإلكتروني</string>
     <!-- Strings related to RSVP -->
-    <string name="greetings_title">تهانينا</string>
-    <string name="greetings_content">لقد تمت دعوتك لحضول إفتتاح متحف قطر الوطني</string>
-    <string name="accept_now">قبول الدعوة</string>
-    <string name="accept_later">سأتخذ القرار لاحقا</string>
     <string name="accept">قبول الدعوة</string>
     <string name="decline">عدم الحضور</string>
-    <string name="thankyou">شكرا جزيلا لقبول الدعوة. لقد تم إرسال بريد إلكتروني بالتفاصيل. للإستفسار، يرجى التواصل عن طريق info@qm.org.qa أو 0097444525555</string>
-    <string name="decline_content">تأكيد عدم الحضور</string>
     <string name="profile_link"><u>دعوة لحضور افتتاح متحف قطر الوطني</u></string>
     <string name="artifact_invalid">Invalid Artifact Number</string>
     <string name="yes">نعم</string>
@@ -256,33 +192,34 @@
     <!-- Strings related to Object preview -->
     <string name="gallery_label">, المعرض </string>
     <string name="floor_label">المستوى </string>
-    <string name="download_brochure_for_more_information"><u>Download Brochure for More Information</u></string>
-    <string name="interested">Book Tour</string>
-    <string name="not_interested">Cancel Booking</string>
-    <string name="date">Date</string>
-    <string name="thankyou_interest">Thank you for booking this tour. You will receive an email with further information.\n\n
-Any questions, please contact booking@qm.org.qa or +974 4452 5555</string>
-    <string name="offer_code">Special offer</string>
-    <string name="claim_offer">Claim Offer</string>
-    <string name="venue">Venue</string>
-    <string name="time_slot_not_available">You are already registered for another event at the selected time.</string>
-    <string name="decline_content_tour">Are you sure you want to cancel this tour?</string>
+    <string name="download_brochure_for_more_information"><u>تحميل الكتيب لمزيد من المعلومات</u></string>
+    <string name="interested">احجز جولة</string>
+    <string name="not_interested">إلغاء الحجز</string>
+    <string name="date">التاريخ</string>
+    <string name="offer_code">عرض خاص</string>
+    <string name="claim_offer">طلب العرض</string>
+    <string name="thankyou_interest">شكرا لك على حجز هذه الجولة. سوف تتلقى رسالة بريد إلكتروني مع مزيد من المعلومات. لأي أسئلة ، يرجى التواصل على booking@qm.org.qa أو 5554 4452 974+</string>
+    <string name="decline_content_tour">هل أنت متأكد من أنك تريد إلغاء هذه الجولة؟</string>
     <string name="event_date">Event Date</string>
     <!-- Strings related to Museum Launch -->
     <string name="museum_about_launch">عن</string>
-    <string name="museum_tours">Tours</string>
-    <string name="museum_travel">Travel</string>
-    <string name="museum_discussion">Activities</string>
+    <string name="museum_tours">الجولات</string>
+    <string name="museum_travel">السياحة</string>
+    <string name="museum_discussion">الأنشطة</string>
     <string name="mia_floors">طوابق متحف الفن الإسلامي</string>
     <string name="warning_no_end_time">NO END TIME AVAILABLE</string>
-    <string name="warning_no_seat_available">Fully booked</string>
-    <string name="warning_selection_not_available">Sorry, no spaces available for the specific tour.</string>
-    <string name="you_have_registered">You have booked&#160;</string>
-    <string name="seat_for_this_tour">&#160;space</string>
-    <string name="seats_for_this_tour">&#160;spaces</string>
-    <string name="seat_available">&#160;space available</string>
-    <string name="seats_available">&#160;spaces available</string>
+    <string name="warning_no_seat_available">محجوزة بالكامل</string>
+    <string name="warning_selection_not_available">Sorry, no seats available for the specific tour.</string>
+    <string name="you_have_registered">قمت بحجز&#160;</string>
+    <string name="seat_for_this_tour">&#160;مكان</string>
+    <string name="seats_for_this_tour">&#160;أماكن</string>
+    <string name="space_available">&#160;مكان متاح</string>
+    <string name="spaces_available">&#160;الأماكن المتاحة / أماكن متاحة</string>
     <string name="number_of_visitors">Number of Visitors</string>
     <string name="done">Done</string>
+    <!-- Strings related to NMoQ Landing -->
+    <string name="facilities_txt">المرافق</string>
+    <string name="experience_txt">المحتويات</string>
+    <string name="facility_sublist">Facility Sublist</string>
 
 </resources>

@@ -1,9 +1,11 @@
 package com.qatarmuseums.qatarmuseumsapp.park;
 
 
+import android.support.annotation.NonNull;
+
 import com.google.gson.annotations.SerializedName;
 
-public class ParkList {
+public class ParkList implements Comparable<ParkList> {
 
     @SerializedName("Title")
     private String mainTitle;
@@ -21,19 +23,16 @@ public class ParkList {
     private String timingInfo;
 
 
-    public ParkList() {
-        }
-
-    public ParkList(String mainTitle, String shortDescription, String image,
-                    String latitude, String longitude, String timingInfo,
-                    String sortId) {
+    ParkList(String mainTitle, String shortDescription, String image,
+             String latitude, String longitude, String timingInfo,
+             String sortId) {
         this.mainTitle = mainTitle;
         this.shortDescription = shortDescription;
         this.image = image;
         this.latitude = latitude;
         this.longitude = longitude;
         this.timingInfo = timingInfo;
-        this.sortId =sortId;
+        this.sortId = sortId;
     }
 
     public String getMainTitle() {
@@ -58,11 +57,6 @@ public class ParkList {
 
     public void setShortDescription(String shortDescription) {
         this.shortDescription = shortDescription;
-    }
-
-
-    public void setLongDescription(String longDescription) {
-        longDescription = longDescription;
     }
 
     public String getLatitude() {
@@ -95,5 +89,13 @@ public class ParkList {
 
     public void setSortId(String sortId) {
         this.sortId = sortId;
+    }
+
+    @Override
+    public int compareTo(@NonNull ParkList parkList) {
+        if (parkList.sortId != null && !this.sortId.trim().equals(""))
+            return Integer.valueOf(this.sortId).compareTo(Integer.valueOf(parkList.sortId));
+        else
+            return 0;
     }
 }

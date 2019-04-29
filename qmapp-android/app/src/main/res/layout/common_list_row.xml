@@ -25,7 +25,7 @@
             android:fontFamily="@font/din_next_lt_pro_bold"
             android:paddingEnd="10dp"
             android:paddingStart="10dp"
-            android:textColor="@color/black"
+            android:textColor="@color/colorBlack"
             android:textSize="@dimen/status_tag"
             android:visibility="gone" />
 
@@ -61,7 +61,7 @@
             android:textAlignment="gravity"
             android:textAllCaps="true"
             android:textColor="@android:color/white"
-            android:textSize="@dimen/home_list_item_name"
+            android:textSize="@dimen/font_size_21"
             android:textStyle="bold" />
 
         <TextView
@@ -96,7 +96,7 @@
             android:fontFamily="@font/din_regular"
             android:lines="1"
             android:textColor="@android:color/white"
-            android:textSize="@dimen/home_list_item_name"
+            android:textSize="@dimen/font_size_21"
             android:textStyle="bold" />
 
         <LinearLayout
@@ -111,9 +111,7 @@
                 android:id="@+id/tour_day_text"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:ellipsize="end"
                 android:fontFamily="@font/din_regular"
-                android:maxLength="20"
                 android:textColor="@android:color/white"
                 android:textSize="@dimen/font_size_18"
                 android:textStyle="bold" />

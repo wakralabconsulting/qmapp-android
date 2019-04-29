@@ -21,24 +21,16 @@ public class HorizontalPagerAdapter extends PagerAdapter {
 
     private Context mContext;
     private LayoutInflater mLayoutInflater;
-    ArrayList<String> imageList = new ArrayList<>();
-    HorizontalLayoutFragment fragment;
-    DetailsActivity activity;
-    private Util.LibraryObject[] LIBRARIES;
+    private ArrayList<String> imageList = new ArrayList<>();
+    private HorizontalLayoutFragment fragment;
+    private DetailsActivity activity;
 
-    public HorizontalPagerAdapter(Context mContext, HorizontalLayoutFragment fragment, ArrayList<String> images) {
+    HorizontalPagerAdapter(Context mContext, HorizontalLayoutFragment fragment, ArrayList<String> images) {
         this.mContext = mContext;
         this.mLayoutInflater = LayoutInflater.from(mContext);
         this.fragment = fragment;
         this.imageList = images;
     }
-
-    public HorizontalPagerAdapter(Context mContext, DetailsActivity activity) {
-        this.mContext = mContext;
-        this.mLayoutInflater = LayoutInflater.from(mContext);
-        this.activity = activity;
-    }
-
 
     @Override
     public int getCount() {
@@ -55,21 +47,18 @@ public class HorizontalPagerAdapter extends PagerAdapter {
     public Object instantiateItem(@NonNull ViewGroup container, final int position) {
         final View view;
         view = mLayoutInflater.inflate(R.layout.item_view, container, false);
-        LIBRARIES = new Util.LibraryObject[imageList.size()];
+        Util.LibraryObject[] LIBRARIES = new Util.LibraryObject[imageList.size()];
         for (int i = 0; i < imageList.size(); i++) {
-           LIBRARIES[i] =new Util.LibraryObject(imageList.get(i));
+            LIBRARIES[i] = new Util.LibraryObject(imageList.get(i));
         }
         setupItem(view, LIBRARIES[position], mContext);
         FrameLayout layout = view.findViewById(R.id.layout_frame);
-        view.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Log.i("TAG","This page was clicked"+position);
-                if(fragment!=null){
-                    fragment.getItemPosition(position);
-                }else {
-                    activity.getItemPosition(position);
-                }
+        view.setOnClickListener(v -> {
+            Log.i("TAG", "This page was clicked" + position);
+            if (fragment != null) {
+                fragment.getItemPosition(position);
+            } else {
+                activity.getItemPosition(position);
             }
         });
         container.addView(view);

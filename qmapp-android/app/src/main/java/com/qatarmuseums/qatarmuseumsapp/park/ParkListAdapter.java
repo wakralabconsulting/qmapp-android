@@ -4,7 +4,6 @@ package com.qatarmuseums.qatarmuseumsapp.park;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
-import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -34,36 +33,33 @@ public class ParkListAdapter extends RecyclerView.Adapter<ParkListAdapter.MyView
     private final Context mContext;
     private List<ParkList> parkLists;
     private String latitude, longitude;
-    Util util = new Util();
-    Bundle mapViewBundle = null;
-    MapView mapDetails;
-    private GoogleMap gmap, gvalue;
-    LinearLayout mapView;
-    int iconView = 0;
+    private Util util = new Util();
+    private GoogleMap gMap, gValue;
+    private int iconView = 0;
 
 
     public class MyViewHolder extends RecyclerView.ViewHolder implements OnMapReadyCallback {
-        public TextView mainTitle, title, shortDescription, longDescription, timingInfo, timimgTitle;
+        TextView mainTitle, title, shortDescription, longDescription, timingInfo, timingTitle;
         public ImageView imageView;
-        public LinearLayout locationLayout, mainTitleLayout, timimgHyphen;
+        LinearLayout locationLayout, mainTitleLayout, timimgHyphen;
         ImageView mapImageView, direction;
 
 
         public MyViewHolder(View view) {
             super(view);
-            imageView = (ImageView) view.findViewById(R.id.image_view);
-            mainTitleLayout = (LinearLayout) view.findViewById(R.id.main_title_layout);
-            mainTitle = (TextView) view.findViewById(R.id.main_title);
-            title = (TextView) view.findViewById(R.id.title);
-            shortDescription = (TextView) view.findViewById(R.id.short_description);
-            longDescription = (TextView) view.findViewById(R.id.long_description);
-            timingInfo = (TextView) view.findViewById(R.id.timing_info);
-            timimgTitle = (TextView) view.findViewById(R.id.timing_title);
-            locationLayout = (LinearLayout) view.findViewById(R.id.location_layout);
-            timimgHyphen = (LinearLayout) view.findViewById(R.id.timing_hiphen);
-            mapDetails = (MapView) view.findViewById(R.id.map_info);
-            mapImageView = (ImageView) view.findViewById(R.id.map_view);
-            direction = (ImageView) view.findViewById(R.id.direction);
+            imageView = view.findViewById(R.id.image_view);
+            mainTitleLayout = view.findViewById(R.id.main_title_layout);
+            mainTitle = view.findViewById(R.id.main_title);
+            title = view.findViewById(R.id.title);
+            shortDescription = view.findViewById(R.id.short_description);
+            longDescription = view.findViewById(R.id.long_description);
+            timingInfo = view.findViewById(R.id.timing_info);
+            timingTitle = view.findViewById(R.id.timing_title);
+            locationLayout = view.findViewById(R.id.location_layout);
+            timimgHyphen = view.findViewById(R.id.timing_hiphen);
+            MapView mapDetails = view.findViewById(R.id.map_info);
+            mapImageView = view.findViewById(R.id.map_view);
+            direction = view.findViewById(R.id.direction);
             if (mapDetails != null) {
                 // Initialise the MapView
                 mapDetails.onCreate(null);
@@ -77,21 +73,21 @@ public class ParkListAdapter extends RecyclerView.Adapter<ParkListAdapter.MyView
         @Override
         public void onMapReady(GoogleMap googleMap) {
             MapsInitializer.initialize(mContext);
-            gvalue = googleMap;
+            gValue = googleMap;
             googleMap.getUiSettings().setMapToolbarEnabled(false);
-            gvalue.setMapType(GoogleMap.MAP_TYPE_NORMAL);
-            gvalue.setMapStyle(MapStyleOptions.loadRawResourceStyle(mContext, R.raw.map_style));
-            if(latitude!=null) {
-                gvalue.addMarker(new MarkerOptions()
+            gValue.setMapType(GoogleMap.MAP_TYPE_NORMAL);
+            gValue.setMapStyle(MapStyleOptions.loadRawResourceStyle(mContext, R.raw.map_style));
+            if (latitude != null) {
+                gValue.addMarker(new MarkerOptions()
                         .position(new LatLng(Double.parseDouble(latitude), Double.parseDouble(longitude)))
                         .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED)));
-                gvalue.animateCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(Double.parseDouble(latitude), Double.parseDouble(longitude)), 10));
+                gValue.animateCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(Double.parseDouble(latitude), Double.parseDouble(longitude)), 10));
             }
         }
     }
 
 
-    public ParkListAdapter(Context context, List<ParkList> parkLists) {
+    ParkListAdapter(Context context, List<ParkList> parkLists) {
         this.parkLists = parkLists;
         this.mContext = context;
 
@@ -114,62 +110,56 @@ public class ParkListAdapter extends RecyclerView.Adapter<ParkListAdapter.MyView
         holder.title.setText(parkList.getMainTitle());
         if (position == 0) {
             if (parkList.getLatitude() != null) {
-                latitude = convertDegreetoDecimalMeasure(latitude);
-                longitude = convertDegreetoDecimalMeasure(longitude);
+                latitude = convertDegreeToDecimalMeasure(latitude);
+                longitude = convertDegreeToDecimalMeasure(longitude);
             }
             holder.title.setVisibility(View.GONE);
             holder.mainTitleLayout.setVisibility(View.VISIBLE);
             holder.imageView.setVisibility(View.GONE);
             holder.locationLayout.setVisibility(View.VISIBLE);
             holder.mainTitle.setText(parkList.getMainTitle());
-            holder.mapImageView.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    if (iconView == 0) {
-                        if (latitude == null) {
-                            util.showLocationAlertDialog(mContext);
-                        } else {
-                            iconView = 1;
-                            holder.mapImageView.setImageResource(R.drawable.ic_map);
-                            gmap = gvalue;
-                            gmap.setMapType(GoogleMap.MAP_TYPE_HYBRID);
-                            gmap.setMapStyle(MapStyleOptions.loadRawResourceStyle(mContext, R.raw.map_style));
-
-                            gmap.addMarker(new MarkerOptions()
-                                    .position(new LatLng(Double.parseDouble(latitude), Double.parseDouble(longitude)))
-                                    .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED)));
-                            gmap.animateCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(Double.parseDouble(latitude), Double.parseDouble(longitude)), 10));
-                        }
+            holder.mapImageView.setOnClickListener(view -> {
+                if (iconView == 0) {
+                    if (latitude == null) {
+                        util.showLocationAlertDialog(mContext);
                     } else {
-                        if (latitude == null) {
-                            util.showLocationAlertDialog(mContext);
-                        } else {
-                            iconView = 0;
-                            gmap = gvalue;
-                            holder.mapImageView.setImageResource(R.drawable.ic_satellite);
-                            gmap.setMapType(GoogleMap.MAP_TYPE_NORMAL);
-                            gmap.setMapStyle(MapStyleOptions.loadRawResourceStyle(mContext, R.raw.map_style));
+                        iconView = 1;
+                        holder.mapImageView.setImageResource(R.drawable.ic_map);
+                        gMap = gValue;
+                        gMap.setMapType(GoogleMap.MAP_TYPE_HYBRID);
+                        gMap.setMapStyle(MapStyleOptions.loadRawResourceStyle(mContext, R.raw.map_style));
 
-                            gmap.addMarker(new MarkerOptions()
-                                    .position(new LatLng(Double.parseDouble(latitude), Double.parseDouble(longitude)))
-                                    .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED)));
-                            gmap.animateCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(Double.parseDouble(latitude), Double.parseDouble(longitude)), 10));
-                        }
+                        gMap.addMarker(new MarkerOptions()
+                                .position(new LatLng(Double.parseDouble(latitude), Double.parseDouble(longitude)))
+                                .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED)));
+                        gMap.animateCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(Double.parseDouble(latitude), Double.parseDouble(longitude)), 10));
+                    }
+                } else {
+                    if (latitude == null) {
+                        util.showLocationAlertDialog(mContext);
+                    } else {
+                        iconView = 0;
+                        gMap = gValue;
+                        holder.mapImageView.setImageResource(R.drawable.ic_satellite);
+                        gMap.setMapType(GoogleMap.MAP_TYPE_NORMAL);
+                        gMap.setMapStyle(MapStyleOptions.loadRawResourceStyle(mContext, R.raw.map_style));
+
+                        gMap.addMarker(new MarkerOptions()
+                                .position(new LatLng(Double.parseDouble(latitude), Double.parseDouble(longitude)))
+                                .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED)));
+                        gMap.animateCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(Double.parseDouble(latitude), Double.parseDouble(longitude)), 10));
                     }
                 }
             });
 
-            holder.direction.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    if (latitude == null) {
-                        util.showLocationAlertDialog(mContext);
-                    } else {
-                        Intent intent = new Intent(android.content.Intent.ACTION_VIEW,
-                                Uri.parse("http://maps.google.com/maps?daddr=" + latitude + "," + longitude + "&basemap=satellite"));
-                        if (intent.resolveActivity(mContext.getPackageManager()) != null) {
-                            mContext.startActivity(intent);
-                        }
+            holder.direction.setOnClickListener(view -> {
+                if (latitude == null) {
+                    util.showLocationAlertDialog(mContext);
+                } else {
+                    Intent intent = new Intent(Intent.ACTION_VIEW,
+                            Uri.parse("http://maps.google.com/maps?daddr=" + latitude + "," + longitude + "&basemap=satellite"));
+                    if (intent.resolveActivity(mContext.getPackageManager()) != null) {
+                        mContext.startActivity(intent);
                     }
                 }
             });
@@ -183,12 +173,12 @@ public class ParkListAdapter extends RecyclerView.Adapter<ParkListAdapter.MyView
         if (parkList.getTimingInfo() != null) {
             holder.timingInfo.setVisibility(View.VISIBLE);
             holder.timimgHyphen.setVisibility(View.VISIBLE);
-            holder.timimgTitle.setVisibility(View.VISIBLE);
+            holder.timingTitle.setVisibility(View.VISIBLE);
             holder.timingInfo.setText(parkList.getTimingInfo());
         } else {
             holder.timingInfo.setVisibility(View.GONE);
             holder.timimgHyphen.setVisibility(View.GONE);
-            holder.timimgTitle.setVisibility(View.GONE);
+            holder.timingTitle.setVisibility(View.GONE);
         }
 
         GlideApp.with(mContext)
@@ -203,7 +193,7 @@ public class ParkListAdapter extends RecyclerView.Adapter<ParkListAdapter.MyView
         return parkLists.size();
     }
 
-    private String convertDegreetoDecimalMeasure(String degreeValue) {
+    private String convertDegreeToDecimalMeasure(String degreeValue) {
         String value = degreeValue.trim();
         String[] latParts = value.split("°");
         float degree = Float.parseFloat(latParts[0]);

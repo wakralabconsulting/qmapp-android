@@ -17,7 +17,7 @@
             android:id="@+id/common_toolbar"
             android:layout_width="match_parent"
             android:layout_height="?android:attr/actionBarSize"
-            android:background="@color/black"
+            android:background="@color/colorBlack"
             android:theme="@style/AppTheme.PopupOverlay"
             app:contentInsetEnd="0dp"
             app:contentInsetStart="0dp">
@@ -116,12 +116,12 @@
                     android:id="@+id/username_txt"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="@dimen/pading_10"
+                    android:layout_marginTop="@dimen/padding_10"
                     android:fontFamily="@font/din_next_lt_pro_light"
                     android:gravity="center"
                     android:text="User Name"
                     android:textAllCaps="true"
-                    android:textColor="@color/black"
+                    android:textColor="@color/colorBlack"
                     android:textSize="@dimen/font_size_17" />
 
 
@@ -130,27 +130,27 @@
             <View
                 android:layout_width="match_parent"
                 android:layout_height="1dp"
-                android:background="@color/divider" />
+                android:background="@color/colorDivider" />
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginEnd="@dimen/pading_30"
-                android:layout_marginStart="@dimen/pading_30"
+                android:layout_marginEnd="@dimen/padding_30"
+                android:layout_marginStart="@dimen/padding_30"
                 android:orientation="vertical">
 
                 <RelativeLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:paddingBottom="@dimen/pading_15"
-                    android:paddingTop="@dimen/pading_15">
+                    android:paddingBottom="@dimen/padding_15"
+                    android:paddingTop="@dimen/padding_15">
 
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:fontFamily="@font/din_next_lt_pro_bold"
                         android:text="@string/membership_number"
-                        android:textColor="@color/black"
+                        android:textColor="@color/colorBlack"
                         android:textSize="@dimen/font_size_14" />
 
                     <TextView
@@ -160,27 +160,27 @@
                         android:layout_alignParentEnd="true"
                         android:fontFamily="@font/din_next_lt_pro_light"
                         android:text="00515"
-                        android:textColor="@color/black"
+                        android:textColor="@color/colorBlack"
                         android:textSize="@dimen/font_size_14" />
                 </RelativeLayout>
 
                 <View
                     android:layout_width="match_parent"
                     android:layout_height="1dp"
-                    android:background="@color/divider" />
+                    android:background="@color/colorDivider" />
 
                 <RelativeLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:paddingBottom="@dimen/pading_15"
-                    android:paddingTop="@dimen/pading_15">
+                    android:paddingBottom="@dimen/padding_15"
+                    android:paddingTop="@dimen/padding_15">
 
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:fontFamily="@font/din_next_lt_pro_bold"
                         android:text="@string/e_mail_address"
-                        android:textColor="@color/black"
+                        android:textColor="@color/colorBlack"
                         android:textSize="@dimen/font_size_14" />
 
                     <TextView
@@ -190,27 +190,27 @@
                         android:layout_alignParentEnd="true"
                         android:fontFamily="@font/din_next_lt_pro_light"
                         android:text="info@qm.com"
-                        android:textColor="@color/black"
+                        android:textColor="@color/colorBlack"
                         android:textSize="@dimen/font_size_14" />
                 </RelativeLayout>
 
                 <View
                     android:layout_width="match_parent"
                     android:layout_height="1dp"
-                    android:background="@color/divider" />
+                    android:background="@color/colorDivider" />
 
                 <RelativeLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:paddingBottom="@dimen/pading_15"
-                    android:paddingTop="@dimen/pading_15">
+                    android:paddingBottom="@dimen/padding_15"
+                    android:paddingTop="@dimen/padding_15">
 
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:fontFamily="@font/din_next_lt_pro_bold"
                         android:text="@string/date_of_birth"
-                        android:textColor="@color/black"
+                        android:textColor="@color/colorBlack"
                         android:textSize="@dimen/font_size_14" />
 
                     <TextView
@@ -220,27 +220,27 @@
                         android:layout_alignParentEnd="true"
                         android:fontFamily="@font/din_next_lt_pro_light"
                         android:text="28 - 12 - 1986"
-                        android:textColor="@color/black"
+                        android:textColor="@color/colorBlack"
                         android:textSize="@dimen/font_size_14" />
                 </RelativeLayout>
 
                 <View
                     android:layout_width="match_parent"
                     android:layout_height="1dp"
-                    android:background="@color/divider" />
+                    android:background="@color/colorDivider" />
 
                 <RelativeLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:paddingBottom="@dimen/pading_15"
-                    android:paddingTop="@dimen/pading_15">
+                    android:paddingBottom="@dimen/padding_15"
+                    android:paddingTop="@dimen/padding_15">
 
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:fontFamily="@font/din_next_lt_pro_bold"
                         android:text="@string/country_of_residence"
-                        android:textColor="@color/black"
+                        android:textColor="@color/colorBlack"
                         android:textSize="@dimen/font_size_14" />
 
                     <TextView
@@ -250,27 +250,27 @@
                         android:layout_alignParentEnd="true"
                         android:fontFamily="@font/din_next_lt_pro_light"
                         android:text="Qatar"
-                        android:textColor="@color/black"
+                        android:textColor="@color/colorBlack"
                         android:textSize="@dimen/font_size_14" />
                 </RelativeLayout>
 
                 <View
                     android:layout_width="match_parent"
                     android:layout_height="1dp"
-                    android:background="@color/divider" />
+                    android:background="@color/colorDivider" />
 
                 <RelativeLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:paddingBottom="@dimen/pading_15"
-                    android:paddingTop="@dimen/pading_15">
+                    android:paddingBottom="@dimen/padding_15"
+                    android:paddingTop="@dimen/padding_15">
 
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:fontFamily="@font/din_next_lt_pro_bold"
                         android:text="@string/nationality"
-                        android:textColor="@color/black"
+                        android:textColor="@color/colorBlack"
                         android:textSize="@dimen/font_size_14" />
 
                     <TextView
@@ -280,7 +280,7 @@
                         android:layout_alignParentEnd="true"
                         android:fontFamily="@font/din_next_lt_pro_light"
                         android:text="Palestine"
-                        android:textColor="@color/black"
+                        android:textColor="@color/colorBlack"
                         android:textSize="@dimen/font_size_14" />
                 </RelativeLayout>
 
@@ -298,13 +298,13 @@
                     android:id="@+id/view_my_fav_btn"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginBottom="@dimen/pading_20"
+                    android:layout_marginBottom="@dimen/padding_20"
                     android:layout_marginEnd="@dimen/padding_30"
                     android:layout_marginStart="@dimen/padding_30"
                     android:background="@drawable/round_corner_black"
                     android:fontFamily="@font/din_next_lt_pro_bold"
                     android:text="@string/view_my_favourites"
-                    android:textColor="@color/white"
+                    android:textColor="@color/colorWhite"
                     android:visibility="gone" />
 
                 <Button
@@ -317,7 +317,7 @@
                     android:background="@drawable/round_corner_black"
                     android:fontFamily="@font/din_next_lt_pro_bold"
                     android:text="@string/view_my_culture_pass_card"
-                    android:textColor="@color/white" />
+                    android:textColor="@color/colorWhite" />
 
             </LinearLayout>
 
@@ -335,7 +335,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center"
-                    android:layout_marginTop="@dimen/pading_10"
+                    android:layout_marginTop="@dimen/padding_10"
                     android:gravity="center"
                     android:orientation="horizontal">
 
@@ -346,7 +346,7 @@
                         android:fontFamily="@font/din_next_lt_pro_light"
                         android:gravity="center"
                         android:text="@string/profile_link"
-                        android:textColor="@color/black"
+                        android:textColor="@color/colorBlack"
                         android:textSize="@dimen/font_size_17" />
 
 
@@ -355,7 +355,7 @@
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="@dimen/pading_10"
+                    android:layout_marginTop="@dimen/padding_10"
                     android:gravity="center"
                     android:orientation="horizontal">
 
@@ -363,12 +363,12 @@
                         android:id="@+id/rsvp_accept"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_marginEnd="@dimen/pading_10"
+                        android:layout_marginEnd="@dimen/padding_10"
                         android:fontFamily="@font/din_next_lt_pro_light"
                         android:text="@string/accept"
                         android:textAlignment="center"
-                        android:textColor="@color/black"
-                        android:textSize="@dimen/settings_text_size" />
+                        android:textColor="@color/colorBlack"
+                        android:textSize="@dimen/font_size_18" />
 
                     <android.support.v7.widget.SwitchCompat
                         android:id="@+id/accept_decline_button"
@@ -382,12 +382,12 @@
                         android:id="@+id/rsvp_decline"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_marginStart="@dimen/pading_10"
+                        android:layout_marginStart="@dimen/padding_10"
                         android:fontFamily="@font/din_next_lt_pro_light"
                         android:text="@string/decline"
                         android:textAlignment="center"
-                        android:textColor="@color/black"
-                        android:textSize="@dimen/settings_text_size" />
+                        android:textColor="@color/colorBlack"
+                        android:textSize="@dimen/font_size_18" />
 
 
                 </LinearLayout>

@@ -101,7 +101,7 @@ public class NotificationUtils {
                     .setSound(alarmSound)
                     .setStyle(inboxStyle)
                     .setSmallIcon(R.mipmap.ic_notification)
-                    .setColor(mContext.getResources().getColor(R.color.black))
+                    .setColor(mContext.getResources().getColor(R.color.colorBlack))
                     .setLargeIcon(BitmapFactory.decodeResource(mContext.getResources(), icon))
                     .setContentText(message)
                     .build();
@@ -145,7 +145,7 @@ public class NotificationUtils {
      * Downloading push notification image before displaying it in
      * the notification tray
      */
-    public Bitmap getBitmapFromURL(String strURL) {
+    private Bitmap getBitmapFromURL(String strURL) {
         try {
             URL url = new URL(strURL);
             HttpURLConnection connection = (HttpURLConnection) url.openConnection();

@@ -9,8 +9,6 @@ import android.content.res.Configuration;
 import android.os.Build;
 import android.util.Log;
 
-import com.squareup.leakcanary.LeakCanary;
-
 
 public class MyApp extends Application {
     private final String TAG = "App";

@@ -4,7 +4,7 @@ import android.text.TextPaint;
 import android.text.style.URLSpan;
 
 public class URLSpanNoUnderline extends URLSpan {
-    public URLSpanNoUnderline(String p_Url) {
+    URLSpanNoUnderline(String p_Url) {
         super(p_Url);
     }
 

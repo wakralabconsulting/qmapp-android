@@ -61,7 +61,7 @@ public class MuseumActivity extends BaseActivity implements
     private MuseumHorizontalScrollViewAdapter museumHorizontalScrollViewAdapter;
     @BindView(R.id.horizontal_scrol_previous_icon)
     ImageView scrollBarPreviousIcon;
-    LinearLayoutManager recyclerviewLayoutManager;
+    LinearLayoutManager recyclerViewLayoutManager;
     @BindView(R.id.horizontal_scrol_next_icon)
     ImageView scrollBarNextIcon;
     @BindView(R.id.settings_page_recycler_view)
@@ -74,7 +74,6 @@ public class MuseumActivity extends BaseActivity implements
     LinearLayout scrollBarPreviousIconLayout;
     private IndicatorConfiguration configuration;
     private InfiniteIndicator animCircleIndicator;
-    private GlideLoaderForMuseum glideLoader;
     ArrayList<Page> ads;
     Intent intent;
     SharedPreferences qmPreferences;
@@ -114,35 +113,44 @@ public class MuseumActivity extends BaseActivity implements
         } else {
             setToolbarForMuseumActivity();
         }
-        animCircleIndicator = (InfiniteIndicator) findViewById(R.id.main_indicator_default_circle);
-        sliderPlaceholderImage = (ImageView) findViewById(R.id.ads_place_holder);
+        animCircleIndicator = findViewById(R.id.main_indicator_default_circle);
+        sliderPlaceholderImage = findViewById(R.id.ads_place_holder);
         qmDatabase = QMDatabase.getInstance(MuseumActivity.this);
         museumHorizontalScrollViewAdapter = new MuseumHorizontalScrollViewAdapter(this,
                 museumHScrollModelList, intent.getStringExtra("MUSEUMTITLE"), museumId, getScreenWidth());
         animCircleIndicator.setVisibility(View.GONE);
         if (language.equals(LocaleManager.LANGUAGE_ENGLISH)) {
-            recyclerviewLayoutManager =
+            recyclerViewLayoutManager =
                     new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false);
-            recyclerviewLayoutManager.setStackFromEnd(false);
+            recyclerViewLayoutManager.setStackFromEnd(false);
         } else {
-            recyclerviewLayoutManager =
+            recyclerViewLayoutManager =
                     new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false);
-            recyclerviewLayoutManager.setStackFromEnd(true);
-            recyclerviewLayoutManager.scrollToPosition(0);
+            recyclerViewLayoutManager.setStackFromEnd(true);
+            recyclerViewLayoutManager.scrollToPosition(0);
         }
 
-        recyclerView.setLayoutManager(recyclerviewLayoutManager);
+        recyclerView.setLayoutManager(recyclerViewLayoutManager);
         recyclerView.setItemAnimator(new DefaultItemAnimator());
         recyclerView.setAdapter(museumHorizontalScrollViewAdapter);
 
-        if (museumId.equals("63") || museumId.equals("96") || museumId.equals("61") || museumId.equals("66") ||
-                museumId.equals("635") || museumId.equals("638")) {
+        if (museumId.equals("63") || museumId.equals("96") || museumId.equals("61") ||
+                museumId.equals("635") || museumId.equals("66") || museumId.equals("638")) {
 
-            if (museumId.equals("63") || museumId.equals("96"))
-                prepareRecyclerViewDataForMIA();
-            else
-                prepareRecyclerViewDataFor5();
-
+            switch (museumId) {
+                case "63":
+                case "96":
+                    prepareRecyclerViewDataForMIA();
+                    break;
+                case "66":
+                case "638":
+                    prepareRecyclerViewDataForNMoQ();
+                    break;
+                default:
+                    prepareRecyclerViewDataFor5();
+                    break;
+            }
+            showRightArrow();
             recyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
                 @Override
                 public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
@@ -190,25 +198,23 @@ public class MuseumActivity extends BaseActivity implements
                 snapHelperStart.attachToRecyclerView(recyclerView);
             }
 
-            scrollBarNextIconLayout.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    if (museumId.equals("63") || museumId.equals("96"))
-                        recyclerviewLayoutManager.scrollToPosition(5);
-                    else {
-                        recyclerviewLayoutManager.smoothScrollToPosition(recyclerView, null, 4);
-                    }
-
+            scrollBarNextIconLayout.setOnClickListener(view -> {
+                switch (museumId) {
+                    case "63":
+                    case "96":
+                        recyclerViewLayoutManager.scrollToPosition(5);
+                        break;
+//                    case "66":
+//                    case "638":
+//                        recyclerViewLayoutManager.scrollToPosition(6);
+//                        break;
+                    default:
+                        recyclerViewLayoutManager.smoothScrollToPosition(recyclerView, null, 4);
+                        break;
                 }
-            });
-            scrollBarPreviousIconLayout.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
 
-                    recyclerviewLayoutManager.smoothScrollToPosition(recyclerView, null, 0);
-
-                }
             });
+            scrollBarPreviousIconLayout.setOnClickListener(view -> recyclerViewLayoutManager.smoothScrollToPosition(recyclerView, null, 0));
         } else if (isBanner)
             prepareRecyclerViewDataForLaunch();
         else
@@ -254,10 +260,10 @@ public class MuseumActivity extends BaseActivity implements
 
 
     public void showRightArrow() {
-        scrollBarNextIcon.setVisibility(View.VISIBLE);
         scrollBarPreviousIcon.setVisibility(View.GONE);
         scrollBarPreviousIconLayout.setVisibility(View.INVISIBLE);
         scrollBarNextIconLayout.setVisibility(View.VISIBLE);
+        scrollBarNextIcon.setVisibility(View.VISIBLE);
     }
 
     public void prepareRecyclerViewData() {
@@ -267,7 +273,7 @@ public class MuseumActivity extends BaseActivity implements
         museumHScrollModelList.add(model);
 
         model = new MuseumHScrollModel(this,
-                getResources().getString(R.string.sidemenu_exhibition_text), R.drawable.exhibition_black);
+                getResources().getString(R.string.side_menu_exhibition_text), R.drawable.exhibition_black);
         museumHScrollModelList.add(model);
 
         model = new MuseumHScrollModel(this,
@@ -275,7 +281,7 @@ public class MuseumActivity extends BaseActivity implements
         museumHScrollModelList.add(model);
 
         model = new MuseumHScrollModel(this,
-                getResources().getString(R.string.sidemenu_dining_text), R.drawable.dining);
+                getResources().getString(R.string.side_menu_dining_text), R.drawable.dining);
         museumHScrollModelList.add(model);
         museumHorizontalScrollViewAdapter.notifyDataSetChanged();
     }
@@ -306,10 +312,11 @@ public class MuseumActivity extends BaseActivity implements
                 getResources().getString(R.string.museum_about_text), R.drawable.about_icon);
         museumHScrollModelList.add(model);
         model = new MuseumHScrollModel(this,
-                getResources().getString(R.string.sidemenu_tour_guide_text), R.drawable.audio_circle);
+                getResources().getString(R.string.side_menu_tour_guide_text), R.drawable.audio_circle);
+
         museumHScrollModelList.add(model);
         model = new MuseumHScrollModel(this,
-                getResources().getString(R.string.sidemenu_exhibition_text), R.drawable.exhibition_black);
+                getResources().getString(R.string.side_menu_exhibition_text), R.drawable.exhibition_black);
         museumHScrollModelList.add(model);
 
         model = new MuseumHScrollModel(this,
@@ -317,11 +324,45 @@ public class MuseumActivity extends BaseActivity implements
         museumHScrollModelList.add(model);
 
         model = new MuseumHScrollModel(this,
-                getResources().getString(R.string.sidemenu_parks_text), R.drawable.park_black);
+                getResources().getString(R.string.side_menu_parks_text), R.drawable.park_black);
         museumHScrollModelList.add(model);
 
         model = new MuseumHScrollModel(this,
-                getResources().getString(R.string.sidemenu_dining_text), R.drawable.dining);
+                getResources().getString(R.string.side_menu_dining_text), R.drawable.dining);
+        museumHScrollModelList.add(model);
+        museumHorizontalScrollViewAdapter.notifyDataSetChanged();
+    }
+
+    public void prepareRecyclerViewDataForNMoQ() {
+        museumHScrollModelList.clear();
+        MuseumHScrollModel model = new MuseumHScrollModel(this,
+                getResources().getString(R.string.museum_about_text), R.drawable.about_launch);
+        museumHScrollModelList.add(model);
+
+        model = new MuseumHScrollModel(this,
+                getResources().getString(R.string.facilities_txt), R.drawable.facilities_icon);
+        museumHScrollModelList.add(model);
+
+        model = new MuseumHScrollModel(this,
+                getResources().getString(R.string.side_menu_exhibition_text), R.drawable.exhibition_black);
+        museumHScrollModelList.add(model);
+
+        // Commented for temporary due to no data
+
+//        model = new MuseumHScrollModel(this,
+//                getResources().getString(R.string.experience_txt), R.drawable.experience_icon);
+//        museumHScrollModelList.add(model);
+//
+        model = new MuseumHScrollModel(this,
+                getResources().getString(R.string.side_menu_tour_guide_text), R.drawable.audio_circle);
+        museumHScrollModelList.add(model);
+//
+//        model = new MuseumHScrollModel(this,
+//                getResources().getString(R.string.side_menu_events_text), R.drawable.events_icon);
+//        museumHScrollModelList.add(model);
+
+        model = new MuseumHScrollModel(this,
+                getResources().getString(R.string.side_menu_parks_text), R.drawable.park_black);
         museumHScrollModelList.add(model);
         museumHorizontalScrollViewAdapter.notifyDataSetChanged();
     }
@@ -332,10 +373,10 @@ public class MuseumActivity extends BaseActivity implements
                 getResources().getString(R.string.museum_about_text), R.drawable.about_icon);
         museumHScrollModelList.add(model);
         model = new MuseumHScrollModel(this,
-                getResources().getString(R.string.sidemenu_tour_guide_text), R.drawable.audio_circle);
+                getResources().getString(R.string.side_menu_tour_guide_text), R.drawable.audio_circle);
         museumHScrollModelList.add(model);
         model = new MuseumHScrollModel(this,
-                getResources().getString(R.string.sidemenu_exhibition_text), R.drawable.exhibition_black);
+                getResources().getString(R.string.side_menu_exhibition_text), R.drawable.exhibition_black);
         museumHScrollModelList.add(model);
 
         model = new MuseumHScrollModel(this,
@@ -343,7 +384,7 @@ public class MuseumActivity extends BaseActivity implements
         museumHScrollModelList.add(model);
 
         model = new MuseumHScrollModel(this,
-                getResources().getString(R.string.sidemenu_dining_text), R.drawable.dining);
+                getResources().getString(R.string.side_menu_dining_text), R.drawable.dining);
         museumHScrollModelList.add(model);
         museumHorizontalScrollViewAdapter.notifyDataSetChanged();
     }
@@ -351,6 +392,7 @@ public class MuseumActivity extends BaseActivity implements
 
     public void loadAdsToSlider(ArrayList<Page> adsImages) {
         language = LocaleManager.getLanguage(this);
+        GlideLoaderForMuseum glideLoader;
         if (adsImages.size() > 1) {
             glideLoader = new GlideLoaderForMuseum();
             if (language.equals(LocaleManager.LANGUAGE_ENGLISH)) {
@@ -448,7 +490,7 @@ public class MuseumActivity extends BaseActivity implements
         }
     }
 
-    public void getSliderImagesfromAPI(Boolean noDataInDB) {
+    public void getSliderImagesFromAPI(Boolean noDataInDB) {
         APIInterface apiService =
                 APIClient.getClient().create(APIInterface.class);
         Call<ArrayList<MuseumAboutModel>> call;
@@ -467,14 +509,9 @@ public class MuseumActivity extends BaseActivity implements
                                 if (noDataInDB) {
                                     int imageSliderSize;
                                     ArrayList<String> sliderList = new ArrayList<>();
-                                    if (museumAboutModels.get(0).getImageList().size() >= 4) {
-                                        imageSliderSize = 4;
-                                    } else {
-                                        imageSliderSize = museumAboutModels.get(0).getImageList().size();
-                                    }
-
-                                    for (int i = 1; i < imageSliderSize; i++) {
-                                        sliderList.add(i - 1, museumAboutModels.get(0).getImageList().get(i));
+                                    imageSliderSize = museumAboutModels.get(0).getImageList().size();
+                                    for (int i = 0; i < imageSliderSize; i++) {
+                                        sliderList.add(i, museumAboutModels.get(0).getImageList().get(i));
                                     }
                                     setSliderImages(sliderList);
                                     sliderPlaceholderImage.setVisibility(View.GONE);
@@ -520,9 +557,9 @@ public class MuseumActivity extends BaseActivity implements
 
     public void getMuseumSliderImageFromDatabase() {
         if (language.equals(LocaleManager.LANGUAGE_ENGLISH)) {
-            new RetriveMuseumAboutDataEnglish(MuseumActivity.this, museumId).execute();
+            new RetrieveMuseumAboutDataEnglish(MuseumActivity.this, museumId).execute();
         } else {
-            new RetriveMuseumAboutDataArabic(MuseumActivity.this, museumId).execute();
+            new RetrieveMuseumAboutDataArabic(MuseumActivity.this, museumId).execute();
         }
     }
 
@@ -549,7 +586,6 @@ public class MuseumActivity extends BaseActivity implements
                 //updateEnglishTable or add row to database
                 new CheckMuseumAboutDBRowExist(activityReference.get(), language).execute();
             } else {
-                //create databse
                 new InsertMuseumAboutDatabaseTask(activityReference.get(), activityReference.get().museumAboutTableEnglish,
                         activityReference.get().museumAboutTableArabic, language).execute();
 
@@ -558,7 +594,7 @@ public class MuseumActivity extends BaseActivity implements
 
         @Override
         protected Integer doInBackground(Void... voids) {
-            if (language.equals("en")) {
+            if (language.equals(LocaleManager.LANGUAGE_ENGLISH)) {
                 return activityReference.get().qmDatabase.getMuseumAboutDao().getNumberOfRowsEnglish();
             } else {
                 return activityReference.get().qmDatabase.getMuseumAboutDao().getNumberOfRowsArabic();
@@ -594,7 +630,7 @@ public class MuseumActivity extends BaseActivity implements
         protected Void doInBackground(Void... voids) {
             Convertor converters = new Convertor();
             if (activityReference.get().museumAboutModels.size() > 0) {
-                if (language.equals("en")) {
+                if (language.equals(LocaleManager.LANGUAGE_ENGLISH)) {
                     for (int i = 0; i < activityReference.get().museumAboutModels.size(); i++) {
                         int n = activityReference.get().qmDatabase.getMuseumAboutDao().checkEnglishIdExist(
                                 Integer.parseInt(activityReference.get().museumAboutModels.get(i).getMuseumId()));
@@ -675,7 +711,7 @@ public class MuseumActivity extends BaseActivity implements
         protected Boolean doInBackground(Void... voids) {
             if (activityReference.get().museumAboutModels != null) {
                 Convertor converters = new Convertor();
-                if (language.equals("en")) {
+                if (language.equals(LocaleManager.LANGUAGE_ENGLISH)) {
                     for (int i = 0; i < activityReference.get().museumAboutModels.size(); i++) {
                         museumAboutTableEnglish = new MuseumAboutTableEnglish(
                                 activityReference.get().museumAboutModels.get(i).getName(),
@@ -751,7 +787,7 @@ public class MuseumActivity extends BaseActivity implements
         @Override
         protected Void doInBackground(Void... voids) {
             Convertor converters = new Convertor();
-            if (language.equals("en")) {
+            if (language.equals(LocaleManager.LANGUAGE_ENGLISH)) {
                 // updateEnglishTable table with english name
                 activityReference.get().qmDatabase.getMuseumAboutDao().updateMuseumAboutDataEnglish(
                         activityReference.get().museumAboutModels.get(position).getName(),
@@ -789,11 +825,11 @@ public class MuseumActivity extends BaseActivity implements
         }
     }
 
-    public static class RetriveMuseumAboutDataEnglish extends AsyncTask<Void, Void, MuseumAboutTableEnglish> {
+    public static class RetrieveMuseumAboutDataEnglish extends AsyncTask<Void, Void, MuseumAboutTableEnglish> {
         private WeakReference<MuseumActivity> activityReference;
         String museumId;
 
-        RetriveMuseumAboutDataEnglish(MuseumActivity context, String museumId) {
+        RetrieveMuseumAboutDataEnglish(MuseumActivity context, String museumId) {
             activityReference = new WeakReference<>(context);
             this.museumId = museumId;
         }
@@ -812,14 +848,10 @@ public class MuseumActivity extends BaseActivity implements
                         converters.fromString(museumAboutTableEnglish.getMuseum_image()).size() > 0) {
                     int imageSliderSize;
                     ArrayList<String> sliderList = new ArrayList<>();
-                    if (converters.fromString(museumAboutTableEnglish.getMuseum_image()).size() >= 4) {
-                        imageSliderSize = 4;
-                    } else {
-                        imageSliderSize = converters.fromString(museumAboutTableEnglish.getMuseum_image()).size();
-                    }
+                    imageSliderSize = converters.fromString(museumAboutTableEnglish.getMuseum_image()).size();
 
-                    for (int i = 1; i < imageSliderSize; i++) {
-                        sliderList.add(i - 1, converters.fromString(museumAboutTableEnglish.getMuseum_image()).get(i));
+                    for (int i = 0; i < imageSliderSize; i++) {
+                        sliderList.add(i, converters.fromString(museumAboutTableEnglish.getMuseum_image()).get(i));
                     }
 
                     activityReference.get().setSliderImages(sliderList);
@@ -829,9 +861,9 @@ public class MuseumActivity extends BaseActivity implements
                     activityReference.get().sliderPlaceholderImage.setVisibility(View.VISIBLE);
                     activityReference.get().animCircleIndicator.setVisibility(View.GONE);
                 }
-                activityReference.get().getSliderImagesfromAPI(false);
+                activityReference.get().getSliderImagesFromAPI(false);
             } else {
-                activityReference.get().getSliderImagesfromAPI(true);
+                activityReference.get().getSliderImagesFromAPI(true);
                 activityReference.get().sliderPlaceholderImage.setVisibility(View.VISIBLE);
                 activityReference.get().animCircleIndicator.setVisibility(View.GONE);
             }
@@ -839,11 +871,11 @@ public class MuseumActivity extends BaseActivity implements
         }
     }
 
-    public static class RetriveMuseumAboutDataArabic extends AsyncTask<Void, Void, MuseumAboutTableArabic> {
+    public static class RetrieveMuseumAboutDataArabic extends AsyncTask<Void, Void, MuseumAboutTableArabic> {
         private WeakReference<MuseumActivity> activityReference;
         String museumId;
 
-        RetriveMuseumAboutDataArabic(MuseumActivity context, String museumId) {
+        RetrieveMuseumAboutDataArabic(MuseumActivity context, String museumId) {
             activityReference = new WeakReference<>(context);
             this.museumId = museumId;
         }
@@ -862,14 +894,10 @@ public class MuseumActivity extends BaseActivity implements
                         converters.fromString(museumAboutTableArabic.getMuseum_image()).size() > 0) {
                     int imageSliderSize;
                     ArrayList<String> sliderList = new ArrayList<>();
-                    if (converters.fromString(museumAboutTableArabic.getMuseum_image()).size() >= 4) {
-                        imageSliderSize = 4;
-                    } else {
-                        imageSliderSize = converters.fromString(museumAboutTableArabic.getMuseum_image()).size();
-                    }
+                    imageSliderSize = converters.fromString(museumAboutTableArabic.getMuseum_image()).size();
 
-                    for (int i = 1; i < imageSliderSize; i++) {
-                        sliderList.add(i - 1, converters.fromString(museumAboutTableArabic.getMuseum_image()).get(i));
+                    for (int i = 0; i < imageSliderSize; i++) {
+                        sliderList.add(i, converters.fromString(museumAboutTableArabic.getMuseum_image()).get(i));
                     }
 
                     activityReference.get().setSliderImages(sliderList);
@@ -879,9 +907,9 @@ public class MuseumActivity extends BaseActivity implements
                     activityReference.get().sliderPlaceholderImage.setVisibility(View.VISIBLE);
                     activityReference.get().animCircleIndicator.setVisibility(View.GONE);
                 }
-                activityReference.get().getSliderImagesfromAPI(false);
+                activityReference.get().getSliderImagesFromAPI(false);
             } else {
-                activityReference.get().getSliderImagesfromAPI(true);
+                activityReference.get().getSliderImagesFromAPI(true);
                 activityReference.get().sliderPlaceholderImage.setVisibility(View.VISIBLE);
                 activityReference.get().animCircleIndicator.setVisibility(View.GONE);
             }

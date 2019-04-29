@@ -28,9 +28,8 @@ import com.qatarmuseums.qatarmuseumsapp.QMDatabase;
 import com.qatarmuseums.qatarmuseumsapp.R;
 import com.qatarmuseums.qatarmuseumsapp.apicall.APIClient;
 import com.qatarmuseums.qatarmuseumsapp.apicall.APIInterface;
-import com.qatarmuseums.qatarmuseumsapp.commonpage.RecyclerTouchListener;
+import com.qatarmuseums.qatarmuseumsapp.commonlistpage.RecyclerTouchListener;
 import com.qatarmuseums.qatarmuseumsapp.floormap.FloorMapActivity;
-import com.qatarmuseums.qatarmuseumsapp.tourguide.TourGuideList;
 import com.qatarmuseums.qatarmuseumsapp.tourguidestartpage.SelfGuideStarterModel;
 import com.qatarmuseums.qatarmuseumsapp.tourguidestartpage.SelfGuidedStartPageActivity;
 import com.qatarmuseums.qatarmuseumsapp.tourguidestartpage.TourGuideStartPageArabic;
@@ -46,8 +45,8 @@ import retrofit2.Callback;
 import retrofit2.Response;
 
 public class TourGuideDetailsActivity extends AppCompatActivity {
-    TextView tourguideMainTitle, tourguideSubTitle, tourguideMainDesc, tourguideSubDesc;
-    LinearLayout exploreLayout, tourguideSubtitleLayout, retryLayout;
+    TextView tourGuideMainTitle, tourGuideSubTitle, tourGuideMainDesc, tourGuideSubDesc;
+    LinearLayout exploreLayout, tourGuideSubtitleLayout, retryLayout;
     Toolbar toolbar;
     RecyclerView recyclerView;
     Intent intent;
@@ -55,7 +54,6 @@ public class TourGuideDetailsActivity extends AppCompatActivity {
     private Animation zoomOutAnimation, exploreZoomOutAnimation;
     private TourGuideDetailsAdapter mAdapter;
     private ArrayList<SelfGuideStarterModel> tourGuideList = new ArrayList<>();
-    TourGuideList tourguideObject;
     private Intent navigationIntent;
     private String museumId;
     Button retryButton;
@@ -79,20 +77,19 @@ public class TourGuideDetailsActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_tour_guide_common);
-        toolbar = (Toolbar) findViewById(R.id.toolbar);
+        toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         intent = getIntent();
         museumId = intent.getStringExtra("ID");
-
         mFirebaseAnalytics = FirebaseAnalytics.getInstance(this);
-        tourguideMainTitle = (TextView) findViewById(R.id.tourguide_tittle);
-        tourguideSubTitle = (TextView) findViewById(R.id.tourguide_subtittle);
-        tourguideMainDesc = (TextView) findViewById(R.id.tourguide_title_desc);
-        tourguideSubDesc = (TextView) findViewById(R.id.tourguide_subtitle_desc);
-        exploreLayout = (LinearLayout) findViewById(R.id.explore_layout);
-        tourguideSubtitleLayout = (LinearLayout) findViewById(R.id.tourguide_subtitle_layout);
-        recyclerView = (RecyclerView) findViewById(R.id.tourguide_recycler_view);
-        backButton = (ImageView) findViewById(R.id.toolbar_close);
+        tourGuideMainTitle = findViewById(R.id.tourguide_tittle);
+        tourGuideSubTitle = findViewById(R.id.tourguide_subtittle);
+        tourGuideMainDesc = findViewById(R.id.tourguide_title_desc);
+        tourGuideSubDesc = findViewById(R.id.tourguide_subtitle_desc);
+        exploreLayout = findViewById(R.id.explore_layout);
+        tourGuideSubtitleLayout = findViewById(R.id.tourguide_subtitle_layout);
+        recyclerView = findViewById(R.id.tourguide_recycler_view);
+        backButton = findViewById(R.id.toolbar_close);
         retryLayout = findViewById(R.id.retry_layout);
         retryButton = findViewById(R.id.retry_btn);
         progressBar = findViewById(R.id.progressBarLoading);
@@ -121,7 +118,7 @@ public class TourGuideDetailsActivity extends AppCompatActivity {
                             navigationIntent.putExtra("TOUR_ID", tourGuideList.get(position).getNid());
                             navigationIntent.putExtra("DESCRIPTION", tourGuideList.get(position).getDescription());
                             navigationIntent.putExtra("IMAGES", tourGuideList.get(position).getImageList());
-                            navigationIntent.putExtra("TITLE", tourguideMainTitle.getText().toString());
+                            navigationIntent.putExtra("TITLE", tourGuideMainTitle.getText().toString());
                             startActivity(navigationIntent);
                         }
                     }
@@ -133,10 +130,17 @@ public class TourGuideDetailsActivity extends AppCompatActivity {
                 }));
 
         if (museumId.equals("63") || museumId.equals("96")) {
-            tourguideMainTitle.setText(getString(R.string.mia_tour_guide));
-            tourguideMainDesc.setText(getString(R.string.tourguide_sidemenu_title_desc));
-            tourguideSubTitle.setText(getString(R.string.tourguide_title));
-            tourguideSubDesc.setText(getString(R.string.tourguide_subtitle_desc));
+            tourGuideMainTitle.setText(getString(R.string.mia_tour_guide));
+            tourGuideMainDesc.setText(getString(R.string.tourguide_sidemenu_title_desc));
+            tourGuideSubTitle.setText(getString(R.string.tourguide_title));
+            tourGuideSubDesc.setText(getString(R.string.tourguide_subtitle_desc));
+            tourGuideList.clear();
+        } else if (museumId.equals("66") || museumId.equals("638")) {
+            tourGuideMainTitle.setText(getString(R.string.nmoq_tour_guide));
+            tourGuideMainDesc.setVisibility(View.GONE);
+            exploreLayout.setVisibility(View.GONE);
+            tourGuideSubTitle.setText(getString(R.string.tourguide_title));
+            tourGuideSubDesc.setText(getString(R.string.tourguide_subtitle_desc));
             tourGuideList.clear();
         }
         backButton.setOnClickListener(v -> onBackPressed());
@@ -198,7 +202,7 @@ public class TourGuideDetailsActivity extends AppCompatActivity {
         if (new Util().isNetworkAvailable(this))
             getTourGuideDetailsPageAPIData();
         else
-            getSliderImagesandDdetailsfromDatabase(museumId);
+            getSliderImagesAndDetailsFromDatabase(museumId);
     }
 
     public void getTourGuideDetailsPageAPIData() {
@@ -265,7 +269,7 @@ public class TourGuideDetailsActivity extends AppCompatActivity {
 
         @Override
         protected Integer doInBackground(Void... voids) {
-            if (language.equals("en")) {
+            if (language.equals(LocaleManager.LANGUAGE_ENGLISH)) {
                 return activityReference.get().qmDatabase.getTourGuideStartPageDao().getNumberOfRowsEnglish();
             } else {
                 return activityReference.get().qmDatabase.getTourGuideStartPageDao().getNumberOfRowsArabic();
@@ -300,7 +304,7 @@ public class TourGuideDetailsActivity extends AppCompatActivity {
         @Override
         protected Void doInBackground(Void... voids) {
             if (activityReference.get().tourGuideList.size() > 0) {
-                if (language.equals("en")) {
+                if (language.equals(LocaleManager.LANGUAGE_ENGLISH)) {
                     for (int i = 0; i < activityReference.get().tourGuideList.size(); i++) {
                         int n = activityReference.get().qmDatabase.getTourGuideStartPageDao().checkEnglishIdExist(
                                 activityReference.get().tourGuideList.get(i).getNid());
@@ -363,7 +367,7 @@ public class TourGuideDetailsActivity extends AppCompatActivity {
         @Override
         protected Boolean doInBackground(Void... voids) {
             if (activityReference.get().tourGuideList != null) {
-                if (language.equals("en")) {
+                if (language.equals(LocaleManager.LANGUAGE_ENGLISH)) {
                     for (int i = 0; i < activityReference.get().tourGuideList.size(); i++) {
                         tourGuideStartPageEnglish = new TourGuideStartPageEnglish(
                                 activityReference.get().tourGuideList.get(i).getTitle(),
@@ -420,7 +424,7 @@ public class TourGuideDetailsActivity extends AppCompatActivity {
 
         @Override
         protected Void doInBackground(Void... voids) {
-            if (language.equals("en")) {
+            if (language.equals(LocaleManager.LANGUAGE_ENGLISH)) {
                 activityReference.get().qmDatabase.getTourGuideStartPageDao().updateTourGuideStartDataEnglish(
                         activityReference.get().tourGuideList.get(position).getTitle(),
                         activityReference.get().tourGuideList.get(position).getDescription(),
@@ -442,12 +446,12 @@ public class TourGuideDetailsActivity extends AppCompatActivity {
         }
     }
 
-    public static class RetriveTourGuideDetailsDataEnglish extends AsyncTask<Void, Void, List<TourGuideStartPageEnglish>> {
+    public static class RetrieveTourGuideDetailsDataEnglish extends AsyncTask<Void, Void, List<TourGuideStartPageEnglish>> {
         private WeakReference<TourGuideDetailsActivity> activityReference;
         String museumId;
 
-        RetriveTourGuideDetailsDataEnglish(TourGuideDetailsActivity context,
-                                           String museumId) {
+        RetrieveTourGuideDetailsDataEnglish(TourGuideDetailsActivity context,
+                                            String museumId) {
             activityReference = new WeakReference<>(context);
             this.museumId = museumId;
         }
@@ -481,11 +485,11 @@ public class TourGuideDetailsActivity extends AppCompatActivity {
         }
     }
 
-    public static class RetriveTourGuideDetailsDataArabic extends AsyncTask<Void, Void, List<TourGuideStartPageArabic>> {
+    public static class RetrieveTourGuideDetailsDataArabic extends AsyncTask<Void, Void, List<TourGuideStartPageArabic>> {
         private WeakReference<TourGuideDetailsActivity> activityReference;
         String museumId;
 
-        RetriveTourGuideDetailsDataArabic(TourGuideDetailsActivity context, String museumId) {
+        RetrieveTourGuideDetailsDataArabic(TourGuideDetailsActivity context, String museumId) {
             activityReference = new WeakReference<>(context);
             this.museumId = museumId;
         }
@@ -521,11 +525,11 @@ public class TourGuideDetailsActivity extends AppCompatActivity {
         }
     }
 
-    public void getSliderImagesandDdetailsfromDatabase(String museumId) {
+    public void getSliderImagesAndDetailsFromDatabase(String museumId) {
         if (appLanguage.equals(LocaleManager.LANGUAGE_ENGLISH)) {
-            new RetriveTourGuideDetailsDataEnglish(TourGuideDetailsActivity.this, museumId).execute();
+            new RetrieveTourGuideDetailsDataEnglish(TourGuideDetailsActivity.this, museumId).execute();
         } else {
-            new RetriveTourGuideDetailsDataArabic(TourGuideDetailsActivity.this, museumId).execute();
+            new RetrieveTourGuideDetailsDataArabic(TourGuideDetailsActivity.this, museumId).execute();
         }
     }
 

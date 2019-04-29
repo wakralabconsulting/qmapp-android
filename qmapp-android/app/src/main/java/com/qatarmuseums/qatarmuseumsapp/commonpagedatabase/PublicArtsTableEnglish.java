@@ -12,28 +12,39 @@ public class PublicArtsTableEnglish {
     @PrimaryKey(autoGenerate = false)
     private long public_arts_id;
     @ColumnInfo()
-    private String public_arts_image;
+    private String sort_id;
     @ColumnInfo()
     private String public_arts_name;
+    @ColumnInfo()
+    private String public_arts_image;
+    @ColumnInfo()
+    private String public_arts_images;
     @ColumnInfo()
     private String longitude;
     @ColumnInfo()
     private String latitude;
     @ColumnInfo()
     private String description;
-
     @ColumnInfo()
     private String short_description;
 
 
-    public PublicArtsTableEnglish(@NonNull long public_arts_id, String public_arts_name,
+    public PublicArtsTableEnglish(@NonNull long public_arts_id,
+                                  String public_arts_name,
                                   String public_arts_image,
-                                  String longitude, String latitude) {
+                                  String longitude,
+                                  String latitude,
+                                  String sortId) {
         this.public_arts_id = public_arts_id;
         this.public_arts_name = public_arts_name;
-        this.public_arts_image=public_arts_image;
+        this.public_arts_image = public_arts_image;
         this.longitude = longitude;
         this.latitude = latitude;
+        this.sort_id = sortId;
+    }
+
+    public PublicArtsTableEnglish() {
+
     }
 
     @NonNull
@@ -45,12 +56,28 @@ public class PublicArtsTableEnglish {
         this.public_arts_id = public_arts_id;
     }
 
+    public String getSort_id() {
+        return sort_id;
+    }
+
+    public void setSort_id(String sort_id) {
+        this.sort_id = sort_id;
+    }
+
     public String getPublic_arts_image() {
         return public_arts_image;
     }
 
     public void setPublic_arts_image(String public_arts_image) {
         this.public_arts_image = public_arts_image;
+    }
+
+    public String getPublic_arts_images() {
+        return public_arts_images;
+    }
+
+    public void setPublic_arts_images(String public_arts_images) {
+        this.public_arts_images = public_arts_images;
     }
 
     public String getPublic_arts_name() {

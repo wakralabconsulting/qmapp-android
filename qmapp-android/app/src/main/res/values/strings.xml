@@ -1,5 +1,5 @@
-<resources>
-    <string name="app_name">Culture Pass</string>
+<resources xmlns:tools="http://schemas.android.com/tools">
+    <string name="app_name" tools:ignore="PrivateResource">Culture Pass</string>
     <string name="web_view_title">Qatar Museums</string>
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>
@@ -11,30 +11,26 @@
     <string name="to">to</string>
     <string name="or">or</string>
     <string name="use_qr_scanner"><u>Use the QR Scanner</u></string>
-    <string name="use_the_keypad"><u>Use the Keypad</u></string>
     <string name="title_dining">Dining</string>
     <string name="title_gift_shop">Gift Shop</string>
     <string name="title_culture_pass">Culture Pass</string>
     <string name="title_more">More</string>
-    <string name="sidemenu_exhibition_text">Exhibitions</string>
-    <string name="sidemenu_text">Sidemenu</string>
-    <string name="sidemenu_events_text">Events</string>
-    <string name="sidemenu_education_text">Education</string>
-    <string name="sidemenu_tour_guide_text">Tour Guide</string>
-    <string name="sidemenu_heritage_text">Heritage Sites</string>
-    <string name="sidemenu_public_arts_text">Public Arts</string>
-    <string name="sidemenu_dining_text">Dining</string>
-    <string name="sidemenu_gift_shop_text">Gift Shop</string>
-    <string name="sidemenu_parks_text">Parks</string>
+    <string name="side_menu_exhibition_text">Exhibitions</string>
+    <string name="side_menu_events_text">Events</string>
+    <string name="side_menu_education_text">Education</string>
+    <string name="side_menu_tour_guide_text">Tour Guide</string>
+    <string name="side_menu_heritage_text">Heritage Sites</string>
+    <string name="side_menu_public_arts_text">Public Arts</string>
+    <string name="side_menu_dining_text">Dining</string>
+    <string name="side_menu_gift_shop_text">Gift Shop</string>
+    <string name="side_menu_parks_text">Parks</string>
     <string name="toolbar_title_key">TOOLBAR_TITLE</string>
-    <string name="new_open">NOW OPEN</string>
-    <string name="closed">CLOSED</string>
     <string name="notifications">Notifications</string>
     <string name="location_title">LOCATION</string>
     <string name="contact_title">CONTACT</string>
     <string name="settings_activity_tittle">SETTINGS</string>
     <string name="calendar_activity_tittle">CALENDAR</string>
-    <string name="education_calendar_activity_tittle">EDUCATION CALENDAR</string>التقويم التعليمي
+    <string name="education_calendar_activity_tittle">EDUCATION CALENDAR</string>
     <string name="select_language_text">Select App Language</string>
     <string name="english">English</string>
     <string name="arabic">عربى</string>
@@ -43,22 +39,11 @@
     <string name="apply">Apply</string>
     <string name="add_to_calendar">Add To Calendar</string>
     <string name="register_now">Register Now</string>
-    <string name="calendar_dialog_title">Event Name</string>
     <string name="change_language_dialog_title">Change Language?</string>
     <string name="change_language_button_text">Continue</string>
     <string name="museum_about_text">About</string>
     <string name="museum_collection_text">Collections</string>
     <string name="change_language_content_text">You will be redirected to home page, after changing the language. Do you want to continue?</string>
-    <string name="home_page_mia_title">Museum of Islamic Art (MIA)</string>
-    <string name="home_page_national_museum_title">National Museum of Qatar</string>
-    <string name="home_page_mathaf_title">Mathaf: Arab Museum of Modern Art</string>
-    <string name="home_page_fire_station_title">Garage Gallery, Fire Station</string>
-    <string name="home_page_exhibition_title">Exhibition</string>
-    <string name="home_page_sports_museum_title">3–2–1 Qatar Olympic and Sports Museum</string>
-    <string name="details_page_short_description">Echoes is a prolongation of Al-Muftah’s ongoing research on the recollection of memories and stories that she documents as a continuous autobiography based on personal encounters and family stories.</string>
-    <string name="details_page_long_description">The work of Bouthayna Al-Muftah (b. 1987) interrogates stories and practices from Qatari cultural heritage by archiving collective memories and personal encounters using various artistic media including drawing, printmaking and installation.\r\n\r\nEchoe​s is a prolongation of Al-Muftah’s ongoing research on the recollection of memories and stories that she documents as a continuous autobiography based on personal encounters and family stories.\r\n\r\nIn this artistic experiment, she distinctively reflects on the rapid social and cultural changes that have taken place in her surroundings in a short period of time. Al-Muftah utilizes the space to evoke shared local memories and question current local cultural practices visibly influenced by technology with an ever growing focus on individualism. In order to highlight this challenging topic the artist contextualizes the lyrical traditional game ‘tag ‘tag ‘tagya*’ and deconstructs its forms to redefine cultural narratives, offering a symbolic experience in a space in which the past and the present intersect.\r\n\r\nThe artistic process and methodology are prominently prioritized in this space. This is exaggerated by integrating different materials to the project, such as sound, wall mirrors and canvas floor, through which the artist interrogates the perception and the use of traditional collective stories in the context of the contemporary.\r\n\r\n* ‘tag ‘tag ‘tagya is the first phrase of a song used in a traditional group game played by boys and girls from different parts of the Arabian Gulf.\r\n</string>
-    <string name="details_page_timing_details">Wednesday, July 11, 2018 – 11:45 to Monday, September 10, 2018 – 11:45</string>
-    <string name="details_page_location_details">Mathaf: Arab Museum of Modern Art</string>
     <string name="knowledge_in_action">KNOWLEDGE IN ACTION</string>
     <string name="education_short_description">Our numerous programmes are designed for families, university students and adults.\n\nFind out what\'s on offer and register ahead to secure your place.</string>
     <string name="education_long_description">All of our education programmes provide interactive opportunities. We hope that they create lasting memories and lead to the development of creative, compassionate and engaged individuals.\n\nFor school teachers and educators, we bring custom-made workshops, conferences and trainings to suit their needs. We also focus on working with children to encourage them to explore the world around them, engage with it, and express themselves through creative activities.\n\nAll of our activities align with Qatar Supreme Educational Council Professional Standards for Teachers and National Curriculum Standards.</string>
@@ -71,10 +56,8 @@
     <string name="location_alert_txt">Something went wrong</string>
     <string name="location_error_content">Unfortunately we cannot open Google Maps.</string>
     <string name="close">Close</string>
-    <string name="register_now_content">Thank you for Registering.Further\nDetails will be sent to you on your\nemail</string>
     <string name="opening_timings">OPENING TIMINGS</string>
     <string name="exhibition_timings">EXHIBITION TIMINGS</string>
-    <string name="open_in_google_maps">Click here to view location</string>
     <string name="contact_mail">info@mia.org.qa</string>
     <string name="for_more_information_text">For more information and to make a reservation, visit <u>MIA.</u></string>
     <string name="institution">Institution -</string>
@@ -88,21 +71,13 @@
     <string name="obj_text_three">to view the details</string>
     <string name="gift_shop_url">https://inq-online.com/</string>
     <string name="touch_again">Touch again to exit</string>
-    <string name="map_navigation_api">http://maps.google.com/maps?q=loc:</string>
     <string name="museum_about">Museum About</string>
-    <string name="museum">Museum</string>
     <string name="museum_timings">MUSEUM TIMINGS</string>
-    <string name="no_results_text">Coming Soon</string>
+    <string name="no_results_text">No results found</string>
     <string name="explore">Explore</string>
     <string name="level">Level</string>
-    <string name="alberallo">Alberallo</string>
 
-    <string name="check_network">Check your internet connections</string>
-    <string name="collection_details_main_text">As well as being objects of great age and beauty, the ceramics in the museum were also meant to be used.\n\n
-
-From humble kitchen wares to elaborate tile panels, ceramics were a vital part of everyday life in the Islamic world.\n\n
-
-They exemplify the external influences and internal creativity that inspired this flourishing of ceramic design over 12 centuries.</string>
+    <string name="check_network">Check your internet connection</string>
     <string name="culture_pass_description">Qatar Museums Culture Pass gives you discounts, free access and exclusive opportunities across many cultural venues in Qatar and discounts at a wide range of ever expanding list of partners. Best of all, as a member you’re invited to join us in a wide range of exciting creative activities. \n\nGet access by activating your membership today.</string>
     <string name="benefits">benefits</string>
     <string name="culture_pass_benefits"><![CDATA[- 15% DISCOUNT AT QM CAFÉ’S ACROSS ALL VENUES  \n\n- 10% DISCOUNT ON ITEMS IN ALL QM GIFT SHOPS (without minimum purchase)  \n\n- 10% DISCOUNT AT IDAM RESTAURANT AT LUNCH TIME  \n\n- RECEIVE OUR MONTHLY NEWSLETTER TO STAY UP TO DATE ON QM AND PARTNER OFFERINGS  \n\n- GET PREMIER ACCESS TO MEMBERS ONLY TALKS &WORKSHOPS  \n\n- GET EXCLUSIVE INVITATIONS TO QM OPEN HOUSE ACCESS TO OUR WORLD CLASS CALL CENTER 8AM TO 8PM DAILY]]></string>
@@ -110,18 +85,12 @@ They exemplify the external influences and internal creativity that inspired thi
     <string name="become_a_member">BECOME A MEMBER</string>
     <string name="already_a_member"><u>Already A Member?</u></string>
     <string name="log_in">Log In</string>
-    <string name="unable_to_fetch_details">Unable to fetch details</string>
     <string name="no_new_notification_yet">No notifications yet.</string>
     <string name="no_events">No Events</string>
     <string name="open_settings">Settings</string>
     <string name="permission_required">Permission Required!</string>
     <string name="runtime_permission">To add events in calendar, allow <b>Qatar Museum App</b> access to your device\'s Calendar.\n\n Tap Settings > Permissions, and turn Calendar on.</string>
-    <string name="camera_runtime_permission">To scan QR Code, allow <b>Qatar Museum App</b> access to your device\'s Camera.\n\n Tap Settings > Permissions, and turn Camera on.</string>
     <string name="event_added">Event added to Calendar.</string>
-    <string name="local_event_institution">MIA</string>
-    <string name="local_event_title">Walk In Gallery Tours</string>
-    <string name="local_event_short_description">Join our Museum Guides for a tour of the Museum of Islamic Art\'s oustanding collection of objects, spread over 1,400 years and across three continents. No booking is required to be a part of the tour.</string>
-    <string name="local_event_long_description">Monday - Science Tour \n\nTuesday - Techniques Tour (from 1 July onwards) \n\nThursday - MIA Architecture Tour \n\nFriday - Permanent Gallery Tour \n\nSaturday - Permanent Gallery Tour</string>
     <string name="notification_event_updates">Event Updates</string>
     <string name="notification_exhibition_updates">Exhibition Updates</string>
     <string name="notification_museum_updates">Museum Updates</string>
@@ -131,15 +100,10 @@ They exemplify the external influences and internal creativity that inspired thi
     <string name="tourguide_sidemenu_title">TOUR GUIDES</string>
     <string name="start_tour">START TOUR</string>
     <string name="tourguide_title_desc">Welcome to Qatar Museum Premises. \n Explore the architrcture and the \nobjects on display. \n Scan the QR codes available on the \ngalleries for more information.</string>
-    <string name="tourguide_subtitle">Self Guided Tours</string>
     <string name="tourguide_sidemenu_title_desc">Immerse yourself into the object details curated specially for you by our experts.</string>
     <string name="tourguide_subtitle_desc">You may also try our self guided tours. \n Immerse yourself into the journeys \ncurated specially for you by our \nexperts.</string>
     <string name="mia_tour_guide">MIA TOUR GUIDE</string>
-    <string name="title_activity_floor_map">Map</string>
-    <string name="transparency">Transparency</string>
-    <string name="switch_image">Switch Image</string>
-    <string name="clickable">Clickable</string>
-    <color name="light_gray">#D3D3D3</color>
+    <string name="nmoq_tour_guide">NMoQ TOUR GUIDE</string>
     <string name="floormap_detail1">This example is a rare example of the Mamluk production of albarelli in Damascus, primarily produced for the European market. The albarello (pl. albarelli) was used as a medicinal jar for holding apothecary ointments and dried herbal drugs. Its elongated shape helps us to recognize the nature and function of this typical object. The Italain word albarello has a quite controversial etymology: sometimes said to be derivng from the Latin albaris, meaning \"in wood\" or \"white\", sometimes from the Arabic al-barmil, which designates a barrel. Albarelli have been produced in the Middle East and Central Asia since the 11th-century and later on in 15th-century Spain and Italy, although they are believed to have been first produced in Syria before making their way to Europe through Spain and Italy. Indeed, many European paintings and archives in France, Italy and Spain refer to vessels produced or imported from Syria.</string>
     <string name="floormap_imagdesc1">Saint Jerome in His Study \nDomenico Ghirlandaio (1449 en dash1494) \nChurch of Ognissanti, Florence, 1480</string>
     <string name="floormap_detail2">According to the Medici Archival records in Florence, this vas is possibly one of the three \'alberegli domaschini\' owned by Piero di Cosimo de Medici (1416-59), the de-facto ruler of Florence from 1464-69."
@@ -152,17 +116,17 @@ They exemplify the external influences and internal creativity that inspired thi
     <string name="mia_education">MIA Education</string>
     <string name="mathaf">Mathaf Education</string>
     <string name="national">National Museum</string>
-    <string name="qosm">3-2-1 QOSM Education</string>
+    <string name="qosm">3–2–1 QOSM Education</string>
     <string name="family">Family &amp; School Programmes Calendar</string>
 
     <string name="all_ages">All Ages</string>
     <string name="teachers">Teachers</string>
-    <string name="nursery">Nursery/Pre-KG(3-5 Years)</string>
-    <string name="early">Early Primary(5-7 Years)</string>
-    <string name="primary">Primary(8-11 Years)</string>
-    <string name="preparatory">Preparatory(12-14 Years)</string>
-    <string name="secondary">Secondary(15-18 Years)</string>
-    <string name="college">College &amp; University(17-24 Years)</string>
+    <string name="nursery">Nursery/Pre–KG(3–5 Years)</string>
+    <string name="early">Early Primary(5–7 Years)</string>
+    <string name="primary">Primary(8–11 Years)</string>
+    <string name="preparatory">Preparatory(12–14 Years)</string>
+    <string name="secondary">Secondary(15–18 Years)</string>
+    <string name="college">College &amp; University(17&#8211;24 Years)</string>
     <string name="youth">Youth</string>
     <string name="adults">Adults</string>
     <string name="seniors">Seniors</string>
@@ -171,8 +135,6 @@ They exemplify the external influences and internal creativity that inspired thi
     <string name="production_text">Production:</string>
     <string name="production_dates">Production dates:</string>
     <string name="period_style">Period/Style:</string>
-    <string name="technique_materials">Technique and materials:</string>
-    <string name="dimension">Dimensions:</string>
 
     <string name="art">Art Workshop</string>
     <string name="field">Field Trip</string>
@@ -183,11 +145,9 @@ They exemplify the external influences and internal creativity that inspired thi
     <string name="research">Research</string>
     <string name="workshop">Workshop</string>
     <string name="object_history">Object History</string>
-    <string name="science_tour">Science Tour</string>
     <string name="no_location_data">No Location Data</string>
     <string name="increase_volume">Please Increase Volume</string>
-    <string name="highlight_tour">Highlights Tour</string>
-    <string name="loading">Loading...</string>
+    <string name="loading">Loading…</string>
     <string name="oops">Oops!</string>
     <string name="there_is_no_internet">There is no Internet connection</string>
     <string name="please_check_your_internet">Please check your Internet connection</string>
@@ -196,7 +156,6 @@ They exemplify the external influences and internal creativity that inspired thi
     <!-- Strings related to login -->
     <string name="prompt_email">Username</string>
     <string name="prompt_password">Password</string>
-    <string name="action_sign_in_short">Sign in</string>
     <string name="forgot_password"><u>forgot password?</u></string>
     <string name="culture_pass_login">Culture pass login</string>
     <string name="error_password_required">Password field is required.</string>
@@ -218,28 +177,11 @@ They exemplify the external influences and internal creativity that inspired thi
     <string name="ok">OK</string>
 
     <!-- Strings related to Create Account -->
-    <string name="create_your_account">Create your account</string>
-    <string name="username">Username *</string>
-    <string name="password">Password *</string>
-    <string name="confirm_password">Confirm Password *</string>
-    <string name="tell_us_more_about_you">Tell us more about you</string>
-    <string name="select_a_value">- Select A Value -</string>
-    <string name="title">Title *</string>
-    <string name="first_name">First Name *</string>
-    <string name="last_name">Last Name *</string>
-    <string name="mobile_number">Mobile Number *</string>
-    <string name="create_account">Create account</string>
     <string name="error_logout">Error in logging out!</string>
     <string name="password_reset_successful">New password link sent to your email</string>
     <!-- Strings related to RSVP -->
-    <string name="greetings_title">Greetings</string>
-    <string name="greetings_content">You have been invited for \nthe launch event of the\n National Museum of Qatar</string>
-    <string name="accept_now">Accept Now</string>
-    <string name="accept_later">Accept Later</string>
     <string name="accept">Accept</string>
     <string name="decline">Decline</string>
-    <string name="thankyou">Thank you for accepting the\ninvitation. You will receive\nfurther details on your\nemail. For any queries,\nplease contact Qatar\n Museums Authority via:\n info@qm.org.qa\n +974 4452 5555</string>
-    <string name="decline_content">Are you sure you want to\ndecline the Invitation?</string>
     <string name="decline_content_tour">Are you sure you want to cancel this tour?</string>
     <string name="profile_link"><u>Invitation for National Museum\nof Qatar Launch Event</u></string>
     <string name="artifact_invalid">Invalid Artifact Number</string>
@@ -253,7 +195,6 @@ They exemplify the external influences and internal creativity that inspired thi
     <!-- Strings related to Notification -->
     <string name="notification_channel">Miscellaneous</string>
     <string name="notification_channel_description">Notifications related to Culture Pass </string>
-    <string name="launch_event">National Museum of Qatar Launch Event</string>
     <!-- Strings related to Museum Launch -->
     <string name="museum_about_launch">About</string>
     <string name="museum_tours">Tours</string>
@@ -265,24 +206,15 @@ They exemplify the external influences and internal creativity that inspired thi
     <string name="interested">Book Tour</string>
     <string name="not_interested">Cancel Booking</string>
     <string name="date">Date</string>
-    <string name="thankyou_interest">Thank you for booking this tour. You will receive an email with further information.\n\n
-Any questions, please contact booking@qm.org.qa or +974 4452 5555</string>
+    <string name="thankyou_interest">"Thank you for booking this tour. You receive an email with further information.\n\n
+Any questions, please contact booking@qm.org.qa or +974 4452 5555"</string>
     <string name="offer_code">Special offer</string>
     <string name="claim_offer">Claim Offer</string>
-    <string name="venue">Venue</string>
-    <string name="time_slot_not_available">You are already registered for another event at the selected time.</string>
-    <string name="visit_qatar_url">http://visitqatar.qa/</string>
     <string name="mia_floors">MIA Floors</string>
     <string name="warning_no_end_time">NO END TIME AVAILABLE</string>
     <string name="warning_no_seat_available">Fully booked</string>
-    <string name="warning_selection_not_available">Sorry, no spaces available for the specific tour.</string>
-    <string name="you_have_registered">You have booked&#160;</string>
-    <string name="seat_for_this_tour">&#160;space</string>
-    <string name="seats_for_this_tour">&#160;spaces</string>
     <string name="seat_available">&#160;space available</string>
     <string name="seats_available">&#160;spaces available</string>
-    <string name="number_of_visitors">Number of Visitors</string>
-    <string name="done">Done</string>
     <string name="culture_pass_card_page">CulturePassCardActivity</string>
     <string name="page">Page</string>
     <string name="details_page">DetailsPage</string>
@@ -315,5 +247,17 @@ Any questions, please contact booking@qm.org.qa or +974 4452 5555</string>
     <string name="activities_secondary_page">ActivitiesSecondaryPage</string>
     <string name="webview_page">WebViewPage</string>
     <string name="collection_details_page">CollectionDetailsPage</string>
+    <string name="warning_selection_not_available">Sorry, no seats available for the specific tour.</string>
+    <string name="you_have_registered">You have booked&#160;</string>
+    <string name="seat_for_this_tour">&#160;space</string>
+    <string name="seats_for_this_tour">&#160;spaces</string>
+    <string name="space_available">&#160;space available</string>
+    <string name="spaces_available">&#160;spaces available</string>
+    <string name="number_of_visitors">Number of Visitors</string>
+    <string name="done">Done</string>
+    <!-- Strings related to NMoQ Landing -->
+    <string name="facilities_txt">Facilities</string>
+    <string name="experience_txt">Experience</string>
+    <string name="facility_sublist">Facility Sublist</string>
 
 </resources>

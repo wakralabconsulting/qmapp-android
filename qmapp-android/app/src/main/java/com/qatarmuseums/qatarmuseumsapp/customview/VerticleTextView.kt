@@ -32,17 +32,13 @@ class VerticleTextView(context: Context, attrs: AttributeSet) : TextView(context
         textPaint.drawableState = getDrawableState()
 
         canvas.save()
-        if(topDown){
+        if (topDown) {
             canvas.translate(getWidth().toFloat(), 0F)
             canvas.rotate((90).toFloat())
-        }else {
+        } else {
             canvas.translate(0F, getHeight().toFloat())
             canvas.rotate((-90).toFloat())
         }
-
-//        canvas.translate(0F, getHeight().toFloat())
-//        canvas.rotate((-90).toFloat())
-
 
         canvas.translate(getCompoundPaddingLeft().toFloat(), getExtendedPaddingTop().toFloat())
 

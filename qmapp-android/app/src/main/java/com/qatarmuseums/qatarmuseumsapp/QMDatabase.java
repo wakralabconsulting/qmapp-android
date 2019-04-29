@@ -36,6 +36,12 @@ import com.qatarmuseums.qatarmuseumsapp.culturepass.UserRegistrationDetailsTable
 import com.qatarmuseums.qatarmuseumsapp.education.EducationCalendarTableDao;
 import com.qatarmuseums.qatarmuseumsapp.education.EducationalCalendarEventsTableArabic;
 import com.qatarmuseums.qatarmuseumsapp.education.EducationalCalendarEventsTableEnglish;
+import com.qatarmuseums.qatarmuseumsapp.facilities.FacilityDetailTableArabic;
+import com.qatarmuseums.qatarmuseumsapp.facilities.FacilityDetailTableDao;
+import com.qatarmuseums.qatarmuseumsapp.facilities.FacilityDetailTableEnglish;
+import com.qatarmuseums.qatarmuseumsapp.facilities.FacilityListTableArabic;
+import com.qatarmuseums.qatarmuseumsapp.facilities.FacilityListTableDao;
+import com.qatarmuseums.qatarmuseumsapp.facilities.FacilityListTableEnglish;
 import com.qatarmuseums.qatarmuseumsapp.floormap.ArtifactTableArabic;
 import com.qatarmuseums.qatarmuseumsapp.floormap.ArtifactTableDao;
 import com.qatarmuseums.qatarmuseumsapp.floormap.ArtifactTableEnglish;
@@ -54,9 +60,19 @@ import com.qatarmuseums.qatarmuseumsapp.museum.MuseumCollectionListTableEnglish;
 import com.qatarmuseums.qatarmuseumsapp.museumabout.MuseumAboutTableArabic;
 import com.qatarmuseums.qatarmuseumsapp.museumabout.MuseumAboutTableDao;
 import com.qatarmuseums.qatarmuseumsapp.museumabout.MuseumAboutTableEnglish;
+import com.qatarmuseums.qatarmuseumsapp.museumcollectiondetails.NMoQParkListDetails;
 import com.qatarmuseums.qatarmuseumsapp.notification.NotificationTableArabic;
 import com.qatarmuseums.qatarmuseumsapp.notification.NotificationTableDao;
 import com.qatarmuseums.qatarmuseumsapp.notification.NotificationTableEnglish;
+import com.qatarmuseums.qatarmuseumsapp.park.NMoQParkListDetailsTableArabic;
+import com.qatarmuseums.qatarmuseumsapp.park.NMoQParkListDetailsTableDao;
+import com.qatarmuseums.qatarmuseumsapp.park.NMoQParkListDetailsTableEnglish;
+import com.qatarmuseums.qatarmuseumsapp.park.NMoQParkListTableArabic;
+import com.qatarmuseums.qatarmuseumsapp.park.NMoQParkListTableDao;
+import com.qatarmuseums.qatarmuseumsapp.park.NMoQParkListTableEnglish;
+import com.qatarmuseums.qatarmuseumsapp.park.NMoQParkTableArabic;
+import com.qatarmuseums.qatarmuseumsapp.park.NMoQParkTableDao;
+import com.qatarmuseums.qatarmuseumsapp.park.NMoQParkTableEnglish;
 import com.qatarmuseums.qatarmuseumsapp.park.ParkTableArabic;
 import com.qatarmuseums.qatarmuseumsapp.park.ParkTableDao;
 import com.qatarmuseums.qatarmuseumsapp.park.ParkTableEnglish;
@@ -81,8 +97,13 @@ import com.qatarmuseums.qatarmuseumsapp.tourguidestartpage.TourGuideStartPageEng
         ArtifactTableArabic.class, NotificationTableEnglish.class, NotificationTableArabic.class,
         HomePageBannerTableEnglish.class, HomePageBannerTableArabic.class, TravelDetailsTableEnglish.class,
         TravelDetailsTableArabic.class, TourListTableEnglish.class, TourListTableArabic.class,
-        TourDetailsTableEnglish.class, TourDetailsTableArabic.class, UserRegistrationDetailsTable.class},
-        version = 2, exportSchema = false)
+        TourDetailsTableEnglish.class, TourDetailsTableArabic.class, UserRegistrationDetailsTable.class,
+        FacilityListTableEnglish.class, FacilityListTableArabic.class,
+        FacilityDetailTableEnglish.class, FacilityDetailTableArabic.class,
+        NMoQParkTableEnglish.class, NMoQParkTableArabic.class,
+        NMoQParkListTableEnglish.class, NMoQParkListTableArabic.class,
+        NMoQParkListDetailsTableEnglish.class, NMoQParkListDetailsTableArabic.class},
+        version = 4, exportSchema = false)
 @TypeConverters({Convertor.class})
 
 
@@ -125,6 +146,16 @@ public abstract class QMDatabase extends RoomDatabase {
     public abstract TourDetailsTableDao getTourDetailsTaleDao();
 
     public abstract UserRegistrationDetailsTableDao getUserRegistrationTaleDao();
+
+    public abstract FacilityListTableDao getFacilitiesListTableDao();
+
+    public abstract FacilityDetailTableDao getFacilitiesDetailTableDao();
+
+    public abstract NMoQParkTableDao getNMoQParkTableDao();
+
+    public abstract NMoQParkListTableDao getNMoQParkListTableDao();
+
+    public abstract NMoQParkListDetailsTableDao getNMoQParkListDetailsTableDao();
 
     private static QMDatabase qmDatabase;
 

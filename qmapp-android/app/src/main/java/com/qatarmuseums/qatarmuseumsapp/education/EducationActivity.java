@@ -2,10 +2,8 @@ package com.qatarmuseums.qatarmuseumsapp.education;
 
 import android.content.Context;
 import android.content.Intent;
-import android.content.pm.ActivityInfo;
 import android.content.res.Configuration;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.view.MotionEvent;
 import android.view.View;
@@ -16,24 +14,18 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.google.firebase.analytics.FirebaseAnalytics;
-import com.pierfrancescosoffritti.androidyoutubeplayer.player.YouTubePlayer;
 import com.pierfrancescosoffritti.androidyoutubeplayer.player.YouTubePlayerView;
 import com.pierfrancescosoffritti.androidyoutubeplayer.player.listeners.AbstractYouTubePlayerListener;
-import com.pierfrancescosoffritti.androidyoutubeplayer.player.listeners.YouTubePlayerFullScreenListener;
-import com.pierfrancescosoffritti.androidyoutubeplayer.player.listeners.YouTubePlayerInitListener;
 import com.qatarmuseums.qatarmuseumsapp.LocaleManager;
 import com.qatarmuseums.qatarmuseumsapp.R;
-import com.qatarmuseums.qatarmuseumsapp.utils.FullScreenHelper;
 
 public class EducationActivity extends AppCompatActivity {
-    private FullScreenHelper fullScreenHelper = new FullScreenHelper(this);
     YouTubePlayerView youTubePlayerView;
     private String videoId = "2cEYXuCTJjQ";
     public View appBar;
     private View backButton;
     Button discoverButton;
     private Animation zoomOutAnimation;
-    private TextView longDescription;
     private LinearLayout youTubePlayerLayout;
     private FirebaseAnalytics mFirebaseAnalytics;
 
@@ -48,8 +40,8 @@ public class EducationActivity extends AppCompatActivity {
         setContentView(R.layout.activity_education);
         appBar = findViewById(R.id.app_bar);
         backButton = findViewById(R.id.toolbar_back);
-        longDescription = findViewById(R.id.long_description);
-        discoverButton = (Button) findViewById(R.id.discover_btn);
+        TextView longDescription = findViewById(R.id.long_description);
+        discoverButton = findViewById(R.id.discover_btn);
         mFirebaseAnalytics = FirebaseAnalytics.getInstance(this);
         longDescription.setText(getString(R.string.education_long_description));
         backButton.setOnClickListener(v -> onBackPressed());
@@ -86,7 +78,6 @@ public class EducationActivity extends AppCompatActivity {
                             initializedYouTubePlayer.cueVideo(videoId, 0);
                         }
                     });
-//                        addFullScreenListenerToPlayer(initializedYouTubePlayer);
                 }, true);
     }
 
@@ -102,22 +93,6 @@ public class EducationActivity extends AppCompatActivity {
             youTubePlayerView.exitFullScreen();
         else
             super.onBackPressed();
-    }
-
-    private void addFullScreenListenerToPlayer(final YouTubePlayer youTubePlayer) {
-        youTubePlayerView.addFullScreenListener(new YouTubePlayerFullScreenListener() {
-            @Override
-            public void onYouTubePlayerEnterFullScreen() {
-                setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
-                fullScreenHelper.enterFullScreen();
-            }
-
-            @Override
-            public void onYouTubePlayerExitFullScreen() {
-                setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
-                fullScreenHelper.exitFullScreen();
-            }
-        });
     }
 
     @Override

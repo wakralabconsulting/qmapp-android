@@ -5,7 +5,7 @@
     android:id="@+id/layout_bg"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/white"
+    android:background="@color/colorWhite"
     tools:context=".tourguidestartpage.TourGuideStartPageActivity">
 
     <android.support.design.widget.AppBarLayout
@@ -18,7 +18,7 @@
             android:id="@+id/common_toolbar"
             android:layout_width="match_parent"
             android:layout_height="?android:attr/actionBarSize"
-            android:background="@color/black"
+            android:background="@color/colorBlack"
             android:theme="@style/AppTheme.PopupOverlay"
             app:contentInsetEnd="0dp"
             app:contentInsetStart="0dp">
@@ -78,7 +78,7 @@
         <FrameLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:background="@color/semi_transparent_white">
+            android:background="@color/colorSemiTransparentWhite">
 
         </FrameLayout>
 
@@ -89,7 +89,7 @@
             android:layout_centerHorizontal="true"
             android:layout_centerInParent="true"
             android:src="@drawable/play_white"
-            android:tint="@color/black"
+            android:tint="@color/colorBlack"
             android:visibility="gone" />
 
         <TextView
@@ -106,7 +106,7 @@
             android:paddingStart="@dimen/padding_15"
             android:textAlignment="center"
             android:textAllCaps="true"
-            android:textColor="@color/black"
+            android:textColor="@color/colorBlack"
             android:textSize="@dimen/font_size_40"
             android:visibility="visible" />
 
@@ -120,7 +120,7 @@
             android:paddingEnd="@dimen/padding_20"
             android:paddingStart="@dimen/padding_20"
             android:textAlignment="center"
-            android:textColor="@color/black"
+            android:textColor="@color/colorBlack"
             android:textSize="@dimen/font_size_16" />
 
         <LinearLayout
@@ -141,8 +141,8 @@
                 android:fontFamily="@font/din_next_lt_pro_bold"
                 android:text="@string/start_tour"
                 android:textAllCaps="false"
-                android:textColor="@color/white"
-                android:textSize="@dimen/settings_page_list_item_text_size"
+                android:textColor="@color/colorWhite"
+                android:textSize="@dimen/font_size_21"
                 android:visibility="visible" />
 
         </LinearLayout>
