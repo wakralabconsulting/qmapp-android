@@ -20,10 +20,6 @@
 
     </style>
 
-    <style name="CustomSpinnerTheme" parent="android:Widget.Spinner">
-        <item name="android:background">@drawable/filter_down</item>
-    </style>
-
     <style name="AppTheme.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar" />
 
     <style name="AppTheme.PopupOverlay" parent="ThemeOverlay.AppCompat.Light" />
@@ -40,14 +36,9 @@
     </style>
 
     <style name="AppTheme.MyActivityTheme">
-        <item name="colorAccent">@color/settings_switch_on_color</item>
+        <item name="colorAccent">@color/colorSettingsSwitchOnColor</item>
         <item name="windowActionBar">false</item>
         <item name="windowNoTitle">true</item>
     </style>
 
-    <style name="ColorSwitchStyle" parent="Theme.AppCompat.Light">
-        <item name="colorControlActivated">@color/colorAccent</item>
-        <item name="colorSwitchThumbNormal">@color/settings_switch_on_color</item>
-        <item name="android:colorForeground">@color/settings_switch_on_color</item>
-    </style>
 </resources>

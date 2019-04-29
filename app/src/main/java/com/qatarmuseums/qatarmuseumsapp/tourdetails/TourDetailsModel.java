@@ -283,6 +283,9 @@ public class TourDetailsModel implements Parcelable, Comparable<TourDetailsModel
 
     @Override
     public int compareTo(@NonNull TourDetailsModel tourDetailsModel) {
-        return this.tourSortId.compareTo(tourDetailsModel.tourSortId);
+        if (tourDetailsModel.tourSortId != null && !this.tourSortId.trim().equals(""))
+            return Integer.valueOf(this.tourSortId).compareTo(Integer.valueOf(tourDetailsModel.tourSortId));
+        else
+            return 0;
     }
 }

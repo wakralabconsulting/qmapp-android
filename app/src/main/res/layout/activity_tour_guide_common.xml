@@ -45,8 +45,7 @@
                 android:id="@+id/headerLayout"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_below="@id/app_bar"
-                android:background="@color/white"
+                android:background="@color/colorWhite"
                 android:fitsSystemWindows="true"
                 android:gravity="center"
                 android:orientation="vertical"
@@ -62,7 +61,7 @@
                     android:layout_marginTop="@dimen/padding_10"
                     android:fontFamily="@font/din_next_lt_pro_bold"
                     android:textAlignment="center"
-                    android:textColor="@color/black"
+                    android:textColor="@color/colorBlack"
                     android:textSize="@dimen/font_size_28"
                     android:visibility="visible" />
 
@@ -76,7 +75,7 @@
                     android:layout_marginStart="@dimen/padding_30"
                     android:layout_marginTop="@dimen/padding_10"
                     android:textAlignment="center"
-                    android:textColor="@color/black"
+                    android:textColor="@color/colorBlack"
                     android:textSize="@dimen/font_size_14" />
 
 
@@ -109,7 +108,7 @@
                         android:text="@string/explore"
                         android:textAlignment="center"
                         android:textAllCaps="false"
-                        android:textColor="@color/white"
+                        android:textColor="@color/colorWhite"
                         android:textSize="@dimen/font_size_16"
                         android:textStyle="bold"
                         android:visibility="visible" />
@@ -131,7 +130,7 @@
                         android:layout_marginTop="@dimen/padding_5"
                         android:fontFamily="@font/din_next_lt_pro_bold"
                         android:textAlignment="center"
-                        android:textColor="@color/black"
+                        android:textColor="@color/colorBlack"
                         android:textSize="@dimen/font_size_22"
                         android:visibility="visible" />
 
@@ -141,11 +140,11 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginBottom="@dimen/padding_5"
-                        android:layout_marginEnd="@dimen/pading_15"
-                        android:layout_marginStart="@dimen/pading_15"
+                        android:layout_marginEnd="@dimen/padding_15"
+                        android:layout_marginStart="@dimen/padding_15"
                         android:layout_marginTop="@dimen/padding_5"
                         android:textAlignment="center"
-                        android:textColor="@color/black"
+                        android:textColor="@color/colorBlack"
                         android:textSize="@dimen/font_size_16" />
 
 
@@ -158,8 +157,7 @@
                 android:id="@+id/tourguide_recycler_view"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:layout_below="@id/headerLayout"
-                android:background="@color/recycler_background"
+                android:background="@color/colorRecyclerBackground"
                 android:nestedScrollingEnabled="false" />
         </LinearLayout>
 
@@ -215,7 +213,7 @@
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/pading_15"
+            android:layout_marginTop="@dimen/padding_15"
             android:fontFamily="@font/din_next_lt_pro_light"
             android:text="@string/there_is_no_internet"
             android:textAlignment="center"
@@ -240,12 +238,12 @@
             android:background="@drawable/round_corner_black"
             android:fontFamily="@font/din_next_lt_pro_bold"
             android:gravity="center"
-            android:paddingEnd="@dimen/pading_30"
-            android:paddingStart="@dimen/pading_30"
+            android:paddingEnd="@dimen/padding_30"
+            android:paddingStart="@dimen/padding_30"
             android:text="@string/try_again"
             android:textAllCaps="false"
-            android:textColor="@color/white"
-            android:textSize="@dimen/settings_page_list_item_text_size" />
+            android:textColor="@color/colorWhite"
+            android:textSize="@dimen/font_size_21" />
 
     </LinearLayout>
 

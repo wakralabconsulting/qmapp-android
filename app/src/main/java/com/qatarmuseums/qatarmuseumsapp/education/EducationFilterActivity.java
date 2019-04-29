@@ -74,7 +74,7 @@ public class EducationFilterActivity extends AppCompatActivity {
     String institutionItem, ageGroupItem, programmeTypeItem;
     Intent navigationIntent;
     SharedPreferences.Editor editor;
-    SharedPreferences sharedfilterpreferences;
+    SharedPreferences sharedFilterPreferences;
     int institutionPosition = 0, ageGroupPosition = 0, programmeTypePosition = 0;
     private FirebaseAnalytics mFirebaseAnalytics;
 
@@ -93,33 +93,24 @@ public class EducationFilterActivity extends AppCompatActivity {
         toolbar_title.setText(getResources().getString(R.string.filter));
 
         mFirebaseAnalytics = FirebaseAnalytics.getInstance(this);
-        sharedfilterpreferences = getSharedPreferences(FILTERPREFS, Context.MODE_PRIVATE);
-
-        sharedfilterpreferences = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
-        institutionPosition = sharedfilterpreferences.getInt(INSTITUTEPREFS, 0);
-        ageGroupPosition = sharedfilterpreferences.getInt(AGEGROUPPREFS, 0);
-        programmeTypePosition = sharedfilterpreferences.getInt(PROGRAMMEPREFS, 0);
+        sharedFilterPreferences = getSharedPreferences(FILTERPREFS, Context.MODE_PRIVATE);
+        sharedFilterPreferences = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
+        institutionPosition = sharedFilterPreferences.getInt(INSTITUTEPREFS, 0);
+        ageGroupPosition = sharedFilterPreferences.getInt(AGEGROUPPREFS, 0);
+        programmeTypePosition = sharedFilterPreferences.getInt(PROGRAMMEPREFS, 0);
 
         zoomOutAnimation = AnimationUtils.loadAnimation(getApplicationContext(),
                 R.anim.zoom_out_more);
-        toolbarClose.setOnTouchListener(new View.OnTouchListener() {
-            @Override
-            public boolean onTouch(View v, MotionEvent event) {
-                switch (event.getAction()) {
-                    case MotionEvent.ACTION_DOWN:
-                        toolbarClose.startAnimation(zoomOutAnimation);
-                        break;
-                }
-                return false;
+        toolbarClose.setOnTouchListener((v, event) -> {
+            switch (event.getAction()) {
+                case MotionEvent.ACTION_DOWN:
+                    toolbarClose.startAnimation(zoomOutAnimation);
+                    break;
             }
+            return false;
         });
 
-        toolbarClose.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                onBackPressed();
-            }
-        });
+        toolbarClose.setOnClickListener(v -> onBackPressed());
         // Spinner Drop down elements
         institutions = new ArrayList<String>();
         institutions.add(getResources().getString(R.string.any));
@@ -203,23 +194,20 @@ public class EducationFilterActivity extends AppCompatActivity {
         setUpProgrammeSpinner();
 
 
-        institutionText.setOnTouchListener(new View.OnTouchListener() {
-            @Override
-            public boolean onTouch(View view, MotionEvent motionEvent) {
-                if (isFillInstitute == 0) {
-                    instituteLayout.setBackground(getResources().getDrawable(R.drawable.rectangular_plain_background_layout));
-                    isFillInstitute = 1;
+        institutionText.setOnTouchListener((view, motionEvent) -> {
+            if (isFillInstitute == 0) {
+                instituteLayout.setBackground(getResources().getDrawable(R.drawable.rectangular_plain_background_layout));
+                isFillInstitute = 1;
 
-                } else {
-                    instituteLayout.setBackground(getResources().getDrawable(R.drawable.rectangular_grey_background_layout));
-                    ageGroupLayout.setBackground(getResources().getDrawable(R.drawable.rectangular_plain_background_layout));
-                    programmeLayout.setBackground(getResources().getDrawable(R.drawable.rectangular_plain_background_layout));
-                    isFillInstitute = 1;
-                    isFillAge = 1;
-                    isFillProgramme = 1;
-                }
-                return false;
+            } else {
+                instituteLayout.setBackground(getResources().getDrawable(R.drawable.rectangular_grey_background_layout));
+                ageGroupLayout.setBackground(getResources().getDrawable(R.drawable.rectangular_plain_background_layout));
+                programmeLayout.setBackground(getResources().getDrawable(R.drawable.rectangular_plain_background_layout));
+                isFillInstitute = 1;
+                isFillAge = 1;
+                isFillProgramme = 1;
             }
+            return false;
         });
         institutionText.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
@@ -235,22 +223,19 @@ public class EducationFilterActivity extends AppCompatActivity {
 
             }
         });
-        ageGroupText.setOnTouchListener(new View.OnTouchListener() {
-            @Override
-            public boolean onTouch(View view, MotionEvent motionEvent) {
-                if (isFillAge == 0) {
-                    ageGroupLayout.setBackground(getResources().getDrawable(R.drawable.rectangular_plain_background_layout));
-                    isFillAge = 1;
-                } else {
-                    instituteLayout.setBackground(getResources().getDrawable(R.drawable.rectangular_plain_background_layout));
-                    ageGroupLayout.setBackground(getResources().getDrawable(R.drawable.rectangular_grey_background_layout));
-                    programmeLayout.setBackground(getResources().getDrawable(R.drawable.rectangular_plain_background_layout));
-                    isFillInstitute = 1;
-                    isFillAge = 1;
-                    isFillProgramme = 1;
-                }
-                return false;
+        ageGroupText.setOnTouchListener((view, motionEvent) -> {
+            if (isFillAge == 0) {
+                ageGroupLayout.setBackground(getResources().getDrawable(R.drawable.rectangular_plain_background_layout));
+                isFillAge = 1;
+            } else {
+                instituteLayout.setBackground(getResources().getDrawable(R.drawable.rectangular_plain_background_layout));
+                ageGroupLayout.setBackground(getResources().getDrawable(R.drawable.rectangular_grey_background_layout));
+                programmeLayout.setBackground(getResources().getDrawable(R.drawable.rectangular_plain_background_layout));
+                isFillInstitute = 1;
+                isFillAge = 1;
+                isFillProgramme = 1;
             }
+            return false;
         });
         ageGroupText.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
@@ -266,22 +251,19 @@ public class EducationFilterActivity extends AppCompatActivity {
 
             }
         });
-        programmeTypeText.setOnTouchListener(new View.OnTouchListener() {
-            @Override
-            public boolean onTouch(View view, MotionEvent motionEvent) {
-                if (isFillProgramme == 0) {
-                    programmeLayout.setBackground(getResources().getDrawable(R.drawable.rectangular_plain_background_layout));
-                    isFillProgramme = 1;
-                } else {
-                    instituteLayout.setBackground(getResources().getDrawable(R.drawable.rectangular_plain_background_layout));
-                    ageGroupLayout.setBackground(getResources().getDrawable(R.drawable.rectangular_plain_background_layout));
-                    programmeLayout.setBackground(getResources().getDrawable(R.drawable.rectangular_grey_background_layout));
-                    isFillInstitute = 1;
-                    isFillAge = 1;
-                    isFillProgramme = 1;
-                }
-                return false;
+        programmeTypeText.setOnTouchListener((view, motionEvent) -> {
+            if (isFillProgramme == 0) {
+                programmeLayout.setBackground(getResources().getDrawable(R.drawable.rectangular_plain_background_layout));
+                isFillProgramme = 1;
+            } else {
+                instituteLayout.setBackground(getResources().getDrawable(R.drawable.rectangular_plain_background_layout));
+                ageGroupLayout.setBackground(getResources().getDrawable(R.drawable.rectangular_plain_background_layout));
+                programmeLayout.setBackground(getResources().getDrawable(R.drawable.rectangular_grey_background_layout));
+                isFillInstitute = 1;
+                isFillAge = 1;
+                isFillProgramme = 1;
             }
+            return false;
         });
         programmeTypeText.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
@@ -298,43 +280,37 @@ public class EducationFilterActivity extends AppCompatActivity {
             }
         });
 
-        clearButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
+        clearButton.setOnClickListener(view -> {
 
-                isFillInstitute = 0;
-                isFillAge = 0;
-                isFillProgramme = 0;
-                institutionPosition = 0;
-                ageGroupPosition = 0;
-                programmeTypePosition = 0;
-                setUpInstituteSpinner();
-                setUpAgeSpinner();
-                setUpProgrammeSpinner();
-                setPreferences();
-                instituteLayout.setBackground(getResources().getDrawable(R.drawable.rectangular_plain_background_layout));
-                ageGroupLayout.setBackground(getResources().getDrawable(R.drawable.rectangular_plain_background_layout));
-                programmeLayout.setBackground(getResources().getDrawable(R.drawable.rectangular_plain_background_layout));
-            }
+            isFillInstitute = 0;
+            isFillAge = 0;
+            isFillProgramme = 0;
+            institutionPosition = 0;
+            ageGroupPosition = 0;
+            programmeTypePosition = 0;
+            setUpInstituteSpinner();
+            setUpAgeSpinner();
+            setUpProgrammeSpinner();
+            setPreferences();
+            instituteLayout.setBackground(getResources().getDrawable(R.drawable.rectangular_plain_background_layout));
+            ageGroupLayout.setBackground(getResources().getDrawable(R.drawable.rectangular_plain_background_layout));
+            programmeLayout.setBackground(getResources().getDrawable(R.drawable.rectangular_plain_background_layout));
         });
 
-        filterButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                navigationIntent = new Intent(EducationFilterActivity.this, EducationCalendarActivity.class);
-                navigationIntent.putExtra("INSTITUTION", institutionItem);
-                navigationIntent.putExtra("AGE_GROUP", ageGroupItem);
-                navigationIntent.putExtra("PROGRAMME_TYPE", programmeTypeItem);
-                setPreferences();
-                startActivity(navigationIntent);
-                finish();
-            }
+        filterButton.setOnClickListener(view -> {
+            navigationIntent = new Intent(EducationFilterActivity.this, EducationCalendarActivity.class);
+            navigationIntent.putExtra("INSTITUTION", institutionItem);
+            navigationIntent.putExtra("AGE_GROUP", ageGroupItem);
+            navigationIntent.putExtra("PROGRAMME_TYPE", programmeTypeItem);
+            setPreferences();
+            startActivity(navigationIntent);
+            finish();
         });
 
     }
 
     private void setPreferences() {
-        editor = sharedfilterpreferences.edit();
+        editor = sharedFilterPreferences.edit();
         editor.putInt(INSTITUTEPREFS, institutionPosition);
         editor.putInt(AGEGROUPPREFS, ageGroupPosition);
         editor.putInt(PROGRAMMEPREFS, programmeTypePosition);

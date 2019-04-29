@@ -28,19 +28,18 @@ import com.qatarmuseums.qatarmuseumsapp.LocaleManager;
 import com.qatarmuseums.qatarmuseumsapp.QMDatabase;
 import com.qatarmuseums.qatarmuseumsapp.R;
 import com.qatarmuseums.qatarmuseumsapp.calendar.CalendarActivity;
-import com.qatarmuseums.qatarmuseumsapp.commonpage.CommonActivity;
+import com.qatarmuseums.qatarmuseumsapp.commonlistpage.CommonListActivity;
 import com.qatarmuseums.qatarmuseumsapp.culturepass.CulturePassActivity;
 import com.qatarmuseums.qatarmuseumsapp.education.EducationActivity;
 import com.qatarmuseums.qatarmuseumsapp.notification.NotificationActivity;
 import com.qatarmuseums.qatarmuseumsapp.notification.NotificationTableArabic;
 import com.qatarmuseums.qatarmuseumsapp.notification.NotificationTableEnglish;
-import com.qatarmuseums.qatarmuseumsapp.notification.NotificationViewModel;
 import com.qatarmuseums.qatarmuseumsapp.park.ParkActivity;
 import com.qatarmuseums.qatarmuseumsapp.profile.ProfileActivity;
 import com.qatarmuseums.qatarmuseumsapp.settings.SettingsActivity;
 import com.qatarmuseums.qatarmuseumsapp.tourguide.TourGuideActivity;
 import com.qatarmuseums.qatarmuseumsapp.utils.Util;
-import com.qatarmuseums.qatarmuseumsapp.webview.WebviewActivity;
+import com.qatarmuseums.qatarmuseumsapp.webview.WebViewActivity;
 
 import java.lang.ref.WeakReference;
 
@@ -54,19 +53,19 @@ public class BaseActivity extends AppCompatActivity
     public Toolbar toolbar;
     @Nullable
     @BindView(R.id.topbar_back)
-    ImageView topbarBack;
+    ImageView topBarBack;
     @Nullable
     @BindView(R.id.topbar_calendar)
-    ImageView topbarCalander;
+    ImageView topBarCalender;
     @Nullable
     @BindView(R.id.topbar_notification)
-    ImageView topbarNotification;
+    ImageView topBarNotification;
     @Nullable
     @BindView(R.id.topbar_profile)
-    ImageView topbarProfile;
+    ImageView topBarProfile;
     @Nullable
     @BindView(R.id.topbar_sidemenu)
-    public ImageView topbarSidemenu;
+    public ImageView topBarSideMenu;
     @Nullable
     @BindView(R.id.drawer_layout)
     public DrawerLayout drawer;
@@ -75,84 +74,77 @@ public class BaseActivity extends AppCompatActivity
     public NavigationView navigationView;
     @Nullable
     @BindView(R.id.sidemenu_exibition_icon)
-    ImageView sidemenuExhibition;
+    ImageView sideMenuExhibition;
     @Nullable
     @BindView(R.id.sidemenu_event_icon)
-    ImageView sidemenuEvents;
+    ImageView sideMenuEvents;
     @Nullable
     @BindView(R.id.sidemenu_education_icon)
-    ImageView sidemenuEducation;
+    ImageView sideMenuEducation;
     @Nullable
     @BindView(R.id.sidemenu_tour_guide_icon)
-    ImageView sidemenuTourGuide;
+    ImageView sideMenuTourGuide;
     @Nullable
     @BindView(R.id.sidemenu_heritage_icon)
-    ImageView sidemenuHeritage;
+    ImageView sideMenuHeritage;
     @Nullable
     @BindView(R.id.sidemenu_public_arts_icon)
-    ImageView sidemenuPublicArts;
+    ImageView sideMenuPublicArts;
     @Nullable
     @BindView(R.id.sidemenu_dining_icon)
-    ImageView sidemenuDining;
+    ImageView sideMenuDining;
     @Nullable
     @BindView(R.id.sidemenu_gift_shop_icon)
-    ImageView sidemenuGiftShop;
+    ImageView sideMenuGiftShop;
     @Nullable
     @BindView(R.id.sidemenu_park_icon)
-    ImageView sidemenuPark;
+    ImageView sideMenuPark;
     @Nullable
     @BindView(R.id.sidemenu_settings_icon)
-    ImageView sidemenuSettings;
+    ImageView sideMenuSettings;
     @Nullable
     @BindView(R.id.sidemenu_exibition_layout)
-    LinearLayout sidemenuExibitionLayout;
+    LinearLayout sideMenuExhibitionLayout;
     @Nullable
     @BindView(R.id.sidemenu_event_layout)
-    LinearLayout sidemenuEventLayout;
+    LinearLayout sideMenuEventLayout;
     @Nullable
     @BindView(R.id.sidemenu_education_layout)
-    LinearLayout sidemenuEducationLayout;
+    LinearLayout sideMenuEducationLayout;
     @Nullable
     @BindView(R.id.sidemenu_tour_guide_layout)
-    LinearLayout sidemenuTourGuideLayout;
+    LinearLayout sideMenuTourGuideLayout;
     @Nullable
     @BindView(R.id.sidemenu_heritage_layout)
-    LinearLayout sidemenuHeritageLayout;
+    LinearLayout sideMenuHeritageLayout;
     @Nullable
     @BindView(R.id.sidemenu_public_arts_layout)
-    LinearLayout sidemenuPublicArtsLayout;
+    LinearLayout sideMenuPublicArtsLayout;
     @Nullable
     @BindView(R.id.sidemenu_dining_layout)
-    LinearLayout sidemenuDiningLayout;
+    LinearLayout sideMenuDiningLayout;
     @Nullable
     @BindView(R.id.sidemenu_gift_shop_layout)
-    LinearLayout sidemenuGiftShopLayout;
+    LinearLayout sideMenuGiftShopLayout;
     @Nullable
     @BindView(R.id.sidemenu_park_layout)
-    LinearLayout sidemenuParkLayout;
+    LinearLayout sideMenuParkLayout;
     @Nullable
     @BindView(R.id.sidemenu_settings_layout)
-    LinearLayout sidemenuSettingsLayout;
+    LinearLayout sideMenuSettingsLayout;
     @BindView(R.id.badge_notification)
     public TextView badgeCountTextView;
 
-
-    private FrameLayout fullView;
-    private FrameLayout activityContainer;
     Animation fadeInAnimation, fadeOutAnimation, zoomOutAnimation;
     private Intent navigation_intent;
     Util util;
     private SharedPreferences qmPreferences;
     private String name;
-    private SharedPreferences.Editor editor;
     private int badgeCount;
 
-    private NotificationViewModel notificationViewModel;
-    private String notificationMessage;
     private QMDatabase qmDatabase;
     NotificationTableEnglish notificationTableEnglish;
     NotificationTableArabic notificationTableArabic;
-    private String language;
 
     @Override
     protected void attachBaseContext(Context base) {
@@ -166,8 +158,8 @@ public class BaseActivity extends AppCompatActivity
 
     @Override
     public void setContentView(int layoutResID) {
-        fullView = (FrameLayout) getLayoutInflater().inflate(R.layout.activity_base, null);
-        activityContainer = (FrameLayout) fullView.findViewById(R.id.activity_content);
+        FrameLayout fullView = (FrameLayout) getLayoutInflater().inflate(R.layout.activity_base, null);
+        FrameLayout activityContainer = fullView.findViewById(R.id.activity_content);
         getLayoutInflater().inflate(layoutResID, activityContainer, true);
         super.setContentView(fullView);
         ButterKnife.bind(this);
@@ -176,10 +168,10 @@ public class BaseActivity extends AppCompatActivity
         zoomOutAnimation = AnimationUtils.loadAnimation(getApplicationContext(),
                 R.anim.zoom_out_more);
         qmDatabase = QMDatabase.getInstance(BaseActivity.this);
-        topbarBack.setOnTouchListener((v, event) -> {
+        topBarBack.setOnTouchListener((v, event) -> {
             switch (event.getAction()) {
                 case MotionEvent.ACTION_DOWN:
-                    topbarBack.startAnimation(zoomOutAnimation);
+                    topBarBack.startAnimation(zoomOutAnimation);
                     break;
             }
             return false;
@@ -227,10 +219,8 @@ public class BaseActivity extends AppCompatActivity
     }
 
     public void insertNotificationRelatedDataToDataBase(String msg, String lan) {
-        notificationMessage = msg;
-        language = lan;
         new InsertDatabaseTask(BaseActivity.this, notificationTableEnglish,
-                notificationTableArabic, language, msg).execute();
+                notificationTableArabic, lan, msg).execute();
     }
 
     public static class InsertDatabaseTask extends AsyncTask<Void, Void, Boolean> {
@@ -279,7 +269,7 @@ public class BaseActivity extends AppCompatActivity
     }
 
     public void setBadge(int badgeCount) {
-        if (topbarNotification.getVisibility() == View.VISIBLE)
+        if ((topBarNotification != null ? topBarNotification.getVisibility() : 0) == View.VISIBLE)
             badgeCountTextView.setVisibility(View.VISIBLE);
         if (badgeCount < 10)
             badgeCountTextView.setPadding(20, 5, 20, 5);
@@ -321,24 +311,24 @@ public class BaseActivity extends AppCompatActivity
                 break;
 
             case R.id.topbar_calendar:
-                topbarCalander.startAnimation(zoomOutAnimation);
+                topBarCalender.startAnimation(zoomOutAnimation);
                 navigation_intent = new Intent(getApplicationContext(), CalendarActivity.class);
                 startActivity(navigation_intent);
                 clearAnimations();
                 break;
 
             case R.id.topbar_notification:
-                topbarNotification.startAnimation(zoomOutAnimation);
+                topBarNotification.startAnimation(zoomOutAnimation);
                 navigation_intent = new Intent(this, NotificationActivity.class);
                 startActivity(navigation_intent);
-                editor = qmPreferences.edit();
+                SharedPreferences.Editor editor = qmPreferences.edit();
                 editor.putInt("BADGE_COUNT", 0);
                 editor.commit();
                 badgeCountTextView.setVisibility(View.GONE);
                 clearAnimations();
                 break;
             case R.id.topbar_profile:
-                topbarProfile.startAnimation(zoomOutAnimation);
+                topBarProfile.startAnimation(zoomOutAnimation);
                 name = qmPreferences.getString("NAME", null);
                 if (name == null)
                     navigation_intent = new Intent(this, CulturePassActivity.class);
@@ -356,16 +346,16 @@ public class BaseActivity extends AppCompatActivity
 
             case R.id.sidemenu_exibition_layout:
             case R.id.sidemenu_exibition_icon:
-                touchListnerForLayout(sidemenuExibitionLayout);
-                navigation_intent = new Intent(this, CommonActivity.class);
-                navigation_intent.putExtra(getString(R.string.toolbar_title_key), getString(R.string.sidemenu_exhibition_text));
+                touchListenerForLayout(sideMenuExhibitionLayout);
+                navigation_intent = new Intent(this, CommonListActivity.class);
+                navigation_intent.putExtra(getString(R.string.toolbar_title_key), getString(R.string.side_menu_exhibition_text));
                 startActivity(navigation_intent);
                 clearAnimations();
                 break;
 
             case R.id.sidemenu_event_layout:
             case R.id.sidemenu_event_icon:
-                touchListnerForLayout(sidemenuEventLayout);
+                touchListenerForLayout(sideMenuEventLayout);
                 navigation_intent = new Intent(getApplicationContext(), CalendarActivity.class);
                 startActivity(navigation_intent);
                 clearAnimations();
@@ -373,7 +363,7 @@ public class BaseActivity extends AppCompatActivity
 
             case R.id.sidemenu_education_layout:
             case R.id.sidemenu_education_icon:
-                touchListnerForLayout(sidemenuEducationLayout);
+                touchListenerForLayout(sideMenuEducationLayout);
                 navigation_intent = new Intent(this, EducationActivity.class);
                 startActivity(navigation_intent);
                 clearAnimations();
@@ -382,50 +372,50 @@ public class BaseActivity extends AppCompatActivity
             case R.id.sidemenu_tour_guide_layout:
             case R.id.sidemenu_tour_guide_icon:
                 // navigation drawer tour guide action
-                touchListnerForLayout(sidemenuTourGuideLayout);
+                touchListenerForLayout(sideMenuTourGuideLayout);
                 navigation_intent = new Intent(this, TourGuideActivity.class);
                 startActivity(navigation_intent);
                 clearAnimations();
                 break;
             case R.id.sidemenu_heritage_layout:
             case R.id.sidemenu_heritage_icon:
-                touchListnerForLayout(sidemenuHeritageLayout);
-                navigation_intent = new Intent(this, CommonActivity.class);
-                navigation_intent.putExtra(getString(R.string.toolbar_title_key), getString(R.string.sidemenu_heritage_text));
+                touchListenerForLayout(sideMenuHeritageLayout);
+                navigation_intent = new Intent(this, CommonListActivity.class);
+                navigation_intent.putExtra(getString(R.string.toolbar_title_key), getString(R.string.side_menu_heritage_text));
                 startActivity(navigation_intent);
                 clearAnimations();
                 break;
 
             case R.id.sidemenu_public_arts_layout:
             case R.id.sidemenu_public_arts_icon:
-                touchListnerForLayout(sidemenuPublicArtsLayout);
-                navigation_intent = new Intent(this, CommonActivity.class);
-                navigation_intent.putExtra(getString(R.string.toolbar_title_key), getString(R.string.sidemenu_public_arts_text));
+                touchListenerForLayout(sideMenuPublicArtsLayout);
+                navigation_intent = new Intent(this, CommonListActivity.class);
+                navigation_intent.putExtra(getString(R.string.toolbar_title_key), getString(R.string.side_menu_public_arts_text));
                 startActivity(navigation_intent);
                 clearAnimations();
                 break;
 
             case R.id.sidemenu_dining_layout:
             case R.id.sidemenu_dining_icon:
-                touchListnerForLayout(sidemenuDiningLayout);
-                navigation_intent = new Intent(this, CommonActivity.class);
-                navigation_intent.putExtra(getString(R.string.toolbar_title_key), getString(R.string.sidemenu_dining_text));
+                touchListenerForLayout(sideMenuDiningLayout);
+                navigation_intent = new Intent(this, CommonListActivity.class);
+                navigation_intent.putExtra(getString(R.string.toolbar_title_key), getString(R.string.side_menu_dining_text));
                 startActivity(navigation_intent);
                 clearAnimations();
                 break;
 
             case R.id.sidemenu_gift_shop_layout:
             case R.id.sidemenu_gift_shop_icon:
-                touchListnerForLayout(sidemenuGiftShopLayout);
-                sidemenuGiftShopLayout.startAnimation(zoomOutAnimation);
-                navigation_intent = new Intent(BaseActivity.this, WebviewActivity.class);
+                touchListenerForLayout(sideMenuGiftShopLayout);
+                sideMenuGiftShopLayout.startAnimation(zoomOutAnimation);
+                navigation_intent = new Intent(BaseActivity.this, WebViewActivity.class);
                 navigation_intent.putExtra("url", getString(R.string.gift_shop_url));
                 startActivity(navigation_intent);
                 clearAnimations();
                 break;
             case R.id.sidemenu_park_layout:
             case R.id.sidemenu_park_icon:
-                touchListnerForLayout(sidemenuParkLayout);
+                touchListenerForLayout(sideMenuParkLayout);
                 navigation_intent = new Intent(BaseActivity.this, ParkActivity.class);
                 startActivity(navigation_intent);
                 clearAnimations();
@@ -433,7 +423,7 @@ public class BaseActivity extends AppCompatActivity
 
             case R.id.sidemenu_settings_layout:
             case R.id.sidemenu_settings_icon:
-                touchListnerForLayout(sidemenuSettingsLayout);
+                touchListenerForLayout(sideMenuSettingsLayout);
                 Intent settingsIntent = new Intent(this, SettingsActivity.class);
                 startActivity(settingsIntent);
                 clearAnimations();
@@ -446,29 +436,29 @@ public class BaseActivity extends AppCompatActivity
     }
 
     public void showToolBarOptions() {
-        topbarCalander.setVisibility(View.VISIBLE);
-        topbarNotification.setVisibility(View.VISIBLE);
+        topBarCalender.setVisibility(View.VISIBLE);
+        topBarNotification.setVisibility(View.VISIBLE);
         updateBadge();
-        topbarProfile.setVisibility(View.VISIBLE);
+        topBarProfile.setVisibility(View.VISIBLE);
     }
 
     public void hideToolBarOptions() {
-        topbarCalander.setVisibility(View.INVISIBLE);
-        topbarNotification.setVisibility(View.INVISIBLE);
+        topBarCalender.setVisibility(View.INVISIBLE);
+        topBarNotification.setVisibility(View.INVISIBLE);
         badgeCountTextView.setVisibility(View.INVISIBLE);
-        topbarProfile.setVisibility(View.INVISIBLE);
+        topBarProfile.setVisibility(View.INVISIBLE);
     }
 
     public void handlingDrawer() {
         if (drawer.isDrawerOpen(Gravity.END)) {
             navigationView.startAnimation(fadeOutAnimation);
             showToolBarOptions();
-            topbarSidemenu.setImageDrawable(getResources().getDrawable(R.drawable.side_menu_icon));
+            topBarSideMenu.setImageDrawable(getResources().getDrawable(R.drawable.side_menu_icon));
             drawer.closeDrawer(GravityCompat.END, false);
             toolbar.setBackgroundColor(Color.parseColor("#000000"));
 
         } else {
-            topbarSidemenu.setImageDrawable(getResources().getDrawable(R.drawable.close));
+            topBarSideMenu.setImageDrawable(getResources().getDrawable(R.drawable.close));
             hideToolBarOptions();
             drawer.openDrawer(Gravity.END, false);
             toolbar.setBackgroundColor(Color.parseColor("#CC000000"));
@@ -478,71 +468,68 @@ public class BaseActivity extends AppCompatActivity
     }
 
     public void setOnclickListenerForButtons() {
-        topbarBack.setOnClickListener(this);
-        topbarCalander.setOnClickListener(this);
-        topbarNotification.setOnClickListener(this);
-        topbarProfile.setOnClickListener(this);
-        topbarSidemenu.setOnClickListener(this);
-        sidemenuExibitionLayout.setOnClickListener(this);
-        sidemenuExhibition.setOnClickListener(this);
-        sidemenuEvents.setOnClickListener(this);
-        sidemenuEventLayout.setOnClickListener(this);
-        sidemenuEducation.setOnClickListener(this);
-        sidemenuEducationLayout.setOnClickListener(this);
-        sidemenuTourGuide.setOnClickListener(this);
-        sidemenuTourGuideLayout.setOnClickListener(this);
-        sidemenuHeritage.setOnClickListener(this);
-        sidemenuHeritageLayout.setOnClickListener(this);
-        sidemenuPublicArts.setOnClickListener(this);
-        sidemenuPublicArtsLayout.setOnClickListener(this);
-        sidemenuDining.setOnClickListener(this);
-        sidemenuDiningLayout.setOnClickListener(this);
-        sidemenuGiftShop.setOnClickListener(this);
-        sidemenuGiftShopLayout.setOnClickListener(this);
-        sidemenuPark.setOnClickListener(this);
-        sidemenuParkLayout.setOnClickListener(this);
-        sidemenuSettings.setOnClickListener(this);
-        sidemenuSettingsLayout.setOnClickListener(this);
+        topBarBack.setOnClickListener(this);
+        topBarCalender.setOnClickListener(this);
+        topBarNotification.setOnClickListener(this);
+        topBarProfile.setOnClickListener(this);
+        topBarSideMenu.setOnClickListener(this);
+        sideMenuExhibitionLayout.setOnClickListener(this);
+        sideMenuExhibition.setOnClickListener(this);
+        sideMenuEvents.setOnClickListener(this);
+        sideMenuEventLayout.setOnClickListener(this);
+        sideMenuEducation.setOnClickListener(this);
+        sideMenuEducationLayout.setOnClickListener(this);
+        sideMenuTourGuide.setOnClickListener(this);
+        sideMenuTourGuideLayout.setOnClickListener(this);
+        sideMenuHeritage.setOnClickListener(this);
+        sideMenuHeritageLayout.setOnClickListener(this);
+        sideMenuPublicArts.setOnClickListener(this);
+        sideMenuPublicArtsLayout.setOnClickListener(this);
+        sideMenuDining.setOnClickListener(this);
+        sideMenuDiningLayout.setOnClickListener(this);
+        sideMenuGiftShop.setOnClickListener(this);
+        sideMenuGiftShopLayout.setOnClickListener(this);
+        sideMenuPark.setOnClickListener(this);
+        sideMenuParkLayout.setOnClickListener(this);
+        sideMenuSettings.setOnClickListener(this);
+        sideMenuSettingsLayout.setOnClickListener(this);
 
     }
 
     public void setToolbarForMuseumActivity() {
-        topbarSidemenu.setVisibility(View.INVISIBLE);
-        topbarBack.setVisibility(View.VISIBLE);
+        topBarSideMenu.setVisibility(View.INVISIBLE);
+        topBarBack.setVisibility(View.VISIBLE);
     }
 
     public void setToolbarForMuseumLaunchy() {
-        topbarSidemenu.setVisibility(View.INVISIBLE);
-        topbarProfile.setVisibility(View.INVISIBLE);
-        topbarCalander.setVisibility(View.INVISIBLE);
-        topbarNotification.setVisibility(View.INVISIBLE);
-        topbarBack.setVisibility(View.VISIBLE);
+        topBarSideMenu.setVisibility(View.INVISIBLE);
+        topBarProfile.setVisibility(View.INVISIBLE);
+        topBarCalender.setVisibility(View.INVISIBLE);
+        topBarNotification.setVisibility(View.INVISIBLE);
+        topBarBack.setVisibility(View.VISIBLE);
     }
 
     public void clearAnimations() {
-        sidemenuExibitionLayout.clearAnimation();
-        sidemenuEventLayout.clearAnimation();
-        sidemenuEducationLayout.clearAnimation();
-        sidemenuTourGuideLayout.clearAnimation();
-        sidemenuHeritageLayout.clearAnimation();
-        sidemenuPublicArtsLayout.clearAnimation();
-        sidemenuDiningLayout.clearAnimation();
-        sidemenuGiftShopLayout.clearAnimation();
-        sidemenuParkLayout.clearAnimation();
-        sidemenuSettingsLayout.clearAnimation();
+        sideMenuExhibitionLayout.clearAnimation();
+        sideMenuEventLayout.clearAnimation();
+        sideMenuEducationLayout.clearAnimation();
+        sideMenuTourGuideLayout.clearAnimation();
+        sideMenuHeritageLayout.clearAnimation();
+        sideMenuPublicArtsLayout.clearAnimation();
+        sideMenuDiningLayout.clearAnimation();
+        sideMenuGiftShopLayout.clearAnimation();
+        sideMenuParkLayout.clearAnimation();
+        sideMenuSettingsLayout.clearAnimation();
     }
 
-    public void touchListnerForLayout(final LinearLayout linearLayout) {
-        linearLayout.setOnTouchListener(new View.OnTouchListener() {
-            @Override
-            public boolean onTouch(View view, MotionEvent motionEvent) {
-                switch (motionEvent.getAction()) {
-                    case MotionEvent.ACTION_DOWN:
-                        linearLayout.startAnimation(zoomOutAnimation);
-                        break;
-                }
-                return false;
+    public void touchListenerForLayout(final LinearLayout linearLayout) {
+        linearLayout.setOnTouchListener((view, motionEvent) -> {
+            switch (motionEvent.getAction()) {
+                case MotionEvent.ACTION_DOWN:
+                    linearLayout.startAnimation(zoomOutAnimation);
+                    break;
             }
+            return false;
         });
     }
 }

@@ -4,7 +4,6 @@ import android.app.Activity;
 import android.app.Dialog;
 import android.content.Context;
 import android.os.Bundle;
-import android.preference.PreferenceManager;
 import android.view.View;
 import android.view.Window;
 import android.widget.Button;
@@ -18,11 +17,9 @@ public class CustomDialogClass extends Dialog implements
     public Activity context;
     public Context mContext;
     public Dialog d;
-    public Button closeButton, no, calendarCloseButton;
-    TextView dialogTitle, dialogContent;
-    String title, content, calendarContent;
+    private String title, content, calendarContent;
 
-    public CustomDialogClass(Activity a, String title, String content) {
+    CustomDialogClass(Activity a, String title, String content) {
         super(a);
         // TODO Auto-generated constructor stub
         this.context = a;
@@ -30,7 +27,7 @@ public class CustomDialogClass extends Dialog implements
         this.content = content;
     }
 
-    public CustomDialogClass(Context c, String title, String content) {
+    CustomDialogClass(Context c, String title, String content) {
         super(c);
         this.mContext = c;
         this.title = title;
@@ -43,10 +40,10 @@ public class CustomDialogClass extends Dialog implements
         super.onCreate(savedInstanceState);
         requestWindowFeature(Window.FEATURE_NO_TITLE);
         setContentView(R.layout.coming_soon_popup);
-        closeButton = (Button) findViewById(R.id.close_btn);
-        dialogTitle = (TextView) findViewById(R.id.dialog_tittle);
-        dialogContent = (TextView) findViewById(R.id.dialog_content);
-        calendarCloseButton = (Button) findViewById(R.id.calendar_close_btn);
+        Button closeButton = findViewById(R.id.close_btn);
+        TextView dialogTitle = findViewById(R.id.dialog_tittle);
+        TextView dialogContent = findViewById(R.id.dialog_content);
+        Button calendarCloseButton = findViewById(R.id.calendar_close_btn);
 
         if (title == null) {
             dialogTitle.setVisibility(View.GONE);
@@ -58,12 +55,11 @@ public class CustomDialogClass extends Dialog implements
             dialogTitle.setVisibility(View.GONE);
             dialogContent.setText(content);
             closeButton.setText(context.getResources().getString(R.string.ok));
-        }else if(title=="p"){
+        } else if (title.equals("p")) {
             dialogTitle.setVisibility(View.GONE);
             dialogContent.setText(content);
             closeButton.setText(context.getResources().getString(R.string.close));
-        }
-        else if (content != null) {
+        } else if (content != null) {
             dialogTitle.setVisibility(View.VISIBLE);
             dialogTitle.setText(title);
             dialogContent.setText(content);

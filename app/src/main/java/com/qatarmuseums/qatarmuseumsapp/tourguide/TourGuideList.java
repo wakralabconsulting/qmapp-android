@@ -13,8 +13,8 @@ public class TourGuideList {
     private String tourId;
     @SerializedName("multimedia")
     private ArrayList<String> imageurl;
-    int image;
-    String tourguideId;
+    private int image;
+    private String tourGuideId;
 
     public TourGuideList(String name, String tourId, int image, String museumId) {
         this.name = name;
@@ -67,11 +67,11 @@ public class TourGuideList {
         this.image = image;
     }
 
-    public String getTourguideId() {
-        return tourguideId;
+    public String getTourGuideId() {
+        return tourGuideId;
     }
 
-    public void setTourguideId(String tourguideId) {
-        this.tourguideId = tourguideId;
+    public void setTourGuideId(String tourGuideId) {
+        this.tourGuideId = tourGuideId;
     }
 }

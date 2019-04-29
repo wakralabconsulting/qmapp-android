@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/background_color"
+    android:background="@color/colorPageBackground"
     app:layout_behavior="@string/appbar_scrolling_view_behavior"
     tools:context="com.qatarmuseums.qatarmuseumsapp.detailspage.DetailsActivity"
     tools:showIn="@layout/activity_dining">
@@ -31,31 +31,31 @@
                 android:id="@+id/dining_content"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="@dimen/text_margin"
-                android:layout_marginEnd="@dimen/text_margin"
                 android:layout_marginBottom="@dimen/text_margin"
+                android:layout_marginEnd="@dimen/text_margin"
+                android:layout_marginStart="@dimen/text_margin"
                 android:background="@drawable/round_corner_white_details_page"
                 android:gravity="center_horizontal"
                 android:orientation="vertical"
-                android:padding="@dimen/padding_25"
                 android:visibility="visible">
 
                 <TextView
                     android:id="@+id/main_title"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/padding_25"
                     android:fontFamily="@font/din_regular"
                     android:textAlignment="center"
                     android:textAllCaps="true"
-                    android:textColor="@color/black"
+                    android:textColor="@color/colorBlack"
                     android:textSize="@dimen/font_size_18"
                     android:textStyle="bold" />
 
                 <LinearLayout
                     android:layout_width="25dp"
                     android:layout_height="2dp"
-                    android:layout_marginTop="@dimen/pading_10"
-                    android:background="@color/black" />
+                    android:layout_marginTop="@dimen/padding_10"
+                    android:background="@color/colorBlack" />
 
                 <TextView
                     android:id="@+id/short_description"
@@ -63,8 +63,10 @@
                     android:layout_height="wrap_content"
                     android:layout_margin="@dimen/text_margin"
                     android:fontFamily="@font/din_next_lt_pro_regular"
+                    android:paddingEnd="@dimen/padding_25"
+                    android:paddingStart="@dimen/padding_25"
                     android:textAlignment="center"
-                    android:textColor="@color/black"
+                    android:textColor="@color/colorBlack"
                     android:textSize="@dimen/font_size_15" />
 
                 <TextView
@@ -73,8 +75,10 @@
                     android:layout_height="wrap_content"
                     android:layout_margin="@dimen/text_margin"
                     android:fontFamily="@font/din_next_lt_pro_regular"
+                    android:paddingEnd="@dimen/padding_25"
+                    android:paddingStart="@dimen/padding_25"
                     android:textAlignment="center"
-                    android:textColor="@color/black"
+                    android:textColor="@color/colorBlack"
                     android:textSize="@dimen/font_size_15"
                     android:visibility="gone" />
 
@@ -94,7 +98,7 @@
                         android:layout_height="wrap_content"
                         android:fontFamily="@font/din_next_lt_pro_bold"
                         android:text="@string/opening_timings"
-                        android:textColor="@color/black"
+                        android:textColor="@color/colorBlack"
                         android:textSize="@dimen/font_size_18" />
 
                     <LinearLayout
@@ -102,7 +106,7 @@
                         android:layout_height="3dp"
                         android:layout_marginBottom="@dimen/padding_10"
                         android:layout_marginTop="@dimen/padding_10"
-                        android:background="@color/black" />
+                        android:background="@color/colorBlack" />
 
                     <TextView
                         android:id="@+id/timing_info"
@@ -112,8 +116,10 @@
                         android:layout_marginEnd="@dimen/text_margin"
                         android:layout_marginStart="@dimen/text_margin"
                         android:fontFamily="@font/din_next_lt_pro_regular"
+                        android:paddingEnd="@dimen/padding_25"
+                        android:paddingStart="@dimen/padding_25"
                         android:textAlignment="center"
-                        android:textColor="@color/black"
+                        android:textColor="@color/colorBlack"
                         android:textSize="@dimen/font_size_15" />
                 </LinearLayout>
 
@@ -131,15 +137,15 @@
                         android:layout_height="wrap_content"
                         android:fontFamily="@font/din_next_lt_pro_bold"
                         android:text="@string/location_title"
-                        android:textColor="@color/black"
+                        android:textColor="@color/colorBlack"
                         android:textSize="@dimen/font_size_18" />
 
                     <LinearLayout
                         android:layout_width="25dp"
                         android:layout_height="3dp"
                         android:layout_marginBottom="@dimen/padding_10"
-                        android:layout_marginTop="@dimen/pading_10"
-                        android:background="@color/black" />
+                        android:layout_marginTop="@dimen/padding_10"
+                        android:background="@color/colorBlack" />
 
                     <TextView
                         android:id="@+id/location_info"
@@ -149,7 +155,7 @@
                         android:layout_marginStart="@dimen/text_margin"
                         android:fontFamily="@font/din_next_lt_pro_regular"
                         android:textAlignment="center"
-                        android:textColor="@color/black"
+                        android:textColor="@color/colorBlack"
                         android:textSize="@dimen/font_size_15" />
 
                     <LinearLayout
@@ -281,7 +287,7 @@
                 <TextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="@dimen/pading_15"
+                    android:layout_marginTop="@dimen/padding_15"
                     android:fontFamily="@font/din_next_lt_pro_light"
                     android:text="@string/there_is_no_internet"
                     android:textAlignment="center"
@@ -306,12 +312,12 @@
                     android:background="@drawable/round_corner_black"
                     android:fontFamily="@font/din_next_lt_pro_bold"
                     android:gravity="center"
-                    android:paddingEnd="@dimen/pading_30"
-                    android:paddingStart="@dimen/pading_30"
+                    android:paddingEnd="@dimen/padding_30"
+                    android:paddingStart="@dimen/padding_30"
                     android:text="@string/try_again"
                     android:textAllCaps="false"
-                    android:textColor="@color/white"
-                    android:textSize="@dimen/settings_page_list_item_text_size" />
+                    android:textColor="@color/colorWhite"
+                    android:textSize="@dimen/font_size_21" />
 
             </LinearLayout>
 

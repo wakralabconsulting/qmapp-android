@@ -10,11 +10,10 @@ import com.qatarmuseums.qatarmuseumsapp.floormap.ArtifactDetails;
 import java.util.ArrayList;
 
 class PagerAdapter extends FragmentPagerAdapter {
-    int count;
-    ArrayList<ArtifactDetails> objectPreviewModels = new ArrayList<>();
-    PageFragment pageFragment;
+    private int count;
+    private ArrayList<ArtifactDetails> objectPreviewModels = new ArrayList<>();
 
-    public PagerAdapter(FragmentManager fm, int count, ArrayList<ArtifactDetails> objectPreviewModels) {
+    PagerAdapter(FragmentManager fm, int count, ArrayList<ArtifactDetails> objectPreviewModels) {
         super(fm);
         this.count = count;
         this.objectPreviewModels = objectPreviewModels;

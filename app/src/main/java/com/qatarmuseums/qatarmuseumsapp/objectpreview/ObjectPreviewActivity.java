@@ -55,9 +55,8 @@ public class ObjectPreviewActivity extends AppCompatActivity {
     LinearLayout commonContentLayout;
     TextView noResultFoundTxt;
     Intent intent;
-    String tourId;
+    String tourId, museumId;
     String language;
-    private Util util;
     ViewPager pager;
     ArrayList<ArtifactDetails> artifactList = new ArrayList<>();
     private int currentPosition;
@@ -86,16 +85,17 @@ public class ObjectPreviewActivity extends AppCompatActivity {
         setSupportActionBar(toolbar);
         intent = getIntent();
 
-        util = new Util();
+        Util util = new Util();
         tourId = intent.getStringExtra("TOUR_ID");
+        museumId = intent.getStringExtra("MUSEUM_ID");
         toolbar = findViewById(R.id.toolbar);
         backBtn = findViewById(R.id.back_btn);
         shareBtn = findViewById(R.id.share_btn);
         locationBtn = findViewById(R.id.location_btn);
         rootLayout = findViewById(R.id.layout_root);
-        progressBar = (ProgressBar) findViewById(R.id.progressBarLoading);
-        commonContentLayout = (LinearLayout) findViewById(R.id.main_content_layout);
-        noResultFoundTxt = (TextView) findViewById(R.id.noResultFoundTxt);
+        progressBar = findViewById(R.id.progressBarLoading);
+        commonContentLayout = findViewById(R.id.main_content_layout);
+        noResultFoundTxt = findViewById(R.id.noResultFoundTxt);
         retryLayout = findViewById(R.id.retry_layout);
         retryButton = findViewById(R.id.retry_btn);
         language = LocaleManager.getLanguage(this);
@@ -104,12 +104,12 @@ public class ObjectPreviewActivity extends AppCompatActivity {
         assert pager != null;
         stepIndicatorRecyclerView = findViewById(R.id.idRecyclerViewHorizontalList);
 
-        RecyclerView.OnItemTouchListener disabler = new RecyclerViewDisabler();
+        RecyclerView.OnItemTouchListener disabler = new RecyclerViewDisablre();
         stepIndicatorRecyclerView.addOnItemTouchListener(disabler);
         zoomOutAnimation = AnimationUtils.loadAnimation(getApplicationContext(),
                 R.anim.zoom_out_more);
         qmDatabase = QMDatabase.getInstance(ObjectPreviewActivity.this);
-        if (new Util().isNetworkAvailable(this))
+        if (util.isNetworkAvailable(this))
             getObjectPreviewDetailsFromAPI(tourId);
         else
             getObjectPreviewDetailsFromDB(tourId);
@@ -136,99 +136,72 @@ public class ObjectPreviewActivity extends AppCompatActivity {
             }
         });
 
-        backBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                finish();
+        backBtn.setOnClickListener(view -> finish());
 
-            }
-        });
-
-        retryButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                getObjectPreviewDetailsFromAPI(tourId);
-                progressBar.setVisibility(View.VISIBLE);
-                retryLayout.setVisibility(View.GONE);
-            }
+        retryButton.setOnClickListener(v -> {
+            getObjectPreviewDetailsFromAPI(tourId);
+            progressBar.setVisibility(View.VISIBLE);
+            retryLayout.setVisibility(View.GONE);
         });
 
-        retryButton.setOnTouchListener(new View.OnTouchListener() {
-            @Override
-            public boolean onTouch(View v, MotionEvent event) {
-                switch (event.getAction()) {
-                    case MotionEvent.ACTION_DOWN:
-                        retryButton.startAnimation(zoomOutAnimation);
-                        break;
-                }
-                return false;
+        retryButton.setOnTouchListener((v, event) -> {
+            switch (event.getAction()) {
+                case MotionEvent.ACTION_DOWN:
+                    retryButton.startAnimation(zoomOutAnimation);
+                    break;
             }
+            return false;
         });
-        backBtn.setOnTouchListener(new View.OnTouchListener() {
-            @Override
-            public boolean onTouch(View v, MotionEvent event) {
-                switch (event.getAction()) {
-                    case MotionEvent.ACTION_DOWN:
-                        backBtn.startAnimation(zoomOutAnimation);
-                        break;
-                }
-                return false;
+        backBtn.setOnTouchListener((v, event) -> {
+            switch (event.getAction()) {
+                case MotionEvent.ACTION_DOWN:
+                    backBtn.startAnimation(zoomOutAnimation);
+                    break;
             }
+            return false;
         });
-        shareBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
+        shareBtn.setOnClickListener(view -> {
 
-            }
         });
-        shareBtn.setOnTouchListener(new View.OnTouchListener() {
-            @Override
-            public boolean onTouch(View v, MotionEvent event) {
-                switch (event.getAction()) {
-                    case MotionEvent.ACTION_DOWN:
-                        shareBtn.startAnimation(zoomOutAnimation);
-                        break;
-                }
-                return false;
+        shareBtn.setOnTouchListener((v, event) -> {
+            switch (event.getAction()) {
+                case MotionEvent.ACTION_DOWN:
+                    shareBtn.startAnimation(zoomOutAnimation);
+                    break;
             }
+            return false;
         });
 
-        locationBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                if (artifactList.size() > 0) {
-                    String position = artifactList.get(currentPosition).getArtifactPosition();
-                    String floorLevel = artifactList.get(currentPosition).getFloorLevel();
-                    if (position != null && floorLevel != null && !position.equals("") && !floorLevel.equals("")) {
-                        Intent i = new Intent(ObjectPreviewActivity.this, FloorMapActivity.class);
-                        i.putExtra("Position", position);
-                        i.putExtra("Level", floorLevel);
-                        i.putExtra("TourId", tourId);
-                        i.putExtra("RESPONSE", artifactList);
-                        startActivity(i);
-                        overridePendingTransition(R.anim.flipfadein, R.anim.flipfadeout);
-                    } else {
-                        Snackbar.make(rootLayout, R.string.no_location_data, Snackbar.LENGTH_SHORT).show();
-                    }
+        locationBtn.setOnClickListener(view -> {
+            if (artifactList.size() > 0) {
+                String position = artifactList.get(currentPosition).getArtifactPosition();
+                String floorLevel = artifactList.get(currentPosition).getFloorLevel();
+                if (position != null && floorLevel != null && !position.equals("") && !floorLevel.equals("")) {
+                    Intent i = new Intent(ObjectPreviewActivity.this, FloorMapActivity.class);
+                    i.putExtra("Position", position);
+                    i.putExtra("Level", floorLevel);
+                    i.putExtra("TourId", tourId);
+                    i.putExtra("RESPONSE", artifactList);
+                    startActivity(i);
+                    overridePendingTransition(R.anim.flipfadein, R.anim.flipfadeout);
+                } else {
+                    Snackbar.make(rootLayout, R.string.no_location_data, Snackbar.LENGTH_SHORT).show();
                 }
             }
         });
-        locationBtn.setOnTouchListener(new View.OnTouchListener() {
-            @Override
-            public boolean onTouch(View v, MotionEvent event) {
-                switch (event.getAction()) {
-                    case MotionEvent.ACTION_DOWN:
-                        locationBtn.startAnimation(zoomOutAnimation);
-                        break;
-                }
-                return false;
+        locationBtn.setOnTouchListener((v, event) -> {
+            switch (event.getAction()) {
+                case MotionEvent.ACTION_DOWN:
+                    locationBtn.startAnimation(zoomOutAnimation);
+                    break;
             }
+            return false;
         });
 
         converters = new Convertor();
     }
 
-    public class RecyclerViewDisabler implements RecyclerView.OnItemTouchListener {
+    public class RecyclerViewDisablre implements RecyclerView.OnItemTouchListener {
 
         @Override
         public boolean onInterceptTouchEvent(RecyclerView rv, MotionEvent e) {
@@ -291,7 +264,8 @@ public class ObjectPreviewActivity extends AppCompatActivity {
 
     public void setupAdapter() {
         commonContentLayout.setVisibility(View.VISIBLE);
-        locationBtn.setVisibility(View.VISIBLE);
+        if (museumId.equals("63") || museumId.equals("96"))
+            locationBtn.setVisibility(View.VISIBLE);
         if (artifactList.size() == 1)
             stepIndicatorRecyclerView.setVisibility(View.GONE);
         if (artifactList.size() < 6)
@@ -324,7 +298,7 @@ public class ObjectPreviewActivity extends AppCompatActivity {
         @Override
         protected Integer doInBackground(Void... voids) {
             if (!(row.isCancelled())) {
-                if (language.equals("en"))
+                if (language.equals(LocaleManager.LANGUAGE_ENGLISH))
                     return activityReference.get().qmDatabase.getArtifactTableDao().getNumberOfRowsEnglish();
                 else
                     return activityReference.get().qmDatabase.getArtifactTableDao().getNumberOfRowsArabic();
@@ -341,7 +315,6 @@ public class ObjectPreviewActivity extends AppCompatActivity {
                 check = new CheckDBRowExist(activityReference.get(), language, artifactList.get()).execute();
 
             } else {
-                //create databse
                 insert = new InsertDatabaseTask(activityReference.get(), artifactTableEnglish,
                         artifactTableArabic, language, artifactList.get()).execute();
 
@@ -367,7 +340,7 @@ public class ObjectPreviewActivity extends AppCompatActivity {
         protected Void doInBackground(Void... voids) {
             if (!(check.isCancelled())) {
                 if (artifactList.get().size() > 0) {
-                    if (language.equals("en")) {
+                    if (language.equals(LocaleManager.LANGUAGE_ENGLISH)) {
                         for (int i = 0; i < artifactList.get().size(); i++) {
                             int n = activityReference.get().qmDatabase.getArtifactTableDao().checkNidExistEnglish(
                                     Integer.parseInt(artifactList.get().get(i).getNid()));
@@ -471,7 +444,7 @@ public class ObjectPreviewActivity extends AppCompatActivity {
         protected Boolean doInBackground(Void... voids) {
             if (!(insert.isCancelled())) {
                 if (artifactList != null && artifactList.get().size() > 0) {
-                    if (language.equals("en")) {
+                    if (language.equals(LocaleManager.LANGUAGE_ENGLISH)) {
                         for (int i = 0; i < artifactList.get().size(); i++) {
                             artifactTableEnglish = new ArtifactTableEnglish(Long.parseLong(artifactList.get().get(i).getNid()),
                                     artifactList.get().get(i).getTitle(),
@@ -554,7 +527,7 @@ public class ObjectPreviewActivity extends AppCompatActivity {
         @Override
         protected Void doInBackground(Void... voids) {
             if (!(update.isCancelled())) {
-                if (language.equals("en")) {
+                if (language.equals(LocaleManager.LANGUAGE_ENGLISH)) {
                     // updateEnglishTable table with english name
                     activityReference.get().qmDatabase.getArtifactTableDao().updateArtifactEnglish(
                             artifactList.get().get(position).getNid(),
@@ -614,17 +587,13 @@ public class ObjectPreviewActivity extends AppCompatActivity {
             return null;
         }
 
-        @Override
-        protected void onPostExecute(Void aVoid) {
-            // Toast.makeText(HomeActivity.this, "Update success", Toast.LENGTH_SHORT).show();
-        }
     }
 
-    public static class RetriveEnglishTableData extends AsyncTask<Void, Void, List<ArtifactTableEnglish>> {
+    public static class RetrieveEnglishTableData extends AsyncTask<Void, Void, List<ArtifactTableEnglish>> {
         private WeakReference<ObjectPreviewActivity> activityReference;
         String tourId;
 
-        RetriveEnglishTableData(ObjectPreviewActivity context, String tourId) {
+        RetrieveEnglishTableData(ObjectPreviewActivity context, String tourId) {
             activityReference = new WeakReference<>(context);
             this.tourId = tourId;
         }
@@ -683,12 +652,12 @@ public class ObjectPreviewActivity extends AppCompatActivity {
         }
     }
 
-    public static class RetriveArabicTableData extends AsyncTask<Void, Void,
+    public static class RetrieveArabicTableData extends AsyncTask<Void, Void,
             List<ArtifactTableArabic>> {
         private WeakReference<ObjectPreviewActivity> activityReference;
         String tourId;
 
-        RetriveArabicTableData(ObjectPreviewActivity context, String tourId) {
+        RetrieveArabicTableData(ObjectPreviewActivity context, String tourId) {
             activityReference = new WeakReference<>(context);
             this.tourId = tourId;
         }
@@ -749,9 +718,9 @@ public class ObjectPreviewActivity extends AppCompatActivity {
     public void getObjectPreviewDetailsFromDB(String tourId) {
         progressBar.setVisibility(View.VISIBLE);
         if (language.equals(LocaleManager.LANGUAGE_ENGLISH))
-            new RetriveEnglishTableData(ObjectPreviewActivity.this, tourId).execute();
+            new RetrieveEnglishTableData(ObjectPreviewActivity.this, tourId).execute();
         else
-            new RetriveArabicTableData(ObjectPreviewActivity.this, tourId).execute();
+            new RetrieveArabicTableData(ObjectPreviewActivity.this, tourId).execute();
     }
 
     @Override

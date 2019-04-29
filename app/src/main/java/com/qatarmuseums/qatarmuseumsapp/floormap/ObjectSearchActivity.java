@@ -46,10 +46,6 @@ public class ObjectSearchActivity extends AppCompatActivity implements View.OnCl
     TextView toolbar_title;
     @BindView(R.id.number_pad_text)
     TextView numberPadDisplay;
-    @BindView(R.id.qr_scanner)
-    ImageView qrScanner;
-    @BindView(R.id.qr_scanner_link)
-    TextView qrScannerLink;
     @BindView(R.id.clear_button)
     ImageView displayClearButton;
     @BindView(R.id.done_button)
@@ -91,7 +87,7 @@ public class ObjectSearchActivity extends AppCompatActivity implements View.OnCl
             {
                 String textViewID = "display_number_" + (i);
                 int resID = getResources().getIdentifier(textViewID, "id", getPackageName());
-                displayButtons[i] = ((LinearLayout) findViewById(resID));
+                displayButtons[i] = findViewById(resID);
                 displayButtons[i].setOnClickListener(this);
             }
         }
@@ -128,52 +124,25 @@ public class ObjectSearchActivity extends AppCompatActivity implements View.OnCl
 
             }
         });
-        doneButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                if (numberPadDisplay.getText().toString() == "") {
-                    util.showAlertDialog(ObjectSearchActivity.this);
-                } else {
-                    getDetailsFromApi(display);
-                }
+        doneButton.setOnClickListener(view -> {
+            if (numberPadDisplay.getText().toString() == "") {
+                util.showAlertDialog(ObjectSearchActivity.this);
+            } else {
+                getDetailsFromApi(display);
             }
         });
         zoomOutAnimation = AnimationUtils.loadAnimation(getApplicationContext(),
                 R.anim.zoom_out_more);
-        toolbarClose.setOnTouchListener(new View.OnTouchListener() {
-            @Override
-            public boolean onTouch(View v, MotionEvent event) {
-                switch (event.getAction()) {
-                    case MotionEvent.ACTION_DOWN:
-                        toolbarClose.startAnimation(zoomOutAnimation);
-                        break;
-                }
-                return false;
+        toolbarClose.setOnTouchListener((v, event) -> {
+            switch (event.getAction()) {
+                case MotionEvent.ACTION_DOWN:
+                    toolbarClose.startAnimation(zoomOutAnimation);
+                    break;
             }
+            return false;
         });
 
-        toolbarClose.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                onBackPressed();
-            }
-        });
-
-        qrScanner.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intent imageIntent = new Intent(ObjectSearchActivity.this, BarCodeCaptureActivity.class);
-                startActivity(imageIntent);
-            }
-        });
-
-        qrScannerLink.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intent imageIntent = new Intent(ObjectSearchActivity.this, BarCodeCaptureActivity.class);
-                startActivity(imageIntent);
-            }
-        });
+        toolbarClose.setOnClickListener(v -> onBackPressed());
 
     }
 

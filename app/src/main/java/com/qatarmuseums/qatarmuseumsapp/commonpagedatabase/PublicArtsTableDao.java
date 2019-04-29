@@ -42,10 +42,10 @@ public interface PublicArtsTableDao {
 
     @Query("UPDATE publicartstableEnglish SET public_arts_name = :nameFromApi," +
             "latitude=:latitudeFromApi," + "longitude=:longitudeFromApi," + "description=:descriptionFromApi," +
-            "short_description=:shortDescriptionFromApi," + "public_arts_image=:imageFromApi  WHERE public_arts_id=:id")
+            "short_description=:shortDescriptionFromApi," + "public_arts_images=:imagesFromApi  WHERE public_arts_id=:id")
     void updatePublicArtsDetailEnglish(String nameFromApi, String latitudeFromApi,
                                        String longitudeFromApi, String descriptionFromApi, String shortDescriptionFromApi,
-                                       String imageFromApi, String id);
+                                       String imagesFromApi, String id);
 
 
     @Query("UPDATE publicartstableArabic SET public_arts_name = :nameFromApi," +
@@ -54,10 +54,10 @@ public interface PublicArtsTableDao {
 
     @Query("UPDATE publicartstableArabic SET public_arts_name = :nameFromApi," +
             "latitude=:latitudeFromApi," + "longitude=:longitudeFromApi," + "description=:descriptionFromApi," +
-            "short_description=:shortDescriptionFromApi," + "public_arts_image=:imageFromApi  WHERE public_arts_id=:id")
+            "short_description=:shortDescriptionFromApi," + "public_arts_images=:imagesFromApi  WHERE public_arts_id=:id")
     void updatePublicArtsDetailArabic(String nameFromApi, String latitudeFromApi,
                                       String longitudeFromApi, String descriptionFromApi, String shortDescriptionFromApi,
-                                      String imageFromApi, String id);
+                                      String imagesFromApi, String id);
 
     /*
      * Insert the object in database

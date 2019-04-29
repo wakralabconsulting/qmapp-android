@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/background_color"
+    android:background="@color/colorPageBackground"
     app:layout_behavior="@string/appbar_scrolling_view_behavior"
     tools:context="com.qatarmuseums.qatarmuseumsapp.park.ParkActivity"
     tools:showIn="@layout/activity_park">
@@ -88,8 +88,6 @@
             android:id="@+id/no_result_layout"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_above="@id/bottom_toolbar"
-            android:layout_below="@id/app_bar"
             android:layout_marginTop="@dimen/padding_50"
             android:visibility="gone">
 
@@ -126,7 +124,7 @@
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/pading_15"
+                android:layout_marginTop="@dimen/padding_15"
                 android:fontFamily="@font/din_next_lt_pro_light"
                 android:text="@string/there_is_no_internet"
                 android:textAlignment="center"
@@ -151,12 +149,12 @@
                 android:background="@drawable/round_corner_black"
                 android:fontFamily="@font/din_next_lt_pro_bold"
                 android:gravity="center"
-                android:paddingEnd="@dimen/pading_30"
-                android:paddingStart="@dimen/pading_30"
+                android:paddingEnd="@dimen/padding_30"
+                android:paddingStart="@dimen/padding_30"
                 android:text="@string/try_again"
                 android:textAllCaps="false"
-                android:textColor="@color/white"
-                android:textSize="@dimen/settings_page_list_item_text_size" />
+                android:textColor="@color/colorWhite"
+                android:textSize="@dimen/font_size_21" />
 
         </LinearLayout>
 

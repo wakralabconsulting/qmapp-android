@@ -27,13 +27,14 @@ public class DiningDetailModel {
     private String longitude;
     @SerializedName("images")
     private ArrayList<String> images;
+
     public DiningDetailModel() {
     }
-    
+
     public DiningDetailModel(String name, String id, String location, String image,
                              String openingTime, String closingTime,
                              String description, String sortId,
-                             String latitude, String longitude,ArrayList<String> images) {
+                             String latitude, String longitude, ArrayList<String> images) {
         this.name = name;
         this.id = id;
         this.location = location;
@@ -44,7 +45,7 @@ public class DiningDetailModel {
         this.sortId = sortId;
         this.latitude = latitude;
         this.longitude = longitude;
-        this.images=images;
+        this.images = images;
     }
 
     public String getLatitude() {

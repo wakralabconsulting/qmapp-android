@@ -2,10 +2,10 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_marginTop="@dimen/pading_22"
+    android:layout_marginTop="@dimen/padding_22"
     android:orientation="horizontal"
-    android:paddingEnd="@dimen/pading_20"
-    android:paddingStart="@dimen/pading_20"
+    android:paddingEnd="@dimen/padding_20"
+    android:paddingStart="@dimen/padding_20"
     android:weightSum="4">
 
     <LinearLayout
@@ -19,8 +19,8 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:fontFamily="@font/din_next_lt_pro_light"
-            android:textColor="@color/black"
-            android:textSize="@dimen/settings_page_list_item_text_size" />
+            android:textColor="@color/colorBlack"
+            android:textSize="@dimen/font_size_21" />
     </LinearLayout>
 
     <LinearLayout

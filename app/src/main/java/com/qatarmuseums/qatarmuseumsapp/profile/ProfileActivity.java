@@ -2,7 +2,6 @@ package com.qatarmuseums.qatarmuseumsapp.profile;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
-import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -11,13 +10,10 @@ import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.SwitchCompat;
-import android.support.v7.widget.Toolbar;
 import android.view.MotionEvent;
 import android.view.View;
-import android.view.Window;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
-import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -57,22 +53,20 @@ import retrofit2.converter.gson.GsonConverterFactory;
 
 public class ProfileActivity extends AppCompatActivity implements View.OnClickListener {
 
-    private Toolbar toolbar;
     private View backArrow, logOut;
     private Animation iconZoomOutAnimation, zoomOutAnimation;
     TextView usernameTxt, membershipNumberTxt, emailTxt, dobTxt, residenceTxt, nationalityTxt;
     ImageView profilePic, profileEdit;
     View myFavBtn, myCardBtn;
     private SharedPreferences qmPreferences;
-    private String token, username, membershipNumber, email, dateOfBirth, residence, nationality,
-            imageURL, rsvpAttendance, acceptStatus;
+    private String token;
+    private String username;
+    private String membershipNumber;
     private SharedPreferences.Editor editor;
     private LinearLayout progressBar;
     String language;
     private Retrofit retrofit;
     HashMap<String, String> country = new HashMap<>();
-    private InputStream is;
-    private LinearLayout rsvpLayout;
     private SwitchCompat acceptDeclineButton;
     Util util;
     String accepted;
@@ -91,7 +85,6 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_profile);
-        toolbar = findViewById(R.id.common_toolbar);
         backArrow = findViewById(R.id.toolbar_back);
         logOut = findViewById(R.id.log_out);
         usernameTxt = findViewById(R.id.username_txt);
@@ -105,7 +98,6 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
         myFavBtn = findViewById(R.id.view_my_fav_btn);
         myCardBtn = findViewById(R.id.view_my_card_btn);
         progressBar = findViewById(R.id.logout_progress);
-        rsvpLayout = findViewById(R.id.rsvp_layout);
         acceptDeclineButton = findViewById(R.id.accept_decline_button);
         util = new Util();
         mFirebaseAnalytics = FirebaseAnalytics.getInstance(this);
@@ -139,26 +131,13 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
         token = qmPreferences.getString("TOKEN", null);
         username = qmPreferences.getString("NAME", null);
         membershipNumber = qmPreferences.getString("MEMBERSHIP_NUMBER", null);
-        email = qmPreferences.getString("EMAIL", null);
-        dateOfBirth = qmPreferences.getString("DOB", null);
-        residence = qmPreferences.getString("RESIDENCE", null);
-        nationality = qmPreferences.getString("NATIONALITY", null);
-        imageURL = qmPreferences.getString("IMAGE", null);
-        rsvpAttendance = qmPreferences.getString("RSVP", null);
+        String email = qmPreferences.getString("EMAIL", null);
+        String dateOfBirth = qmPreferences.getString("DOB", null);
+        String residence = qmPreferences.getString("RESIDENCE", null);
+        String nationality = qmPreferences.getString("NATIONALITY", null);
+        String imageURL = qmPreferences.getString("IMAGE", null);
         uid = qmPreferences.getString("UID", null);
         qmDatabase = QMDatabase.getInstance(ProfileActivity.this);
-        // RSVP is hiding from profile page
-//        accepted = qmPreferences.getString("ACCEPTED", "0");
-//        if (rsvpAttendance != null) {
-//            rsvpLayout.setVisibility(View.VISIBLE);
-//        } else
-//            rsvpLayout.setVisibility(View.GONE);
-//        if (accepted.equals("0"))
-//            acceptDeclineButton.setChecked(true);
-//        else
-//            acceptDeclineButton.setChecked(false);
-//        if (getIntent().getStringExtra("RSVP") != null)
-//            showGreetingsDialog();
         if (imageURL != null && !imageURL.equals("") && !imageURL.equals("0")) {
             profilePic.setBackground(getDrawable(R.drawable.circular_bg));
             GlideApp.with(this)
@@ -172,9 +151,9 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
         dobTxt.setText(dateOfBirth);
         if (language.equals(LocaleManager.LANGUAGE_ENGLISH)) {
             try {
-                JSONArray m_jArry = new JSONArray(loadJSONFromAsset(language));
-                for (int i = 0; i < m_jArry.length(); i++) {
-                    JSONObject jo_inside = m_jArry.getJSONObject(i);
+                JSONArray m_jArray = new JSONArray(loadJSONFromAsset(language));
+                for (int i = 0; i < m_jArray.length(); i++) {
+                    JSONObject jo_inside = m_jArray.getJSONObject(i);
                     String key = jo_inside.getString("alpha-2");
                     String value = jo_inside.getString("name");
                     country.put(key, value);
@@ -212,146 +191,7 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
             }
             return false;
         });
-//        acceptDeclineButton.setOnTouchListener((v, event) -> {
-//            if (accepted.equals("0")) {
-//                accepted = "1";
-//                invitationAction(accepted);
-//            } else {
-//                accepted = "0";
-//                showDeclineDialog();
-//            }
-//            return false;
-//        });
         progressBar.setOnClickListener(v -> {
-        });
-    }
-
-    protected void showGreetingsDialog() {
-
-        final Dialog dialog = new Dialog(this, R.style.DialogNoAnimation);
-        dialog.setCancelable(true);
-        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
-
-        View view = getLayoutInflater().inflate(R.layout.vip_pop_up, null);
-        dialog.setContentView(view);
-        View line = (View) view.findViewById(R.id.view);
-        Button acceptBtn = (Button) view.findViewById(R.id.acceptbtn);
-        Button acceptLaterBtn = (Button) view.findViewById(R.id.accept_later_btn);
-        TextView dialogTitle = (TextView) view.findViewById(R.id.dialog_tittle);
-        TextView dialogContent = (TextView) view.findViewById(R.id.dialog_content);
-        view.setVisibility(View.VISIBLE);
-        dialogTitle.setVisibility(View.VISIBLE);
-        dialogTitle.setText(getResources().getString(R.string.greetings_title));
-        acceptBtn.setText(getResources().getString(R.string.accept));
-        acceptLaterBtn.setText(getResources().getString(R.string.accept_later));
-        dialogContent.setText(getResources().getString(R.string.greetings_content));
-
-        acceptBtn.setOnClickListener(view1 -> {
-            accepted = "1";
-            invitationAction(accepted);
-            dialog.dismiss();
-
-        });
-        acceptLaterBtn.setOnClickListener(v -> {
-            accepted = "0";
-            acceptDeclineButton.setChecked(true);
-            dialog.dismiss();
-        });
-
-        dialog.show();
-    }
-
-    protected void showDeclineDialog() {
-
-        final Dialog dialog = new Dialog(this, R.style.DialogNoAnimation);
-        dialog.setCancelable(true);
-        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
-
-        View view = getLayoutInflater().inflate(R.layout.vip_pop_up, null);
-        dialog.setContentView(view);
-
-        View line = (View) view.findViewById(R.id.view);
-        Button yes = (Button) view.findViewById(R.id.acceptbtn);
-        Button no = (Button) view.findViewById(R.id.accept_later_btn);
-        TextView dialogTitle = (TextView) view.findViewById(R.id.dialog_tittle);
-        TextView dialogContent = (TextView) view.findViewById(R.id.dialog_content);
-        line.setVisibility(View.GONE);
-        dialogTitle.setVisibility(View.GONE);
-        yes.setText(getResources().getString(R.string.yes));
-        no.setText(getResources().getString(R.string.no));
-        dialogContent.setText(getResources().getString(R.string.decline_content));
-
-        yes.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                //Do something
-                dialog.dismiss();
-                accepted = "0";
-                invitationAction(accepted);
-            }
-        });
-        no.setOnClickListener(v -> {
-            accepted = "1";
-            acceptDeclineButton.setChecked(false);
-            dialog.dismiss();
-        });
-
-        dialog.show();
-    }
-
-    public void invitationAction(String value) {
-        progressBar.setVisibility(View.VISIBLE);
-        token = qmPreferences.getString("TOKEN", null);
-        HttpLoggingInterceptor interceptor = new HttpLoggingInterceptor();
-        interceptor.setLevel(HttpLoggingInterceptor.Level.BODY);
-
-        OkHttpClient client;
-        OkHttpClient.Builder builder = new OkHttpClient.Builder();
-
-        builder.addInterceptor(interceptor);
-        builder.addInterceptor(new AddCookiesInterceptor(this));
-        builder.addInterceptor(new ReceivedCookiesInterceptor(this));
-        client = builder.build();
-
-        retrofit = new Retrofit.Builder()
-                .baseUrl(APIClient.apiBaseUrl)
-                .addConverterFactory(GsonConverterFactory.create())
-                .client(client)
-                .build();
-
-        APIInterface apiService = retrofit.create(APIInterface.class);
-        if (unds != null)
-            unds.clear();
-        unds.add(new Und(value));
-
-        language = "en";  //Temporary
-
-        Call<UserData> call = apiService.setRSVP(language, uid, token, new RsvpData(new Model(unds)));
-        call.enqueue(new Callback<UserData>() {
-            @Override
-            public void onResponse(Call<UserData> call, Response<UserData> response) {
-                if (response.isSuccessful()) {
-                    if (value.equals("0")) {
-                        acceptDeclineButton.setChecked(true);
-                    } else {
-                        acceptDeclineButton.setChecked(false);
-                        util.showCulturalPassAlertDialog(ProfileActivity.this);
-                    }
-                    editor = qmPreferences.edit();
-                    editor.putString("ACCEPTED", value);
-                    editor.commit();
-                } else {
-                    new Util().showToast(getResources().getString(R.string.error_unexpected),
-                            ProfileActivity.this);
-                }
-                progressBar.setVisibility(View.GONE);
-            }
-
-            @Override
-            public void onFailure(Call<UserData> call, Throwable t) {
-                new Util().showToast(getResources().getString(R.string.check_network), ProfileActivity.this);
-                progressBar.setVisibility(View.GONE);
-            }
         });
     }
 
@@ -499,7 +339,7 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
     public String loadJSONFromAsset(String language) {
         String json = null;
         try {
-            is = this.getAssets().open("countries_" + language + ".json");
+            InputStream is = this.getAssets().open("countries_" + language + ".json");
             int size = is.available();
             byte[] buffer = new byte[size];
             is.read(buffer);

@@ -5,14 +5,8 @@ import android.arch.persistence.room.Dao;
 import android.arch.persistence.room.Delete;
 import android.arch.persistence.room.Insert;
 import android.arch.persistence.room.Query;
-import android.arch.persistence.room.TypeConverter;
 import android.arch.persistence.room.Update;
 
-import com.google.gson.Gson;
-import com.google.gson.reflect.TypeToken;
-
-import java.lang.reflect.Type;
-import java.util.ArrayList;
 import java.util.List;
 
 @Dao
@@ -39,16 +33,16 @@ public interface EducationCalendarTableDao {
 
 
     @Query("SELECT * FROM educationcalendareventstenglish WHERE event_date = :eventDateFromAPI AND "
-            + " event_institution = :instituionFilterFromApi AND " + " event_age_group = :ageGroupFilter AND "
+            + " event_institution = :instituionFilterFromApi AND "
             + " event_program_type = :programmeFilterApi")
     List<EducationalCalendarEventsTableEnglish> getEventsWithDateEnglish(String eventDateFromAPI, String instituionFilterFromApi,
-                                                                         String ageGroupFilter, String programmeFilterApi);
+                                                                         String programmeFilterApi);
 
     @Query("SELECT * FROM educationcalendareventstarabic WHERE event_date = :eventDateFromAPI AND "
-            + " event_institution = :instituionFilterFromApi AND " + " event_age_group = :ageGroupFilter AND "
+            + " event_institution = :instituionFilterFromApi AND "
             + " event_program_type = :programmeFilterApi")
     List<EducationalCalendarEventsTableArabic> getEventsWithDateArabic(String eventDateFromAPI, String instituionFilterFromApi,
-                                                                       String ageGroupFilter, String programmeFilterApi);
+                                                                       String programmeFilterApi);
 
     @Query("SELECT * FROM educationcalendareventstenglish WHERE event_date = :eventDateFromAPI AND "
             + " event_institution = :instituionFilterFromApi")
@@ -60,25 +54,21 @@ public interface EducationCalendarTableDao {
     List<EducationalCalendarEventsTableArabic> getInstitutionFilterEventsArabic(String eventDateFromAPI,
                                                                                 String instituionFilterFromApi);
 
-    @Query("SELECT * FROM educationcalendareventstenglish WHERE event_date = :eventDateFromAPI AND "
-            + " event_age_group = :ageGroupFilterFromApi")
-    List<EducationalCalendarEventsTableEnglish> getAgeGroupFilterEventsEnglish(String eventDateFromAPI,
-                                                                                  String ageGroupFilterFromApi);
+    @Query("SELECT * FROM educationcalendareventstenglish WHERE event_date = :eventDateFromAPI")
+    List<EducationalCalendarEventsTableEnglish> getAgeGroupFilterEventsEnglish(String eventDateFromAPI);
 
-    @Query("SELECT * FROM educationcalendareventstarabic WHERE event_date = :eventDateFromAPI AND "
-            + " event_age_group = :ageGroupFilterFromApi")
-    List<EducationalCalendarEventsTableArabic> getAgeGroupFilterEventsArabic(String eventDateFromAPI,
-                                                                                String ageGroupFilterFromApi);
+    @Query("SELECT * FROM educationcalendareventstarabic WHERE event_date = :eventDateFromAPI")
+    List<EducationalCalendarEventsTableArabic> getAgeGroupFilterEventsArabic(String eventDateFromAPI);
 
     @Query("SELECT * FROM educationcalendareventstenglish WHERE event_date = :eventDateFromAPI AND "
             + " event_program_type = :programmeFilterFromApi")
     List<EducationalCalendarEventsTableEnglish> getProgrammeFilterEventsEnglish(String eventDateFromAPI,
-                                                                                  String programmeFilterFromApi);
+                                                                                String programmeFilterFromApi);
 
     @Query("SELECT * FROM educationcalendareventstarabic WHERE event_date = :eventDateFromAPI AND "
             + " event_program_type = :programmeFilterFromApi")
     List<EducationalCalendarEventsTableArabic> getProgrammeFilterEventsArabic(String eventDateFromAPI,
-                                                                                String programmeFilterFromApi);
+                                                                              String programmeFilterFromApi);
 
 
     @Query("SELECT * FROM educationcalendareventstenglish WHERE event_date = :eventDateFromAPI")

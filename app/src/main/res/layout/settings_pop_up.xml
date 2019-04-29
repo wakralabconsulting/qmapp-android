@@ -8,8 +8,8 @@
     <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginEnd="@dimen/padding_25"
         android:layout_marginStart="@dimen/padding_40"
-        android:layout_marginEnd="@dimen/pading_25"
         android:gravity="center"
         android:orientation="vertical">
 
@@ -18,56 +18,56 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
-            android:layout_marginBottom="@dimen/pading_10"
-            android:layout_marginEnd="@dimen/pading_20"
-            android:layout_marginStart="@dimen/pading_10"
-            android:layout_marginTop="@dimen/pading_20"
+            android:layout_marginBottom="@dimen/padding_10"
+            android:layout_marginEnd="@dimen/padding_20"
+            android:layout_marginStart="@dimen/padding_10"
+            android:layout_marginTop="@dimen/padding_20"
             android:background="@drawable/round_corner_white"
             android:gravity="center"
             android:orientation="vertical"
-            android:paddingEnd="@dimen/pading_10"
-            android:paddingStart="@dimen/pading_10">
+            android:paddingEnd="@dimen/padding_10"
+            android:paddingStart="@dimen/padding_10">
 
 
             <TextView
                 android:id="@+id/dialog_tittle"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/pading_25"
+                android:layout_marginTop="@dimen/padding_25"
                 android:fontFamily="@font/din_next_lt_pro_bold"
                 android:textAlignment="center"
                 android:textAllCaps="true"
-                android:textColor="@color/black"
-                android:textSize="@dimen/settings_page_list_item_text_size" />
+                android:textColor="@color/colorBlack"
+                android:textSize="@dimen/font_size_21" />
 
             <View
                 android:layout_width="match_parent"
-                android:layout_height="@dimen/pading_2"
-                android:layout_marginTop="@dimen/pading_20"
-                android:background="@color/black" />
+                android:layout_height="@dimen/padding_2"
+                android:layout_marginTop="@dimen/padding_20"
+                android:background="@color/colorBlack" />
 
             <TextView
                 android:id="@+id/dialog_content"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="@dimen/margin_50"
-                android:layout_marginTop="@dimen/pading_25"
-                android:paddingEnd="@dimen/pading_5"
-                android:paddingStart="@dimen/pading_5"
+                android:layout_marginTop="@dimen/padding_25"
+                android:paddingEnd="@dimen/padding_5"
+                android:paddingStart="@dimen/padding_5"
                 android:textAlignment="center"
-                android:textSize="@dimen/settings_text_size" />
+                android:textSize="@dimen/font_size_18" />
 
 
             <Button
                 android:id="@+id/doneBtn"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="@dimen/pading_15"
+                android:layout_marginBottom="@dimen/padding_15"
                 android:background="@drawable/round_corner_black"
                 android:fontFamily="@font/din_next_lt_pro_bold"
                 android:textAllCaps="false"
-                android:textColor="@color/white"
-                android:textSize="@dimen/settings_page_list_item_text_size" />
+                android:textColor="@color/colorWhite"
+                android:textSize="@dimen/font_size_21" />
 
         </LinearLayout>
 

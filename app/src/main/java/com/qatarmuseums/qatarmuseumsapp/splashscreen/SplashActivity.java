@@ -8,14 +8,14 @@ import com.google.firebase.analytics.FirebaseAnalytics;
 import com.qatarmuseums.qatarmuseumsapp.R;
 import com.qatarmuseums.qatarmuseumsapp.home.HomeActivity;
 
-import java.io.IOException;
-
 import pl.droidsonroids.gif.GifDrawable;
+import pl.droidsonroids.gif.GifImageView;
 
 
 public class SplashActivity extends Activity {
     Intent intent;
     private FirebaseAnalytics mFirebaseAnalytics;
+    private GifImageView gifImageView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -23,13 +23,12 @@ public class SplashActivity extends Activity {
 
         setContentView(R.layout.activity_splash);
         mFirebaseAnalytics = FirebaseAnalytics.getInstance(this);
-        GifDrawable gifFromResource = null;
-        try {
-            gifFromResource = new GifDrawable(getResources(), R.raw.qm_logo);
 
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        gifImageView = findViewById(R.id.gif_image_view);
+
+        GifDrawable gifFromResource;
+        gifFromResource = (GifDrawable) gifImageView.getDrawable();
+
         if (gifFromResource != null) {
             gifFromResource.setLoopCount(1);
             gifFromResource.addAnimationListener(loopNumber -> {

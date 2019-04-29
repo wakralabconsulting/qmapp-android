@@ -7,7 +7,7 @@
     android:fadeScrollbars="false"
     android:scrollbarFadeDuration="0"
     app:layout_behavior="@string/appbar_scrolling_view_behavior"
-    tools:context=".webview.WebviewActivity"
+    tools:context=".webview.WebViewActivity"
     tools:showIn="@layout/activity_webview">
 
     <WebView

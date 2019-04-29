@@ -10,18 +10,18 @@
         android:id="@+id/dialog_tittle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="@dimen/pading_25"
+        android:layout_marginTop="@dimen/padding_25"
         android:fontFamily="@font/din_next_lt_pro_bold"
         android:textAlignment="center"
-        android:textColor="@color/black"
-        android:textSize="@dimen/select_language_text_size"
+        android:textColor="@color/colorBlack"
+        android:textSize="@dimen/font_size_25"
         android:visibility="visible" />
 
     <View
         android:layout_width="match_parent"
-        android:layout_height="@dimen/pading_2"
-        android:layout_marginTop="@dimen/pading_20"
-        android:background="@color/black"
+        android:layout_height="@dimen/padding_2"
+        android:layout_marginTop="@dimen/padding_20"
+        android:background="@color/colorBlack"
         android:visibility="gone" />
 
     <TextView
@@ -30,22 +30,22 @@
         android:layout_height="wrap_content"
         android:layout_marginEnd="@dimen/padding_25"
         android:layout_marginStart="@dimen/padding_25"
-        android:layout_marginTop="@dimen/pading_25"
+        android:layout_marginTop="@dimen/padding_25"
         android:textAlignment="center"
-        android:textColor="@color/black"
-        android:textSize="@dimen/settings_text_size" />
+        android:textColor="@color/colorBlack"
+        android:textSize="@dimen/font_size_18" />
 
 
     <Button
         android:id="@+id/close_btn"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_margin="@dimen/pading_25"
+        android:layout_margin="@dimen/padding_25"
         android:background="@drawable/round_corner_black"
         android:fontFamily="@font/din_next_lt_pro_bold"
         android:textAllCaps="false"
-        android:textColor="@color/white"
-        android:textSize="@dimen/settings_page_list_item_text_size"
+        android:textColor="@color/colorWhite"
+        android:textSize="@dimen/font_size_21"
         android:visibility="visible" />
 
 
@@ -53,12 +53,12 @@
         android:id="@+id/calendar_close_btn"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_margin="@dimen/pading_25"
+        android:layout_margin="@dimen/padding_25"
         android:background="@drawable/round_corner_black"
         android:fontFamily="@font/din_next_lt_pro_bold"
         android:textAllCaps="false"
-        android:textColor="@color/white"
-        android:textSize="@dimen/settings_page_list_item_text_size"
+        android:textColor="@color/colorWhite"
+        android:textSize="@dimen/font_size_21"
         android:visibility="gone" />
 
 </LinearLayout>

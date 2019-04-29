@@ -16,7 +16,7 @@
             android:id="@+id/slider_layout"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:background="@color/white">
+            android:background="@color/colorWhite">
 
             <ImageView
                 android:id="@+id/ads_place_holder"
@@ -46,8 +46,8 @@
                 android:fontFamily="@font/din_next_lt_pro_bold"
                 android:padding="@dimen/padding_20"
                 android:textAlignment="center"
-                android:textColor="@color/white"
-                android:textSize="@dimen/museum_page_slider_text_size"
+                android:textColor="@color/colorWhite"
+                android:textSize="@dimen/font_size_35"
                 android:textStyle="bold" />
 
 
@@ -60,7 +60,7 @@
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight=".175"
-        android:background="@color/white"
+        android:background="@color/colorWhite"
         android:gravity="center"
         android:orientation="horizontal">
 
@@ -93,8 +93,8 @@
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_gravity="center"
-            android:layout_marginEnd="@dimen/pading_10"
-            android:layout_marginStart="@dimen/pading_10"
+            android:layout_marginEnd="@dimen/padding_10"
+            android:layout_marginStart="@dimen/padding_10"
             android:layout_weight=".86"
             android:gravity="center">
 

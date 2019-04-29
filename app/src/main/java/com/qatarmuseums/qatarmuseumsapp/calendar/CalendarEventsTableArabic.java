@@ -12,15 +12,13 @@ public class CalendarEventsTableArabic {
     @PrimaryKey(autoGenerate = true)
     private long sl_number;
     @ColumnInfo()
-    private long event_id;
+    private String event_id;
     @ColumnInfo()
     private String event_title;
     @ColumnInfo()
-    private long event_date;
+    private String event_date;
     @ColumnInfo()
     private String event_institution;
-    @ColumnInfo()
-    private String event_age_group;
     @ColumnInfo()
     private String event_program_type;
     @ColumnInfo()
@@ -28,9 +26,9 @@ public class CalendarEventsTableArabic {
     @ColumnInfo()
     private String event_end_time;
     @ColumnInfo()
-    private boolean event_registration;
+    private String event_registration;
     @ColumnInfo()
-    private long max_group_size;
+    private String max_group_size;
     @ColumnInfo()
     private String event_short_description;
     @ColumnInfo()
@@ -43,26 +41,26 @@ public class CalendarEventsTableArabic {
     private String filter;
     @ColumnInfo()
     private String field;
-    private String age;
     @ColumnInfo()
-    private String associatedTopics;
+    private String age_group;
+    @ColumnInfo()
+    private String associated_topics;
     @ColumnInfo()
     private String museum;
 
-    public CalendarEventsTableArabic(@NonNull long event_id, String event_title,
+    public CalendarEventsTableArabic(@NonNull String event_id, String event_title,
                                      String event_short_description, String event_long_description,
-                                     String event_institution, String event_age_group, String event_program_type,
-                                     String category, String location, long event_date,
-                                     String event_start_time, String event_end_time, boolean event_registration,
-                                     String filter, long max_group_size,String field,
-                                     String age,String associatedTopics,String museum) {
+                                     String event_institution, String event_program_type,
+                                     String category, String location, String event_date,
+                                     String event_start_time, String event_end_time, String event_registration,
+                                     String filter, String max_group_size, String field,
+                                     String age_group, String associated_topics, String museum) {
         this.event_id = event_id;
         this.event_title = event_title;
         this.event_short_description = event_short_description;
         this.event_long_description = event_long_description;
         this.event_date = event_date;
         this.event_institution = event_institution;
-        this.event_age_group = event_age_group;
         this.event_program_type = event_program_type;
         this.category = category;
         this.location = location;
@@ -71,10 +69,10 @@ public class CalendarEventsTableArabic {
         this.event_registration = event_registration;
         this.filter = filter;
         this.max_group_size = max_group_size;
-        this.field=field;
-        this.age=age;
-        this.associatedTopics=associatedTopics;
-        this.museum=museum;
+        this.field = field;
+        this.age_group = age_group;
+        this.associated_topics = associated_topics;
+        this.museum = museum;
     }
 
     @NonNull
@@ -87,11 +85,11 @@ public class CalendarEventsTableArabic {
     }
 
     @NonNull
-    public long getEvent_id() {
+    public String getEvent_id() {
         return event_id;
     }
 
-    public void setEvent_id(@NonNull long event_id) {
+    public void setEvent_id(@NonNull String event_id) {
         this.event_id = event_id;
     }
 
@@ -119,11 +117,11 @@ public class CalendarEventsTableArabic {
         this.event_long_description = event_long_description;
     }
 
-    public long getEvent_date() {
+    public String getEvent_date() {
         return event_date;
     }
 
-    public void setEvent_date(long event_date) {
+    public void setEvent_date(String event_date) {
         this.event_date = event_date;
     }
 
@@ -133,14 +131,6 @@ public class CalendarEventsTableArabic {
 
     public void setEvent_institution(String event_institution) {
         this.event_institution = event_institution;
-    }
-
-    public String getEvent_age_group() {
-        return event_age_group;
-    }
-
-    public void setEvent_age_group(String event_age_group) {
-        this.event_age_group = event_age_group;
     }
 
     public String getEvent_program_type() {
@@ -167,11 +157,11 @@ public class CalendarEventsTableArabic {
         this.event_end_time = event_end_time;
     }
 
-    public boolean getEvent_registration() {
+    public String getEvent_registration() {
         return event_registration;
     }
 
-    public void setEvent_registration(boolean event_registration) {
+    public void setEvent_registration(String event_registration) {
         this.event_registration = event_registration;
     }
 
@@ -191,11 +181,11 @@ public class CalendarEventsTableArabic {
         this.location = location;
     }
 
-    public long getMax_group_size() {
+    public String getMax_group_size() {
         return max_group_size;
     }
 
-    public void setMax_group_size(long max_group_size) {
+    public void setMax_group_size(String max_group_size) {
         this.max_group_size = max_group_size;
     }
 
@@ -215,20 +205,20 @@ public class CalendarEventsTableArabic {
         this.field = field;
     }
 
-    public String getAge() {
-        return age;
+    public String getAge_group() {
+        return age_group;
     }
 
-    public void setAge(String age) {
-        this.age = age;
+    public void setAge_group(String age_group) {
+        this.age_group = age_group;
     }
 
-    public String getAssociatedTopics() {
-        return associatedTopics;
+    public String getAssociated_topics() {
+        return associated_topics;
     }
 
-    public void setAssociatedTopics(String associatedTopics) {
-        this.associatedTopics = associatedTopics;
+    public void setAssociated_topics(String associated_topics) {
+        this.associated_topics = associated_topics;
     }
 
     public String getMuseum() {

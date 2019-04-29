@@ -23,21 +23,21 @@ public class TourListTableArabic {
     private String tourSortId;
     @ColumnInfo()
     private String tourDescription;
+    @ColumnInfo()
+    private int isTour;
 
-    public TourListTableArabic(@NonNull String tourNid,
-                               String tourDay,
-                               String tourEventDate,
-                               String tourSubtitle,
-                               String tourImages,
-                               String tourSortId,
-                               String tourDescription) {
+
+    public TourListTableArabic(@NonNull String tourNid, String tourSubtitle, String tourDay,
+                               String tourEventDate, String tourImages,
+                               String tourSortId, String tourDescription, int isTour) {
         this.tourNid = tourNid;
+        this.tourSubtitle = tourSubtitle;
         this.tourDay = tourDay;
         this.tourEventDate = tourEventDate;
-        this.tourSubtitle = tourSubtitle;
         this.tourImages = tourImages;
         this.tourSortId = tourSortId;
         this.tourDescription = tourDescription;
+        this.isTour = isTour;
     }
 
     @NonNull
@@ -95,5 +95,13 @@ public class TourListTableArabic {
 
     public void setTourDescription(String tourDescription) {
         this.tourDescription = tourDescription;
+    }
+
+    public int getIsTour() {
+        return isTour;
+    }
+
+    public void setIsTour(int isTour) {
+        this.isTour = isTour;
     }
 }

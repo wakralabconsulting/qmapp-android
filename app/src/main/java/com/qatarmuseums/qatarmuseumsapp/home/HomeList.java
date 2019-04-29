@@ -13,23 +13,19 @@ public class HomeList implements Comparable<HomeList> {
     @SerializedName(value = "image", alternate = {"banner_link"})
     private String image;
     @SerializedName("tourguide_available")
-    private String tourguideAvailable;
+    private String tourGuideAvailable;
     @SerializedName("SORt_ID")
-    private Integer sortId;
+    private String sortId;
 
-    public HomeList() {
-
-    }
-
-    public HomeList(String name, String id, String image, String tourguideAvailable, Integer sortId) {
+    public HomeList(String name, String id, String image, String tourGuideAvailable, String sortId) {
         this.name = name;
         this.id = id;
         this.image = image;
-        this.tourguideAvailable = tourguideAvailable;
+        this.tourGuideAvailable = tourGuideAvailable;
         this.sortId = sortId;
     }
 
-    public HomeList(String name, String id, String image) {
+    HomeList(String name, String id, String image) {
         this.name = name;
         this.id = id;
         this.image = image;
@@ -59,20 +55,19 @@ public class HomeList implements Comparable<HomeList> {
         this.image = image;
     }
 
-    public String getTourguideAvailable() {
-        return tourguideAvailable;
+    public String getTourGuideAvailable() {
+        return tourGuideAvailable;
     }
 
-    public void setTourguideAvailable(String tourguideAvailable) {
-        this.tourguideAvailable = tourguideAvailable;
-    }
-
-    public Integer getSortId() {
+    public String getSortId() {
         return sortId;
     }
 
     @Override
     public int compareTo(@NonNull HomeList homeList) {
-        return this.sortId.compareTo(homeList.sortId);
+        if (homeList.sortId != null && !this.sortId.trim().equals(""))
+            return Integer.valueOf(this.sortId).compareTo(Integer.valueOf(homeList.sortId));
+        else
+            return 0;
     }
 }

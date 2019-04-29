@@ -1,43 +1,46 @@
 <?xml version="1.0" encoding="utf-8"?>
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/layout_bg"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:id="@+id/layout_bg"
     tools:context=".tourguidestartpage.TourGuideStartPageActivity">
+
     <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="@color/semitransparent">
-    </FrameLayout>
+        android:background="@color/colorSemiTransparent" />
+
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical"
         android:weightSum="4">
+
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:layout_weight="1.5"
             android:gravity="center">
 
-                <ImageView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:src="@drawable/play_white"
-                    android:id="@+id/playBtn"
-                    android:visibility="invisible"/>
+            <ImageView
+                android:id="@+id/playBtn"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/play_white"
+                android:visibility="invisible" />
 
         </LinearLayout>
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="0dp"
-            android:orientation="vertical"
             android:layout_weight="2.5"
             android:gravity="center"
-            android:paddingStart="@dimen/padding_10"
-            android:paddingEnd="@dimen/padding_10">
+            android:orientation="vertical"
+            android:paddingEnd="@dimen/padding_10"
+            android:paddingStart="@dimen/padding_10">
+
             <TextView
                 android:id="@+id/museum_tittle"
                 android:layout_width="wrap_content"
@@ -45,19 +48,19 @@
                 android:layout_marginTop="@dimen/padding_10"
                 android:fontFamily="@font/din_next_lt_pro_bold"
                 android:textAlignment="center"
-                android:visibility="visible"
-                android:textColor="@color/white"
-                android:textSize="@dimen/font_size_40" />
+                android:textColor="@color/colorWhite"
+                android:textSize="@dimen/font_size_40"
+                android:visibility="visible" />
 
             <TextView
                 android:id="@+id/museum_desc"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="@dimen/padding_5"
-                android:textColor="@color/white"
-                android:textAlignment="center"
-                android:paddingStart="@dimen/padding_15"
                 android:paddingEnd="@dimen/padding_15"
+                android:paddingStart="@dimen/padding_15"
+                android:textAlignment="center"
+                android:textColor="@color/colorWhite"
                 android:textSize="@dimen/font_size_16" />
 
 
@@ -65,21 +68,20 @@
                 android:id="@+id/start_btn"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_margin="@dimen/pading_25"
+                android:layout_margin="@dimen/padding_25"
                 android:background="@drawable/round_corner_black"
                 android:fontFamily="@font/din_next_lt_pro_bold"
-                android:textAllCaps="false"
-                android:visibility="visible"
-                android:textColor="@color/white"
                 android:text="@string/start_tour"
-                android:textSize="@dimen/settings_page_list_item_text_size" />
+                android:textAllCaps="false"
+                android:textColor="@color/colorWhite"
+                android:textSize="@dimen/font_size_21"
+                android:visibility="visible" />
 
 
         </LinearLayout>
 
 
     </LinearLayout>
-
 
 
 </FrameLayout>
