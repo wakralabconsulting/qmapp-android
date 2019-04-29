@@ -52,8 +52,9 @@ import com.qatarmuseums.qatarmuseumsapp.R;
 import com.qatarmuseums.qatarmuseumsapp.apicall.APIClient;
 import com.qatarmuseums.qatarmuseumsapp.apicall.APIInterface;
 import com.qatarmuseums.qatarmuseumsapp.base.BaseActivity;
-import com.qatarmuseums.qatarmuseumsapp.commonpage.CommonActivity;
-import com.qatarmuseums.qatarmuseumsapp.commonpage.RecyclerTouchListener;
+import com.qatarmuseums.qatarmuseumsapp.commonlistpage.CommonListActivity;
+import com.qatarmuseums.qatarmuseumsapp.commonlistpage.RecyclerTouchListener;
+import com.qatarmuseums.qatarmuseumsapp.commonlistsecondary.SecondaryListActivity;
 import com.qatarmuseums.qatarmuseumsapp.culturepass.AddCookiesInterceptor;
 import com.qatarmuseums.qatarmuseumsapp.culturepass.CulturePassActivity;
 import com.qatarmuseums.qatarmuseumsapp.culturepass.LoginData;
@@ -65,7 +66,6 @@ import com.qatarmuseums.qatarmuseumsapp.notification.NotificationActivity;
 import com.qatarmuseums.qatarmuseumsapp.profile.ProfileActivity;
 import com.qatarmuseums.qatarmuseumsapp.profile.ProfileDetails;
 import com.qatarmuseums.qatarmuseumsapp.profile.UserData;
-import com.qatarmuseums.qatarmuseumsapp.toursecondarylist.TourSecondaryListActivity;
 import com.qatarmuseums.qatarmuseumsapp.utils.Util;
 import com.qatarmuseums.qatarmuseumsapp.webview.WebViewActivity;
 
@@ -175,7 +175,7 @@ public class HomeActivity extends BaseActivity {
             }
         });
         diningNavigation.setOnClickListener(v -> {
-            navigation_intent = new Intent(HomeActivity.this, CommonActivity.class);
+            navigation_intent = new Intent(HomeActivity.this, CommonListActivity.class);
             navigation_intent.putExtra(getString(R.string.toolbar_title_key), getString(R.string.side_menu_dining_text));
             startActivity(navigation_intent);
         });
@@ -208,13 +208,13 @@ public class HomeActivity extends BaseActivity {
             public void onClick(View view, int position) {
                 HomeList homeList = homeLists.get(position);
                 if (homeList.getId().equals("12181") || homeList.getId().equals("12186")) {
-                    navigationIntent = new Intent(HomeActivity.this, CommonActivity.class);
+                    navigationIntent = new Intent(HomeActivity.this, CommonListActivity.class);
                     navigationIntent.putExtra(getString(R.string.toolbar_title_key), getString(R.string.side_menu_exhibition_text));
                     startActivity(navigationIntent);
                 } else if (homeList.getName().trim().toUpperCase().contains("QATAR CREATES: EVENTS FOR THE OPENING OF NMOQ") ||
                         homeList.getName().trim().toUpperCase().contains("قطر تبدع: فعاليات افتتاح متحف قطر الوطني")) {
                     navigationIntent = new Intent(HomeActivity.this,
-                            TourSecondaryListActivity.class);
+                            SecondaryListActivity.class);
                     navigationIntent.putExtra("MAIN_TITLE", homeList.getName());
                     navigationIntent.putExtra("ID", homeList.getId());
                     navigationIntent.putExtra("COMING_FROM", getString(R.string.museum_discussion));
