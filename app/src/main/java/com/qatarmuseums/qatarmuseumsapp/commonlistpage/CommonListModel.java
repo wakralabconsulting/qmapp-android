@@ -1,4 +1,4 @@
-package com.qatarmuseums.qatarmuseumsapp.commonpage;
+package com.qatarmuseums.qatarmuseumsapp.commonlistpage;
 
 
 import android.support.annotation.NonNull;
@@ -7,7 +7,7 @@ import com.google.gson.annotations.SerializedName;
 
 import java.util.ArrayList;
 
-public class CommonModel implements Comparable<CommonModel> {
+public class CommonListModel implements Comparable<CommonListModel> {
 
     @SerializedName(value = "name", alternate = {"Name", "Title", "subtitle"})
     private String name;
@@ -70,56 +70,50 @@ public class CommonModel implements Comparable<CommonModel> {
 
     boolean imageTypeIsArray = false;
 
-    public CommonModel() {
+    public CommonListModel() {
 
     }
 
-
-    CommonModel(String name, String sortId, String id, ArrayList<String> images) {
+    CommonListModel(String name, String image, String museumReference) {
         this.name = name;
-        this.sortId = sortId;
-        this.id = id;
-        this.images = images;
+        this.image = image;
+        this.museumReference = museumReference;
     }
 
-    CommonModel(String name, String sortId, String id, String images) {
+    CommonListModel(String name, String sortId, String id, String images) {
         this.name = name;
         this.sortId = sortId;
         this.id = id;
         this.image = images;
     }
 
-    CommonModel(String id, String name, String location, String image, String exhibitionStatus,
-                String exhibitionDisplayDate) {
+    CommonListModel(String name, String sortId, String id, String images, String latitude, String longitude) {
+        this.name = name;
+        this.sortId = sortId;
+        this.id = id;
+        this.image = images;
+        this.latitude = latitude;
+        this.longitude = longitude;
+
+    }
+
+    CommonListModel(String id, String name, String location, String image, String exhibitionStatus,
+                    String exhibitionDisplayDate, String startDate, String eventDate, String museumId) {
         this.id = id;
         this.name = name;
         this.location = location;
         this.image = image;
         this.exhibitionStatus = exhibitionStatus;
         this.exhibitionDisplayDate = exhibitionDisplayDate;
+        this.startDate = startDate;
+        this.endDate = eventDate;
+        this.museumId = museumId;
 
     }
 
-
-    CommonModel(String id, String name, String image, String latitude,
-                String longitude) {
-        this.id = id;
-        this.name = name;
-        this.image = image;
-        this.latitude = latitude;
-        this.longitude = longitude;
-    }
-
-    CommonModel(String name, String image, String museumReference) {
-        this.name = name;
-        this.image = image;
-        this.museumReference = museumReference;
-
-    }
-
-    CommonModel(String name, String image, String description, String email, String contactNumber,
-                String promotionalCode, String claimOffer, String contentId,
-                boolean isTravel) {
+    CommonListModel(String name, String image, String description, String email, String contactNumber,
+                    String promotionalCode, String claimOffer, String contentId,
+                    boolean isTravel) {
         this.name = name;
         this.image = image;
         this.description = description;
@@ -131,9 +125,9 @@ public class CommonModel implements Comparable<CommonModel> {
         this.isTravel = isTravel;
     }
 
-    CommonModel(String name, String id, String location, String image,
-                String sortId, String openingTime, String closingTime,
-                String description) {
+    CommonListModel(String name, String id, String location, String image,
+                    String sortId, String openingTime, String closingTime,
+                    String description) {
         this.name = name;
         this.id = id;
         this.location = location;
@@ -144,8 +138,8 @@ public class CommonModel implements Comparable<CommonModel> {
         this.description = description;
     }
 
-    CommonModel(String id, String eventDay, String eventDate, String name,
-                ArrayList<String> images, boolean isTour) {
+    CommonListModel(String id, String eventDay, String eventDate, String name,
+                    ArrayList<String> images, boolean isTour) {
         this.id = id;
         this.name = name;
         this.images = images;
@@ -365,9 +359,9 @@ public class CommonModel implements Comparable<CommonModel> {
     }
 
     @Override
-    public int compareTo(@NonNull CommonModel commonModel) {
-        if (commonModel.sortId != null && !this.sortId.trim().equals(""))
-            return Integer.valueOf(this.sortId).compareTo(Integer.valueOf(commonModel.sortId));
+    public int compareTo(@NonNull CommonListModel commonListModel) {
+        if (commonListModel.sortId != null && !this.sortId.trim().equals(""))
+            return Integer.valueOf(this.sortId).compareTo(Integer.valueOf(commonListModel.sortId));
         else
             return 0;
     }

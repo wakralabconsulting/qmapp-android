@@ -103,7 +103,7 @@ import com.qatarmuseums.qatarmuseumsapp.tourguidestartpage.TourGuideStartPageEng
         NMoQParkTableEnglish.class, NMoQParkTableArabic.class,
         NMoQParkListTableEnglish.class, NMoQParkListTableArabic.class,
         NMoQParkListDetailsTableEnglish.class, NMoQParkListDetailsTableArabic.class},
-        version = 3, exportSchema = false)
+        version = 4, exportSchema = false)
 @TypeConverters({Convertor.class})
 
 

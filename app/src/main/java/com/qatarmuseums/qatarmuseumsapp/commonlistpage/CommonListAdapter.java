@@ -1,9 +1,11 @@
-package com.qatarmuseums.qatarmuseumsapp.commonpage;
+package com.qatarmuseums.qatarmuseumsapp.commonlistpage;
 
 
+import android.app.Activity;
 import android.content.Context;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
+import android.util.DisplayMetrics;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
@@ -26,11 +28,12 @@ public class CommonListAdapter extends RecyclerView.Adapter<CommonListAdapter.My
 
     private final Context mContext;
     private final RecyclerTouchListener.ItemClickListener listener;
-    private List<CommonModel> commonModelList;
+    private List<CommonListModel> commonListModelList;
     private Animation zoomOutAnimation;
     private Util util;
 
     public class MyViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
+        private final int height;
         TextView name, statusTag, tourDayTxt, tourDateTxt,
                 tourTitleTxt, dateAndTime;
         ImageView imageView, favIcon;
@@ -52,7 +55,6 @@ public class CommonListAdapter extends RecyclerView.Adapter<CommonListAdapter.My
             tourDateTxt = view.findViewById(R.id.tour_date_text);
             tourTitleTxt = view.findViewById(R.id.tour_title_text);
             recyclerRowItem = view.findViewById(R.id.row_item);
-
             view.setOnClickListener(this);
             favIcon.setOnClickListener(this);
             favIcon.setOnTouchListener((v, event) -> {
@@ -63,13 +65,14 @@ public class CommonListAdapter extends RecyclerView.Adapter<CommonListAdapter.My
                 }
                 return false;
             });
-
-
+            DisplayMetrics displayMetrics = new DisplayMetrics();
+            ((Activity) mContext).getWindowManager().getDefaultDisplay().getMetrics(displayMetrics);
+            height = (int) (displayMetrics.heightPixels * 0.27);
         }
 
         @Override
         public void onClick(View v) {
-            CommonModel model = commonModelList.get(getAdapterPosition());
+            CommonListModel model = commonListModelList.get(getAdapterPosition());
             if (v.getId() == favIcon.getId()) {
                 if (util.checkImageResource(mContext, favIcon, R.drawable.heart_fill)) {
                     favIcon.setImageResource(R.drawable.heart_empty);
@@ -85,8 +88,8 @@ public class CommonListAdapter extends RecyclerView.Adapter<CommonListAdapter.My
         }
     }
 
-    CommonListAdapter(Context context, List<CommonModel> commonModelList, RecyclerTouchListener.ItemClickListener listener) {
-        this.commonModelList = commonModelList;
+    CommonListAdapter(Context context, List<CommonListModel> commonListModelList, RecyclerTouchListener.ItemClickListener listener) {
+        this.commonListModelList = commonListModelList;
         this.mContext = context;
         this.listener = listener;
         zoomOutAnimation = AnimationUtils.loadAnimation(mContext.getApplicationContext(),
@@ -106,7 +109,10 @@ public class CommonListAdapter extends RecyclerView.Adapter<CommonListAdapter.My
 
     @Override
     public void onBindViewHolder(@NonNull CommonListAdapter.MyViewHolder holder, int position) {
-        CommonModel model = commonModelList.get(position);
+        CommonListModel model = commonListModelList.get(position);
+        ViewGroup.LayoutParams params = holder.recyclerRowItem.getLayoutParams();
+        params.height = holder.height;
+        holder.recyclerRowItem.setLayoutParams(params);
         if (model.getEventDate() != null) {
             holder.commonTitleLayout.setVisibility(View.GONE);
             holder.tourTitleLayout.setVisibility(View.VISIBLE);
@@ -178,6 +184,6 @@ public class CommonListAdapter extends RecyclerView.Adapter<CommonListAdapter.My
 
     @Override
     public int getItemCount() {
-        return commonModelList.size();
+        return commonListModelList.size();
     }
 }

@@ -4,7 +4,7 @@ import com.google.gson.annotations.SerializedName;
 
 import java.util.ArrayList;
 
-public class EducationEvents {
+public class Events {
     @SerializedName("item_id")
     private String eid;
     @SerializedName("institution")
@@ -12,19 +12,17 @@ public class EducationEvents {
     @SerializedName("title")
     private String title;
     @SerializedName("Introduction_Text")
-    private String short_desc;
+    private String shortDescription;
     @SerializedName("main_description")
-    private String long_desc;
+    private String longDescription;
     @SerializedName("Register")
     private String registration;
     @SerializedName("start_Date")
-    private ArrayList<String> start_time;
+    private ArrayList<String> startTime;
     @SerializedName("End_Date")
-    private ArrayList<String> end_time;
-    @SerializedName("age_group")
-    private String age_group;
+    private ArrayList<String> endTime;
     @SerializedName("Programme_type")
-    private String program_type;
+    private String programType;
     @SerializedName("date")
     private String date;
     @SerializedName("filter")
@@ -32,42 +30,41 @@ public class EducationEvents {
     @SerializedName("location")
     private String location;
     @SerializedName("max_group_size")
-    private String max_group_size;
+    private String maxGroupSize;
     @SerializedName("category")
     private String category;
     @SerializedName("field_eduprog_repeat_field_date")
     private ArrayList<String> field;
     @SerializedName("Age_group")
-    private ArrayList<String> age;
+    private ArrayList<String> ageGroup;
     @SerializedName("Associated_topics")
     private ArrayList<String> associatedTopics;
     @SerializedName("Museum_Department")
     private String museumDepartment;
 
-    public EducationEvents(String eid, String filter, String title, String short_desc,
-                           String long_desc, String location, String institution,
-                           ArrayList<String> start_time, ArrayList<String> end_time,
-                           String max_group_size, String age_group, String program_type,
-                           String category, String registration, String date,
-                           ArrayList<String> fieldVal, ArrayList<String> age,
-                           ArrayList<String> topics, String museum) {
+    public Events(String eid, String filter, String title, String shortDescription,
+                  String longDescription, String location, String institution,
+                  ArrayList<String> startTime, ArrayList<String> endTime,
+                  String maxGroupSize, String programType,
+                  String category, String registration, String date,
+                  ArrayList<String> fieldVal, ArrayList<String> ageGroup,
+                  ArrayList<String> topics, String museum) {
         this.eid = eid;
         this.filter = filter;
         this.title = title;
-        this.short_desc = short_desc;
-        this.long_desc = long_desc;
+        this.shortDescription = shortDescription;
+        this.longDescription = longDescription;
         this.location = location;
         this.institution = institution;
-        this.start_time = start_time;
-        this.end_time = end_time;
-        this.max_group_size = max_group_size;
-        this.age_group = age_group;
-        this.program_type = program_type;
+        this.startTime = startTime;
+        this.endTime = endTime;
+        this.maxGroupSize = maxGroupSize;
+        this.programType = programType;
         this.category = category;
         this.registration = registration;
         this.date = date;
         this.field = fieldVal;
-        this.age = age;
+        this.ageGroup = ageGroup;
         this.associatedTopics = topics;
         this.museumDepartment = museum;
     }
@@ -96,20 +93,20 @@ public class EducationEvents {
         this.title = title;
     }
 
-    public String getShort_desc() {
-        return short_desc;
+    public String getShortDescription() {
+        return shortDescription;
     }
 
-    public void setShort_desc(String short_desc) {
-        this.short_desc = short_desc;
+    public void setShortDescription(String shortDescription) {
+        this.shortDescription = shortDescription;
     }
 
-    public String getLong_desc() {
-        return long_desc;
+    public String getLongDescription() {
+        return longDescription;
     }
 
-    public void setLong_desc(String long_desc) {
-        this.long_desc = long_desc;
+    public void setLongDescription(String longDescription) {
+        this.longDescription = longDescription;
     }
 
     public String getLocation() {
@@ -128,44 +125,36 @@ public class EducationEvents {
         this.institution = institution;
     }
 
-    public ArrayList<String> getStart_time() {
-        return start_time;
+    public ArrayList<String> getStartTime() {
+        return startTime;
     }
 
-    public void setStart_time(ArrayList<String> start_time) {
-        this.start_time = start_time;
+    public void setStartTime(ArrayList<String> startTime) {
+        this.startTime = startTime;
     }
 
-    public ArrayList<String> getEnd_time() {
-        return end_time;
+    public ArrayList<String> getEndTime() {
+        return endTime;
     }
 
-    public void setEnd_time(ArrayList<String> end_time) {
-        this.end_time = end_time;
+    public void setEndTime(ArrayList<String> endTime) {
+        this.endTime = endTime;
     }
 
-    public String getMax_group_size() {
-        return max_group_size;
+    public String getMaxGroupSize() {
+        return maxGroupSize;
     }
 
-    public void setMax_group_size(String max_group_size) {
-        this.max_group_size = max_group_size;
+    public void setMaxGroupSize(String maxGroupSize) {
+        this.maxGroupSize = maxGroupSize;
     }
 
-    public String getAge_group() {
-        return age_group;
+    public String getProgramType() {
+        return programType;
     }
 
-    public void setAge_group(String age_group) {
-        this.age_group = age_group;
-    }
-
-    public String getProgram_type() {
-        return program_type;
-    }
-
-    public void setProgram_type(String program_type) {
-        this.program_type = program_type;
+    public void setProgramType(String programType) {
+        this.programType = programType;
     }
 
     public String getCategory() {
@@ -200,27 +189,20 @@ public class EducationEvents {
         this.field = field;
     }
 
-    public ArrayList<String> getAge() {
-        return age;
+    public ArrayList<String> getAgeGroup() {
+        return ageGroup;
     }
 
-    public void setAge(ArrayList<String> age) {
-        this.age = age;
+    public void setAgeGroup(ArrayList<String> ageGroup) {
+        this.ageGroup = ageGroup;
     }
 
     public ArrayList<String> getAssociatedTopics() {
         return associatedTopics;
     }
 
-    public void setAssociatedTopics(ArrayList<String> associatedTopics) {
-        this.associatedTopics = associatedTopics;
-    }
-
     public String getMuseumDepartment() {
         return museumDepartment;
     }
 
-    public void setMuseumDepartment(String museumDepartment) {
-        this.museumDepartment = museumDepartment;
-    }
 }

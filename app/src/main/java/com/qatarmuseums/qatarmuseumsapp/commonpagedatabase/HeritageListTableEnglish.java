@@ -15,6 +15,8 @@ public class HeritageListTableEnglish {
     @ColumnInfo()
     private String heritage_image;
     @ColumnInfo()
+    private String heritage_images;
+    @ColumnInfo()
     private String location;
     @ColumnInfo()
     private String latitude;
@@ -65,6 +67,14 @@ public class HeritageListTableEnglish {
 
     public void setHeritage_image(String heritage_image) {
         this.heritage_image = heritage_image;
+    }
+
+    public String getHeritage_images() {
+        return heritage_images;
+    }
+
+    public void setHeritage_images(String heritage_images) {
+        this.heritage_images = heritage_images;
     }
 
     public String getHeritage_sortid() {

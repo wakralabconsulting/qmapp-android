@@ -26,7 +26,7 @@ import com.qatarmuseums.qatarmuseumsapp.QMDatabase;
 import com.qatarmuseums.qatarmuseumsapp.R;
 import com.qatarmuseums.qatarmuseumsapp.apicall.APIClient;
 import com.qatarmuseums.qatarmuseumsapp.apicall.APIInterface;
-import com.qatarmuseums.qatarmuseumsapp.commonpage.RecyclerTouchListener;
+import com.qatarmuseums.qatarmuseumsapp.commonlistpage.RecyclerTouchListener;
 import com.qatarmuseums.qatarmuseumsapp.home.HomeList;
 import com.qatarmuseums.qatarmuseumsapp.home.HomePageTableArabic;
 import com.qatarmuseums.qatarmuseumsapp.home.HomePageTableEnglish;
@@ -110,7 +110,7 @@ public class TourGuideActivity extends AppCompatActivity {
                         if (tourGuideList.get(position).getId().equals("63") ||
                                 tourGuideList.get(position).getId().equals("96") ||
                                 tourGuideList.get(position).getId().equals("61") ||
-                                tourGuideList.get(position).getId().equals("635")||
+                                tourGuideList.get(position).getId().equals("635") ||
                                 tourGuideList.get(position).getId().equals("66") ||
                                 tourGuideList.get(position).getId().equals("638")) {
                             navigationIntent = new Intent(TourGuideActivity.this,

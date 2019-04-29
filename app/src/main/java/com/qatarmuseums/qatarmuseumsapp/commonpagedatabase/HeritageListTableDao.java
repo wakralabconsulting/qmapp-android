@@ -42,10 +42,11 @@ public interface HeritageListTableDao {
 
     @Query("UPDATE heritagelistenglish SET latitude = :latitudeFromApi,longitude = :longitudeFromApi," +
             "heritage_long_description=:descriptionFromApi," + "heritage_short_description=:shortDescriptionFromApi," +
-             "heritage_image=:imagesFromApi WHERE heritage_id=:id")
+            "heritage_image=:imageFromApi, heritage_images=:imagesFromApi WHERE heritage_id=:id")
     void updateHeritageDetailEnglish(String latitudeFromApi,
                                      String longitudeFromApi, String descriptionFromApi,
-                                     String shortDescriptionFromApi,String imagesFromApi, String id);
+                                     String shortDescriptionFromApi, String imageFromApi,
+                                     String imagesFromApi, String id);
 
     @Query("UPDATE heritagelistarabic SET heritage_name = :nameFromApi," + "heritage_sortid = :sortidFromApi," +
             "heritage_image = :imageFromApi WHERE heritage_id=:id")
@@ -54,10 +55,12 @@ public interface HeritageListTableDao {
 
     @Query("UPDATE heritagelistarabic SET latitude = :latitudeFromApi,longitude = :longitudeFromApi," +
             "heritage_long_description=:descriptionFromApi," +
-            "heritage_short_description=:shortDescriptionFromApi," + "heritage_image=:imagesFromApi WHERE heritage_id=:id")
-    void updateHeritageDetailArabic( String latitudeFromApi,
+            "heritage_short_description=:shortDescriptionFromApi," +
+            "heritage_image=:imageFromApi, heritage_images=:imagesFromApi WHERE heritage_id=:id")
+    void updateHeritageDetailArabic(String latitudeFromApi,
                                     String longitudeFromApi, String descriptionFromApi,
-                                    String shortDescriptionFromApi,String imagesFromApi, String id);
+                                    String shortDescriptionFromApi, String imageFromApi,
+                                    String imagesFromApi, String id);
 
 
     @Insert

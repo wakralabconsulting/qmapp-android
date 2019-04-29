@@ -55,6 +55,7 @@
                     android:layout_height="match_parent"
                     android:layout_alignParentEnd="true"
                     android:layout_centerVertical="true"
+                    android:tint="@color/colorDarkGray"
                     android:paddingEnd="@dimen/padding_20"
                     android:paddingStart="@dimen/padding_20"
                     android:src="@drawable/settings" />

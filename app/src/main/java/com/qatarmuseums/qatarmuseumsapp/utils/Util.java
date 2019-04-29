@@ -1,27 +1,46 @@
 package com.qatarmuseums.qatarmuseumsapp.utils;
 
+import android.Manifest;
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.Dialog;
+import android.content.ContentResolver;
+import android.content.ContentValues;
 import android.content.Context;
+import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.content.res.ColorStateList;
 import android.content.res.Configuration;
 import android.content.res.Resources;
+import android.database.Cursor;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
+import android.net.Uri;
 import android.os.Build;
+import android.provider.CalendarContract;
+import android.provider.Settings;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
 import android.text.Spannable;
 import android.text.style.URLSpan;
 import android.util.DisplayMetrics;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.widget.EditText;
+import android.view.Window;
+import android.view.WindowManager;
+import android.widget.Button;
+import android.widget.FrameLayout;
 import android.widget.ImageView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.qatarmuseums.qatarmuseumsapp.LocaleManager;
 import com.qatarmuseums.qatarmuseumsapp.R;
+import com.qatarmuseums.qatarmuseumsapp.education.Events;
 import com.qatarmuseums.qatarmuseumsapp.home.GlideApp;
 
 import org.jsoup.Jsoup;
@@ -30,11 +49,20 @@ import org.jsoup.safety.Whitelist;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Collections;
 import java.util.Date;
 import java.util.Locale;
 
+import static android.content.Context.LAYOUT_INFLATER_SERVICE;
+
 public class Util {
     private CustomDialogClass customDialog;
+    private ContentResolver contentResolver;
+    private ContentValues contentValues;
+    private int MY_PERMISSIONS_REQUEST_CALENDAR = 100;
+    private int REQUEST_PERMISSION_SETTING = 110;
 
     public Util() {
     }
@@ -221,4 +249,236 @@ public class Util {
             p_Text.setSpan(span, start, end, 0);
         }
     }
+
+    public void removeHtmlTags(ArrayList<Events> models) {
+        for (int i = 0; i < models.size(); i++) {
+            ArrayList<String> fieldValue = models.get(i).getField();
+            fieldValue.set(0, html2string(fieldValue.get(0)));
+            models.get(i).setField(fieldValue);
+            ArrayList<String> startDateVal = models.get(i).getStartTime();
+            startDateVal.set(0, html2string(startDateVal.get(0)));
+            models.get(i).setStartTime(startDateVal);
+            ArrayList<String> endDateVal = models.get(i).getEndTime();
+            endDateVal.set(0, html2string(endDateVal.get(0)));
+            models.get(i).setEndTime(endDateVal);
+            models.get(i).setProgramType(html2string(models.get(i).getProgramType()));
+            models.get(i).setLongDescription(html2string(models.get(i).getLongDescription()));
+            models.get(i).setShortDescription(html2string(models.get(i).getShortDescription()));
+            models.get(i).setTitle(html2string(models.get(i).getTitle()));
+        }
+    }
+
+    public void updateTimeStamp(ArrayList<Events> events, long timestamp, String day, String month, String year) {
+        for (int i = 0; i < events.size(); i++) {
+            // Split time and converting time to timestamp and updating
+            String start = events.get(i).getStartTime().get(0);
+            String startValue = start.substring(start.lastIndexOf("-") + 1);
+            String[] startTimeArray = startValue.trim().split("-");
+            String startTime = startTimeArray[0].trim();
+            String end = events.get(i).getEndTime().get(0);
+            String endValue = end.substring(end.lastIndexOf("-") + 1);
+            String[] endTimeArray = endValue.trim().split("-");
+            String endTime = endTimeArray[0].trim();
+            String str_start_date = day + "-" + month + "-" + year + " " + startTime;
+            String str_end_date = day + "-" + month + "-" + year + " " + endTime;
+            ArrayList<String> st = new ArrayList<>();
+            st.add(0, String.valueOf(convertDate(str_start_date)));
+            ArrayList<String> en = new ArrayList<>();
+            en.add(0, String.valueOf(convertDate(str_end_date)));
+            events.get(i).setStartTime(st);
+            events.get(i).setEndTime(en);
+            // Setting event date to selected date timestamp
+            events.get(i).setDate(String.valueOf(timestamp / 1000));
+
+        }
+
+        // Sort events depends on start time
+        Collections.sort(events, (event1, event2) -> event1.getStartTime().get(0).compareTo(event2.getStartTime().get(0)));
+    }
+
+
+    public int getScreenHeight(Context context) {
+        DisplayMetrics displayMetrics = new DisplayMetrics();
+        WindowManager windowManager = (WindowManager) context
+                .getSystemService(Context.WINDOW_SERVICE);
+        windowManager.getDefaultDisplay().getMetrics(displayMetrics);
+        double height = displayMetrics.heightPixels;
+        height = (height) * (0.75);
+        return (int) height;
+    }
+
+    public long convertDate(String dateValue) {
+        @SuppressLint("SimpleDateFormat")
+        SimpleDateFormat formatter = new SimpleDateFormat("dd-MM-yyyy HH:mm");
+        Date date = null;
+        try {
+            date = formatter.parse(dateValue);
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+        return date != null ? date.getTime() : 0;
+    }
+
+    @SuppressLint("MissingPermission")
+    public int getCalendarId(Context context) {
+        Cursor cursor;
+        ContentResolver contentResolver = context.getContentResolver();
+        Uri calendars = CalendarContract.Calendars.CONTENT_URI;
+
+        String[] EVENT_PROJECTION = new String[]{
+                CalendarContract.Calendars._ID,                           // 0
+                CalendarContract.Calendars.ACCOUNT_NAME,                  // 1
+                CalendarContract.Calendars.CALENDAR_DISPLAY_NAME,         // 2
+                CalendarContract.Calendars.OWNER_ACCOUNT,                 // 3
+                CalendarContract.Calendars.IS_PRIMARY                     // 4
+        };
+
+        int PROJECTION_ID_INDEX = 0;
+        int PROJECTION_DISPLAY_NAME_INDEX = 2;
+        int PROJECTION_VISIBLE = 4;
+
+        cursor = contentResolver.query(calendars, EVENT_PROJECTION, null, null, null);
+
+        if (cursor != null && cursor.moveToFirst()) {
+            String calName;
+            long calId = 0;
+            String visible;
+
+            do {
+                calName = cursor.getString(PROJECTION_DISPLAY_NAME_INDEX);
+                calId = cursor.getLong(PROJECTION_ID_INDEX);
+                visible = cursor.getString(PROJECTION_VISIBLE);
+                if (visible.equals("1")) {
+                    return (int) calId;
+                }
+                Log.e("Calendar Id : ", "" + calId + " : " + calName + " : " + visible);
+            } while (cursor.moveToNext());
+            cursor.close();
+            return (int) calId;
+        }
+        return 1;
+    }
+
+    public void showDialog(Context context, final String buttonText, final ArrayList<Events> events, final int position) {
+
+        final Dialog dialog = new Dialog(context, R.style.DialogNoAnimation);
+        dialog.setCancelable(true);
+        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+
+        LayoutInflater layoutInflater = (LayoutInflater) context.getSystemService(LAYOUT_INFLATER_SERVICE);
+        @SuppressLint("InflateParams")
+        View view = layoutInflater.inflate(R.layout.calendar_popup, null);
+        dialog.setContentView(view);
+        FrameLayout contentLayout = view.findViewById(R.id.content_frame_layout);
+        ImageView closeBtn = view.findViewById(R.id.close_dialog);
+        final Button registerNowBtn = view.findViewById(R.id.doneBtn);
+        TextView dialogTitle = view.findViewById(R.id.dialog_tittle);
+        TextView dialogContent = view.findViewById(R.id.dialog_content);
+        int heightValue = getScreenHeight(context);
+        contentLayout.setLayoutParams(new FrameLayout.LayoutParams(FrameLayout.LayoutParams.MATCH_PARENT, heightValue));
+        dialogTitle.setText(events.get(position).getTitle());
+        registerNowBtn.setText(buttonText);
+        if (buttonText.equalsIgnoreCase(context.getResources().getString(R.string.register_now))) {
+            registerNowBtn.setEnabled(false);
+            registerNowBtn.setTextColor(context.getResources().getColor(R.color.colorWhite));
+            registerNowBtn.setBackgroundTintList(ColorStateList.valueOf(context.getResources().getColor(R.color.colorSemiTransparentGrey)));
+        }
+        dialogContent.setText(events.get(position).getLongDescription());
+
+        registerNowBtn.setOnClickListener(view1 -> {
+            //Do something
+            if (buttonText.equalsIgnoreCase(context.getResources().getString(R.string.register_now))) {
+                new Util().showComingSoonDialog((Activity) context, R.string.coming_soon_content);
+                dialog.dismiss();
+            } else {
+                addToCalendar(context, events, position);
+                dialog.dismiss();
+            }
+
+        });
+        closeBtn.setOnClickListener(view12 -> {
+            //Do something
+            dialog.dismiss();
+
+        });
+        dialog.show();
+    }
+
+    private void addToCalendar(Context context, final ArrayList<Events> events, final int position) {
+        contentResolver = context.getContentResolver();
+
+        contentValues = new ContentValues();
+        contentValues.put(CalendarContract.Events.TITLE, events.get(position).getTitle());
+        contentValues.put(CalendarContract.Events.DESCRIPTION, events.get(position).getLongDescription());
+        contentValues.put(CalendarContract.Events.DTSTART, events.get(position).getStartTime().get(0));
+        contentValues.put(CalendarContract.Events.DTEND, events.get(position).getEndTime().get(0));
+        contentValues.put(CalendarContract.Events.EVENT_TIMEZONE, Calendar.getInstance().getTimeZone().getID());
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.M) {
+            if (ContextCompat.checkSelfPermission(context,
+                    Manifest.permission.WRITE_CALENDAR)
+                    != PackageManager.PERMISSION_GRANTED) {
+                ActivityCompat.requestPermissions((Activity) context,
+                        new String[]{Manifest.permission.WRITE_CALENDAR, Manifest.permission.READ_CALENDAR},
+                        MY_PERMISSIONS_REQUEST_CALENDAR);
+
+            } else {
+                insertEventToCalendar(context, contentValues);
+            }
+        } else
+            insertEventToCalendar(context, contentValues);
+
+
+    }
+
+    @SuppressLint("MissingPermission")
+    public void insertEventToCalendar(Context context, ContentValues contentValues) {
+        try {
+            if (contentValues == null) {
+                this.contentValues.put(CalendarContract.Events.CALENDAR_ID, getCalendarId(context));
+                contentResolver.insert(CalendarContract.Events.CONTENT_URI, this.contentValues);
+            } else {
+                contentValues.put(CalendarContract.Events.CALENDAR_ID, getCalendarId(context));
+                contentResolver.insert(CalendarContract.Events.CONTENT_URI, contentValues);
+            }
+            showToast(context.getString(R.string.event_added), context);
+        } catch (Exception ex) {
+            Toast.makeText(context, "Error in adding event on calendar : " + ex.getMessage(),
+                    Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    public void showNavigationDialog(Context context, String title, final String details) {
+
+        Dialog dialog = new Dialog(context, R.style.DialogNoAnimation);
+        dialog.setCancelable(true);
+        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+
+        LayoutInflater layoutInflater = (LayoutInflater) context.getSystemService(LAYOUT_INFLATER_SERVICE);
+        View view = layoutInflater.inflate(R.layout.common_popup, null);
+
+        dialog.setContentView(view);
+        ImageView closeBtn = view.findViewById(R.id.close_dialog);
+        Button dialogActionButton = view.findViewById(R.id.doneBtn);
+        TextView dialogTitle = view.findViewById(R.id.dialog_tittle);
+        TextView dialogContent = view.findViewById(R.id.dialog_content);
+        dialogTitle.setText(title);
+        dialogActionButton.setText(context.getResources().getString(R.string.open_settings));
+        dialogContent.setText(details);
+
+        dialogActionButton.setOnClickListener(view1 -> {
+            navigateToSettings(context);
+            dialog.dismiss();
+
+        });
+        closeBtn.setOnClickListener(view12 -> dialog.dismiss());
+        dialog.show();
+    }
+
+    private void navigateToSettings(Context context) {
+        Intent intent = new Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS);
+        Uri uri = Uri.fromParts("package", context.getPackageName(), null);
+        intent.setData(uri);
+        ((Activity) context).startActivityForResult(intent, REQUEST_PERMISSION_SETTING);
+    }
+
 }

@@ -9,13 +9,11 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
-import android.database.Cursor;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.provider.CalendarContract;
-import android.provider.Settings;
 import android.support.annotation.NonNull;
 import android.support.constraint.ConstraintLayout;
 import android.support.design.widget.AppBarLayout;
@@ -59,6 +57,8 @@ import com.qatarmuseums.qatarmuseumsapp.QMDatabase;
 import com.qatarmuseums.qatarmuseumsapp.R;
 import com.qatarmuseums.qatarmuseumsapp.apicall.APIClient;
 import com.qatarmuseums.qatarmuseumsapp.apicall.APIInterface;
+import com.qatarmuseums.qatarmuseumsapp.commonpagedatabase.DiningTableArabic;
+import com.qatarmuseums.qatarmuseumsapp.commonpagedatabase.DiningTableEnglish;
 import com.qatarmuseums.qatarmuseumsapp.commonpagedatabase.ExhibitionListTableArabic;
 import com.qatarmuseums.qatarmuseumsapp.commonpagedatabase.ExhibitionListTableEnglish;
 import com.qatarmuseums.qatarmuseumsapp.commonpagedatabase.HeritageListTableArabic;
@@ -67,6 +67,7 @@ import com.qatarmuseums.qatarmuseumsapp.commonpagedatabase.PublicArtsTableArabic
 import com.qatarmuseums.qatarmuseumsapp.commonpagedatabase.PublicArtsTableEnglish;
 import com.qatarmuseums.qatarmuseumsapp.culturepass.AddCookiesInterceptor;
 import com.qatarmuseums.qatarmuseumsapp.culturepass.UserRegistrationDetailsTable;
+import com.qatarmuseums.qatarmuseumsapp.dining.DiningDetailModel;
 import com.qatarmuseums.qatarmuseumsapp.facilities.FacilitiesDetailModel;
 import com.qatarmuseums.qatarmuseumsapp.facilities.FacilityDetailTableArabic;
 import com.qatarmuseums.qatarmuseumsapp.facilities.FacilityDetailTableEnglish;
@@ -213,10 +214,13 @@ public class DetailsActivity extends AppCompatActivity implements IPullZoom, OnM
     private int seatsCount;
     private ArrayList<FacilitiesDetailModel> facilitiesDetailModels = new ArrayList<>();
     private ArrayList<NMoQParkListDetails> nMoQParkListDetails = new ArrayList<>();
+    private ArrayList<DiningDetailModel> diningDetailModels = new ArrayList<>();
     FacilityDetailTableEnglish facilityDetailTableEnglish;
     FacilityDetailTableArabic facilityDetailTableArabic;
     private NMoQParkListDetailsTableEnglish nMoQParkListDetailsTableEnglish;
     private NMoQParkListDetailsTableArabic nMoQParkListDetailsTableArabic;
+    private LinearLayout diningContent;
+    private TextView downloadText;
 
 
     @Override
@@ -228,7 +232,13 @@ public class DetailsActivity extends AppCompatActivity implements IPullZoom, OnM
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_details);
+        intent = getIntent();
+        comingFrom = intent.getStringExtra("COMING_FROM");
+        if (comingFrom.equals(getString(R.string.side_menu_dining_text))) {
+            setContentView(R.layout.activity_dining);
+            diningContent = findViewById(R.id.dining_content);
+        } else
+            setContentView(R.layout.activity_details);
         qmPreferences = PreferenceManager.getDefaultSharedPreferences(this);
         appLanguage = LocaleManager.getLanguage(this);
         if (appLanguage.equals(LocaleManager.LANGUAGE_ENGLISH))
@@ -242,9 +252,7 @@ public class DetailsActivity extends AppCompatActivity implements IPullZoom, OnM
         field_membership_number = qmPreferences.getInt("MEMBERSHIP", 0);
         time_zone = qmPreferences.getString("TIMEZONE", null);
         progressBar = findViewById(R.id.progressBarLoading);
-        intent = getIntent();
         mainTitle = intent.getStringExtra("MAIN_TITLE");
-        comingFrom = intent.getStringExtra("COMING_FROM");
         headerImage = intent.getStringExtra("HEADER_IMAGE");
         description = intent.getStringExtra("LONG_DESC");
         promotionCode = intent.getStringExtra("PROMOTION_CODE");
@@ -297,53 +305,132 @@ public class DetailsActivity extends AppCompatActivity implements IPullZoom, OnM
         toolbarClose = findViewById(R.id.toolbar_close);
         headerImageView = findViewById(R.id.header_img);
         title = findViewById(R.id.main_title);
-        subTitle = findViewById(R.id.sub_title);
+
         shortDescription = findViewById(R.id.short_description);
         longDescription = findViewById(R.id.long_description);
-        secondTitle = findViewById(R.id.second_title);
-        secondTitleDescription = findViewById(R.id.second_short_description);
+
         timingTitle = findViewById(R.id.timing_title);
         timingDetails = findViewById(R.id.timing_info);
         locationDetails = findViewById(R.id.location_info);
         mapImageView = findViewById(R.id.map_view);
         direction = findViewById(R.id.direction);
-        imagePlaceHolder = findViewById(R.id.video_place_holder);
-        jzvdStd = findViewById(R.id.videoplayer);
         mapView = findViewById(R.id.map_layout);
         mapDetails = findViewById(R.id.map_info);
+        favIcon = findViewById(R.id.favourite);
+        shareIcon = findViewById(R.id.share);
+        noResultFoundTxt = findViewById(R.id.noResultFoundTxt);
+        retryButton = findViewById(R.id.retry_btn);
+        circleIndicator = findViewById(R.id.carousel_indicator);
+        locationLayout = findViewById(R.id.location_layout);
+        timingLayout = findViewById(R.id.timing_layout);
+        retryLayout = findViewById(R.id.retry_layout);
+
         Bundle mapViewBundle = null;
         if (savedInstanceState != null) {
             mapViewBundle = savedInstanceState.getBundle(MAP_VIEW_BUNDLE_KEY);
         }
         mapDetails.onCreate(mapViewBundle);
         mapDetails.getMapAsync(this);
-        contactPhone = findViewById(R.id.contact_phone);
-        contactEmail = findViewById(R.id.contact_mail);
-        favIcon = findViewById(R.id.favourite);
-        shareIcon = findViewById(R.id.share);
-        secondTitleLayout = findViewById(R.id.second_title_layout);
-        timingLayout = findViewById(R.id.timing_layout);
-        contactLayout = findViewById(R.id.contact_layout);
-        commonContentLayout = findViewById(R.id.common_content_layout);
-        dateLocationLayout = findViewById(R.id.date_and_location_layout);
-        noResultFoundTxt = findViewById(R.id.noResultFoundTxt);
-        retryLayout = findViewById(R.id.retry_layout_about);
-        retryButton = findViewById(R.id.retry_btn);
-        circleIndicator = findViewById(R.id.carousel_indicator);
-        registrationLoader = findViewById(R.id.registration_loader);
-        eventDateLayout = findViewById(R.id.event_date_layout);
-        eventDateTxt = findViewById(R.id.event_date);
-        videoLayout = findViewById(R.id.video_layout);
-        downloadLayout = findViewById(R.id.download_layout);
-        TextView downloadText = findViewById(R.id.download_text);
-        downloadButton = findViewById(R.id.download_button);
-        interestLayout = findViewById(R.id.interest_layout);
-        registerUnregisterCount = findViewById(R.id.register_unregister_label);
-        registerButton = findViewById(R.id.register_button);
-        locationLayout = findViewById(R.id.location_layout);
-        offerLayout = findViewById(R.id.offer_layout);
-        offerCode = findViewById(R.id.offer_code);
-        claimButton = findViewById(R.id.claim_offer_button);
+        if (!comingFrom.equals(getString(R.string.side_menu_dining_text))) {
+            subTitle = findViewById(R.id.sub_title);
+            retryLayout = findViewById(R.id.retry_layout_about);
+            secondTitle = findViewById(R.id.second_title);
+            secondTitleDescription = findViewById(R.id.second_short_description);
+            jzvdStd = findViewById(R.id.videoplayer);
+            imagePlaceHolder = findViewById(R.id.video_place_holder);
+            contactPhone = findViewById(R.id.contact_phone);
+            contactEmail = findViewById(R.id.contact_mail);
+            secondTitleLayout = findViewById(R.id.second_title_layout);
+            contactLayout = findViewById(R.id.contact_layout);
+            commonContentLayout = findViewById(R.id.common_content_layout);
+            dateLocationLayout = findViewById(R.id.date_and_location_layout);
+            registrationLoader = findViewById(R.id.registration_loader);
+            eventDateLayout = findViewById(R.id.event_date_layout);
+            eventDateTxt = findViewById(R.id.event_date);
+            videoLayout = findViewById(R.id.video_layout);
+            downloadLayout = findViewById(R.id.download_layout);
+            downloadText = findViewById(R.id.download_text);
+            downloadButton = findViewById(R.id.download_button);
+            interestLayout = findViewById(R.id.interest_layout);
+            registerUnregisterCount = findViewById(R.id.register_unregister_label);
+            registerButton = findViewById(R.id.register_button);
+            offerLayout = findViewById(R.id.offer_layout);
+            offerCode = findViewById(R.id.offer_code);
+            claimButton = findViewById(R.id.claim_offer_button);
+
+            downloadText.setOnTouchListener((v, event) -> {
+                switch (event.getAction()) {
+                    case MotionEvent.ACTION_DOWN:
+                        downloadButton.startAnimation(zoomOutAnimation);
+                        break;
+                }
+                return false;
+            });
+            registrationLoader.setOnClickListener(v -> {
+            });
+            claimButton.setOnTouchListener((v, event) -> {
+                switch (event.getAction()) {
+                    case MotionEvent.ACTION_DOWN:
+                        claimButton.startAnimation(zoomOutAnimation);
+                        break;
+                }
+                return false;
+            });
+            downloadButton.setOnTouchListener((v, event) -> {
+                switch (event.getAction()) {
+                    case MotionEvent.ACTION_DOWN:
+                        downloadButton.startAnimation(zoomOutAnimation);
+                        break;
+                }
+                return false;
+            });
+            claimButton.setOnClickListener(v -> {
+                if (util.isNetworkAvailable(this)) {
+                    if (!claimOfferURL.equals("")) {
+                        navigation_intent = new Intent(DetailsActivity.this, WebViewActivity.class);
+                        navigation_intent.putExtra("url", claimOfferURL);
+                        startActivity(navigation_intent);
+                    } else
+                        util.showComingSoonDialog(DetailsActivity.this, R.string.coming_soon_content);
+                } else
+                    util.showToast(getResources().getString(R.string.check_network), getApplicationContext());
+            });
+
+            downloadButton.setOnClickListener(v ->
+                    downloadAction());
+            downloadText.setOnClickListener(v ->
+                    downloadAction());
+            registerButton.setOnClickListener(v -> {
+                if (registerButton.getText().toString().equals(getResources().getString(R.string.interested))) {
+                    // Overlapping check commented temporarily
+
+//                if (registrationDetailsMap.size() > 0 && tourDetailsMap.size() > 0) {
+//                    myVeryOwnIterator = tourDetailsMap.keySet().iterator();
+//                    isTimeSlotAvailable = true;
+//                    while (myVeryOwnIterator.hasNext()) {
+//                        final String key = myVeryOwnIterator.next();
+//                        if (registrationDetailsMap.get(key) != null) {
+//                            if (tourDetailsMap.get(key).getEventTimeStampDiff().equals(currentEventTimeStampDiff))
+//                                isTimeSlotAvailable = false;
+//                            else if (!((tourDetailsMap.get(key).getStartTimeStamp() >= currentEventEndTimeStamp) ||
+//                                    (tourDetailsMap.get(key).getEndTimeStamp() <= currentEventStartTimeStamp))) {
+//                                isTimeSlotAvailable = false;
+//                            }
+//                        }
+//                    }
+//                    if (isTimeSlotAvailable) {
+//                        showNumberPicker();
+//                    } else {
+//                        util.showNormalDialog(DetailsActivity.this, R.string.time_slot_not_available);
+//                    }
+//                } else
+                    showNumberPicker();
+
+                } else
+                    showDeclineDialog();
+            });
+
+        }
         util = new Util();
         title.setText(mainTitle);
         getData();
@@ -362,9 +449,7 @@ public class DetailsActivity extends AppCompatActivity implements IPullZoom, OnM
         toolbarClose.setOnClickListener(v ->
 
                 onBackPressed());
-        favIcon.setOnClickListener(v ->
-
-        {
+        favIcon.setOnClickListener(v -> {
             if (util.checkImageResource(DetailsActivity.this, favIcon, R.drawable.heart_fill)) {
                 favIcon.setImageResource(R.drawable.heart_empty);
             } else
@@ -415,43 +500,6 @@ public class DetailsActivity extends AppCompatActivity implements IPullZoom, OnM
             }
             return false;
         });
-        downloadText.setOnTouchListener((v, event) -> {
-            switch (event.getAction()) {
-                case MotionEvent.ACTION_DOWN:
-                    downloadButton.startAnimation(zoomOutAnimation);
-                    break;
-            }
-            return false;
-        });
-        registrationLoader.setOnClickListener(v -> {
-        });
-        claimButton.setOnTouchListener((v, event) -> {
-            switch (event.getAction()) {
-                case MotionEvent.ACTION_DOWN:
-                    claimButton.startAnimation(zoomOutAnimation);
-                    break;
-            }
-            return false;
-        });
-        downloadButton.setOnTouchListener((v, event) -> {
-            switch (event.getAction()) {
-                case MotionEvent.ACTION_DOWN:
-                    downloadButton.startAnimation(zoomOutAnimation);
-                    break;
-            }
-            return false;
-        });
-        claimButton.setOnClickListener(v -> {
-            if (util.isNetworkAvailable(this)) {
-                if (!claimOfferURL.equals("")) {
-                    navigation_intent = new Intent(DetailsActivity.this, WebViewActivity.class);
-                    navigation_intent.putExtra("url", claimOfferURL);
-                    startActivity(navigation_intent);
-                } else
-                    util.showComingSoonDialog(DetailsActivity.this, R.string.coming_soon_content);
-            } else
-                util.showToast(getResources().getString(R.string.check_network), getApplicationContext());
-        });
         mapImageView.setOnClickListener(view -> {
             if (iconView == 0) {
                 if (latitude == null || latitude.equals("")) {
@@ -495,39 +543,7 @@ public class DetailsActivity extends AppCompatActivity implements IPullZoom, OnM
                 }
             }
         });
-        downloadButton.setOnClickListener(v ->
-                downloadAction());
-        downloadText.setOnClickListener(v ->
-                downloadAction());
-        registerButton.setOnClickListener(v -> {
-            if (registerButton.getText().toString().equals(getResources().getString(R.string.interested))) {
-                // Overlapping check commented temporarily
 
-//                if (registrationDetailsMap.size() > 0 && tourDetailsMap.size() > 0) {
-//                    myVeryOwnIterator = tourDetailsMap.keySet().iterator();
-//                    isTimeSlotAvailable = true;
-//                    while (myVeryOwnIterator.hasNext()) {
-//                        final String key = myVeryOwnIterator.next();
-//                        if (registrationDetailsMap.get(key) != null) {
-//                            if (tourDetailsMap.get(key).getEventTimeStampDiff().equals(currentEventTimeStampDiff))
-//                                isTimeSlotAvailable = false;
-//                            else if (!((tourDetailsMap.get(key).getStartTimeStamp() >= currentEventEndTimeStamp) ||
-//                                    (tourDetailsMap.get(key).getEndTimeStamp() <= currentEventStartTimeStamp))) {
-//                                isTimeSlotAvailable = false;
-//                            }
-//                        }
-//                    }
-//                    if (isTimeSlotAvailable) {
-//                        showNumberPicker();
-//                    } else {
-//                        util.showNormalDialog(DetailsActivity.this, R.string.time_slot_not_available);
-//                    }
-//                } else
-                showNumberPicker();
-
-            } else
-                showDeclineDialog();
-        });
     }
 
     private void getFacilityDetailsFromAPI(String id, int appLanguage) {
@@ -848,8 +864,332 @@ public class DetailsActivity extends AppCompatActivity implements IPullZoom, OnM
                 getNMoQParkListDetailsFromAPI(intent.getStringExtra("NID"));
             else
                 getNMoQParkListDetailsFromDataBase(intent.getStringExtra("NID"));
+        } else if (comingFrom.equals(getString(R.string.side_menu_dining_text))) {
+            if (util.isNetworkAvailable(DetailsActivity.this))
+                getDiningDetailsFromAPI(id, language);
+            else
+                getDiningDetailsFromDatabase(id, language);
         }
     }
+
+    public void getDiningDetailsFromAPI(String id, int language) {
+        progressBar.setVisibility(View.VISIBLE);
+        diningContent.setVisibility(View.INVISIBLE);
+        final String appLanguage;
+        if (language == 1) {
+            appLanguage = LocaleManager.LANGUAGE_ENGLISH;
+        } else {
+            appLanguage = LocaleManager.LANGUAGE_ARABIC;
+        }
+
+        APIInterface apiService =
+                APIClient.getClient().create(APIInterface.class);
+        Call<ArrayList<DiningDetailModel>> call = apiService.getDiningDetails(appLanguage, id);
+        call.enqueue(new Callback<ArrayList<DiningDetailModel>>() {
+            @Override
+            public void onResponse(Call<ArrayList<DiningDetailModel>> call, Response<ArrayList<DiningDetailModel>> response) {
+                if (response.isSuccessful()) {
+                    if (response.body() != null && response.body().size() > 0) {
+                        diningContent.setVisibility(View.VISIBLE);
+                        diningDetailModels = response.body();
+                        removeDiningDetailsHtmlTags(diningDetailModels);
+                        for (int i = 0; i < diningDetailModels.get(0).getImages().size(); i++) {
+                            imageList.add(i, diningDetailModels.get(0).getImages().get(i));
+                        }
+                        if (imageList.size() > 0) {
+                            zoomView.setOnClickListener(view -> showCarouselView());
+                            showIndicator(language);
+                        }
+                        loadData(diningDetailModels.get(0).getDescription(),
+                                diningDetailModels.get(0).getOpeningTime(),
+                                diningDetailModels.get(0).getClosingTime(),
+                                diningDetailModels.get(0).getLocation(),
+                                diningDetailModels.get(0).getLatitude(),
+                                diningDetailModels.get(0).getLongitude());
+                        new DiningRowCount(DetailsActivity.this, appLanguage).execute();
+
+                    } else {
+                        diningContent.setVisibility(View.INVISIBLE);
+                        noResultFoundTxt.setVisibility(View.VISIBLE);
+                    }
+                } else {
+                    diningContent.setVisibility(View.INVISIBLE);
+                    retryLayout.setVisibility(View.VISIBLE);
+                }
+                progressBar.setVisibility(View.GONE);
+            }
+
+            @Override
+            public void onFailure(Call<ArrayList<DiningDetailModel>> call, Throwable t) {
+                diningContent.setVisibility(View.INVISIBLE);
+                retryLayout.setVisibility(View.VISIBLE);
+                progressBar.setVisibility(View.GONE);
+            }
+        });
+    }
+
+    public void removeDiningDetailsHtmlTags(ArrayList<DiningDetailModel> models) {
+        for (int i = 0; i < models.size(); i++) {
+            models.get(i).setDescription(new Util().html2string(models.get(i).getDescription()));
+        }
+    }
+
+    private void getDiningDetailsFromDatabase(String id, int appLanguage) {
+        if (appLanguage == 1) {
+            new RetrieveEnglishDiningData(DetailsActivity.this, appLanguage, id).execute();
+        } else {
+            new RetrieveArabicDiningData(DetailsActivity.this, appLanguage, id).execute();
+        }
+    }
+
+    public void loadData(String longDescription, String openingTime,
+                         String closingTime, String locationInfo, String latitudefromApi,
+                         String longitudefromApi) {
+        this.shortDescription.setText(longDescription);
+        latitude = latitudefromApi;
+        longitude = longitudefromApi;
+        if (openingTime != null) {
+            this.timingLayout.setVisibility(View.VISIBLE);
+            String time = getResources().getString(R.string.everyday_from) + " " +
+                    openingTime + " " + getResources().getString(R.string.to) + " " +
+                    closingTime;
+            this.timingDetails.setText(time);
+        }
+        if (locationInfo != null) {
+            this.locationLayout.setVisibility(View.VISIBLE);
+            this.locationDetails.setText(locationInfo);
+        }
+
+        if (latitude != null && !latitude.equals("") && latitude.contains("°")) {
+            latitude = convertDegreeToDecimalMeasure(latitude);
+            longitude = convertDegreeToDecimalMeasure(longitude);
+        }
+        if (latitude != null && !latitude.equals("")) {
+            gMap = gValue;
+            gMap.setMinZoomPreference(12);
+            LatLng ny = new LatLng(Double.valueOf(latitude), Double.valueOf(longitude));
+            UiSettings uiSettings = gMap.getUiSettings();
+            uiSettings.setMyLocationButtonEnabled(true);
+            MarkerOptions markerOptions = new MarkerOptions();
+            markerOptions.position(ny);
+            gMap.addMarker(markerOptions);
+            gMap.moveCamera(CameraUpdateFactory.newLatLng(ny));
+        }
+    }
+
+
+    public static class DiningRowCount extends AsyncTask<Void, Void, Integer> {
+
+        private WeakReference<DetailsActivity> activityReference;
+        String language;
+
+        DiningRowCount(DetailsActivity context, String apiLanguage) {
+            activityReference = new WeakReference<>(context);
+            language = apiLanguage;
+        }
+
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+        }
+
+        @Override
+        protected void onPostExecute(Integer integer) {
+            int diningTableRowCount = integer;
+            if (diningTableRowCount > 0) {
+                if (activityReference.get().diningDetailModels.size() > 0)
+                    //updateEnglishTable or add row to database
+                    new CheckDiningDBRowExist(activityReference.get(), language).execute();
+            } else {
+                activityReference.get().diningContent.setVisibility(View.INVISIBLE);
+                activityReference.get().retryLayout.setVisibility(View.VISIBLE);
+            }
+        }
+
+        @Override
+        protected Integer doInBackground(Void... voids) {
+            if (language.equals(LocaleManager.LANGUAGE_ENGLISH))
+                return activityReference.get().qmDatabase.getDiningTableDao().getNumberOfRowsEnglish();
+            else
+                return activityReference.get().qmDatabase.getDiningTableDao().getNumberOfRowsArabic();
+
+        }
+    }
+
+    public static class CheckDiningDBRowExist extends AsyncTask<Void, Void, Void> {
+        private WeakReference<DetailsActivity> activityReference;
+        private DiningTableEnglish diningTableEnglish;
+        private DiningTableArabic diningTableArabic;
+        String language;
+
+        CheckDiningDBRowExist(DetailsActivity context, String apiLanguage) {
+            activityReference = new WeakReference<>(context);
+            language = apiLanguage;
+        }
+
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+        }
+
+        @Override
+        protected void onPostExecute(Void aVoid) {
+            super.onPostExecute(aVoid);
+        }
+
+        @Override
+        protected Void doInBackground(Void... voids) {
+
+            if (activityReference.get().diningDetailModels.size() > 0) {
+                if (language.equals(LocaleManager.LANGUAGE_ENGLISH)) {
+                    for (int i = 0; i < activityReference.get().diningDetailModels.size(); i++) {
+                        int n = activityReference.get().qmDatabase.getDiningTableDao().checkEnglishIdExist(
+                                Integer.parseInt(activityReference.get().diningDetailModels.get(i).getId()));
+                        if (n > 0) {
+                            //updateEnglishTable same id
+                            new UpdateDiningTable(activityReference.get(), language, i).execute();
+
+                        }
+                    }
+                } else {
+                    for (int i = 0; i < activityReference.get().diningDetailModels.size(); i++) {
+                        int n = activityReference.get().qmDatabase.getDiningTableDao().checkArabicIdExist(
+                                Integer.parseInt(activityReference.get().diningDetailModels.get(i).getId()));
+                        if (n > 0) {
+                            //updateEnglishTable same id
+                            new UpdateDiningTable(activityReference.get(), language, i).execute();
+
+                        }
+                    }
+                }
+
+            }
+            return null;
+        }
+    }
+
+    public static class UpdateDiningTable extends AsyncTask<Void, Void, Void> {
+        private WeakReference<DetailsActivity> activityReference;
+        String language;
+        int position;
+
+        UpdateDiningTable(DetailsActivity context, String apiLanguage, int p) {
+            activityReference = new WeakReference<>(context);
+            language = apiLanguage;
+            position = p;
+        }
+
+        @Override
+        protected Void doInBackground(Void... voids) {
+            if (language.equals(LocaleManager.LANGUAGE_ENGLISH)) {
+                // updateEnglishTable table with english name
+                activityReference.get().qmDatabase.getDiningTableDao().updateDiningDetailsEnglish(
+                        activityReference.get().diningDetailModels.get(position).getName(),
+                        activityReference.get().diningDetailModels.get(position).getImage(),
+                        activityReference.get().diningDetailModels.get(position).getDescription(),
+                        activityReference.get().diningDetailModels.get(position).getOpeningTime(),
+                        activityReference.get().diningDetailModels.get(position).getClosingTime(),
+                        activityReference.get().diningDetailModels.get(position).getLatitude(),
+                        activityReference.get().diningDetailModels.get(position).getLongitude(),
+                        activityReference.get().diningDetailModels.get(position).getId(),
+                        activityReference.get().diningDetailModels.get(position).getSortId()
+                );
+
+            } else {
+                // updateArabicTable table with arabic name
+                activityReference.get().qmDatabase.getDiningTableDao().updateDiningDetailsArabic(
+                        activityReference.get().diningDetailModels.get(position).getName(),
+                        activityReference.get().diningDetailModels.get(position).getImage(),
+                        activityReference.get().diningDetailModels.get(position).getDescription(),
+                        activityReference.get().diningDetailModels.get(position).getOpeningTime(),
+                        activityReference.get().diningDetailModels.get(position).getClosingTime(),
+                        activityReference.get().diningDetailModels.get(position).getLatitude(),
+                        activityReference.get().diningDetailModels.get(position).getLongitude(),
+                        activityReference.get().diningDetailModels.get(position).getId(),
+                        activityReference.get().diningDetailModels.get(position).getSortId()
+                );
+            }
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(Void aVoid) {
+        }
+    }
+
+    public static class RetrieveEnglishDiningData extends AsyncTask<Void, Void, List<DiningTableEnglish>> {
+        private WeakReference<DetailsActivity> activityReference;
+        int language;
+        String diningId;
+
+        RetrieveEnglishDiningData(DetailsActivity context, int appLanguage, String diningId) {
+            activityReference = new WeakReference<>(context);
+            language = appLanguage;
+            this.diningId = diningId;
+        }
+
+        @Override
+        protected void onPreExecute() {
+        }
+
+        @Override
+        protected void onPostExecute(List<DiningTableEnglish> diningTableEnglishList) {
+            if (diningTableEnglishList.get(0).getDescription() != null) {
+                activityReference.get().loadData(diningTableEnglishList.get(0).getDescription(),
+                        diningTableEnglishList.get(0).getOpening_time(),
+                        diningTableEnglishList.get(0).getClosing_time(),
+                        diningTableEnglishList.get(0).getLocation(),
+                        diningTableEnglishList.get(0).getLatitude(),
+                        diningTableEnglishList.get(0).getLongitude());
+            } else {
+                activityReference.get().diningContent.setVisibility(View.INVISIBLE);
+                activityReference.get().retryLayout.setVisibility(View.VISIBLE);
+            }
+        }
+
+        @Override
+        protected List<DiningTableEnglish> doInBackground(Void... voids) {
+            return activityReference.get().qmDatabase.getDiningTableDao().getDiningDetailsEnglish(Integer.parseInt(diningId));
+        }
+    }
+
+    public static class RetrieveArabicDiningData extends AsyncTask<Void, Void, List<DiningTableArabic>> {
+        private WeakReference<DetailsActivity> activityReference;
+        int language;
+        String diningId;
+
+        RetrieveArabicDiningData(DetailsActivity context, int appLanguage, String diningId) {
+            activityReference = new WeakReference<>(context);
+            language = appLanguage;
+            this.diningId = diningId;
+        }
+
+        @Override
+        protected void onPreExecute() {
+            activityReference.get().progressBar.setVisibility(View.VISIBLE);
+        }
+
+        @Override
+        protected void onPostExecute(List<DiningTableArabic> diningTableArabicList) {
+            if (diningTableArabicList.get(0).getDescription() != null) {
+                activityReference.get().loadData(diningTableArabicList.get(0).getDescription(),
+                        diningTableArabicList.get(0).getOpening_time(),
+                        diningTableArabicList.get(0).getClosing_time(),
+                        diningTableArabicList.get(0).getLocation(),
+                        diningTableArabicList.get(0).getLatitude(),
+                        diningTableArabicList.get(0).getLongitude());
+            } else {
+                activityReference.get().diningContent.setVisibility(View.INVISIBLE);
+                activityReference.get().retryLayout.setVisibility(View.VISIBLE);
+            }
+        }
+
+        @Override
+        protected List<DiningTableArabic> doInBackground(Void... voids) {
+            return activityReference.get().qmDatabase.getDiningTableDao().getDiningDetailsArabic(Integer.parseInt(diningId));
+        }
+    }
+
 
     private void getNMoQParkListDetailsFromAPI(String nid) {
         commonContentLayout.setVisibility(View.INVISIBLE);
@@ -1297,7 +1637,6 @@ public class DetailsActivity extends AppCompatActivity implements IPullZoom, OnM
         }
 
     }
-
 
     public static class RetrieveRegistrationDetails extends AsyncTask<Void, Void, List<UserRegistrationDetailsTable>> {
         private WeakReference<DetailsActivity> activityReference;
@@ -1809,7 +2148,7 @@ public class DetailsActivity extends AppCompatActivity implements IPullZoom, OnM
 
                         registerButton.setBackground(getResources().getDrawable(R.drawable.round_corner_red));
                         registerButton.setText(R.string.not_interested);
-                        showCalendarDialog(mainTitle, description, eventDate);
+                        showAddToCalendarDialog(mainTitle, description, eventDate);
                         new InsertRegisteredEventToDataBase(DetailsActivity.this,
                                 userRegistrationDetailsTable).execute();
                     }
@@ -1827,7 +2166,7 @@ public class DetailsActivity extends AppCompatActivity implements IPullZoom, OnM
 
     }
 
-    protected void showCalendarDialog(final String title, final String details, String eventDate) {
+    protected void showAddToCalendarDialog(final String title, final String details, String eventDate) {
         dialog = new Dialog(this, R.style.DialogNoAnimation);
         dialog.setCancelable(true);
         dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
@@ -1880,66 +2219,13 @@ public class DetailsActivity extends AppCompatActivity implements IPullZoom, OnM
                         MY_PERMISSIONS_REQUEST_CALENDAR);
 
             } else {
-                insertEventToCalendar();
+                util.insertEventToCalendar(this, contentValues);
             }
         } else
-            insertEventToCalendar();
+            util.insertEventToCalendar(this, contentValues);
 
     }
 
-    public void insertEventToCalendar() {
-        try {
-            contentValues.put(CalendarContract.Events.CALENDAR_ID, getCalendarId(this));
-            @SuppressLint("MissingPermission")
-            Uri uri = contentResolver.insert(CalendarContract.Events.CONTENT_URI, contentValues);
-            Toast.makeText(this, R.string.event_added, Toast.LENGTH_SHORT).show();
-        } catch (Exception ex) {
-            Log.e("Add_event", "Error in adding event on calendar : " + ex.getMessage());
-        }
-    }
-
-    @SuppressLint("MissingPermission")
-    private int getCalendarId(Context context) {
-
-        Cursor cursor = null;
-        ContentResolver contentResolver = context.getContentResolver();
-        Uri calendars = CalendarContract.Calendars.CONTENT_URI;
-
-        String[] EVENT_PROJECTION = new String[]{
-                CalendarContract.Calendars._ID,                           // 0
-                CalendarContract.Calendars.ACCOUNT_NAME,                  // 1
-                CalendarContract.Calendars.CALENDAR_DISPLAY_NAME,         // 2
-                CalendarContract.Calendars.OWNER_ACCOUNT,                 // 3
-                CalendarContract.Calendars.IS_PRIMARY                     // 4
-        };
-
-        int PROJECTION_ID_INDEX = 0;
-        int PROJECTION_ACCOUNT_NAME_INDEX = 1;
-        int PROJECTION_DISPLAY_NAME_INDEX = 2;
-        int PROJECTION_OWNER_ACCOUNT_INDEX = 3;
-        int PROJECTION_VISIBLE = 4;
-
-        cursor = contentResolver.query(calendars, EVENT_PROJECTION, null, null, null);
-
-        if (cursor.moveToFirst()) {
-            String calName;
-            long calId = 0;
-            String visible;
-
-            do {
-                calName = cursor.getString(PROJECTION_DISPLAY_NAME_INDEX);
-                calId = cursor.getLong(PROJECTION_ID_INDEX);
-                visible = cursor.getString(PROJECTION_VISIBLE);
-                if (visible.equals("1")) {
-                    return (int) calId;
-                }
-                Log.e("Calendar Id : ", "" + calId + " : " + calName + " : " + visible);
-            } while (cursor.moveToNext());
-
-            return (int) calId;
-        }
-        return 1;
-    }
 
     @Override
     public void onRequestPermissionsResult(int requestCode,
@@ -1949,52 +2235,19 @@ public class DetailsActivity extends AppCompatActivity implements IPullZoom, OnM
                 // If request is cancelled, the result arrays are empty.
                 if (grantResults.length > 0
                         && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                    insertEventToCalendar();
+                    util.insertEventToCalendar(this, contentValues);
                 } else {
                     boolean showRationale = false;
                     if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.M) {
                         showRationale = shouldShowRequestPermissionRationale(permissions[0]);
                     }
                     if (!showRationale) {
-                        showNavigationDialog(getString(R.string.permission_required), getString(R.string.runtime_permission));
+                        util.showNavigationDialog(this,
+                                getString(R.string.permission_required), getString(R.string.runtime_permission));
                     }
                 }
             }
         }
-    }
-
-    protected void showNavigationDialog(String title, final String details) {
-
-        dialog = new Dialog(this, R.style.DialogNoAnimation);
-        dialog.setCancelable(true);
-        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
-
-        layoutInflater = (LayoutInflater) getSystemService(LAYOUT_INFLATER_SERVICE);
-        View view = layoutInflater.inflate(R.layout.common_popup, null);
-
-        dialog.setContentView(view);
-        closeBtn = view.findViewById(R.id.close_dialog);
-        dialogActionButton = view.findViewById(R.id.doneBtn);
-        TextView dialogTitle = view.findViewById(R.id.dialog_tittle);
-        dialogContent = view.findViewById(R.id.dialog_content);
-        dialogTitle.setText(title);
-        dialogActionButton.setText(getResources().getString(R.string.open_settings));
-        dialogContent.setText(details);
-
-        dialogActionButton.setOnClickListener(view1 -> {
-            navigateToSettings();
-            dialog.dismiss();
-
-        });
-        closeBtn.setOnClickListener(view12 -> dialog.dismiss());
-        dialog.show();
-    }
-
-    public void navigateToSettings() {
-        Intent intent = new Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS);
-        Uri uri = Uri.fromParts("package", getPackageName(), null);
-        intent.setData(uri);
-        startActivityForResult(intent, REQUEST_PERMISSION_SETTING);
     }
 
     @Override
@@ -2003,7 +2256,8 @@ public class DetailsActivity extends AppCompatActivity implements IPullZoom, OnM
         if (ContextCompat.checkSelfPermission(this,
                 Manifest.permission.WRITE_CALENDAR)
                 == PackageManager.PERMISSION_GRANTED) {
-            insertEventToCalendar();
+            util.insertEventToCalendar(this, contentValues);
+
         }
     }
 
@@ -2083,8 +2337,8 @@ public class DetailsActivity extends AppCompatActivity implements IPullZoom, OnM
                         commonContentLayout.setVisibility(View.VISIBLE);
                         heritageOrExhibitionDetailModel = response.body();
                         removeHtmlTags(heritageOrExhibitionDetailModel);
-                        for (int i = 0; i < heritageOrExhibitionDetailModel.get(0).getImage().size(); i++) {
-                            imageList.add(i, heritageOrExhibitionDetailModel.get(0).getImage().get(i));
+                        for (int i = 0; i < heritageOrExhibitionDetailModel.get(0).getImages().size(); i++) {
+                            imageList.add(i, heritageOrExhibitionDetailModel.get(0).getImages().get(i));
                         }
                         if (imageList.size() > 0) {
                             zoomView.setOnClickListener(view -> showCarouselView());
@@ -2192,7 +2446,6 @@ public class DetailsActivity extends AppCompatActivity implements IPullZoom, OnM
             models.get(i).setDescription(util.html2string(models.get(i).getDescription()));
         }
     }
-
 
     public void removeHtmlTagsPublicArts(ArrayList<PublicArtModel> models) {
         for (int i = 0; i < models.size(); i++) {
@@ -2337,11 +2590,12 @@ public class DetailsActivity extends AppCompatActivity implements IPullZoom, OnM
                 activityReference.get().qmDatabase.getExhibitionTableDao().updateExhibitionDetailEnglish(
                         activityReference.get().heritageOrExhibitionDetailModel.get(position).getStartDate(),
                         activityReference.get().heritageOrExhibitionDetailModel.get(position).getEndDate(),
-                        converters.fromArrayList(activityReference.get().heritageOrExhibitionDetailModel.get(position).getImage()),
+                        activityReference.get().heritageOrExhibitionDetailModel.get(position).getImage(),
                         activityReference.get().heritageOrExhibitionDetailModel.get(position).getLongDescription(),
                         activityReference.get().heritageOrExhibitionDetailModel.get(position).getShortDescription(),
                         activityReference.get().heritageOrExhibitionDetailModel.get(position).getLatitude(),
                         activityReference.get().heritageOrExhibitionDetailModel.get(position).getLongitude(),
+                        converters.fromArrayList(activityReference.get().heritageOrExhibitionDetailModel.get(position).getImages()),
                         activityReference.get().heritageOrExhibitionDetailModel.get(position).getId()
                 );
 
@@ -2351,11 +2605,12 @@ public class DetailsActivity extends AppCompatActivity implements IPullZoom, OnM
                 activityReference.get().qmDatabase.getExhibitionTableDao().updateExhibitionDetailArabic(
                         activityReference.get().heritageOrExhibitionDetailModel.get(position).getStartDate(),
                         activityReference.get().heritageOrExhibitionDetailModel.get(position).getEndDate(),
-                        converters.fromArrayList(activityReference.get().heritageOrExhibitionDetailModel.get(position).getImage()),
+                        activityReference.get().heritageOrExhibitionDetailModel.get(position).getImage(),
                         activityReference.get().heritageOrExhibitionDetailModel.get(position).getLongDescription(),
                         activityReference.get().heritageOrExhibitionDetailModel.get(position).getShortDescription(),
                         activityReference.get().heritageOrExhibitionDetailModel.get(position).getLatitude(),
                         activityReference.get().heritageOrExhibitionDetailModel.get(position).getLongitude(),
+                        converters.fromArrayList(activityReference.get().heritageOrExhibitionDetailModel.get(position).getImages()),
                         activityReference.get().heritageOrExhibitionDetailModel.get(position).getId()
                 );
             }
@@ -2383,6 +2638,7 @@ public class DetailsActivity extends AppCompatActivity implements IPullZoom, OnM
         @Override
         protected void onPostExecute(List<ExhibitionListTableEnglish> exhibitionListTableEnglish) {
             if (exhibitionListTableEnglish.size() > 0) {
+                activityReference.get().commonContentLayout.setVisibility(View.VISIBLE);
                 Convertor convertor = new Convertor();
                 if (exhibitionListTableEnglish.get(0).getExhibition_latest_image().contains("[")) {
                     ArrayList<String> list = convertor.fromString(exhibitionListTableEnglish.get(0).getExhibition_latest_image());
@@ -2440,6 +2696,7 @@ public class DetailsActivity extends AppCompatActivity implements IPullZoom, OnM
         @Override
         protected void onPostExecute(List<ExhibitionListTableArabic> exhibitionListTableArabics) {
             if (exhibitionListTableArabics.size() > 0) {
+                activityReference.get().commonContentLayout.setVisibility(View.VISIBLE);
                 Convertor convertor = new Convertor();
                 if (exhibitionListTableArabics.get(0).getExhibition_latest_image().contains("[")) {
                     ArrayList<String> list = convertor.fromString(exhibitionListTableArabics.get(0).getExhibition_latest_image());
@@ -2590,9 +2847,10 @@ public class DetailsActivity extends AppCompatActivity implements IPullZoom, OnM
                 // updateEnglishTable table with english name
                 activityReference.get().qmDatabase.getHeritageListTableDao().updateHeritageDetailEnglish(
                         activityReference.get().latitude, activityReference.get().longitude,
-                        activityReference.get().heritageOrExhibitionDetailModel.get(position).getLongDescription()
-                        , activityReference.get().heritageOrExhibitionDetailModel.get(position).getShortDescription(),
-                        convertor.fromArrayList(activityReference.get().heritageOrExhibitionDetailModel.get(position).getImage()),
+                        activityReference.get().heritageOrExhibitionDetailModel.get(position).getLongDescription(),
+                        activityReference.get().heritageOrExhibitionDetailModel.get(position).getShortDescription(),
+                        activityReference.get().heritageOrExhibitionDetailModel.get(position).getImage(),
+                        convertor.fromArrayList(activityReference.get().heritageOrExhibitionDetailModel.get(position).getImages()),
                         activityReference.get().heritageOrExhibitionDetailModel.get(position).getId()
                 );
 
@@ -2600,9 +2858,10 @@ public class DetailsActivity extends AppCompatActivity implements IPullZoom, OnM
                 // updateArabicTable table with arabic name
                 activityReference.get().qmDatabase.getHeritageListTableDao().updateHeritageDetailArabic(
                         activityReference.get().latitude, activityReference.get().longitude,
-                        activityReference.get().heritageOrExhibitionDetailModel.get(position).getLongDescription()
-                        , activityReference.get().heritageOrExhibitionDetailModel.get(position).getShortDescription(),
-                        convertor.fromArrayList(activityReference.get().heritageOrExhibitionDetailModel.get(position).getImage()),
+                        activityReference.get().heritageOrExhibitionDetailModel.get(position).getLongDescription(),
+                        activityReference.get().heritageOrExhibitionDetailModel.get(position).getShortDescription(),
+                        activityReference.get().heritageOrExhibitionDetailModel.get(position).getImage(),
+                        convertor.fromArrayList(activityReference.get().heritageOrExhibitionDetailModel.get(position).getImages()),
                         activityReference.get().heritageOrExhibitionDetailModel.get(position).getId()
                 );
             }
@@ -2630,9 +2889,11 @@ public class DetailsActivity extends AppCompatActivity implements IPullZoom, OnM
         @Override
         protected void onPostExecute(List<HeritageListTableEnglish> heritageListTableEnglish) {
             if (heritageListTableEnglish.size() > 0) {
+                activityReference.get().commonContentLayout.setVisibility(View.VISIBLE);
                 Convertor convertor = new Convertor();
-                if (heritageListTableEnglish.get(0).getHeritage_image().contains("[")) {
-                    ArrayList<String> list = convertor.fromString(heritageListTableEnglish.get(0).getHeritage_image());
+                if (heritageListTableEnglish.get(0).getHeritage_images() != null &&
+                        heritageListTableEnglish.get(0).getHeritage_images().contains("[")) {
+                    ArrayList<String> list = convertor.fromString(heritageListTableEnglish.get(0).getHeritage_images());
                     for (int i = 0; i < list.size(); i++) {
                         activityReference.get().imageList.add(i, list.get(i));
                     }
@@ -2685,8 +2946,9 @@ public class DetailsActivity extends AppCompatActivity implements IPullZoom, OnM
 
             if (heritageListTableArabic.size() > 0) {
                 Convertor convertor = new Convertor();
-                if (heritageListTableArabic.get(0).getHeritage_image().contains("[")) {
-                    ArrayList<String> list = convertor.fromString(heritageListTableArabic.get(0).getHeritage_image());
+                if (heritageListTableArabic.get(0).getHeritage_images() != null &&
+                        heritageListTableArabic.get(0).getHeritage_images().contains("[")) {
+                    ArrayList<String> list = convertor.fromString(heritageListTableArabic.get(0).getHeritage_images());
                     for (int i = 0; i < list.size(); i++) {
                         activityReference.get().imageList.add(i, list.get(i));
                     }
@@ -2894,8 +3156,8 @@ public class DetailsActivity extends AppCompatActivity implements IPullZoom, OnM
                 activityReference.get().qmDatabase.getPublicArtsTableDao().updatePublicArtsDetailEnglish(
                         activityReference.get().publicArtModel.get(position).getName(),
                         activityReference.get().latitude, activityReference.get().longitude,
-                        activityReference.get().publicArtModel.get(position).getShortDescription()
-                        , activityReference.get().publicArtModel.get(position).getLongDescription(),
+                        activityReference.get().publicArtModel.get(position).getShortDescription(),
+                        activityReference.get().publicArtModel.get(position).getLongDescription(),
                         converters.fromArrayList(activityReference.get().publicArtModel.get(position).getImage()),
                         activityReference.get().publicArtModel.get(position).getId()
                 );
@@ -2936,8 +3198,9 @@ public class DetailsActivity extends AppCompatActivity implements IPullZoom, OnM
         protected void onPostExecute(List<PublicArtsTableEnglish> publicArtsTableEnglish) {
             if (publicArtsTableEnglish.size() > 0) {
                 Convertor converters = new Convertor();
-                if (publicArtsTableEnglish.get(0).getPublic_arts_image().contains("[")) {
-                    ArrayList<String> list = converters.fromString(publicArtsTableEnglish.get(0).getPublic_arts_image());
+                if (publicArtsTableEnglish.get(0).getPublic_arts_images() != null &&
+                        publicArtsTableEnglish.get(0).getPublic_arts_images().contains("[")) {
+                    ArrayList<String> list = converters.fromString(publicArtsTableEnglish.get(0).getPublic_arts_images());
                     for (int l = 0; l < list.size(); l++) {
                         activityReference.get().imageList.add(l, list.get(l));
                     }
@@ -2993,8 +3256,9 @@ public class DetailsActivity extends AppCompatActivity implements IPullZoom, OnM
         protected void onPostExecute(List<PublicArtsTableArabic> publicArtsTableArabic) {
             if (publicArtsTableArabic.size() > 0) {
                 Convertor converters = new Convertor();
-                if (publicArtsTableArabic.get(0).getPublic_arts_image().contains("[")) {
-                    ArrayList<String> list = converters.fromString(publicArtsTableArabic.get(0).getPublic_arts_image());
+                if (publicArtsTableArabic.get(0).getPublic_arts_images() != null &&
+                        publicArtsTableArabic.get(0).getPublic_arts_images().contains("[")) {
+                    ArrayList<String> list = converters.fromString(publicArtsTableArabic.get(0).getPublic_arts_images());
                     for (int l = 0; l < list.size(); l++) {
                         activityReference.get().imageList.add(l, list.get(l));
                     }
