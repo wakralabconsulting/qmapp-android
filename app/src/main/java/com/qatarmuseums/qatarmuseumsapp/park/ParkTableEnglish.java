@@ -7,14 +7,16 @@ import android.support.annotation.NonNull;
 
 @Entity(tableName = "parktableEnglish")
 public class ParkTableEnglish {
+    @NonNull
+    @PrimaryKey(autoGenerate = true)
+    private long itemId;
     @ColumnInfo()
     private String mainTitle;
     @ColumnInfo()
     private String shortDescription;
     @ColumnInfo()
     private String image;
-    @NonNull
-    @PrimaryKey(autoGenerate = false)
+    @ColumnInfo()
     private long sortId;
     @ColumnInfo()
     private String latitude;
@@ -93,6 +95,15 @@ public class ParkTableEnglish {
         this.timingInfo = timingInfo;
     }
 
+    @NonNull
+    public long getItemId() {
+        return itemId;
+    }
+
+    public void setItemId(@NonNull long itemId) {
+        this.itemId = itemId;
+    }
+
     @Override
     public boolean equals(Object obj) {
         if (this == obj) return true;
@@ -111,10 +122,10 @@ public class ParkTableEnglish {
                 "mainTitle=" + mainTitle +
                 ", shortDescription='" + shortDescription + '\'' +
                 ", image='" + image + '\'' +
-                ",sortId='"+sortId+'\''+
-                ",latitude='"+latitude+'\''+
-                ",longitude='"+longitude+'\''+
-                ",timingInfo='"+timingInfo+'\''+
+                ",sortId='" + sortId + '\'' +
+                ",latitude='" + latitude + '\'' +
+                ",longitude='" + longitude + '\'' +
+                ",timingInfo='" + timingInfo + '\'' +
                 '}';
     }
 }

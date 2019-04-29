@@ -17,6 +17,8 @@ import com.qatarmuseums.qatarmuseumsapp.LocaleManager;
 import com.qatarmuseums.qatarmuseumsapp.R;
 import com.qatarmuseums.qatarmuseumsapp.floormap.FloorMapActivity;
 
+import timber.log.Timber;
+
 public class TourGuideStartPageActivity extends AppCompatActivity {
     FrameLayout mainLayout;
     ImageView playButton;
@@ -64,6 +66,7 @@ public class TourGuideStartPageActivity extends AppCompatActivity {
         museumDesc.setText(getString(R.string.tourguide_title_desc));
 
         startBtn.setOnTouchListener((v, event) -> {
+            Timber.i("Start button clicked");
             switch (event.getAction()) {
                 case MotionEvent.ACTION_DOWN:
                     startBtn.startAnimation(zoomOutAnimation);

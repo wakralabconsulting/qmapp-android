@@ -217,3 +217,8 @@
 -dontwarn org.slf4j.**
 
 -keep class com.qatarmuseums.qatarmuseumsapp.culturepass.** { *; }
+
+##---------------Begin: proguard configuration related to Logs ----------
+-dontwarn javax.mail.**, javax.naming.Context, javax.naming.InitialContext
+##---------------end: proguard configuration related to Logs ----------
+-dontwarn com.google.api.**

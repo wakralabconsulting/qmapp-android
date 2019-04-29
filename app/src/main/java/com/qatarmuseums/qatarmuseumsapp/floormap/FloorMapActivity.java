@@ -71,6 +71,7 @@ import io.fabric.sdk.android.services.concurrency.AsyncTask;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
+import timber.log.Timber;
 
 public class FloorMapActivity extends AppCompatActivity implements OnMapReadyCallback,
         GoogleMap.OnGroundOverlayClickListener, MediaPlayer.OnBufferingUpdateListener, MediaPlayer.OnCompletionListener, SeekBar.OnSeekBarChangeListener {
@@ -280,10 +281,14 @@ public class FloorMapActivity extends AppCompatActivity implements OnMapReadyCal
                 fetchArtifactsFromDB();
         }
         numberPad.setOnClickListener(view -> {
+            Timber.i("Number pad clicked");
             Intent numberPadIntent = new Intent(FloorMapActivity.this, ObjectSearchActivity.class);
             startActivity(numberPadIntent);
         });
-        imageToZoom.setOnClickListener(view -> openDialogForZoomingImage());
+        imageToZoom.setOnClickListener(view -> {
+            Timber.i("Image clicked");
+            openDialogForZoomingImage();
+        });
 
         mBottomSheetBehavior = BottomSheetBehavior.from(bottomSheet);
         mBottomSheetBehavior.setPeekHeight(dpToPx(160));
@@ -293,6 +298,7 @@ public class FloorMapActivity extends AppCompatActivity implements OnMapReadyCal
                 int n = newState;
                 switch (newState) {
                     case BottomSheetBehavior.STATE_COLLAPSED:
+                        Timber.i("BottomSheet STATE_COLLAPSED");
                         disableLevelPicker();
                         popupShortLayout.setVisibility(View.VISIBLE);
                         break;
@@ -300,10 +306,12 @@ public class FloorMapActivity extends AppCompatActivity implements OnMapReadyCal
                         disableLevelPicker();
                         break;
                     case BottomSheetBehavior.STATE_EXPANDED:
+                        Timber.i("BottomSheet STATE_EXPANDED");
                         popupShortLayout.setVisibility(View.GONE);
                         disableLevelPicker();
                         break;
                     case BottomSheetBehavior.STATE_HIDDEN:
+                        Timber.i("BottomSheet STATE_HIDDEN");
                         checkMarkerStatus();
                         markerTitle = "";
                         enableLevelPicker();
@@ -329,6 +337,7 @@ public class FloorMapActivity extends AppCompatActivity implements OnMapReadyCal
 
 
         level2.setOnClickListener(v -> {
+            Timber.i("Floor Level 3 Clicked");
             stopAudio();
             audioURL = secondFloorAudioURL;
             selectedLevel = 2;
@@ -341,6 +350,7 @@ public class FloorMapActivity extends AppCompatActivity implements OnMapReadyCal
             mGroundOverlay.setImage(BitmapDescriptorFactory.fromResource(R.drawable.qm_level_3));
         });
         level1.setOnClickListener(v -> {
+            Timber.i("Floor Level 2 Clicked");
             stopAudio();
             audioURL = firstFloorAudioURL;
             selectedLevel = 1;
@@ -353,6 +363,7 @@ public class FloorMapActivity extends AppCompatActivity implements OnMapReadyCal
             mGroundOverlay.setImage(BitmapDescriptorFactory.fromResource(R.drawable.qm_level_2));
         });
         levelG.setOnClickListener(v -> {
+            Timber.i("Floor Level 1 Clicked");
             selectedLevel = 0;
             stopAudio();
             hideLevel2();
@@ -364,6 +375,7 @@ public class FloorMapActivity extends AppCompatActivity implements OnMapReadyCal
             mGroundOverlay.setImage(BitmapDescriptorFactory.fromResource(R.drawable.qm_level_1));
         });
         retryButton.setOnClickListener(v -> {
+            Timber.i("Retry button clicked");
             if (getIntent().getParcelableArrayListExtra("RESPONSE") != null) {
                 if (utils.isNetworkAvailable(FloorMapActivity.this)) {
                     fetchComingData();
@@ -403,6 +415,7 @@ public class FloorMapActivity extends AppCompatActivity implements OnMapReadyCal
     }
 
     public void fetchComingData() {
+        Timber.i("fetchComingData()");
         artifactList.clear();
         artifactList = getIntent().getParcelableArrayListExtra("RESPONSE");
         addDataToHashMap();
@@ -431,6 +444,7 @@ public class FloorMapActivity extends AppCompatActivity implements OnMapReadyCal
         btn_play.setOnClickListener(v -> {
             if (utils.isNetworkAvailable(getApplicationContext())) {
                 if (!playPause) {
+                    Timber.i("Play button clicked");
                     btn_play.setImageDrawable(getDrawable(R.drawable.pause_black));
                     if (initialStage) {
                         new Player().execute(audioURL);
@@ -442,6 +456,7 @@ public class FloorMapActivity extends AppCompatActivity implements OnMapReadyCal
                     }
                     playPause = true;
                 } else {
+                    Timber.i("Pause button clicked");
                     btn_play.setImageDrawable(getDrawable(R.drawable.play_black));
                     if (mediaPlayer.isPlaying()) {
                         pauseAudio();
@@ -464,6 +479,7 @@ public class FloorMapActivity extends AppCompatActivity implements OnMapReadyCal
         protected Boolean doInBackground(String... strings) {
             Boolean prepared = false;
             try {
+                Timber.i("Preparing audio");
                 mediaPlayer.setDataSource(strings[0]);
                 mediaPlayer.prepare();
                 lengthOfAudio = mediaPlayer.getDuration();
@@ -502,6 +518,7 @@ public class FloorMapActivity extends AppCompatActivity implements OnMapReadyCal
 
     @Override
     public void onCompletion(MediaPlayer mp) {
+        Timber.i("Audio completed");
         initialStage = true;
         playPause = false;
         mediaPlayer.stop();
@@ -534,6 +551,7 @@ public class FloorMapActivity extends AppCompatActivity implements OnMapReadyCal
     }
 
     private void stopAudio() {
+        Timber.i("stopAudio()");
         if (mediaPlayer != null) {
             initialStage = true;
             playPause = false;
@@ -545,6 +563,7 @@ public class FloorMapActivity extends AppCompatActivity implements OnMapReadyCal
     }
 
     private void pauseAudio() {
+        Timber.i("pauseAudio()");
         if (mediaPlayer != null) {
             mediaPlayer.pause();
         }
@@ -552,6 +571,7 @@ public class FloorMapActivity extends AppCompatActivity implements OnMapReadyCal
     }
 
     private void playAudio() {
+        Timber.i("playAudio()");
         if (mediaPlayer != null) {
             mediaPlayer.start();
         }
@@ -564,6 +584,7 @@ public class FloorMapActivity extends AppCompatActivity implements OnMapReadyCal
     }
 
     public void fetchArtifactsFromAPI() {
+        Timber.i("fetchArtifactsFromAPI()");
         progressBar.setVisibility(View.VISIBLE);
         APIInterface apiService = APIClient.getClient().create(APIInterface.class);
 
@@ -580,6 +601,8 @@ public class FloorMapActivity extends AppCompatActivity implements OnMapReadyCal
             public void onResponse(Call<ArrayList<ArtifactDetails>> call, Response<ArrayList<ArtifactDetails>> response) {
                 if (response.isSuccessful()) {
                     if (response.body().size() > 0) {
+                        Timber.i("fetchArtifactsFromAPI() - isSuccessful with artifact count: %s",
+                                response.body().size());
                         artifactList.addAll(response.body());
                         addDataToHashMap();
                         new RowCount(FloorMapActivity.this, language, artifactList).execute();
@@ -587,6 +610,7 @@ public class FloorMapActivity extends AppCompatActivity implements OnMapReadyCal
                     floorMapRootLayout.setVisibility(View.VISIBLE);
                     retryLayout.setVisibility(View.GONE);
                 } else {
+                    Timber.w("fetchArtifactsFromAPI() - response not successful");
                     floorMapRootLayout.setVisibility(View.GONE);
                     retryLayout.setVisibility(View.VISIBLE);
                 }
@@ -595,6 +619,7 @@ public class FloorMapActivity extends AppCompatActivity implements OnMapReadyCal
 
             @Override
             public void onFailure(Call<ArrayList<ArtifactDetails>> call, Throwable t) {
+                Timber.e("fetchArtifactsFromAPI() - onFailure: %s", t.getMessage());
                 progressBar.setVisibility(View.GONE);
                 floorMapRootLayout.setVisibility(View.GONE);
                 retryLayout.setVisibility(View.VISIBLE);
@@ -625,10 +650,12 @@ public class FloorMapActivity extends AppCompatActivity implements OnMapReadyCal
     }
 
     public void showLevel2() {
+        Timber.i("showLevel2()");
         showCorrespondingMarkers("l2");
     }
 
     public void hideLevel2() {
+        Timber.i("hideLevel2()");
         if (tourId != null && (tourId.equals("12216") || tourId.equals("12226"))) {
             l2_g1_sc3.setVisible(false);
             l2_g3_sc13.setVisible(false);
@@ -669,10 +696,12 @@ public class FloorMapActivity extends AppCompatActivity implements OnMapReadyCal
     }
 
     public void showLevel3() {
+        Timber.i("showLevel3()");
         showCorrespondingMarkers("l3");
     }
 
     public void hideLevel3() {
+        Timber.i("hideLevel3()");
         if (tourId != null && (tourId.equals("12216") || tourId.equals("12226"))) {
             l3_g10_sc1_1.setVisible(false);
             l3_g10_sc1_2.setVisible(false);
@@ -706,6 +735,7 @@ public class FloorMapActivity extends AppCompatActivity implements OnMapReadyCal
 
     @Override
     public void onMapReady(GoogleMap map) {
+        Timber.i("onMapReady()");
         // Register a listener to respond to clicks on GroundOverlays.
         googleMap = map;
         googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(QM_CENTER, 18));
@@ -740,7 +770,7 @@ public class FloorMapActivity extends AppCompatActivity implements OnMapReadyCal
 
         googleMap.setContentDescription("Google Map with ground overlay.");
         googleMap.setOnMarkerClickListener(marker -> {
-
+            Timber.i("Marker clicked: %s", marker.getTitle());
             if (!markerTitle.equals(marker.getTitle())) {
                 markerTitle = marker.getTitle();
                 if (selectedMarker != null) {
@@ -770,6 +800,7 @@ public class FloorMapActivity extends AppCompatActivity implements OnMapReadyCal
     }
 
     public void addScienceTourMarkers() {
+        Timber.i("adding ScienceTour Markers");
         l2_g1_sc3 = googleMap.addMarker(new MarkerOptions()
                 .position(L2_G1_SC3)
                 .title("SI.5")
@@ -911,6 +942,7 @@ public class FloorMapActivity extends AppCompatActivity implements OnMapReadyCal
     }
 
     public void addHighlightMarkers() {
+        Timber.i("adding HighlightTour Markers()");
         l2_g1_sc2 = googleMap.addMarker(new MarkerOptions()
                 .position(L2_G1_SC2)
                 .title("GL.378")
@@ -1360,6 +1392,7 @@ public class FloorMapActivity extends AppCompatActivity implements OnMapReadyCal
 
     @Override
     public void onBackPressed() {
+        Timber.i("onBackPressed()");
         stopAudio();
         if (mBottomSheetBehavior.getState() != BottomSheetBehavior.STATE_HIDDEN) {
             if (selectedLevel == 0)
@@ -1472,6 +1505,7 @@ public class FloorMapActivity extends AppCompatActivity implements OnMapReadyCal
 
 
     public void openDialogForZoomingImage() {
+        Timber.i("openDialogForZoomingImage()");
         AlertDialog.Builder mBuilder = new AlertDialog.Builder(FloorMapActivity.this/*,android.R.style.Theme_DeviceDefault_Light_NoActionBar_Fullscreen*/);
         View mView = getLayoutInflater().inflate(R.layout.zooming_layout, null);
         PhotoView photoView = mView.findViewById(R.id.imageView);
@@ -1513,11 +1547,11 @@ public class FloorMapActivity extends AppCompatActivity implements OnMapReadyCal
             int artifactTableRowCount;
             artifactTableRowCount = integer;
             if (artifactTableRowCount > 0) {
-
-                //updateEnglishTable or add row to database
+                Timber.i("Count: %d", integer);
                 new CheckDBRowExist(activityReference.get(), language, artifactList.get()).execute();
 
             } else {
+                Timber.i("Artifact Table have no data");
                 ArtifactTableEnglish artifactTableEnglish = null;
                 ArtifactTableArabic artifactTableArabic = null;
                 new InsertDatabaseTask(activityReference.get(), artifactTableEnglish,
@@ -1549,11 +1583,13 @@ public class FloorMapActivity extends AppCompatActivity implements OnMapReadyCal
                         int n = activityReference.get().qmDatabase.getArtifactTableDao().checkNidExistEnglish(
                                 Integer.parseInt(artifactList.get().get(i).getNid()));
                         if (n > 0) {
-                            //updateEnglishTable same id
+                            Timber.i("Row exist in database(%s) for id: %s", language.toUpperCase(),
+                                    activityReference.get().artifactList.get(i).getNid());
                             new UpdateArtifactTable(activityReference.get(), language, i, artifactList.get()).execute();
 
                         } else {
-                            //create row with corresponding id
+                            Timber.i("Inserting Artifact Table(%s) with id: %s",
+                                    language.toUpperCase(), activityReference.get().artifactList.get(i).getNid());
                             artifactTableEnglish = new ArtifactTableEnglish(Long.parseLong(artifactList.get().get(i).getNid()),
                                     artifactList.get().get(i).getTitle(),
                                     artifactList.get().get(i).getAccessionNumber(),
@@ -1586,11 +1622,13 @@ public class FloorMapActivity extends AppCompatActivity implements OnMapReadyCal
                         int n = activityReference.get().qmDatabase.getArtifactTableDao().checkNidExistArabic(
                                 Integer.parseInt(artifactList.get().get(i).getNid()));
                         if (n > 0) {
-                            //updateEnglishTable same id
+                            Timber.i("Row exist in database(%s) for id: %s", language.toUpperCase(),
+                                    activityReference.get().artifactList.get(i).getNid());
                             new UpdateArtifactTable(activityReference.get(), language, i, artifactList.get()).execute();
 
                         } else {
-                            //create row with corresponding id
+                            Timber.i("Inserting Artifact Table(%s) with id: %s",
+                                    language.toUpperCase(), activityReference.get().artifactList.get(i).getNid());
                             artifactTableArabic = new ArtifactTableArabic(Long.parseLong(artifactList.get().get(i).getNid()),
                                     artifactList.get().get(i).getTitle(),
                                     artifactList.get().get(i).getAccessionNumber(),
@@ -1647,6 +1685,8 @@ public class FloorMapActivity extends AppCompatActivity implements OnMapReadyCal
             if (artifactList != null) {
                 if (language.equals(LocaleManager.LANGUAGE_ENGLISH)) {
                     for (int i = 0; i < artifactList.get().size(); i++) {
+                        Timber.i("Inserting Artifact Table(%s) with id: %s",
+                                language.toUpperCase(), activityReference.get().artifactList.get(i).getNid());
                         artifactTableEnglish = new ArtifactTableEnglish(Long.parseLong(artifactList.get().get(i).getNid()),
                                 artifactList.get().get(i).getTitle(),
                                 artifactList.get().get(i).getAccessionNumber(),
@@ -1674,6 +1714,8 @@ public class FloorMapActivity extends AppCompatActivity implements OnMapReadyCal
                     }
                 } else {
                     for (int i = 0; i < artifactList.get().size(); i++) {
+                        Timber.i("Inserting Artifact Table(%s) with id: %s",
+                                language.toUpperCase(), activityReference.get().artifactList.get(i).getNid());
                         artifactTableArabic = new ArtifactTableArabic(Long.parseLong(artifactList.get().get(i).getNid()),
                                 artifactList.get().get(i).getTitle(),
                                 artifactList.get().get(i).getAccessionNumber(),
@@ -1727,6 +1769,8 @@ public class FloorMapActivity extends AppCompatActivity implements OnMapReadyCal
 
         @Override
         protected Void doInBackground(Void... voids) {
+            Timber.i("Updating Artifact Table(%s) with id: %s",
+                    language.toUpperCase(), activityReference.get().artifactList.get(position).getNid());
             if (language.equals(LocaleManager.LANGUAGE_ENGLISH)) {
                 // updateEnglishTable table with english name
                 activityReference.get().qmDatabase.getArtifactTableDao().updateArtifactEnglish(
@@ -1802,6 +1846,7 @@ public class FloorMapActivity extends AppCompatActivity implements OnMapReadyCal
 
         @Override
         protected List<ArtifactTableEnglish> doInBackground(Void... voids) {
+            Timber.i("getAllDataFromArtifactEnglishTable()");
             return activityReference.get().qmDatabase.getArtifactTableDao().getAllDataFromArtifactEnglishTable();
 
         }
@@ -1809,8 +1854,12 @@ public class FloorMapActivity extends AppCompatActivity implements OnMapReadyCal
         @Override
         protected void onPostExecute(List<ArtifactTableEnglish> artifactDetailsList) {
             if (artifactDetailsList.size() > 0) {
+                Timber.i("Set Artifact list from database with size: %d",
+                        artifactDetailsList.size());
                 activityReference.get().artifactList.clear();
                 for (int i = 0; i < artifactDetailsList.size(); i++) {
+                    Timber.i("Setting Artifact list from database with id: %s",
+                            artifactDetailsList.get(i).getNid());
                     ArtifactDetails artifactDetails = new ArtifactDetails(
                             artifactDetailsList.get(i).getNid(),
                             artifactDetailsList.get(i).getTitle(),
@@ -1861,6 +1910,7 @@ public class FloorMapActivity extends AppCompatActivity implements OnMapReadyCal
 
         @Override
         protected List<ArtifactTableArabic> doInBackground(Void... voids) {
+            Timber.i("getAllDataFromArtifactArabicTable()");
             return activityReference.get().qmDatabase.getArtifactTableDao().getAllDataFromArtifactArabicTable();
 
         }
@@ -1868,8 +1918,12 @@ public class FloorMapActivity extends AppCompatActivity implements OnMapReadyCal
         @Override
         protected void onPostExecute(List<ArtifactTableArabic> artifactDetailsList) {
             if (artifactDetailsList.size() > 0) {
+                Timber.i("Set Artifact list from database with size: %d",
+                        artifactDetailsList.size());
                 activityReference.get().artifactList.clear();
                 for (int i = 0; i < artifactDetailsList.size(); i++) {
+                    Timber.i("Setting Artifact list from database with id: %s",
+                            artifactDetailsList.get(i).getNid());
                     ArtifactDetails artifactDetails = new ArtifactDetails(artifactDetailsList.get(i).getNid(),
                             artifactDetailsList.get(i).getTitle(),
                             artifactDetailsList.get(i).getAccessionNumber(),
@@ -1909,6 +1963,7 @@ public class FloorMapActivity extends AppCompatActivity implements OnMapReadyCal
     }
 
     public void fetchArtifactsFromDB() {
+        Timber.i("fetchArtifactsFromDB()");
         progressBar.setVisibility(View.VISIBLE);
         if (language.equals(LocaleManager.LANGUAGE_ENGLISH))
             new RetrieveEnglishTableData(FloorMapActivity.this).execute();
@@ -1925,6 +1980,7 @@ public class FloorMapActivity extends AppCompatActivity implements OnMapReadyCal
 
     @Override
     protected void onDestroy() {
+        Timber.i("onDestroy()");
         markerHashMap.clear();
         artifactDetailsMap.clear();
         super.onDestroy();

@@ -10,6 +10,7 @@ import com.qatarmuseums.qatarmuseumsapp.home.HomeActivity;
 
 import pl.droidsonroids.gif.GifDrawable;
 import pl.droidsonroids.gif.GifImageView;
+import timber.log.Timber;
 
 
 public class SplashActivity extends Activity {

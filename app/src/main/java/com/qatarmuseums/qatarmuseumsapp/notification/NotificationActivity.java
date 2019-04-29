@@ -25,6 +25,8 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import timber.log.Timber;
+
 public class NotificationActivity extends AppCompatActivity {
 
     private RecyclerView recyclerView;
@@ -58,7 +60,10 @@ public class NotificationActivity extends AppCompatActivity {
         recyclerView.setLayoutManager(mLayoutManager);
         recyclerView.setItemAnimator(new DefaultItemAnimator());
         recyclerView.setAdapter(mAdapter);
-        backArrow.setOnClickListener(v -> onBackPressed());
+        backArrow.setOnClickListener(v -> {
+            Timber.i("Back arrow clicked");
+            onBackPressed();
+        });
         zoomOutAnimation = AnimationUtils.loadAnimation(getApplicationContext(),
                 R.anim.zoom_out_more);
         backArrow.setOnTouchListener((v, event) -> {
@@ -82,6 +87,7 @@ public class NotificationActivity extends AppCompatActivity {
     }
 
     public void getDataFromDataBase() {
+        Timber.i("getDataFromDataBase()");
         if (appLanguage.equals(LocaleManager.LANGUAGE_ENGLISH))
             new RetrieveEnglishTableData(NotificationActivity.this).execute();
         else
@@ -97,6 +103,7 @@ public class NotificationActivity extends AppCompatActivity {
 
         @Override
         protected List<NotificationTableEnglish> doInBackground(Void... voids) {
+            Timber.i("getAllDataFromEnglishTable()");
             return activityReference.get().qmDatabase.getNotificationDao().getAllDataFromEnglishTable();
 
         }
@@ -104,8 +111,12 @@ public class NotificationActivity extends AppCompatActivity {
         @Override
         protected void onPostExecute(List<NotificationTableEnglish> notificationTableEnglishes) {
             if (notificationTableEnglishes.size() > 0) {
+                Timber.i("Set list from database with size: %d",
+                        notificationTableEnglishes.size());
                 activityReference.get().models.clear();
                 for (int i = 0; i < notificationTableEnglishes.size(); i++) {
+                    Timber.i("Setting list from database for title: %s",
+                            notificationTableEnglishes.get(i).getTitle());
                     NotificationModel notificationModel = new NotificationModel(notificationTableEnglishes.get(i).getTitle());
                     activityReference.get().models.add(i, notificationModel);
                 }
@@ -114,6 +125,7 @@ public class NotificationActivity extends AppCompatActivity {
                 activityReference.get().mAdapter.notifyDataSetChanged();
                 activityReference.get().recyclerView.setVisibility(View.VISIBLE);
             } else {
+                Timber.i("Have no data in database");
                 activityReference.get().emptyText.setVisibility(View.VISIBLE);
                 activityReference.get().recyclerView.setVisibility(View.GONE);
             }
@@ -131,6 +143,7 @@ public class NotificationActivity extends AppCompatActivity {
 
         @Override
         protected List<NotificationTableArabic> doInBackground(Void... voids) {
+            Timber.i("getAllDataFromArabicTable()");
             return activityReference.get().qmDatabase.getNotificationDao().getAllDataFromArabicTable();
 
         }
@@ -138,8 +151,12 @@ public class NotificationActivity extends AppCompatActivity {
         @Override
         protected void onPostExecute(List<NotificationTableArabic> notificationTableArabics) {
             if (notificationTableArabics.size() > 0) {
+                Timber.i("Set list from database with size: %d",
+                        notificationTableArabics.size());
                 activityReference.get().models.clear();
                 for (int i = 0; i < notificationTableArabics.size(); i++) {
+                    Timber.i("Setting list from database for title: %s",
+                            notificationTableArabics.get(i).getTitle());
                     NotificationModel notificationModel = new NotificationModel(notificationTableArabics.get(i).getTitle());
                     activityReference.get().models.add(i, notificationModel);
                 }
@@ -148,6 +165,7 @@ public class NotificationActivity extends AppCompatActivity {
                 activityReference.get().mAdapter.notifyDataSetChanged();
                 activityReference.get().recyclerView.setVisibility(View.VISIBLE);
             } else {
+                Timber.i("Have no data in database");
                 activityReference.get().emptyText.setVisibility(View.VISIBLE);
                 activityReference.get().recyclerView.setVisibility(View.GONE);
             }

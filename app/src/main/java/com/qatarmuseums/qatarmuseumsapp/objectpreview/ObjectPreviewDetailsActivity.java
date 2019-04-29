@@ -28,6 +28,7 @@ import com.qatarmuseums.qatarmuseumsapp.utils.Util;
 import java.util.ArrayList;
 
 import io.fabric.sdk.android.services.concurrency.AsyncTask;
+import timber.log.Timber;
 
 public class ObjectPreviewDetailsActivity extends AppCompatActivity implements SeekBar.OnSeekBarChangeListener, MediaPlayer.OnBufferingUpdateListener, MediaPlayer.OnCompletionListener {
     Toolbar toolbar;
@@ -65,6 +66,7 @@ public class ObjectPreviewDetailsActivity extends AppCompatActivity implements S
         mFireBaseAnalytics = FirebaseAnalytics.getInstance(this);
         closeBtn = findViewById(R.id.close_btn);
         closeBtn.setOnClickListener(view -> {
+            Timber.i("Close button clicked");
             finish();
             stopAudio();
         });
@@ -94,7 +96,10 @@ public class ObjectPreviewDetailsActivity extends AppCompatActivity implements S
         audioURL = intent.getStringExtra("Audio");
         if (audioURL != null && !audioURL.equals(""))
             audioControlLayout.setVisibility(View.VISIBLE);
-        imageToZoom.setOnClickListener(view -> openDialogForZoomingImage());
+        imageToZoom.setOnClickListener(view -> {
+            Timber.i("Image clicked");
+            openDialogForZoomingImage();
+        });
 
         maiTittle.setText(utils.html2string(title));
         shortDescription.setText(description);
@@ -144,6 +149,7 @@ public class ObjectPreviewDetailsActivity extends AppCompatActivity implements S
         playButton.setOnClickListener(v -> {
             if (utils.isNetworkAvailable(getApplicationContext())) {
                 if (!playPause) {
+                    Timber.i("Play button clicked");
                     playButton.setImageDrawable(getDrawable(R.drawable.pause_black));
                     if (initialStage) {
                         new Player().execute(audioURL);
@@ -155,6 +161,7 @@ public class ObjectPreviewDetailsActivity extends AppCompatActivity implements S
                     }
                     playPause = true;
                 } else {
+                    Timber.i("Pause button clicked");
                     playButton.setImageDrawable(getDrawable(R.drawable.play_black));
                     if (mediaPlayer.isPlaying()) {
                         pauseAudio();
@@ -177,6 +184,7 @@ public class ObjectPreviewDetailsActivity extends AppCompatActivity implements S
         protected Boolean doInBackground(String... strings) {
             Boolean prepared = false;
             try {
+                Timber.i("Preparing audio");
                 mediaPlayer.setDataSource(strings[0]);
                 mediaPlayer.prepare();
                 lengthOfAudio = mediaPlayer.getDuration();
@@ -215,6 +223,7 @@ public class ObjectPreviewDetailsActivity extends AppCompatActivity implements S
 
     @Override
     public void onCompletion(MediaPlayer mp) {
+        Timber.i("Audio completed");
         initialStage = true;
         playPause = false;
         mediaPlayer.stop();
@@ -247,6 +256,7 @@ public class ObjectPreviewDetailsActivity extends AppCompatActivity implements S
     }
 
     private void stopAudio() {
+        Timber.i("stopAudio()");
         if (mediaPlayer != null) {
             initialStage = true;
             playPause = false;
@@ -258,6 +268,7 @@ public class ObjectPreviewDetailsActivity extends AppCompatActivity implements S
     }
 
     private void pauseAudio() {
+        Timber.i("pauseAudio()");
         if (mediaPlayer != null) {
             mediaPlayer.pause();
         }
@@ -265,6 +276,7 @@ public class ObjectPreviewDetailsActivity extends AppCompatActivity implements S
     }
 
     private void playAudio() {
+        Timber.i("playAudio()");
         if (mediaPlayer != null) {
             mediaPlayer.start();
         }

@@ -25,6 +25,7 @@ import cn.lightsky.infiniteindicator.IndicatorConfiguration;
 import cn.lightsky.infiniteindicator.InfiniteIndicator;
 import cn.lightsky.infiniteindicator.OnPageClickListener;
 import cn.lightsky.infiniteindicator.Page;
+import timber.log.Timber;
 
 import static android.view.Gravity.LEFT;
 import static android.view.Gravity.RIGHT;
@@ -97,9 +98,13 @@ public class SelfGuidedStartPageActivity extends AppCompatActivity implements
             }
             return false;
         });
-        backArrow.setOnClickListener(v -> onBackPressed());
+        backArrow.setOnClickListener(v -> {
+            Timber.i("Back button clicked");
+            onBackPressed();
+        });
         intent = getIntent();
         startBtn.setOnClickListener(v -> {
+            Timber.i("Start button clicked");
             Intent i = new Intent(SelfGuidedStartPageActivity.this, ObjectPreviewActivity.class);
             i.putExtra("TOUR_ID", tourId);
             i.putExtra("MUSEUM_ID", museumId);
@@ -118,6 +123,7 @@ public class SelfGuidedStartPageActivity extends AppCompatActivity implements
 
 
     public void loadAdsToSlider(ArrayList<Page> adsImages) {
+        Timber.i("loadAdsToSlider()");
         appLanguage = LocaleManager.getLanguage(this);
         GlideLoaderForTourGuide glideLoader;
         if (adsImages.size() > 1) {

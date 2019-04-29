@@ -39,6 +39,7 @@ import java.util.List;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
+import timber.log.Timber;
 
 public class ParkActivity extends AppCompatActivity implements IPullZoom {
 
@@ -99,7 +100,10 @@ public class ParkActivity extends AppCompatActivity implements IPullZoom {
             // fetch data from database
             getParkDetailsFromDataBase();
         }
-        toolbarClose.setOnClickListener(v -> onBackPressed());
+        toolbarClose.setOnClickListener(v -> {
+            Timber.i("Toolbar close clicked");
+            onBackPressed();
+        });
 
         favIcon.setOnClickListener(v -> {
             if (utilObject.checkImageResource(ParkActivity.this, favIcon, R.drawable.heart_fill)) {
@@ -110,6 +114,7 @@ public class ParkActivity extends AppCompatActivity implements IPullZoom {
         zoomOutAnimation = AnimationUtils.loadAnimation(getApplicationContext(),
                 R.anim.zoom_out_more);
         retryButton.setOnClickListener(v -> {
+            Timber.i("Retry button clicked");
             getParkDetailsFromAPI();
             progressBar.setVisibility(View.VISIBLE);
             retryLayout.setVisibility(View.GONE);
@@ -150,6 +155,7 @@ public class ParkActivity extends AppCompatActivity implements IPullZoom {
     }
 
     private void initViews() {
+        Timber.i("Pull to zoom image view initialized");
         PullToZoomCoordinatorLayout coordinatorLayout = findViewById(R.id.main_content);
         View zoomView = findViewById(R.id.header_img);
         AppBarLayout appBarLayout = findViewById(R.id.app_bar);
@@ -160,6 +166,7 @@ public class ParkActivity extends AppCompatActivity implements IPullZoom {
     }
 
     public void getParkDetailsFromAPI() {
+        Timber.i("getParkDetailsFromAPI()");
         progressBar.setVisibility(View.VISIBLE);
         APIInterface apiService =
                 APIClient.getClient().create(APIInterface.class);
@@ -169,6 +176,7 @@ public class ParkActivity extends AppCompatActivity implements IPullZoom {
             public void onResponse(Call<ArrayList<ParkList>> call, Response<ArrayList<ParkList>> response) {
                 if (response.isSuccessful()) {
                     if (response.body() != null) {
+                        Timber.i("getNMoQParkListFromAPI() - isSuccessful with size: %s", response.body().size());
                         mainLayout.setVisibility(View.VISIBLE);
                         recyclerView.setVisibility(View.VISIBLE);
                         parkLists.addAll(response.body());
@@ -184,10 +192,12 @@ public class ParkActivity extends AppCompatActivity implements IPullZoom {
                         mAdapter.notifyDataSetChanged();
                         new RowCount(ParkActivity.this, appLanguage).execute();
                     } else {
+                        Timber.i("Response have no data");
                         mainLayout.setVisibility(View.GONE);
                         noResultFoundLayout.setVisibility(View.VISIBLE);
                     }
                 } else {
+                    Timber.w("Response not successful");
                     mainLayout.setVisibility(View.GONE);
                     retryLayout.setVisibility(View.VISIBLE);
                 }
@@ -196,6 +206,7 @@ public class ParkActivity extends AppCompatActivity implements IPullZoom {
 
             @Override
             public void onFailure(Call<ArrayList<ParkList>> call, Throwable t) {
+                Timber.e("getParkDetailsFromAPI() - onFailure: %s", t.getMessage());
                 mainLayout.setVisibility(View.GONE);
                 progressBar.setVisibility(View.GONE);
                 retryLayout.setVisibility(View.VISIBLE);
@@ -210,6 +221,7 @@ public class ParkActivity extends AppCompatActivity implements IPullZoom {
     }
 
     public void getParkDetailsFromDataBase() {
+        Timber.i("getParkDetailsFromDataBase()");
         progressBar.setVisibility(View.VISIBLE);
         if (appLanguage.equals(LocaleManager.LANGUAGE_ENGLISH))
             new RetrieveEnglishTableData(ParkActivity.this).execute();
@@ -233,7 +245,6 @@ public class ParkActivity extends AppCompatActivity implements IPullZoom {
 
     }
 
-
     public static class RowCount extends AsyncTask<Void, Void, Integer> {
         private WeakReference<ParkActivity> activityReference;
         String language;
@@ -245,6 +256,7 @@ public class ParkActivity extends AppCompatActivity implements IPullZoom {
 
         @Override
         protected Integer doInBackground(Void... voids) {
+            Timber.i("getNumberOfRows%s()", language.toUpperCase());
             if (language.equals(LocaleManager.LANGUAGE_ENGLISH))
                 return activityReference.get().qmDatabase.getParkTableDao().getNumberOfRowsEnglish();
             else
@@ -256,10 +268,11 @@ public class ParkActivity extends AppCompatActivity implements IPullZoom {
         protected void onPostExecute(Integer integer) {
             activityReference.get().parkTableRowCount = integer;
             if (activityReference.get().parkTableRowCount > 0) {
-                //updateEnglishTable or add row to database
+                Timber.i("Count: %d", integer);
                 new CheckDBRowExist(activityReference.get(), language).execute();
 
             } else {
+                Timber.i("Database table have no data");
                 new InsertDatabaseTask(activityReference.get(), activityReference.get().parkTableEnglish,
                         activityReference.get().parkTableArabic, language).execute();
 
@@ -285,13 +298,15 @@ public class ParkActivity extends AppCompatActivity implements IPullZoom {
                 if (language.equals(LocaleManager.LANGUAGE_ENGLISH)) {
                     for (int i = 0; i < activityReference.get().parkLists.size(); i++) {
                         int n = activityReference.get().qmDatabase.getParkTableDao().checkIdExistEnglish(
-                                Integer.parseInt(activityReference.get().parkLists.get(i).getSortId()));
+                                activityReference.get().parkLists.get(i).getMainTitle());
                         if (n > 0) {
-                            //updateEnglishTable same id
+                            Timber.i("Row exist in database(%s) for title: %s", language.toUpperCase(),
+                                    activityReference.get().parkLists.get(i).getMainTitle());
                             new UpdateHomePageTable(activityReference.get(), language, i).execute();
 
                         } else {
-                            //create row with corresponding id
+                            Timber.i("Inserting data to Table(%s) with title: %s",
+                                    language.toUpperCase(), activityReference.get().parkLists.get(i).getMainTitle());
                             parkTableEnglish = new ParkTableEnglish(activityReference.get().parkLists.get(i).getMainTitle(),
                                     activityReference.get().parkLists.get(i).getShortDescription(),
                                     activityReference.get().parkLists.get(i).getImage(),
@@ -306,13 +321,15 @@ public class ParkActivity extends AppCompatActivity implements IPullZoom {
                 } else {
                     for (int i = 0; i < activityReference.get().parkLists.size(); i++) {
                         int n = activityReference.get().qmDatabase.getParkTableDao().checkIdExistArabic(
-                                Integer.parseInt(activityReference.get().parkLists.get(i).getSortId()));
+                                activityReference.get().parkLists.get(i).getMainTitle());
                         if (n > 0) {
-                            //updateEnglishTable same id
+                            Timber.i("Row exist in database(%s) for title: %s", language.toUpperCase(),
+                                    activityReference.get().parkLists.get(i).getMainTitle());
                             new UpdateHomePageTable(activityReference.get(), language, i).execute();
 
                         } else {
-                            //create row with corresponding id
+                            Timber.i("Inserting data to Table(%s) with title: %s",
+                                    language.toUpperCase(), activityReference.get().parkLists.get(i).getMainTitle());
                             parkTableArabic = new ParkTableArabic(activityReference.get().parkLists.get(i).getMainTitle(),
                                     activityReference.get().parkLists.get(i).getShortDescription(),
                                     activityReference.get().parkLists.get(i).getImage(),
@@ -328,8 +345,6 @@ public class ParkActivity extends AppCompatActivity implements IPullZoom {
             }
             return null;
         }
-
-
     }
 
     public static class InsertDatabaseTask extends AsyncTask<Void, Void, Boolean> {
@@ -351,6 +366,8 @@ public class ParkActivity extends AppCompatActivity implements IPullZoom {
             if (activityReference.get().parkLists != null) {
                 if (language.equals(LocaleManager.LANGUAGE_ENGLISH)) {
                     for (int i = 0; i < activityReference.get().parkLists.size(); i++) {
+                        Timber.i("Inserting data to Table(%s) with title: %s",
+                                language.toUpperCase(), activityReference.get().parkLists.get(i).getMainTitle());
                         parkTableEnglish = new ParkTableEnglish(
                                 activityReference.get().parkLists.get(i).getMainTitle(),
                                 activityReference.get().parkLists.get(i).getShortDescription(),
@@ -363,6 +380,8 @@ public class ParkActivity extends AppCompatActivity implements IPullZoom {
                     }
                 } else {
                     for (int i = 0; i < activityReference.get().parkLists.size(); i++) {
+                        Timber.i("Inserting data to Table(%s) with title: %s",
+                                language.toUpperCase(), activityReference.get().parkLists.get(i).getMainTitle());
                         parkTableArabic = new ParkTableArabic(
                                 activityReference.get().parkLists.get(i).getMainTitle(),
                                 activityReference.get().parkLists.get(i).getShortDescription(),
@@ -398,6 +417,8 @@ public class ParkActivity extends AppCompatActivity implements IPullZoom {
 
         @Override
         protected Void doInBackground(Void... voids) {
+            Timber.i("Updating data on Table(%s) for title: %s",
+                    language.toUpperCase(), activityReference.get().parkLists.get(position).getMainTitle());
             if (language.equals(LocaleManager.LANGUAGE_ENGLISH)) {
                 // updateEnglishTable table with english name
                 activityReference.get().qmDatabase.getParkTableDao().updateParkEnglish(
@@ -432,7 +453,6 @@ public class ParkActivity extends AppCompatActivity implements IPullZoom {
         }
     }
 
-
     public static class RetrieveEnglishTableData extends AsyncTask<Void, Void, List<ParkTableEnglish>> {
         private WeakReference<ParkActivity> activityReference;
 
@@ -442,6 +462,7 @@ public class ParkActivity extends AppCompatActivity implements IPullZoom {
 
         @Override
         protected List<ParkTableEnglish> doInBackground(Void... voids) {
+            Timber.i("getAllDataFromParkEnglishTable()");
             return activityReference.get().qmDatabase.getParkTableDao().getAllDataFromParkEnglishTable();
 
         }
@@ -451,6 +472,8 @@ public class ParkActivity extends AppCompatActivity implements IPullZoom {
             if (parkTableEnglishes.size() > 0) {
                 activityReference.get().parkLists.clear();
                 for (int i = 0; i < parkTableEnglishes.size(); i++) {
+                    Timber.i("Setting data from database with id: %s",
+                            parkTableEnglishes.get(i).getMainTitle());
                     ParkList parkObject = new ParkList(parkTableEnglishes.get(i).getMainTitle(),
                             parkTableEnglishes.get(i).getShortDescription(),
                             parkTableEnglishes.get(i).getImage(),
@@ -463,6 +486,7 @@ public class ParkActivity extends AppCompatActivity implements IPullZoom {
                 activityReference.get().mAdapter.notifyDataSetChanged();
                 activityReference.get().progressBar.setVisibility(View.GONE);
             } else {
+                Timber.i("Have no data in database");
                 activityReference.get().progressBar.setVisibility(View.GONE);
                 activityReference.get().retryLayout.setVisibility(View.VISIBLE);
             }
@@ -470,7 +494,6 @@ public class ParkActivity extends AppCompatActivity implements IPullZoom {
 
         }
     }
-
 
     public static class RetrieveArabicTableData extends AsyncTask<Void, Void, List<ParkTableArabic>> {
         private WeakReference<ParkActivity> activityReference;
@@ -481,6 +504,7 @@ public class ParkActivity extends AppCompatActivity implements IPullZoom {
 
         @Override
         protected List<ParkTableArabic> doInBackground(Void... voids) {
+            Timber.i("getAllDataFromParkArabicTable()");
             return activityReference.get().qmDatabase.getParkTableDao().getAllDataFromParkArabicTable();
 
         }
@@ -490,6 +514,8 @@ public class ParkActivity extends AppCompatActivity implements IPullZoom {
             if (parkTableArabics.size() > 0) {
                 activityReference.get().parkLists.clear();
                 for (int i = 0; i < parkTableArabics.size(); i++) {
+                    Timber.i("Setting data from database with id: %s",
+                            parkTableArabics.get(i).getMainTitle());
                     ParkList parkObject = new ParkList(parkTableArabics.get(i).getMainTitle(),
                             parkTableArabics.get(i).getShortDescription(),
                             parkTableArabics.get(i).getImage(),
@@ -502,6 +528,7 @@ public class ParkActivity extends AppCompatActivity implements IPullZoom {
                 activityReference.get().mAdapter.notifyDataSetChanged();
                 activityReference.get().progressBar.setVisibility(View.GONE);
             } else {
+                Timber.i("Have no data in database");
                 activityReference.get().progressBar.setVisibility(View.GONE);
                 activityReference.get().retryLayout.setVisibility(View.VISIBLE);
             }
