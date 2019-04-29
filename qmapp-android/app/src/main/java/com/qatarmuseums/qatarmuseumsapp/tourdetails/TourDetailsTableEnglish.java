@@ -9,7 +9,7 @@ import android.support.annotation.NonNull;
 @Entity(tableName = "tourdetailstableenglish")
 public class TourDetailsTableEnglish {
     @NonNull
-    @PrimaryKey(autoGenerate = true)
+    @PrimaryKey(autoGenerate = false)
     private long item_id;
     @ColumnInfo()
     private String tour_title;
@@ -48,7 +48,7 @@ public class TourDetailsTableEnglish {
                                    String tour_sort_id, String tour_body,
                                    String tour_registered,
                                    String moderator_name, String description_for_moderator,
-                                   String seats_remaining) {
+                                   String seats_remaining, long item_id) {
         this.tour_title = tour_title;
         this.tour_images = tour_images;
         this.tour_date = tour_date;
@@ -63,6 +63,7 @@ public class TourDetailsTableEnglish {
         this.moderator_name = moderator_name;
         this.description_for_moderator = description_for_moderator;
         this.seats_remaining = seats_remaining;
+        this.item_id = item_id;
     }
 
     @NonNull

@@ -43,6 +43,7 @@ import java.util.List;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
+import timber.log.Timber;
 
 public class TourGuideDetailsActivity extends AppCompatActivity {
     TextView tourGuideMainTitle, tourGuideSubTitle, tourGuideMainDesc, tourGuideSubDesc;
@@ -107,6 +108,9 @@ public class TourGuideDetailsActivity extends AppCompatActivity {
 
                     @Override
                     public void onClick(View view, int position) {
+                        Timber.i("%s is clicked with ID: %s",
+                                tourGuideList.get(position).getTitle().toUpperCase(),
+                                tourGuideList.get(position).getNid());
                         if (tourGuideList.get(position).getTitle().equals(getString(R.string.coming_soon_txt))) {
                             new Util().showComingSoonDialog(TourGuideDetailsActivity.this,
                                     R.string.coming_soon_content_map);
@@ -143,18 +147,23 @@ public class TourGuideDetailsActivity extends AppCompatActivity {
             tourGuideSubDesc.setText(getString(R.string.tourguide_subtitle_desc));
             tourGuideList.clear();
         }
-        backButton.setOnClickListener(v -> onBackPressed());
+        backButton.setOnClickListener(v -> {
+            Timber.i("Back button clicked");
+            onBackPressed();
+        });
         zoomOutAnimation = AnimationUtils.loadAnimation(getApplicationContext(),
                 R.anim.zoom_out_more);
         exploreZoomOutAnimation = AnimationUtils.loadAnimation(getApplicationContext(),
                 R.anim.zoom_out);
         retryButton.setOnClickListener(v -> {
+            Timber.i("Retry button clicked");
             getTourGuideDetailsPageAPIData();
             progressBar.setVisibility(View.VISIBLE);
             retryLayout.setVisibility(View.GONE);
         });
 
         exploreLayout.setOnTouchListener((v, event) -> {
+            Timber.i("Explore button clicked");
             switch (event.getAction()) {
                 case MotionEvent.ACTION_DOWN:
                     exploreLayout.startAnimation(exploreZoomOutAnimation);
@@ -183,7 +192,6 @@ public class TourGuideDetailsActivity extends AppCompatActivity {
         exploreZoomOutAnimation.setAnimationListener(new Animation.AnimationListener() {
             @Override
             public void onAnimationStart(Animation animation) {
-
             }
 
             @Override
@@ -194,7 +202,6 @@ public class TourGuideDetailsActivity extends AppCompatActivity {
 
             @Override
             public void onAnimationRepeat(Animation animation) {
-
             }
         });
         converters = new Convertor();
@@ -206,6 +213,7 @@ public class TourGuideDetailsActivity extends AppCompatActivity {
     }
 
     public void getTourGuideDetailsPageAPIData() {
+        Timber.i("getTourGuideDetailsPageAPIData()");
         progressBar.setVisibility(View.VISIBLE);
         APIInterface apiService =
                 APIClient.getClient().create(APIInterface.class);
@@ -215,15 +223,18 @@ public class TourGuideDetailsActivity extends AppCompatActivity {
             public void onResponse(Call<ArrayList<SelfGuideStarterModel>> call, Response<ArrayList<SelfGuideStarterModel>> response) {
                 if (response.isSuccessful()) {
                     if (response.body() != null && response.body().size() > 0) {
+                        Timber.i("getTourGuideDetailsPageAPIData() - isSuccessful with size: %d", tourGuideList.size());
                         scrollviewContainer.setVisibility(View.VISIBLE);
                         tourGuideList.addAll(response.body());
                         mAdapter.notifyDataSetChanged();
                         new SelfGuideStartRowCount(TourGuideDetailsActivity.this, appLanguage).execute();
                     } else {
+                        Timber.w("Response have no data");
                         scrollviewContainer.setVisibility(View.GONE);
                         noResultFoundLayout.setVisibility(View.VISIBLE);
                     }
                 } else {
+                    Timber.w("Response not successful %s", getResources().getString(R.string.error_logout));
                     scrollviewContainer.setVisibility(View.GONE);
                     retryLayout.setVisibility(View.VISIBLE);
                 }
@@ -232,6 +243,7 @@ public class TourGuideDetailsActivity extends AppCompatActivity {
 
             @Override
             public void onFailure(Call<ArrayList<SelfGuideStarterModel>> call, Throwable t) {
+                Timber.e("getTourGuideDetailsPageAPIData() - onFailure: %s", t.getMessage());
                 scrollviewContainer.setVisibility(View.GONE);
                 progressBar.setVisibility(View.GONE);
                 retryLayout.setVisibility(View.VISIBLE);
@@ -259,8 +271,10 @@ public class TourGuideDetailsActivity extends AppCompatActivity {
         protected void onPostExecute(Integer integer) {
             activityReference.get().selfGuideStartRowCount = integer;
             if (activityReference.get().selfGuideStartRowCount > 0) {
+                Timber.i("Count: %d", integer);
                 new CheckTourGuideStartPageDBRowExist(activityReference.get(), language).execute();
             } else {
+                Timber.i("Database Table have no data");
                 new InsertTourGuideStartPageDatabaseTask(activityReference.get(),
                         activityReference.get().tourGuideStartPageEnglish,
                         activityReference.get().tourGuideStartPageArabic, language).execute();
@@ -269,6 +283,7 @@ public class TourGuideDetailsActivity extends AppCompatActivity {
 
         @Override
         protected Integer doInBackground(Void... voids) {
+            Timber.i("getNumberOfRows%s()", language.toUpperCase());
             if (language.equals(LocaleManager.LANGUAGE_ENGLISH)) {
                 return activityReference.get().qmDatabase.getTourGuideStartPageDao().getNumberOfRowsEnglish();
             } else {
@@ -309,10 +324,14 @@ public class TourGuideDetailsActivity extends AppCompatActivity {
                         int n = activityReference.get().qmDatabase.getTourGuideStartPageDao().checkEnglishIdExist(
                                 activityReference.get().tourGuideList.get(i).getNid());
                         if (n > 0) {
+                            Timber.i("Row exist in database(%s) for id: %s", language.toUpperCase(),
+                                    activityReference.get().tourGuideList.get(i).getNid());
                             new UpdateTourGuideStartPageDetailTable(activityReference.get(),
                                     language, i).execute();
 
                         } else {
+                            Timber.i("Inserting data to table(%s) with id: %s",
+                                    language.toUpperCase(), activityReference.get().tourGuideList.get(i).getNid());
                             tourGuideStartPageEnglish = new TourGuideStartPageEnglish(
                                     activityReference.get().tourGuideList.get(i).getTitle(),
                                     activityReference.get().tourGuideList.get(i).getNid(),
@@ -330,9 +349,13 @@ public class TourGuideDetailsActivity extends AppCompatActivity {
                         int n = activityReference.get().qmDatabase.getTourGuideStartPageDao().checkArabicIdExist(
                                 activityReference.get().tourGuideList.get(i).getNid());
                         if (n > 0) {
+                            Timber.i("Row exist in database(%s) for id: %s", language.toUpperCase(),
+                                    activityReference.get().tourGuideList.get(i).getNid());
                             new UpdateTourGuideStartPageDetailTable(activityReference.get(), language, i).execute();
 
                         } else {
+                            Timber.i("Inserting data to table(%s) with id: %s",
+                                    language.toUpperCase(), activityReference.get().tourGuideList.get(i).getNid());
                             tourGuideStartPageArabic = new TourGuideStartPageArabic(
                                     activityReference.get().tourGuideList.get(i).getTitle(),
                                     activityReference.get().tourGuideList.get(i).getNid(),
@@ -369,6 +392,8 @@ public class TourGuideDetailsActivity extends AppCompatActivity {
             if (activityReference.get().tourGuideList != null) {
                 if (language.equals(LocaleManager.LANGUAGE_ENGLISH)) {
                     for (int i = 0; i < activityReference.get().tourGuideList.size(); i++) {
+                        Timber.i("Inserting data to table(%s) with id: %s",
+                                language.toUpperCase(), activityReference.get().tourGuideList.get(i).getNid());
                         tourGuideStartPageEnglish = new TourGuideStartPageEnglish(
                                 activityReference.get().tourGuideList.get(i).getTitle(),
                                 activityReference.get().tourGuideList.get(i).getNid(),
@@ -380,6 +405,8 @@ public class TourGuideDetailsActivity extends AppCompatActivity {
                     }
                 } else {
                     for (int i = 0; i < activityReference.get().tourGuideList.size(); i++) {
+                        Timber.i("Inserting data to table(%s) with id: %s",
+                                language.toUpperCase(), activityReference.get().tourGuideList.get(i).getNid());
                         tourGuideStartPageArabic = new TourGuideStartPageArabic(
                                 activityReference.get().tourGuideList.get(i).getTitle(),
                                 activityReference.get().tourGuideList.get(i).getNid(),
@@ -424,6 +451,8 @@ public class TourGuideDetailsActivity extends AppCompatActivity {
 
         @Override
         protected Void doInBackground(Void... voids) {
+            Timber.i("Updating data to table(%s) with id: %s",
+                    language.toUpperCase(), activityReference.get().tourGuideList.get(position).getNid());
             if (language.equals(LocaleManager.LANGUAGE_ENGLISH)) {
                 activityReference.get().qmDatabase.getTourGuideStartPageDao().updateTourGuideStartDataEnglish(
                         activityReference.get().tourGuideList.get(position).getTitle(),
@@ -458,6 +487,7 @@ public class TourGuideDetailsActivity extends AppCompatActivity {
 
         @Override
         protected List<TourGuideStartPageEnglish> doInBackground(Void... voids) {
+            Timber.i("getTourGuideDetailsEnglish(id: %s)", museumId);
             return activityReference.get().qmDatabase.getTourGuideStartPageDao().
                     getTourGuideDetailsEnglish(museumId);
         }
@@ -465,9 +495,13 @@ public class TourGuideDetailsActivity extends AppCompatActivity {
         @Override
         protected void onPostExecute(List<TourGuideStartPageEnglish> tourGuideStartPageEnglish) {
             if (tourGuideStartPageEnglish != null && tourGuideStartPageEnglish.size() > 0) {
+                Timber.i("Set list from database with size: %d",
+                        tourGuideStartPageEnglish.size());
                 activityReference.get().retryLayout.setVisibility(View.GONE);
                 activityReference.get().scrollviewContainer.setVisibility(View.VISIBLE);
                 for (int i = 0; i < tourGuideStartPageEnglish.size(); i++) {
+                    Timber.i("Setting list from database with id: %s",
+                            tourGuideStartPageEnglish.get(i).getNid());
                     SelfGuideStarterModel model = new SelfGuideStarterModel(
                             tourGuideStartPageEnglish.get(i).getTitle(),
                             tourGuideStartPageEnglish.get(i).getDescription(),
@@ -478,6 +512,7 @@ public class TourGuideDetailsActivity extends AppCompatActivity {
                 }
                 activityReference.get().mAdapter.notifyDataSetChanged();
             } else {
+                Timber.i("Have no data in database");
                 activityReference.get().retryLayout.setVisibility(View.VISIBLE);
                 activityReference.get().scrollviewContainer.setVisibility(View.GONE);
             }
@@ -496,6 +531,7 @@ public class TourGuideDetailsActivity extends AppCompatActivity {
 
         @Override
         protected List<TourGuideStartPageArabic> doInBackground(Void... voids) {
+            Timber.i("getTourGuideDetailsArabic(id: %s)", museumId);
             return activityReference.get().qmDatabase.getTourGuideStartPageDao().
                     getTourGuideDetailsArabic(museumId);
         }
@@ -503,9 +539,13 @@ public class TourGuideDetailsActivity extends AppCompatActivity {
         @Override
         protected void onPostExecute(List<TourGuideStartPageArabic> tourGuideStartPageArabic) {
             if (tourGuideStartPageArabic != null && tourGuideStartPageArabic.size() > 0) {
+                Timber.i("Set list from database with size: %d",
+                        tourGuideStartPageArabic.size());
                 activityReference.get().retryLayout.setVisibility(View.GONE);
                 activityReference.get().scrollviewContainer.setVisibility(View.VISIBLE);
                 for (int i = 0; i < tourGuideStartPageArabic.size(); i++) {
+                    Timber.i("Setting list from database with id: %s",
+                            tourGuideStartPageArabic.get(i).getNid());
                     SelfGuideStarterModel model = new SelfGuideStarterModel(
                             tourGuideStartPageArabic.get(i).getTitle(),
                             tourGuideStartPageArabic.get(i).getDescription(),
@@ -517,6 +557,7 @@ public class TourGuideDetailsActivity extends AppCompatActivity {
                 activityReference.get().mAdapter.notifyDataSetChanged();
 
             } else {
+                Timber.i("Have no data in database");
                 activityReference.get().retryLayout.setVisibility(View.VISIBLE);
                 activityReference.get().scrollviewContainer.setVisibility(View.GONE);
 
@@ -526,6 +567,7 @@ public class TourGuideDetailsActivity extends AppCompatActivity {
     }
 
     public void getSliderImagesAndDetailsFromDatabase(String museumId) {
+        Timber.i("getSliderImagesAndDetailsFromDatabase()");
         if (appLanguage.equals(LocaleManager.LANGUAGE_ENGLISH)) {
             new RetrieveTourGuideDetailsDataEnglish(TourGuideDetailsActivity.this, museumId).execute();
         } else {

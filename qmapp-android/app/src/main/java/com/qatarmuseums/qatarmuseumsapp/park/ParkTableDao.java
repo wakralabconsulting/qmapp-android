@@ -23,26 +23,26 @@ public interface ParkTableDao {
     @Query("SELECT COUNT(sortId) FROM parktableArabic")
     int getNumberOfRowsArabic();
 
-    @Query("SELECT COUNT(sortId) FROM parktableEnglish WHERE sortId = :idFromAPI")
-    int checkIdExistEnglish(int idFromAPI);
+    @Query("SELECT COUNT(sortId) FROM parktableEnglish WHERE mainTitle = :titleFromAPI")
+    int checkIdExistEnglish(String titleFromAPI);
 
-    @Query("SELECT COUNT(sortId) FROM parktableArabic WHERE sortId = :idFromAPI")
-    int checkIdExistArabic(int idFromAPI);
+    @Query("SELECT COUNT(sortId) FROM parktableArabic WHERE mainTitle = :titleFromAPI")
+    int checkIdExistArabic(String titleFromAPI);
 
-    @Query("UPDATE parktableEnglish SET mainTitle = :mainTitleFromApi," +
+    @Query("UPDATE parktableEnglish SET sortId = :id," +
             "shortDescription = :shortDescriptionFrmAPI,image = :imageFromApi," +
             "latitude = :latitudeFromAPI,longitude = :longitudeFromApi," +
-            "timingInfo = :timingInfoFromAPI WHERE sortId=:id")
-    void updateParkEnglish(String mainTitleFromApi, String shortDescriptionFrmAPI,
+            "timingInfo = :timingInfoFromAPI WHERE mainTitle=:titleFromAPI")
+    void updateParkEnglish(String titleFromAPI, String shortDescriptionFrmAPI,
                                String imageFromApi,String latitudeFromAPI,
                                String longitudeFromApi, String timingInfoFromAPI,
                                long id);
 
-    @Query("UPDATE parktableArabic SET mainTitle = :mainTitleFromApi," +
+    @Query("UPDATE parktableArabic SET sortId = :id," +
             "shortDescription = :shortDescriptionFrmAPI,image = :imageFromApi," +
             "latitude = :latitudeFromAPI,longitude = :longitudeFromApi," +
-            "timingInfo = :timingInfoFromAPI WHERE sortId=:id")
-    void updateParkArabic(String mainTitleFromApi, String shortDescriptionFrmAPI,
+            "timingInfo = :timingInfoFromAPI WHERE mainTitle=:titleFromAPI")
+    void updateParkArabic(String titleFromAPI, String shortDescriptionFrmAPI,
                            String imageFromApi,String latitudeFromAPI,
                            String longitudeFromApi, String timingInfoFromAPI,
                            long id);

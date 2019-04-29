@@ -12,6 +12,7 @@ import com.journeyapps.barcodescanner.BarcodeEncoder
 import com.qatarmuseums.qatarmuseumsapp.LocaleManager
 import com.qatarmuseums.qatarmuseumsapp.R
 import kotlinx.android.synthetic.main.activity_culture_pass_card.*
+import timber.log.Timber
 
 
 class CulturePassCardActivity : AppCompatActivity() {
@@ -30,18 +31,22 @@ class CulturePassCardActivity : AppCompatActivity() {
         nameTxt.text = userName
 
         flipButtonSecond.setOnClickListener {
+            Timber.i("Second Flip Button clicked")
             flipView.flipTheView()
         }
 
         flipButtonFirst.setOnClickListener {
+            Timber.i("First Flip Button clicked")
             flipView.flipTheView()
         }
 
         closeBtnFirst.setOnClickListener {
+            Timber.i("First Close Button clicked")
             finish()
         }
 
         closeBtnSecond.setOnClickListener {
+            Timber.i("Second Close Button clicked")
             finish()
         }
 
@@ -53,11 +58,13 @@ class CulturePassCardActivity : AppCompatActivity() {
         var multiFormatWriter = MultiFormatWriter();
         if (!membershipNumber.equals("")) {
             try {
+                Timber.i("Preparing Barcode")
                 var bitMatrix = multiFormatWriter.encode(membershipNumber, BarcodeFormat.CODABAR, 500, 250);
                 var barcodeEncoder = BarcodeEncoder();
                 var bitmap = barcodeEncoder.createBitmap(bitMatrix);
                 barcodeImg.setImageBitmap(bitmap);
             } catch (e: WriterException) {
+                Timber.e("Preparing Barcode error: %s", e.message)
                 e.printStackTrace();
             }
         }

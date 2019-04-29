@@ -7,14 +7,16 @@ import android.support.annotation.NonNull;
 
 @Entity(tableName = "parktableArabic")
 public class ParkTableArabic {
+    @NonNull
+    @PrimaryKey(autoGenerate = true)
+    private long itemId;
     @ColumnInfo()
     private String mainTitle;
     @ColumnInfo()
     private String shortDescription;
     @ColumnInfo()
     private String image;
-    @NonNull
-    @PrimaryKey(autoGenerate = false)
+    @ColumnInfo()
     private long sortId;
     @ColumnInfo()
     private String latitude;
@@ -24,8 +26,8 @@ public class ParkTableArabic {
     private String timingInfo;
 
     public ParkTableArabic(String mainTitle, String shortDescription,
-                            String image, @NonNull long sortId,
-                            String latitude, String longitude, String timingInfo) {
+                           String image, @NonNull long sortId,
+                           String latitude, String longitude, String timingInfo) {
         this.mainTitle = mainTitle;
         this.shortDescription = shortDescription;
         this.image = image;
@@ -92,6 +94,16 @@ public class ParkTableArabic {
     public void setTimingInfo(String timingInfo) {
         this.timingInfo = timingInfo;
     }
+
+    @NonNull
+    public long getItemId() {
+        return itemId;
+    }
+
+    public void setItemId(@NonNull long itemId) {
+        this.itemId = itemId;
+    }
+
     @Override
     public boolean equals(Object obj) {
         if (this == obj) return true;
@@ -110,10 +122,10 @@ public class ParkTableArabic {
                 "mainTitle=" + mainTitle +
                 ", shortDescription='" + shortDescription + '\'' +
                 ", image='" + image + '\'' +
-                ",sortId='"+sortId+'\''+
-                ",latitude='"+latitude+'\''+
-                ",longitude='"+longitude+'\''+
-                ",timingInfo='"+timingInfo+'\''+
+                ",sortId='" + sortId + '\'' +
+                ",latitude='" + latitude + '\'' +
+                ",longitude='" + longitude + '\'' +
+                ",timingInfo='" + timingInfo + '\'' +
                 '}';
     }
 }

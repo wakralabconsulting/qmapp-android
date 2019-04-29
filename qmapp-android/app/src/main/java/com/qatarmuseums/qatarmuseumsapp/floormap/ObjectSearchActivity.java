@@ -34,6 +34,7 @@ import butterknife.ButterKnife;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
+import timber.log.Timber;
 
 public class ObjectSearchActivity extends AppCompatActivity implements View.OnClickListener {
 
@@ -95,6 +96,7 @@ public class ObjectSearchActivity extends AppCompatActivity implements View.OnCl
         displayClearButton.setEnabled(false);
         doneButton.setEnabled(false);
         displayClearButton.setOnClickListener(view -> {
+            Timber.i("Clear button clicked");
             display = "";
             numberPadDisplay.setText("");
         });
@@ -125,6 +127,7 @@ public class ObjectSearchActivity extends AppCompatActivity implements View.OnCl
             }
         });
         doneButton.setOnClickListener(view -> {
+            Timber.i("Done button clicked");
             if (numberPadDisplay.getText().toString() == "") {
                 util.showAlertDialog(ObjectSearchActivity.this);
             } else {
@@ -147,6 +150,7 @@ public class ObjectSearchActivity extends AppCompatActivity implements View.OnCl
     }
 
     private void getDetailsFromApi(String id) {
+        Timber.i("getDetailsFromApi(artifact_number: %s)", id);
         progressBar.setVisibility(View.VISIBLE);
         mainContainer.setVisibility(View.GONE);
         APIInterface apiService =
@@ -158,6 +162,7 @@ public class ObjectSearchActivity extends AppCompatActivity implements View.OnCl
                 if (response.isSuccessful()) {
                     if (response.body().size() > 0) {
                         if (response.body() != null && response.body().size() > 0) {
+                            Timber.i("getDetailsFromApi() - isSuccessful for artifact_number: %s", id);
                             artifactList = response.body();
                             Intent intent = new Intent(ObjectSearchActivity.this, ObjectPreviewDetailsActivity.class);
                             intent.putExtra("Title", artifactList.get(0).getTitle());
@@ -172,11 +177,13 @@ public class ObjectSearchActivity extends AppCompatActivity implements View.OnCl
                             numberPadDisplay.setText("");
                         }
                     } else {
+                        Timber.i("Have no data for artifact_number: %s", id);
                         util.showToast(getResources().getString(R.string.artifact_invalid), ObjectSearchActivity.this);
                         display = "";
                         numberPadDisplay.setText("");
                     }
                 } else {
+                    Timber.w("Response not successful");
                     util.showToast(getResources().getString(R.string.artifact_invalid), ObjectSearchActivity.this);
                     display = "";
                     numberPadDisplay.setText("");
@@ -187,6 +194,7 @@ public class ObjectSearchActivity extends AppCompatActivity implements View.OnCl
 
             @Override
             public void onFailure(Call<ArrayList<ArtifactDetails>> call, Throwable t) {
+                Timber.e("getDetailsFromApi() - onFailure: %s", t.getMessage());
                 progressBar.setVisibility(View.GONE);
                 mainContainer.setVisibility(View.VISIBLE);
             }
@@ -202,7 +210,7 @@ public class ObjectSearchActivity extends AppCompatActivity implements View.OnCl
                 break;
             }
         }
-
+        Timber.i("Number %d clicked", index);
         switch (index) {
             case 0:
                 display = display + "0";

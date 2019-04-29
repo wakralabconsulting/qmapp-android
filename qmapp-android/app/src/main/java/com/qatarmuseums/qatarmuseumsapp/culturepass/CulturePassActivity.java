@@ -55,6 +55,7 @@ import retrofit2.Callback;
 import retrofit2.Response;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
+import timber.log.Timber;
 
 import static com.qatarmuseums.qatarmuseumsapp.apicall.APIClient.apiBaseUrl;
 
@@ -125,12 +126,16 @@ public class CulturePassActivity extends AppCompatActivity {
             return false;
         });
         becomeMember.setOnClickListener(v -> {
+            Timber.i("Become Member clicked with URL: %s%s/user/register#user-register-form", apiBaseUrl, language);
             navigationIntent = new Intent(CulturePassActivity.this, WebViewActivity.class);
             navigationIntent.putExtra("url", apiBaseUrl + language +
                     "/user/register#user-register-form");
             startActivity(navigationIntent);
         });
-        loginButton.setOnClickListener(v -> showLoginDialog());
+        loginButton.setOnClickListener(v -> {
+            Timber.i("Login Button clicked");
+            showLoginDialog();
+        });
         becomeMember.setOnTouchListener((v, event) -> {
             switch (event.getAction()) {
                 case MotionEvent.ACTION_DOWN:
@@ -152,6 +157,7 @@ public class CulturePassActivity extends AppCompatActivity {
 
 
     public void fetchToken() {
+        Timber.i("fetchToken()");
         HttpLoggingInterceptor interceptor = new HttpLoggingInterceptor();
         interceptor.setLevel(HttpLoggingInterceptor.Level.BODY);
 
@@ -176,6 +182,7 @@ public class CulturePassActivity extends AppCompatActivity {
             public void onResponse(Call<ProfileDetails> call, final Response<ProfileDetails> response) {
                 if (response.isSuccessful()) {
                     if (response.body() != null) {
+                        Timber.i("fetchToken() - isSuccessful");
                         performLogin(response.body().getToken());
                     }
                 }
@@ -183,6 +190,7 @@ public class CulturePassActivity extends AppCompatActivity {
 
             @Override
             public void onFailure(Call<ProfileDetails> call, Throwable t) {
+                Timber.e("fetchToken() - onFailure: %s", t.getMessage());
                 if (t.getMessage().contains("timeout"))
                     util.showToast(t.getMessage(), CulturePassActivity.this);
                 else
@@ -195,6 +203,7 @@ public class CulturePassActivity extends AppCompatActivity {
     }
 
     public void performLogin(String token) {
+        Timber.i("performLogin()");
         HttpLoggingInterceptor interceptor = new HttpLoggingInterceptor();
         interceptor.setLevel(HttpLoggingInterceptor.Level.BODY);
         OkHttpClient client;
@@ -223,6 +232,8 @@ public class CulturePassActivity extends AppCompatActivity {
                         // Commenting VIP user check for temporary
 //                        checkRSVP(profileDetails.getUser().getuId(), profileDetails.getToken());
 
+                        Timber.i("performLogin() - success with id: %s", profileDetails.getUser().getuId());
+
                         editor = qmPreferences.edit();
                         editor.putString("TOKEN", profileDetails.getToken());
                         editor.putString("UID", profileDetails.getUser().getuId());
@@ -246,6 +257,7 @@ public class CulturePassActivity extends AppCompatActivity {
                         navigateToProfile(RSVP);
                     }
                 } else {
+                    Timber.w("performLogin() - not success with code: %d", response.code());
                     if (response.code() == 401)
                         mPasswordViewLayout.setError(getString(R.string.error_incorrect_credentials));
                     else if (response.code() == 406)
@@ -259,6 +271,7 @@ public class CulturePassActivity extends AppCompatActivity {
 
             @Override
             public void onFailure(Call<ProfileDetails> call, Throwable t) {
+                Timber.e("performLogin() - onFailure: %s", t.getMessage());
                 if (t.getMessage().contains("timeout"))
                     util.showToast(t.getMessage(), CulturePassActivity.this);
                 else
@@ -272,6 +285,7 @@ public class CulturePassActivity extends AppCompatActivity {
     }
 
     public void checkRSVP(String uid, String token) {
+        Timber.i("checkRSVP()");
         HttpLoggingInterceptor interceptor = new HttpLoggingInterceptor();
         interceptor.setLevel(HttpLoggingInterceptor.Level.BODY);
 
@@ -296,6 +310,7 @@ public class CulturePassActivity extends AppCompatActivity {
                 if (response.isSuccessful()) {
                     if (response.body() != null) {
                         if (response.body().getRsvpAttendance() != null) {
+                            Timber.i("RSVP check - isSuccessful for id: %s", uid);
                             RSVP = ((LinkedTreeMap) ((ArrayList) ((LinkedTreeMap)
                                     response.body().getRsvpAttendance()).get("und")).get(0)).get("value").toString();
                             editor = qmPreferences.edit();
@@ -319,6 +334,7 @@ public class CulturePassActivity extends AppCompatActivity {
 
             @Override
             public void onFailure(Call<UserData> call, Throwable t) {
+                Timber.e("checkRSVP() - onFailure: %s", t.getMessage());
                 new Util().showToast(getResources().getString(R.string.check_network), CulturePassActivity.this);
                 showProgress(false);
             }
@@ -329,6 +345,7 @@ public class CulturePassActivity extends AppCompatActivity {
     UserRegistrationDetailsTable userRegistrationDetailsTable;
 
     public void getUserRegistrationDetails(String userID) {
+        Timber.i("getUserRegistrationDetails()");
         APIInterface apiService = APIClient.getClient().create(APIInterface.class);
         Call<ArrayList<UserRegistrationModel>> call = apiService.getUserRegistrationDetails("en", userID);
         call.enqueue(new Callback<ArrayList<UserRegistrationModel>>() {
@@ -336,6 +353,7 @@ public class CulturePassActivity extends AppCompatActivity {
             public void onResponse(Call<ArrayList<UserRegistrationModel>> call, Response<ArrayList<UserRegistrationModel>> response) {
                 if (response.isSuccessful()) {
                     if (response.body() != null && response.body().size() > 0) {
+                        Timber.i("getUserRegistrationDetails() - isSuccessful");
                         registeredEventLists.addAll(response.body());
                         new InsertRegistrationDatabaseTask(CulturePassActivity.this,
                                 userRegistrationDetailsTable, registeredEventLists).execute();
@@ -345,6 +363,7 @@ public class CulturePassActivity extends AppCompatActivity {
 
             @Override
             public void onFailure(Call<ArrayList<UserRegistrationModel>> call, Throwable t) {
+                Timber.e("getUserRegistrationDetails() - onFailure: %s", t.getMessage());
             }
         });
     }
@@ -366,6 +385,8 @@ public class CulturePassActivity extends AppCompatActivity {
         protected Boolean doInBackground(Void... voids) {
             if (registeredEventLists != null) {
                 for (int i = 0; i < registeredEventLists.size(); i++) {
+                    Timber.i("insertUserRegistrationTable() with id: %s",
+                            registeredEventLists.get(i).getRegID());
                     userRegistrationDetailsTable = new UserRegistrationDetailsTable(
                             registeredEventLists.get(i).getRegID(),
                             registeredEventLists.get(i).getEventID(),
@@ -381,6 +402,7 @@ public class CulturePassActivity extends AppCompatActivity {
     }
 
     protected void showLoginDialog() {
+        Timber.i("showLoginDialog()");
         loginDialog = new Dialog(this, R.style.DialogNoAnimation);
         loginDialog.setCancelable(true);
         loginDialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
@@ -398,10 +420,14 @@ public class CulturePassActivity extends AppCompatActivity {
             return false;
         });
         dialogLoginButton.setOnClickListener(view1 -> {
+            Timber.i("Login Button clicked");
             attemptLogin();
             hideSoftKeyboard(view1);
         });
-        closeBtn.setOnClickListener(view12 -> loginDialog.dismiss());
+        closeBtn.setOnClickListener(view12 -> {
+            Timber.i("Login close clicked");
+            loginDialog.dismiss();
+        });
         mUsernameView = view.findViewById(R.id.username);
         mPasswordView = view.findViewById(R.id.password);
         mPasswordViewLayout = view.findViewById(R.id.password_text_input_layout);
@@ -415,7 +441,10 @@ public class CulturePassActivity extends AppCompatActivity {
             }
             return false;
         });
-        forgotPassword.setOnClickListener(v -> attemptForgotPassword());
+        forgotPassword.setOnClickListener(v -> {
+            Timber.i("Forgot Password clicked");
+            attemptForgotPassword();
+        });
         mUsernameView.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
@@ -470,6 +499,7 @@ public class CulturePassActivity extends AppCompatActivity {
     }
 
     private void attemptLogin() {
+        Timber.i("attemptLogin()");
         // Reset errors.
         mUsernameViewLayout.setError(null);
         mPasswordViewLayout.setError(null);
@@ -509,6 +539,7 @@ public class CulturePassActivity extends AppCompatActivity {
     }
 
     private void attemptForgotPassword() {
+        Timber.i("attemptForgotPassword()");
         mUsernameViewLayout.setError(null);
         mPasswordViewLayout.setError(null);
         qatar = mUsernameView.getText().toString();
@@ -530,6 +561,7 @@ public class CulturePassActivity extends AppCompatActivity {
     }
 
     public void fetchTokenForPassword() {
+        Timber.i("fetchTokenForPassword()");
         apiService = APIClient.getClient().create(APIInterface.class);
         Call<ProfileDetails> call = apiService.generateToken(language, loginData);
         call.enqueue(new Callback<ProfileDetails>() {
@@ -537,6 +569,7 @@ public class CulturePassActivity extends AppCompatActivity {
             public void onResponse(Call<ProfileDetails> call, final Response<ProfileDetails> response) {
                 if (response.isSuccessful()) {
                     if (response.body() != null) {
+                        Timber.i("fetchTokenForPassword() - isSuccessful");
                         forgotPasswordAction(response.body().getToken());
                     }
                 }
@@ -544,6 +577,7 @@ public class CulturePassActivity extends AppCompatActivity {
 
             @Override
             public void onFailure(Call<ProfileDetails> call, Throwable t) {
+                Timber.e("fetchTokenForPassword() - onFailure: %s", t.getMessage());
                 util.showToast(getResources().getString(R.string.check_network),
                         CulturePassActivity.this);
                 showProgress(false);
@@ -553,6 +587,7 @@ public class CulturePassActivity extends AppCompatActivity {
     }
 
     public void forgotPasswordAction(String token) {
+        Timber.i("forgotPasswordAction()");
         apiService = APIClient.getClient().create(APIInterface.class);
         Call<ArrayList<String>> callLogin = apiService.forgotPassword(language, token, loginData);
         callLogin.enqueue(new Callback<ArrayList<String>>() {
@@ -560,10 +595,12 @@ public class CulturePassActivity extends AppCompatActivity {
             public void onResponse(Call<ArrayList<String>> call, Response<ArrayList<String>> response) {
                 if (response.isSuccessful()) {
                     if (response.body() != null) {
+                        Timber.i("forgotPasswordAction() - isSuccessful");
                         loginDialog.dismiss();
                         util.showNormalDialog(CulturePassActivity.this, R.string.password_reset_successful);
                     }
                 } else {
+                    Timber.w("forgotPasswordAction() - not success with code: %d", response.code());
                     if (response.code() == 406)
                         mUsernameViewLayout.setError(getString(R.string.error_incorrect_username));
                     else
@@ -575,6 +612,7 @@ public class CulturePassActivity extends AppCompatActivity {
 
             @Override
             public void onFailure(Call<ArrayList<String>> call, Throwable t) {
+                Timber.e("forgotPasswordAction() - onFailure: %s", t.getMessage());
                 util.showToast(getResources().getString(R.string.check_network),
                         CulturePassActivity.this);
                 showProgress(false);
@@ -588,7 +626,7 @@ public class CulturePassActivity extends AppCompatActivity {
      * Shows the progress UI and hides the login form.
      */
     private void showProgress(final boolean show) {
-
+        Timber.i("showProgress(%b)", show);
         int shortAnimTime = getResources().getInteger(android.R.integer.config_shortAnimTime);
 
         mLoginFormView.setVisibility(show ? View.GONE : View.VISIBLE);
