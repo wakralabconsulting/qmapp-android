@@ -18,6 +18,8 @@ import com.pierfrancescosoffritti.androidyoutubeplayer.player.listeners.Abstract
 import com.qatarmuseums.qatarmuseumsapp.LocaleManager;
 import com.qatarmuseums.qatarmuseumsapp.R;
 
+import timber.log.Timber;
+
 public class EducationActivity extends AppCompatActivity {
     YouTubePlayerView youTubePlayerView;
     private String videoId = "2cEYXuCTJjQ";
@@ -41,9 +43,12 @@ public class EducationActivity extends AppCompatActivity {
         TextView longDescription = findViewById(R.id.long_description);
         discoverButton = findViewById(R.id.discover_btn);
         longDescription.setText(getString(R.string.education_long_description));
-        backButton.setOnClickListener(v -> onBackPressed());
+        backButton.setOnClickListener(v -> {
+            Timber.i("onBackPressed()");
+            onBackPressed();
+        });
         discoverButton.setOnClickListener(v -> {
-            //Discover button action
+            Timber.i("Discover Button clicked");
             Intent intent = new Intent(EducationActivity.this, EducationCalendarActivity.class);
             startActivity(intent);
         });
@@ -64,6 +69,7 @@ public class EducationActivity extends AppCompatActivity {
     }
 
     public void initYouTubePlayerView() {
+        Timber.i("initYouTubePlayerView()");
         youTubePlayerView = new YouTubePlayerView(this);
         youTubePlayerLayout.addView(youTubePlayerView);
         getLifecycle().addObserver(youTubePlayerView);
@@ -72,6 +78,7 @@ public class EducationActivity extends AppCompatActivity {
                     initializedYouTubePlayer.addListener(new AbstractYouTubePlayerListener() {
                         @Override
                         public void onReady() {
+                            Timber.i("Play video: %s", videoId);
                             initializedYouTubePlayer.cueVideo(videoId, 0);
                         }
                     });
@@ -86,6 +93,7 @@ public class EducationActivity extends AppCompatActivity {
 
     @Override
     public void onBackPressed() {
+        Timber.i("onBackPressed()");
         if (youTubePlayerView.isFullScreen())
             youTubePlayerView.exitFullScreen();
         else

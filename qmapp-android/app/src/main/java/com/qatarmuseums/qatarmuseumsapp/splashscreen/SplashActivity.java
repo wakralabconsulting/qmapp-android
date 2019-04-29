@@ -22,7 +22,6 @@ public class SplashActivity extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        Timber.i("Splash screen initialised ...");
         setContentView(R.layout.activity_splash);
         gifImageView = findViewById(R.id.gif_image_view);
 

@@ -48,6 +48,7 @@ import butterknife.ButterKnife;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
+import timber.log.Timber;
 
 public class CalendarActivity extends AppCompatActivity {
 
@@ -119,6 +120,7 @@ public class CalendarActivity extends AppCompatActivity {
         zoomOutAnimation = AnimationUtils.loadAnimation(getApplicationContext(),
                 R.anim.zoom_out_more);
         retryButton.setOnClickListener(v -> {
+            Timber.i("Retry button clicked");
             getCalendarEventsFromAPI(monthNumber, day, year, today.getTimeInMillis());
             retryLayout.setVisibility(View.GONE);
         });
@@ -139,7 +141,10 @@ public class CalendarActivity extends AppCompatActivity {
             return false;
         });
 
-        backArrow.setOnClickListener(v -> onBackPressed());
+        backArrow.setOnClickListener(v -> {
+            Timber.i("onBackPressed()");
+            onBackPressed();
+        });
 
         progress.setOnClickListener(view -> {
             // To avoid background click while loading
@@ -148,6 +153,7 @@ public class CalendarActivity extends AppCompatActivity {
         collapsibleCalendar.setCalendarListener(new CollapsibleCalendar.CalendarListener() {
             @Override
             public void onDaySelect() {
+                Timber.i("onDaySelect()");
                 calendarInstance = Calendar.getInstance();
                 calendarInstance.set(collapsibleCalendar.getSelectedItem().getYear(),
                         collapsibleCalendar.getSelectedItem().getMonth(),
@@ -228,12 +234,14 @@ public class CalendarActivity extends AppCompatActivity {
     }
 
     public void getCalendarEventsFromDatabase(Long timeStamp) {
+        Timber.i("getCalendarEventsFromDatabase()");
         progress.setVisibility(View.VISIBLE);
         calendarAdapter.clear();
         new EventsRowCount(CalendarActivity.this, language, timeStamp / 1000).execute();
     }
 
     public void getCalendarEventsFromAPI(final String month, final String day, final String year, final long timeStamp) {
+        Timber.i("getCalendarEventsFromAPI()");
         progress.setVisibility(View.VISIBLE);
         calendarAdapter.clear();
         apiService = APIClient.getClient().create(APIInterface.class);
@@ -244,6 +252,7 @@ public class CalendarActivity extends AppCompatActivity {
             public void onResponse(Call<ArrayList<Events>> call, Response<ArrayList<Events>> response) {
                 if (response.isSuccessful()) {
                     if (response.body().size() > 0) {
+                        Timber.i("getCalendarEventsFromAPI() - isSuccessful with size: %s", response.body().size());
                         noEventsTxt.setVisibility(View.GONE);
                         calendarEventList.addAll(response.body());
                         util.removeHtmlTags(calendarEventList);
@@ -252,10 +261,12 @@ public class CalendarActivity extends AppCompatActivity {
                         eventListView.setVisibility(View.VISIBLE);
                         new EventsRowCount(CalendarActivity.this, language, timeStamp / 1000).execute();
                     } else {
+                        Timber.i("getCalendarEventsFromAPI() - have no data");
                         noEventsTxt.setVisibility(View.VISIBLE);
                         noEventsTxt.setText(R.string.no_events);
                     }
                 } else {
+                    Timber.w("getCalendarEventsFromAPI() - response not successful");
                     retryLayout.setVisibility(View.VISIBLE);
                 }
                 progress.setVisibility(View.GONE);
@@ -263,6 +274,7 @@ public class CalendarActivity extends AppCompatActivity {
 
             @Override
             public void onFailure(Call<ArrayList<Events>> call, Throwable t) {
+                Timber.e("getCalendarEventsFromAPI() - onFailure: %s", t.getMessage());
                 retryLayout.setVisibility(View.VISIBLE);
                 progress.setVisibility(View.GONE);
             }
@@ -271,6 +283,7 @@ public class CalendarActivity extends AppCompatActivity {
     }
 
     public void onClickCalled(Boolean registrationRequired, final ArrayList<Events> events, final int position) {
+        Timber.i("Calendar event clicked with registration required: %b", registrationRequired);
         if (registrationRequired)
             util.showDialog(this, getResources().getString(R.string.register_now), events, position);
         else
@@ -285,8 +298,10 @@ public class CalendarActivity extends AppCompatActivity {
                 // If request is cancelled, the result arrays are empty.
                 if (grantResults.length > 0
                         && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    Timber.i("onRequestPermissionsResult() - PERMISSION_GRANTED");
                     util.insertEventToCalendar(this, null);
                 } else {
+                    Timber.i("onRequestPermissionsResult() - PERMISSION_NOT_GRANTED ");
                     boolean showRationale = false;
                     if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.M) {
                         showRationale = shouldShowRequestPermissionRationale(permissions[0]);
@@ -305,6 +320,7 @@ public class CalendarActivity extends AppCompatActivity {
         if (ContextCompat.checkSelfPermission(this,
                 Manifest.permission.WRITE_CALENDAR)
                 == PackageManager.PERMISSION_GRANTED) {
+            Timber.i("onActivityResult() - PERMISSION_GRANTED");
             util.insertEventToCalendar(this, null);
         }
     }
@@ -330,20 +346,23 @@ public class CalendarActivity extends AppCompatActivity {
         protected void onPostExecute(Integer integer) {
             int eventsTableRowCount = integer;
             if (eventsTableRowCount > 0) {
+                Timber.i("Count: %d", integer);
                 if (activityReference.get().calendarEventList.size() > 0 &&
                         activityReference.get().util.isNetworkAvailable(activityReference.get()))
                     new CheckEventRowExist(activityReference.get(), language, timeStamp).execute();
                 else {
-                    if (language.equals("en")) {
+                    if (language.equals(LocaleManager.LANGUAGE_ENGLISH)) {
                         new RetrieveEnglishTableData(activityReference.get(), timeStamp).execute();
                     } else {
                         new RetrieveArabicTableData(activityReference.get(), timeStamp).execute();
                     }
                 }
             } else if (activityReference.get().calendarEventList.size() > 0) {
+                Timber.i("Database table have no data");
                 new InsertDatabaseTask(activityReference.get(), activityReference.get().calendarEventsTableEnglish,
                         activityReference.get().calendarEventsTableArabic, language, timeStamp).execute();
             } else {
+                Timber.i("Database table have no data");
                 activityReference.get().retryLayout.setVisibility(View.VISIBLE);
                 activityReference.get().progress.setVisibility(View.GONE);
             }
@@ -351,11 +370,12 @@ public class CalendarActivity extends AppCompatActivity {
 
         @Override
         protected Integer doInBackground(Void... voids) {
-            if (language.equals("en"))
+            Timber.i("getNumberOf%sRows%s()", activityReference.get().toolbar_title.getText(), language.toUpperCase());
+            if (language.equals("en")) {
                 return activityReference.get().qmDatabase.getCalendarEventsDao().getNumberOfRowsEnglish();
-            else
+            } else {
                 return activityReference.get().qmDatabase.getCalendarEventsDao().getNumberOfRowsArabic();
-
+            }
         }
     }
 
@@ -373,13 +393,16 @@ public class CalendarActivity extends AppCompatActivity {
         @Override
         protected Void doInBackground(Void... voids) {
             if (activityReference.get().calendarEventList.size() > 0) {
-                if (language.equals("en")) {
+                Timber.i("checkTableWithEventDateExist(%s) timestamp: %d", language.toUpperCase(), timeStamp);
+                if (language.equals(LocaleManager.LANGUAGE_ENGLISH)) {
                     int n = activityReference.get().qmDatabase.getCalendarEventsDao().checkEnglishWithEventDateExist(
                             timeStamp);
                     if (n > 0) {
+                        Timber.i("Event is Exist for %d", timeStamp);
                         new DeleteEventsTableRow(activityReference.get(), language,
                                 timeStamp).execute();
                     } else {
+                        Timber.i("No Event for %d", timeStamp);
                         new InsertDatabaseTask(activityReference.get(), activityReference.get().calendarEventsTableEnglish,
                                 activityReference.get().calendarEventsTableArabic, language, timeStamp).execute();
                     }
@@ -387,9 +410,11 @@ public class CalendarActivity extends AppCompatActivity {
                     int n = activityReference.get().qmDatabase.getCalendarEventsDao().checkArabicWithEventDateExist(
                             timeStamp);
                     if (n > 0) {
+                        Timber.i("Event is Exist for %d", timeStamp);
                         new DeleteEventsTableRow(activityReference.get(), language,
                                 timeStamp).execute();
                     } else {
+                        Timber.i("No Event for %d", timeStamp);
                         new InsertDatabaseTask(activityReference.get(), activityReference.get().calendarEventsTableEnglish,
                                 activityReference.get().calendarEventsTableArabic, language, timeStamp).execute();
                     }
@@ -420,8 +445,12 @@ public class CalendarActivity extends AppCompatActivity {
         @Override
         protected Boolean doInBackground(Void... voids) {
             if (activityReference.get().calendarEventList != null) {
-                if (language.equals("en")) {
+                Timber.i("insert event on table(%s) with size: %d", language.toUpperCase(),
+                        activityReference.get().calendarEventList.size());
+                if (language.equals(LocaleManager.LANGUAGE_ENGLISH)) {
                     for (int i = 0; i < activityReference.get().calendarEventList.size(); i++) {
+                        Timber.i("insertEnglishTable with id: %s",
+                                activityReference.get().calendarEventList.get(i).getEid());
                         ArrayList<String> fieldValue = new ArrayList<String>();
                         fieldValue = activityReference.get().calendarEventList.get(i).getField();
                         ArrayList<String> startDate = new ArrayList<String>();
@@ -455,7 +484,8 @@ public class CalendarActivity extends AppCompatActivity {
                     }
                 } else {
                     for (int i = 0; i < activityReference.get().calendarEventList.size(); i++) {
-
+                        Timber.i("insertArabicTable with id: %s",
+                                activityReference.get().calendarEventList.get(i).getEid());
                         ArrayList<String> fieldValue = new ArrayList<String>();
                         fieldValue = activityReference.get().calendarEventList.get(i).getField();
                         ArrayList<String> startDate = new ArrayList<String>();
@@ -507,7 +537,8 @@ public class CalendarActivity extends AppCompatActivity {
 
         @Override
         protected Void doInBackground(Void... voids) {
-            if (language.equals("en")) {
+            Timber.i("DeleteEventsTableRow(%s) with timestamp: %d before insertion", language, timestamp);
+            if (language.equals(LocaleManager.LANGUAGE_ENGLISH)) {
                 activityReference.get().qmDatabase.getCalendarEventsDao().deleteEnglishEventsWithDate(
                         timestamp
                 );
@@ -540,6 +571,7 @@ public class CalendarActivity extends AppCompatActivity {
 
         @Override
         protected List<CalendarEventsTableEnglish> doInBackground(Void... voids) {
+            Timber.i("getEventsWithDateEnglish(%d)", eventDate);
             return activityReference.get().qmDatabase.getCalendarEventsDao().getEventsWithDateEnglish(eventDate);
 
         }
@@ -552,7 +584,9 @@ public class CalendarActivity extends AppCompatActivity {
             ArrayList<String> endDate = new ArrayList<String>();
             Convertor converters = new Convertor();
             if (eventsTableEnglishList.size() > 0) {
+                Timber.i("CalendarEventsTableEnglish with size: %d", eventsTableEnglishList.size());
                 for (int i = 0; i < eventsTableEnglishList.size(); i++) {
+                    Timber.i("Set calendar events from DB with id: %s", eventsTableEnglishList.get(i).getEvent_id());
                     startDate.add(0, eventsTableEnglishList.get(i).getEvent_start_time());
                     endDate.add(0, eventsTableEnglishList.get(i).getEvent_end_time());
                     fieldValue.add(0, eventsTableEnglishList.get(i).getField());
@@ -582,6 +616,7 @@ public class CalendarActivity extends AppCompatActivity {
                 activityReference.get().eventListView.setVisibility(View.VISIBLE);
                 activityReference.get().retryLayout.setVisibility(View.GONE);
             } else {
+                Timber.i("CalendarEventsTableEnglish have no data");
                 activityReference.get().retryLayout.setVisibility(View.VISIBLE);
             }
             activityReference.get().progress.setVisibility(View.GONE);
@@ -612,7 +647,9 @@ public class CalendarActivity extends AppCompatActivity {
             ArrayList<String> endDate = new ArrayList<String>();
             Convertor converters = new Convertor();
             if (eventsTableArabicList.size() > 0) {
+                Timber.i("eventsTableArabicList with size: %d", eventsTableArabicList.size());
                 for (int i = 0; i < eventsTableArabicList.size(); i++) {
+                    Timber.i("Set calendar events from DB with id: %s", eventsTableArabicList.get(i).getEvent_id());
                     startDate.add(0, eventsTableArabicList.get(i).getEvent_start_time());
                     endDate.add(0, eventsTableArabicList.get(i).getEvent_end_time());
                     fieldValue.add(0, eventsTableArabicList.get(i).getField());
@@ -642,6 +679,7 @@ public class CalendarActivity extends AppCompatActivity {
                 activityReference.get().eventListView.setVisibility(View.VISIBLE);
                 activityReference.get().retryLayout.setVisibility(View.GONE);
             } else {
+                Timber.i("CalendarEventsTableArabic have no data");
                 activityReference.get().retryLayout.setVisibility(View.VISIBLE);
             }
             activityReference.get().progress.setVisibility(View.GONE);

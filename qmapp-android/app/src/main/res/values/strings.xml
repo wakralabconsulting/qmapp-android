@@ -40,7 +40,7 @@
     <string name="add_to_calendar">Add To Calendar</string>
     <string name="register_now">Register Now</string>
     <string name="change_language_dialog_title">Change Language?</string>
-    <string name="change_language_button_text">Continue</string>
+    <string name="continue_button_text">Continue</string>
     <string name="museum_about_text">About</string>
     <string name="museum_collection_text">Collections</string>
     <string name="change_language_content_text">You will be redirected to home page, after changing the language. Do you want to continue?</string>
@@ -224,7 +224,12 @@ Any questions, please contact booking@qm.org.qa or +974 4452 5555"</string>
     <string name="facilities_txt">Facilities</string>
     <string name="experience_txt">Experience</string>
     <string name="facility_sublist">Facility Sublist</string>
-    <string name="playground">playground</string>
+    <!-- Strings related to Send logs Landing -->
+    <string name="send_logs">Send Logs</string>
+    <string name="send_email_dialog_title">Send Email Confirmation</string>
+    <string name="send_email_dialog_message">Would you like send email</string>
+    <string name="send_email_success">Email Sent</string>
+    <string name="send_email_cancelled">Email Cancelled</string>
 
-    facility_sublist
+
 </resources>

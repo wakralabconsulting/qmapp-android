@@ -26,6 +26,7 @@ import com.qatarmuseums.qatarmuseumsapp.R;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import timber.log.Timber;
 
 public class WebViewActivity extends AppCompatActivity {
 
@@ -92,6 +93,7 @@ public class WebViewActivity extends AppCompatActivity {
                 webViewProgressBar.setVisibility(View.GONE);
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
                     if (error.getDescription().toString().contains("net::ERR_INTERNET_DISCONNECTED")) {
+                        Timber.i("On Error: %s", error.getDescription().toString());
                         webView.setVisibility(View.GONE);
                         retryLayout.setVisibility(View.VISIBLE);
                     }
@@ -116,10 +118,14 @@ public class WebViewActivity extends AppCompatActivity {
     }
 
     public void setUpCloseButtonClickListener() {
-        webViewCloseBtn.setOnClickListener(view -> finish());
+        webViewCloseBtn.setOnClickListener(view -> {
+            Timber.i("Close button clicked");
+            finish();
+        });
         zoomOutAnimation = AnimationUtils.loadAnimation(getApplicationContext(),
                 R.anim.zoom_out_more);
         retryButton.setOnClickListener(v -> {
+            Timber.i("Retry button clicked");
             webView.loadUrl(url);
             webViewProgressBar.setVisibility(View.VISIBLE);
             retryLayout.setVisibility(View.GONE);

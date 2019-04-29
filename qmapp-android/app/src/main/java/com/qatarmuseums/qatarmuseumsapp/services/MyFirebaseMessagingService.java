@@ -3,7 +3,6 @@ package com.qatarmuseums.qatarmuseumsapp.services;
 import android.content.Context;
 import android.content.Intent;
 import android.support.v4.content.LocalBroadcastManager;
-import android.util.Log;
 
 import com.google.firebase.messaging.FirebaseMessagingService;
 import com.google.firebase.messaging.RemoteMessage;
@@ -23,35 +22,33 @@ import org.json.JSONObject;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
-
-import static android.content.ContentValues.TAG;
+import timber.log.Timber;
 
 public class MyFirebaseMessagingService extends FirebaseMessagingService {
 
     @Override
     public void onNewToken(String token) {
-        Log.d(TAG, "Refreshed token: " + token);
         sendRegistrationToServer(token);
     }
 
     @Override
     public void onMessageReceived(RemoteMessage remoteMessage) {
 
-        Log.d(TAG, "From: " + remoteMessage.getFrom());
+        Timber.d("From: %s", remoteMessage.getFrom());
         // Check if message contains a data payload.
         if (remoteMessage.getData().size() > 0) {
-            Log.d(TAG, "Message data payload: " + remoteMessage.getData());
+            Timber.d("Message data payload: %s", remoteMessage.getData());
             try {
                 JSONObject json = new JSONObject(remoteMessage.getData().toString());
                 handleDataMessage(json);
             } catch (Exception e) {
-                Log.e(TAG, "Exception: " + e.getMessage());
+                Timber.e("Exception: %s", e.getMessage());
             }
         }
 
         // Check if message contains a notification payload.
         else if (remoteMessage.getNotification() != null) {
-            Log.d(TAG, "Message Notification Body: " + remoteMessage.getNotification().getBody());
+            Timber.d("Message Notification Body: %s", remoteMessage.getNotification().getBody());
             handleNotification(remoteMessage.getNotification().getBody());
         }
 
@@ -75,12 +72,12 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
     }
 
     private void handleDataMessage(JSONObject json) {
-        Log.e(TAG, "push json: " + json.toString());
+        Timber.e("push json: %s", json.toString());
 
         try {
             JSONObject data = json.getJSONObject("app");
             String message = data.getString("alert");
-            Log.e(TAG, "message: " + message);
+            Timber.e("message: %s", message);
             if (!NotificationUtils.isAppIsInBackground(getApplicationContext())) {
                 // app is in foreground, broadcast the push message
                 Intent pushNotification = new Intent(Config.PUSH_NOTIFICATION);
@@ -98,9 +95,9 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
 
             }
         } catch (JSONException e) {
-            Log.e(TAG, "Json Exception: " + e.getMessage());
+            Timber.e("Json Exception: %s", e.getMessage());
         } catch (Exception e) {
-            Log.e(TAG, "Exception: " + e.getMessage());
+            Timber.e("Exception: %s", e.getMessage());
         }
     }
 
@@ -142,6 +139,7 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
     }
 
     private void sendFireBaseToken(String loginToken, String fireBaseToken, String lan) {
+        Timber.i("sendFireBaseToken()");
         TokenForPushNotification tokenForPushNotification = new TokenForPushNotification(fireBaseToken, "android");
         APIInterface apiService =
                 APIClient.getClient().create(APIInterface.class);
@@ -149,12 +147,13 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
         call.enqueue(new Callback<Void>() {
             @Override
             public void onResponse(Call<Void> call, Response<Void> response) {
-                // token send success
+                Timber.i("sendFireBaseToken() - isSuccessful");
+
             }
 
             @Override
             public void onFailure(Call<Void> call, Throwable t) {
-                //token send failed
+                Timber.e("sendFireBaseToken() - onFailure: %s", t.getMessage());
             }
         });
     }
