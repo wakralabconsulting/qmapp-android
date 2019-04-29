@@ -57,6 +57,7 @@ import java.util.List;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
+import timber.log.Timber;
 
 public class CommonListActivity extends AppCompatActivity {
 
@@ -132,6 +133,10 @@ public class CommonListActivity extends AppCompatActivity {
         recyclerView = findViewById(R.id.common_recycler_view);
 
         mAdapter = new CommonListAdapter(this, models, position -> {
+            Timber.i("%s is clicked with ID: %s from %s",
+                    models.get(position).getName().toUpperCase(),
+                    models.get(position).getId(),
+                    toolbarTitle);
             if (toolbarTitle.equals(getString(R.string.museum_collection_text)))
                 navigationIntent = new Intent(CommonListActivity.this,
                         CollectionDetailsActivity.class);
@@ -163,10 +168,7 @@ public class CommonListActivity extends AppCompatActivity {
             navigationIntent.putExtra("CLAIM_OFFER", models.get(position).getClaimOffer());
             navigationIntent.putExtra("CONTACT_PHONE", models.get(position).getContactNumber());
             navigationIntent.putExtra("CONTACT_MAIL", models.get(position).getEmail());
-
-
             startActivity(navigationIntent);
-
         });
         RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(getApplicationContext());
         recyclerView.setLayoutManager(mLayoutManager);
@@ -177,6 +179,7 @@ public class CommonListActivity extends AppCompatActivity {
         zoomOutAnimation = AnimationUtils.loadAnimation(getApplicationContext(),
                 R.anim.zoom_out_more);
         retryButton.setOnClickListener(v -> {
+            Timber.i("Retry button clicked");
             getData();
             progressBar.setVisibility(View.VISIBLE);
             retryLayout.setVisibility(View.GONE);
@@ -201,15 +204,9 @@ public class CommonListActivity extends AppCompatActivity {
         convertor = new Convertor();
     }
 
-    private void getTravelDataFromDataBase() {
-        if (appLanguage.equals(LocaleManager.LANGUAGE_ENGLISH)) {
-            new RetrieveEnglishTravelData(CommonListActivity.this).execute();
-        } else {
-            new RetrieveArabicTravelData(CommonListActivity.this).execute();
-        }
-    }
 
     public void getData() {
+        Timber.i("getData() for %s", toolbarTitle);
         if (toolbarTitle.equals(getString(R.string.side_menu_exhibition_text))) {
             if (util.isNetworkAvailable(CommonListActivity.this))
                 getCommonListAPIDataFromAPI("Exhibition_List_Page.json");
@@ -261,32 +258,8 @@ public class CommonListActivity extends AppCompatActivity {
         }
     }
 
-    public void getTourListFromDatabase() {
-        if (appLanguage.equals(LocaleManager.LANGUAGE_ENGLISH)) {
-            new RetrieveEnglishTourData(CommonListActivity.this, 1).execute();
-        } else {
-            new RetrieveArabicTourData(CommonListActivity.this, 1).execute();
-        }
-    }
-
-    public void getFacilityListFromDataBase() {
-        if (appLanguage.equals(LocaleManager.LANGUAGE_ENGLISH)) {
-            new RetrieveEnglishFacilityData(CommonListActivity.this).execute();
-        } else {
-            new RetrieveArabicFacilityData(CommonListActivity.this).execute();
-        }
-    }
-
-
-    public void getSpecialEventFromDatabase() {
-        if (appLanguage.equals(LocaleManager.LANGUAGE_ENGLISH)) {
-            new RetrieveEnglishTourData(CommonListActivity.this, 0).execute();
-        } else {
-            new RetrieveArabicTourData(CommonListActivity.this, 0).execute();
-        }
-    }
-
     private void getFacilityListFromAPI() {
+        Timber.i("get%sListFromAPI()", toolbarTitle);
         progressBar.setVisibility(View.VISIBLE);
         apiService = APIClient.getClient().create(APIInterface.class);
         Call<ArrayList<CommonListModel>> call = apiService.getFacilityList(appLanguage);
@@ -302,15 +275,18 @@ public class CommonListActivity extends AppCompatActivity {
                         }
                         removeHtmlTags(models);
                         Collections.sort(models);
+                        Timber.i("Set %s list with size: %d", toolbarTitle, response.body().size());
                         mAdapter.notifyDataSetChanged();
                         new FacilityRowCount(CommonListActivity.this, appLanguage).execute();
 
                     } else {
+                        Timber.i("%s list have no data", toolbarTitle);
                         recyclerView.setVisibility(View.GONE);
                         noResultFoundLayout.setVisibility(View.VISIBLE);
                     }
 
                 } else {
+                    Timber.w("%s list response is not successful", toolbarTitle);
                     recyclerView.setVisibility(View.GONE);
                     retryLayout.setVisibility(View.VISIBLE);
                 }
@@ -319,6 +295,7 @@ public class CommonListActivity extends AppCompatActivity {
 
             @Override
             public void onFailure(Call<ArrayList<CommonListModel>> call, Throwable t) {
+                Timber.e("get%sListFromAPI() - onFailure: %s", toolbarTitle, t.getMessage());
                 recyclerView.setVisibility(View.GONE);
                 retryLayout.setVisibility(View.VISIBLE);
                 progressBar.setVisibility(View.GONE);
@@ -328,6 +305,7 @@ public class CommonListActivity extends AppCompatActivity {
     }
 
     private void getTourListFromAPI() {
+        Timber.i("get%sListFromAPI()", toolbarTitle);
         progressBar.setVisibility(View.VISIBLE);
         apiService = APIClient.getClient().create(APIInterface.class);
         call = apiService.getTourList(appLanguage);
@@ -337,7 +315,8 @@ public class CommonListActivity extends AppCompatActivity {
                 if (response.isSuccessful()) {
                     if (response.body() != null && response.body().size() > 0) {
                         recyclerView.setVisibility(View.VISIBLE);
-                        for (int i = 0; i < response.body().size(); i++)
+                        Timber.i("Setting %s list with size: %d", toolbarTitle, response.body().size());
+                        for (int i = 0; i < response.body().size(); i++) {
                             models.add(new CommonListModel(
                                     response.body().get(i).getId(),
                                     response.body().get(i).getEventDay(),
@@ -345,14 +324,17 @@ public class CommonListActivity extends AppCompatActivity {
                                     response.body().get(i).getName(),
                                     response.body().get(i).getImages(),
                                     true));
+                        }
                         removeHtmlTags(models);
                         mAdapter.notifyDataSetChanged();
                         new TourRowCount(CommonListActivity.this, appLanguage, 1).execute();
                     } else {
+                        Timber.i("%s list have no data", toolbarTitle);
                         recyclerView.setVisibility(View.GONE);
                         noResultFoundLayout.setVisibility(View.VISIBLE);
                     }
                 } else {
+                    Timber.w("%s list response is not successful", toolbarTitle);
                     recyclerView.setVisibility(View.GONE);
                     retryLayout.setVisibility(View.VISIBLE);
                 }
@@ -361,6 +343,7 @@ public class CommonListActivity extends AppCompatActivity {
 
             @Override
             public void onFailure(Call<ArrayList<CommonListModel>> call, Throwable t) {
+                Timber.e("get%sListFromAPI() - onFailure: %s", toolbarTitle, t.getMessage());
                 recyclerView.setVisibility(View.GONE);
                 retryLayout.setVisibility(View.VISIBLE);
                 progressBar.setVisibility(View.GONE);
@@ -369,6 +352,7 @@ public class CommonListActivity extends AppCompatActivity {
     }
 
     private void getSpecialEventFromAPI() {
+        Timber.i("get%sListFromAPI()", toolbarTitle);
         progressBar.setVisibility(View.VISIBLE);
         apiService = APIClient.getClient().create(APIInterface.class);
         call = apiService.getSpecialEvents(appLanguage);
@@ -378,7 +362,8 @@ public class CommonListActivity extends AppCompatActivity {
                 if (response.isSuccessful()) {
                     if (response.body() != null && response.body().size() > 0) {
                         recyclerView.setVisibility(View.VISIBLE);
-                        for (int i = 0; i < response.body().size(); i++)
+                        Timber.i("Setting %s list with size: %d", toolbarTitle, response.body().size());
+                        for (int i = 0; i < response.body().size(); i++) {
                             models.add(new CommonListModel(
                                     response.body().get(i).getId(),
                                     response.body().get(i).getEventDay(),
@@ -386,14 +371,17 @@ public class CommonListActivity extends AppCompatActivity {
                                     response.body().get(i).getName(),
                                     response.body().get(i).getImages(),
                                     false));
+                        }
                         removeHtmlTags(models);
                         mAdapter.notifyDataSetChanged();
                         new TourRowCount(CommonListActivity.this, appLanguage, 0).execute();
                     } else {
+                        Timber.i("%s list have no data", toolbarTitle);
                         recyclerView.setVisibility(View.GONE);
                         noResultFoundLayout.setVisibility(View.VISIBLE);
                     }
                 } else {
+                    Timber.w("%s list response is not successful", toolbarTitle);
                     recyclerView.setVisibility(View.GONE);
                     retryLayout.setVisibility(View.VISIBLE);
                 }
@@ -402,6 +390,7 @@ public class CommonListActivity extends AppCompatActivity {
 
             @Override
             public void onFailure(Call<ArrayList<CommonListModel>> call, Throwable t) {
+                Timber.e("get%sListFromAPI() - onFailure: %s", toolbarTitle, t.getMessage());
                 recyclerView.setVisibility(View.GONE);
                 retryLayout.setVisibility(View.VISIBLE);
                 progressBar.setVisibility(View.GONE);
@@ -410,6 +399,7 @@ public class CommonListActivity extends AppCompatActivity {
     }
 
     private void getTravelDataFromAPI() {
+        Timber.i("get%sListFromAPI()", toolbarTitle);
         progressBar.setVisibility(View.VISIBLE);
         apiService = APIClient.getClient().create(APIInterface.class);
         call = apiService.getTravelData(appLanguage);
@@ -419,7 +409,8 @@ public class CommonListActivity extends AppCompatActivity {
                 if (response.isSuccessful()) {
                     if (response.body() != null && response.body().size() > 0) {
                         recyclerView.setVisibility(View.VISIBLE);
-                        for (int i = 0; i < response.body().size(); i++)
+                        Timber.i("Setting %s list with size: %d", toolbarTitle, response.body().size());
+                        for (int i = 0; i < response.body().size(); i++) {
                             models.add(new CommonListModel(response.body().get(i).getName(),
                                     response.body().get(i).getImage(),
                                     response.body().get(i).getDescription(),
@@ -429,14 +420,17 @@ public class CommonListActivity extends AppCompatActivity {
                                     response.body().get(i).getClaimOffer(),
                                     response.body().get(i).getId(),
                                     true));
+                        }
                         removeHtmlTags(models);
                         mAdapter.notifyDataSetChanged();
                         new TravelRowCount(CommonListActivity.this, appLanguage).execute();
                     } else {
+                        Timber.i("%s list have no data", toolbarTitle);
                         recyclerView.setVisibility(View.GONE);
                         noResultFoundLayout.setVisibility(View.VISIBLE);
                     }
                 } else {
+                    Timber.w("%s list response is not successful", toolbarTitle);
                     recyclerView.setVisibility(View.GONE);
                     retryLayout.setVisibility(View.VISIBLE);
                 }
@@ -445,6 +439,7 @@ public class CommonListActivity extends AppCompatActivity {
 
             @Override
             public void onFailure(Call<ArrayList<CommonListModel>> call, Throwable t) {
+                Timber.e("get%sListFromAPI() - onFailure: %s", toolbarTitle, t.getMessage());
                 recyclerView.setVisibility(View.GONE);
                 retryLayout.setVisibility(View.VISIBLE);
                 progressBar.setVisibility(View.GONE);
@@ -452,8 +447,112 @@ public class CommonListActivity extends AppCompatActivity {
         });
     }
 
-    public void getCommonListDataFromDatabase(String apiParts) {
+    private void getMuseumCollectionListFromAPI() {
+        Timber.i("get%sListFromAPI()", toolbarTitle);
+        progressBar.setVisibility(View.VISIBLE);
+        apiService = APIClient.getClient().create(APIInterface.class);
 
+        call = apiService.getCollectionList(appLanguage, id);
+        call.enqueue(new Callback<ArrayList<CommonListModel>>() {
+            @Override
+            public void onResponse(Call<ArrayList<CommonListModel>> call, Response<ArrayList<CommonListModel>> response) {
+                if (response.isSuccessful()) {
+                    if (response.body() != null && response.body().size() > 0) {
+                        Timber.i("Setting %s list with size: %d", toolbarTitle, response.body().size());
+                        recyclerView.setVisibility(View.VISIBLE);
+                        models.addAll(response.body());
+                        removeHtmlTags(models);
+                        mAdapter.notifyDataSetChanged();
+                        new MuseumCollectionRowCount(CommonListActivity.this, appLanguage).execute();
+                    } else {
+                        Timber.i("%s list have no data", toolbarTitle);
+                        recyclerView.setVisibility(View.GONE);
+                        noResultFoundLayout.setVisibility(View.VISIBLE);
+                    }
+                } else {
+                    Timber.w("%s list response is not successful", toolbarTitle);
+                    recyclerView.setVisibility(View.GONE);
+                    retryLayout.setVisibility(View.VISIBLE);
+                }
+                progressBar.setVisibility(View.GONE);
+            }
+
+            @Override
+            public void onFailure(Call<ArrayList<CommonListModel>> call, Throwable t) {
+                Timber.e("get%sListFromAPI() - onFailure: %s", toolbarTitle, t.getMessage());
+                recyclerView.setVisibility(View.GONE);
+                retryLayout.setVisibility(View.VISIBLE);
+                progressBar.setVisibility(View.GONE);
+            }
+        });
+    }
+
+    private void getCommonListAPIDataFromAPI(String name) {
+        Timber.i("get%sListFromAPI()", toolbarTitle);
+        progressBar.setVisibility(View.VISIBLE);
+        pageName = name;
+        apiService = APIClient.getClient().create(APIInterface.class);
+        if (id != null)
+            call = apiService.getCommonPageListWithID(appLanguage, pageName, id);
+        else
+            call = apiService.getCommonPageList(appLanguage, pageName);
+        call.enqueue(new Callback<ArrayList<CommonListModel>>() {
+            @Override
+            public void onResponse(Call<ArrayList<CommonListModel>> call, Response<ArrayList<CommonListModel>> response) {
+                if (response.isSuccessful()) {
+                    if (response.body() != null && response.body().size() > 0) {
+                        Timber.i("Setting %s list with size: %d", toolbarTitle, response.body().size());
+                        recyclerView.setVisibility(View.VISIBLE);
+                        models.addAll(response.body());
+                        removeHtmlTags(models);
+                        Collections.sort(models);
+                        mAdapter.notifyDataSetChanged();
+                        if (pageName.equals("Heritage_List_Page.json")) {
+                            new HeritageRowCount(CommonListActivity.this, appLanguage).execute();
+                        } else if (pageName.equals("Public_Arts_List_Page.json")) {
+                            new PublicArtsRowCount(CommonListActivity.this, appLanguage).execute();
+                        } else if (pageName.equals("Exhibition_List_Page.json")) {
+                            new ExhibitionRowCount(CommonListActivity.this, appLanguage).execute();
+                        } else if (pageName.equals("getDiningList.json")) {
+                            new DiningRowCount(CommonListActivity.this, appLanguage).execute();
+                        }
+                    } else {
+                        Timber.i("%s list have no data", toolbarTitle);
+                        recyclerView.setVisibility(View.GONE);
+                        noResultFoundLayout.setVisibility(View.VISIBLE);
+                    }
+                } else {
+                    Timber.w("%s list response is not successful", toolbarTitle);
+                    recyclerView.setVisibility(View.GONE);
+                    retryLayout.setVisibility(View.VISIBLE);
+                }
+                progressBar.setVisibility(View.GONE);
+            }
+
+            @Override
+            public void onFailure(Call<ArrayList<CommonListModel>> call, Throwable t) {
+                Timber.e("get%sListFromAPI() - onFailure: %s", toolbarTitle, t.getMessage());
+                recyclerView.setVisibility(View.GONE);
+                retryLayout.setVisibility(View.VISIBLE);
+                progressBar.setVisibility(View.GONE);
+            }
+        });
+
+    }
+
+    public void removeHtmlTags(ArrayList<CommonListModel> models) {
+        if (models.size() > 0) {
+            for (int i = 0; i < models.size(); i++) {
+                models.get(i).setName(util.html2string(models.get(i).getName()));
+                models.get(i).setDescription(util.html2string(models.get(i).getDescription()));
+                models.get(i).setStartDate(util.html2string(models.get(i).getStartDate()));
+                models.get(i).setEndDate(util.html2string(models.get(i).getEndDate()));
+            }
+        }
+    }
+
+    public void getCommonListDataFromDatabase(String apiParts) {
+        Timber.i("get%sListFromDatabase()", toolbarTitle);
         switch (apiParts) {
             case "Heritage_List_Page.json":
                 if (appLanguage.equals(LocaleManager.LANGUAGE_ENGLISH)) {
@@ -484,98 +583,41 @@ public class CommonListActivity extends AppCompatActivity {
         }
     }
 
-    private void getMuseumCollectionListFromAPI() {
-        progressBar.setVisibility(View.VISIBLE);
-        apiService = APIClient.getClient().create(APIInterface.class);
-
-        call = apiService.getCollectionList(appLanguage, id);
-        call.enqueue(new Callback<ArrayList<CommonListModel>>() {
-            @Override
-            public void onResponse(Call<ArrayList<CommonListModel>> call, Response<ArrayList<CommonListModel>> response) {
-                if (response.isSuccessful()) {
-                    if (response.body() != null && response.body().size() > 0) {
-                        recyclerView.setVisibility(View.VISIBLE);
-                        models.addAll(response.body());
-                        removeHtmlTags(models);
-                        mAdapter.notifyDataSetChanged();
-                        new MuseumCollectionRowCount(CommonListActivity.this, appLanguage).execute();
-                    } else {
-                        recyclerView.setVisibility(View.GONE);
-                        noResultFoundLayout.setVisibility(View.VISIBLE);
-                    }
-                } else {
-                    recyclerView.setVisibility(View.GONE);
-                    retryLayout.setVisibility(View.VISIBLE);
-                }
-                progressBar.setVisibility(View.GONE);
-            }
-
-            @Override
-            public void onFailure(Call<ArrayList<CommonListModel>> call, Throwable t) {
-                recyclerView.setVisibility(View.GONE);
-                retryLayout.setVisibility(View.VISIBLE);
-                progressBar.setVisibility(View.GONE);
-            }
-        });
-    }
-
-    public void removeHtmlTags(ArrayList<CommonListModel> models) {
-        if (models.size() > 0) {
-            for (int i = 0; i < models.size(); i++) {
-                models.get(i).setName(util.html2string(models.get(i).getName()));
-                models.get(i).setDescription(util.html2string(models.get(i).getDescription()));
-                models.get(i).setStartDate(util.html2string(models.get(i).getStartDate()));
-                models.get(i).setEndDate(util.html2string(models.get(i).getEndDate()));
-            }
+    private void getTravelDataFromDataBase() {
+        Timber.i("get%sListFromDatabase()", toolbarTitle);
+        if (appLanguage.equals(LocaleManager.LANGUAGE_ENGLISH)) {
+            new RetrieveEnglishTravelData(CommonListActivity.this).execute();
+        } else {
+            new RetrieveArabicTravelData(CommonListActivity.this).execute();
         }
     }
 
-    private void getCommonListAPIDataFromAPI(String name) {
-        progressBar.setVisibility(View.VISIBLE);
-        pageName = name;
-        apiService = APIClient.getClient().create(APIInterface.class);
-        if (id != null)
-            call = apiService.getCommonPageListWithID(appLanguage, pageName, id);
-        else
-            call = apiService.getCommonPageList(appLanguage, pageName);
-        call.enqueue(new Callback<ArrayList<CommonListModel>>() {
-            @Override
-            public void onResponse(Call<ArrayList<CommonListModel>> call, Response<ArrayList<CommonListModel>> response) {
-                if (response.isSuccessful()) {
-                    if (response.body() != null && response.body().size() > 0) {
-                        recyclerView.setVisibility(View.VISIBLE);
-                        models.addAll(response.body());
-                        removeHtmlTags(models);
-                        Collections.sort(models);
-                        mAdapter.notifyDataSetChanged();
-                        if (pageName.equals("Heritage_List_Page.json")) {
-                            new HeritageRowCount(CommonListActivity.this, appLanguage).execute();
-                        } else if (pageName.equals("Public_Arts_List_Page.json")) {
-                            new PublicArtsRowCount(CommonListActivity.this, appLanguage).execute();
-                        } else if (pageName.equals("Exhibition_List_Page.json")) {
-                            new ExhibitionRowCount(CommonListActivity.this, appLanguage).execute();
-                        } else if (pageName.equals("getDiningList.json")) {
-                            new DiningRowCount(CommonListActivity.this, appLanguage).execute();
-                        }
-                    } else {
-                        recyclerView.setVisibility(View.GONE);
-                        noResultFoundLayout.setVisibility(View.VISIBLE);
-                    }
-                } else {
-                    recyclerView.setVisibility(View.GONE);
-                    retryLayout.setVisibility(View.VISIBLE);
-                }
-                progressBar.setVisibility(View.GONE);
-            }
+    public void getTourListFromDatabase() {
+        Timber.i("get%sListFromDatabase()", toolbarTitle);
+        if (appLanguage.equals(LocaleManager.LANGUAGE_ENGLISH)) {
+            new RetrieveEnglishTourData(CommonListActivity.this, 1).execute();
+        } else {
+            new RetrieveArabicTourData(CommonListActivity.this, 1).execute();
+        }
+    }
 
-            @Override
-            public void onFailure(Call<ArrayList<CommonListModel>> call, Throwable t) {
-                recyclerView.setVisibility(View.GONE);
-                retryLayout.setVisibility(View.VISIBLE);
-                progressBar.setVisibility(View.GONE);
-            }
-        });
+    public void getFacilityListFromDataBase() {
+        Timber.i("get%sListFromDatabase()", toolbarTitle);
+        if (appLanguage.equals(LocaleManager.LANGUAGE_ENGLISH)) {
+            new RetrieveEnglishFacilityData(CommonListActivity.this).execute();
+        } else {
+            new RetrieveArabicFacilityData(CommonListActivity.this).execute();
+        }
+    }
 
+
+    public void getSpecialEventFromDatabase() {
+        Timber.i("get%sListFromDatabase()", toolbarTitle);
+        if (appLanguage.equals(LocaleManager.LANGUAGE_ENGLISH)) {
+            new RetrieveEnglishTourData(CommonListActivity.this, 0).execute();
+        } else {
+            new RetrieveArabicTourData(CommonListActivity.this, 0).execute();
+        }
     }
 
 
@@ -595,18 +637,21 @@ public class CommonListActivity extends AppCompatActivity {
 
         @Override
         protected Integer doInBackground(Void... voids) {
-            if (language.equals(LocaleManager.LANGUAGE_ENGLISH))
+            Timber.i("getNumberOf%sRows%s()", activityReference.get().toolbarTitle, language.toUpperCase());
+            if (language.equals(LocaleManager.LANGUAGE_ENGLISH)) {
                 return activityReference.get().qmDatabase.getFacilitiesListTableDao().getNumberOfRowsEnglish();
-            else
+            } else {
                 return activityReference.get().qmDatabase.getFacilitiesListTableDao().getNumberOfRowsArabic();
-
+            }
         }
 
         @Override
         protected void onPostExecute(Integer integer) {
             if (integer > 0) {
+                Timber.i("Count: %d", integer);
                 new CheckFacilityDBRowExist(activityReference.get(), language).execute();
             } else {
+                Timber.i("%s Table have no data", activityReference.get().toolbarTitle);
                 new InsertFacilityDataToDataBase(activityReference.get(), activityReference.get().facilityListTableEnglish,
                         activityReference.get().facilityListTableArabic, language).execute();
             }
@@ -635,10 +680,13 @@ public class CommonListActivity extends AppCompatActivity {
 
         @Override
         protected Boolean doInBackground(Void... voids) {
+            Timber.i("Insert %s Table(%s) with size: %d", activityReference.get().toolbarTitle,
+                    language.toUpperCase(), activityReference.get().models.size());
             if (language.equals(LocaleManager.LANGUAGE_ENGLISH)) {
                 if (activityReference.get().models != null && activityReference.get().models.size() > 0) {
                     for (int i = 0; i < activityReference.get().models.size(); i++) {
-
+                        Timber.i("Inserting %s Table(%s) with id: %s", activityReference.get().toolbarTitle,
+                                language.toUpperCase(), activityReference.get().models.get(i).getId());
                         facilityListTableEnglish = new FacilityListTableEnglish(activityReference.get().models.get(i).getId(),
                                 activityReference.get().models.get(i).getSortId(),
                                 activityReference.get().models.get(i).getName(),
@@ -648,7 +696,8 @@ public class CommonListActivity extends AppCompatActivity {
                 }
             } else {
                 for (int i = 0; i < activityReference.get().models.size(); i++) {
-
+                    Timber.i("Inserting %s Table(%s) with id: %s", activityReference.get().toolbarTitle,
+                            language.toUpperCase(), activityReference.get().models.get(i).getId());
                     facilityListTableArabic = new FacilityListTableArabic(activityReference.get().models.get(i).getId(),
                             activityReference.get().models.get(i).getSortId(),
                             activityReference.get().models.get(i).getName(),
@@ -685,14 +734,16 @@ public class CommonListActivity extends AppCompatActivity {
                         int n = activityReference.get().qmDatabase.getFacilitiesListTableDao().checkEnglishIdExist(
                                 Integer.parseInt(activityReference.get().models.get(i).getId()));
                         if (n > 0) {
+                            Timber.i("Row exist in database(%s) for id: %s", language.toUpperCase(),
+                                    activityReference.get().models.get(i).getId());
                             new UpdateFacilityTable(activityReference.get(), language).execute();
                         } else {
-
+                            Timber.i("Inserting %s Table(%s) with id: %s", activityReference.get().toolbarTitle,
+                                    language.toUpperCase(), activityReference.get().models.get(i).getId());
                             facilityListTableEnglish = new FacilityListTableEnglish(activityReference.get().models.get(i).getId(),
                                     activityReference.get().models.get(i).getSortId(),
                                     activityReference.get().models.get(i).getName(),
                                     activityReference.get().models.get(i).getImages().get(0));
-
                             activityReference.get().qmDatabase.getFacilitiesListTableDao().insertEnglish(facilityListTableEnglish);
                         }
                     }
@@ -701,9 +752,12 @@ public class CommonListActivity extends AppCompatActivity {
                         int n = activityReference.get().qmDatabase.getFacilitiesListTableDao().checkArabicIdExist(
                                 Integer.parseInt(activityReference.get().models.get(i).getId()));
                         if (n > 0) {
+                            Timber.i("Row exist in database(%s) for id: %s", language.toUpperCase(),
+                                    activityReference.get().models.get(i).getId());
                             new UpdateFacilityTable(activityReference.get(), language).execute();
                         } else {
-
+                            Timber.i("Inserting %s Table(%s) with id: %s", activityReference.get().toolbarTitle,
+                                    language.toUpperCase(), activityReference.get().models.get(i).getId());
                             facilityListTableArabic = new FacilityListTableArabic(activityReference.get().models.get(i).getId(),
                                     activityReference.get().models.get(i).getSortId(),
                                     activityReference.get().models.get(i).getName(),
@@ -731,6 +785,8 @@ public class CommonListActivity extends AppCompatActivity {
 
         @Override
         protected Void doInBackground(Void... voids) {
+            Timber.i("Updating %s Table(%s) with id: %s", activityReference.get().toolbarTitle,
+                    language.toUpperCase(), activityReference.get().models.get(0).getId());
             if (language.equals(LocaleManager.LANGUAGE_ENGLISH)) {
                 activityReference.get().qmDatabase.getFacilitiesListTableDao().updateFacilityListEnglish(
                         activityReference.get().models.get(0).getSortId(),
@@ -766,6 +822,7 @@ public class CommonListActivity extends AppCompatActivity {
 
         @Override
         protected List<FacilityListTableEnglish> doInBackground(Void... voids) {
+            Timber.i("getAll%sEnglishData()", activityReference.get().toolbarTitle);
             return activityReference.get().qmDatabase.getFacilitiesListTableDao().getAllEnglish();
         }
 
@@ -774,7 +831,11 @@ public class CommonListActivity extends AppCompatActivity {
             CommonListModel commonListModel;
             activityReference.get().models.clear();
             if (facilityListTableEnglishes.size() > 0) {
+                Timber.i("Set %s list from database with size: %d", activityReference.get().toolbarTitle,
+                        facilityListTableEnglishes.size());
                 for (int i = 0; i < facilityListTableEnglishes.size(); i++) {
+                    Timber.i("Setting %s list from database with id: %s", activityReference.get().toolbarTitle,
+                            facilityListTableEnglishes.get(i).getFacilityNid());
                     commonListModel = new CommonListModel(
                             facilityListTableEnglishes.get(i).getFacilityTitle(),
                             facilityListTableEnglishes.get(i).getSortId(),
@@ -786,6 +847,7 @@ public class CommonListActivity extends AppCompatActivity {
                 activityReference.get().mAdapter.notifyDataSetChanged();
                 activityReference.get().progressBar.setVisibility(View.GONE);
             } else {
+                Timber.i("Have no data in database");
                 activityReference.get().progressBar.setVisibility(View.GONE);
                 activityReference.get().recyclerView.setVisibility(View.GONE);
                 activityReference.get().retryLayout.setVisibility(View.VISIBLE);
@@ -809,6 +871,7 @@ public class CommonListActivity extends AppCompatActivity {
 
         @Override
         protected List<FacilityListTableArabic> doInBackground(Void... voids) {
+            Timber.i("getAll%sArabicData()", activityReference.get().toolbarTitle);
             return activityReference.get().qmDatabase.getFacilitiesListTableDao().getAllArabic();
         }
 
@@ -817,7 +880,11 @@ public class CommonListActivity extends AppCompatActivity {
             CommonListModel commonListModel;
             activityReference.get().models.clear();
             if (facilityListTableArabics.size() > 0) {
+                Timber.i("Set %s list from database with size: %d", activityReference.get().toolbarTitle,
+                        facilityListTableArabics.size());
                 for (int i = 0; i < facilityListTableArabics.size(); i++) {
+                    Timber.i("Setting %s list from database with id: %s", activityReference.get().toolbarTitle,
+                            facilityListTableArabics.get(i).getFacilityNid());
                     commonListModel = new CommonListModel(
                             facilityListTableArabics.get(i).getFacilityTitle(),
                             facilityListTableArabics.get(i).getSortId(),
@@ -828,9 +895,8 @@ public class CommonListActivity extends AppCompatActivity {
                 Collections.sort(activityReference.get().models);
                 activityReference.get().mAdapter.notifyDataSetChanged();
                 activityReference.get().progressBar.setVisibility(View.GONE);
-
-
             } else {
+                Timber.i("Have no data in database");
                 activityReference.get().progressBar.setVisibility(View.GONE);
                 activityReference.get().recyclerView.setVisibility(View.GONE);
                 activityReference.get().retryLayout.setVisibility(View.VISIBLE);
@@ -860,8 +926,10 @@ public class CommonListActivity extends AppCompatActivity {
         @Override
         protected void onPostExecute(Integer integer) {
             if (integer > 0) {
+                Timber.i("Count: %d", integer);
                 new CheckTourDBRowExist(activityReference.get(), language, isTour).execute();
             } else {
+                Timber.i("%s Table have no data", activityReference.get().toolbarTitle);
                 new InsertTourDataToDataBase(activityReference.get(), activityReference.get().tourListTableEnglish,
                         activityReference.get().tourListTableArabic, language, isTour).execute();
             }
@@ -869,6 +937,7 @@ public class CommonListActivity extends AppCompatActivity {
 
         @Override
         protected Integer doInBackground(Void... voids) {
+            Timber.i("getNumberOf%sRows%s()", activityReference.get().toolbarTitle, language.toUpperCase());
             if (language.equals(LocaleManager.LANGUAGE_ENGLISH))
                 return activityReference.get().qmDatabase.getTourListTaleDao().getNumberOfRowsEnglish();
             else
@@ -907,8 +976,12 @@ public class CommonListActivity extends AppCompatActivity {
                         int n = activityReference.get().qmDatabase.getTourListTaleDao().checkEnglishIdExist(
                                 Integer.parseInt(activityReference.get().models.get(i).getId()));
                         if (n > 0) {
+                            Timber.i("Row exist in database(%s) for id: %s", language.toUpperCase(),
+                                    activityReference.get().models.get(i).getId());
                             new UpdateTourTable(activityReference.get(), language, i).execute();
                         } else {
+                            Timber.i("Inserting %s Table(%s) with id: %s", activityReference.get().toolbarTitle,
+                                    language.toUpperCase(), activityReference.get().models.get(i).getId());
                             tourListTableEnglish = new TourListTableEnglish(activityReference.get().models.get(i).getId(),
                                     activityReference.get().models.get(i).getEventDay(),
                                     activityReference.get().models.get(i).getEventDate(),
@@ -924,8 +997,12 @@ public class CommonListActivity extends AppCompatActivity {
                         int n = activityReference.get().qmDatabase.getTourListTaleDao().checkArabicIdExist(
                                 Integer.parseInt(activityReference.get().models.get(i).getId()));
                         if (n > 0) {
+                            Timber.i("Row exist in database(%s) for id: %s", language.toUpperCase(),
+                                    activityReference.get().models.get(i).getId());
                             new UpdateTourTable(activityReference.get(), language, i).execute();
                         } else {
+                            Timber.i("Inserting %s Table(%s) with id: %s", activityReference.get().toolbarTitle,
+                                    language.toUpperCase(), activityReference.get().models.get(i).getId());
                             tourListTableArabic = new TourListTableArabic(activityReference.get().models.get(i).getId(),
                                     activityReference.get().models.get(i).getEventDay(),
                                     activityReference.get().models.get(i).getEventDate(),
@@ -955,6 +1032,8 @@ public class CommonListActivity extends AppCompatActivity {
 
         @Override
         protected Void doInBackground(Void... voids) {
+            Timber.i("Updating %s Table(%s) with id: %s", activityReference.get().toolbarTitle,
+                    language.toUpperCase(), activityReference.get().models.get(0).getId());
             if (language.equals(LocaleManager.LANGUAGE_ENGLISH)) {
                 activityReference.get().qmDatabase.getTourListTaleDao().updateTourListEnglish(
                         activityReference.get().models.get(i).getEventDay(),
@@ -1014,9 +1093,13 @@ public class CommonListActivity extends AppCompatActivity {
 
         @Override
         protected Boolean doInBackground(Void... voids) {
+            Timber.i("Insert %s Table(%s) with size: %d", activityReference.get().toolbarTitle,
+                    language.toUpperCase(), activityReference.get().models.size());
             if (language.equals(LocaleManager.LANGUAGE_ENGLISH)) {
                 if (activityReference.get().models != null && activityReference.get().models.size() > 0) {
                     for (int i = 0; i < activityReference.get().models.size(); i++) {
+                        Timber.i("Inserting %s Table(%s) with id: %s", activityReference.get().toolbarTitle,
+                                language.toUpperCase(), activityReference.get().models.get(i).getId());
                         tourListTableEnglish = new TourListTableEnglish(activityReference.get().models.get(i).getId(),
                                 activityReference.get().models.get(i).getEventDay(),
                                 activityReference.get().models.get(i).getEventDate(),
@@ -1030,6 +1113,8 @@ public class CommonListActivity extends AppCompatActivity {
             } else {
                 if (activityReference.get().models != null && activityReference.get().models.size() > 0) {
                     for (int i = 0; i < activityReference.get().models.size(); i++) {
+                        Timber.i("Inserting %s Table(%s) with id: %s", activityReference.get().toolbarTitle,
+                                language.toUpperCase(), activityReference.get().models.get(i).getId());
                         tourListTableArabic = new TourListTableArabic(activityReference.get().models.get(i).getId(),
                                 activityReference.get().models.get(i).getEventDay(),
                                 activityReference.get().models.get(i).getEventDate(),
@@ -1064,8 +1149,12 @@ public class CommonListActivity extends AppCompatActivity {
             CommonListModel commonListModel;
             activityReference.get().models.clear();
             if (tourListTableEnglishes.size() > 0) {
+                Timber.i("Set %s list from database with size: %d", activityReference.get().toolbarTitle,
+                        tourListTableEnglishes.size());
                 for (int i = 0; i < tourListTableEnglishes.size(); i++) {
-                    if (isTour == 1)
+                    Timber.i("Setting %s list from database with id: %s", activityReference.get().toolbarTitle,
+                            tourListTableEnglishes.get(i).getTourNid());
+                    if (isTour == 1) {
                         commonListModel = new CommonListModel(
                                 tourListTableEnglishes.get(i).getTourNid(),
                                 tourListTableEnglishes.get(i).getTourDay(),
@@ -1073,7 +1162,7 @@ public class CommonListActivity extends AppCompatActivity {
                                 tourListTableEnglishes.get(i).getTourSubtitle(),
                                 activityReference.get().convertor.fromString(tourListTableEnglishes.get(i).getTourImages()),
                                 true);
-                    else
+                    } else {
                         commonListModel = new CommonListModel(
                                 tourListTableEnglishes.get(i).getTourNid(),
                                 tourListTableEnglishes.get(i).getTourDay(),
@@ -1081,11 +1170,13 @@ public class CommonListActivity extends AppCompatActivity {
                                 tourListTableEnglishes.get(i).getTourSubtitle(),
                                 activityReference.get().convertor.fromString(tourListTableEnglishes.get(i).getTourImages()),
                                 false);
+                    }
                     activityReference.get().models.add(i, commonListModel);
                 }
                 activityReference.get().mAdapter.notifyDataSetChanged();
                 activityReference.get().progressBar.setVisibility(View.GONE);
             } else {
+                Timber.i("Have no data in database");
                 activityReference.get().progressBar.setVisibility(View.GONE);
                 activityReference.get().recyclerView.setVisibility(View.GONE);
                 activityReference.get().retryLayout.setVisibility(View.VISIBLE);
@@ -1094,6 +1185,7 @@ public class CommonListActivity extends AppCompatActivity {
 
         @Override
         protected List<TourListTableEnglish> doInBackground(Void... voids) {
+            Timber.i("getAll%sEnglishData()", activityReference.get().toolbarTitle);
             if (isTour == 1)
                 return activityReference.get().qmDatabase.getTourListTaleDao().getTourListEnglish(1);
             else
@@ -1120,8 +1212,12 @@ public class CommonListActivity extends AppCompatActivity {
             CommonListModel commonListModel;
             activityReference.get().models.clear();
             if (tourListTableArabics.size() > 0) {
+                Timber.i("Set %s list from database with size: %d", activityReference.get().toolbarTitle,
+                        tourListTableArabics.size());
                 for (int i = 0; i < tourListTableArabics.size(); i++) {
-                    if (isTour == 1)
+                    Timber.i("Setting %s list from database with id: %s", activityReference.get().toolbarTitle,
+                            tourListTableArabics.get(i).getTourNid());
+                    if (isTour == 1) {
                         commonListModel = new CommonListModel(
                                 tourListTableArabics.get(i).getTourNid(),
                                 tourListTableArabics.get(i).getTourDay(),
@@ -1129,7 +1225,7 @@ public class CommonListActivity extends AppCompatActivity {
                                 tourListTableArabics.get(i).getTourSubtitle(),
                                 activityReference.get().convertor.fromString(tourListTableArabics.get(i).getTourImages()),
                                 true);
-                    else
+                    } else {
                         commonListModel = new CommonListModel(
                                 tourListTableArabics.get(i).getTourNid(),
                                 tourListTableArabics.get(i).getTourDay(),
@@ -1137,11 +1233,13 @@ public class CommonListActivity extends AppCompatActivity {
                                 tourListTableArabics.get(i).getTourSubtitle(),
                                 activityReference.get().convertor.fromString(tourListTableArabics.get(i).getTourImages()),
                                 false);
+                    }
                     activityReference.get().models.add(i, commonListModel);
                 }
                 activityReference.get().mAdapter.notifyDataSetChanged();
                 activityReference.get().progressBar.setVisibility(View.GONE);
             } else {
+                Timber.i("Have no data in database");
                 activityReference.get().progressBar.setVisibility(View.GONE);
                 activityReference.get().recyclerView.setVisibility(View.GONE);
                 activityReference.get().retryLayout.setVisibility(View.VISIBLE);
@@ -1150,6 +1248,7 @@ public class CommonListActivity extends AppCompatActivity {
 
         @Override
         protected List<TourListTableArabic> doInBackground(Void... voids) {
+            Timber.i("getAll%sArabicData()", activityReference.get().toolbarTitle);
             if (isTour == 1)
                 return activityReference.get().qmDatabase.getTourListTaleDao().getTourListArabic(1);
             else
@@ -1176,8 +1275,10 @@ public class CommonListActivity extends AppCompatActivity {
         protected void onPostExecute(Integer integer) {
             activityReference.get().travelTableRowCount = integer;
             if (activityReference.get().travelTableRowCount > 0) {
+                Timber.i("Count: %d", integer);
                 new CheckTravelDBRowExist(activityReference.get(), language).execute();
             } else {
+                Timber.i("%s Table have no data", activityReference.get().toolbarTitle);
                 new InsertTravelDataToDataBase(activityReference.get(), activityReference.get().travelDetailsTableEnglish,
                         activityReference.get().travelDetailsTableArabic, language).execute();
             }
@@ -1185,6 +1286,7 @@ public class CommonListActivity extends AppCompatActivity {
 
         @Override
         protected Integer doInBackground(Void... voids) {
+            Timber.i("getNumberOf%sRows%s()", activityReference.get().toolbarTitle, language.toUpperCase());
             if (language.equals(LocaleManager.LANGUAGE_ENGLISH))
                 return activityReference.get().qmDatabase.getTravelDetailsTableDao().getNumberOfRowsEnglish();
             else
@@ -1223,9 +1325,13 @@ public class CommonListActivity extends AppCompatActivity {
                         int n = activityReference.get().qmDatabase.getTravelDetailsTableDao().checkEnglishIdExist(
                                 Integer.parseInt(activityReference.get().models.get(i).getId()));
                         if (n > 0) {
+                            Timber.i("Row exist in database(%s) for id: %s", language.toUpperCase(),
+                                    activityReference.get().models.get(i).getId());
                             new UpdateTravelTable(activityReference.get(), language, i).execute();
 
                         } else {
+                            Timber.i("Inserting %s Table(%s) with id: %s", activityReference.get().toolbarTitle,
+                                    language.toUpperCase(), activityReference.get().models.get(i).getId());
                             travelDetailsTableEnglish = new TravelDetailsTableEnglish(activityReference.get().models.get(i).getId(),
                                     activityReference.get().models.get(i).getName(),
                                     activityReference.get().models.get(i).getImage(),
@@ -1242,11 +1348,13 @@ public class CommonListActivity extends AppCompatActivity {
                         int n = activityReference.get().qmDatabase.getTravelDetailsTableDao().checkArabicIdExist(
                                 Integer.parseInt(activityReference.get().models.get(i).getId()));
                         if (n > 0) {
-                            //updateEnglishTable same id
+                            Timber.i("Row exist in database(%s) for id: %s", language.toUpperCase(),
+                                    activityReference.get().models.get(i).getId());
                             new UpdateTravelTable(activityReference.get(), language, i).execute();
 
                         } else {
-                            //create row with corresponding id
+                            Timber.i("Inserting %s Table(%s) with id: %s", activityReference.get().toolbarTitle,
+                                    language.toUpperCase(), activityReference.get().models.get(i).getId());
                             travelDetailsTableArabic = new TravelDetailsTableArabic(activityReference.get().models.get(i).getId(),
                                     activityReference.get().models.get(i).getName(),
                                     activityReference.get().models.get(i).getImage(),
@@ -1279,7 +1387,9 @@ public class CommonListActivity extends AppCompatActivity {
 
         @Override
         protected Void doInBackground(Void... voids) {
-            if (language.equals("en")) {
+            Timber.i("Updating %s Table(%s) with id: %s", activityReference.get().toolbarTitle,
+                    language.toUpperCase(), activityReference.get().models.get(0).getId());
+            if (language.equals(LocaleManager.LANGUAGE_ENGLISH)) {
                 // updateEnglishTable table with english name
                 activityReference.get().qmDatabase.getTravelDetailsTableDao().updateTraveldetailsenglish(
                         activityReference.get().models.get(position).getName(),
@@ -1337,9 +1447,13 @@ public class CommonListActivity extends AppCompatActivity {
 
         @Override
         protected Boolean doInBackground(Void... voids) {
+            Timber.i("Insert %s Table(%s) with size: %d", activityReference.get().toolbarTitle,
+                    language.toUpperCase(), activityReference.get().models.size());
             if (activityReference.get().models != null && activityReference.get().models.size() > 0) {
                 if (language.equals("en")) {
                     for (int i = 0; i < activityReference.get().models.size(); i++) {
+                        Timber.i("Inserting %s Table(%s) with id: %s", activityReference.get().toolbarTitle,
+                                language.toUpperCase(), activityReference.get().models.get(i).getId());
                         travelDetailsTableEnglish = new TravelDetailsTableEnglish(
                                 activityReference.get().models.get(i).getId(),
                                 activityReference.get().models.get(i).getName(),
@@ -1353,6 +1467,8 @@ public class CommonListActivity extends AppCompatActivity {
                     }
                 } else {
                     for (int i = 0; i < activityReference.get().models.size(); i++) {
+                        Timber.i("Inserting %s Table(%s) with id: %s", activityReference.get().toolbarTitle,
+                                language.toUpperCase(), activityReference.get().models.get(i).getId());
                         travelDetailsTableArabic = new TravelDetailsTableArabic(activityReference.get().models.get(i).getId(),
                                 activityReference.get().models.get(i).getName(),
                                 activityReference.get().models.get(i).getImage(),
@@ -1386,7 +1502,11 @@ public class CommonListActivity extends AppCompatActivity {
         protected void onPostExecute(List<TravelDetailsTableEnglish> travelDetailsTableEnglishe) {
             activityReference.get().models.clear();
             if (travelDetailsTableEnglishe.size() > 0) {
+                Timber.i("Set %s list from database with size: %d", activityReference.get().toolbarTitle,
+                        travelDetailsTableEnglishe.size());
                 for (int i = 0; i < travelDetailsTableEnglishe.size(); i++) {
+                    Timber.i("Setting %s list from database with id: %s", activityReference.get().toolbarTitle,
+                            travelDetailsTableEnglishe.get(i).getContent_ID());
                     CommonListModel commonListModel = new CommonListModel(travelDetailsTableEnglishe.get(i).getTravel_name(),
                             travelDetailsTableEnglishe.get(i).getTravel_image(),
                             travelDetailsTableEnglishe.get(i).getTravel_description(),
@@ -1401,6 +1521,7 @@ public class CommonListActivity extends AppCompatActivity {
                 activityReference.get().mAdapter.notifyDataSetChanged();
                 activityReference.get().progressBar.setVisibility(View.GONE);
             } else {
+                Timber.i("Have no data in database");
                 activityReference.get().progressBar.setVisibility(View.GONE);
                 activityReference.get().recyclerView.setVisibility(View.GONE);
                 activityReference.get().retryLayout.setVisibility(View.VISIBLE);
@@ -1409,6 +1530,7 @@ public class CommonListActivity extends AppCompatActivity {
 
         @Override
         protected List<TravelDetailsTableEnglish> doInBackground(Void... voids) {
+            Timber.i("getAll%sEnglishData()", activityReference.get().toolbarTitle);
             return activityReference.get().qmDatabase.getTravelDetailsTableDao().getAllEnglish();
         }
     }
@@ -1429,7 +1551,11 @@ public class CommonListActivity extends AppCompatActivity {
         protected void onPostExecute(List<TravelDetailsTableArabic> travelDetailsTableArabic) {
             activityReference.get().models.clear();
             if (travelDetailsTableArabic.size() > 0) {
+                Timber.i("Set %s list from database with size: %d", activityReference.get().toolbarTitle,
+                        travelDetailsTableArabic.size());
                 for (int i = 0; i < travelDetailsTableArabic.size(); i++) {
+                    Timber.i("Setting %s list from database with id: %s", activityReference.get().toolbarTitle,
+                            travelDetailsTableArabic.get(i).getContent_ID());
                     CommonListModel commonListModel = new CommonListModel(travelDetailsTableArabic.get(i).getTravel_name(),
                             travelDetailsTableArabic.get(i).getTravel_image(),
                             travelDetailsTableArabic.get(i).getTravel_description(),
@@ -1445,6 +1571,7 @@ public class CommonListActivity extends AppCompatActivity {
                 activityReference.get().mAdapter.notifyDataSetChanged();
                 activityReference.get().progressBar.setVisibility(View.GONE);
             } else {
+                Timber.i("Have no data in database");
                 activityReference.get().progressBar.setVisibility(View.GONE);
                 activityReference.get().recyclerView.setVisibility(View.GONE);
                 activityReference.get().retryLayout.setVisibility(View.VISIBLE);
@@ -1453,6 +1580,7 @@ public class CommonListActivity extends AppCompatActivity {
 
         @Override
         protected List<TravelDetailsTableArabic> doInBackground(Void... voids) {
+            Timber.i("getAll%sArabicData()", activityReference.get().toolbarTitle);
             return activityReference.get().qmDatabase.getTravelDetailsTableDao().getAllArabic();
         }
     }
@@ -1477,10 +1605,10 @@ public class CommonListActivity extends AppCompatActivity {
         protected void onPostExecute(Integer integer) {
             activityReference.get().diningTableRowCount = integer;
             if (activityReference.get().diningTableRowCount > 0) {
-                if (activityReference.get().models.size() > 0)
-                    //updateEnglishTable or add row to database
+                if (activityReference.get().models.size() > 0) {
+                    Timber.i("Count: %d", integer);
                     new CheckDiningDBRowExist(activityReference.get(), language).execute();
-                else {
+                } else {
                     if (museumID == null) {
                         if (language.equals(LocaleManager.LANGUAGE_ENGLISH)) {
                             new RetrieveEnglishDiningData(activityReference.get()).execute();
@@ -1496,6 +1624,7 @@ public class CommonListActivity extends AppCompatActivity {
                     }
                 }
             } else if (activityReference.get().models.size() > 0) {
+                Timber.i("%s Table have no data", activityReference.get().toolbarTitle);
                 new InsertDiningDataToDataBase(activityReference.get(),
                         activityReference.get().diningTableEnglish,
                         activityReference.get().diningTableArabic, language).execute();
@@ -1508,6 +1637,7 @@ public class CommonListActivity extends AppCompatActivity {
 
         @Override
         protected Integer doInBackground(Void... voids) {
+            Timber.i("getNumberOf%sRows%s()", activityReference.get().toolbarTitle, language.toUpperCase());
             if (language.equals(LocaleManager.LANGUAGE_ENGLISH))
                 return activityReference.get().qmDatabase.getDiningTableDao().getNumberOfRowsEnglish();
             else
@@ -1546,11 +1676,13 @@ public class CommonListActivity extends AppCompatActivity {
                         int n = activityReference.get().qmDatabase.getDiningTableDao().checkEnglishIdExist(
                                 Integer.parseInt(activityReference.get().models.get(i).getId()));
                         if (n > 0) {
-                            //updateEnglishTable same id
+                            Timber.i("Row exist in database(%s) for id: %s", language.toUpperCase(),
+                                    activityReference.get().models.get(i).getId());
                             new UpdateDiningTable(activityReference.get(), language, i).execute();
 
                         } else {
-                            //create row with corresponding id
+                            Timber.i("Inserting %s Table(%s) with id: %s", activityReference.get().toolbarTitle,
+                                    language.toUpperCase(), activityReference.get().models.get(i).getId());
                             diningTableEnglish = new DiningTableEnglish(Long.parseLong(
                                     activityReference.get().models.get(i).getId()),
                                     activityReference.get().models.get(i).getName(),
@@ -1566,11 +1698,13 @@ public class CommonListActivity extends AppCompatActivity {
                         int n = activityReference.get().qmDatabase.getDiningTableDao().checkArabicIdExist(
                                 Integer.parseInt(activityReference.get().models.get(i).getId()));
                         if (n > 0) {
-                            //updateEnglishTable same id
+                            Timber.i("Row exist in database(%s) for id: %s", language.toUpperCase(),
+                                    activityReference.get().models.get(i).getId());
                             new UpdateDiningTable(activityReference.get(), language, i).execute();
 
                         } else {
-                            //create row with corresponding id
+                            Timber.i("Inserting %s Table(%s) with id: %s", activityReference.get().toolbarTitle,
+                                    language.toUpperCase(), activityReference.get().models.get(i).getId());
                             diningTableArabic = new DiningTableArabic(Long.parseLong(
                                     activityReference.get().models.get(i).getId()),
                                     activityReference.get().models.get(i).getName(),
@@ -1601,6 +1735,8 @@ public class CommonListActivity extends AppCompatActivity {
 
         @Override
         protected Void doInBackground(Void... voids) {
+            Timber.i("Updating %s Table(%s) with id: %s", activityReference.get().toolbarTitle,
+                    language.toUpperCase(), activityReference.get().models.get(0).getId());
             if (language.equals(LocaleManager.LANGUAGE_ENGLISH)) {
                 // updateEnglishTable table with english name
                 activityReference.get().qmDatabase.getDiningTableDao().updateDiningEnglish(
@@ -1653,9 +1789,13 @@ public class CommonListActivity extends AppCompatActivity {
 
         @Override
         protected Boolean doInBackground(Void... voids) {
+            Timber.i("Insert %s Table(%s) with size: %d", activityReference.get().toolbarTitle,
+                    language.toUpperCase(), activityReference.get().models.size());
             if (activityReference.get().models != null && activityReference.get().models.size() > 0) {
                 if (language.equals(LocaleManager.LANGUAGE_ENGLISH)) {
                     for (int i = 0; i < activityReference.get().models.size(); i++) {
+                        Timber.i("Inserting %s Table(%s) with id: %s", activityReference.get().toolbarTitle,
+                                language.toUpperCase(), activityReference.get().models.get(i).getId());
                         diningTableEnglish = new DiningTableEnglish(Long.parseLong(
                                 activityReference.get().models.get(i).getId()),
                                 activityReference.get().models.get(i).getName(),
@@ -1666,6 +1806,8 @@ public class CommonListActivity extends AppCompatActivity {
                     }
                 } else {
                     for (int i = 0; i < activityReference.get().models.size(); i++) {
+                        Timber.i("Inserting %s Table(%s) with id: %s", activityReference.get().toolbarTitle,
+                                language.toUpperCase(), activityReference.get().models.get(i).getId());
                         diningTableArabic = new DiningTableArabic(Long.parseLong(
                                 activityReference.get().models.get(i).getId()),
                                 activityReference.get().models.get(i).getName(),
@@ -1702,8 +1844,12 @@ public class CommonListActivity extends AppCompatActivity {
         @Override
         protected void onPostExecute(List<DiningTableEnglish> diningTableEnglishList) {
             if (diningTableEnglishList.size() > 0) {
+                Timber.i("Set %s list from database with size: %d", activityReference.get().toolbarTitle,
+                        diningTableEnglishList.size());
                 activityReference.get().models.clear();
                 for (int i = 0; i < diningTableEnglishList.size(); i++) {
+                    Timber.i("Setting %s list from database with id: %s", activityReference.get().toolbarTitle,
+                            diningTableEnglishList.get(i).getDining_id());
                     CommonListModel commonListModel = new CommonListModel(
                             diningTableEnglishList.get(i).getDining_name(),
                             diningTableEnglishList.get(i).getDining_sort_id(),
@@ -1715,6 +1861,7 @@ public class CommonListActivity extends AppCompatActivity {
                 Collections.sort(activityReference.get().models);
                 activityReference.get().mAdapter.notifyDataSetChanged();
             } else {
+                Timber.i("Have no data in database");
                 activityReference.get().recyclerView.setVisibility(View.GONE);
                 activityReference.get().retryLayout.setVisibility(View.VISIBLE);
             }
@@ -1723,10 +1870,14 @@ public class CommonListActivity extends AppCompatActivity {
 
         @Override
         protected List<DiningTableEnglish> doInBackground(Void... voids) {
-            if (museumID != null)
-                return activityReference.get().qmDatabase.getDiningTableDao().getDiningDetailsEnglishWithMuseumId(Integer.parseInt(museumID));
-            else
+            if (museumID != null) {
+                Timber.i("get%sEnglishData() for id: %s", activityReference.get().toolbarTitle, museumID);
+                return activityReference.get().qmDatabase.getDiningTableDao()
+                        .getDiningDetailsEnglishWithMuseumId(Integer.parseInt(museumID));
+            } else {
+                Timber.i("getAll%sEnglishData()", activityReference.get().toolbarTitle);
                 return activityReference.get().qmDatabase.getDiningTableDao().getAllEnglish();
+            }
         }
     }
 
@@ -1751,8 +1902,12 @@ public class CommonListActivity extends AppCompatActivity {
         @Override
         protected void onPostExecute(List<DiningTableArabic> diningTableArabicList) {
             if (diningTableArabicList.size() > 0) {
+                Timber.i("Set %s list from database with size: %d", activityReference.get().toolbarTitle,
+                        diningTableArabicList.size());
                 activityReference.get().models.clear();
                 for (int i = 0; i < diningTableArabicList.size(); i++) {
+                    Timber.i("Setting %s list from database with id: %s", activityReference.get().toolbarTitle,
+                            diningTableArabicList.get(i).getDining_id());
                     CommonListModel commonListModel = new CommonListModel(
                             diningTableArabicList.get(i).getDining_name(),
                             diningTableArabicList.get(i).getDining_sort_id(),
@@ -1764,6 +1919,7 @@ public class CommonListActivity extends AppCompatActivity {
                 Collections.sort(activityReference.get().models);
                 activityReference.get().mAdapter.notifyDataSetChanged();
             } else {
+                Timber.i("Have no data in database");
                 activityReference.get().recyclerView.setVisibility(View.GONE);
                 activityReference.get().retryLayout.setVisibility(View.VISIBLE);
             }
@@ -1772,10 +1928,14 @@ public class CommonListActivity extends AppCompatActivity {
 
         @Override
         protected List<DiningTableArabic> doInBackground(Void... voids) {
-            if (museumID != null)
-                return activityReference.get().qmDatabase.getDiningTableDao().getDiningDetailsArabicWithMuseumId(Integer.parseInt(museumID));
-            else
+            if (museumID != null) {
+                Timber.i("get%sArabicData() for id: %s", activityReference.get().toolbarTitle, museumID);
+                return activityReference.get().qmDatabase.getDiningTableDao()
+                        .getDiningDetailsArabicWithMuseumId(Integer.parseInt(museumID));
+            } else {
+                Timber.i("getAll%sArabicData()", activityReference.get().toolbarTitle);
                 return activityReference.get().qmDatabase.getDiningTableDao().getAllArabic();
+            }
         }
     }
 
@@ -1798,9 +1958,10 @@ public class CommonListActivity extends AppCompatActivity {
         protected void onPostExecute(Integer integer) {
             activityReference.get().publicArtsTableRowCount = integer;
             if (activityReference.get().publicArtsTableRowCount > 0) {
-                //updateEnglishTable or add row to database
+                Timber.i("Count: %d", integer);
                 new CheckPublicArtsDBRowExist(activityReference.get(), language).execute();
             } else {
+                Timber.i("%s Table have no data", activityReference.get().toolbarTitle);
                 new InsertPublicArtsDataToDataBase(activityReference.get(),
                         activityReference.get().publicArtsTableEnglish,
                         activityReference.get().publicArtsTableArabic, language).execute();
@@ -1809,6 +1970,7 @@ public class CommonListActivity extends AppCompatActivity {
 
         @Override
         protected Integer doInBackground(Void... voids) {
+            Timber.i("getNumberOf%sRows%s()", activityReference.get().toolbarTitle, language.toUpperCase());
             if (language.equals(LocaleManager.LANGUAGE_ENGLISH))
                 return activityReference.get().qmDatabase.getPublicArtsTableDao().getNumberOfRowsEnglish();
             else
@@ -1847,11 +2009,13 @@ public class CommonListActivity extends AppCompatActivity {
                         int n = activityReference.get().qmDatabase.getPublicArtsTableDao().checkEnglishIdExist(
                                 Integer.parseInt(activityReference.get().models.get(i).getId()));
                         if (n > 0) {
-                            //updateEnglishTable same id
+                            Timber.i("Row exist in database(%s) for id: %s", language.toUpperCase(),
+                                    activityReference.get().models.get(i).getId());
                             new UpdatePublicArtsTable(activityReference.get(), language, i).execute();
 
                         } else {
-                            //create row with corresponding id
+                            Timber.i("Inserting %s Table(%s) with id: %s", activityReference.get().toolbarTitle,
+                                    language.toUpperCase(), activityReference.get().models.get(i).getId());
                             publicArtsTableEnglish = new PublicArtsTableEnglish(
                                     Long.parseLong(activityReference.get().models.get(i).getId()),
                                     activityReference.get().models.get(i).getName(),
@@ -1868,11 +2032,13 @@ public class CommonListActivity extends AppCompatActivity {
                         int n = activityReference.get().qmDatabase.getPublicArtsTableDao().checkArabicIdExist(
                                 Integer.parseInt(activityReference.get().models.get(i).getId()));
                         if (n > 0) {
-                            //updateEnglishTable same id
+                            Timber.i("Row exist in database(%s) for id: %s", language.toUpperCase(),
+                                    activityReference.get().models.get(i).getId());
                             new UpdatePublicArtsTable(activityReference.get(), language, i).execute();
 
                         } else {
-                            //create row with corresponding id
+                            Timber.i("Inserting %s Table(%s) with id: %s", activityReference.get().toolbarTitle,
+                                    language.toUpperCase(), activityReference.get().models.get(i).getId());
                             publicArtsTableArabic = new PublicArtsTableArabic(Long.parseLong(
                                     activityReference.get().models.get(i).getId()),
                                     activityReference.get().models.get(i).getName(),
@@ -1904,6 +2070,8 @@ public class CommonListActivity extends AppCompatActivity {
 
         @Override
         protected Void doInBackground(Void... voids) {
+            Timber.i("Updating %s Table(%s) with id: %s", activityReference.get().toolbarTitle,
+                    language.toUpperCase(), activityReference.get().models.get(0).getId());
             if (language.equals(LocaleManager.LANGUAGE_ENGLISH)) {
                 // updateEnglishTable table with english name
                 activityReference.get().qmDatabase.getPublicArtsTableDao().updatePublicArtsEnglish(
@@ -1956,9 +2124,13 @@ public class CommonListActivity extends AppCompatActivity {
 
         @Override
         protected Boolean doInBackground(Void... voids) {
+            Timber.i("insert %s Table(%s) with size: %d", activityReference.get().toolbarTitle,
+                    language.toUpperCase(), activityReference.get().models.size());
             if (activityReference.get().models != null && activityReference.get().models.size() > 0) {
                 if (language.equals(LocaleManager.LANGUAGE_ENGLISH)) {
                     for (int i = 0; i < activityReference.get().models.size(); i++) {
+                        Timber.i("insert %s Table(%s) with id: %s", activityReference.get().toolbarTitle,
+                                language.toUpperCase(), activityReference.get().models.get(i).getId());
                         publicArtsTableEnglish = new PublicArtsTableEnglish(
                                 Long.parseLong(activityReference.get().models.get(i).getId()),
                                 activityReference.get().models.get(i).getName(),
@@ -1970,6 +2142,8 @@ public class CommonListActivity extends AppCompatActivity {
                     }
                 } else {
                     for (int i = 0; i < activityReference.get().models.size(); i++) {
+                        Timber.i("insert %s Table(%s) with id: %s", activityReference.get().toolbarTitle,
+                                language.toUpperCase(), activityReference.get().models.get(i).getId());
                         publicArtsTableArabic = new PublicArtsTableArabic(
                                 Long.parseLong(activityReference.get().models.get(i).getId()),
                                 activityReference.get().models.get(i).getName(),
@@ -2002,7 +2176,11 @@ public class CommonListActivity extends AppCompatActivity {
         protected void onPostExecute(List<PublicArtsTableEnglish> publicArtsTableEnglish) {
             activityReference.get().models.clear();
             if (publicArtsTableEnglish.size() > 0) {
+                Timber.i("Set %s list from database with size: %d", activityReference.get().toolbarTitle,
+                        publicArtsTableEnglish.size());
                 for (int i = 0; i < publicArtsTableEnglish.size(); i++) {
+                    Timber.i("Setting %s list from database with id: %s", activityReference.get().toolbarTitle,
+                            publicArtsTableEnglish.get(i).getPublic_arts_id());
                     CommonListModel commonListModel = new CommonListModel(
                             publicArtsTableEnglish.get(i).getPublic_arts_name(),
                             publicArtsTableEnglish.get(i).getSort_id(),
@@ -2017,6 +2195,7 @@ public class CommonListActivity extends AppCompatActivity {
                 activityReference.get().mAdapter.notifyDataSetChanged();
                 activityReference.get().progressBar.setVisibility(View.GONE);
             } else {
+                Timber.i("Have no data in database");
                 activityReference.get().progressBar.setVisibility(View.GONE);
                 activityReference.get().recyclerView.setVisibility(View.GONE);
                 activityReference.get().retryLayout.setVisibility(View.VISIBLE);
@@ -2025,6 +2204,7 @@ public class CommonListActivity extends AppCompatActivity {
 
         @Override
         protected List<PublicArtsTableEnglish> doInBackground(Void... voids) {
+            Timber.i("getAll%sEnglishData()", activityReference.get().toolbarTitle);
             return activityReference.get().qmDatabase.getPublicArtsTableDao().getAllEnglish();
         }
     }
@@ -2045,7 +2225,11 @@ public class CommonListActivity extends AppCompatActivity {
         protected void onPostExecute(List<PublicArtsTableArabic> publicArtsTableArabic) {
             activityReference.get().models.clear();
             if (publicArtsTableArabic.size() > 0) {
+                Timber.i("Set %s list from database with size: %d", activityReference.get().toolbarTitle,
+                        publicArtsTableArabic.size());
                 for (int i = 0; i < publicArtsTableArabic.size(); i++) {
+                    Timber.i("Setting %s list from database with id: %s", activityReference.get().toolbarTitle,
+                            publicArtsTableArabic.get(i).getPublic_arts_id());
                     CommonListModel commonListModel = new CommonListModel(
                             publicArtsTableArabic.get(i).getPublic_arts_name(),
                             publicArtsTableArabic.get(i).getSort_id(),
@@ -2060,6 +2244,7 @@ public class CommonListActivity extends AppCompatActivity {
                 activityReference.get().mAdapter.notifyDataSetChanged();
                 activityReference.get().progressBar.setVisibility(View.GONE);
             } else {
+                Timber.i("Have no data in database");
                 activityReference.get().progressBar.setVisibility(View.GONE);
                 activityReference.get().recyclerView.setVisibility(View.GONE);
                 activityReference.get().retryLayout.setVisibility(View.VISIBLE);
@@ -2068,6 +2253,7 @@ public class CommonListActivity extends AppCompatActivity {
 
         @Override
         protected List<PublicArtsTableArabic> doInBackground(Void... voids) {
+            Timber.i("getAll%sArabicData()", activityReference.get().toolbarTitle);
             return activityReference.get().qmDatabase.getPublicArtsTableDao().getAllArabic();
         }
     }
@@ -2083,7 +2269,7 @@ public class CommonListActivity extends AppCompatActivity {
 
         @Override
         protected Integer doInBackground(Void... voids) {
-
+            Timber.i("getNumberOf%sRows%s()", activityReference.get().toolbarTitle, language.toUpperCase());
             if (language.equals(LocaleManager.LANGUAGE_ENGLISH))
                 return activityReference.get().qmDatabase.getHeritageListTableDao().getNumberOfRowsEnglish();
             else
@@ -2095,10 +2281,11 @@ public class CommonListActivity extends AppCompatActivity {
         protected void onPostExecute(Integer integer) {
             activityReference.get().heritageTableRowCount = integer;
             if (activityReference.get().heritageTableRowCount > 0) {
-                //updateEnglishTable or add row to database
+                Timber.i("Count: %d", integer);
                 new CheckHeritageDBRowExist(activityReference.get(), language).execute();
 
             } else {
+                Timber.i("%s Table have no data", activityReference.get().toolbarTitle);
                 new InsertHeritageDataToDataBase(activityReference.get(),
                         activityReference.get().heritageListTableEnglish,
                         activityReference.get().heritageListTableArabic, language).execute();
@@ -2122,9 +2309,13 @@ public class CommonListActivity extends AppCompatActivity {
 
         @Override
         protected Boolean doInBackground(Void... voids) {
+            Timber.i("Insert %s Table(%s) with size: %d", activityReference.get().toolbarTitle,
+                    language.toUpperCase(), activityReference.get().models.size());
             if (activityReference.get().models != null && activityReference.get().models.size() > 0) {
                 if (language.equals(LocaleManager.LANGUAGE_ENGLISH)) {
                     for (int i = 0; i < activityReference.get().models.size(); i++) {
+                        Timber.i("Inserting %s Table(%s) with id: %s", activityReference.get().toolbarTitle,
+                                language.toUpperCase(), activityReference.get().models.get(i).getId());
                         heritageListTableEnglish = new HeritageListTableEnglish(
                                 Long.parseLong(activityReference.get().models.get(i).getId()),
                                 activityReference.get().models.get(i).getName(),
@@ -2136,6 +2327,8 @@ public class CommonListActivity extends AppCompatActivity {
                     }
                 } else {
                     for (int i = 0; i < activityReference.get().models.size(); i++) {
+                        Timber.i("Inserting %s Table(%s) with id: %s", activityReference.get().toolbarTitle,
+                                language.toUpperCase(), activityReference.get().models.get(i).getId());
                         heritageListTableArabic = new HeritageListTableArabic(
                                 Long.parseLong(activityReference.get().models.get(i).getId()),
                                 activityReference.get().models.get(i).getName(),
@@ -2174,11 +2367,13 @@ public class CommonListActivity extends AppCompatActivity {
                         int n = activityReference.get().qmDatabase.getHeritageListTableDao().checkEnglishIdExist(
                                 Integer.parseInt(activityReference.get().models.get(i).getId()));
                         if (n > 0) {
-                            //updateEnglishTable same id
+                            Timber.i("Row exist in database(%s) for id: %s", language.toUpperCase(),
+                                    activityReference.get().models.get(i).getId());
                             new UpdateHeritagePageTable(activityReference.get(), activityReference.get().appLanguage, i).execute();
 
                         } else {
-                            //create row with corresponding id
+                            Timber.i("Inserting %s Table(%s) with id: %s", activityReference.get().toolbarTitle,
+                                    language.toUpperCase(), activityReference.get().models.get(i).getId());
                             heritageListTableEnglish = new HeritageListTableEnglish(
                                     Long.parseLong(activityReference.get().models.get(i).getId()),
                                     activityReference.get().models.get(i).getName(),
@@ -2194,11 +2389,13 @@ public class CommonListActivity extends AppCompatActivity {
                         int n = activityReference.get().qmDatabase.getHeritageListTableDao().checkArabicIdExist(
                                 Integer.parseInt(activityReference.get().models.get(i).getId()));
                         if (n > 0) {
-                            //updateEnglishTable same id
+                            Timber.i("Row exist in database(%s) for id: %s", language.toUpperCase(),
+                                    activityReference.get().models.get(i).getId());
                             new UpdateHeritagePageTable(activityReference.get(), activityReference.get().appLanguage, i).execute();
 
                         } else {
-                            //create row with corresponding id
+                            Timber.i("Inserting %s Table(%s) with id: %s", activityReference.get().toolbarTitle,
+                                    language.toUpperCase(), activityReference.get().models.get(i).getId());
                             activityReference.get().heritageListTableArabic = new HeritageListTableArabic(
                                     Long.parseLong(activityReference.get().models.get(i).getId()),
                                     activityReference.get().models.get(i).getName(),
@@ -2228,6 +2425,8 @@ public class CommonListActivity extends AppCompatActivity {
 
         @Override
         protected Void doInBackground(Void... voids) {
+            Timber.i("Updating %s Table(%s) with id: %s", activityReference.get().toolbarTitle,
+                    language.toUpperCase(), activityReference.get().models.get(0).getId());
             if (language.equals(LocaleManager.LANGUAGE_ENGLISH)) {
                 // updateEnglishTable table with english name
                 activityReference.get().qmDatabase.getHeritageListTableDao().updateHeritageListEnglish(
@@ -2271,6 +2470,7 @@ public class CommonListActivity extends AppCompatActivity {
 
         @Override
         protected List<HeritageListTableEnglish> doInBackground(Void... voids) {
+            Timber.i("getAll%sEnglishData()", activityReference.get().toolbarTitle);
             return activityReference.get().qmDatabase.getHeritageListTableDao().getAllEnglish();
         }
 
@@ -2278,7 +2478,11 @@ public class CommonListActivity extends AppCompatActivity {
         protected void onPostExecute(List<HeritageListTableEnglish> heritageListTableEnglishes) {
             activityReference.get().models.clear();
             if (heritageListTableEnglishes.size() > 0) {
+                Timber.i("Set %s list from database with size: %d", activityReference.get().toolbarTitle,
+                        heritageListTableEnglishes.size());
                 for (int i = 0; i < heritageListTableEnglishes.size(); i++) {
+                    Timber.i("Setting %s list from database with id: %s", activityReference.get().toolbarTitle,
+                            heritageListTableEnglishes.get(i).getHeritage_id());
                     CommonListModel commonListModel = new CommonListModel(
                             heritageListTableEnglishes.get(i).getHeritage_name(),
                             String.valueOf(heritageListTableEnglishes.get(i).getHeritage_id()),
@@ -2292,6 +2496,7 @@ public class CommonListActivity extends AppCompatActivity {
                 activityReference.get().mAdapter.notifyDataSetChanged();
                 activityReference.get().progressBar.setVisibility(View.GONE);
             } else {
+                Timber.i("Have no data in database");
                 activityReference.get().progressBar.setVisibility(View.GONE);
                 activityReference.get().recyclerView.setVisibility(View.GONE);
                 activityReference.get().retryLayout.setVisibility(View.VISIBLE);
@@ -2316,7 +2521,11 @@ public class CommonListActivity extends AppCompatActivity {
         protected void onPostExecute(List<HeritageListTableArabic> heritageListTableArabics) {
             activityReference.get().models.clear();
             if (heritageListTableArabics.size() > 0) {
+                Timber.i("Set %s list from database with size: %d", activityReference.get().toolbarTitle,
+                        heritageListTableArabics.size());
                 for (int i = 0; i < heritageListTableArabics.size(); i++) {
+                    Timber.i("Setting %s list from database with id: %s", activityReference.get().toolbarTitle,
+                            heritageListTableArabics.get(i).getHeritage_id());
                     CommonListModel commonListModel = new CommonListModel(
                             heritageListTableArabics.get(i).getHeritage_name(),
                             String.valueOf(heritageListTableArabics.get(i).getHeritage_id()),
@@ -2330,6 +2539,7 @@ public class CommonListActivity extends AppCompatActivity {
                 activityReference.get().mAdapter.notifyDataSetChanged();
                 activityReference.get().progressBar.setVisibility(View.GONE);
             } else {
+                Timber.i("Have no data in database");
                 activityReference.get().progressBar.setVisibility(View.GONE);
                 activityReference.get().recyclerView.setVisibility(View.GONE);
                 activityReference.get().retryLayout.setVisibility(View.VISIBLE);
@@ -2338,6 +2548,7 @@ public class CommonListActivity extends AppCompatActivity {
 
         @Override
         protected List<HeritageListTableArabic> doInBackground(Void... voids) {
+            Timber.i("getAll%sArabicData()", activityReference.get().toolbarTitle);
             return activityReference.get().qmDatabase.getHeritageListTableDao().getAllArabic();
         }
     }
@@ -2361,10 +2572,11 @@ public class CommonListActivity extends AppCompatActivity {
         protected void onPostExecute(Integer integer) {
             activityReference.get().exhibitionTableRowCount = integer;
             if (activityReference.get().exhibitionTableRowCount > 0) {
-                //updateEnglishTable or add row to database
+                Timber.i("Count: %d", integer);
                 new CheckExhibitionDBRowExist(activityReference.get(), language).execute();
 
             } else {
+                Timber.i("%s Table have no data", activityReference.get().toolbarTitle);
                 new InsertExhibitionDataToDataBase(activityReference.get(),
                         activityReference.get().exhibitionListTableEnglish,
                         activityReference.get().exhibitionListTableArabic, language).execute();
@@ -2374,7 +2586,7 @@ public class CommonListActivity extends AppCompatActivity {
 
         @Override
         protected Integer doInBackground(Void... voids) {
-
+            Timber.i("getNumberOf%sRows%s()", activityReference.get().toolbarTitle, language.toUpperCase());
             if (language.equals(LocaleManager.LANGUAGE_ENGLISH))
                 return activityReference.get().qmDatabase.getExhibitionTableDao().getNumberOfRowsEnglish();
             else
@@ -2412,11 +2624,13 @@ public class CommonListActivity extends AppCompatActivity {
                         int n = activityReference.get().qmDatabase.getExhibitionTableDao().checkEnglishIdExist(
                                 Integer.parseInt(activityReference.get().models.get(i).getId()));
                         if (n > 0) {
-                            //updateEnglishTable same id
+                            Timber.i("Row exist in database(%s) for id: %s", language.toUpperCase(),
+                                    activityReference.get().models.get(i).getId());
                             new UpdateExhibitionTable(activityReference.get(), activityReference.get().appLanguage, i).execute();
 
                         } else {
-                            //create row with corresponding id
+                            Timber.i("Inserting %s Table(%s) with id: %s", activityReference.get().toolbarTitle,
+                                    language.toUpperCase(), activityReference.get().models.get(i).getId());
                             exhibitionListTableEnglish = new ExhibitionListTableEnglish(Long.parseLong(
                                     activityReference.get().models.get(i).getId()),
                                     activityReference.get().models.get(i).getName(),
@@ -2441,11 +2655,13 @@ public class CommonListActivity extends AppCompatActivity {
                         int n = activityReference.get().qmDatabase.getExhibitionTableDao().checkArabicIdExist(
                                 Integer.parseInt(activityReference.get().models.get(i).getId()));
                         if (n > 0) {
-                            //updateEnglishTable same id
+                            Timber.i("Row exist in database(%s) for id: %s", language.toUpperCase(),
+                                    activityReference.get().models.get(i).getId());
                             new UpdateExhibitionTable(activityReference.get(), activityReference.get().appLanguage, i).execute();
 
                         } else {
-                            //create row with corresponding id
+                            Timber.i("Inserting %s Table(%s) with id: %s", activityReference.get().toolbarTitle,
+                                    language.toUpperCase(), activityReference.get().models.get(i).getId());
                             activityReference.get().exhibitionListTableArabic = new ExhibitionListTableArabic(
                                     Long.parseLong(activityReference.get().models.get(i).getId()),
                                     activityReference.get().models.get(i).getName(),
@@ -2498,9 +2714,13 @@ public class CommonListActivity extends AppCompatActivity {
 
         @Override
         protected Boolean doInBackground(Void... voids) {
+            Timber.i("Insert %s Table(%s) with size: %d", activityReference.get().toolbarTitle,
+                    language.toUpperCase(), activityReference.get().models.size());
             if (activityReference.get().models != null && activityReference.get().models.size() > 0) {
                 if (language.equals(LocaleManager.LANGUAGE_ENGLISH)) {
                     for (int i = 0; i < activityReference.get().models.size(); i++) {
+                        Timber.i("Inserting %s Table(%s) with id: %s", activityReference.get().toolbarTitle,
+                                language.toUpperCase(), activityReference.get().models.get(i).getId());
                         exhibitionListTableEnglish = new ExhibitionListTableEnglish(Long.parseLong(
                                 activityReference.get().models.get(i).getId()),
                                 activityReference.get().models.get(i).getName(),
@@ -2520,6 +2740,8 @@ public class CommonListActivity extends AppCompatActivity {
                     }
                 } else {
                     for (int i = 0; i < activityReference.get().models.size(); i++) {
+                        Timber.i("Inserting %s Table(%s) with id: %s", activityReference.get().toolbarTitle,
+                                language.toUpperCase(), activityReference.get().models.get(i).getId());
                         exhibitionListTableArabic = new ExhibitionListTableArabic(
                                 Long.parseLong(activityReference.get().models.get(i).getId()),
                                 activityReference.get().models.get(i).getName(),
@@ -2566,6 +2788,8 @@ public class CommonListActivity extends AppCompatActivity {
 
         @Override
         protected Void doInBackground(Void... voids) {
+            Timber.i("Updating %s Table(%s) with id: %s", activityReference.get().toolbarTitle,
+                    language.toUpperCase(), activityReference.get().models.get(0).getId());
             if (language.equals(LocaleManager.LANGUAGE_ENGLISH)) {
                 // updateEnglishTable table with english name
                 activityReference.get().qmDatabase.getExhibitionTableDao().updateExhibitionListEnglish(
@@ -2613,7 +2837,11 @@ public class CommonListActivity extends AppCompatActivity {
         protected void onPostExecute(List<ExhibitionListTableEnglish> exhibitionListTableEnglish) {
             activityReference.get().models.clear();
             if (exhibitionListTableEnglish.size() > 0) {
+                Timber.i("Set %s list from database with size: %d", activityReference.get().toolbarTitle,
+                        exhibitionListTableEnglish.size());
                 for (int i = 0; i < exhibitionListTableEnglish.size(); i++) {
+                    Timber.i("Setting %s list from database with id: %s", activityReference.get().toolbarTitle,
+                            exhibitionListTableEnglish.get(i).getExhibition_id());
                     CommonListModel commonListModel = new CommonListModel(
                             String.valueOf(exhibitionListTableEnglish.get(i).getExhibition_id()),
                             exhibitionListTableEnglish.get(i).getExhibition_name(),
@@ -2631,6 +2859,7 @@ public class CommonListActivity extends AppCompatActivity {
                 activityReference.get().mAdapter.notifyDataSetChanged();
                 activityReference.get().progressBar.setVisibility(View.GONE);
             } else {
+                Timber.i("Have no data in database");
                 activityReference.get().progressBar.setVisibility(View.GONE);
                 activityReference.get().recyclerView.setVisibility(View.GONE);
                 activityReference.get().retryLayout.setVisibility(View.VISIBLE);
@@ -2639,10 +2868,14 @@ public class CommonListActivity extends AppCompatActivity {
 
         @Override
         protected List<ExhibitionListTableEnglish> doInBackground(Void... voids) {
-            if (museumID != null)
-                return activityReference.get().qmDatabase.getExhibitionTableDao().getExhibitionWithMuseumIdEnglish(Integer.parseInt(museumID));
-            else
+            if (museumID != null) {
+                Timber.i("get%sEnglishData() for id: %s", activityReference.get().toolbarTitle, museumID);
+                return activityReference.get().qmDatabase.getExhibitionTableDao().
+                        getExhibitionWithMuseumIdEnglish(Integer.parseInt(museumID));
+            } else {
+                Timber.i("getAll%sEnglishData()", activityReference.get().toolbarTitle);
                 return activityReference.get().qmDatabase.getExhibitionTableDao().getAllEnglish();
+            }
         }
     }
 
@@ -2668,7 +2901,11 @@ public class CommonListActivity extends AppCompatActivity {
         protected void onPostExecute(List<ExhibitionListTableArabic> exhibitionListTableArabic) {
             activityReference.get().models.clear();
             if (exhibitionListTableArabic.size() > 0) {
+                Timber.i("Set %s list from database with size: %d", activityReference.get().toolbarTitle,
+                        exhibitionListTableArabic.size());
                 for (int i = 0; i < exhibitionListTableArabic.size(); i++) {
+                    Timber.i("Setting %s list from database with id: %s", activityReference.get().toolbarTitle,
+                            exhibitionListTableArabic.get(i).getExhibition_id());
                     CommonListModel commonListModel = new CommonListModel(String.valueOf(exhibitionListTableArabic.get(i).getExhibition_id()),
                             exhibitionListTableArabic.get(i).getExhibition_name(),
                             exhibitionListTableArabic.get(i).getExhibition_location(),
@@ -2683,6 +2920,7 @@ public class CommonListActivity extends AppCompatActivity {
                 activityReference.get().mAdapter.notifyDataSetChanged();
                 activityReference.get().progressBar.setVisibility(View.GONE);
             } else {
+                Timber.i("Have no data in database");
                 activityReference.get().progressBar.setVisibility(View.GONE);
                 activityReference.get().recyclerView.setVisibility(View.GONE);
                 activityReference.get().retryLayout.setVisibility(View.VISIBLE);
@@ -2692,11 +2930,13 @@ public class CommonListActivity extends AppCompatActivity {
 
         @Override
         protected List<ExhibitionListTableArabic> doInBackground(Void... voids) {
-            if (museumID != null)
+            if (museumID != null) {
+                Timber.i("get%sArabicData() for id: %s", activityReference.get().toolbarTitle, museumID);
                 return activityReference.get().qmDatabase.getExhibitionTableDao().getExhibitionWithMuseumIdArabic(Integer.parseInt(museumID));
-            else
+            } else {
+                Timber.i("getAll%sArabicData()", activityReference.get().toolbarTitle);
                 return activityReference.get().qmDatabase.getExhibitionTableDao().getAllArabic();
-
+            }
         }
     }
 
@@ -2719,7 +2959,7 @@ public class CommonListActivity extends AppCompatActivity {
 
         @Override
         protected Integer doInBackground(Void... voids) {
-
+            Timber.i("getNumberOf%sRows%s()", activityReference.get().toolbarTitle, language.toUpperCase());
             if (language.equals(LocaleManager.LANGUAGE_ENGLISH))
                 return activityReference.get().qmDatabase.getMuseumCollectionListDao().getNumberOfRowsEnglish();
             else
@@ -2731,10 +2971,10 @@ public class CommonListActivity extends AppCompatActivity {
         protected void onPostExecute(Integer integer) {
             activityReference.get().museumCollectionListRowCount = integer;
             if (activityReference.get().museumCollectionListRowCount > 0) {
-                //updateEnglishTable or add row to database
+                Timber.i("Count: %d", integer);
                 new CheckMuseumCollectionDBRowExist(activityReference.get(), language).execute();
-
             } else {
+                Timber.i("%s Table have no data", activityReference.get().toolbarTitle);
                 new InsertMuseumCollectionListDataToDataBase(activityReference.get(),
                         activityReference.get().museumCollectionListTableEnglish,
                         activityReference.get().museumCollectionListTableArabic, language).execute();
@@ -2762,11 +3002,13 @@ public class CommonListActivity extends AppCompatActivity {
                         int n = activityReference.get().qmDatabase.getMuseumCollectionListDao().checkNameExistEnglish(
                                 activityReference.get().models.get(i).getName());
                         if (n > 0) {
-                            //updateEnglishTable same id
+                            Timber.i("Row exist in database(%s) for id: %s", language.toUpperCase(),
+                                    activityReference.get().models.get(i).getId());
                             new UpdateMuseumCollectionListTable(activityReference.get(), activityReference.get().appLanguage, i).execute();
 
                         } else {
-                            //create row with corresponding id
+                            Timber.i("Inserting %s Table(%s) with id: %s", activityReference.get().toolbarTitle,
+                                    language.toUpperCase(), activityReference.get().models.get(i).getId());
                             museumCollectionListTableEnglish =
                                     new MuseumCollectionListTableEnglish(
                                             activityReference.get().models.get(i).getName(),
@@ -2781,11 +3023,13 @@ public class CommonListActivity extends AppCompatActivity {
                         int n = activityReference.get().qmDatabase.getMuseumCollectionListDao().checkNameExistArabic(
                                 activityReference.get().models.get(i).getName());
                         if (n > 0) {
-                            //updateEnglishTable same id
+                            Timber.i("Row exist in database(%s) for id: %s", language.toUpperCase(),
+                                    activityReference.get().models.get(i).getId());
                             new UpdateMuseumCollectionListTable(activityReference.get(), activityReference.get().appLanguage, i).execute();
 
                         } else {
-                            //create row with corresponding id
+                            Timber.i("Inserting %s Table(%s) with id: %s", activityReference.get().toolbarTitle,
+                                    language.toUpperCase(), activityReference.get().models.get(i).getId());
                             museumCollectionListTableArabic =
                                     new MuseumCollectionListTableArabic(
                                             activityReference.get().models.get(i).getName(),
@@ -2819,9 +3063,13 @@ public class CommonListActivity extends AppCompatActivity {
 
         @Override
         protected Boolean doInBackground(Void... voids) {
+            Timber.i("Insert %s Table(%s) with size: %d", activityReference.get().toolbarTitle,
+                    language.toUpperCase(), activityReference.get().models.size());
             if (activityReference.get().models != null && activityReference.get().models.size() > 0) {
                 if (language.equals(LocaleManager.LANGUAGE_ENGLISH)) {
                     for (int i = 0; i < activityReference.get().models.size(); i++) {
+                        Timber.i("Inserting %s Table(%s) with id: %s", activityReference.get().toolbarTitle,
+                                language.toUpperCase(), activityReference.get().models.get(i).getId());
                         museumCollectionListTableEnglish =
                                 new MuseumCollectionListTableEnglish(activityReference.get().models.get(i).getName(),
                                         activityReference.get().models.get(i).getImage(),
@@ -2831,6 +3079,8 @@ public class CommonListActivity extends AppCompatActivity {
                     }
                 } else {
                     for (int i = 0; i < activityReference.get().models.size(); i++) {
+                        Timber.i("Inserting %s Table(%s) with id: %s", activityReference.get().toolbarTitle,
+                                language.toUpperCase(), activityReference.get().models.get(i).getId());
                         museumCollectionListTableArabic = new MuseumCollectionListTableArabic(
                                 activityReference.get().models.get(i).getName(),
                                 activityReference.get().models.get(i).getImage(),
@@ -2862,6 +3112,8 @@ public class CommonListActivity extends AppCompatActivity {
 
         @Override
         protected Void doInBackground(Void... voids) {
+            Timber.i("Updating %s Table(%s) with id: %s", activityReference.get().toolbarTitle,
+                    language.toUpperCase(), activityReference.get().models.get(0).getId());
             if (language.equals(LocaleManager.LANGUAGE_ENGLISH)) {
                 // updateEnglishTable table with english name
                 activityReference.get().qmDatabase.getMuseumCollectionListDao().updateMuseumListTableEnglish(
@@ -2904,6 +3156,7 @@ public class CommonListActivity extends AppCompatActivity {
 
         @Override
         protected List<MuseumCollectionListTableEnglish> doInBackground(Void... voids) {
+            Timber.i("get%sEnglishData() for id: %s", activityReference.get().toolbarTitle, museumReference);
             return activityReference.get().qmDatabase.getMuseumCollectionListDao().
                     getDataFromEnglishTableWithReference(museumReference);
         }
@@ -2912,7 +3165,11 @@ public class CommonListActivity extends AppCompatActivity {
         protected void onPostExecute(List<MuseumCollectionListTableEnglish> museumCollectionListTableEnglishes) {
             activityReference.get().models.clear();
             if (museumCollectionListTableEnglishes.size() > 0) {
+                Timber.i("Set %s list from database with size: %d", activityReference.get().toolbarTitle,
+                        museumCollectionListTableEnglishes.size());
                 for (int i = 0; i < museumCollectionListTableEnglishes.size(); i++) {
+                    Timber.i("Setting %s list from database with id: %s", activityReference.get().toolbarTitle,
+                            museumCollectionListTableEnglishes.get(i).getMuseum_id());
                     CommonListModel commonListModel = new CommonListModel(museumCollectionListTableEnglishes.get(i).getName(),
                             museumCollectionListTableEnglishes.get(i).getImage(),
                             museumCollectionListTableEnglishes.get(i).getMuseum_id());
@@ -2921,6 +3178,7 @@ public class CommonListActivity extends AppCompatActivity {
                 activityReference.get().mAdapter.notifyDataSetChanged();
                 activityReference.get().progressBar.setVisibility(View.GONE);
             } else {
+                Timber.i("Have no data in database");
                 activityReference.get().progressBar.setVisibility(View.GONE);
                 activityReference.get().recyclerView.setVisibility(View.GONE);
                 activityReference.get().retryLayout.setVisibility(View.VISIBLE);
@@ -2948,7 +3206,11 @@ public class CommonListActivity extends AppCompatActivity {
         protected void onPostExecute(List<MuseumCollectionListTableArabic> museumCollectionListTableArabics) {
             activityReference.get().models.clear();
             if (museumCollectionListTableArabics.size() > 0) {
+                Timber.i("Set %s list from database with size: %d", activityReference.get().toolbarTitle,
+                        museumCollectionListTableArabics.size());
                 for (int i = 0; i < museumCollectionListTableArabics.size(); i++) {
+                    Timber.i("Setting %s list from database with id: %s", activityReference.get().toolbarTitle,
+                            museumCollectionListTableArabics.get(i).getMuseum_id());
                     CommonListModel commonListModel = new CommonListModel(museumCollectionListTableArabics.get(i).getName(),
                             museumCollectionListTableArabics.get(i).getImage(),
                             museumCollectionListTableArabics.get(i).getMuseum_id());
@@ -2957,6 +3219,7 @@ public class CommonListActivity extends AppCompatActivity {
                 activityReference.get().mAdapter.notifyDataSetChanged();
                 activityReference.get().progressBar.setVisibility(View.GONE);
             } else {
+                Timber.i("Have no data in database");
                 activityReference.get().progressBar.setVisibility(View.GONE);
                 activityReference.get().recyclerView.setVisibility(View.GONE);
                 activityReference.get().retryLayout.setVisibility(View.VISIBLE);
@@ -2965,6 +3228,7 @@ public class CommonListActivity extends AppCompatActivity {
 
         @Override
         protected List<MuseumCollectionListTableArabic> doInBackground(Void... voids) {
+            Timber.i("get%sEnglishData() for id: %s", activityReference.get().toolbarTitle, museumReference);
             return activityReference.get().qmDatabase.getMuseumCollectionListDao().
                     getDataFromArabicTableWithReference(museumReference);
         }

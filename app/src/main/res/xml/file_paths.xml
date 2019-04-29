@@ -2,4 +2,7 @@
     <files-path
         name="my-log-latest"
         path="logs/" />
+    <files-path
+        name="log_latest"
+        path="logs_zip/" />
 </paths>

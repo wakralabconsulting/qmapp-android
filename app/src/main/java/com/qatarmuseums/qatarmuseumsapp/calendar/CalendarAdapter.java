@@ -16,6 +16,8 @@ import com.qatarmuseums.qatarmuseumsapp.education.Events;
 
 import java.util.ArrayList;
 
+import timber.log.Timber;
+
 
 public class CalendarAdapter extends RecyclerView.Adapter<CalendarAdapter.CalendarAdapterViewHolder> {
     private Context context;
@@ -39,6 +41,7 @@ public class CalendarAdapter extends RecyclerView.Adapter<CalendarAdapter.Calend
     @Override
     public void onBindViewHolder(@NonNull final CalendarAdapter.CalendarAdapterViewHolder holder, final int position) {
         if (calendarEventsList.size() > 0) {
+            Timber.i("Setting calendar event list with Id: %s", calendarEventsList.get(position).getEid());
             if (calendarEventsList.get(position).getInstitution() != null &&
                     !calendarEventsList.get(position).getInstitution().equals("")) {
                 holder.eventTitle.setVisibility(View.VISIBLE);

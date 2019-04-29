@@ -55,6 +55,8 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.Locale;
 
+import timber.log.Timber;
+
 import static android.content.Context.LAYOUT_INFLATER_SERVICE;
 
 public class Util {
@@ -314,6 +316,7 @@ public class Util {
         try {
             date = formatter.parse(dateValue);
         } catch (ParseException e) {
+            Timber.e("convertDate() - ParseException: %s", e.getMessage());
             e.printStackTrace();
         }
         return date != null ? date.getTime() : 0;
@@ -321,6 +324,7 @@ public class Util {
 
     @SuppressLint("MissingPermission")
     public int getCalendarId(Context context) {
+        Timber.i("getCalendarId()");
         Cursor cursor;
         ContentResolver contentResolver = context.getContentResolver();
         Uri calendars = CalendarContract.Calendars.CONTENT_URI;
@@ -351,7 +355,7 @@ public class Util {
                 if (visible.equals("1")) {
                     return (int) calId;
                 }
-                Log.e("Calendar Id : ", "" + calId + " : " + calName + " : " + visible);
+                Timber.e("Calendar Id : %d  : %s : %s", calId, calName, visible);
             } while (cursor.moveToNext());
             cursor.close();
             return (int) calId;
@@ -360,7 +364,7 @@ public class Util {
     }
 
     public void showDialog(Context context, final String buttonText, final ArrayList<Events> events, final int position) {
-
+        Timber.i("showDialog() - For %s", buttonText);
         final Dialog dialog = new Dialog(context, R.style.DialogNoAnimation);
         dialog.setCancelable(true);
         dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
@@ -386,7 +390,7 @@ public class Util {
         dialogContent.setText(events.get(position).getLongDescription());
 
         registerNowBtn.setOnClickListener(view1 -> {
-            //Do something
+            Timber.i("Dialog - on Approval");
             if (buttonText.equalsIgnoreCase(context.getResources().getString(R.string.register_now))) {
                 new Util().showComingSoonDialog((Activity) context, R.string.coming_soon_content);
                 dialog.dismiss();
@@ -397,7 +401,7 @@ public class Util {
 
         });
         closeBtn.setOnClickListener(view12 -> {
-            //Do something
+            Timber.i("Dialog - on Cancelled");
             dialog.dismiss();
 
         });
@@ -405,8 +409,8 @@ public class Util {
     }
 
     private void addToCalendar(Context context, final ArrayList<Events> events, final int position) {
+        Timber.i("addToCalendar() - Setting calendar data for %s", events.get(position).getTitle());
         contentResolver = context.getContentResolver();
-
         contentValues = new ContentValues();
         contentValues.put(CalendarContract.Events.TITLE, events.get(position).getTitle());
         contentValues.put(CalendarContract.Events.DESCRIPTION, events.get(position).getLongDescription());
@@ -417,6 +421,7 @@ public class Util {
             if (ContextCompat.checkSelfPermission(context,
                     Manifest.permission.WRITE_CALENDAR)
                     != PackageManager.PERMISSION_GRANTED) {
+                Timber.i("Requesting CALENDAR READ & WRITE permission");
                 ActivityCompat.requestPermissions((Activity) context,
                         new String[]{Manifest.permission.WRITE_CALENDAR, Manifest.permission.READ_CALENDAR},
                         MY_PERMISSIONS_REQUEST_CALENDAR);
@@ -432,6 +437,7 @@ public class Util {
 
     @SuppressLint("MissingPermission")
     public void insertEventToCalendar(Context context, ContentValues contentValues) {
+        Timber.i("insertEventToCalendar()");
         try {
             if (contentValues == null) {
                 this.contentValues.put(CalendarContract.Events.CALENDAR_ID, getCalendarId(context));
@@ -442,13 +448,14 @@ public class Util {
             }
             showToast(context.getString(R.string.event_added), context);
         } catch (Exception ex) {
+            Timber.e("insertEventToCalendar() - Exception: %s", ex.getMessage());
             Toast.makeText(context, "Error in adding event on calendar : " + ex.getMessage(),
                     Toast.LENGTH_SHORT).show();
         }
     }
 
     public void showNavigationDialog(Context context, String title, final String details) {
-
+        Timber.i("showNavigationDialog()");
         Dialog dialog = new Dialog(context, R.style.DialogNoAnimation);
         dialog.setCancelable(true);
         dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
@@ -466,15 +473,20 @@ public class Util {
         dialogContent.setText(details);
 
         dialogActionButton.setOnClickListener(view1 -> {
+            Timber.i("Navigation - on Approve");
             navigateToSettings(context);
             dialog.dismiss();
 
         });
-        closeBtn.setOnClickListener(view12 -> dialog.dismiss());
+        closeBtn.setOnClickListener(view12 -> {
+            Timber.i("Navigation - on Cancelled");
+            dialog.dismiss();
+        });
         dialog.show();
     }
 
     private void navigateToSettings(Context context) {
+        Timber.i("navigateToSettings()");
         Intent intent = new Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS);
         Uri uri = Uri.fromParts("package", context.getPackageName(), null);
         intent.setData(uri);

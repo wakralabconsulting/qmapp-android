@@ -10,7 +10,6 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.graphics.Color;
-import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
@@ -18,7 +17,6 @@ import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.TextInputLayout;
-import android.support.v4.content.FileProvider;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v4.view.GravityCompat;
 import android.support.v7.widget.DefaultItemAnimator;
@@ -71,14 +69,12 @@ import com.qatarmuseums.qatarmuseumsapp.profile.UserData;
 import com.qatarmuseums.qatarmuseumsapp.utils.Util;
 import com.qatarmuseums.qatarmuseumsapp.webview.WebViewActivity;
 
-import java.io.File;
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 
-import ir.mahdi.mzip.zip.ZipArchive;
 import okhttp3.OkHttpClient;
 import okhttp3.logging.HttpLoggingInterceptor;
 import retrofit2.Call;
@@ -86,6 +82,7 @@ import retrofit2.Callback;
 import retrofit2.Response;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
+import timber.log.Timber;
 
 public class HomeActivity extends BaseActivity {
     View diningNavigation, giftShopNavigation, culturePassNavigation, moreNavigation;
@@ -178,18 +175,21 @@ public class HomeActivity extends BaseActivity {
 
             }
         });
+
         diningNavigation.setOnClickListener(v -> {
+            Timber.i("Bottom bar Dining clicked");
             navigation_intent = new Intent(HomeActivity.this, CommonListActivity.class);
             navigation_intent.putExtra(getString(R.string.toolbar_title_key), getString(R.string.side_menu_dining_text));
             startActivity(navigation_intent);
         });
         giftShopNavigation.setOnClickListener(v -> {
+            Timber.i("Bottom bar Gift shop clicked");
             navigation_intent = new Intent(HomeActivity.this, WebViewActivity.class);
             navigation_intent.putExtra("url", getString(R.string.gift_shop_url));
             startActivity(navigation_intent);
-
         });
         culturePassNavigation.setOnClickListener(v -> {
+            Timber.i("Bottom bar Culture pass clicked");
             name = qmPreferences.getString("NAME", null);
             if (name == null)
                 navigation_intent = new Intent(HomeActivity.this, CulturePassActivity.class);
@@ -197,7 +197,10 @@ public class HomeActivity extends BaseActivity {
                 navigation_intent = new Intent(HomeActivity.this, ProfileActivity.class);
             startActivity(navigation_intent);
         });
-        moreNavigation.setOnClickListener(v -> handlingDrawer());
+        moreNavigation.setOnClickListener(v -> {
+            handlingDrawer();
+            Timber.i("Bottom bar More clicked");
+        });
 
         mAdapter = new HomeListAdapter(this, homeLists);
         RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(getApplicationContext());
@@ -212,11 +215,13 @@ public class HomeActivity extends BaseActivity {
             public void onClick(View view, int position) {
                 HomeList homeList = homeLists.get(position);
                 if (homeList.getId().equals("12181") || homeList.getId().equals("12186")) {
+                    Timber.i("Home list Exhibition clicked");
                     navigationIntent = new Intent(HomeActivity.this, CommonListActivity.class);
                     navigationIntent.putExtra(getString(R.string.toolbar_title_key), getString(R.string.side_menu_exhibition_text));
                     startActivity(navigationIntent);
                 } else if (homeList.getName().trim().toUpperCase().contains("QATAR CREATES: EVENTS FOR THE OPENING OF NMOQ") ||
                         homeList.getName().trim().toUpperCase().contains("قطر تبدع: فعاليات افتتاح متحف قطر الوطني")) {
+                    Timber.i("Home list %s clicked", homeList.getName().trim().toUpperCase());
                     navigationIntent = new Intent(HomeActivity.this,
                             SecondaryListActivity.class);
                     navigationIntent.putExtra("MAIN_TITLE", homeList.getName());
@@ -224,6 +229,7 @@ public class HomeActivity extends BaseActivity {
                     navigationIntent.putExtra("COMING_FROM", getString(R.string.museum_discussion));
                     startActivity(navigationIntent);
                 } else {
+                    Timber.i("Home list %s clicked with ID: %s", homeList.getName(), homeList.getId());
                     navigationIntent = new Intent(HomeActivity.this, MuseumActivity.class);
                     navigationIntent.putExtra("MUSEUMTITLE", homeList.getName());
                     navigationIntent.putExtra("MUSEUM_ID", homeList.getId());
@@ -240,6 +246,7 @@ public class HomeActivity extends BaseActivity {
         // Temporarley Commenting Login popup for the first Launch
         boolean isFirstLaunch = qmPreferences.getBoolean("FIRST_LAUNCH", true);
         if (isFirstLaunch) {
+            Timber.i("First launch login popup");
             showLoginDialog();
             editor = qmPreferences.edit();
             editor.putBoolean("FIRST_LAUNCH", false);
@@ -255,6 +262,7 @@ public class HomeActivity extends BaseActivity {
         }
 
         retryButton.setOnClickListener(v -> {
+            Timber.i("Retry button clicked");
             getHomePageAPIData(language);
             progressBar.setVisibility(View.VISIBLE);
             retryLayout.setVisibility(View.GONE);
@@ -335,35 +343,6 @@ public class HomeActivity extends BaseActivity {
                 new IntentFilter(Config.PUSH_NOTIFICATION));
 
         checkForNotification(getIntent());
-
-        sendLogs();
-    }
-
-    private void sendLogs() {
-        Intent emailIntent = new Intent(Intent.ACTION_SEND_MULTIPLE);
-        emailIntent.setType("vnd.android.cursor.dir/email");
-        String to[] = {"testingfourexalture@gmail.com"};
-        emailIntent.putExtra(Intent.EXTRA_EMAIL, to);
-        emailIntent.putExtra(android.content.Intent.EXTRA_SUBJECT, "Your subject");
-        emailIntent.putExtra(android.content.Intent.EXTRA_TEXT, "Your message");
-
-        ArrayList<Uri> uris = new ArrayList<Uri>();
-        File filePath = new File(this.getFilesDir(), "logs");
-
-        File logFile = new File(filePath, "my-log-latest.html");
-
-        ZipArchive.zip(logFile.getPath(), filePath.getPath() + "/log_latest.zip", "11");
-        File shareFile = new File(filePath, "log_latest.zip");
-
-        Uri contentUri = FileProvider.getUriForFile(getApplicationContext(),
-                "com.qatarmuseums.qatarmuseumsapp.fileprovider", shareFile);
-        uris.add(contentUri);
-        emailIntent.putParcelableArrayListExtra(Intent.EXTRA_STREAM, uris);
-
-        // Grant temporary read permission to the content URI
-        emailIntent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
-
-        startActivity(emailIntent);
     }
 
     public void navigateToLaunchPage() {
@@ -426,6 +405,7 @@ public class HomeActivity extends BaseActivity {
     }
 
     public void getHomePageAPIData(String language) {
+        Timber.i("getHomePageAPIData()");
         APIInterface apiService =
                 APIClient.getClient().create(APIInterface.class);
         Call<ArrayList<HomeList>> call = apiService.getMuseumsList(language);
@@ -434,6 +414,7 @@ public class HomeActivity extends BaseActivity {
             public void onResponse(@NonNull Call<ArrayList<HomeList>> call, @NonNull Response<ArrayList<HomeList>> response) {
                 if (response.isSuccessful()) {
                     if (response.body() != null) {
+                        Timber.i("getHomePageAPIData() - isSuccessful");
                         recyclerView.setVisibility(View.VISIBLE);
                         homeLists.addAll(response.body());
 
@@ -441,6 +422,7 @@ public class HomeActivity extends BaseActivity {
 //                        AddPanelDiscussion();
 
                         Collections.sort(homeLists);
+                        Timber.i("Setting home cell data from API with size: %d", response.body().size());
                         mAdapter.notifyDataSetChanged();
                         new RowCount(HomeActivity.this, language, homeLists).execute();
                     } else {
@@ -456,6 +438,7 @@ public class HomeActivity extends BaseActivity {
 
             @Override
             public void onFailure(@NonNull Call<ArrayList<HomeList>> call, @NonNull Throwable t) {
+                Timber.e("getHomePageAPIData() - onFailure: %s", t.getMessage());
                 recyclerView.setVisibility(View.GONE);
                 progressBar.setVisibility(View.GONE);
                 retryLayout.setVisibility(View.VISIBLE);
@@ -473,6 +456,7 @@ public class HomeActivity extends BaseActivity {
         }
         if (!isPanelDiscussionAvailable) {
             HomeList homeList;
+            Timber.i("AddPanelDiscussion() Hardcoded value");
             if (language.equals(LocaleManager.LANGUAGE_ENGLISH)) {
                 homeList = new HomeList(
                         "QATAR CREATES: EVENTS FOR THE OPENING OF NMoQ",
@@ -493,6 +477,7 @@ public class HomeActivity extends BaseActivity {
     }
 
     public void getBannerAPIData() {
+        Timber.i("getBannerAPIData()");
         APIInterface apiService =
                 APIClient.getClient().create(APIInterface.class);
         Call<ArrayList<HomeList>> call = apiService.getBannerDetails(language);
@@ -503,6 +488,7 @@ public class HomeActivity extends BaseActivity {
                     if (response.body() != null) {
                         bannerLists.addAll(response.body());
                         if (bannerLists.size() > 0) {
+                            Timber.i("getBannerAPIData() - isSuccessful");
                             bannerLayout.setVisibility(View.VISIBLE);
                             addBannerData(bannerLists);
                             new RowCountBanner(HomeActivity.this, language, bannerLists).execute();
@@ -513,6 +499,7 @@ public class HomeActivity extends BaseActivity {
 
             @Override
             public void onFailure(@NonNull Call<ArrayList<HomeList>> call, @NonNull Throwable t) {
+                Timber.e("getBannerAPIData() - onFailure: %s", t.getMessage());
             }
         });
     }
@@ -520,6 +507,7 @@ public class HomeActivity extends BaseActivity {
     UserRegistrationDetailsTable userRegistrationDetailsTable;
 
     public void getUserRegistrationDetails(String userID) {
+        Timber.i("getUserRegistrationDetails()");
         HttpLoggingInterceptor interceptor = new HttpLoggingInterceptor();
         interceptor.setLevel(HttpLoggingInterceptor.Level.BODY);
 
@@ -544,6 +532,7 @@ public class HomeActivity extends BaseActivity {
                                    @NonNull Response<ArrayList<UserRegistrationModel>> response) {
                 if (response.isSuccessful()) {
                     if (response.body() != null && response.body().size() > 0) {
+                        Timber.i("getUserRegistrationDetails() - isSuccessful");
                         registeredEventLists.addAll(response.body());
                         new InsertRegistrationDatabaseTask(HomeActivity.this,
                                 userRegistrationDetailsTable, registeredEventLists).execute();
@@ -553,6 +542,7 @@ public class HomeActivity extends BaseActivity {
 
             @Override
             public void onFailure(@NonNull Call<ArrayList<UserRegistrationModel>> call, @NonNull Throwable t) {
+                Timber.e("getUserRegistrationDetails() - onFailure: %s", t.getMessage());
             }
         });
     }
@@ -587,6 +577,7 @@ public class HomeActivity extends BaseActivity {
     }
 
     public void addBannerData(List<HomeList> bannerLists) {
+        Timber.i("addBannerData()");
         if (bannerLists.size() > 0) {
             if (!HomeActivity.this.isFinishing())
                 GlideApp.with(HomeActivity.this)
@@ -598,6 +589,7 @@ public class HomeActivity extends BaseActivity {
     }
 
     public void fetchToken() {
+        Timber.i("fetchToken()");
         HttpLoggingInterceptor interceptor = new HttpLoggingInterceptor();
         interceptor.setLevel(HttpLoggingInterceptor.Level.BODY);
 
@@ -622,6 +614,7 @@ public class HomeActivity extends BaseActivity {
             public void onResponse(@NonNull Call<ProfileDetails> call, @NonNull final Response<ProfileDetails> response) {
                 if (response.isSuccessful()) {
                     if (response.body() != null) {
+                        Timber.i("fetchToken() - isSuccessful");
                         performLogin(response.body().getToken());
                     }
                 }
@@ -629,6 +622,7 @@ public class HomeActivity extends BaseActivity {
 
             @Override
             public void onFailure(@NonNull Call<ProfileDetails> call, @NonNull Throwable t) {
+                Timber.e("fetchToken() - onFailure: %s", t.getMessage());
                 util.showToast(getResources().getString(R.string.check_network),
                         HomeActivity.this);
                 showProgress(false);
@@ -638,6 +632,7 @@ public class HomeActivity extends BaseActivity {
     }
 
     public void performLogin(String token) {
+        Timber.i("performLogin()");
         HttpLoggingInterceptor interceptor = new HttpLoggingInterceptor();
         interceptor.setLevel(HttpLoggingInterceptor.Level.BODY);
         OkHttpClient client;
@@ -666,6 +661,8 @@ public class HomeActivity extends BaseActivity {
                         // Commenting VIP user check for temporary
 //                        checkRSVP(profileDetails.getUser().getuId(), profileDetails.getToken());
 
+                        Timber.i("performLogin() - success with id: %s", profileDetails.getUser().getuId());
+
                         editor = qmPreferences.edit();
                         editor.putString("TOKEN", profileDetails.getToken());
                         editor.putString("UID", profileDetails.getUser().getuId());
@@ -686,6 +683,7 @@ public class HomeActivity extends BaseActivity {
                         editor.apply();
                     }
                 } else {
+                    Timber.w("performLogin() - not success with code: %d", response.code());
                     if (response.code() == 401)
                         mPasswordViewLayout.setError(getString(R.string.error_incorrect_credentials));
                     else if (response.code() == 406)
@@ -698,6 +696,7 @@ public class HomeActivity extends BaseActivity {
 
             @Override
             public void onFailure(@NonNull Call<ProfileDetails> call, @NonNull Throwable t) {
+                Timber.e("performLogin() - onFailure: %s", t.getMessage());
                 if (t.getMessage().contains("timeout"))
                     util.showToast(t.getMessage(), HomeActivity.this);
                 else
@@ -711,6 +710,7 @@ public class HomeActivity extends BaseActivity {
     }
 
     public void checkRSVP(String uid, String token) {
+        Timber.i("checkRSVP()");
         HttpLoggingInterceptor interceptor = new HttpLoggingInterceptor();
         interceptor.setLevel(HttpLoggingInterceptor.Level.BODY);
 
@@ -735,6 +735,7 @@ public class HomeActivity extends BaseActivity {
                 if (response.isSuccessful()) {
                     if (response.body() != null) {
                         if (response.body().getRsvpAttendance() != null) {
+                            Timber.i("RSVP check - isSuccessful for id: %s", uid);
                             RSVP = ((LinkedTreeMap) ((ArrayList) ((LinkedTreeMap)
                                     response.body().getRsvpAttendance()).get("und")).get(0)).get("value").toString();
                             editor = qmPreferences.edit();
@@ -751,6 +752,7 @@ public class HomeActivity extends BaseActivity {
 
             @Override
             public void onFailure(@NonNull Call<UserData> call, @NonNull Throwable t) {
+                Timber.e("checkRSVP() - onFailure: %s", t.getMessage());
                 new Util().showToast(getResources().getString(R.string.check_network), HomeActivity.this);
                 showProgress(false);
             }
@@ -759,6 +761,7 @@ public class HomeActivity extends BaseActivity {
 
     @SuppressLint("ClickableViewAccessibility")
     protected void showLoginDialog() {
+        Timber.i("showLoginDialog()");
         loginDialog = new Dialog(this, R.style.DialogNoAnimation);
         loginDialog.setCancelable(true);
         loginDialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
@@ -841,6 +844,7 @@ public class HomeActivity extends BaseActivity {
     }
 
     public void hideSoftKeyboard(View view) {
+        Timber.i("hideSoftKeyboard()");
         InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
         if (imm != null) {
             imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
@@ -848,6 +852,7 @@ public class HomeActivity extends BaseActivity {
     }
 
     private void attemptLogin() {
+        Timber.i("attemptLogin()");
         // Reset errors.
         mUsernameViewLayout.setError(null);
         mPasswordViewLayout.setError(null);
@@ -887,6 +892,7 @@ public class HomeActivity extends BaseActivity {
     }
 
     private void attemptForgotPassword() {
+        Timber.i("attemptForgotPassword()");
         mUsernameViewLayout.setError(null);
         mPasswordViewLayout.setError(null);
         qatar = mUsernameView.getText().toString();
@@ -908,6 +914,7 @@ public class HomeActivity extends BaseActivity {
     }
 
     public void fetchTokenForPassword() {
+        Timber.i("fetchTokenForPassword()");
         apiService = APIClient.getClient().create(APIInterface.class);
         Call<ProfileDetails> call = apiService.generateToken(language, loginData);
         call.enqueue(new Callback<ProfileDetails>() {
@@ -915,6 +922,7 @@ public class HomeActivity extends BaseActivity {
             public void onResponse(@NonNull Call<ProfileDetails> call, @NonNull final Response<ProfileDetails> response) {
                 if (response.isSuccessful()) {
                     if (response.body() != null) {
+                        Timber.i("fetchTokenForPassword() - isSuccessful");
                         forgotPasswordAction(response.body().getToken());
                     }
                 }
@@ -922,6 +930,7 @@ public class HomeActivity extends BaseActivity {
 
             @Override
             public void onFailure(@NonNull Call<ProfileDetails> call, @NonNull Throwable t) {
+                Timber.e("fetchTokenForPassword() - onFailure: %s", t.getMessage());
                 util.showToast(getResources().getString(R.string.check_network),
                         HomeActivity.this);
                 showProgress(false);
@@ -931,6 +940,7 @@ public class HomeActivity extends BaseActivity {
     }
 
     public void forgotPasswordAction(String token) {
+        Timber.i("forgotPasswordAction()");
         apiService = APIClient.getClient().create(APIInterface.class);
         Call<ArrayList<String>> callLogin = apiService.forgotPassword(language, token, loginData);
         callLogin.enqueue(new Callback<ArrayList<String>>() {
@@ -938,10 +948,12 @@ public class HomeActivity extends BaseActivity {
             public void onResponse(@NonNull Call<ArrayList<String>> call, @NonNull Response<ArrayList<String>> response) {
                 if (response.isSuccessful()) {
                     if (response.body() != null) {
+                        Timber.i("forgotPasswordAction() - isSuccessful");
                         loginDialog.dismiss();
                         util.showNormalDialog(HomeActivity.this, R.string.password_reset_successful);
                     }
                 } else {
+                    Timber.w("forgotPasswordAction() - not success with code: %d", response.code());
                     if (response.code() == 406)
                         mUsernameViewLayout.setError(getString(R.string.error_incorrect_username));
                     else
@@ -953,6 +965,7 @@ public class HomeActivity extends BaseActivity {
 
             @Override
             public void onFailure(@NonNull Call<ArrayList<String>> call, @NonNull Throwable t) {
+                Timber.e("forgotPasswordAction() - onFailure: %s", t.getMessage());
                 util.showToast(getResources().getString(R.string.check_network),
                         HomeActivity.this);
                 showProgress(false);
@@ -966,7 +979,7 @@ public class HomeActivity extends BaseActivity {
      * Shows the progress UI and hides the login form.
      */
     private void showProgress(final boolean show) {
-
+        Timber.i("showProgress(%b)", show);
         int shortAnimTime = getResources().getInteger(android.R.integer.config_shortAnimTime);
 
         mLoginFormView.setVisibility(show ? View.GONE : View.VISIBLE);
@@ -1006,6 +1019,8 @@ public class HomeActivity extends BaseActivity {
         protected Boolean doInBackground(Void... voids) {
             if (registeredEventLists != null && registeredEventLists.size() > 0) {
                 for (int i = 0; i < registeredEventLists.size(); i++) {
+                    Timber.i("insertUserRegistrationTable() with id: %s",
+                            registeredEventLists.get(i).getRegID());
                     userRegistrationDetailsTable = new UserRegistrationDetailsTable(
                             registeredEventLists.get(i).getRegID(),
                             registeredEventLists.get(i).getEventID(),
@@ -1034,6 +1049,7 @@ public class HomeActivity extends BaseActivity {
 
         @Override
         protected Integer doInBackground(Void... voids) {
+            Timber.i("getNumberOfBannerRows%s()", language.toUpperCase());
             if (language.equals(LocaleManager.LANGUAGE_ENGLISH))
                 return activityReference.get().qmDatabase.getHomePageBannerTableDao().getNumberOfBannerRowsEnglish();
             else
@@ -1045,10 +1061,11 @@ public class HomeActivity extends BaseActivity {
         protected void onPostExecute(Integer integer) {
             int homePageBannerTableRowCount = integer;
             if (homePageBannerTableRowCount > 0) {
-                //updateEnglishTable or add row to database
+                Timber.i("Count: %d", integer);
                 new UpdateHomePageBannerTable(activityReference.get(), language, bannerLists).execute();
 
             } else {
+                Timber.i("Banner Table have no data");
                 new InsertBannerDatabaseTask(activityReference.get(), activityReference.get().homePageBannerTableEnglish,
                         activityReference.get().homePageBannerTableArabic, language, bannerLists).execute();
 
@@ -1072,6 +1089,7 @@ public class HomeActivity extends BaseActivity {
         protected Void doInBackground(Void... voids) {
             if (language.equals(LocaleManager.LANGUAGE_ENGLISH)) {
                 // updateEnglishTable table with english name
+                Timber.i("updateHomePageBannerEnglish() with id: %s", bannerLists.get(0).getId());
                 activityReference.get().qmDatabase.getHomePageBannerTableDao().updateHomePageBannerEnglish(
                         bannerLists.get(0).getName(),
                         bannerLists.get(0).getImage(),
@@ -1080,6 +1098,7 @@ public class HomeActivity extends BaseActivity {
 
             } else {
                 // updateEnglishTable table with arabic name
+                Timber.i("updateHomePageBannerArabic() with id: %s", bannerLists.get(0).getId());
                 activityReference.get().qmDatabase.getHomePageBannerTableDao().updateHomePageBannerArabic(
                         bannerLists.get(0).getName(),
                         bannerLists.get(0).getImage(),
@@ -1112,6 +1131,8 @@ public class HomeActivity extends BaseActivity {
         @Override
         protected Boolean doInBackground(Void... voids) {
             if (bannerLists != null && bannerLists.size() > 0) {
+                Timber.i("insertBannerTable%s() with id: %s", language.toUpperCase(),
+                        bannerLists.get(0).getId());
                 if (language.equals(LocaleManager.LANGUAGE_ENGLISH)) {
                     homePageBannerTableEnglish = new HomePageBannerTableEnglish(
                             Long.parseLong(bannerLists.get(0).getId()),
@@ -1142,6 +1163,7 @@ public class HomeActivity extends BaseActivity {
 
         @Override
         protected List<HomePageBannerTableEnglish> doInBackground(Void... voids) {
+            Timber.i("getAllDataFromHomePageBannerEnglishTable()");
             return activityReference.get().qmDatabase.getHomePageBannerTableDao().getAllDataFromHomePageBannerEnglishTable();
 
         }
@@ -1149,6 +1171,7 @@ public class HomeActivity extends BaseActivity {
         @Override
         protected void onPostExecute(List<HomePageBannerTableEnglish> homePageBannerTableEnglishes) {
             if (homePageBannerTableEnglishes.size() > 0) {
+                Timber.i("homePageBannerTableEnglishes have data with id: %d", homePageBannerTableEnglishes.get(0).getQatarmuseum_id());
                 activityReference.get().bannerLists.clear();
                 HomeList bannerList = new HomeList(homePageBannerTableEnglishes.get(0).getName()
                         , String.valueOf(homePageBannerTableEnglishes.get(0).getQatarmuseum_id()),
@@ -1165,6 +1188,7 @@ public class HomeActivity extends BaseActivity {
                 }
                 activityReference.get().bannerLayout.setVisibility(View.VISIBLE);
             } else {
+                Timber.i("homePageBannerTableEnglishes have no data");
                 activityReference.get().bannerLayout.setVisibility(View.GONE);
             }
         }
@@ -1181,6 +1205,7 @@ public class HomeActivity extends BaseActivity {
 
         @Override
         protected List<HomePageBannerTableArabic> doInBackground(Void... voids) {
+            Timber.i("getAllDataFromHomePageBannerArabicTable()");
             return activityReference.get().qmDatabase.getHomePageBannerTableDao().getAllDataFromHomePageBannerArabicTable();
 
         }
@@ -1188,6 +1213,7 @@ public class HomeActivity extends BaseActivity {
         @Override
         protected void onPostExecute(List<HomePageBannerTableArabic> homePageBannerTableArabics) {
             if (homePageBannerTableArabics.size() > 0) {
+                Timber.i("homePageBannerTableEnglishes have data with id: %d", homePageBannerTableArabics.get(0).getQatarmuseum_id());
                 activityReference.get().bannerLists.clear();
                 HomeList bannerList = new HomeList(homePageBannerTableArabics.get(0).getName()
                         , String.valueOf(homePageBannerTableArabics.get(0).getQatarmuseum_id()),
@@ -1205,6 +1231,7 @@ public class HomeActivity extends BaseActivity {
 
                 activityReference.get().bannerLayout.setVisibility(View.VISIBLE);
             } else {
+                Timber.i("homePageBannerTableEnglishes have no data");
                 activityReference.get().bannerLayout.setVisibility(View.GONE);
             }
         }
@@ -1212,6 +1239,7 @@ public class HomeActivity extends BaseActivity {
     }
 
     public void getBannerDataFromDataBase() {
+        Timber.i("getBannerDataFromDataBase()");
         if (language.equals(LocaleManager.LANGUAGE_ENGLISH))
             new RetrieveEnglishBannerTableData(HomeActivity.this).execute();
         else
@@ -1234,11 +1262,12 @@ public class HomeActivity extends BaseActivity {
 
         @Override
         protected Integer doInBackground(Void... voids) {
-            if (language.equals(LocaleManager.LANGUAGE_ENGLISH))
+            Timber.i("getNumberOfRows%s()", language.toUpperCase());
+            if (language.equals(LocaleManager.LANGUAGE_ENGLISH)) {
                 return activityReference.get().qmDatabase.getHomePageTableDao().getNumberOfRowsEnglish();
-            else
+            } else {
                 return activityReference.get().qmDatabase.getHomePageTableDao().getNumberOfRowsArabic();
-
+            }
         }
 
         @Override
@@ -1246,10 +1275,11 @@ public class HomeActivity extends BaseActivity {
             int homePageTableRowCount;
             homePageTableRowCount = integer;
             if (homePageTableRowCount > 0) {
-                //updateEnglishTable or add row to database
+                Timber.i("homePageTableRowCount: %d", homePageTableRowCount);
                 new CheckDBRowExist(activityReference.get(), language, homeList.get()).execute();
 
             } else {
+                Timber.i("homePageTable have no data");
                 new InsertDatabaseTask(activityReference.get(), homePageTableEnglish,
                         homePageTableArabic, language, homeList.get()).execute();
 
@@ -1279,11 +1309,10 @@ public class HomeActivity extends BaseActivity {
                         int n = activityReference.get().qmDatabase.getHomePageTableDao().checkIdExistEnglish(
                                 Integer.parseInt(homeLists.get().get(i).getId()));
                         if (n > 0) {
-                            //updateEnglishTable same id
+                            Timber.i("Row exist in DB for id: %s", homeLists.get().get(i).getId());
                             new UpdateHomePageTable(activityReference.get(), language, i, homeLists.get()).execute();
-
                         } else {
-                            //create row with corresponding id
+                            Timber.i("insertEnglishTable with id: %s", homeLists.get().get(i).getId());
                             homePageTableEnglish = new HomePageTableEnglish(Long.parseLong(homeLists.get().get(i).getId()),
                                     homeLists.get().get(i).getName(),
                                     homeLists.get().get(i).getTourGuideAvailable(),
@@ -1298,11 +1327,9 @@ public class HomeActivity extends BaseActivity {
                         int n = activityReference.get().qmDatabase.getHomePageTableDao().checkIdExistArabic(
                                 Integer.parseInt(homeLists.get().get(i).getId()));
                         if (n > 0) {
-                            //updateEnglishTable same id
                             new UpdateHomePageTable(activityReference.get(), language, i, homeLists.get()).execute();
-
                         } else {
-                            //create row with corresponding id
+                            Timber.i("insertArabicTable with id: %s", homeLists.get().get(i).getId());
                             homePageTableArabic = new HomePageTableArabic(Long.parseLong(homeLists.get().get(i).getId()),
                                     homeLists.get().get(i).getName(),
                                     homeLists.get().get(i).getTourGuideAvailable(),
@@ -1340,7 +1367,9 @@ public class HomeActivity extends BaseActivity {
         protected Boolean doInBackground(Void... voids) {
             if (homeLists != null && homeLists.get().size() > 0) {
                 if (language.equals(LocaleManager.LANGUAGE_ENGLISH)) {
+                    Timber.i("insertEnglishTable with size: %d", homeLists.get().size());
                     for (int i = 0; i < homeLists.get().size(); i++) {
+                        Timber.i("insertEnglishTable with id: %s", homeLists.get().get(i).getId());
                         homePageTableEnglish = new HomePageTableEnglish(Long.parseLong(homeLists.get().get(i).getId()),
                                 homeLists.get().get(i).getName(),
                                 homeLists.get().get(i).getTourGuideAvailable(),
@@ -1349,7 +1378,9 @@ public class HomeActivity extends BaseActivity {
                         activityReference.get().qmDatabase.getHomePageTableDao().insertEnglishTable(homePageTableEnglish);
                     }
                 } else {
+                    Timber.i("insertArabicTable with size: %d", homeLists.get().size());
                     for (int i = 0; i < homeLists.get().size(); i++) {
+                        Timber.i("insertArabicTable with id: %s", homeLists.get().get(i).getId());
                         homePageTableArabic = new HomePageTableArabic(Long.parseLong(homeLists.get().get(i).getId()),
                                 homeLists.get().get(i).getName(),
                                 homeLists.get().get(i).getTourGuideAvailable(),
@@ -1386,7 +1417,7 @@ public class HomeActivity extends BaseActivity {
         @Override
         protected Void doInBackground(Void... voids) {
             if (language.equals(LocaleManager.LANGUAGE_ENGLISH)) {
-                // updateEnglishTable table with english name
+                Timber.i("updateEnglishTable with id: %s", homeLists.get().get(position).getId());
                 activityReference.get().qmDatabase.getHomePageTableDao().updateHomePageEnglish(
                         homeLists.get().get(position).getName(), homeLists.get().get(position).getTourGuideAvailable(),
                         homeLists.get().get(position).getImage(), homeLists.get().get(position).getSortId(),
@@ -1394,7 +1425,7 @@ public class HomeActivity extends BaseActivity {
                 );
 
             } else {
-                // updateEnglishTable table with arabic name
+                Timber.i("updateArabicTable with id: %s", homeLists.get().get(position).getId());
                 activityReference.get().qmDatabase.getHomePageTableDao().updateHomePageArabic(
                         homeLists.get().get(position).getName(), homeLists.get().get(position).getTourGuideAvailable(),
                         homeLists.get().get(position).getImage(), homeLists.get().get(position).getSortId(),
@@ -1420,6 +1451,7 @@ public class HomeActivity extends BaseActivity {
 
         @Override
         protected List<HomePageTableEnglish> doInBackground(Void... voids) {
+            Timber.i("getAllDataFromHomePageEnglishTable()");
             return activityReference.get().qmDatabase.getHomePageTableDao().getAllDataFromHomePageEnglishTable();
 
         }
@@ -1427,8 +1459,10 @@ public class HomeActivity extends BaseActivity {
         @Override
         protected void onPostExecute(List<HomePageTableEnglish> homePageTableEnglishes) {
             if (homePageTableEnglishes.size() > 0) {
+                Timber.i("HomePageEnglishTable with size: %d", homePageTableEnglishes.size());
                 activityReference.get().homeLists.clear();
                 for (int i = 0; i < homePageTableEnglishes.size(); i++) {
+                    Timber.i("Set home list from DB with id: %d", homePageTableEnglishes.get(i).getQatarmuseum_id());
                     HomeList exhibitionObject = new HomeList(homePageTableEnglishes.get(i).getName()
                             , String.valueOf(homePageTableEnglishes.get(i).getQatarmuseum_id()),
                             homePageTableEnglishes.get(i).getImage(),
@@ -1443,6 +1477,7 @@ public class HomeActivity extends BaseActivity {
                 activityReference.get().recyclerView.setVisibility(View.VISIBLE);
                 activityReference.get().retryLayout.setVisibility(View.GONE);
             } else {
+                Timber.i("HomePageEnglishTable have no data");
                 activityReference.get().progressBar.setVisibility(View.GONE);
                 activityReference.get().recyclerView.setVisibility(View.GONE);
                 activityReference.get().retryLayout.setVisibility(View.VISIBLE);
@@ -1463,6 +1498,7 @@ public class HomeActivity extends BaseActivity {
 
         @Override
         protected List<HomePageTableArabic> doInBackground(Void... voids) {
+            Timber.i("getAllDataFromHomePageArabicTable()");
             return activityReference.get().qmDatabase.getHomePageTableDao().getAllDataFromHomePageArabicTable();
 
         }
@@ -1470,8 +1506,10 @@ public class HomeActivity extends BaseActivity {
         @Override
         protected void onPostExecute(List<HomePageTableArabic> homePageTableArabics) {
             if (homePageTableArabics.size() > 0) {
+                Timber.i("HomePageTableArabic with size: %s", homePageTableArabics.size());
                 activityReference.get().homeLists.clear();
                 for (int i = 0; i < homePageTableArabics.size(); i++) {
+                    Timber.i("Set home list from DB with id: %d", homePageTableArabics.get(i).getQatarmuseum_id());
                     HomeList exhibitionObject = new HomeList(homePageTableArabics.get(i).getName()
                             , String.valueOf(homePageTableArabics.get(i).getQatarmuseum_id()),
                             homePageTableArabics.get(i).getImage(),
@@ -1486,6 +1524,7 @@ public class HomeActivity extends BaseActivity {
                 activityReference.get().recyclerView.setVisibility(View.VISIBLE);
                 activityReference.get().retryLayout.setVisibility(View.GONE);
             } else {
+                Timber.i("HomePageTableArabic have no data");
                 activityReference.get().progressBar.setVisibility(View.GONE);
                 activityReference.get().recyclerView.setVisibility(View.GONE);
                 activityReference.get().retryLayout.setVisibility(View.VISIBLE);
@@ -1495,6 +1534,7 @@ public class HomeActivity extends BaseActivity {
     }
 
     public void getDataFromDataBase(String language) {
+        Timber.i("getDataFromDataBase()");
         progressBar.setVisibility(View.VISIBLE);
         if (language.equals(LocaleManager.LANGUAGE_ENGLISH))
             new RetrieveEnglishTableData(HomeActivity.this).execute();

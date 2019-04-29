@@ -7,7 +7,6 @@ import android.app.NotificationManager;
 import android.content.Context;
 import android.content.res.Configuration;
 import android.os.Build;
-import android.util.Log;
 
 import com.qatarmuseums.qatarmuseumsapp.timber.FileLoggingTree;
 
@@ -21,9 +20,8 @@ public class MyApp extends Application {
     public void onCreate() {
         super.onCreate();
         // For log integration
-        Timber.plant(new Timber.DebugTree());
         Timber.plant(new FileLoggingTree(getApplicationContext()));
-
+        Timber.i("Initializing Logger...");
 //        if (LeakCanary.isInAnalyzerProcess(this)) {
 //            // This process is dedicated to LeakCanary for heap analysis.
 //            // You should not init your app in this process.
@@ -37,18 +35,19 @@ public class MyApp extends Application {
     @Override
     protected void attachBaseContext(Context base) {
         super.attachBaseContext(LocaleManager.setLocale(base));
-        Log.d(TAG, "attachBaseContext");
+        Timber.d("attachBaseContext");
     }
 
     @Override
     public void onConfigurationChanged(Configuration newConfig) {
         super.onConfigurationChanged(newConfig);
         LocaleManager.setNewLocale(this, newConfig.locale.getLanguage());
-        Log.d(TAG, "onConfigurationChanged: " + newConfig.locale.getLanguage());
+        Timber.d("onConfigurationChanged: " + newConfig.locale.getLanguage());
     }
 
     private void createNotificationChannel() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            Timber.i("Creating NotificationChannel for Oreo and above");
             CharSequence name = getString(R.string.notification_channel);
             String description = getString(R.string.notification_channel_description);
             int importance = NotificationManager.IMPORTANCE_DEFAULT;

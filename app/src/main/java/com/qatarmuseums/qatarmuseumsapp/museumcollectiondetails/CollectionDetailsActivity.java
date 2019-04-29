@@ -41,6 +41,7 @@ import butterknife.ButterKnife;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
+import timber.log.Timber;
 
 
 public class CollectionDetailsActivity extends AppCompatActivity {
@@ -137,6 +138,7 @@ public class CollectionDetailsActivity extends AppCompatActivity {
                 getMuseumCollectionDetailFromDatabase();
         }
         retryButton.setOnClickListener(v -> {
+            Timber.i("Retry button clicked");
             if (intent.getStringExtra("COMING_FROM").equals(this.getString(R.string.side_menu_parks_text)))
                 getNMoQParkDetailsFromAPI(nid);
             else
@@ -182,6 +184,7 @@ public class CollectionDetailsActivity extends AppCompatActivity {
     }
 
     private void getNMoQParkDetailsFromAPI(String nid) {
+        Timber.i("getNMoQParkDetailsFromAPI(id: %s)", nid);
         progressBar.setVisibility(View.VISIBLE);
         APIInterface apiService =
                 APIClient.getClient().create(APIInterface.class);
@@ -192,6 +195,7 @@ public class CollectionDetailsActivity extends AppCompatActivity {
                                    @NonNull Response<ArrayList<NMoQParkListDetails>> response) {
                 if (response.isSuccessful()) {
                     if (response.body() != null && response.body().size() > 0) {
+                        Timber.i("getNMoQParkDetailsFromAPI() - isSuccessful with size: %s", response.body().size());
                         detailLayout.setVisibility(View.VISIBLE);
                         nMoQParkListDetails.addAll(response.body());
                         removeParkHtmlTags(nMoQParkListDetails);
@@ -201,10 +205,12 @@ public class CollectionDetailsActivity extends AppCompatActivity {
                         // Commented for Nid issue in park list details API
 //                        new NMoQParkListDetailsRowCount(CollectionDetailsActivity.this, appLanguage).execute();
                     } else {
+                        Timber.i("Response have no data");
                         detailLayout.setVisibility(View.GONE);
                         noResultFoundLayout.setVisibility(View.VISIBLE);
                     }
                 } else {
+                    Timber.w("Response not successful");
                     detailLayout.setVisibility(View.GONE);
                     retryLayout.setVisibility(View.VISIBLE);
                 }
@@ -213,6 +219,7 @@ public class CollectionDetailsActivity extends AppCompatActivity {
 
             @Override
             public void onFailure(@NonNull Call<ArrayList<NMoQParkListDetails>> call, @NonNull Throwable t) {
+                Timber.e("getNMoQParkDetailsFromAPI() - onFailure: %s", t.getMessage());
                 detailLayout.setVisibility(View.GONE);
                 retryLayout.setVisibility(View.VISIBLE);
                 progressBar.setVisibility(View.GONE);
@@ -222,6 +229,7 @@ public class CollectionDetailsActivity extends AppCompatActivity {
     }
 
     public void getMuseumCollectionDetailFromAPI() {
+        Timber.i("getMuseumCollectionDetailFromAPI()");
         progressBar.setVisibility(View.VISIBLE);
         APIInterface apiService =
                 APIClient.getClient().create(APIInterface.class);
@@ -232,6 +240,7 @@ public class CollectionDetailsActivity extends AppCompatActivity {
                                    @NonNull Response<ArrayList<CollectionDetailsList>> response) {
                 if (response.isSuccessful()) {
                     if (response.body() != null && response.body().size() > 0) {
+                        Timber.i("getMuseumCollectionDetailFromAPI() - isSuccessful with size: %s", response.body().size());
                         detailLayout.setVisibility(View.VISIBLE);
                         collectionDetailsList.addAll(response.body());
                         removeHtmlTags(collectionDetailsList);
@@ -240,10 +249,12 @@ public class CollectionDetailsActivity extends AppCompatActivity {
 
 
                     } else {
+                        Timber.i("Response have no data");
                         detailLayout.setVisibility(View.GONE);
                         noResultFoundLayout.setVisibility(View.VISIBLE);
                     }
                 } else {
+                    Timber.w("Response not successful");
                     detailLayout.setVisibility(View.GONE);
                     retryLayout.setVisibility(View.VISIBLE);
                 }
@@ -253,6 +264,7 @@ public class CollectionDetailsActivity extends AppCompatActivity {
             @Override
             public void onFailure(@NonNull Call<ArrayList<CollectionDetailsList>> call,
                                   @NonNull Throwable t) {
+                Timber.e("getMuseumCollectionDetailFromAPI() - onFailure: %s", t.getMessage());
                 detailLayout.setVisibility(View.GONE);
                 retryLayout.setVisibility(View.VISIBLE);
                 progressBar.setVisibility(View.GONE);
@@ -262,6 +274,7 @@ public class CollectionDetailsActivity extends AppCompatActivity {
     }
 
     public void getMuseumCollectionDetailFromDatabase() {
+        Timber.i("getMuseumCollectionDetailFromDatabase()");
         if (appLanguage.equals(LocaleManager.LANGUAGE_ENGLISH)) {
             new RetrieveMuseumCollectionDetailDataEnglish(CollectionDetailsActivity.this).execute();
         } else {
@@ -299,6 +312,7 @@ public class CollectionDetailsActivity extends AppCompatActivity {
 
         @Override
         protected Integer doInBackground(Void... voids) {
+            Timber.i("getNumberOfRows%s()", language.toUpperCase());
             if (language.equals(LocaleManager.LANGUAGE_ENGLISH))
                 return activityReference.get().qmDatabase.getNMoQParkListDetailsTableDao().getNumberOfRowsEnglish();
             else
@@ -309,8 +323,10 @@ public class CollectionDetailsActivity extends AppCompatActivity {
         @Override
         protected void onPostExecute(Integer integer) {
             if (integer > 0) {
+                Timber.i("Count: %d", integer);
                 new CheckNMoQParkListDetailsDBRowExist(activityReference.get(), language).execute();
             } else {
+                Timber.i("Database table have no data");
                 new InsertNMoQParkListDetailsDataToDataBase(
                         activityReference.get(),
                         activityReference.get().nMoQParkListDetailsTableEnglish,
@@ -338,8 +354,12 @@ public class CollectionDetailsActivity extends AppCompatActivity {
                         int n = activityReference.get().qmDatabase.getNMoQParkListDetailsTableDao().checkIdExistEnglish(
                                 Integer.parseInt(activityReference.get().nMoQParkListDetails.get(i).getNid()));
                         if (n > 0) {
+                            Timber.i("Row exist in database(%s) for id: %s", language.toUpperCase(),
+                                    activityReference.get().nMoQParkListDetails.get(i).getNid());
                             new UpdateNMoQParkListDetailsTable(activityReference.get(), language).execute();
                         } else {
+                            Timber.i("Inserting data to Table(%s) with id: %s",
+                                    language.toUpperCase(), activityReference.get().nMoQParkListDetails.get(i).getNid());
                             nMoQParkListDetailsTableEnglish = new NMoQParkListDetailsTableEnglish(
                                     activityReference.get().nMoQParkListDetails.get(i).getNid(),
                                     activityReference.get().nMoQParkListDetails.get(i).getMainTitle(),
@@ -356,9 +376,12 @@ public class CollectionDetailsActivity extends AppCompatActivity {
                         int n = activityReference.get().qmDatabase.getNMoQParkListDetailsTableDao().checkIdExistArabic(
                                 Integer.parseInt(activityReference.get().nMoQParkListDetails.get(i).getNid()));
                         if (n > 0) {
+                            Timber.i("Row exist in database(%s) for id: %s", language.toUpperCase(),
+                                    activityReference.get().nMoQParkListDetails.get(i).getNid());
                             new UpdateNMoQParkListDetailsTable(activityReference.get(), language).execute();
                         } else {
-
+                            Timber.i("Inserting data to Table(%s) with id: %s",
+                                    language.toUpperCase(), activityReference.get().nMoQParkListDetails.get(i).getNid());
                             nMoQParkListDetailsTableArabic = new NMoQParkListDetailsTableArabic(
                                     activityReference.get().nMoQParkListDetails.get(i).getNid(),
                                     activityReference.get().nMoQParkListDetails.get(i).getMainTitle(),
@@ -389,6 +412,8 @@ public class CollectionDetailsActivity extends AppCompatActivity {
 
         @Override
         protected Void doInBackground(Void... voids) {
+            Timber.i("Updating data on Table(%s) with id: %s",
+                    language.toUpperCase(), activityReference.get().nMoQParkListDetails.get(0).getNid());
             if (language.equals(LocaleManager.LANGUAGE_ENGLISH)) {
                 activityReference.get().qmDatabase.getNMoQParkListDetailsTableDao().updateNMoQParkListDetailsEnglish(
                         activityReference.get().nMoQParkListDetails.get(0).getMainTitle(),
@@ -439,6 +464,8 @@ public class CollectionDetailsActivity extends AppCompatActivity {
                 if (activityReference.get().nMoQParkListDetails != null &&
                         activityReference.get().nMoQParkListDetails.size() > 0) {
                     for (int i = 0; i < activityReference.get().nMoQParkListDetails.size(); i++) {
+                        Timber.i("Inserting data to Table(%s) with id: %s",
+                                language.toUpperCase(), activityReference.get().nMoQParkListDetails.get(i).getNid());
                         nMoQParkListDetailsTableEnglish = new NMoQParkListDetailsTableEnglish(
                                 activityReference.get().nMoQParkListDetails.get(i).getNid(),
                                 activityReference.get().nMoQParkListDetails.get(i).getMainTitle(),
@@ -453,6 +480,8 @@ public class CollectionDetailsActivity extends AppCompatActivity {
                 if (activityReference.get().nMoQParkListDetails != null &&
                         activityReference.get().nMoQParkListDetails.size() > 0) {
                     for (int i = 0; i < activityReference.get().nMoQParkListDetails.size(); i++) {
+                        Timber.i("Inserting data to Table(%s) with id: %s",
+                                language.toUpperCase(), activityReference.get().nMoQParkListDetails.get(i).getNid());
                         nMoQParkListDetailsTableArabic = new NMoQParkListDetailsTableArabic(
                                 activityReference.get().nMoQParkListDetails.get(i).getNid(),
                                 activityReference.get().nMoQParkListDetails.get(i).getMainTitle(),
@@ -474,6 +503,7 @@ public class CollectionDetailsActivity extends AppCompatActivity {
     }
 
     public void getNMoQParkListDetailsFromDataBase(String nid) {
+        Timber.i("getNMoQParkListDetailsFromDataBase(id: %s)", nid);
         if (appLanguage.equals(LocaleManager.LANGUAGE_ENGLISH)) {
             new RetrieveEnglishNMoQParkListDetailsData(CollectionDetailsActivity.this, nid).execute();
         } else {
@@ -498,6 +528,7 @@ public class CollectionDetailsActivity extends AppCompatActivity {
 
         @Override
         protected List<NMoQParkListDetailsTableEnglish> doInBackground(Void... voids) {
+            Timber.i("getNMoQParkListDetailsEnglishTable(id: %s)", nid);
             return activityReference.get().qmDatabase.getNMoQParkListDetailsTableDao().
                     getNMoQParkListDetailsEnglishTable(nid);
         }
@@ -506,7 +537,11 @@ public class CollectionDetailsActivity extends AppCompatActivity {
         protected void onPostExecute(List<NMoQParkListDetailsTableEnglish> nMoQParkListDetailsTableEnglishes) {
             NMoQParkListDetails nMoQParkListDetails;
             if (nMoQParkListDetailsTableEnglishes.size() > 0) {
+                Timber.i("Set list from database with size: %d",
+                        nMoQParkListDetailsTableEnglishes.size());
                 for (int i = 0; i < nMoQParkListDetailsTableEnglishes.size(); i++) {
+                    Timber.i("Setting list from database with id: %s",
+                            nMoQParkListDetailsTableEnglishes.get(i).getParkNid());
                     ArrayList<String> image = new ArrayList<>();
                     image.add(nMoQParkListDetailsTableEnglishes.get(i).getParkImages());
 
@@ -523,6 +558,7 @@ public class CollectionDetailsActivity extends AppCompatActivity {
                 Collections.sort(activityReference.get().nMoQParkListDetails);
                 activityReference.get().mAdapterPark.notifyDataSetChanged();
             } else {
+                Timber.i("Have no data in database");
                 activityReference.get().progressBar.setVisibility(View.GONE);
                 activityReference.get().retryLayout.setVisibility(View.VISIBLE);
             }
@@ -548,6 +584,7 @@ public class CollectionDetailsActivity extends AppCompatActivity {
 
         @Override
         protected List<NMoQParkListDetailsTableArabic> doInBackground(Void... voids) {
+            Timber.i("getNMoQParkListDetailsArabicTable(id: %s)", nid);
             return activityReference.get().qmDatabase.getNMoQParkListDetailsTableDao().
                     getNMoQParkListDetailsArabicTable(nid);
         }
@@ -556,7 +593,11 @@ public class CollectionDetailsActivity extends AppCompatActivity {
         protected void onPostExecute(List<NMoQParkListDetailsTableArabic> nMoQParkListDetailsTableArabics) {
             NMoQParkListDetails nMoQParkListDetails;
             if (nMoQParkListDetailsTableArabics.size() > 0) {
+                Timber.i("Set list from database with size: %d",
+                        nMoQParkListDetailsTableArabics.size());
                 for (int i = 0; i < nMoQParkListDetailsTableArabics.size(); i++) {
+                    Timber.i("Setting list from database with id: %s",
+                            nMoQParkListDetailsTableArabics.get(i).getParkNid());
                     ArrayList<String> image = new ArrayList<>();
                     image.add(nMoQParkListDetailsTableArabics.get(i).getParkImages());
                     nMoQParkListDetails = new NMoQParkListDetails(
@@ -572,6 +613,7 @@ public class CollectionDetailsActivity extends AppCompatActivity {
                 activityReference.get().mAdapterPark.notifyDataSetChanged();
                 activityReference.get().progressBar.setVisibility(View.GONE);
             } else {
+                Timber.i("Have no data in database");
                 activityReference.get().progressBar.setVisibility(View.GONE);
                 activityReference.get().retryLayout.setVisibility(View.VISIBLE);
             }
@@ -599,11 +641,12 @@ public class CollectionDetailsActivity extends AppCompatActivity {
         protected void onPostExecute(Integer integer) {
             activityReference.get().collectionDetailRowCount = integer;
             if (activityReference.get().collectionDetailRowCount > 0) {
-                //updateEnglishTable or add row to database
+                Timber.i("Count: %d", integer);
                 new CheckMuseumCollectionDetailDBRowExist(activityReference.get(),
                         activityReference.get().appLanguage).execute();
 
             } else {
+                Timber.i("Database table have no data");
                 new InsertMuseumCollectionDetailListDataToDataBase(activityReference.get(),
                         activityReference.get().museumCollectionDetailTableEnglish,
                         activityReference.get().museumCollectionDetailTableArabic,
@@ -613,6 +656,7 @@ public class CollectionDetailsActivity extends AppCompatActivity {
 
         @Override
         protected Integer doInBackground(Void... voids) {
+            Timber.i("getNumberOfRows%s()", activityReference.get().appLanguage.toUpperCase());
             if (activityReference.get().appLanguage.equals(LocaleManager.LANGUAGE_ENGLISH)) {
                 return activityReference.get().qmDatabase.getMuseumCollectionDetailDao().getNumberOfRowsEnglish();
             } else {
@@ -620,114 +664,121 @@ public class CollectionDetailsActivity extends AppCompatActivity {
             }
         }
 
-        public static class InsertMuseumCollectionDetailListDataToDataBase extends AsyncTask<Void, Void, Boolean> {
-            private WeakReference<CollectionDetailsActivity> activityReference;
-            private MuseumCollectionDetailTableEnglish museumCollectionDetailTableEnglish;
-            private MuseumCollectionDetailTableArabic museumCollectionDetailTableArabic;
-            String language;
+    }
 
-            InsertMuseumCollectionDetailListDataToDataBase(CollectionDetailsActivity context,
-                                                           MuseumCollectionDetailTableEnglish museumCollectionDetailTableEnglish,
-                                                           MuseumCollectionDetailTableArabic museumCollectionDetailTableArabic, String appLanguage) {
-                activityReference = new WeakReference<>(context);
-                this.museumCollectionDetailTableEnglish = museumCollectionDetailTableEnglish;
-                this.museumCollectionDetailTableArabic = museumCollectionDetailTableArabic;
-                this.language = appLanguage;
+    public static class InsertMuseumCollectionDetailListDataToDataBase extends AsyncTask<Void, Void, Boolean> {
+        private WeakReference<CollectionDetailsActivity> activityReference;
+        private MuseumCollectionDetailTableEnglish museumCollectionDetailTableEnglish;
+        private MuseumCollectionDetailTableArabic museumCollectionDetailTableArabic;
+        String language;
+
+        InsertMuseumCollectionDetailListDataToDataBase(CollectionDetailsActivity context,
+                                                       MuseumCollectionDetailTableEnglish museumCollectionDetailTableEnglish,
+                                                       MuseumCollectionDetailTableArabic museumCollectionDetailTableArabic, String appLanguage) {
+            activityReference = new WeakReference<>(context);
+            this.museumCollectionDetailTableEnglish = museumCollectionDetailTableEnglish;
+            this.museumCollectionDetailTableArabic = museumCollectionDetailTableArabic;
+            this.language = appLanguage;
+        }
+
+        @Override
+        protected Boolean doInBackground(Void... voids) {
+            if (activityReference.get().collectionDetailsList != null) {
+                if (language.equals(LocaleManager.LANGUAGE_ENGLISH)) {
+                    for (int i = 0; i < activityReference.get().collectionDetailsList.size(); i++) {
+                        Timber.i("Inserting data to Table(%s) with title: %s",
+                                language.toUpperCase(), activityReference.get().collectionDetailsList.get(i).getMainTitle());
+                        museumCollectionDetailTableEnglish = new MuseumCollectionDetailTableEnglish(
+                                activityReference.get().collectionDetailsList.get(i).getCategoryName(),
+                                activityReference.get().collectionDetailsList.get(i).getMainTitle(),
+                                activityReference.get().collectionDetailsList.get(i).getImage1(),
+                                activityReference.get().collectionDetailsList.get(i).getAbout());
+                        activityReference.get().qmDatabase.getMuseumCollectionDetailDao().insertEnglishTable(museumCollectionDetailTableEnglish);
+                    }
+                } else {
+                    for (int i = 0; i < activityReference.get().collectionDetailsList.size(); i++) {
+                        Timber.i("Inserting data to Table(%s) with title: %s",
+                                language.toUpperCase(), activityReference.get().collectionDetailsList.get(i).getMainTitle());
+                        museumCollectionDetailTableArabic = new MuseumCollectionDetailTableArabic(
+                                activityReference.get().collectionDetailsList.get(i).getCategoryName(),
+                                activityReference.get().collectionDetailsList.get(i).getMainTitle(),
+                                activityReference.get().collectionDetailsList.get(i).getImage1(),
+                                activityReference.get().collectionDetailsList.get(i).getAbout());
+                        activityReference.get().qmDatabase.getMuseumCollectionDetailDao().insertArabicTable(museumCollectionDetailTableArabic);
+                    }
+                }
             }
+            return true;
+        }
 
-            @Override
-            protected Boolean doInBackground(Void... voids) {
-                if (activityReference.get().collectionDetailsList != null) {
-                    if (language.equals(LocaleManager.LANGUAGE_ENGLISH)) {
-                        for (int i = 0; i < activityReference.get().collectionDetailsList.size(); i++) {
+        @Override
+        protected void onPostExecute(Boolean aBoolean) {
+
+        }
+    }
+
+
+    public static class CheckMuseumCollectionDetailDBRowExist extends AsyncTask<Void, Void, Void> {
+        private WeakReference<CollectionDetailsActivity> activityReference;
+        private MuseumCollectionDetailTableEnglish museumCollectionDetailTableEnglish;
+        private MuseumCollectionDetailTableArabic museumCollectionDetailTableArabic;
+        String language;
+
+        CheckMuseumCollectionDetailDBRowExist(CollectionDetailsActivity context, String apiLanguage) {
+            activityReference = new WeakReference<>(context);
+            language = apiLanguage;
+        }
+
+        @Override
+        protected Void doInBackground(Void... voids) {
+            if (activityReference.get().collectionDetailsList.size() > 0) {
+                if (language.equals(LocaleManager.LANGUAGE_ENGLISH)) {
+                    for (int i = 0; i < activityReference.get().collectionDetailsList.size(); i++) {
+                        int n = activityReference.get().qmDatabase.getMuseumCollectionDetailDao().checkTitleExistEnglish(
+                                activityReference.get().collectionDetailsList.get(i).getMainTitle());
+                        if (n > 0) {
+                            Timber.i("Row exist in database(%s) for title: %s", language.toUpperCase(),
+                                    activityReference.get().collectionDetailsList.get(i).getMainTitle());
+                            new UpdateMuseumCollectionDetailTable(activityReference.get(), activityReference.get().appLanguage, i).execute();
+
+                        } else {
+                            Timber.i("Inserting data to Table(%s) with title: %s",
+                                    language.toUpperCase(), activityReference.get().collectionDetailsList.get(i).getMainTitle());
                             museumCollectionDetailTableEnglish = new MuseumCollectionDetailTableEnglish(
                                     activityReference.get().collectionDetailsList.get(i).getCategoryName(),
                                     activityReference.get().collectionDetailsList.get(i).getMainTitle(),
                                     activityReference.get().collectionDetailsList.get(i).getImage1(),
                                     activityReference.get().collectionDetailsList.get(i).getAbout());
                             activityReference.get().qmDatabase.getMuseumCollectionDetailDao().insertEnglishTable(museumCollectionDetailTableEnglish);
+
                         }
-                    } else {
-                        for (int i = 0; i < activityReference.get().collectionDetailsList.size(); i++) {
+                    }
+                } else {
+                    for (int i = 0; i < activityReference.get().collectionDetailsList.size(); i++) {
+                        int n = activityReference.get().qmDatabase.getMuseumCollectionDetailDao().checkTitleExistArabic(
+                                activityReference.get().collectionDetailsList.get(i).getMainTitle());
+                        if (n > 0) {
+                            Timber.i("Row exist in database(%s) for title: %s", language.toUpperCase(),
+                                    activityReference.get().collectionDetailsList.get(i).getMainTitle());
+                            new UpdateMuseumCollectionDetailTable(activityReference.get(), activityReference.get().appLanguage, i).execute();
+
+                        } else {
+                            Timber.i("Inserting data to Table(%s) with title: %s",
+                                    language.toUpperCase(), activityReference.get().collectionDetailsList.get(i).getMainTitle());
                             museumCollectionDetailTableArabic = new MuseumCollectionDetailTableArabic(
                                     activityReference.get().collectionDetailsList.get(i).getCategoryName(),
                                     activityReference.get().collectionDetailsList.get(i).getMainTitle(),
                                     activityReference.get().collectionDetailsList.get(i).getImage1(),
                                     activityReference.get().collectionDetailsList.get(i).getAbout());
                             activityReference.get().qmDatabase.getMuseumCollectionDetailDao().insertArabicTable(museumCollectionDetailTableArabic);
+
                         }
                     }
                 }
-                return true;
             }
-
-            @Override
-            protected void onPostExecute(Boolean aBoolean) {
-
-            }
+            return null;
         }
-
-
-        public static class CheckMuseumCollectionDetailDBRowExist extends AsyncTask<Void, Void, Void> {
-            private WeakReference<CollectionDetailsActivity> activityReference;
-            private MuseumCollectionDetailTableEnglish museumCollectionDetailTableEnglish;
-            private MuseumCollectionDetailTableArabic museumCollectionDetailTableArabic;
-            String language;
-
-            CheckMuseumCollectionDetailDBRowExist(CollectionDetailsActivity context, String apiLanguage) {
-                activityReference = new WeakReference<>(context);
-                language = apiLanguage;
-            }
-
-            @Override
-            protected Void doInBackground(Void... voids) {
-                if (activityReference.get().collectionDetailsList.size() > 0) {
-                    if (language.equals(LocaleManager.LANGUAGE_ENGLISH)) {
-                        for (int i = 0; i < activityReference.get().collectionDetailsList.size(); i++) {
-                            int n = activityReference.get().qmDatabase.getMuseumCollectionDetailDao().checkTitleExistEnglish(
-                                    activityReference.get().collectionDetailsList.get(i).getMainTitle());
-                            if (n > 0) {
-                                //updateEnglishTable same id
-                                new UpdateMuseumCollectionDetailTable(activityReference.get(), activityReference.get().appLanguage, i).execute();
-
-                            } else {
-                                //create row with corresponding name
-                                museumCollectionDetailTableEnglish = new MuseumCollectionDetailTableEnglish(
-                                        activityReference.get().collectionDetailsList.get(i).getCategoryName(),
-                                        activityReference.get().collectionDetailsList.get(i).getMainTitle(),
-                                        activityReference.get().collectionDetailsList.get(i).getImage1(),
-                                        activityReference.get().collectionDetailsList.get(i).getAbout());
-                                activityReference.get().qmDatabase.getMuseumCollectionDetailDao().insertEnglishTable(museumCollectionDetailTableEnglish);
-
-                            }
-                        }
-                    } else {
-                        for (int i = 0; i < activityReference.get().collectionDetailsList.size(); i++) {
-                            int n = activityReference.get().qmDatabase.getMuseumCollectionDetailDao().checkTitleExistArabic(
-                                    activityReference.get().collectionDetailsList.get(i).getMainTitle());
-                            if (n > 0) {
-                                //updateEnglishTable same id
-                                new UpdateMuseumCollectionDetailTable(activityReference.get(), activityReference.get().appLanguage, i).execute();
-
-                            } else {
-                                //create row with corresponding name
-                                museumCollectionDetailTableArabic = new MuseumCollectionDetailTableArabic(
-                                        activityReference.get().collectionDetailsList.get(i).getCategoryName(),
-                                        activityReference.get().collectionDetailsList.get(i).getMainTitle(),
-                                        activityReference.get().collectionDetailsList.get(i).getImage1(),
-                                        activityReference.get().collectionDetailsList.get(i).getAbout());
-                                activityReference.get().qmDatabase.getMuseumCollectionDetailDao().insertArabicTable(museumCollectionDetailTableArabic);
-
-                            }
-                        }
-                    }
-                }
-                return null;
-            }
-        }
-
     }
-
 
     public static class UpdateMuseumCollectionDetailTable extends AsyncTask<Void, Void, Void> {
         private WeakReference<CollectionDetailsActivity> activityReference;
@@ -742,6 +793,8 @@ public class CollectionDetailsActivity extends AppCompatActivity {
 
         @Override
         protected Void doInBackground(Void... voids) {
+            Timber.i("Updating data on Table(%s) for title: %s",
+                    language.toUpperCase(), activityReference.get().collectionDetailsList.get(0).getMainTitle());
             if (language.equals(LocaleManager.LANGUAGE_ENGLISH)) {
                 // updateEnglishTable table with english name
                 activityReference.get().qmDatabase.getMuseumCollectionDetailDao().updateMuseumDetailTableEnglish(
@@ -784,6 +837,7 @@ public class CollectionDetailsActivity extends AppCompatActivity {
 
         @Override
         protected List<MuseumCollectionDetailTableEnglish> doInBackground(Void... voids) {
+            Timber.i("getAllDataFromMuseumDetailEnglishTable(name: %s)", activityReference.get().categoryName);
             return activityReference.get().qmDatabase.getMuseumCollectionDetailDao().
                     getAllDataFromMuseumDetailEnglishTable(activityReference.get().categoryName);
         }
@@ -792,7 +846,11 @@ public class CollectionDetailsActivity extends AppCompatActivity {
         protected void onPostExecute(List<MuseumCollectionDetailTableEnglish> museumCollectionListTableEnglishes) {
             activityReference.get().collectionDetailsList.clear();
             if (museumCollectionListTableEnglishes.size() > 0) {
+                Timber.i("Set list from database with size: %d",
+                        museumCollectionListTableEnglishes.size());
                 for (int i = 0; i < museumCollectionListTableEnglishes.size(); i++) {
+                    Timber.i("Setting list from database with name: %s",
+                            museumCollectionListTableEnglishes.get(i).getDetail_title());
                     CollectionDetailsList collectionDetailsList1 = new CollectionDetailsList(
                             museumCollectionListTableEnglishes.get(i).getDetail_title(),
                             museumCollectionListTableEnglishes.get(i).getDetail_image1(),
@@ -805,6 +863,7 @@ public class CollectionDetailsActivity extends AppCompatActivity {
                 activityReference.get().mAdapter.notifyDataSetChanged();
                 activityReference.get().progressBar.setVisibility(View.GONE);
             } else {
+                Timber.i("Have no data in database");
                 activityReference.get().progressBar.setVisibility(View.GONE);
                 activityReference.get().detailLayout.setVisibility(View.GONE);
                 activityReference.get().retryLayout.setVisibility(View.VISIBLE);
@@ -827,6 +886,7 @@ public class CollectionDetailsActivity extends AppCompatActivity {
 
         @Override
         protected List<MuseumCollectionDetailTableArabic> doInBackground(Void... voids) {
+            Timber.i("getAllDataFromMuseumDetailArabicTable(name: %s)", activityReference.get().categoryName);
             return activityReference.get().qmDatabase.getMuseumCollectionDetailDao().
                     getAllDataFromMuseumDetailArabicTable(activityReference.get().categoryName);
         }
@@ -835,7 +895,11 @@ public class CollectionDetailsActivity extends AppCompatActivity {
         protected void onPostExecute(List<MuseumCollectionDetailTableArabic> museumCollectionDetailTableArabics) {
             activityReference.get().collectionDetailsList.clear();
             if (museumCollectionDetailTableArabics.size() > 0) {
+                Timber.i("Set list from database with size: %d",
+                        museumCollectionDetailTableArabics.size());
                 for (int i = 0; i < museumCollectionDetailTableArabics.size(); i++) {
+                    Timber.i("Setting list from database with name: %s",
+                            museumCollectionDetailTableArabics.get(i).getDetail_title());
                     CollectionDetailsList collectionDetailsList1 = new CollectionDetailsList(museumCollectionDetailTableArabics.get(i).getDetail_title(),
                             museumCollectionDetailTableArabics.get(i).getDetail_image1(),
                             museumCollectionDetailTableArabics.get(i).getDetail_about(),
@@ -847,6 +911,7 @@ public class CollectionDetailsActivity extends AppCompatActivity {
                 activityReference.get().mAdapter.notifyDataSetChanged();
                 activityReference.get().progressBar.setVisibility(View.GONE);
             } else {
+                Timber.i("Have no data in database");
                 activityReference.get().progressBar.setVisibility(View.GONE);
                 activityReference.get().detailLayout.setVisibility(View.GONE);
                 activityReference.get().retryLayout.setVisibility(View.VISIBLE);

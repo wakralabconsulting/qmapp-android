@@ -12,7 +12,6 @@ import java.nio.charset.Charset;
 import ch.qos.logback.classic.Level;
 import ch.qos.logback.classic.LoggerContext;
 import ch.qos.logback.classic.encoder.PatternLayoutEncoder;
-import ch.qos.logback.classic.html.HTMLLayout;
 import ch.qos.logback.classic.spi.ILoggingEvent;
 import ch.qos.logback.core.rolling.RollingFileAppender;
 import ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP;
@@ -23,7 +22,7 @@ import timber.log.Timber;
 
 public class FileLoggingTree extends Timber.DebugTree {
     private static Logger mLogger = LoggerFactory.getLogger(FileLoggingTree.class);
-    private static final String LOG_PREFIX = "my-log";
+    private static final String LOG_PREFIX = "log";
 
     public FileLoggingTree(Context context) {
         final String logDirectory = context.getFilesDir() + "/logs";
@@ -43,7 +42,7 @@ public class FileLoggingTree extends Timber.DebugTree {
 
         SizeAndTimeBasedFNATP<ILoggingEvent> fileNamingPolicy = new SizeAndTimeBasedFNATP<>();
         fileNamingPolicy.setContext(loggerContext);
-        fileNamingPolicy.setMaxFileSize(FileSize.valueOf("1 MB"));
+        fileNamingPolicy.setMaxFileSize(FileSize.valueOf("1MB"));
 
         TimeBasedRollingPolicy<ILoggingEvent> rollingPolicy = new TimeBasedRollingPolicy<>();
         rollingPolicy.setContext(loggerContext);
@@ -52,11 +51,6 @@ public class FileLoggingTree extends Timber.DebugTree {
         rollingPolicy.setTimeBasedFileNamingAndTriggeringPolicy(fileNamingPolicy);
         rollingPolicy.setParent(rollingFileAppender);  // parent and context required!
         rollingPolicy.start();
-
-        HTMLLayout htmlLayout = new HTMLLayout();
-        htmlLayout.setContext(loggerContext);
-        htmlLayout.setPattern("%d{HH:mm:ss.SSS}%level%thread%msg");
-        htmlLayout.start();
 
         PatternLayoutEncoder encoder = new PatternLayoutEncoder();
         encoder.setContext(loggerContext);

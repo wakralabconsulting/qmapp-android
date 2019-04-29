@@ -109,11 +109,11 @@ dependencies {
     implementation 'com.journeyapps:zxing-android-embedded:3.2.0@aar'
 
     // Logger
-    compile 'com.jakewharton.timber:timber:4.5.1'
-    compile 'org.slf4j:slf4j-api:1.7.25'
-    compile 'com.github.tony19:logback-android:2.0.0'
+    implementation 'com.jakewharton.timber:timber:4.7.1'
+    implementation 'org.slf4j:slf4j-api:1.7.25'
+    implementation 'com.github.tony19:logback-android:2.0.0'
     // Zip
-    compile 'com.github.ghost1372:Mzip-Android:0.4.0'
+    implementation 'com.github.ghost1372:Mzip-Android:0.4.0'
 }
 apply plugin: 'com.google.gms.google-services'
 apply plugin: 'kotlin-android'

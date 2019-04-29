@@ -129,7 +129,7 @@
     <string name="tourguide_title_desc">Welcome to Qatar Museum Premises. \n Explore the architrcture and the \nobjects on display. \n Scan the QR codes available on the \ngalleries for more information.</string>
     <!--////////////////////// check-->
     <string name="change_language_dialog_title">تغيير اللغة</string>
-    <string name="change_language_button_text">المتابعة</string>
+    <string name="continue_button_text">المتابعة</string>
     <string name="contact_mail">info@mia.org.qa</string>
     <string name="alberallo">Alberallo</string>
     <string name="tourguide_title">تجول كما يحلو لك</string>
@@ -221,5 +221,11 @@
     <string name="facilities_txt">المرافق</string>
     <string name="experience_txt">المحتويات</string>
     <string name="facility_sublist">Facility Sublist</string>
+    <!-- Strings related to Send logs Landing -->
+    <string name="send_logs">إرسال التقرير</string>
+    <string name="send_email_dialog_title">أرسل التقرير</string>
+    <string name="send_email_dialog_message">هل ترغب بإرسال التقرير</string>
+    <string name="send_email_success">تم الإرسال</string>
+    <string name="send_email_cancelled">تم الإلغاء</string>
 
 </resources>
