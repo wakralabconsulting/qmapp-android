@@ -127,7 +127,7 @@ public class HomeActivity extends BaseActivity {
     private String qatar;
     private LoginData loginData;
     private FirebaseAnalytics mFirebaseAnalytics;
-    private Bundle bundleParams;
+    private Bundle bundleParams, contentBundleParams;
 
     @SuppressLint("ClickableViewAccessibility")
     @Override
@@ -238,6 +238,12 @@ public class HomeActivity extends BaseActivity {
                     navigationIntent.putExtra("MUSEUM_ID", homeList.getId());
                     startActivity(navigationIntent);
                 }
+                contentBundleParams = new Bundle();
+                contentBundleParams.putString(FirebaseAnalytics.Param.CONTENT_TYPE, "HOME LIST");
+                contentBundleParams.putString(FirebaseAnalytics.Param.ITEM_ID, homeList.getId());
+                contentBundleParams.putString(FirebaseAnalytics.Param.ITEM_NAME, homeList.getName());
+                mFirebaseAnalytics.logEvent(FirebaseAnalytics.Event.SELECT_CONTENT, contentBundleParams);
+
             }
 
             @Override
