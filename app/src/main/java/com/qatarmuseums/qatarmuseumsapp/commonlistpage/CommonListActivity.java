@@ -107,6 +107,7 @@ public class CommonListActivity extends AppCompatActivity {
     private Integer travelTableRowCount;
     private Convertor convertor;
     private FirebaseAnalytics mFirebaseAnalytics;
+    private Bundle contentBundleParams;
 
     @Override
     protected void attachBaseContext(Context base) {
@@ -141,6 +142,11 @@ public class CommonListActivity extends AppCompatActivity {
                     models.get(position).getName().toUpperCase(),
                     models.get(position).getId(),
                     toolbarTitle);
+            contentBundleParams = new Bundle();
+            contentBundleParams.putString(FirebaseAnalytics.Param.CONTENT_TYPE, toolbarTitle);
+            contentBundleParams.putString(FirebaseAnalytics.Param.ITEM_ID, models.get(position).getId());
+            contentBundleParams.putString(FirebaseAnalytics.Param.ITEM_NAME, models.get(position).getName());
+            mFirebaseAnalytics.logEvent(FirebaseAnalytics.Event.SELECT_CONTENT, contentBundleParams);
             if (toolbarTitle.equals(getString(R.string.museum_collection_text)))
                 navigationIntent = new Intent(CommonListActivity.this,
                         CollectionDetailsActivity.class);
