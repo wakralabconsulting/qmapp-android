@@ -27,6 +27,7 @@ import java.util.HashMap;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import timber.log.Timber;
 
 import static com.qatarmuseums.qatarmuseumsapp.education.EducationCalendarActivity.AGEGROUPPREFS;
 import static com.qatarmuseums.qatarmuseumsapp.education.EducationCalendarActivity.FILTERPREFS;
@@ -108,7 +109,10 @@ public class EducationFilterActivity extends AppCompatActivity {
             return false;
         });
 
-        toolbarClose.setOnClickListener(v -> onBackPressed());
+        toolbarClose.setOnClickListener(v -> {
+            Timber.i("Close button clicked");
+            onBackPressed();
+        });
         // Spinner Drop down elements
         institutions = new ArrayList<String>();
         institutions.add(getResources().getString(R.string.any));
@@ -212,6 +216,7 @@ public class EducationFilterActivity extends AppCompatActivity {
             public void onItemSelected(AdapterView<?> adapterView, View view, int position, long l) {
                 // On selecting a spinner item
                 String item = adapterView.getItemAtPosition(position).toString();
+                Timber.i("Selected Institution: %s", instituteMap.get(item));
                 institutionItem = instituteMap.get(item);
                 institutionPosition = position;
             }
@@ -240,6 +245,7 @@ public class EducationFilterActivity extends AppCompatActivity {
             public void onItemSelected(AdapterView<?> adapterView, View view, int position, long l) {
                 // On selecting a spinner item
                 String item = adapterView.getItemAtPosition(position).toString();
+                Timber.i("Selected Age group: %s", ageMap.get(item));
                 ageGroupItem = ageMap.get(item);
                 ageGroupPosition = position;
             }
@@ -268,6 +274,7 @@ public class EducationFilterActivity extends AppCompatActivity {
             public void onItemSelected(AdapterView<?> adapterView, View view, int position, long l) {
                 // On selecting a spinner item
                 String item = adapterView.getItemAtPosition(position).toString();
+                Timber.i("Selected Program type: %s", programmeMap.get(item));
                 programmeTypeItem = programmeMap.get(item);
                 programmeTypePosition = position;
             }
@@ -279,7 +286,7 @@ public class EducationFilterActivity extends AppCompatActivity {
         });
 
         clearButton.setOnClickListener(view -> {
-
+            Timber.i("Clear button clicked");
             isFillInstitute = 0;
             isFillAge = 0;
             isFillProgramme = 0;
@@ -296,6 +303,7 @@ public class EducationFilterActivity extends AppCompatActivity {
         });
 
         filterButton.setOnClickListener(view -> {
+            Timber.i("Filter button clicked");
             navigationIntent = new Intent(EducationFilterActivity.this, EducationCalendarActivity.class);
             navigationIntent.putExtra("INSTITUTION", institutionItem);
             navigationIntent.putExtra("AGE_GROUP", ageGroupItem);

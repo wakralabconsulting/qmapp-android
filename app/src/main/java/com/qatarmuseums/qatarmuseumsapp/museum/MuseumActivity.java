@@ -50,6 +50,7 @@ import cn.lightsky.infiniteindicator.Page;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
+import timber.log.Timber;
 
 import static android.view.Gravity.LEFT;
 import static android.view.Gravity.RIGHT;
@@ -195,6 +196,7 @@ public class MuseumActivity extends BaseActivity implements
             }
 
             scrollBarNextIconLayout.setOnClickListener(view -> {
+                Timber.i("Scroll to Next button clicked");
                 switch (museumId) {
                     case "63":
                     case "96":
@@ -387,6 +389,7 @@ public class MuseumActivity extends BaseActivity implements
 
 
     public void loadAdsToSlider(ArrayList<Page> adsImages) {
+        Timber.i("loadAdsToSlider()");
         language = LocaleManager.getLanguage(this);
         GlideLoaderForMuseum glideLoader;
         if (adsImages.size() > 1) {
@@ -483,6 +486,7 @@ public class MuseumActivity extends BaseActivity implements
     }
 
     public void getSliderImagesFromAPI(Boolean noDataInDB) {
+        Timber.i("getSliderImagesFromAPI()");
         APIInterface apiService =
                 APIClient.getClient().create(APIInterface.class);
         Call<ArrayList<MuseumAboutModel>> call;
@@ -495,6 +499,7 @@ public class MuseumActivity extends BaseActivity implements
             public void onResponse(Call<ArrayList<MuseumAboutModel>> call, Response<ArrayList<MuseumAboutModel>> response) {
                 if (response.isSuccessful()) {
                     if (response.body() != null) {
+                        Timber.i("getSliderImagesFromAPI() - isSuccessful for museum id: %s", museumId);
                         museumAboutModels.addAll(response.body());
                         if (museumAboutModels.size() != 0) {
                             if (museumAboutModels.get(0).getImageList().size() > 0) {
@@ -510,22 +515,26 @@ public class MuseumActivity extends BaseActivity implements
                                     animCircleIndicator.setVisibility(View.VISIBLE);
                                 }
                             } else {
+                                Timber.i("Have no data for museum id: %s", museumId);
                                 sliderPlaceholderImage.setVisibility(View.VISIBLE);
                                 animCircleIndicator.setVisibility(View.GONE);
                             }
 
                         } else {
+                            Timber.i("Have no data for museum id: %s", museumId);
                             sliderPlaceholderImage.setVisibility(View.VISIBLE);
                             animCircleIndicator.setVisibility(View.GONE);
                         }
                         new MuseumAboutRowCount(MuseumActivity.this, language).execute();
 
                     } else {
+                        Timber.w("Response body null");
                         sliderPlaceholderImage.setVisibility(View.VISIBLE);
                         animCircleIndicator.setVisibility(View.GONE);
                     }
 
                 } else {
+                    Timber.w("Response not successful");
                     sliderPlaceholderImage.setVisibility(View.VISIBLE);
                     animCircleIndicator.setVisibility(View.GONE);
                 }
@@ -534,6 +543,7 @@ public class MuseumActivity extends BaseActivity implements
 
             @Override
             public void onFailure(Call<ArrayList<MuseumAboutModel>> call, Throwable t) {
+                Timber.e("getSliderImagesFromAPI() - onFailure: %s", t.getMessage());
                 if (t instanceof IOException && noDataInDB) {
                     util.showToast(getResources().getString(R.string.check_network), getApplicationContext());
                 }
@@ -548,6 +558,7 @@ public class MuseumActivity extends BaseActivity implements
     }
 
     public void getMuseumSliderImageFromDatabase() {
+        Timber.i("getMuseumSliderImageFromDatabase()");
         if (language.equals(LocaleManager.LANGUAGE_ENGLISH)) {
             new RetrieveMuseumAboutDataEnglish(MuseumActivity.this, museumId).execute();
         } else {
@@ -575,9 +586,10 @@ public class MuseumActivity extends BaseActivity implements
         protected void onPostExecute(Integer integer) {
             Integer museumAboutRowCount = integer;
             if (museumAboutRowCount > 0) {
-                //updateEnglishTable or add row to database
+                Timber.i("Count: %d", integer);
                 new CheckMuseumAboutDBRowExist(activityReference.get(), language).execute();
             } else {
+                Timber.i("Table have no data");
                 new InsertMuseumAboutDatabaseTask(activityReference.get(), activityReference.get().museumAboutTableEnglish,
                         activityReference.get().museumAboutTableArabic, language).execute();
 
@@ -586,6 +598,7 @@ public class MuseumActivity extends BaseActivity implements
 
         @Override
         protected Integer doInBackground(Void... voids) {
+            Timber.i("getNumberOfRows%s()", language.toUpperCase());
             if (language.equals(LocaleManager.LANGUAGE_ENGLISH)) {
                 return activityReference.get().qmDatabase.getMuseumAboutDao().getNumberOfRowsEnglish();
             } else {
@@ -622,15 +635,21 @@ public class MuseumActivity extends BaseActivity implements
         protected Void doInBackground(Void... voids) {
             Convertor converters = new Convertor();
             if (activityReference.get().museumAboutModels.size() > 0) {
+                Timber.i("checkTableWithIdExist(%s)", language.toUpperCase());
                 if (language.equals(LocaleManager.LANGUAGE_ENGLISH)) {
                     for (int i = 0; i < activityReference.get().museumAboutModels.size(); i++) {
+                        Timber.i("checkTableWithIdExist(%s) for id: %s", language.toUpperCase(),
+                                activityReference.get().museumAboutModels.get(i).getMuseumId());
                         int n = activityReference.get().qmDatabase.getMuseumAboutDao().checkEnglishIdExist(
                                 Integer.parseInt(activityReference.get().museumAboutModels.get(i).getMuseumId()));
                         if (n > 0) {
-                            //updateEnglishTable same id
+                            Timber.i("Row exist in database(%s) for id: %s", language.toUpperCase(),
+                                    activityReference.get().museumAboutModels.get(i).getMuseumId());
                             new UpdateMuseumAboutDetailTable(activityReference.get(), language, i).execute();
 
                         } else {
+                            Timber.i("Inserting data to Table(%s) with id: %s",
+                                    language.toUpperCase(), activityReference.get().museumAboutModels.get(i).getMuseumId());
                             museumAboutTableEnglish = new MuseumAboutTableEnglish(
                                     activityReference.get().museumAboutModels.get(i).getName(),
                                     Long.parseLong(activityReference.get().museumAboutModels.get(i).getMuseumId()),
@@ -655,10 +674,13 @@ public class MuseumActivity extends BaseActivity implements
                         int n = activityReference.get().qmDatabase.getMuseumAboutDao().checkArabicIdExist(
                                 Integer.parseInt(activityReference.get().museumAboutModels.get(i).getMuseumId()));
                         if (n > 0) {
-                            //updateEnglishTable same id
+                            Timber.i("Row exist in database(%s) for id: %s", language.toUpperCase(),
+                                    activityReference.get().museumAboutModels.get(i).getMuseumId());
                             new UpdateMuseumAboutDetailTable(activityReference.get(), language, i).execute();
 
                         } else {
+                            Timber.i("Inserting data to Table(%s) with id: %s",
+                                    language.toUpperCase(), activityReference.get().museumAboutModels.get(i).getMuseumId());
                             museumAboutTableArabic = new MuseumAboutTableArabic(
                                     activityReference.get().museumAboutModels.get(i).getName(),
                                     Long.parseLong(activityReference.get().museumAboutModels.get(i).getMuseumId()),
@@ -705,6 +727,8 @@ public class MuseumActivity extends BaseActivity implements
                 Convertor converters = new Convertor();
                 if (language.equals(LocaleManager.LANGUAGE_ENGLISH)) {
                     for (int i = 0; i < activityReference.get().museumAboutModels.size(); i++) {
+                        Timber.i("Inserting data to Table(%s) with id: %s",
+                                language.toUpperCase(), activityReference.get().museumAboutModels.get(i).getMuseumId());
                         museumAboutTableEnglish = new MuseumAboutTableEnglish(
                                 activityReference.get().museumAboutModels.get(i).getName(),
                                 Long.parseLong(activityReference.get().museumAboutModels.get(i).getMuseumId()),
@@ -725,6 +749,8 @@ public class MuseumActivity extends BaseActivity implements
                     }
                 } else {
                     for (int i = 0; i < activityReference.get().museumAboutModels.size(); i++) {
+                        Timber.i("Inserting data to Table(%s) with id: %s",
+                                language.toUpperCase(), activityReference.get().museumAboutModels.get(i).getMuseumId());
                         museumAboutTableArabic = new MuseumAboutTableArabic(
                                 activityReference.get().museumAboutModels.get(i).getName(),
                                 Long.parseLong(activityReference.get().museumAboutModels.get(i).getMuseumId()),
@@ -779,6 +805,8 @@ public class MuseumActivity extends BaseActivity implements
         @Override
         protected Void doInBackground(Void... voids) {
             Convertor converters = new Convertor();
+            Timber.i("Updating data to Table(%s) with id: %s",
+                    language.toUpperCase(), activityReference.get().museumAboutModels.get(position).getMuseumId());
             if (language.equals(LocaleManager.LANGUAGE_ENGLISH)) {
                 // updateEnglishTable table with english name
                 activityReference.get().qmDatabase.getMuseumAboutDao().updateMuseumAboutDataEnglish(
@@ -828,6 +856,7 @@ public class MuseumActivity extends BaseActivity implements
 
         @Override
         protected MuseumAboutTableEnglish doInBackground(Void... voids) {
+            Timber.i("getMuseumAboutDataEnglish(id: %s)", museumId);
             return activityReference.get().qmDatabase.getMuseumAboutDao().
                     getMuseumAboutDataEnglish(Integer.parseInt(museumId));
         }
@@ -838,6 +867,7 @@ public class MuseumActivity extends BaseActivity implements
             if (museumAboutTableEnglish != null) {
                 if (converters.fromString(museumAboutTableEnglish.getMuseum_image()) != null &&
                         converters.fromString(museumAboutTableEnglish.getMuseum_image()).size() > 0) {
+                    Timber.i("Set images from database");
                     int imageSliderSize;
                     ArrayList<String> sliderList = new ArrayList<>();
                     imageSliderSize = converters.fromString(museumAboutTableEnglish.getMuseum_image()).size();
@@ -850,11 +880,13 @@ public class MuseumActivity extends BaseActivity implements
                     activityReference.get().sliderPlaceholderImage.setVisibility(View.GONE);
                     activityReference.get().animCircleIndicator.setVisibility(View.VISIBLE);
                 } else {
+                    Timber.i("Have no data in database");
                     activityReference.get().sliderPlaceholderImage.setVisibility(View.VISIBLE);
                     activityReference.get().animCircleIndicator.setVisibility(View.GONE);
                 }
                 activityReference.get().getSliderImagesFromAPI(false);
             } else {
+                Timber.i("Have no data in database");
                 activityReference.get().getSliderImagesFromAPI(true);
                 activityReference.get().sliderPlaceholderImage.setVisibility(View.VISIBLE);
                 activityReference.get().animCircleIndicator.setVisibility(View.GONE);
@@ -874,6 +906,7 @@ public class MuseumActivity extends BaseActivity implements
 
         @Override
         protected MuseumAboutTableArabic doInBackground(Void... voids) {
+            Timber.i("getMuseumAboutDataArabic(id: %s)", museumId);
             return activityReference.get().qmDatabase.getMuseumAboutDao().
                     getMuseumAboutDataArabic(Integer.parseInt(museumId));
         }
@@ -884,6 +917,7 @@ public class MuseumActivity extends BaseActivity implements
                 Convertor converters = new Convertor();
                 if (converters.fromString(museumAboutTableArabic.getMuseum_image()) != null &&
                         converters.fromString(museumAboutTableArabic.getMuseum_image()).size() > 0) {
+                    Timber.i("Set images from database");
                     int imageSliderSize;
                     ArrayList<String> sliderList = new ArrayList<>();
                     imageSliderSize = converters.fromString(museumAboutTableArabic.getMuseum_image()).size();
@@ -896,11 +930,13 @@ public class MuseumActivity extends BaseActivity implements
                     activityReference.get().sliderPlaceholderImage.setVisibility(View.GONE);
                     activityReference.get().animCircleIndicator.setVisibility(View.VISIBLE);
                 } else {
+                    Timber.i("Have no data in database");
                     activityReference.get().sliderPlaceholderImage.setVisibility(View.VISIBLE);
                     activityReference.get().animCircleIndicator.setVisibility(View.GONE);
                 }
                 activityReference.get().getSliderImagesFromAPI(false);
             } else {
+                Timber.i("Have no data in database");
                 activityReference.get().getSliderImagesFromAPI(true);
                 activityReference.get().sliderPlaceholderImage.setVisibility(View.VISIBLE);
                 activityReference.get().animCircleIndicator.setVisibility(View.GONE);

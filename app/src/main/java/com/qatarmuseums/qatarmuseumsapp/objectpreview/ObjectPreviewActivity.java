@@ -41,6 +41,7 @@ import io.fabric.sdk.android.services.concurrency.AsyncTask;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
+import timber.log.Timber;
 
 
 public class ObjectPreviewActivity extends AppCompatActivity {
@@ -133,9 +134,13 @@ public class ObjectPreviewActivity extends AppCompatActivity {
             }
         });
 
-        backBtn.setOnClickListener(view -> finish());
+        backBtn.setOnClickListener(view -> {
+            Timber.i("Back button clicked");
+            finish();
+        });
 
         retryButton.setOnClickListener(v -> {
+            Timber.i("Retry button clicked");
             getObjectPreviewDetailsFromAPI(tourId);
             progressBar.setVisibility(View.VISIBLE);
             retryLayout.setVisibility(View.GONE);
@@ -170,6 +175,7 @@ public class ObjectPreviewActivity extends AppCompatActivity {
         });
 
         locationBtn.setOnClickListener(view -> {
+            Timber.i("Location button clicked");
             if (artifactList.size() > 0) {
                 String position = artifactList.get(currentPosition).getArtifactPosition();
                 String floorLevel = artifactList.get(currentPosition).getFloorLevel();
@@ -225,6 +231,7 @@ public class ObjectPreviewActivity extends AppCompatActivity {
     }
 
     public void getObjectPreviewDetailsFromAPI(String id) {
+        Timber.i("getObjectPreviewDetailsFromAPI(id: %s)", id);
         progressBar.setVisibility(View.VISIBLE);
         APIInterface apiService =
                 APIClient.getClient().create(APIInterface.class);
@@ -234,15 +241,18 @@ public class ObjectPreviewActivity extends AppCompatActivity {
             public void onResponse(Call<ArrayList<ArtifactDetails>> call, Response<ArrayList<ArtifactDetails>> response) {
                 if (response.isSuccessful()) {
                     if (response.body() != null && response.body().size() > 0) {
+                        Timber.i("getObjectPreviewDetailsFromAPI() - isSuccessful with size: %s", response.body().size());
                         artifactList = response.body();
                         row = new RowCount(ObjectPreviewActivity.this, language, artifactList).execute();
                         setupAdapter();
                     } else {
+                        Timber.i("Response have no data");
                         commonContentLayout.setVisibility(View.GONE);
                         noResultFoundTxt.setVisibility(View.VISIBLE);
                     }
 
                 } else {
+                    Timber.w("Response not successful");
                     commonContentLayout.setVisibility(View.GONE);
                     retryLayout.setVisibility(View.VISIBLE);
                 }
@@ -251,6 +261,7 @@ public class ObjectPreviewActivity extends AppCompatActivity {
 
             @Override
             public void onFailure(Call<ArrayList<ArtifactDetails>> call, Throwable t) {
+                Timber.e("getObjectPreviewDetailsFromAPI() - onFailure: %s", t.getMessage());
                 commonContentLayout.setVisibility(View.GONE);
                 retryLayout.setVisibility(View.VISIBLE);
                 progressBar.setVisibility(View.GONE);
@@ -295,6 +306,7 @@ public class ObjectPreviewActivity extends AppCompatActivity {
         @Override
         protected Integer doInBackground(Void... voids) {
             if (!(row.isCancelled())) {
+                Timber.i("getNumberOfRows%s()", language.toUpperCase());
                 if (language.equals(LocaleManager.LANGUAGE_ENGLISH))
                     return activityReference.get().qmDatabase.getArtifactTableDao().getNumberOfRowsEnglish();
                 else
@@ -308,10 +320,11 @@ public class ObjectPreviewActivity extends AppCompatActivity {
             int artifactTableRowCount;
             artifactTableRowCount = integer;
             if (artifactTableRowCount > 0) {
-                //updateEnglishTable or add row to database
+                Timber.i("Count: %d", integer);
                 check = new CheckDBRowExist(activityReference.get(), language, artifactList.get()).execute();
 
             } else {
+                Timber.i("Database table have no data");
                 insert = new InsertDatabaseTask(activityReference.get(), artifactTableEnglish,
                         artifactTableArabic, language, artifactList.get()).execute();
 
@@ -342,11 +355,13 @@ public class ObjectPreviewActivity extends AppCompatActivity {
                             int n = activityReference.get().qmDatabase.getArtifactTableDao().checkNidExistEnglish(
                                     Integer.parseInt(artifactList.get().get(i).getNid()));
                             if (n > 0) {
-                                //updateEnglishTable same id
+                                Timber.i("Row exist in database(%s) for id: %s", language.toUpperCase(),
+                                        activityReference.get().artifactList.get(i).getNid());
                                 update = new UpdateArtifactTable(activityReference.get(), language, i, artifactList.get()).execute();
 
                             } else {
-                                //create row with corresponding id
+                                Timber.i("Inserting data to Table(%s) with id: %s",
+                                        language.toUpperCase(), activityReference.get().artifactList.get(i).getNid());
                                 artifactTableEnglish = new ArtifactTableEnglish(Long.parseLong(artifactList.get().get(i).getNid()),
                                         artifactList.get().get(i).getTitle(),
                                         artifactList.get().get(i).getAccessionNumber(),
@@ -379,11 +394,13 @@ public class ObjectPreviewActivity extends AppCompatActivity {
                             int n = activityReference.get().qmDatabase.getArtifactTableDao().checkNidExistArabic(
                                     Integer.parseInt(artifactList.get().get(i).getNid()));
                             if (n > 0) {
-                                //updateEnglishTable same id
+                                Timber.i("Row exist in database(%s) for id: %s", language.toUpperCase(),
+                                        activityReference.get().artifactList.get(i).getNid());
                                 update = new UpdateArtifactTable(activityReference.get(), language, i, artifactList.get()).execute();
 
                             } else {
-                                //create row with corresponding id
+                                Timber.i("Inserting data to Table(%s) with id: %s",
+                                        language.toUpperCase(), activityReference.get().artifactList.get(i).getNid());
                                 artifactTableArabic = new ArtifactTableArabic(Long.parseLong(artifactList.get().get(i).getNid()),
                                         artifactList.get().get(i).getTitle(),
                                         artifactList.get().get(i).getAccessionNumber(),
@@ -415,10 +432,7 @@ public class ObjectPreviewActivity extends AppCompatActivity {
                 }
             }
             return null;
-
         }
-
-
     }
 
     public static class InsertDatabaseTask extends AsyncTask<Void, Void, Boolean> {
@@ -443,6 +457,8 @@ public class ObjectPreviewActivity extends AppCompatActivity {
                 if (artifactList != null && artifactList.get().size() > 0) {
                     if (language.equals(LocaleManager.LANGUAGE_ENGLISH)) {
                         for (int i = 0; i < artifactList.get().size(); i++) {
+                            Timber.i("Inserting data to Table(%s) with id: %s",
+                                    language.toUpperCase(), activityReference.get().artifactList.get(i).getNid());
                             artifactTableEnglish = new ArtifactTableEnglish(Long.parseLong(artifactList.get().get(i).getNid()),
                                     artifactList.get().get(i).getTitle(),
                                     artifactList.get().get(i).getAccessionNumber(),
@@ -470,6 +486,8 @@ public class ObjectPreviewActivity extends AppCompatActivity {
                         }
                     } else {
                         for (int i = 0; i < artifactList.get().size(); i++) {
+                            Timber.i("Inserting data to Table(%s) with id: %s",
+                                    language.toUpperCase(), activityReference.get().artifactList.get(i).getNid());
                             artifactTableArabic = new ArtifactTableArabic(Long.parseLong(artifactList.get().get(i).getNid()),
                                     artifactList.get().get(i).getTitle(),
                                     artifactList.get().get(i).getAccessionNumber(),
@@ -524,6 +542,8 @@ public class ObjectPreviewActivity extends AppCompatActivity {
         @Override
         protected Void doInBackground(Void... voids) {
             if (!(update.isCancelled())) {
+                Timber.i("Updating data on Table(%s) for id: %s",
+                        language.toUpperCase(), activityReference.get().artifactList.get(position).getNid());
                 if (language.equals(LocaleManager.LANGUAGE_ENGLISH)) {
                     // updateEnglishTable table with english name
                     activityReference.get().qmDatabase.getArtifactTableDao().updateArtifactEnglish(
@@ -597,6 +617,7 @@ public class ObjectPreviewActivity extends AppCompatActivity {
 
         @Override
         protected List<ArtifactTableEnglish> doInBackground(Void... voids) {
+            Timber.i("getDataFromArtifactEnglishTable(id: %s)", tourId);
             return activityReference.get().qmDatabase.getArtifactTableDao().getDataFromArtifactEnglishTable(tourId);
 
         }
@@ -604,8 +625,12 @@ public class ObjectPreviewActivity extends AppCompatActivity {
         @Override
         protected void onPostExecute(List<ArtifactTableEnglish> artifactDetailsList) {
             if (artifactDetailsList.size() > 0) {
+                Timber.i("Set list from database with size: %d",
+                        artifactDetailsList.size());
                 activityReference.get().artifactList.clear();
                 for (int i = 0; i < artifactDetailsList.size(); i++) {
+                    Timber.i("Setting list from database with id: %s",
+                            artifactDetailsList.get(i).getNid());
                     ArtifactDetails artifactDetails = new ArtifactDetails(
                             artifactDetailsList.get(i).getNid(),
                             artifactDetailsList.get(i).getTitle(),
@@ -640,6 +665,7 @@ public class ObjectPreviewActivity extends AppCompatActivity {
                 }
                 activityReference.get().progressBar.setVisibility(View.GONE);
             } else {
+                Timber.i("Have no data in database");
                 activityReference.get().progressBar.setVisibility(View.GONE);
                 activityReference.get().commonContentLayout.setVisibility(View.GONE);
                 activityReference.get().retryLayout.setVisibility(View.VISIBLE);
@@ -662,6 +688,7 @@ public class ObjectPreviewActivity extends AppCompatActivity {
 
         @Override
         protected List<ArtifactTableArabic> doInBackground(Void... voids) {
+            Timber.i("getDataFromArtifactArabicTable(id: %s)", tourId);
             return activityReference.get().qmDatabase.getArtifactTableDao().getDataFromArtifactArabicTable(tourId);
 
         }
@@ -669,8 +696,12 @@ public class ObjectPreviewActivity extends AppCompatActivity {
         @Override
         protected void onPostExecute(List<ArtifactTableArabic> artifactDetailsList) {
             if (artifactDetailsList.size() > 0) {
+                Timber.i("Set list from database with size: %d",
+                        artifactDetailsList.size());
                 activityReference.get().artifactList.clear();
                 for (int i = 0; i < artifactDetailsList.size(); i++) {
+                    Timber.i("Setting list from database with id: %s",
+                            artifactDetailsList.get(i).getNid());
                     ArtifactDetails artifactDetails = new ArtifactDetails(artifactDetailsList.get(i).getNid(),
                             artifactDetailsList.get(i).getTitle(),
                             artifactDetailsList.get(i).getAccessionNumber(),
@@ -704,6 +735,7 @@ public class ObjectPreviewActivity extends AppCompatActivity {
                 }
                 activityReference.get().progressBar.setVisibility(View.GONE);
             } else {
+                Timber.i("Have no data in database");
                 activityReference.get().progressBar.setVisibility(View.GONE);
                 activityReference.get().commonContentLayout.setVisibility(View.GONE);
                 activityReference.get().retryLayout.setVisibility(View.VISIBLE);
@@ -713,6 +745,7 @@ public class ObjectPreviewActivity extends AppCompatActivity {
     }
 
     public void getObjectPreviewDetailsFromDB(String tourId) {
+        Timber.i("getObjectPreviewDetailsFromDB(id: %s)", tourId);
         progressBar.setVisibility(View.VISIBLE);
         if (language.equals(LocaleManager.LANGUAGE_ENGLISH))
             new RetrieveEnglishTableData(ObjectPreviewActivity.this, tourId).execute();
@@ -722,6 +755,7 @@ public class ObjectPreviewActivity extends AppCompatActivity {
 
     @Override
     protected void onDestroy() {
+        Timber.i("onDestroy()");
         super.onDestroy();
         if (row != null)
             row.cancel(true);

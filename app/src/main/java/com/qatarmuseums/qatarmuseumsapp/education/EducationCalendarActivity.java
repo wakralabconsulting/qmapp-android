@@ -46,6 +46,7 @@ import butterknife.ButterKnife;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
+import timber.log.Timber;
 
 public class EducationCalendarActivity extends AppCompatActivity {
 
@@ -120,6 +121,7 @@ public class EducationCalendarActivity extends AppCompatActivity {
         zoomOutAnimation = AnimationUtils.loadAnimation(getApplicationContext(),
                 R.anim.zoom_out_more);
         retryButton.setOnClickListener(v -> {
+            Timber.i("Retry button clicked");
             getDataOnline();
             progressBar.setVisibility(View.VISIBLE);
             retryLayout.setVisibility(View.GONE);
@@ -141,16 +143,19 @@ public class EducationCalendarActivity extends AppCompatActivity {
             return false;
         });
 
-        backArrow.setOnClickListener(v -> onBackPressed());
+        backArrow.setOnClickListener(v -> {
+            Timber.i("onBackPressed()");
+            onBackPressed();
+        });
 
         /* Filter option is disabled temporary
         toolbar_filter.setOnClickListener(view -> {
+            Timber.i("Filter clicked");
             Intent intent = new Intent(EducationCalendarActivity.this, EducationFilterActivity.class);
             startActivity(intent);
         });
         */
         progress.setOnClickListener(view -> {
-
         });
 
         if (institutionFilter == null) {
@@ -189,6 +194,7 @@ public class EducationCalendarActivity extends AppCompatActivity {
         collapsibleCalendar.setCalendarListener(new CollapsibleCalendar.CalendarListener() {
             @Override
             public void onDaySelect() {
+                Timber.i("onDaySelect()");
                 calendarInstance = Calendar.getInstance();
                 calendarInstance.set(collapsibleCalendar.getSelectedItem().getYear(),
                         collapsibleCalendar.getSelectedItem().getMonth(),
@@ -258,6 +264,7 @@ public class EducationCalendarActivity extends AppCompatActivity {
     }
 
     public void onClickCalled(Boolean registrationRequired, final ArrayList<Events> events, final int position) {
+        Timber.i("Education Calendar event clicked with registration required: %b", registrationRequired);
         if (registrationRequired)
             util.showDialog(this, getResources().getString(R.string.register_now), events, position);
         else
@@ -284,6 +291,7 @@ public class EducationCalendarActivity extends AppCompatActivity {
     }
 
     private void getEducationCalendarEventsFromDatabase(long timeStamp) {
+        Timber.i("getEducationCalendarEventsFromDatabase()");
         progress.setVisibility(View.VISIBLE);
         educationAdapter.clear();
         new EducationCalendarActivity.EventsRowCount(EducationCalendarActivity.this, appLanguage, timeStamp / 1000).execute();
@@ -325,6 +333,7 @@ public class EducationCalendarActivity extends AppCompatActivity {
     private void getEducationCalendarDataFromApi(String institute, String ageGroup, String programmeType,
                                                  final String month, final String day,
                                                  final String year, final long timeStamp) {
+        Timber.i("getEducationCalendarDataFromApi()");
         progress.setVisibility(View.VISIBLE);
         APIInterface apiService =
                 APIClient.getClient().create(APIInterface.class);
@@ -335,6 +344,7 @@ public class EducationCalendarActivity extends AppCompatActivity {
             public void onResponse(Call<ArrayList<Events>> call, Response<ArrayList<Events>> response) {
                 if (response.isSuccessful()) {
                     if (response.body() != null && response.body().size() > 0) {
+                        Timber.i("getEducationCalendarDataFromApi() - isSuccessful with size: %s", response.body().size());
                         events.clear();
                         progress.setVisibility(View.GONE);
                         noResultFoundTxt.setVisibility(View.GONE);
@@ -347,6 +357,7 @@ public class EducationCalendarActivity extends AppCompatActivity {
                                 timeStamp / 1000).execute();
 
                     } else {
+                        Timber.i("getEducationCalendarDataFromApi() - have no data");
                         progress.setVisibility(View.GONE);
                         eventListView.setVisibility(View.GONE);
                         retryLayout.setVisibility(View.GONE);
@@ -357,6 +368,7 @@ public class EducationCalendarActivity extends AppCompatActivity {
 
             @Override
             public void onFailure(Call<ArrayList<Events>> call, Throwable t) {
+                Timber.e("getEducationCalendarDataFromApi() - onFailure: %s", t.getMessage());
                 eventListView.setVisibility(View.GONE);
                 retryLayout.setVisibility(View.VISIBLE);
                 progress.setVisibility(View.GONE);
@@ -386,6 +398,7 @@ public class EducationCalendarActivity extends AppCompatActivity {
         protected void onPostExecute(Integer integer) {
             activityReference.get().eventsTableRowCount = integer;
             if (activityReference.get().eventsTableRowCount > 0) {
+                Timber.i("Count: %d", integer);
                 if (activityReference.get().events.size() > 0 &&
                         activityReference.get().util.isNetworkAvailable(activityReference.get()))
                     new CheckEventRowExist(activityReference.get(), language, timeStamp).execute();
@@ -399,10 +412,12 @@ public class EducationCalendarActivity extends AppCompatActivity {
                     }
                 }
             } else if (activityReference.get().events.size() > 0) {
+                Timber.i("%s Table have no data", activityReference.get().toolbar_title.getText());
                 new InsertDatabaseTask(activityReference.get(),
                         activityReference.get().educationalCalendarEventsTableEnglish,
                         activityReference.get().educationalCalendarEventsTableArabic, language, timeStamp).execute();
             } else {
+                Timber.i("%s Table have no data", activityReference.get().toolbar_title.getText());
                 activityReference.get().progress.setVisibility(View.GONE);
                 activityReference.get().eventListView.setVisibility(View.GONE);
                 activityReference.get().retryLayout.setVisibility(View.VISIBLE);
@@ -411,6 +426,7 @@ public class EducationCalendarActivity extends AppCompatActivity {
 
         @Override
         protected Integer doInBackground(Void... voids) {
+            Timber.i("getNumberOf%sRows%s()", activityReference.get().toolbar_title.getText(), language.toUpperCase());
             if (language.equals(LocaleManager.LANGUAGE_ENGLISH))
                 return activityReference.get().qmDatabase.getEducationCalendarEventsDao().getNumberOfRowsEnglish();
             else
@@ -444,6 +460,7 @@ public class EducationCalendarActivity extends AppCompatActivity {
         @Override
         protected Void doInBackground(Void... voids) {
             if (activityReference.get().events.size() > 0) {
+                Timber.i("checkTableWithEventDateExist(%s) timestamp: %d", language.toUpperCase(), timestamp);
                 if (language.equals(LocaleManager.LANGUAGE_ENGLISH)) {
                     int n = activityReference.get().qmDatabase.getEducationCalendarEventsDao()
                             .checkEnglishWithEventDateExist(String.valueOf(timestamp));
@@ -453,15 +470,18 @@ public class EducationCalendarActivity extends AppCompatActivity {
                                     .checkEnglishWithEventIdExist(String.valueOf(timestamp),
                                             activityReference.get().events.get(i).getEid());
                             if (count > 0) {
+                                Timber.i("Event is Exist for %d", timestamp);
                                 new UpdateEventsTableRow(activityReference.get(), language,
                                         i, timestamp, activityReference.get().events.get(i).getEid()).execute();
                             } else {
+                                Timber.i("No Event for %d", timestamp);
                                 new InsertSingleElementDatabaseTask(activityReference.get(),
                                         activityReference.get().educationalCalendarEventsTableEnglish,
                                         activityReference.get().educationalCalendarEventsTableArabic, language, i, timestamp).execute();
                             }
                         }
                     } else {
+                        Timber.i("No Event for %d", timestamp);
                         new InsertDatabaseTask(activityReference.get(),
                                 activityReference.get().educationalCalendarEventsTableEnglish,
                                 activityReference.get().educationalCalendarEventsTableArabic, language, timestamp).execute();
@@ -475,9 +495,11 @@ public class EducationCalendarActivity extends AppCompatActivity {
                                     .checkArabicWithEventIdExist(String.valueOf(timestamp),
                                             activityReference.get().events.get(i).getEid());
                             if (count > 0) {
+                                Timber.i("Event is Exist for %d", timestamp);
                                 new UpdateEventsTableRow(activityReference.get(), language,
                                         i, timestamp, activityReference.get().events.get(i).getEid()).execute();
                             } else {
+                                Timber.i("No Event for %d", timestamp);
                                 new InsertSingleElementDatabaseTask(activityReference.get(),
                                         activityReference.get().educationalCalendarEventsTableEnglish,
                                         activityReference.get().educationalCalendarEventsTableArabic, language, i, timestamp).execute();
@@ -485,7 +507,8 @@ public class EducationCalendarActivity extends AppCompatActivity {
                             }
                         }
                     } else {
-                        new EducationCalendarActivity.InsertDatabaseTask(activityReference.get(),
+                        Timber.i("No Event for %d", timestamp);
+                        new InsertDatabaseTask(activityReference.get(),
                                 activityReference.get().educationalCalendarEventsTableEnglish,
                                 activityReference.get().educationalCalendarEventsTableArabic, language, timestamp).execute();
                     }
@@ -523,6 +546,8 @@ public class EducationCalendarActivity extends AppCompatActivity {
 
         @Override
         protected Void doInBackground(Void... voids) {
+            Timber.i("Updating %s Table(%s) with id: %s", activityReference.get().toolbar_title.getText(),
+                    language.toUpperCase(), activityReference.get().events.get(position).getEid());
 
             if (language.equals(LocaleManager.LANGUAGE_ENGLISH)) {
                 // updateEnglishTable table with english name
@@ -600,6 +625,8 @@ public class EducationCalendarActivity extends AppCompatActivity {
         @Override
         protected Boolean doInBackground(Void... voids) {
             if (activityReference.get().events != null) {
+                Timber.i("insert event on table(%s) with id: %s", language.toUpperCase(),
+                        activityReference.get().events.get(position).getEid());
                 if (language.equals(LocaleManager.LANGUAGE_ENGLISH)) {
                     Convertor converters = new Convertor();
                     ArrayList<String> fieldValue = new ArrayList<String>();
@@ -699,9 +726,13 @@ public class EducationCalendarActivity extends AppCompatActivity {
         @Override
         protected Boolean doInBackground(Void... voids) {
             if (activityReference.get().events != null) {
+                Timber.i("insert event on table(%s) with size: %d", language.toUpperCase(),
+                        activityReference.get().events.size());
                 if (language.equals(LocaleManager.LANGUAGE_ENGLISH)) {
                     Convertor converters = new Convertor();
                     for (int i = 0; i < activityReference.get().events.size(); i++) {
+                        Timber.i("insertEnglishTable with id: %s",
+                                activityReference.get().events.get(i).getEid());
                         ArrayList<String> fieldValue = new ArrayList<String>();
                         fieldValue = activityReference.get().events.get(i).getField();
                         ArrayList<String> startDate = new ArrayList<String>();
@@ -735,6 +766,8 @@ public class EducationCalendarActivity extends AppCompatActivity {
                 } else {
                     Convertor converters = new Convertor();
                     for (int i = 0; i < activityReference.get().events.size(); i++) {
+                        Timber.i("insertArabicTable with id: %s",
+                                activityReference.get().events.get(i).getEid());
                         ArrayList<String> fieldValue = new ArrayList<String>();
                         fieldValue = activityReference.get().events.get(i).getField();
                         ArrayList<String> startDate = new ArrayList<String>();
@@ -796,6 +829,7 @@ public class EducationCalendarActivity extends AppCompatActivity {
             ArrayList<String> endDate = new ArrayList<String>();
             Convertor converters = new Convertor();
             if (educationalCalendarEventsTableEnglish.size() > 0) {
+                Timber.i("EducationCalendarEventsTableEnglish with size: %d", educationalCalendarEventsTableEnglish.size());
                 for (int i = 0; i < educationalCalendarEventsTableEnglish.size(); i++) {
                     startDate.add(0, educationalCalendarEventsTableEnglish.get(i).getEvent_start_time());
                     endDate.add(0, educationalCalendarEventsTableEnglish.get(i).getEvent_end_time());
@@ -826,6 +860,7 @@ public class EducationCalendarActivity extends AppCompatActivity {
                 activityReference.get().eventListView.setVisibility(View.VISIBLE);
                 activityReference.get().retryLayout.setVisibility(View.GONE);
             } else {
+                Timber.i("EducationCalendarEventsTableEnglish have no data");
                 activityReference.get().progress.setVisibility(View.GONE);
                 activityReference.get().eventListView.setVisibility(View.GONE);
                 activityReference.get().retryLayout.setVisibility(View.VISIBLE);
@@ -838,23 +873,28 @@ public class EducationCalendarActivity extends AppCompatActivity {
             if (activityReference.get().institutionFilter.equalsIgnoreCase("All") &&
                     activityReference.get().ageGroupFilter.equalsIgnoreCase("All") &&
                     activityReference.get().programmeTypeFilter.equalsIgnoreCase("All")) {
+                Timber.i("getAllEnglishEventsWithDate(%d)", eventDate);
                 return activityReference.get().qmDatabase.getEducationCalendarEventsDao()
                         .getAllEventsEnglish(String.valueOf(eventDate));
             } else if (activityReference.get().institutionFilter.equalsIgnoreCase("All") &&
                     activityReference.get().ageGroupFilter.equalsIgnoreCase("All")) {
+                Timber.i("getProgrammeFilterEnglishEventsWithDate(%d)", eventDate);
                 return activityReference.get().qmDatabase.getEducationCalendarEventsDao().
                         getProgrammeFilterEventsEnglish(String.valueOf(eventDate),
                                 activityReference.get().programmeTypeFilter);
             } else if (activityReference.get().institutionFilter.equalsIgnoreCase("All") &&
                     activityReference.get().programmeTypeFilter.equalsIgnoreCase("All")) {
+                Timber.i("getAgeGroupFilterEnglishEventsWithDate(%d)", eventDate);
                 return activityReference.get().qmDatabase.getEducationCalendarEventsDao().
                         getAgeGroupFilterEventsEnglish(String.valueOf(eventDate));
             } else if (activityReference.get().programmeTypeFilter.equalsIgnoreCase("All") &&
                     activityReference.get().ageGroupFilter.equalsIgnoreCase("All")) {
+                Timber.i("getInstitutionFilterEnglishEventsWithDate(%d)", eventDate);
                 return activityReference.get().qmDatabase.getEducationCalendarEventsDao().
                         getInstitutionFilterEventsEnglish(String.valueOf(eventDate),
                                 activityReference.get().institutionFilter);
             } else {
+                Timber.i("getEnglishEventsWithDate(%d)", eventDate);
                 return activityReference.get().qmDatabase.getEducationCalendarEventsDao()
                         .getEventsWithDateEnglish(String.valueOf(eventDate), activityReference.get().institutionFilter,
                                 activityReference.get().programmeTypeFilter);
@@ -917,6 +957,7 @@ public class EducationCalendarActivity extends AppCompatActivity {
                 activityReference.get().eventListView.setVisibility(View.VISIBLE);
                 activityReference.get().retryLayout.setVisibility(View.GONE);
             } else {
+                Timber.i("EducationCalendarEventsTableArabic have no data");
                 activityReference.get().progress.setVisibility(View.GONE);
                 activityReference.get().eventListView.setVisibility(View.GONE);
                 activityReference.get().retryLayout.setVisibility(View.VISIBLE);
@@ -930,21 +971,26 @@ public class EducationCalendarActivity extends AppCompatActivity {
             if (activityReference.get().institutionFilter.equalsIgnoreCase("All") &&
                     activityReference.get().ageGroupFilter.equalsIgnoreCase("All") &&
                     activityReference.get().programmeTypeFilter.equalsIgnoreCase("All")) {
+                Timber.i("getAllArabicEventsWithDate(%d)", eventDate);
                 return activityReference.get().qmDatabase.getEducationCalendarEventsDao()
                         .getAllEventsArabic(String.valueOf(eventDate));
             } else if (activityReference.get().institutionFilter.equalsIgnoreCase("All") &&
                     activityReference.get().ageGroupFilter.equalsIgnoreCase("All")) {
+                Timber.i("getProgrammeFilterArabicEventsWithDate(%d)", eventDate);
                 return activityReference.get().qmDatabase.getEducationCalendarEventsDao().
                         getProgrammeFilterEventsArabic(String.valueOf(eventDate), activityReference.get().programmeTypeFilter);
             } else if (activityReference.get().institutionFilter.equalsIgnoreCase("All") &&
                     activityReference.get().programmeTypeFilter.equalsIgnoreCase("All")) {
+                Timber.i("getAgeGroupFilterArabicEventsWithDate(%d)", eventDate);
                 return activityReference.get().qmDatabase.getEducationCalendarEventsDao().
                         getAgeGroupFilterEventsArabic(String.valueOf(eventDate));
             } else if (activityReference.get().programmeTypeFilter.equalsIgnoreCase("All") &&
                     activityReference.get().ageGroupFilter.equalsIgnoreCase("All")) {
+                Timber.i("getInstitutionFilterArabicEventsWithDate(%d)", eventDate);
                 return activityReference.get().qmDatabase.getEducationCalendarEventsDao().
                         getInstitutionFilterEventsArabic(String.valueOf(eventDate), activityReference.get().institutionFilter);
             } else {
+                Timber.i("getArabicEventsWithDate(%d)", eventDate);
                 return activityReference.get().qmDatabase.getEducationCalendarEventsDao()
                         .getEventsWithDateArabic(String.valueOf(eventDate), activityReference.get().institutionFilter,
                                 activityReference.get().programmeTypeFilter);
@@ -959,8 +1005,10 @@ public class EducationCalendarActivity extends AppCompatActivity {
                 // If request is cancelled, the result arrays are empty.
                 if (grantResults.length > 0
                         && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    Timber.i("onRequestPermissionsResult() - PERMISSION_GRANTED");
                     util.insertEventToCalendar(this, null);
                 } else {
+                    Timber.i("onRequestPermissionsResult() - PERMISSION_NOT_GRANTED ");
                     boolean showRationale = false;
                     if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.M) {
                         showRationale = shouldShowRequestPermissionRationale(permissions[0]);
@@ -980,6 +1028,7 @@ public class EducationCalendarActivity extends AppCompatActivity {
         if (ContextCompat.checkSelfPermission(this,
                 Manifest.permission.WRITE_CALENDAR)
                 == PackageManager.PERMISSION_GRANTED) {
+            Timber.i("onActivityResult() - PERMISSION_GRANTED");
             util.insertEventToCalendar(this, null);
         }
     }
