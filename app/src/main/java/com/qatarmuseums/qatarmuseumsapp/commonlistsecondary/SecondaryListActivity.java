@@ -74,7 +74,7 @@ public class SecondaryListActivity extends AppCompatActivity {
     private long startTimeStamp, endTimeStamp;
     private String mainTitle;
     private Bundle contentBundleParams;
-    private FirebaseAnalytics mFirebaseAnalytics;
+    private FirebaseAnalytics mFireBaseAnalytics;
     private String screenName = null;
 
     @Override
@@ -102,7 +102,7 @@ public class SecondaryListActivity extends AppCompatActivity {
         recyclerView = findViewById(R.id.secondary_list_recycler_view);
         qmDatabase = QMDatabase.getInstance(SecondaryListActivity.this);
         util = new Util();
-        mFirebaseAnalytics = FirebaseAnalytics.getInstance(this);
+        mFireBaseAnalytics = FirebaseAnalytics.getInstance(this);
         screenName = comingFrom + "Secondary";
         if (comingFrom.equals(getString(R.string.facilities_txt))) {
             facilitiesSecondaryAdapter = new FacilitiesSecondaryAdapter(this, facilitiesDetailList, position -> {
@@ -114,8 +114,7 @@ public class SecondaryListActivity extends AppCompatActivity {
                 contentBundleParams.putString(FirebaseAnalytics.Param.CONTENT_TYPE, mainTitle);
                 contentBundleParams.putString(FirebaseAnalytics.Param.ITEM_ID, facilitiesDetailList.get(position).getFacilitiesId());
                 contentBundleParams.putString(FirebaseAnalytics.Param.ITEM_NAME, facilitiesDetailList.get(position).getFacilitiesTitle());
-
-                mFirebaseAnalytics.logEvent(FirebaseAnalytics.Event.SELECT_CONTENT, contentBundleParams);
+                mFireBaseAnalytics.logEvent(FirebaseAnalytics.Event.SELECT_CONTENT, contentBundleParams);
                 navigationIntent = new Intent(SecondaryListActivity.this, DetailsActivity.class);
                 if (facilitiesDetailList.get(position).getFacilityImage().size() > 0) {
                     navigationIntent.putExtra("HEADER_IMAGE", facilitiesDetailList.get(position).getFacilityImage().get(0));
@@ -1041,7 +1040,7 @@ public class SecondaryListActivity extends AppCompatActivity {
     protected void onResume() {
         super.onResume();
         if (screenName != null)
-            mFirebaseAnalytics.setCurrentScreen(this, screenName + getString(R.string.page), null);
+            mFireBaseAnalytics.setCurrentScreen(this, screenName + getString(R.string.page), null);
 
     }
 

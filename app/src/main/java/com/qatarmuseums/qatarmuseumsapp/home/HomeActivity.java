@@ -178,21 +178,34 @@ public class HomeActivity extends BaseActivity {
 
             }
         });
+        contentBundleParams = new Bundle();
 
         diningNavigation.setOnClickListener(v -> {
             Timber.i("Bottom bar Dining clicked");
+            contentBundleParams.putString(FirebaseAnalytics.Param.CONTENT_TYPE, "BOTTOM BAR");
+            contentBundleParams.putString(FirebaseAnalytics.Param.ITEM_ID,
+                    ((TextView) ((RelativeLayout) v).getChildAt(1)).getText().toString());
+            mFirebaseAnalytics.logEvent(FirebaseAnalytics.Event.SELECT_CONTENT, contentBundleParams);
             navigation_intent = new Intent(HomeActivity.this, CommonListActivity.class);
             navigation_intent.putExtra(getString(R.string.toolbar_title_key), getString(R.string.side_menu_dining_text));
             startActivity(navigation_intent);
         });
         giftShopNavigation.setOnClickListener(v -> {
             Timber.i("Bottom bar Gift shop clicked");
+            contentBundleParams.putString(FirebaseAnalytics.Param.CONTENT_TYPE, "BOTTOM BAR");
+            contentBundleParams.putString(FirebaseAnalytics.Param.ITEM_ID,
+                    ((TextView) ((RelativeLayout) v).getChildAt(1)).getText().toString());
+            mFirebaseAnalytics.logEvent(FirebaseAnalytics.Event.SELECT_CONTENT, contentBundleParams);
             navigation_intent = new Intent(HomeActivity.this, WebViewActivity.class);
             navigation_intent.putExtra("url", getString(R.string.gift_shop_url));
             startActivity(navigation_intent);
         });
         culturePassNavigation.setOnClickListener(v -> {
             Timber.i("Bottom bar Culture pass clicked");
+            contentBundleParams.putString(FirebaseAnalytics.Param.CONTENT_TYPE, "BOTTOM BAR");
+            contentBundleParams.putString(FirebaseAnalytics.Param.ITEM_ID,
+                    ((TextView) ((RelativeLayout) v).getChildAt(1)).getText().toString());
+            mFirebaseAnalytics.logEvent(FirebaseAnalytics.Event.SELECT_CONTENT, contentBundleParams);
             name = qmPreferences.getString("NAME", null);
             if (name == null)
                 navigation_intent = new Intent(HomeActivity.this, CulturePassActivity.class);
@@ -238,7 +251,6 @@ public class HomeActivity extends BaseActivity {
                     navigationIntent.putExtra("MUSEUM_ID", homeList.getId());
                     startActivity(navigationIntent);
                 }
-                contentBundleParams = new Bundle();
                 contentBundleParams.putString(FirebaseAnalytics.Param.CONTENT_TYPE, "HOME LIST");
                 contentBundleParams.putString(FirebaseAnalytics.Param.ITEM_ID, homeList.getId());
                 contentBundleParams.putString(FirebaseAnalytics.Param.ITEM_NAME, homeList.getName());

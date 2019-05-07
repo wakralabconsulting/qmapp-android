@@ -67,7 +67,8 @@ public class TourGuideDetailsActivity extends AppCompatActivity {
     TourGuideStartPageEnglish tourGuideStartPageEnglish;
     TourGuideStartPageArabic tourGuideStartPageArabic;
     private Convertor converters;
-    private FirebaseAnalytics mFirebaseAnalytics;
+    private FirebaseAnalytics mFireBaseAnalytics;
+    private Bundle contentBundleParams;
 
     @Override
     protected void attachBaseContext(Context base) {
@@ -82,7 +83,7 @@ public class TourGuideDetailsActivity extends AppCompatActivity {
         setSupportActionBar(toolbar);
         intent = getIntent();
         museumId = intent.getStringExtra("ID");
-        mFirebaseAnalytics = FirebaseAnalytics.getInstance(this);
+        mFireBaseAnalytics = FirebaseAnalytics.getInstance(this);
         tourGuideMainTitle = findViewById(R.id.tourguide_tittle);
         tourGuideSubTitle = findViewById(R.id.tourguide_subtittle);
         tourGuideMainDesc = findViewById(R.id.tourguide_title_desc);
@@ -111,6 +112,10 @@ public class TourGuideDetailsActivity extends AppCompatActivity {
                         Timber.i("%s is clicked with ID: %s",
                                 tourGuideList.get(position).getTitle().toUpperCase(),
                                 tourGuideList.get(position).getNid());
+                        contentBundleParams = new Bundle();
+                        contentBundleParams.putString(FirebaseAnalytics.Param.CONTENT_TYPE, tourGuideMainTitle.getText().toString());
+                        contentBundleParams.putString(FirebaseAnalytics.Param.ITEM_ID,  tourGuideList.get(position).getNid());
+                        mFireBaseAnalytics.logEvent(FirebaseAnalytics.Event.SELECT_CONTENT, contentBundleParams);
                         if (tourGuideList.get(position).getTitle().equals(getString(R.string.coming_soon_txt))) {
                             new Util().showComingSoonDialog(TourGuideDetailsActivity.this,
                                     R.string.coming_soon_content_map);
@@ -196,6 +201,10 @@ public class TourGuideDetailsActivity extends AppCompatActivity {
 
             @Override
             public void onAnimationEnd(Animation animation) {
+                contentBundleParams = new Bundle();
+                contentBundleParams.putString(FirebaseAnalytics.Param.CONTENT_TYPE, tourGuideMainTitle.getText().toString());
+                contentBundleParams.putString(FirebaseAnalytics.Param.ITEM_ID, "Explore");
+                mFireBaseAnalytics.logEvent(FirebaseAnalytics.Event.SELECT_CONTENT, contentBundleParams);
                 Intent i = new Intent(TourGuideDetailsActivity.this, FloorMapActivity.class);
                 startActivity(i);
             }
@@ -578,6 +587,6 @@ public class TourGuideDetailsActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        mFirebaseAnalytics.setCurrentScreen(this, getString(R.string.tour_guide_details_page), null);
+        mFireBaseAnalytics.setCurrentScreen(this, getString(R.string.tour_guide_details_page), null);
     }
 }

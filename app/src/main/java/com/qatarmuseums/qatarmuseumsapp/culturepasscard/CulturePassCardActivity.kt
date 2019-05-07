@@ -4,6 +4,7 @@ import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
+import android.widget.Button
 import com.google.firebase.analytics.FirebaseAnalytics
 import com.google.zxing.BarcodeFormat
 import com.google.zxing.MultiFormatWriter
@@ -33,11 +34,19 @@ class CulturePassCardActivity : AppCompatActivity() {
         flipButtonSecond.setOnClickListener {
             Timber.i("Second Flip Button clicked")
             flipView.flipTheView()
+            val contentBundleParams = Bundle()
+            contentBundleParams.putString(FirebaseAnalytics.Param.CONTENT_TYPE, flipButtonSecond.text.toString())
+            contentBundleParams.putString(FirebaseAnalytics.Param.ITEM_ID, flipButtonSecond.text.toString())
+            FirebaseAnalytics.getInstance(this).logEvent(FirebaseAnalytics.Event.SELECT_CONTENT, contentBundleParams)
         }
 
         flipButtonFirst.setOnClickListener {
             Timber.i("First Flip Button clicked")
             flipView.flipTheView()
+            val contentBundleParams = Bundle()
+            contentBundleParams.putString(FirebaseAnalytics.Param.CONTENT_TYPE, flipButtonFirst.text.toString())
+            contentBundleParams.putString(FirebaseAnalytics.Param.ITEM_ID, flipButtonFirst.text.toString())
+            FirebaseAnalytics.getInstance(this).logEvent(FirebaseAnalytics.Event.SELECT_CONTENT, contentBundleParams)
         }
 
         closeBtnFirst.setOnClickListener {
