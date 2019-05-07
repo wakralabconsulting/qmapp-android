@@ -50,6 +50,7 @@ public class ObjectPreviewDetailsActivity extends AppCompatActivity implements S
     private final Handler handler = new Handler();
     private final Runnable r = this::updateSeekProgress;
     private FirebaseAnalytics mFireBaseAnalytics;
+    private Bundle contentBundleParams;
 
     @Override
 
@@ -277,6 +278,10 @@ public class ObjectPreviewDetailsActivity extends AppCompatActivity implements S
 
     private void playAudio() {
         Timber.i("playAudio()");
+        contentBundleParams = new Bundle();
+        contentBundleParams.putString(FirebaseAnalytics.Param.CONTENT_TYPE, "AUDIO PLAYED");
+        contentBundleParams.putString(FirebaseAnalytics.Param.ITEM_ID, getIntent().getStringExtra("Nid"));
+        mFireBaseAnalytics.logEvent(FirebaseAnalytics.Event.SELECT_CONTENT, contentBundleParams);
         if (mediaPlayer != null) {
             mediaPlayer.start();
         }

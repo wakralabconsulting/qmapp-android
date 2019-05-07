@@ -66,7 +66,8 @@ public class ObjectSearchActivity extends AppCompatActivity implements View.OnCl
     String language;
     ArrayList<ArtifactDetails> artifactList = new ArrayList<>();
     Util util;
-    private FirebaseAnalytics mFirebaseAnalytics;
+    private FirebaseAnalytics mFireBaseAnalytics;
+    private Bundle contentBundleParams;
 
     @Override
     protected void attachBaseContext(Context base) {
@@ -92,7 +93,7 @@ public class ObjectSearchActivity extends AppCompatActivity implements View.OnCl
                 displayButtons[i].setOnClickListener(this);
             }
         }
-        mFirebaseAnalytics = FirebaseAnalytics.getInstance(this);
+        mFireBaseAnalytics = FirebaseAnalytics.getInstance(this);
         displayClearButton.setEnabled(false);
         doneButton.setEnabled(false);
         displayClearButton.setOnClickListener(view -> {
@@ -131,6 +132,10 @@ public class ObjectSearchActivity extends AppCompatActivity implements View.OnCl
             if (numberPadDisplay.getText().toString() == "") {
                 util.showAlertDialog(ObjectSearchActivity.this);
             } else {
+                contentBundleParams = new Bundle();
+                contentBundleParams.putString(FirebaseAnalytics.Param.CONTENT_TYPE, "ARTIFACTS SEARCH");
+                contentBundleParams.putString(FirebaseAnalytics.Param.ITEM_ID, display);
+                mFireBaseAnalytics.logEvent(FirebaseAnalytics.Event.SELECT_CONTENT, contentBundleParams);
                 getDetailsFromApi(display);
             }
         });
@@ -171,6 +176,7 @@ public class ObjectSearchActivity extends AppCompatActivity implements View.OnCl
                             intent.putExtra("History", artifactList.get(0).getObjectHistory());
                             intent.putExtra("Summary", artifactList.get(0).getObjectENGSummary());
                             intent.putExtra("Audio", artifactList.get(0).getAudioFile());
+                            intent.putExtra("Nid", artifactList.get(0).getNid());
                             intent.putStringArrayListExtra("Images", artifactList.get(0).getImages());
                             startActivity(intent);
                             display = "";
@@ -258,6 +264,6 @@ public class ObjectSearchActivity extends AppCompatActivity implements View.OnCl
     @Override
     protected void onResume() {
         super.onResume();
-        mFirebaseAnalytics.setCurrentScreen(this, getString(R.string.object_search_page), null);
+        mFireBaseAnalytics.setCurrentScreen(this, getString(R.string.object_search_page), null);
     }
 }

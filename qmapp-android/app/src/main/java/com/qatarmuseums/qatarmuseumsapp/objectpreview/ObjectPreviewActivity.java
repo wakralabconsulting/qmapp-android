@@ -72,7 +72,8 @@ public class ObjectPreviewActivity extends AppCompatActivity {
     private static Convertor converters;
     LinearLayout retryLayout;
     Button retryButton;
-    private FirebaseAnalytics mFirebaseAnalytics;
+    private FirebaseAnalytics mFireBaseAnalytics;
+    private Bundle contentBundleParams;
 
     @Override
     protected void attachBaseContext(Context base) {
@@ -101,7 +102,7 @@ public class ObjectPreviewActivity extends AppCompatActivity {
         retryButton = findViewById(R.id.retry_btn);
         language = LocaleManager.getLanguage(this);
         pager = (RtlViewPager) findViewById(R.id.pager);
-        mFirebaseAnalytics = FirebaseAnalytics.getInstance(this);
+        mFireBaseAnalytics = FirebaseAnalytics.getInstance(this);
         assert pager != null;
         stepIndicatorRecyclerView = findViewById(R.id.idRecyclerViewHorizontalList);
 
@@ -183,6 +184,11 @@ public class ObjectPreviewActivity extends AppCompatActivity {
                 String position = artifactList.get(currentPosition).getArtifactPosition();
                 String floorLevel = artifactList.get(currentPosition).getFloorLevel();
                 if (position != null && floorLevel != null && !position.equals("") && !floorLevel.equals("")) {
+                    contentBundleParams = new Bundle();
+                    contentBundleParams.putString(FirebaseAnalytics.Param.CONTENT_TYPE, "OBJECT PREVIEW LOCATION");
+                    contentBundleParams.putString(FirebaseAnalytics.Param.ITEM_ID,
+                            artifactList.get(currentPosition).getNid());
+                    mFireBaseAnalytics.logEvent(FirebaseAnalytics.Event.SELECT_CONTENT, contentBundleParams);
                     Intent i = new Intent(ObjectPreviewActivity.this, FloorMapActivity.class);
                     i.putExtra("Position", position);
                     i.putExtra("Level", floorLevel);
@@ -773,6 +779,6 @@ public class ObjectPreviewActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        mFirebaseAnalytics.setCurrentScreen(this, getString(R.string.object_preview_page), null);
+        mFireBaseAnalytics.setCurrentScreen(this, getString(R.string.object_preview_page), null);
     }
 }

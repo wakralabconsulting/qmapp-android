@@ -3709,7 +3709,7 @@ public class DetailsActivity extends AppCompatActivity implements IPullZoom, OnM
                                 Integer.parseInt(activityReference.get().museumAboutModels.get(i).getMuseumId()));
                         if (n > 0) {
                             Timber.i("Row exist in database(%s) for id: %s", language.toUpperCase(),
-                                    activityReference.get().publicArtModel.get(i).getId());
+                                    activityReference.get().museumAboutModels.get(i).getMuseumId());
                             new UpdateMuseumAboutDetailTable(activityReference.get(), language, i).execute();
 
                         } else {
@@ -3740,7 +3740,7 @@ public class DetailsActivity extends AppCompatActivity implements IPullZoom, OnM
                                 Integer.parseInt(activityReference.get().museumAboutModels.get(i).getMuseumId()));
                         if (n > 0) {
                             Timber.i("Row exist in database(%s) for id: %s", language.toUpperCase(),
-                                    activityReference.get().publicArtModel.get(i).getId());
+                                    activityReference.get().museumAboutModels.get(i).getMuseumId());
                             new UpdateMuseumAboutDetailTable(activityReference.get(), language, i).execute();
 
                         } else {
@@ -3870,7 +3870,7 @@ public class DetailsActivity extends AppCompatActivity implements IPullZoom, OnM
         @Override
         protected Void doInBackground(Void... voids) {
             Timber.i("Updating %s details table(%s) with id: %s", activityReference.get().comingFrom,
-                    language.toUpperCase(), activityReference.get().publicArtModel.get(position).getId());
+                    language.toUpperCase(), activityReference.get().museumAboutModels.get(position).getMuseumId());
             Convertor converters = new Convertor();
             if (language.equals(LocaleManager.LANGUAGE_ENGLISH)) {
                 // updateEnglishTable table with english name

@@ -23,6 +23,7 @@ import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
@@ -85,6 +86,8 @@ public class CulturePassActivity extends AppCompatActivity {
     private QMDatabase qmDatabase;
     private FirebaseAnalytics mFirebaseAnalytics;
     private Bundle bundleParams;
+    private FirebaseAnalytics mFireBaseAnalytics;
+    private Bundle contentBundleParams;
 
     @Override
     protected void attachBaseContext(Context base) {
@@ -99,6 +102,7 @@ public class CulturePassActivity extends AppCompatActivity {
         becomeMember = findViewById(R.id.become_a_member_btn);
         loginButton = findViewById(R.id.login_btn);
         setSupportActionBar(toolbar);
+        mFireBaseAnalytics = FirebaseAnalytics.getInstance(this);
         qmDatabase = QMDatabase.getInstance(CulturePassActivity.this);
         mFirebaseAnalytics = FirebaseAnalytics.getInstance(this);
         util = new Util();
@@ -127,6 +131,10 @@ public class CulturePassActivity extends AppCompatActivity {
         });
         becomeMember.setOnClickListener(v -> {
             Timber.i("Become Member clicked with URL: %s%s/user/register#user-register-form", apiBaseUrl, language);
+            contentBundleParams = new Bundle();
+            contentBundleParams.putString(FirebaseAnalytics.Param.CONTENT_TYPE, ((Button) v).getText().toString());
+            contentBundleParams.putString(FirebaseAnalytics.Param.ITEM_ID, ((Button) v).getText().toString());
+            mFireBaseAnalytics.logEvent(FirebaseAnalytics.Event.SELECT_CONTENT, contentBundleParams);
             navigationIntent = new Intent(CulturePassActivity.this, WebViewActivity.class);
             navigationIntent.putExtra("url", apiBaseUrl + language +
                     "/user/register#user-register-form");
@@ -135,6 +143,11 @@ public class CulturePassActivity extends AppCompatActivity {
         loginButton.setOnClickListener(v -> {
             Timber.i("Login Button clicked");
             showLoginDialog();
+            contentBundleParams = new Bundle();
+            contentBundleParams.putString(FirebaseAnalytics.Param.CONTENT_TYPE, ((Button) v).getText().toString());
+            contentBundleParams.putString(FirebaseAnalytics.Param.ITEM_ID, ((Button) v).getText().toString());
+            mFireBaseAnalytics.logEvent(FirebaseAnalytics.Event.SELECT_CONTENT, contentBundleParams);
+
         });
         becomeMember.setOnTouchListener((v, event) -> {
             switch (event.getAction()) {

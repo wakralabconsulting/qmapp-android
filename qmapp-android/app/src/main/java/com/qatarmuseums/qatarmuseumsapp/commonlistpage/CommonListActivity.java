@@ -106,7 +106,7 @@ public class CommonListActivity extends AppCompatActivity {
     Button retryButton;
     private Integer travelTableRowCount;
     private Convertor convertor;
-    private FirebaseAnalytics mFirebaseAnalytics;
+    private FirebaseAnalytics mFireBaseAnalytics;
     private Bundle contentBundleParams;
 
     @Override
@@ -123,7 +123,7 @@ public class CommonListActivity extends AppCompatActivity {
         TextView toolbar_title = findViewById(R.id.toolbar_title);
         backArrow = findViewById(R.id.toolbar_back);
         intent = getIntent();
-        mFirebaseAnalytics = FirebaseAnalytics.getInstance(this);
+        mFireBaseAnalytics = FirebaseAnalytics.getInstance(this);
         util = new Util();
         qmDatabase = QMDatabase.getInstance(this);
         progressBar = findViewById(R.id.progressBarLoading);
@@ -146,7 +146,7 @@ public class CommonListActivity extends AppCompatActivity {
             contentBundleParams.putString(FirebaseAnalytics.Param.CONTENT_TYPE, toolbarTitle);
             contentBundleParams.putString(FirebaseAnalytics.Param.ITEM_ID, models.get(position).getId());
             contentBundleParams.putString(FirebaseAnalytics.Param.ITEM_NAME, models.get(position).getName());
-            mFirebaseAnalytics.logEvent(FirebaseAnalytics.Event.SELECT_CONTENT, contentBundleParams);
+            mFireBaseAnalytics.logEvent(FirebaseAnalytics.Event.SELECT_CONTENT, contentBundleParams);
             if (toolbarTitle.equals(getString(R.string.museum_collection_text)))
                 navigationIntent = new Intent(CommonListActivity.this,
                         CollectionDetailsActivity.class);
@@ -3256,7 +3256,7 @@ public class CommonListActivity extends AppCompatActivity {
     protected void onResume() {
         super.onResume();
         if (screenName != null)
-            mFirebaseAnalytics.setCurrentScreen(this, screenName + getString(R.string.page), null);
+            mFireBaseAnalytics.setCurrentScreen(this, screenName + getString(R.string.page), null);
 
     }
 }
