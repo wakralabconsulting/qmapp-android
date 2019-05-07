@@ -24,6 +24,8 @@ import java.lang.ref.WeakReference;
 import java.text.ParseException;
 import java.util.List;
 
+import timber.log.Timber;
+
 public class CommonListAdapter extends RecyclerView.Adapter<CommonListAdapter.MyViewHolder> {
 
     private final Context mContext;

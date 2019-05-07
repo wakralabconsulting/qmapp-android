@@ -14,6 +14,8 @@ import com.qatarmuseums.qatarmuseumsapp.utils.Util;
 
 import java.util.ArrayList;
 
+import timber.log.Timber;
+
 import static com.qatarmuseums.qatarmuseumsapp.utils.Util.setupItem;
 
 public class HorizontalPagerAdapter extends PagerAdapter {
@@ -54,7 +56,7 @@ public class HorizontalPagerAdapter extends PagerAdapter {
         setupItem(view, LIBRARIES[position], mContext);
         FrameLayout layout = view.findViewById(R.id.layout_frame);
         view.setOnClickListener(v -> {
-            Log.i("TAG", "This page was clicked" + position);
+            Timber.i("Clicked position: %d ", position);
             if (fragment != null) {
                 fragment.getItemPosition(position);
             } else {

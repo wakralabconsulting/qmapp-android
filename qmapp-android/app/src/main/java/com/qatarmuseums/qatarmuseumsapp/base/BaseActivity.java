@@ -45,6 +45,7 @@ import java.lang.ref.WeakReference;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import timber.log.Timber;
 
 public class BaseActivity extends AppCompatActivity
         implements View.OnClickListener {
@@ -219,6 +220,7 @@ public class BaseActivity extends AppCompatActivity
     }
 
     public void insertNotificationRelatedDataToDataBase(String msg, String lan) {
+        Timber.i("Inserting Notification message to Database");
         new InsertDatabaseTask(BaseActivity.this, notificationTableEnglish,
                 notificationTableArabic, lan, msg).execute();
     }
@@ -262,13 +264,15 @@ public class BaseActivity extends AppCompatActivity
 
     public void updateBadge() {
         badgeCount = qmPreferences.getInt("BADGE_COUNT", 0);
-        if (badgeCount > 0)
+        if (badgeCount > 0) {
+            Timber.i("updateBadge()");
             setBadge(badgeCount);
-        else
+        } else
             badgeCountTextView.setVisibility(View.GONE);
     }
 
     public void setBadge(int badgeCount) {
+        Timber.i("Setting Badge Count: %d", badgeCount);
         if ((topBarNotification != null ? topBarNotification.getVisibility() : 0) == View.VISIBLE)
             badgeCountTextView.setVisibility(View.VISIBLE);
         if (badgeCount < 10)
@@ -307,10 +311,12 @@ public class BaseActivity extends AppCompatActivity
 
             case R.id.topbar_back:
                 // topbar back action
+                Timber.i("Top bar Back clicked");
                 onBackPressed();
                 break;
 
             case R.id.topbar_calendar:
+                Timber.i("Top bar Calendar clicked");
                 topBarCalender.startAnimation(zoomOutAnimation);
                 navigation_intent = new Intent(getApplicationContext(), CalendarActivity.class);
                 startActivity(navigation_intent);
@@ -318,6 +324,7 @@ public class BaseActivity extends AppCompatActivity
                 break;
 
             case R.id.topbar_notification:
+                Timber.i("Top bar Notification clicked");
                 topBarNotification.startAnimation(zoomOutAnimation);
                 navigation_intent = new Intent(this, NotificationActivity.class);
                 startActivity(navigation_intent);
@@ -328,6 +335,7 @@ public class BaseActivity extends AppCompatActivity
                 clearAnimations();
                 break;
             case R.id.topbar_profile:
+                Timber.i("Top bar Profile clicked");
                 topBarProfile.startAnimation(zoomOutAnimation);
                 name = qmPreferences.getString("NAME", null);
                 if (name == null)
@@ -341,11 +349,13 @@ public class BaseActivity extends AppCompatActivity
             case R.id.topbar_sidemenu:
                 // topbar sidemenu action
                 handlingDrawer();
+                Timber.i("Hamburger menu clicked");
                 break;
 
 
             case R.id.sidemenu_exibition_layout:
             case R.id.sidemenu_exibition_icon:
+                Timber.i("Side menu Exhibition clicked");
                 touchListenerForLayout(sideMenuExhibitionLayout);
                 navigation_intent = new Intent(this, CommonListActivity.class);
                 navigation_intent.putExtra(getString(R.string.toolbar_title_key), getString(R.string.side_menu_exhibition_text));
@@ -355,6 +365,7 @@ public class BaseActivity extends AppCompatActivity
 
             case R.id.sidemenu_event_layout:
             case R.id.sidemenu_event_icon:
+                Timber.i("Side menu Event clicked");
                 touchListenerForLayout(sideMenuEventLayout);
                 navigation_intent = new Intent(getApplicationContext(), CalendarActivity.class);
                 startActivity(navigation_intent);
@@ -363,6 +374,7 @@ public class BaseActivity extends AppCompatActivity
 
             case R.id.sidemenu_education_layout:
             case R.id.sidemenu_education_icon:
+                Timber.i("Side menu Education clicked");
                 touchListenerForLayout(sideMenuEducationLayout);
                 navigation_intent = new Intent(this, EducationActivity.class);
                 startActivity(navigation_intent);
@@ -372,6 +384,7 @@ public class BaseActivity extends AppCompatActivity
             case R.id.sidemenu_tour_guide_layout:
             case R.id.sidemenu_tour_guide_icon:
                 // navigation drawer tour guide action
+                Timber.i("Side menu Tour guide clicked");
                 touchListenerForLayout(sideMenuTourGuideLayout);
                 navigation_intent = new Intent(this, TourGuideActivity.class);
                 startActivity(navigation_intent);
@@ -379,6 +392,7 @@ public class BaseActivity extends AppCompatActivity
                 break;
             case R.id.sidemenu_heritage_layout:
             case R.id.sidemenu_heritage_icon:
+                Timber.i("Side menu Heritage clicked");
                 touchListenerForLayout(sideMenuHeritageLayout);
                 navigation_intent = new Intent(this, CommonListActivity.class);
                 navigation_intent.putExtra(getString(R.string.toolbar_title_key), getString(R.string.side_menu_heritage_text));
@@ -388,6 +402,7 @@ public class BaseActivity extends AppCompatActivity
 
             case R.id.sidemenu_public_arts_layout:
             case R.id.sidemenu_public_arts_icon:
+                Timber.i("Side menu Public arts clicked");
                 touchListenerForLayout(sideMenuPublicArtsLayout);
                 navigation_intent = new Intent(this, CommonListActivity.class);
                 navigation_intent.putExtra(getString(R.string.toolbar_title_key), getString(R.string.side_menu_public_arts_text));
@@ -397,6 +412,7 @@ public class BaseActivity extends AppCompatActivity
 
             case R.id.sidemenu_dining_layout:
             case R.id.sidemenu_dining_icon:
+                Timber.i("Side menu Dining clicked");
                 touchListenerForLayout(sideMenuDiningLayout);
                 navigation_intent = new Intent(this, CommonListActivity.class);
                 navigation_intent.putExtra(getString(R.string.toolbar_title_key), getString(R.string.side_menu_dining_text));
@@ -406,6 +422,7 @@ public class BaseActivity extends AppCompatActivity
 
             case R.id.sidemenu_gift_shop_layout:
             case R.id.sidemenu_gift_shop_icon:
+                Timber.i("Side menu Gift shop clicked");
                 touchListenerForLayout(sideMenuGiftShopLayout);
                 sideMenuGiftShopLayout.startAnimation(zoomOutAnimation);
                 navigation_intent = new Intent(BaseActivity.this, WebViewActivity.class);
@@ -415,6 +432,7 @@ public class BaseActivity extends AppCompatActivity
                 break;
             case R.id.sidemenu_park_layout:
             case R.id.sidemenu_park_icon:
+                Timber.i("Side menu Park clicked");
                 touchListenerForLayout(sideMenuParkLayout);
                 navigation_intent = new Intent(BaseActivity.this, ParkActivity.class);
                 startActivity(navigation_intent);
@@ -423,10 +441,12 @@ public class BaseActivity extends AppCompatActivity
 
             case R.id.sidemenu_settings_layout:
             case R.id.sidemenu_settings_icon:
+                Timber.i("Side menu Settings clicked");
                 touchListenerForLayout(sideMenuSettingsLayout);
                 Intent settingsIntent = new Intent(this, SettingsActivity.class);
                 startActivity(settingsIntent);
                 clearAnimations();
+                Timber.i("Settings clicked");
                 break;
 
             default:

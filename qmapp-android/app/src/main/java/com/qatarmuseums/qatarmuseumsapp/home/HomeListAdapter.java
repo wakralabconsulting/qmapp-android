@@ -17,6 +17,8 @@ import com.qatarmuseums.qatarmuseumsapp.R;
 
 import java.util.List;
 
+import timber.log.Timber;
+
 public class HomeListAdapter extends RecyclerView.Adapter<HomeListAdapter.MyViewHolder> {
 
     private final Context mContext;
@@ -57,6 +59,7 @@ public class HomeListAdapter extends RecyclerView.Adapter<HomeListAdapter.MyView
     @Override
     public void onBindViewHolder(@NonNull HomeListAdapter.MyViewHolder holder, int position) {
         HomeList homeList = homeLists.get(position);
+        Timber.i("Setting home list row with Id: %s", homeList.getId());
         ViewGroup.LayoutParams params = holder.itemContainer.getLayoutParams();
         params.height = holder.height;
         holder.itemContainer.setLayoutParams(params);

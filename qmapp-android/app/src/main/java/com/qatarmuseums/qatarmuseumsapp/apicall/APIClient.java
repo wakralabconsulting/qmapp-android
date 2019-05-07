@@ -13,6 +13,7 @@ import okhttp3.TlsVersion;
 import okhttp3.logging.HttpLoggingInterceptor;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
+import timber.log.Timber;
 
 public class APIClient {
     private static final String TAG = "APIClient";
@@ -46,7 +47,7 @@ public class APIClient {
                 tlsSocketFactory = new TLSSocketFactory();
                 httpBuilder.sslSocketFactory(tlsSocketFactory, tlsSocketFactory.systemDefaultTrustManager());
             } catch (KeyManagementException | NoSuchAlgorithmException e) {
-                Log.d(TAG, "Failed to create Socket connection ");
+                Timber.w("Failed to create Socket connection ");
                 e.printStackTrace();
             }
 
