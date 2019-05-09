@@ -202,6 +202,7 @@
     <string name="museum_discussion">Activities</string>
     <string name="event_date">Event Date</string>
     <string name="download_brochure_for_more_information"><u>Download Brochure for More Information</u></string>
+    <string name="seporater"> - </string>
     <string name="interested">Book Tour</string>
     <string name="not_interested">Cancel Booking</string>
     <string name="date">Date</string>
@@ -212,6 +213,40 @@ Any questions, please contact booking@qm.org.qa or +974 4452 5555"</string>
     <string name="mia_floors">MIA Floors</string>
     <string name="warning_no_end_time">NO END TIME AVAILABLE</string>
     <string name="warning_no_seat_available">Fully booked</string>
+    <string name="seat_available">&#160;space available</string>
+    <string name="seats_available">&#160;spaces available</string>
+    <string name="culture_pass_card_page">CulturePassCardActivity</string>
+    <string name="page">Page</string>
+    <string name="details_page">DetailsPage</string>
+    <string name="nmoq">NMoQ</string>
+    <string name="calendar_events_page">EventPage</string>
+    <string name="create_account_page">CreateAccountPage</string>
+    <string name="culture_pass_page">CulturePassPage</string>
+    <string name="dining_details_page">DiningDetailsPage</string>
+    <string name="education_page">EducationPage</string>
+    <string name="education_calander_page">EducationCalendarPage</string>
+    <string name="education_filter_page">EducationFilterPage</string>
+    <string name="barcode_page">BarcodeScannerPage</string>
+    <string name="floor_map_page">FloorMapPage</string>
+    <string name="object_search_page">ObjectSearchPage</string>
+    <string name="home_page">HomePage</string>
+    <string name="nmoq_landing_page">NMoQLandingPage</string>
+    <string name="landing_page">LandingPage</string>
+    <string name="notification_page">NotificationPage</string>
+    <string name="object_preview_page">ObjectPreviewPage</string>
+    <string name="object_preview_details_page">ObjectPreviewDetailsPage</string>
+    <string name="park_page">ParkPage</string>
+    <string name="profile_page">ProfilePage</string>
+    <string name="settings_page">SettingsPage</string>
+    <string name="welcome_page">WelcomePage</string>
+    <string name="tour_guide_page">TourGuidePage</string>
+    <string name="tour_guide_details_page">TourGuideDetailsPage</string>
+    <string name="self_guided_starter_page">SelfGuidedStarterPage</string>
+    <string name="tour_guided_starter_page">TourGuidedStarterPage</string>
+    <string name="tour_secondary_page">TourSecondaryPage</string>
+    <string name="activities_secondary_page">ActivitiesSecondaryPage</string>
+    <string name="webview_page">WebViewPage</string>
+    <string name="collection_details_page">CollectionDetailsPage</string>
     <string name="warning_selection_not_available">Sorry, no seats available for the specific tour.</string>
     <string name="you_have_registered">You have booked&#160;</string>
     <string name="seat_for_this_tour">&#160;space</string>
@@ -230,6 +265,5 @@ Any questions, please contact booking@qm.org.qa or +974 4452 5555"</string>
     <string name="send_email_dialog_message">Would you like send email</string>
     <string name="send_email_success">Email Sent</string>
     <string name="send_email_cancelled">Email Cancelled</string>
-
 
 </resources>

@@ -20,6 +20,7 @@ import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.Uri;
 import android.os.Build;
+import android.os.Bundle;
 import android.provider.CalendarContract;
 import android.provider.Settings;
 import android.support.v4.app.ActivityCompat;
@@ -38,6 +39,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.firebase.analytics.FirebaseAnalytics;
 import com.qatarmuseums.qatarmuseumsapp.LocaleManager;
 import com.qatarmuseums.qatarmuseumsapp.R;
 import com.qatarmuseums.qatarmuseumsapp.education.Events;
@@ -65,6 +67,7 @@ public class Util {
     private ContentValues contentValues;
     private int MY_PERMISSIONS_REQUEST_CALENDAR = 100;
     private int REQUEST_PERMISSION_SETTING = 110;
+    private Bundle contentBundleParams;
 
     public Util() {
     }
@@ -447,6 +450,11 @@ public class Util {
                 contentResolver.insert(CalendarContract.Events.CONTENT_URI, contentValues);
             }
             showToast(context.getString(R.string.event_added), context);
+            contentBundleParams = new Bundle();
+            contentBundleParams.putString(FirebaseAnalytics.Param.CONTENT_TYPE, context.getString(R.string.event_added));
+            contentBundleParams.putString(FirebaseAnalytics.Param.ITEM_ID, contentValues.getAsString(CalendarContract.Events.TITLE));
+            FirebaseAnalytics.getInstance(context).logEvent(FirebaseAnalytics.Event.SELECT_CONTENT, contentBundleParams);
+
         } catch (Exception ex) {
             Timber.e("insertEventToCalendar() - Exception: %s", ex.getMessage());
             Toast.makeText(context, "Error in adding event on calendar : " + ex.getMessage(),

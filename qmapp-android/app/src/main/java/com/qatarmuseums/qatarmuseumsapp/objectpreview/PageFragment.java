@@ -24,6 +24,7 @@ import android.widget.Toast;
 
 import com.booking.rtlviewpager.RtlViewPager;
 import com.github.chrisbanes.photoview.PhotoView;
+import com.google.firebase.analytics.FirebaseAnalytics;
 import com.qatarmuseums.qatarmuseumsapp.R;
 import com.qatarmuseums.qatarmuseumsapp.home.GlideApp;
 import com.qatarmuseums.qatarmuseumsapp.utils.Util;
@@ -57,6 +58,8 @@ public class PageFragment extends Fragment implements SeekBar.OnSeekBarChangeLis
     private final Runnable r = this::updateSeekProgress;
     private Util utils;
     ViewPager pager;
+    private String nId;
+    private Bundle contentBundleParams;
 
     public PageFragment() {
     }
@@ -125,6 +128,7 @@ public class PageFragment extends Fragment implements SeekBar.OnSeekBarChangeLis
         history = getArguments().getString("HISTORY");
         summary = getArguments().getString("SUMMARY");
         audioURL = getArguments().getString("AUDIO");
+        nId = getArguments().getString("NID");
         imageList = getArguments().getStringArrayList("IMAGES");
 
         positionInfo.setText(getResources().getString(R.string.floor_label) + " " + floorNumber +
@@ -329,6 +333,10 @@ public class PageFragment extends Fragment implements SeekBar.OnSeekBarChangeLis
     }
 
     private void playAudio() {
+        contentBundleParams = new Bundle();
+        contentBundleParams.putString(FirebaseAnalytics.Param.CONTENT_TYPE, "AUDIO PLAYED");
+        contentBundleParams.putString(FirebaseAnalytics.Param.ITEM_ID, nId);
+        FirebaseAnalytics.getInstance(getContext()).logEvent(FirebaseAnalytics.Event.SELECT_CONTENT, contentBundleParams);
         if (mediaPlayer != null) {
             mediaPlayer.start();
         }

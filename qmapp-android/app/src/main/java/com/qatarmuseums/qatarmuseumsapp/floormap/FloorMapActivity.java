@@ -51,6 +51,7 @@ import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.MapStyleOptions;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.firebase.analytics.FirebaseAnalytics;
 import com.qatarmuseums.qatarmuseumsapp.Convertor;
 import com.qatarmuseums.qatarmuseumsapp.LocaleManager;
 import com.qatarmuseums.qatarmuseumsapp.QMDatabase;
@@ -212,6 +213,9 @@ public class FloorMapActivity extends AppCompatActivity implements OnMapReadyCal
     private Animation zoomOutAnimation, zoomOutAnimationMore;
     private Bitmap resizedBitmap;
     private ImageView backArrow;
+    private FirebaseAnalytics mFireBaseAnalytics;
+    private Bundle contentBundleParams;
+    private TextView toolbarTitle;
 
     @Override
     protected void attachBaseContext(Context base) {
@@ -225,6 +229,7 @@ public class FloorMapActivity extends AppCompatActivity implements OnMapReadyCal
         Toolbar toolbar = findViewById(R.id.common_toolbar);
         setSupportActionBar(toolbar);
         backArrow = findViewById(R.id.toolbar_back);
+        toolbarTitle = findViewById(R.id.toolbar_title);
         floorMapLayout = findViewById(R.id.floor_map_activity);
         floorMapRootLayout = findViewById(R.id.floor_map_root);
         levelPicker = findViewById(R.id.level_picker);
@@ -259,6 +264,7 @@ public class FloorMapActivity extends AppCompatActivity implements OnMapReadyCal
         utils = new Util();
         qmDatabase = QMDatabase.getInstance(FloorMapActivity.this);
 
+        mFireBaseAnalytics = FirebaseAnalytics.getInstance(this);
         artifactDetailsMap = new HashMap<String, ArtifactDetails>();
         markerHashMap = new HashMap<String, Marker>();
         language = LocaleManager.getLanguage(this);
@@ -335,6 +341,10 @@ public class FloorMapActivity extends AppCompatActivity implements OnMapReadyCal
 
         level2.setOnClickListener(v -> {
             Timber.i("Floor Level 3 Clicked");
+            contentBundleParams = new Bundle();
+            contentBundleParams.putString(FirebaseAnalytics.Param.CONTENT_TYPE, toolbarTitle.getText().toString());
+            contentBundleParams.putString(FirebaseAnalytics.Param.ITEM_ID, "Level 3");
+            mFireBaseAnalytics.logEvent(FirebaseAnalytics.Event.SELECT_CONTENT, contentBundleParams);
             stopAudio();
             audioURL = secondFloorAudioURL;
             selectedLevel = 2;
@@ -348,6 +358,10 @@ public class FloorMapActivity extends AppCompatActivity implements OnMapReadyCal
         });
         level1.setOnClickListener(v -> {
             Timber.i("Floor Level 2 Clicked");
+            contentBundleParams = new Bundle();
+            contentBundleParams.putString(FirebaseAnalytics.Param.CONTENT_TYPE, toolbarTitle.getText().toString());
+            contentBundleParams.putString(FirebaseAnalytics.Param.ITEM_ID, "Level 2");
+            mFireBaseAnalytics.logEvent(FirebaseAnalytics.Event.SELECT_CONTENT, contentBundleParams);
             stopAudio();
             audioURL = firstFloorAudioURL;
             selectedLevel = 1;
@@ -361,6 +375,10 @@ public class FloorMapActivity extends AppCompatActivity implements OnMapReadyCal
         });
         levelG.setOnClickListener(v -> {
             Timber.i("Floor Level 1 Clicked");
+            contentBundleParams = new Bundle();
+            contentBundleParams.putString(FirebaseAnalytics.Param.CONTENT_TYPE, toolbarTitle.getText().toString());
+            contentBundleParams.putString(FirebaseAnalytics.Param.ITEM_ID, "Level 1");
+            mFireBaseAnalytics.logEvent(FirebaseAnalytics.Event.SELECT_CONTENT, contentBundleParams);
             selectedLevel = 0;
             stopAudio();
             hideLevel2();
@@ -569,6 +587,12 @@ public class FloorMapActivity extends AppCompatActivity implements OnMapReadyCal
 
     private void playAudio() {
         Timber.i("playAudio()");
+        if (mBottomSheetBehavior.getState() != BottomSheetBehavior.STATE_HIDDEN) {
+            contentBundleParams = new Bundle();
+            contentBundleParams.putString(FirebaseAnalytics.Param.CONTENT_TYPE, "AUDIO PLAYED");
+            contentBundleParams.putString(FirebaseAnalytics.Param.ITEM_ID, artifactDetails.getNid());
+            mFireBaseAnalytics.logEvent(FirebaseAnalytics.Event.SELECT_CONTENT, contentBundleParams);
+        }
         if (mediaPlayer != null) {
             mediaPlayer.start();
         }
@@ -1283,6 +1307,10 @@ public class FloorMapActivity extends AppCompatActivity implements OnMapReadyCal
         }
         artifactDetails = artifactDetailsMap.get(marker.getSnippet());
         if (artifactDetails != null) {
+            contentBundleParams = new Bundle();
+            contentBundleParams.putString(FirebaseAnalytics.Param.CONTENT_TYPE, "CLICKED ARTIFACTS");
+            contentBundleParams.putString(FirebaseAnalytics.Param.ITEM_ID, artifactDetails.getNid());
+            mFireBaseAnalytics.logEvent(FirebaseAnalytics.Event.SELECT_CONTENT, contentBundleParams);
             noDataTxt.setVisibility(View.GONE);
             popupLongLayout.setVisibility(View.VISIBLE);
             popupTitle.setText(utils.html2string(artifactDetails.getTitle()));
@@ -1981,5 +2009,11 @@ public class FloorMapActivity extends AppCompatActivity implements OnMapReadyCal
         markerHashMap.clear();
         artifactDetailsMap.clear();
         super.onDestroy();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        mFireBaseAnalytics.setCurrentScreen(this, getString(R.string.floor_map_page), null);
     }
 }

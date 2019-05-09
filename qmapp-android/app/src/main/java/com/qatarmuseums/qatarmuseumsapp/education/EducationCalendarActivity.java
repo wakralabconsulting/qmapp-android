@@ -24,6 +24,7 @@ import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.google.firebase.analytics.FirebaseAnalytics;
 import com.qatarmuseums.qatarmuseumsapp.Convertor;
 import com.qatarmuseums.qatarmuseumsapp.LocaleManager;
 import com.qatarmuseums.qatarmuseumsapp.QMDatabase;
@@ -96,6 +97,8 @@ public class EducationCalendarActivity extends AppCompatActivity {
     String monthNumber;
     String year;
     private SimpleDateFormat dayDateFormat, monthDateFormat, yearDateFormat;
+    private FirebaseAnalytics mFireBaseAnalytics;
+    private Bundle contentBundleParams;
 
     @Override
     protected void attachBaseContext(Context base) {
@@ -116,6 +119,7 @@ public class EducationCalendarActivity extends AppCompatActivity {
         yearDateFormat = new SimpleDateFormat("yyyy", Locale.US);
 
         util = new Util();
+        mFireBaseAnalytics = FirebaseAnalytics.getInstance(this);
         appLanguage = LocaleManager.getLanguage(this);
         qmDatabase = QMDatabase.getInstance(EducationCalendarActivity.this);
         zoomOutAnimation = AnimationUtils.loadAnimation(getApplicationContext(),
@@ -265,6 +269,10 @@ public class EducationCalendarActivity extends AppCompatActivity {
 
     public void onClickCalled(Boolean registrationRequired, final ArrayList<Events> events, final int position) {
         Timber.i("Education Calendar event clicked with registration required: %b", registrationRequired);
+        contentBundleParams = new Bundle();
+        contentBundleParams.putString(FirebaseAnalytics.Param.CONTENT_TYPE, toolbar_title.getText().toString());
+        contentBundleParams.putString(FirebaseAnalytics.Param.ITEM_ID, events.get(position).getEid());
+        mFireBaseAnalytics.logEvent(FirebaseAnalytics.Event.SELECT_CONTENT, contentBundleParams);
         if (registrationRequired)
             util.showDialog(this, getResources().getString(R.string.register_now), events, position);
         else
@@ -1031,6 +1039,12 @@ public class EducationCalendarActivity extends AppCompatActivity {
             Timber.i("onActivityResult() - PERMISSION_GRANTED");
             util.insertEventToCalendar(this, null);
         }
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        mFireBaseAnalytics.setCurrentScreen(this, getString(R.string.calendar_events_page), null);
     }
 
 }
