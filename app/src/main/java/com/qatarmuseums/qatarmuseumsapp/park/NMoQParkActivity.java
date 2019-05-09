@@ -31,6 +31,7 @@ import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MapStyleOptions;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.firebase.analytics.FirebaseAnalytics;
 import com.qatarmuseums.qatarmuseumsapp.LocaleManager;
 import com.qatarmuseums.qatarmuseumsapp.QMDatabase;
 import com.qatarmuseums.qatarmuseumsapp.R;
@@ -109,6 +110,8 @@ public class NMoQParkActivity extends AppCompatActivity implements OnMapReadyCal
     private NMoQParkTableEnglish nMoQParkTableEnglish;
     private NMoQParkListTableArabic nMoQParkListTableArabic;
     private NMoQParkListTableEnglish nMoQParkListTableEnglish;
+    private Bundle contentBundleParams;
+    private FirebaseAnalytics mFireBaseAnalytics;
 
     @SuppressLint("ClickableViewAccessibility")
     @Override
@@ -122,6 +125,7 @@ public class NMoQParkActivity extends AppCompatActivity implements OnMapReadyCal
         Animation zoomOutAnimation = AnimationUtils.loadAnimation(getApplicationContext(),
                 R.anim.zoom_out_more);
         qmDatabase = QMDatabase.getInstance(NMoQParkActivity.this);
+        mFireBaseAnalytics = FirebaseAnalytics.getInstance(this);
 
         toolbarBack.setOnTouchListener((v, event) -> {
             switch (event.getAction()) {
@@ -146,7 +150,11 @@ public class NMoQParkActivity extends AppCompatActivity implements OnMapReadyCal
             Timber.i("%s is clicked with ID: %s from %s",
                     parkLists.get(position).getMainTitle().toUpperCase(),
                     parkLists.get(position).getNid(),
-                    toolbarTitle);
+                    toolbarTitle.getText().toString());
+            contentBundleParams = new Bundle();
+            contentBundleParams.putString(FirebaseAnalytics.Param.CONTENT_TYPE, toolbarTitle.getText().toString());
+            contentBundleParams.putString(FirebaseAnalytics.Param.ITEM_ID, parkLists.get(position).getNid());
+            mFireBaseAnalytics.logEvent(FirebaseAnalytics.Event.SELECT_CONTENT, contentBundleParams);
             if (parkLists.get(position).getNid().equals("15616") ||
                     parkLists.get(position).getNid().equals("15851")) {
                 navigationIntent = new Intent(NMoQParkActivity.this, CollectionDetailsActivity.class);
@@ -1022,6 +1030,9 @@ public class NMoQParkActivity extends AppCompatActivity implements OnMapReadyCal
     protected void onResume() {
         super.onResume();
         parkMapInfo.onResume();
+        if (toolbarTitle.getText() != null)
+            mFireBaseAnalytics.setCurrentScreen(this, toolbarTitle.getText() + getString(R.string.page), null);
+
     }
 
     @Override

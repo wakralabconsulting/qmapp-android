@@ -19,6 +19,7 @@ import android.widget.ProgressBar;
 import android.widget.ScrollView;
 import android.widget.TextView;
 
+import com.google.firebase.analytics.FirebaseAnalytics;
 import com.qatarmuseums.qatarmuseumsapp.LocaleManager;
 import com.qatarmuseums.qatarmuseumsapp.R;
 import com.qatarmuseums.qatarmuseumsapp.apicall.APIClient;
@@ -65,6 +66,8 @@ public class ObjectSearchActivity extends AppCompatActivity implements View.OnCl
     String language;
     ArrayList<ArtifactDetails> artifactList = new ArrayList<>();
     Util util;
+    private FirebaseAnalytics mFireBaseAnalytics;
+    private Bundle contentBundleParams;
 
     @Override
     protected void attachBaseContext(Context base) {
@@ -90,6 +93,7 @@ public class ObjectSearchActivity extends AppCompatActivity implements View.OnCl
                 displayButtons[i].setOnClickListener(this);
             }
         }
+        mFireBaseAnalytics = FirebaseAnalytics.getInstance(this);
         displayClearButton.setEnabled(false);
         doneButton.setEnabled(false);
         displayClearButton.setOnClickListener(view -> {
@@ -128,6 +132,10 @@ public class ObjectSearchActivity extends AppCompatActivity implements View.OnCl
             if (numberPadDisplay.getText().toString() == "") {
                 util.showAlertDialog(ObjectSearchActivity.this);
             } else {
+                contentBundleParams = new Bundle();
+                contentBundleParams.putString(FirebaseAnalytics.Param.CONTENT_TYPE, "ARTIFACTS SEARCH");
+                contentBundleParams.putString(FirebaseAnalytics.Param.ITEM_ID, display);
+                mFireBaseAnalytics.logEvent(FirebaseAnalytics.Event.SELECT_CONTENT, contentBundleParams);
                 getDetailsFromApi(display);
             }
         });
@@ -168,6 +176,7 @@ public class ObjectSearchActivity extends AppCompatActivity implements View.OnCl
                             intent.putExtra("History", artifactList.get(0).getObjectHistory());
                             intent.putExtra("Summary", artifactList.get(0).getObjectENGSummary());
                             intent.putExtra("Audio", artifactList.get(0).getAudioFile());
+                            intent.putExtra("Nid", artifactList.get(0).getNid());
                             intent.putStringArrayListExtra("Images", artifactList.get(0).getImages());
                             startActivity(intent);
                             display = "";
@@ -250,5 +259,11 @@ public class ObjectSearchActivity extends AppCompatActivity implements View.OnCl
                 numberPadDisplay.setText(display);
                 break;
         }
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        mFireBaseAnalytics.setCurrentScreen(this, getString(R.string.object_search_page), null);
     }
 }

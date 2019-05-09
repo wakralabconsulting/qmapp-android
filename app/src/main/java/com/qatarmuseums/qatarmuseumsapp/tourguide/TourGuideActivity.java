@@ -21,6 +21,7 @@ import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.google.firebase.analytics.FirebaseAnalytics;
 import com.qatarmuseums.qatarmuseumsapp.LocaleManager;
 import com.qatarmuseums.qatarmuseumsapp.QMDatabase;
 import com.qatarmuseums.qatarmuseumsapp.R;
@@ -63,6 +64,8 @@ public class TourGuideActivity extends AppCompatActivity {
     HomePageTableEnglish homePageTableEnglish;
     HomePageTableArabic homePageTableArabic;
     int homePageTableRowCount;
+    private FirebaseAnalytics mFireBaseAnalytics;
+    private Bundle contentBundleParams;
 
     @Override
     protected void attachBaseContext(Context base) {
@@ -77,6 +80,7 @@ public class TourGuideActivity extends AppCompatActivity {
         setSupportActionBar(toolbar);
         intent = getIntent();
 
+        mFireBaseAnalytics = FirebaseAnalytics.getInstance(this);
         tourGuideMainTitle = findViewById(R.id.tourguide_tittle);
         tourGuideSubTitle = findViewById(R.id.tourguide_subtittle);
         tourGuideMainDesc = findViewById(R.id.tourguide_title_desc);
@@ -111,6 +115,10 @@ public class TourGuideActivity extends AppCompatActivity {
                         Timber.i("%s is clicked with ID: %s",
                                 tourGuideList.get(position).getName().toUpperCase(),
                                 tourGuideList.get(position).getId());
+                        contentBundleParams = new Bundle();
+                        contentBundleParams.putString(FirebaseAnalytics.Param.CONTENT_TYPE, tourGuideMainTitle.getText().toString());
+                        contentBundleParams.putString(FirebaseAnalytics.Param.ITEM_ID,  tourGuideList.get(position).getId());
+                        mFireBaseAnalytics.logEvent(FirebaseAnalytics.Event.SELECT_CONTENT, contentBundleParams);
                         if (tourGuideList.get(position).getId().equals("63") ||
                                 tourGuideList.get(position).getId().equals("96") ||
                                 tourGuideList.get(position).getId().equals("61") ||
@@ -510,4 +518,9 @@ public class TourGuideActivity extends AppCompatActivity {
             new RetrieveArabicTableData(TourGuideActivity.this).execute();
     }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+        mFireBaseAnalytics.setCurrentScreen(this, getString(R.string.tour_guide_page), null);
+    }
 }

@@ -19,6 +19,7 @@ import android.widget.ImageView;
 import android.widget.Spinner;
 import android.widget.TextView;
 
+import com.google.firebase.analytics.FirebaseAnalytics;
 import com.qatarmuseums.qatarmuseumsapp.LocaleManager;
 import com.qatarmuseums.qatarmuseumsapp.R;
 
@@ -76,6 +77,7 @@ public class EducationFilterActivity extends AppCompatActivity {
     SharedPreferences.Editor editor;
     SharedPreferences sharedFilterPreferences;
     int institutionPosition = 0, ageGroupPosition = 0, programmeTypePosition = 0;
+    private FirebaseAnalytics mFirebaseAnalytics;
 
     @Override
     protected void attachBaseContext(Context base) {
@@ -91,8 +93,8 @@ public class EducationFilterActivity extends AppCompatActivity {
         setSupportActionBar(toolbar);
         toolbar_title.setText(getResources().getString(R.string.filter));
 
+        mFirebaseAnalytics = FirebaseAnalytics.getInstance(this);
         sharedFilterPreferences = getSharedPreferences(FILTERPREFS, Context.MODE_PRIVATE);
-
         sharedFilterPreferences = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
         institutionPosition = sharedFilterPreferences.getInt(INSTITUTEPREFS, 0);
         ageGroupPosition = sharedFilterPreferences.getInt(AGEGROUPPREFS, 0);
@@ -356,5 +358,11 @@ public class EducationFilterActivity extends AppCompatActivity {
         // attaching data adapter to spinner
         programmeTypeText.setAdapter(programmeDataAdapter);
         programmeTypeText.setSelection(programmeTypePosition);
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        mFirebaseAnalytics.setCurrentScreen(this, getString(R.string.education_filter_page), null);
     }
 }

@@ -28,6 +28,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.firebase.analytics.FirebaseAnalytics;
 import com.qatarmuseums.qatarmuseumsapp.Config;
 import com.qatarmuseums.qatarmuseumsapp.LocaleManager;
 import com.qatarmuseums.qatarmuseumsapp.R;
@@ -65,6 +66,7 @@ public class SettingsActivity extends AppCompatActivity implements View.OnClickL
     @BindView(R.id.send_logs_btn)
     View sendLogsButton;
     String language;
+    private FirebaseAnalytics mFirebaseAnalytics;
     private File shareFile;
 
     @SuppressLint("ClickableViewAccessibility")
@@ -74,6 +76,7 @@ public class SettingsActivity extends AppCompatActivity implements View.OnClickL
         setContentView(R.layout.activity_settings);
         ButterKnife.bind(this);
         setSupportActionBar(toolbar);
+        mFirebaseAnalytics = FirebaseAnalytics.getInstance(this);
         setClickListenerforButtons();
         languageChangeButton.setOnTouchListener((v, event) -> {
             if (language.equals(LocaleManager.LANGUAGE_ENGLISH))
@@ -357,5 +360,6 @@ public class SettingsActivity extends AppCompatActivity implements View.OnClickL
         } else {
             languageChangeButton.setChecked(true);
         }
+        mFirebaseAnalytics.setCurrentScreen(this, getString(R.string.settings_page), null);
     }
 }

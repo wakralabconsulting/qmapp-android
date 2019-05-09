@@ -19,6 +19,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.bumptech.glide.request.RequestOptions;
+import com.google.firebase.analytics.FirebaseAnalytics;
 import com.qatarmuseums.qatarmuseumsapp.LocaleManager;
 import com.qatarmuseums.qatarmuseumsapp.QMDatabase;
 import com.qatarmuseums.qatarmuseumsapp.R;
@@ -73,6 +74,7 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
     private String uid;
     private List<Und> unds = new ArrayList<>();
     private QMDatabase qmDatabase;
+    private FirebaseAnalytics mFirebaseAnalytics;
 
     @Override
     protected void attachBaseContext(Context base) {
@@ -99,6 +101,7 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
         progressBar = findViewById(R.id.logout_progress);
         acceptDeclineButton = findViewById(R.id.accept_decline_button);
         util = new Util();
+        mFirebaseAnalytics = FirebaseAnalytics.getInstance(this);
         zoomOutAnimation = AnimationUtils.loadAnimation(getApplicationContext(),
                 R.anim.zoom_out);
         iconZoomOutAnimation = AnimationUtils.loadAnimation(getApplicationContext(),
@@ -365,5 +368,11 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
             return null;
         }
         return json;
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        mFirebaseAnalytics.setCurrentScreen(this, getString(R.string.profile_page), null);
     }
 }
