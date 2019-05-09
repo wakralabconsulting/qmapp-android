@@ -3,11 +3,6 @@ package com.qatarmuseums.qatarmuseumsapp.museumabout;
 import android.arch.persistence.room.Dao;
 import android.arch.persistence.room.Insert;
 import android.arch.persistence.room.Query;
-import android.arch.persistence.room.Update;
-import android.support.annotation.NonNull;
-
-import java.util.ArrayList;
-import java.util.List;
 
 @Dao
 public interface MuseumAboutTableDao {
@@ -36,7 +31,7 @@ public interface MuseumAboutTableDao {
     MuseumAboutTableArabic getMuseumAboutDataArabic(int idFromAPI);
 
     @Query("UPDATE museumabouttableenglish SET museum_name = :museumnameFromApi," +
-            "tourguide_available = :tourguideAvailableFromApi, short_description = :museumshortDescriptionFromApi," +
+            "tourGuide_available = :tourguideAvailableFromApi, short_description = :museumshortDescriptionFromApi," +
             "long_description = :museumLongDescriptionFromApi, " +
             "museum_image = :museumImageFromApi, museum_contact_number = :museumContactNumberFromApi, " +
             "museum_contact_email = :museumContactEmailFromApi, museum_lattitude = :museumLattitude," +
@@ -53,7 +48,7 @@ public interface MuseumAboutTableDao {
                                       String museumSubtitleFromApi, String museumOpeningTimeFromApi, long idFromApi);
 
     @Query("UPDATE museumabouttablearabic SET museum_name = :museumnameFromApi," +
-            "tourguide_available = :tourguideAvailableFromApi,short_description = :museumShortDescriptionFromApi,long_description = :museumLongDescriptionFromApi, " +
+            "tourGuide_available = :tourguideAvailableFromApi,short_description = :museumShortDescriptionFromApi,long_description = :museumLongDescriptionFromApi, " +
             "museum_image = :museumImageFromApi,museum_contact_number = :museumContactNumberFromApi, " +
             "museum_contact_email = :museumContactEmailFromApi,museum_lattitude = :museumLattitude," +
             "museum_longitude = :museumLongitude," +

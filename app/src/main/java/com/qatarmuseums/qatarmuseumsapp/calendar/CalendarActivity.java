@@ -1,7 +1,6 @@
 package com.qatarmuseums.qatarmuseumsapp.calendar;
 
 import android.Manifest;
-import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -13,7 +12,6 @@ import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
-import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.animation.Animation;
@@ -79,22 +77,18 @@ public class CalendarActivity extends AppCompatActivity {
     APIInterface apiService;
     Calendar calendarInstance;
 
-    int REQUEST_PERMISSION_SETTING = 110;
-    private LayoutInflater layoutInflater;
-    private Dialog dialog;
-    private ImageView closeBtn;
-    private Button dialogActionButton;
-    private TextView dialogTitle, dialogContent;
     private String language;
     private QMDatabase qmDatabase;
-    CalendarEventsTableEnglish calendarEventsTableEnglish;
-    CalendarEventsTableArabic calendarEventsTableArabic;
+    CalendarEventsTable calendarEventsTable;
     private Util util;
     private Calendar today;
     String day;
     String monthNumber;
     String year;
     private SimpleDateFormat dayDateFormat, monthDateFormat, yearDateFormat;
+
+    public CalendarActivity() {
+    }
 
     @Override
     protected void attachBaseContext(Context base) {
@@ -191,7 +185,7 @@ public class CalendarActivity extends AppCompatActivity {
             }
         });
 
-        calendarEventList = new ArrayList<Events>();
+        calendarEventList = new ArrayList<>();
         calendarAdapter = new CalendarAdapter(CalendarActivity.this, calendarEventList);
         layoutManager = new LinearLayoutManager(getApplication());
         eventListView.setLayoutManager(layoutManager);
@@ -351,16 +345,12 @@ public class CalendarActivity extends AppCompatActivity {
                         activityReference.get().util.isNetworkAvailable(activityReference.get()))
                     new CheckEventRowExist(activityReference.get(), language, timeStamp).execute();
                 else {
-                    if (language.equals(LocaleManager.LANGUAGE_ENGLISH)) {
-                        new RetrieveEnglishTableData(activityReference.get(), timeStamp).execute();
-                    } else {
-                        new RetrieveArabicTableData(activityReference.get(), timeStamp).execute();
-                    }
+                    new RetrieveTableData(activityReference.get(), timeStamp).execute();
                 }
             } else if (activityReference.get().calendarEventList.size() > 0) {
                 Timber.i("Database table have no data");
-                new InsertDatabaseTask(activityReference.get(), activityReference.get().calendarEventsTableEnglish,
-                        activityReference.get().calendarEventsTableArabic, language, timeStamp).execute();
+                new InsertDatabaseTask(activityReference.get(), activityReference.get().calendarEventsTable,
+                        language, timeStamp).execute();
             } else {
                 Timber.i("Database table have no data");
                 activityReference.get().retryLayout.setVisibility(View.VISIBLE);
@@ -370,12 +360,9 @@ public class CalendarActivity extends AppCompatActivity {
 
         @Override
         protected Integer doInBackground(Void... voids) {
-            Timber.i("getNumberOf%sRows%s()", activityReference.get().toolbar_title.getText(), language.toUpperCase());
-            if (language.equals("en")) {
-                return activityReference.get().qmDatabase.getCalendarEventsDao().getNumberOfRowsEnglish();
-            } else {
-                return activityReference.get().qmDatabase.getCalendarEventsDao().getNumberOfRowsArabic();
-            }
+            Timber.i("getNumberOf%sRows%s()", activityReference.get().toolbar_title.getText(),
+                    language.toUpperCase());
+            return activityReference.get().qmDatabase.getCalendarEventsDao().getNumberOfRows(language);
         }
     }
 
@@ -394,30 +381,16 @@ public class CalendarActivity extends AppCompatActivity {
         protected Void doInBackground(Void... voids) {
             if (activityReference.get().calendarEventList.size() > 0) {
                 Timber.i("checkTableWithEventDateExist(%s) timestamp: %d", language.toUpperCase(), timeStamp);
-                if (language.equals(LocaleManager.LANGUAGE_ENGLISH)) {
-                    int n = activityReference.get().qmDatabase.getCalendarEventsDao().checkEnglishWithEventDateExist(
-                            timeStamp);
-                    if (n > 0) {
-                        Timber.i("Event is Exist for %d", timeStamp);
-                        new DeleteEventsTableRow(activityReference.get(), language,
-                                timeStamp).execute();
-                    } else {
-                        Timber.i("No Event for %d", timeStamp);
-                        new InsertDatabaseTask(activityReference.get(), activityReference.get().calendarEventsTableEnglish,
-                                activityReference.get().calendarEventsTableArabic, language, timeStamp).execute();
-                    }
+                int n = activityReference.get().qmDatabase.getCalendarEventsDao().checkEventDateExist(
+                        timeStamp, language);
+                if (n > 0) {
+                    Timber.i("Event is Exist for %d", timeStamp);
+                    new DeleteEventsTableRow(activityReference.get(), language,
+                            timeStamp).execute();
                 } else {
-                    int n = activityReference.get().qmDatabase.getCalendarEventsDao().checkArabicWithEventDateExist(
-                            timeStamp);
-                    if (n > 0) {
-                        Timber.i("Event is Exist for %d", timeStamp);
-                        new DeleteEventsTableRow(activityReference.get(), language,
-                                timeStamp).execute();
-                    } else {
-                        Timber.i("No Event for %d", timeStamp);
-                        new InsertDatabaseTask(activityReference.get(), activityReference.get().calendarEventsTableEnglish,
-                                activityReference.get().calendarEventsTableArabic, language, timeStamp).execute();
-                    }
+                    Timber.i("No Event for %d", timeStamp);
+                    new InsertDatabaseTask(activityReference.get(), activityReference.get().calendarEventsTable,
+                            language, timeStamp).execute();
                 }
             }
             return null;
@@ -428,16 +401,14 @@ public class CalendarActivity extends AppCompatActivity {
 
     public static class InsertDatabaseTask extends AsyncTask<Void, Void, Boolean> {
         private WeakReference<CalendarActivity> activityReference;
-        private CalendarEventsTableEnglish calendarEventsTableEnglish;
-        private CalendarEventsTableArabic calendarEventsTableArabic;
+        private CalendarEventsTable calendarEventsTable;
         String language;
         long timestamp;
 
-        InsertDatabaseTask(CalendarActivity context, CalendarEventsTableEnglish calendarEventsTableEnglish,
-                           CalendarEventsTableArabic calendarEventsTableArabic, String lan, long time) {
+        InsertDatabaseTask(CalendarActivity context, CalendarEventsTable calendarEventsTable,
+                           String lan, long time) {
             activityReference = new WeakReference<>(context);
-            this.calendarEventsTableEnglish = calendarEventsTableEnglish;
-            this.calendarEventsTableArabic = calendarEventsTableArabic;
+            this.calendarEventsTable = calendarEventsTable;
             language = lan;
             timestamp = time;
         }
@@ -447,76 +418,40 @@ public class CalendarActivity extends AppCompatActivity {
             if (activityReference.get().calendarEventList != null) {
                 Timber.i("insert event on table(%s) with size: %d", language.toUpperCase(),
                         activityReference.get().calendarEventList.size());
-                if (language.equals(LocaleManager.LANGUAGE_ENGLISH)) {
-                    for (int i = 0; i < activityReference.get().calendarEventList.size(); i++) {
-                        Timber.i("insertEnglishTable with id: %s",
-                                activityReference.get().calendarEventList.get(i).getEid());
-                        ArrayList<String> fieldValue = new ArrayList<String>();
-                        fieldValue = activityReference.get().calendarEventList.get(i).getField();
-                        ArrayList<String> startDate = new ArrayList<String>();
-                        startDate = activityReference.get().calendarEventList.get(i).getStartTime();
-                        ArrayList<String> endDate = new ArrayList<String>();
-                        endDate = activityReference.get().calendarEventList.get(i).getEndTime();
-                        Convertor converters = new Convertor();
-                        calendarEventsTableEnglish = new CalendarEventsTableEnglish(
-                                activityReference.get().calendarEventList.get(i).getEid(),
-                                activityReference.get().calendarEventList.get(i).getTitle(),
-                                activityReference.get().calendarEventList.get(i).getShortDescription(),
-                                activityReference.get().calendarEventList.get(i).getLongDescription(),
-                                activityReference.get().calendarEventList.get(i).getInstitution(),
-                                activityReference.get().calendarEventList.get(i).getProgramType(),
-                                activityReference.get().calendarEventList.get(i).getCategory(),
-                                activityReference.get().calendarEventList.get(i).getLocation(),
-                                String.valueOf(timestamp),
-                                activityReference.get().util.html2string(startDate.get(0)),
-                                activityReference.get().util.html2string(endDate.get(0)),
-                                activityReference.get().calendarEventList.get(i).getRegistration(),
-                                activityReference.get().calendarEventList.get(i).getFilter(),
-                                activityReference.get().calendarEventList.get(i).getMaxGroupSize(),
-                                activityReference.get().util.html2string(fieldValue.get(0)),
-                                converters.fromArrayList(activityReference.get().calendarEventList.get(i).getAgeGroup()),
-                                converters.fromArrayList(activityReference.get().calendarEventList.get(i).getAssociatedTopics()),
-                                activityReference.get().calendarEventList.get(i).getMuseumDepartment()
-                        );
-                        activityReference.get().qmDatabase.getCalendarEventsDao().
-                                insertEventsTableEnglish(calendarEventsTableEnglish);
+                for (int i = 0; i < activityReference.get().calendarEventList.size(); i++) {
+                    Timber.i("insertTable with id: %s",
+                            activityReference.get().calendarEventList.get(i).getEid());
+                    ArrayList<String> fieldValue = new ArrayList<String>();
+                    fieldValue = activityReference.get().calendarEventList.get(i).getField();
+                    ArrayList<String> startDate = new ArrayList<String>();
+                    startDate = activityReference.get().calendarEventList.get(i).getStartTime();
+                    ArrayList<String> endDate = new ArrayList<String>();
+                    endDate = activityReference.get().calendarEventList.get(i).getEndTime();
+                    Convertor converters = new Convertor();
+                    calendarEventsTable = new CalendarEventsTable(
+                            activityReference.get().calendarEventList.get(i).getEid(),
+                            activityReference.get().calendarEventList.get(i).getTitle(),
+                            activityReference.get().calendarEventList.get(i).getShortDescription(),
+                            activityReference.get().calendarEventList.get(i).getLongDescription(),
+                            activityReference.get().calendarEventList.get(i).getInstitution(),
+                            activityReference.get().calendarEventList.get(i).getProgramType(),
+                            activityReference.get().calendarEventList.get(i).getCategory(),
+                            activityReference.get().calendarEventList.get(i).getLocation(),
+                            String.valueOf(timestamp),
+                            activityReference.get().util.html2string(startDate.get(0)),
+                            activityReference.get().util.html2string(endDate.get(0)),
+                            activityReference.get().calendarEventList.get(i).getRegistration(),
+                            activityReference.get().calendarEventList.get(i).getFilter(),
+                            activityReference.get().calendarEventList.get(i).getMaxGroupSize(),
+                            activityReference.get().util.html2string(fieldValue.get(0)),
+                            converters.fromArrayList(activityReference.get().calendarEventList.get(i).getAgeGroup()),
+                            converters.fromArrayList(activityReference.get().calendarEventList.get(i).getAssociatedTopics()),
+                            activityReference.get().calendarEventList.get(i).getMuseumDepartment(),
+                            language
+                    );
+                    activityReference.get().qmDatabase.getCalendarEventsDao().
+                            insertEventsTable(calendarEventsTable);
 
-                    }
-                } else {
-                    for (int i = 0; i < activityReference.get().calendarEventList.size(); i++) {
-                        Timber.i("insertArabicTable with id: %s",
-                                activityReference.get().calendarEventList.get(i).getEid());
-                        ArrayList<String> fieldValue = new ArrayList<String>();
-                        fieldValue = activityReference.get().calendarEventList.get(i).getField();
-                        ArrayList<String> startDate = new ArrayList<String>();
-                        startDate = activityReference.get().calendarEventList.get(i).getStartTime();
-                        ArrayList<String> endDate = new ArrayList<String>();
-                        endDate = activityReference.get().calendarEventList.get(i).getEndTime();
-                        Convertor converters = new Convertor();
-                        calendarEventsTableArabic = new CalendarEventsTableArabic(
-                                activityReference.get().calendarEventList.get(i).getEid(),
-                                activityReference.get().calendarEventList.get(i).getTitle(),
-                                activityReference.get().calendarEventList.get(i).getShortDescription(),
-                                activityReference.get().calendarEventList.get(i).getLongDescription(),
-                                activityReference.get().calendarEventList.get(i).getInstitution(),
-                                activityReference.get().calendarEventList.get(i).getProgramType(),
-                                activityReference.get().calendarEventList.get(i).getCategory(),
-                                activityReference.get().calendarEventList.get(i).getLocation(),
-                                String.valueOf(timestamp),
-                                activityReference.get().util.html2string(startDate.get(0)),
-                                activityReference.get().util.html2string(endDate.get(0)),
-                                activityReference.get().calendarEventList.get(i).getRegistration(),
-                                activityReference.get().calendarEventList.get(i).getFilter(),
-                                activityReference.get().calendarEventList.get(i).getMaxGroupSize(),
-                                activityReference.get().util.html2string(fieldValue.get(0)),
-                                converters.fromArrayList(activityReference.get().calendarEventList.get(i).getAgeGroup()),
-                                converters.fromArrayList(activityReference.get().calendarEventList.get(i).getAssociatedTopics()),
-                                activityReference.get().calendarEventList.get(i).getMuseumDepartment()
-                        );
-                        activityReference.get().qmDatabase.getCalendarEventsDao().
-                                insertEventsTableArabic(calendarEventsTableArabic);
-
-                    }
                 }
             }
             return true;
@@ -538,77 +473,69 @@ public class CalendarActivity extends AppCompatActivity {
         @Override
         protected Void doInBackground(Void... voids) {
             Timber.i("DeleteEventsTableRow(%s) with timestamp: %d before insertion", language, timestamp);
-            if (language.equals(LocaleManager.LANGUAGE_ENGLISH)) {
-                activityReference.get().qmDatabase.getCalendarEventsDao().deleteEnglishEventsWithDate(
-                        timestamp
-                );
-
-            } else {
-                activityReference.get().qmDatabase.getCalendarEventsDao().deleteArabicEventsWithDate(
-                        timestamp
-                );
-            }
-
+            activityReference.get().qmDatabase.getCalendarEventsDao()
+                    .deleteEventsWithDate(timestamp, language);
             return null;
         }
 
         @Override
         protected void onPostExecute(Void aVoid) {
-            new InsertDatabaseTask(activityReference.get(), activityReference.get().calendarEventsTableEnglish,
-                    activityReference.get().calendarEventsTableArabic, language, timestamp).execute();
+            new InsertDatabaseTask(activityReference.get(), activityReference.get().calendarEventsTable,
+                    language, timestamp).execute();
 
         }
     }
 
-    public static class RetrieveEnglishTableData extends AsyncTask<Void, Void, List<CalendarEventsTableEnglish>> {
+    public static class RetrieveTableData extends AsyncTask<Void, Void, List<CalendarEventsTable>> {
         private WeakReference<CalendarActivity> activityReference;
         long eventDate;
 
-        RetrieveEnglishTableData(CalendarActivity context, long eventDate) {
+        RetrieveTableData(CalendarActivity context, long eventDate) {
             activityReference = new WeakReference<>(context);
             this.eventDate = eventDate;
         }
 
         @Override
-        protected List<CalendarEventsTableEnglish> doInBackground(Void... voids) {
-            Timber.i("getEventsWithDateEnglish(%d)", eventDate);
-            return activityReference.get().qmDatabase.getCalendarEventsDao().getEventsWithDateEnglish(eventDate);
+        protected List<CalendarEventsTable> doInBackground(Void... voids) {
+            Timber.i("getEventsWithDate(%d)", eventDate);
+            return activityReference.get().qmDatabase.getCalendarEventsDao()
+                    .getEventsWithDate(eventDate, activityReference.get().language);
 
         }
 
         @Override
-        protected void onPostExecute(List<CalendarEventsTableEnglish> eventsTableEnglishList) {
+        protected void onPostExecute(List<CalendarEventsTable> eventsTableList) {
             activityReference.get().calendarEventList.clear();
             ArrayList<String> fieldValue = new ArrayList<String>();
             ArrayList<String> startDate = new ArrayList<String>();
             ArrayList<String> endDate = new ArrayList<String>();
             Convertor converters = new Convertor();
-            if (eventsTableEnglishList.size() > 0) {
-                Timber.i("CalendarEventsTableEnglish with size: %d", eventsTableEnglishList.size());
-                for (int i = 0; i < eventsTableEnglishList.size(); i++) {
-                    Timber.i("Set calendar events from DB with id: %s", eventsTableEnglishList.get(i).getEvent_id());
-                    startDate.add(0, eventsTableEnglishList.get(i).getEvent_start_time());
-                    endDate.add(0, eventsTableEnglishList.get(i).getEvent_end_time());
-                    fieldValue.add(0, eventsTableEnglishList.get(i).getField());
+            if (eventsTableList.size() > 0) {
+                Timber.i("CalendarEventsTable with size: %d", eventsTableList.size());
+                for (int i = 0; i < eventsTableList.size(); i++) {
+                    Timber.i("Set calendar events from DB with id: %s", eventsTableList.get(i).getEvent_id());
+                    startDate.add(0, eventsTableList.get(i).getEvent_start_time());
+                    endDate.add(0, eventsTableList.get(i).getEvent_end_time());
+                    fieldValue.add(0, eventsTableList.get(i).getField());
                     Events calendarEvents = new Events(
-                            eventsTableEnglishList.get(i).getEvent_id(),
-                            eventsTableEnglishList.get(i).getFilter(),
-                            eventsTableEnglishList.get(i).getEvent_title(),
-                            eventsTableEnglishList.get(i).getEvent_short_description(),
-                            eventsTableEnglishList.get(i).getEvent_long_description(),
-                            eventsTableEnglishList.get(i).getLocation(),
-                            eventsTableEnglishList.get(i).getEvent_institution(),
+                            eventsTableList.get(i).getEvent_id(),
+                            eventsTableList.get(i).getFilter(),
+                            eventsTableList.get(i).getEvent_title(),
+                            eventsTableList.get(i).getEvent_short_description(),
+                            eventsTableList.get(i).getEvent_long_description(),
+                            eventsTableList.get(i).getLocation(),
+                            eventsTableList.get(i).getEvent_institution(),
                             startDate,
                             endDate,
-                            eventsTableEnglishList.get(i).getMax_group_size(),
-                            eventsTableEnglishList.get(i).getEvent_program_type(),
-                            eventsTableEnglishList.get(i).getCategory(),
-                            eventsTableEnglishList.get(i).getEvent_registration(),
-                            eventsTableEnglishList.get(i).getEvent_date(),
+                            eventsTableList.get(i).getMax_group_size(),
+                            eventsTableList.get(i).getEvent_program_type(),
+                            eventsTableList.get(i).getCategory(),
+                            eventsTableList.get(i).getEvent_registration(),
+                            eventsTableList.get(i).getEvent_date(),
                             fieldValue,
-                            converters.fromString(eventsTableEnglishList.get(i).getAge_group()),
-                            converters.fromString(eventsTableEnglishList.get(i).getAssociated_topics()),
-                            eventsTableEnglishList.get(i).getMuseum()
+                            converters.fromString(eventsTableList.get(i).getAge_group()),
+                            converters.fromString(eventsTableList.get(i).getAssociated_topics()),
+                            eventsTableList.get(i).getMuseum()
                     );
                     activityReference.get().calendarEventList.add(i, calendarEvents);
                 }
@@ -616,74 +543,10 @@ public class CalendarActivity extends AppCompatActivity {
                 activityReference.get().eventListView.setVisibility(View.VISIBLE);
                 activityReference.get().retryLayout.setVisibility(View.GONE);
             } else {
-                Timber.i("CalendarEventsTableEnglish have no data");
+                Timber.i("CalendarEventsTable have no data");
                 activityReference.get().retryLayout.setVisibility(View.VISIBLE);
             }
             activityReference.get().progress.setVisibility(View.GONE);
         }
     }
-
-    public static class RetrieveArabicTableData extends AsyncTask<Void, Void,
-            List<CalendarEventsTableArabic>> {
-        private WeakReference<CalendarActivity> activityReference;
-        long eventDate;
-
-        RetrieveArabicTableData(CalendarActivity context, long eventDate) {
-            activityReference = new WeakReference<>(context);
-            this.eventDate = eventDate;
-        }
-
-        @Override
-        protected List<CalendarEventsTableArabic> doInBackground(Void... voids) {
-            return activityReference.get().qmDatabase.getCalendarEventsDao().getEventsWithDateArabic(eventDate);
-
-        }
-
-        @Override
-        protected void onPostExecute(List<CalendarEventsTableArabic> eventsTableArabicList) {
-            activityReference.get().calendarEventList.clear();
-            ArrayList<String> fieldValue = new ArrayList<String>();
-            ArrayList<String> startDate = new ArrayList<String>();
-            ArrayList<String> endDate = new ArrayList<String>();
-            Convertor converters = new Convertor();
-            if (eventsTableArabicList.size() > 0) {
-                Timber.i("eventsTableArabicList with size: %d", eventsTableArabicList.size());
-                for (int i = 0; i < eventsTableArabicList.size(); i++) {
-                    Timber.i("Set calendar events from DB with id: %s", eventsTableArabicList.get(i).getEvent_id());
-                    startDate.add(0, eventsTableArabicList.get(i).getEvent_start_time());
-                    endDate.add(0, eventsTableArabicList.get(i).getEvent_end_time());
-                    fieldValue.add(0, eventsTableArabicList.get(i).getField());
-                    Events events = new Events(
-                            eventsTableArabicList.get(i).getEvent_id(),
-                            eventsTableArabicList.get(i).getFilter(),
-                            eventsTableArabicList.get(i).getEvent_title(),
-                            eventsTableArabicList.get(i).getEvent_short_description(),
-                            eventsTableArabicList.get(i).getEvent_long_description(),
-                            eventsTableArabicList.get(i).getLocation(),
-                            eventsTableArabicList.get(i).getEvent_institution(),
-                            startDate,
-                            endDate,
-                            eventsTableArabicList.get(i).getMax_group_size(),
-                            eventsTableArabicList.get(i).getEvent_program_type(),
-                            eventsTableArabicList.get(i).getCategory(),
-                            eventsTableArabicList.get(i).getEvent_registration(),
-                            eventsTableArabicList.get(i).getEvent_date(),
-                            fieldValue,
-                            converters.fromString(eventsTableArabicList.get(i).getAge_group()),
-                            converters.fromString(eventsTableArabicList.get(i).getAssociated_topics()),
-                            eventsTableArabicList.get(i).getMuseum()
-                    );
-                    activityReference.get().calendarEventList.add(i, events);
-                }
-                activityReference.get().calendarAdapter.notifyDataSetChanged();
-                activityReference.get().eventListView.setVisibility(View.VISIBLE);
-                activityReference.get().retryLayout.setVisibility(View.GONE);
-            } else {
-                Timber.i("CalendarEventsTableArabic have no data");
-                activityReference.get().retryLayout.setVisibility(View.VISIBLE);
-            }
-            activityReference.get().progress.setVisibility(View.GONE);
-        }
-    }
-
 }

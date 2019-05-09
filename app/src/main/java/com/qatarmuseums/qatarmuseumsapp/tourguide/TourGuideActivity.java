@@ -28,8 +28,7 @@ import com.qatarmuseums.qatarmuseumsapp.apicall.APIClient;
 import com.qatarmuseums.qatarmuseumsapp.apicall.APIInterface;
 import com.qatarmuseums.qatarmuseumsapp.commonlistpage.RecyclerTouchListener;
 import com.qatarmuseums.qatarmuseumsapp.home.HomeList;
-import com.qatarmuseums.qatarmuseumsapp.home.HomePageTableArabic;
-import com.qatarmuseums.qatarmuseumsapp.home.HomePageTableEnglish;
+import com.qatarmuseums.qatarmuseumsapp.home.HomePageTable;
 import com.qatarmuseums.qatarmuseumsapp.tourguidedetails.TourGuideDetailsActivity;
 import com.qatarmuseums.qatarmuseumsapp.utils.Util;
 
@@ -60,8 +59,7 @@ public class TourGuideActivity extends AppCompatActivity {
     private NestedScrollView scrollviewContainer;
     private String appLanguage;
     private QMDatabase qmDatabase;
-    HomePageTableEnglish homePageTableEnglish;
-    HomePageTableArabic homePageTableArabic;
+    HomePageTable homePageTable;
     int homePageTableRowCount;
 
     @Override
@@ -226,10 +224,7 @@ public class TourGuideActivity extends AppCompatActivity {
         @Override
         protected Integer doInBackground(Void... voids) {
             Timber.i("getNumberOfRows%s()", language.toUpperCase());
-            if (language.equals(LocaleManager.LANGUAGE_ENGLISH))
-                return activityReference.get().qmDatabase.getHomePageTableDao().getNumberOfRowsEnglish();
-            else
-                return activityReference.get().qmDatabase.getHomePageTableDao().getNumberOfRowsArabic();
+            return activityReference.get().qmDatabase.getHomePageTableDao().getNumberOfRows(language);
 
         }
 
@@ -243,8 +238,7 @@ public class TourGuideActivity extends AppCompatActivity {
             } else {
                 Timber.i("Database Table have no data");
                 new InsertDatabaseTask(activityReference.get(),
-                        activityReference.get().homePageTableEnglish,
-                        activityReference.get().homePageTableArabic, language).execute();
+                        activityReference.get().homePageTable, language).execute();
             }
 
         }
@@ -253,8 +247,7 @@ public class TourGuideActivity extends AppCompatActivity {
 
     public static class CheckDBRowExist extends AsyncTask<Void, Void, Void> {
         private WeakReference<TourGuideActivity> activityReference;
-        private HomePageTableEnglish homePageTableEnglish;
-        private HomePageTableArabic homePageTableArabic;
+        private HomePageTable homePageTable;
         String language;
 
         CheckDBRowExist(TourGuideActivity context, String apiLanguage) {
@@ -265,51 +258,30 @@ public class TourGuideActivity extends AppCompatActivity {
         @Override
         protected Void doInBackground(Void... voids) {
             if (activityReference.get().tourGuideList.size() > 0) {
-                if (language.equals(LocaleManager.LANGUAGE_ENGLISH)) {
-                    for (int i = 0; i < activityReference.get().tourGuideList.size(); i++) {
-                        int n = activityReference.get().qmDatabase.getHomePageTableDao().checkIdExistEnglish(
-                                Integer.parseInt(activityReference.get().tourGuideList.get(i).getId()));
-                        if (n > 0) {
-                            Timber.i("Row exist in database(%s) for id: %s", language.toUpperCase(),
-                                    activityReference.get().tourGuideList.get(i).getId());
-                            new UpdateHomePageTable(activityReference.get(), language, i).execute();
+                for (int i = 0; i < activityReference.get().tourGuideList.size(); i++) {
+                    int n = activityReference.get().qmDatabase.getHomePageTableDao().checkIdExist(
+                            Integer.parseInt(activityReference.get().tourGuideList.get(i).getId()),
+                            language);
+                    if (n > 0) {
+                        Timber.i("Row exist in database(%s) for id: %s", language.toUpperCase(),
+                                activityReference.get().tourGuideList.get(i).getId());
+                        new UpdateHomePageTable(activityReference.get(), language, i).execute();
 
-                        } else {
-                            Timber.i("Inserting data to table(%s) with id: %s",
-                                    language.toUpperCase(), activityReference.get().tourGuideList.get(i).getId());
-                            homePageTableEnglish = new HomePageTableEnglish(
-                                    Long.parseLong(activityReference.get().tourGuideList.get(i).getId()),
-                                    activityReference.get().tourGuideList.get(i).getName(),
-                                    activityReference.get().tourGuideList.get(i).getTourGuideAvailable(),
-                                    activityReference.get().tourGuideList.get(i).getImage(),
-                                    activityReference.get().tourGuideList.get(i).getSortId());
-                            activityReference.get().qmDatabase.getHomePageTableDao().insertEnglishTable(homePageTableEnglish);
+                    } else {
+                        Timber.i("Inserting data to table(%s) with id: %s",
+                                language.toUpperCase(), activityReference.get().tourGuideList.get(i).getId());
+                        homePageTable = new HomePageTable(
+                                Long.parseLong(activityReference.get().tourGuideList.get(i).getId()),
+                                activityReference.get().tourGuideList.get(i).getName(),
+                                activityReference.get().tourGuideList.get(i).getTourGuideAvailable(),
+                                activityReference.get().tourGuideList.get(i).getImage(),
+                                activityReference.get().tourGuideList.get(i).getSortId(),
+                                language);
+                        activityReference.get().qmDatabase.getHomePageTableDao().insertTable(homePageTable);
 
-                        }
-                    }
-                } else {
-                    for (int i = 0; i < activityReference.get().tourGuideList.size(); i++) {
-                        int n = activityReference.get().qmDatabase.getHomePageTableDao().checkIdExistArabic(
-                                Integer.parseInt(activityReference.get().tourGuideList.get(i).getId()));
-                        if (n > 0) {
-                            Timber.i("Row exist in database(%s) for id: %s", language.toUpperCase(),
-                                    activityReference.get().tourGuideList.get(i).getId());
-                            new UpdateHomePageTable(activityReference.get(), language, i).execute();
-
-                        } else {
-                            Timber.i("Inserting data to table(%s) with id: %s",
-                                    language.toUpperCase(), activityReference.get().tourGuideList.get(i).getId());
-                            homePageTableArabic = new HomePageTableArabic(
-                                    Long.parseLong(activityReference.get().tourGuideList.get(i).getId()),
-                                    activityReference.get().tourGuideList.get(i).getName(),
-                                    activityReference.get().tourGuideList.get(i).getTourGuideAvailable(),
-                                    activityReference.get().tourGuideList.get(i).getImage(),
-                                    activityReference.get().tourGuideList.get(i).getSortId());
-                            activityReference.get().qmDatabase.getHomePageTableDao().insertArabicTable(homePageTableArabic);
-
-                        }
                     }
                 }
+
             }
             return null;
         }
@@ -319,45 +291,29 @@ public class TourGuideActivity extends AppCompatActivity {
 
     public static class InsertDatabaseTask extends AsyncTask<Void, Void, Boolean> {
         private WeakReference<TourGuideActivity> activityReference;
-        private HomePageTableEnglish homePageTableEnglish;
-        private HomePageTableArabic homePageTableArabic;
+        private HomePageTable homePageTable;
         String language;
 
-        InsertDatabaseTask(TourGuideActivity context, HomePageTableEnglish homePageTableEnglish,
-                           HomePageTableArabic homePageTableArabic, String lan) {
+        InsertDatabaseTask(TourGuideActivity context, HomePageTable homePageTable, String lan) {
             activityReference = new WeakReference<>(context);
-            this.homePageTableEnglish = homePageTableEnglish;
-            this.homePageTableArabic = homePageTableArabic;
+            this.homePageTable = homePageTable;
             language = lan;
         }
 
         @Override
         protected Boolean doInBackground(Void... voids) {
             if (activityReference.get().tourGuideList != null) {
-                if (language.equals(LocaleManager.LANGUAGE_ENGLISH)) {
-                    for (int i = 0; i < activityReference.get().tourGuideList.size(); i++) {
-                        Timber.i("Inserting data to table(%s) with id: %s",
-                                language.toUpperCase(), activityReference.get().tourGuideList.get(i).getId());
-                        homePageTableEnglish = new HomePageTableEnglish(
-                                Long.parseLong(activityReference.get().tourGuideList.get(i).getId()),
-                                activityReference.get().tourGuideList.get(i).getName(),
-                                activityReference.get().tourGuideList.get(i).getTourGuideAvailable(),
-                                activityReference.get().tourGuideList.get(i).getImage(),
-                                activityReference.get().tourGuideList.get(i).getSortId());
-                        activityReference.get().qmDatabase.getHomePageTableDao().insertEnglishTable(homePageTableEnglish);
-                    }
-                } else {
-                    for (int i = 0; i < activityReference.get().tourGuideList.size(); i++) {
-                        Timber.i("Inserting data to table(%s) with id: %s",
-                                language.toUpperCase(), activityReference.get().tourGuideList.get(i).getId());
-                        homePageTableArabic = new HomePageTableArabic(Long.parseLong(activityReference.get().tourGuideList.get(i).getId()),
-                                activityReference.get().tourGuideList.get(i).getName(),
-                                activityReference.get().tourGuideList.get(i).getTourGuideAvailable(),
-                                activityReference.get().tourGuideList.get(i).getImage(),
-                                activityReference.get().tourGuideList.get(i).getSortId());
-                        activityReference.get().qmDatabase.getHomePageTableDao().insertArabicTable(homePageTableArabic);
-
-                    }
+                for (int i = 0; i < activityReference.get().tourGuideList.size(); i++) {
+                    Timber.i("Inserting data to table(%s) with id: %s",
+                            language.toUpperCase(), activityReference.get().tourGuideList.get(i).getId());
+                    homePageTable = new HomePageTable(
+                            Long.parseLong(activityReference.get().tourGuideList.get(i).getId()),
+                            activityReference.get().tourGuideList.get(i).getName(),
+                            activityReference.get().tourGuideList.get(i).getTourGuideAvailable(),
+                            activityReference.get().tourGuideList.get(i).getImage(),
+                            activityReference.get().tourGuideList.get(i).getSortId(),
+                            language);
+                    activityReference.get().qmDatabase.getHomePageTableDao().insertTable(homePageTable);
                 }
             }
             return true;
@@ -385,58 +341,48 @@ public class TourGuideActivity extends AppCompatActivity {
         protected Void doInBackground(Void... voids) {
             Timber.i("Updating data to table(%s) with id: %s",
                     language.toUpperCase(), activityReference.get().tourGuideList.get(position).getId());
-            if (language.equals(LocaleManager.LANGUAGE_ENGLISH)) {
-                activityReference.get().qmDatabase.getHomePageTableDao().updateHomePageEnglish(
-                        activityReference.get().tourGuideList.get(position).getName(),
-                        activityReference.get().tourGuideList.get(position).getTourGuideAvailable(),
-                        activityReference.get().tourGuideList.get(position).getImage(),
-                        activityReference.get().tourGuideList.get(position).getSortId(),
-                        activityReference.get().tourGuideList.get(position).getId()
-                );
-
-            } else {
-                activityReference.get().qmDatabase.getHomePageTableDao().updateHomePageArabic(
-                        activityReference.get().tourGuideList.get(position).getName(),
-                        activityReference.get().tourGuideList.get(position).getTourGuideAvailable(),
-                        activityReference.get().tourGuideList.get(position).getImage(),
-                        activityReference.get().tourGuideList.get(position).getSortId(),
-                        activityReference.get().tourGuideList.get(position).getId()
-                );
-            }
-
+            activityReference.get().qmDatabase.getHomePageTableDao().updateHomePageTable(
+                    activityReference.get().tourGuideList.get(position).getName(),
+                    activityReference.get().tourGuideList.get(position).getTourGuideAvailable(),
+                    activityReference.get().tourGuideList.get(position).getImage(),
+                    activityReference.get().tourGuideList.get(position).getSortId(),
+                    activityReference.get().tourGuideList.get(position).getId(),
+                    language
+            );
             return null;
         }
 
     }
 
-    public static class RetrieveEnglishTableData extends AsyncTask<Void, Void, List<HomePageTableEnglish>> {
+    public static class RetrieveTableData extends AsyncTask<Void, Void, List<HomePageTable>> {
         private WeakReference<TourGuideActivity> activityReference;
 
-        RetrieveEnglishTableData(TourGuideActivity context) {
+        RetrieveTableData(TourGuideActivity context) {
             activityReference = new WeakReference<>(context);
         }
 
         @Override
-        protected List<HomePageTableEnglish> doInBackground(Void... voids) {
-            Timber.i("getAllDataFromHomePageEnglishTable()");
-            return activityReference.get().qmDatabase.getHomePageTableDao().getAllDataFromHomePageEnglishTable();
+        protected List<HomePageTable> doInBackground(Void... voids) {
+            Timber.i("getAllDataFromHomePageTable()");
+            return activityReference.get().qmDatabase.getHomePageTableDao()
+                    .getAllDataFromHomePageTable(activityReference.get().appLanguage);
 
         }
 
         @Override
-        protected void onPostExecute(List<HomePageTableEnglish> homePageTableEnglishes) {
-            if (homePageTableEnglishes.size() > 0) {
+        protected void onPostExecute(List<HomePageTable> homePageTables) {
+            if (homePageTables.size() > 0) {
                 Timber.i("Set list from database with size: %d",
-                        homePageTableEnglishes.size());
+                        homePageTables.size());
                 activityReference.get().tourGuideList.clear();
-                for (int i = 0; i < homePageTableEnglishes.size(); i++) {
+                for (int i = 0; i < homePageTables.size(); i++) {
                     Timber.i("Setting list from database with id: %s",
-                            homePageTableEnglishes.get(i).getQatarmuseum_id());
-                    HomeList exhibitionObject = new HomeList(homePageTableEnglishes.get(i).getName()
-                            , String.valueOf(homePageTableEnglishes.get(i).getQatarmuseum_id()),
-                            homePageTableEnglishes.get(i).getImage(),
-                            homePageTableEnglishes.get(i).getTourguide_available(),
-                            homePageTableEnglishes.get(i).getSortId());
+                            homePageTables.get(i).getQatarMuseum_id());
+                    HomeList exhibitionObject = new HomeList(homePageTables.get(i).getName()
+                            , String.valueOf(homePageTables.get(i).getQatarMuseum_id()),
+                            homePageTables.get(i).getImage(),
+                            homePageTables.get(i).getTourGuide_available(),
+                            homePageTables.get(i).getSortId());
                     activityReference.get().tourGuideList.add(i, exhibitionObject);
                 }
 
@@ -451,63 +397,12 @@ public class TourGuideActivity extends AppCompatActivity {
                 activityReference.get().retryLayout.setVisibility(View.VISIBLE);
             }
         }
-    }
-
-    public static class RetrieveArabicTableData extends AsyncTask<Void, Void,
-            List<HomePageTableArabic>> {
-        private WeakReference<TourGuideActivity> activityReference;
-
-        RetrieveArabicTableData(TourGuideActivity context) {
-            activityReference = new WeakReference<>(context);
-
-        }
-
-
-        @Override
-        protected List<HomePageTableArabic> doInBackground(Void... voids) {
-            Timber.i("getAllDataFromHomePageArabicTable()");
-            return activityReference.get().qmDatabase.getHomePageTableDao().getAllDataFromHomePageArabicTable();
-
-        }
-
-        @Override
-        protected void onPostExecute(List<HomePageTableArabic> homePageTableArabics) {
-            if (homePageTableArabics.size() > 0) {
-                Timber.i("Set list from database with size: %d",
-                        homePageTableArabics.size());
-                activityReference.get().tourGuideList.clear();
-                for (int i = 0; i < homePageTableArabics.size(); i++) {
-                    Timber.i("Setting list from database with id: %s",
-                            homePageTableArabics.get(i).getQatarmuseum_id());
-                    HomeList exhibitionObject = new HomeList(homePageTableArabics.get(i).getName()
-                            , String.valueOf(homePageTableArabics.get(i).getQatarmuseum_id()),
-                            homePageTableArabics.get(i).getImage(),
-                            homePageTableArabics.get(i).getTourguide_available(),
-                            homePageTableArabics.get(i).getSortId());
-                    activityReference.get().tourGuideList.add(i, exhibitionObject);
-                }
-
-                Collections.sort(activityReference.get().tourGuideList);
-                activityReference.get().mAdapter.notifyDataSetChanged();
-                activityReference.get().scrollviewContainer.setVisibility(View.VISIBLE);
-                activityReference.get().progressBar.setVisibility(View.GONE);
-            } else {
-                Timber.i("Have no data in database");
-                activityReference.get().progressBar.setVisibility(View.GONE);
-                activityReference.get().scrollviewContainer.setVisibility(View.GONE);
-                activityReference.get().retryLayout.setVisibility(View.VISIBLE);
-            }
-        }
-
     }
 
     public void getDataFromDataBase() {
         Timber.i("getDataFromDataBase()");
         progressBar.setVisibility(View.VISIBLE);
-        if (appLanguage.equals(LocaleManager.LANGUAGE_ENGLISH))
-            new RetrieveEnglishTableData(TourGuideActivity.this).execute();
-        else
-            new RetrieveArabicTableData(TourGuideActivity.this).execute();
+        new RetrieveTableData(TourGuideActivity.this).execute();
     }
 
 }

@@ -3,28 +3,28 @@ package com.qatarmuseums.qatarmuseumsapp.notification;
 import android.arch.persistence.room.ColumnInfo;
 import android.arch.persistence.room.Entity;
 import android.arch.persistence.room.PrimaryKey;
-import android.support.annotation.NonNull;
 
-@Entity(tableName = "notificationTableEnglish")
-public class NotificationTableEnglish {
+@Entity(tableName = "notificationTable")
+public class NotificationTable {
 
-    @NonNull
     @PrimaryKey(autoGenerate = true)
     private long number;
+    @ColumnInfo()
+    private String language;
     @ColumnInfo()
     private String title;
 
 
-    public NotificationTableEnglish(String title) {
+    public NotificationTable(String title, String language) {
         this.title = title;
+        this.language = language;
     }
 
-    @NonNull
     public long getNumber() {
         return number;
     }
 
-    public void setNumber(@NonNull long number) {
+    public void setNumber(long number) {
         this.number = number;
     }
 
@@ -34,5 +34,13 @@ public class NotificationTableEnglish {
 
     public void setTitle(String title) {
         this.title = title;
+    }
+
+    public String getLanguage() {
+        return language;
+    }
+
+    public void setLanguage(String language) {
+        this.language = language;
     }
 }
