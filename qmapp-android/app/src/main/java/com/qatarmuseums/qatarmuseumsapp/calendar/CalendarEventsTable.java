@@ -5,10 +5,11 @@ import android.arch.persistence.room.Entity;
 import android.arch.persistence.room.PrimaryKey;
 import android.support.annotation.NonNull;
 
+@Entity(tableName = "calendarEvents")
+public class CalendarEventsTable {
 
-@Entity(tableName = "calendareventstarabic")
-public class CalendarEventsTableArabic {
-    @NonNull
+    @ColumnInfo()
+    private String language;
     @PrimaryKey(autoGenerate = true)
     private long sl_number;
     @ColumnInfo()
@@ -48,13 +49,14 @@ public class CalendarEventsTableArabic {
     @ColumnInfo()
     private String museum;
 
-    public CalendarEventsTableArabic(@NonNull String event_id, String event_title,
-                                     String event_short_description, String event_long_description,
-                                     String event_institution, String event_program_type,
-                                     String category, String location, String event_date,
-                                     String event_start_time, String event_end_time, String event_registration,
-                                     String filter, String max_group_size, String field,
-                                     String age_group, String associated_topics, String museum) {
+
+    CalendarEventsTable(@NonNull String event_id, String event_title,
+                        String event_short_description, String event_long_description,
+                        String event_institution, String event_program_type,
+                        String category, String location, String event_date,
+                        String event_start_time, String event_end_time, String event_registration,
+                        String filter, String max_group_size, String field,
+                        String age_group, String associated_topics, String museum, String language) {
         this.event_id = event_id;
         this.event_title = event_title;
         this.event_short_description = event_short_description;
@@ -73,96 +75,23 @@ public class CalendarEventsTableArabic {
         this.age_group = age_group;
         this.associated_topics = associated_topics;
         this.museum = museum;
+        this.language = language;
     }
 
-    @NonNull
-    public long getSl_number() {
+    long getSl_number() {
         return sl_number;
     }
 
-    public void setSl_number(@NonNull long sl_number) {
+    void setSl_number(long sl_number) {
         this.sl_number = sl_number;
     }
 
-    @NonNull
     public String getEvent_id() {
         return event_id;
     }
 
-    public void setEvent_id(@NonNull String event_id) {
+    public void setEvent_id(String event_id) {
         this.event_id = event_id;
-    }
-
-    public String getEvent_title() {
-        return event_title;
-    }
-
-    public void setEvent_title(String event_title) {
-        this.event_title = event_title;
-    }
-
-    public String getEvent_short_description() {
-        return event_short_description;
-    }
-
-    public void setEvent_short_description(String event_short_description) {
-        this.event_short_description = event_short_description;
-    }
-
-    public String getEvent_long_description() {
-        return event_long_description;
-    }
-
-    public void setEvent_long_description(String event_long_description) {
-        this.event_long_description = event_long_description;
-    }
-
-    public String getEvent_date() {
-        return event_date;
-    }
-
-    public void setEvent_date(String event_date) {
-        this.event_date = event_date;
-    }
-
-    public String getEvent_institution() {
-        return event_institution;
-    }
-
-    public void setEvent_institution(String event_institution) {
-        this.event_institution = event_institution;
-    }
-
-    public String getEvent_program_type() {
-        return event_program_type;
-    }
-
-    public void setEvent_program_type(String event_program_type) {
-        this.event_program_type = event_program_type;
-    }
-
-    public String getEvent_start_time() {
-        return event_start_time;
-    }
-
-    public void setEvent_start_time(String event_start_time) {
-        this.event_start_time = event_start_time;
-    }
-
-    public String getEvent_end_time() {
-        return event_end_time;
-    }
-
-    public void setEvent_end_time(String event_end_time) {
-        this.event_end_time = event_end_time;
-    }
-
-    public String getEvent_registration() {
-        return event_registration;
-    }
-
-    public void setEvent_registration(String event_registration) {
-        this.event_registration = event_registration;
     }
 
     public String getFilter() {
@@ -173,6 +102,22 @@ public class CalendarEventsTableArabic {
         this.filter = filter;
     }
 
+    public String getEvent_title() {
+        return event_title;
+    }
+
+    public void setEvent_title(String event_title) {
+        this.event_title = event_title;
+    }
+
+    String getEvent_short_description() {
+        return event_short_description;
+    }
+
+    String getEvent_long_description() {
+        return event_long_description;
+    }
+
     public String getLocation() {
         return location;
     }
@@ -181,12 +126,36 @@ public class CalendarEventsTableArabic {
         this.location = location;
     }
 
-    public String getMax_group_size() {
-        return max_group_size;
+    public String getEvent_date() {
+        return event_date;
     }
 
-    public void setMax_group_size(String max_group_size) {
-        this.max_group_size = max_group_size;
+    public void setEvent_date(String event_date) {
+        this.event_date = event_date;
+    }
+
+    String getEvent_institution() {
+        return event_institution;
+    }
+
+    String getEvent_program_type() {
+        return event_program_type;
+    }
+
+    String getEvent_start_time() {
+        return event_start_time;
+    }
+
+    String getEvent_end_time() {
+        return event_end_time;
+    }
+
+    String getEvent_registration() {
+        return event_registration;
+    }
+
+    String getMax_group_size() {
+        return max_group_size;
     }
 
     public String getCategory() {
@@ -213,12 +182,8 @@ public class CalendarEventsTableArabic {
         this.age_group = age_group;
     }
 
-    public String getAssociated_topics() {
+    String getAssociated_topics() {
         return associated_topics;
-    }
-
-    public void setAssociated_topics(String associated_topics) {
-        this.associated_topics = associated_topics;
     }
 
     public String getMuseum() {
@@ -227,5 +192,9 @@ public class CalendarEventsTableArabic {
 
     public void setMuseum(String museum) {
         this.museum = museum;
+    }
+
+    public String getLanguage() {
+        return language;
     }
 }

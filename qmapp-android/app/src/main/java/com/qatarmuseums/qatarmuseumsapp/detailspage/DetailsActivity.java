@@ -56,14 +56,10 @@ import com.qatarmuseums.qatarmuseumsapp.QMDatabase;
 import com.qatarmuseums.qatarmuseumsapp.R;
 import com.qatarmuseums.qatarmuseumsapp.apicall.APIClient;
 import com.qatarmuseums.qatarmuseumsapp.apicall.APIInterface;
-import com.qatarmuseums.qatarmuseumsapp.commonpagedatabase.DiningTableArabic;
-import com.qatarmuseums.qatarmuseumsapp.commonpagedatabase.DiningTableEnglish;
-import com.qatarmuseums.qatarmuseumsapp.commonpagedatabase.ExhibitionListTableArabic;
-import com.qatarmuseums.qatarmuseumsapp.commonpagedatabase.ExhibitionListTableEnglish;
-import com.qatarmuseums.qatarmuseumsapp.commonpagedatabase.HeritageListTableArabic;
-import com.qatarmuseums.qatarmuseumsapp.commonpagedatabase.HeritageListTableEnglish;
-import com.qatarmuseums.qatarmuseumsapp.commonpagedatabase.PublicArtsTableArabic;
-import com.qatarmuseums.qatarmuseumsapp.commonpagedatabase.PublicArtsTableEnglish;
+import com.qatarmuseums.qatarmuseumsapp.commonpagedatabase.DiningTable;
+import com.qatarmuseums.qatarmuseumsapp.commonpagedatabase.ExhibitionListTable;
+import com.qatarmuseums.qatarmuseumsapp.commonpagedatabase.HeritageListTable;
+import com.qatarmuseums.qatarmuseumsapp.commonpagedatabase.PublicArtsTable;
 import com.qatarmuseums.qatarmuseumsapp.culturepass.AddCookiesInterceptor;
 import com.qatarmuseums.qatarmuseumsapp.culturepass.UserRegistrationDetailsTable;
 import com.qatarmuseums.qatarmuseumsapp.dining.DiningDetailModel;
@@ -900,25 +896,17 @@ public class DetailsActivity extends AppCompatActivity implements IPullZoom, OnM
                 getNMoQParkListDetailsFromDataBase(intent.getStringExtra("NID"));
         } else if (comingFrom.equals(getString(R.string.side_menu_dining_text))) {
             if (util.isNetworkAvailable(DetailsActivity.this))
-                getDiningDetailsFromAPI(id, language);
+                getDiningDetailsFromAPI(id);
             else
-                getDiningDetailsFromDatabase(id, language);
+                getDiningDetailsFromDatabase(id);
         }
     }
 
-    public void getDiningDetailsFromAPI(String id, int language) {
+    public void getDiningDetailsFromAPI(String id) {
         Timber.i("getDiningDetailsFromAPI(id: %s)", id);
         progressBar.setVisibility(View.VISIBLE);
         diningContent.setVisibility(View.INVISIBLE);
-        final String appLanguage;
-        if (language == 1) {
-            appLanguage = LocaleManager.LANGUAGE_ENGLISH;
-        } else {
-            appLanguage = LocaleManager.LANGUAGE_ARABIC;
-        }
-
-        APIInterface apiService =
-                APIClient.getClient().create(APIInterface.class);
+        APIInterface apiService = APIClient.getClient().create(APIInterface.class);
         Call<ArrayList<DiningDetailModel>> call = apiService.getDiningDetails(appLanguage, id);
         call.enqueue(new Callback<ArrayList<DiningDetailModel>>() {
             @Override
@@ -934,7 +922,7 @@ public class DetailsActivity extends AppCompatActivity implements IPullZoom, OnM
                         }
                         if (imageList.size() > 0) {
                             zoomView.setOnClickListener(view -> showCarouselView());
-                            showIndicator(language);
+                            showIndicator();
                         }
                         loadData(diningDetailModels.get(0).getDescription(),
                                 diningDetailModels.get(0).getOpeningTime(),
@@ -973,13 +961,9 @@ public class DetailsActivity extends AppCompatActivity implements IPullZoom, OnM
         }
     }
 
-    private void getDiningDetailsFromDatabase(String id, int appLanguage) {
+    private void getDiningDetailsFromDatabase(String id) {
         Timber.i("get%sDetailsFromDatabase(id: %s)", comingFrom, id);
-        if (appLanguage == 1) {
-            new RetrieveEnglishDiningData(DetailsActivity.this, appLanguage, id).execute();
-        } else {
-            new RetrieveArabicDiningData(DetailsActivity.this, appLanguage, id).execute();
-        }
+        new RetrieveDiningData(DetailsActivity.this, id).execute();
     }
 
     public void loadData(String longDescription, String openingTime,
@@ -1052,18 +1036,12 @@ public class DetailsActivity extends AppCompatActivity implements IPullZoom, OnM
         @Override
         protected Integer doInBackground(Void... voids) {
             Timber.i("getNumberOf%sRows%s()", activityReference.get().comingFrom, language.toUpperCase());
-            if (language.equals(LocaleManager.LANGUAGE_ENGLISH))
-                return activityReference.get().qmDatabase.getDiningTableDao().getNumberOfRowsEnglish();
-            else
-                return activityReference.get().qmDatabase.getDiningTableDao().getNumberOfRowsArabic();
-
+            return activityReference.get().qmDatabase.getDiningTableDao().getNumberOfRows(language);
         }
     }
 
     public static class CheckDiningDBRowExist extends AsyncTask<Void, Void, Void> {
         private WeakReference<DetailsActivity> activityReference;
-        private DiningTableEnglish diningTableEnglish;
-        private DiningTableArabic diningTableArabic;
         String language;
 
         CheckDiningDBRowExist(DetailsActivity context, String apiLanguage) {
@@ -1085,29 +1063,15 @@ public class DetailsActivity extends AppCompatActivity implements IPullZoom, OnM
         protected Void doInBackground(Void... voids) {
 
             if (activityReference.get().diningDetailModels.size() > 0) {
-                if (language.equals(LocaleManager.LANGUAGE_ENGLISH)) {
-                    for (int i = 0; i < activityReference.get().diningDetailModels.size(); i++) {
-                        int n = activityReference.get().qmDatabase.getDiningTableDao().checkEnglishIdExist(
-                                Integer.parseInt(activityReference.get().diningDetailModels.get(i).getId()));
-                        if (n > 0) {
-                            Timber.i("Row exist in database(%s) for id: %s", language.toUpperCase(),
-                                    activityReference.get().diningDetailModels.get(i).getId());
-                            new UpdateDiningTable(activityReference.get(), language, i).execute();
-                        }
-                    }
-                } else {
-                    for (int i = 0; i < activityReference.get().diningDetailModels.size(); i++) {
-                        int n = activityReference.get().qmDatabase.getDiningTableDao().checkArabicIdExist(
-                                Integer.parseInt(activityReference.get().diningDetailModels.get(i).getId()));
-                        if (n > 0) {
-                            Timber.i("Row exist in database(%s) for id: %s", language.toUpperCase(),
-                                    activityReference.get().diningDetailModels.get(i).getId());
-                            new UpdateDiningTable(activityReference.get(), language, i).execute();
-
-                        }
+                for (int i = 0; i < activityReference.get().diningDetailModels.size(); i++) {
+                    int n = activityReference.get().qmDatabase.getDiningTableDao()
+                            .checkIdExist(Integer.parseInt(activityReference.get().diningDetailModels.get(i).getId()), language);
+                    if (n > 0) {
+                        Timber.i("Row exist in database(%s) for id: %s", language.toUpperCase(),
+                                activityReference.get().diningDetailModels.get(i).getId());
+                        new UpdateDiningTable(activityReference.get(), language, i).execute();
                     }
                 }
-
             }
             return null;
         }
@@ -1128,34 +1092,18 @@ public class DetailsActivity extends AppCompatActivity implements IPullZoom, OnM
         protected Void doInBackground(Void... voids) {
             Timber.i("Updating %s Table(%s) with id: %s", activityReference.get().comingFrom,
                     language.toUpperCase(), activityReference.get().diningDetailModels.get(0).getId());
-            if (language.equals(LocaleManager.LANGUAGE_ENGLISH)) {
-                // updateEnglishTable table with english name
-                activityReference.get().qmDatabase.getDiningTableDao().updateDiningDetailsEnglish(
-                        activityReference.get().diningDetailModels.get(position).getName(),
-                        activityReference.get().diningDetailModels.get(position).getImage(),
-                        activityReference.get().diningDetailModels.get(position).getDescription(),
-                        activityReference.get().diningDetailModels.get(position).getOpeningTime(),
-                        activityReference.get().diningDetailModels.get(position).getClosingTime(),
-                        activityReference.get().diningDetailModels.get(position).getLatitude(),
-                        activityReference.get().diningDetailModels.get(position).getLongitude(),
-                        activityReference.get().diningDetailModels.get(position).getId(),
-                        activityReference.get().diningDetailModels.get(position).getSortId()
-                );
-
-            } else {
-                // updateArabicTable table with arabic name
-                activityReference.get().qmDatabase.getDiningTableDao().updateDiningDetailsArabic(
-                        activityReference.get().diningDetailModels.get(position).getName(),
-                        activityReference.get().diningDetailModels.get(position).getImage(),
-                        activityReference.get().diningDetailModels.get(position).getDescription(),
-                        activityReference.get().diningDetailModels.get(position).getOpeningTime(),
-                        activityReference.get().diningDetailModels.get(position).getClosingTime(),
-                        activityReference.get().diningDetailModels.get(position).getLatitude(),
-                        activityReference.get().diningDetailModels.get(position).getLongitude(),
-                        activityReference.get().diningDetailModels.get(position).getId(),
-                        activityReference.get().diningDetailModels.get(position).getSortId()
-                );
-            }
+            activityReference.get().qmDatabase.getDiningTableDao().updateDiningDetails(
+                    activityReference.get().diningDetailModels.get(position).getName(),
+                    activityReference.get().diningDetailModels.get(position).getImage(),
+                    activityReference.get().diningDetailModels.get(position).getDescription(),
+                    activityReference.get().diningDetailModels.get(position).getOpeningTime(),
+                    activityReference.get().diningDetailModels.get(position).getClosingTime(),
+                    activityReference.get().diningDetailModels.get(position).getLatitude(),
+                    activityReference.get().diningDetailModels.get(position).getLongitude(),
+                    activityReference.get().diningDetailModels.get(position).getId(),
+                    activityReference.get().diningDetailModels.get(position).getSortId(),
+                    language
+            );
             return null;
         }
 
@@ -1164,14 +1112,12 @@ public class DetailsActivity extends AppCompatActivity implements IPullZoom, OnM
         }
     }
 
-    public static class RetrieveEnglishDiningData extends AsyncTask<Void, Void, List<DiningTableEnglish>> {
+    public static class RetrieveDiningData extends AsyncTask<Void, Void, List<DiningTable>> {
         private WeakReference<DetailsActivity> activityReference;
-        int language;
         String diningId;
 
-        RetrieveEnglishDiningData(DetailsActivity context, int appLanguage, String diningId) {
+        RetrieveDiningData(DetailsActivity context, String diningId) {
             activityReference = new WeakReference<>(context);
-            language = appLanguage;
             this.diningId = diningId;
         }
 
@@ -1180,16 +1126,16 @@ public class DetailsActivity extends AppCompatActivity implements IPullZoom, OnM
         }
 
         @Override
-        protected void onPostExecute(List<DiningTableEnglish> diningTableEnglishList) {
-            if (diningTableEnglishList.get(0).getDescription() != null) {
+        protected void onPostExecute(List<DiningTable> diningTableList) {
+            if (diningTableList.get(0).getDescription() != null) {
                 Timber.i("Setting %s details from database with id: %s", activityReference.get().comingFrom,
-                        diningTableEnglishList.get(0).getDining_id());
-                activityReference.get().loadData(diningTableEnglishList.get(0).getDescription(),
-                        diningTableEnglishList.get(0).getOpening_time(),
-                        diningTableEnglishList.get(0).getClosing_time(),
-                        diningTableEnglishList.get(0).getLocation(),
-                        diningTableEnglishList.get(0).getLatitude(),
-                        diningTableEnglishList.get(0).getLongitude());
+                        diningTableList.get(0).getDining_id());
+                activityReference.get().loadData(diningTableList.get(0).getDescription(),
+                        diningTableList.get(0).getOpening_time(),
+                        diningTableList.get(0).getClosing_time(),
+                        diningTableList.get(0).getLocation(),
+                        diningTableList.get(0).getLatitude(),
+                        diningTableList.get(0).getLongitude());
             } else {
                 Timber.i("Have no data in database");
                 activityReference.get().diningContent.setVisibility(View.INVISIBLE);
@@ -1198,50 +1144,10 @@ public class DetailsActivity extends AppCompatActivity implements IPullZoom, OnM
         }
 
         @Override
-        protected List<DiningTableEnglish> doInBackground(Void... voids) {
+        protected List<DiningTable> doInBackground(Void... voids) {
             Timber.i("get%sEnglishData() for id: %s", activityReference.get().comingFrom, diningId);
-            return activityReference.get().qmDatabase.getDiningTableDao().getDiningDetailsEnglish(Integer.parseInt(diningId));
-        }
-    }
-
-    public static class RetrieveArabicDiningData extends AsyncTask<Void, Void, List<DiningTableArabic>> {
-        private WeakReference<DetailsActivity> activityReference;
-        int language;
-        String diningId;
-
-        RetrieveArabicDiningData(DetailsActivity context, int appLanguage, String diningId) {
-            activityReference = new WeakReference<>(context);
-            language = appLanguage;
-            this.diningId = diningId;
-        }
-
-        @Override
-        protected void onPreExecute() {
-            activityReference.get().progressBar.setVisibility(View.VISIBLE);
-        }
-
-        @Override
-        protected void onPostExecute(List<DiningTableArabic> diningTableArabicList) {
-            if (diningTableArabicList.get(0).getDescription() != null) {
-                Timber.i("Setting %s details from database with id: %s", activityReference.get().comingFrom,
-                        diningTableArabicList.get(0).getDining_id());
-                activityReference.get().loadData(diningTableArabicList.get(0).getDescription(),
-                        diningTableArabicList.get(0).getOpening_time(),
-                        diningTableArabicList.get(0).getClosing_time(),
-                        diningTableArabicList.get(0).getLocation(),
-                        diningTableArabicList.get(0).getLatitude(),
-                        diningTableArabicList.get(0).getLongitude());
-            } else {
-                Timber.i("Have no data in database");
-                activityReference.get().diningContent.setVisibility(View.INVISIBLE);
-                activityReference.get().retryLayout.setVisibility(View.VISIBLE);
-            }
-        }
-
-        @Override
-        protected List<DiningTableArabic> doInBackground(Void... voids) {
-            Timber.i("get%sArabicData() for id: %s", activityReference.get().comingFrom, diningId);
-            return activityReference.get().qmDatabase.getDiningTableDao().getDiningDetailsArabic(Integer.parseInt(diningId));
+            return activityReference.get().qmDatabase.getDiningTableDao()
+                    .getDiningDetails(Integer.parseInt(diningId), activityReference.get().appLanguage);
         }
     }
 
@@ -1895,29 +1801,17 @@ public class DetailsActivity extends AppCompatActivity implements IPullZoom, OnM
 
     private void getCommonListAPIDataFromDatabase(String id, int appLanguage) {
         Timber.i("getCommonListAPIDataFromDatabase(id: %s)", id);
-        if (appLanguage == 1) {
-            new RetrieveEnglishPublicArtsData(DetailsActivity.this, appLanguage, id).execute();
-        } else {
-            new RetrieveArabicPublicArtsData(DetailsActivity.this, appLanguage, id).execute();
-        }
+        new RetrievePublicArtsData(DetailsActivity.this, appLanguage, id).execute();
     }
 
     private void getHeritageAPIDataFromDatabase(String id, int appLanguage) {
         Timber.i("getHeritageAPIDataFromDatabase(id: %s)", id);
-        if (appLanguage == 1) {
-            new RetrieveEnglishHeritageData(DetailsActivity.this, appLanguage, id).execute();
-        } else {
-            new RetrieveArabicHeritageData(DetailsActivity.this, appLanguage, id).execute();
-        }
+        new RetrieveHeritageData(DetailsActivity.this, appLanguage, id).execute();
     }
 
     private void getExhibitionAPIDataFromDatabase(String id, int appLanguage) {
         Timber.i("getExhibitionAPIDataFromDatabase(id: %s)", id);
-        if (appLanguage == 1) {
-            new RetrieveEnglishExhibitionData(DetailsActivity.this, appLanguage, id).execute();
-        } else {
-            new RetrieveArabicExhibitionData(DetailsActivity.this, appLanguage, id).execute();
-        }
+        new RetrieveExhibitionData(DetailsActivity.this, appLanguage, id).execute();
     }
 
     private String convertDegreeToDecimalMeasure(String degreeValue) {
@@ -2463,7 +2357,7 @@ public class DetailsActivity extends AppCompatActivity implements IPullZoom, OnM
                         }
                         if (imageList.size() > 0) {
                             zoomView.setOnClickListener(view -> showCarouselView());
-                            showIndicator(language);
+                            showIndicator();
                         }
 
                         if (pageName.equals("heritage_detail_Page.json")) {
@@ -2519,7 +2413,7 @@ public class DetailsActivity extends AppCompatActivity implements IPullZoom, OnM
         });
     }
 
-    public void showIndicator(int language) {
+    public void showIndicator() {
         Timber.i("showIndicator()");
         circleIndicator.setVisibility(View.VISIBLE);
         ads = new ArrayList<>();
@@ -2529,7 +2423,7 @@ public class DetailsActivity extends AppCompatActivity implements IPullZoom, OnM
         }
         GlideLoaderForMuseum glideLoader = new GlideLoaderForMuseum();
         IndicatorConfiguration configuration;
-        if (language == 1)
+        if (appLanguage.equals(LocaleManager.LANGUAGE_ENGLISH))
             configuration = new IndicatorConfiguration.Builder()
                     .imageLoader(glideLoader)
                     .direction(LEFT)
@@ -2629,11 +2523,7 @@ public class DetailsActivity extends AppCompatActivity implements IPullZoom, OnM
         @Override
         protected Integer doInBackground(Void... voids) {
             Timber.i("getNumberOf%sRows%s()", activityReference.get().comingFrom, language.toUpperCase());
-            if (language.equals(LocaleManager.LANGUAGE_ENGLISH)) {
-                return activityReference.get().qmDatabase.getExhibitionTableDao().getNumberOfRowsEnglish();
-            } else {
-                return activityReference.get().qmDatabase.getExhibitionTableDao().getNumberOfRowsArabic();
-            }
+            return activityReference.get().qmDatabase.getExhibitionTableDao().getNumberOfRows(language);
         }
     }
 
@@ -2660,29 +2550,17 @@ public class DetailsActivity extends AppCompatActivity implements IPullZoom, OnM
         @Override
         protected Void doInBackground(Void... voids) {
             if (activityReference.get().heritageOrExhibitionDetailModel.size() > 0) {
-                if (language.equals(LocaleManager.LANGUAGE_ENGLISH)) {
-                    for (int i = 0; i < activityReference.get().heritageOrExhibitionDetailModel.size(); i++) {
-                        int n = activityReference.get().qmDatabase.getExhibitionTableDao().checkEnglishIdExist(
-                                Integer.parseInt(activityReference.get().heritageOrExhibitionDetailModel.get(i).getId()));
-                        if (n > 0) {
-                            Timber.i("Row exist in database(%s) for id: %s", language.toUpperCase(),
-                                    activityReference.get().heritageOrExhibitionDetailModel.get(i).getId());
-                            new UpdateExhibitionDetailTable(activityReference.get(), language, i).execute();
-
-                        }
-                    }
-                } else {
-                    for (int i = 0; i < activityReference.get().heritageOrExhibitionDetailModel.size(); i++) {
-                        int n = activityReference.get().qmDatabase.getExhibitionTableDao().checkArabicIdExist(
-                                Integer.parseInt(activityReference.get().heritageOrExhibitionDetailModel.get(i).getId()));
-                        if (n > 0) {
-                            Timber.i("Row exist in database(%s) for id: %s", language.toUpperCase(),
-                                    activityReference.get().heritageOrExhibitionDetailModel.get(i).getId());
-                            new UpdateExhibitionDetailTable(activityReference.get(), language, i).execute();
-
-                        }
+                for (int i = 0; i < activityReference.get().heritageOrExhibitionDetailModel.size(); i++) {
+                    int n = activityReference.get().qmDatabase.getExhibitionTableDao().checkIdExist(
+                            Integer.parseInt(activityReference.get().heritageOrExhibitionDetailModel.get(i).getId()),
+                            language);
+                    if (n > 0) {
+                        Timber.i("Row exist in database(%s) for id: %s", language.toUpperCase(),
+                                activityReference.get().heritageOrExhibitionDetailModel.get(i).getId());
+                        new UpdateExhibitionDetailTable(activityReference.get(), language, i).execute();
                     }
                 }
+
             }
             return null;
         }
@@ -2715,47 +2593,29 @@ public class DetailsActivity extends AppCompatActivity implements IPullZoom, OnM
             Timber.i("Updating %s details table(%s) with id: %s", activityReference.get().comingFrom,
                     language.toUpperCase(), activityReference.get().heritageOrExhibitionDetailModel.get(position).getId());
             Convertor converters = new Convertor();
-            if (language.equals(LocaleManager.LANGUAGE_ENGLISH)) {
-                // updateEnglishTable table with english name
-
-                activityReference.get().qmDatabase.getExhibitionTableDao().updateExhibitionDetailEnglish(
-                        activityReference.get().heritageOrExhibitionDetailModel.get(position).getStartDate(),
-                        activityReference.get().heritageOrExhibitionDetailModel.get(position).getEndDate(),
-                        activityReference.get().heritageOrExhibitionDetailModel.get(position).getImage(),
-                        activityReference.get().heritageOrExhibitionDetailModel.get(position).getLongDescription(),
-                        activityReference.get().heritageOrExhibitionDetailModel.get(position).getShortDescription(),
-                        activityReference.get().heritageOrExhibitionDetailModel.get(position).getLatitude(),
-                        activityReference.get().heritageOrExhibitionDetailModel.get(position).getLongitude(),
-                        converters.fromArrayList(activityReference.get().heritageOrExhibitionDetailModel.get(position).getImages()),
-                        activityReference.get().heritageOrExhibitionDetailModel.get(position).getId()
-                );
-
-
-            } else {
-                // updateArabicTable table with arabic name
-                activityReference.get().qmDatabase.getExhibitionTableDao().updateExhibitionDetailArabic(
-                        activityReference.get().heritageOrExhibitionDetailModel.get(position).getStartDate(),
-                        activityReference.get().heritageOrExhibitionDetailModel.get(position).getEndDate(),
-                        activityReference.get().heritageOrExhibitionDetailModel.get(position).getImage(),
-                        activityReference.get().heritageOrExhibitionDetailModel.get(position).getLongDescription(),
-                        activityReference.get().heritageOrExhibitionDetailModel.get(position).getShortDescription(),
-                        activityReference.get().heritageOrExhibitionDetailModel.get(position).getLatitude(),
-                        activityReference.get().heritageOrExhibitionDetailModel.get(position).getLongitude(),
-                        converters.fromArrayList(activityReference.get().heritageOrExhibitionDetailModel.get(position).getImages()),
-                        activityReference.get().heritageOrExhibitionDetailModel.get(position).getId()
-                );
-            }
+            activityReference.get().qmDatabase.getExhibitionTableDao().updateExhibitionDetail(
+                    activityReference.get().heritageOrExhibitionDetailModel.get(position).getStartDate(),
+                    activityReference.get().heritageOrExhibitionDetailModel.get(position).getEndDate(),
+                    activityReference.get().heritageOrExhibitionDetailModel.get(position).getImage(),
+                    activityReference.get().heritageOrExhibitionDetailModel.get(position).getLongDescription(),
+                    activityReference.get().heritageOrExhibitionDetailModel.get(position).getShortDescription(),
+                    activityReference.get().heritageOrExhibitionDetailModel.get(position).getLatitude(),
+                    activityReference.get().heritageOrExhibitionDetailModel.get(position).getLongitude(),
+                    converters.fromArrayList(activityReference.get().heritageOrExhibitionDetailModel.get(position).getImages()),
+                    activityReference.get().heritageOrExhibitionDetailModel.get(position).getId(),
+                    language
+            );
             return null;
         }
     }
 
-    public static class RetrieveEnglishExhibitionData extends AsyncTask<Void, Void, List<ExhibitionListTableEnglish>> {
+    public static class RetrieveExhibitionData extends AsyncTask<Void, Void, List<ExhibitionListTable>> {
 
         private WeakReference<DetailsActivity> activityReference;
         int language;
         String exhibitionId;
 
-        RetrieveEnglishExhibitionData(DetailsActivity context, int appLanguage, String id) {
+        RetrieveExhibitionData(DetailsActivity context, int appLanguage, String id) {
             activityReference = new WeakReference<>(context);
             language = appLanguage;
             exhibitionId = id;
@@ -2767,34 +2627,34 @@ public class DetailsActivity extends AppCompatActivity implements IPullZoom, OnM
         }
 
         @Override
-        protected void onPostExecute(List<ExhibitionListTableEnglish> exhibitionListTableEnglish) {
-            if (exhibitionListTableEnglish.size() > 0) {
+        protected void onPostExecute(List<ExhibitionListTable> exhibitionListTables) {
+            if (exhibitionListTables.size() > 0) {
                 Timber.i("Setting %s details from database with id: %s", activityReference.get().comingFrom,
                         exhibitionId);
                 activityReference.get().commonContentLayout.setVisibility(View.VISIBLE);
                 Convertor convertor = new Convertor();
-                if (exhibitionListTableEnglish.get(0).getExhibition_latest_image().contains("[")) {
-                    ArrayList<String> list = convertor.fromString(exhibitionListTableEnglish.get(0).getExhibition_latest_image());
+                if (exhibitionListTables.get(0).getExhibition_latest_image().contains("[")) {
+                    ArrayList<String> list = convertor.fromString(exhibitionListTables.get(0).getExhibition_latest_image());
                     for (int i = 0; i < list.size(); i++) {
                         activityReference.get().imageList.add(i, list.get(i));
                     }
                 }
                 if (activityReference.get().imageList.size() > 0) {
                     activityReference.get().zoomView.setOnClickListener(view -> activityReference.get().showCarouselView());
-                    activityReference.get().showIndicator(language);
+                    activityReference.get().showIndicator();
                 }
 
                 activityReference.get().loadDataForHeritageOrExhibitionDetails(null,
-                        exhibitionListTableEnglish.get(0).getExhibition_short_description(),
-                        exhibitionListTableEnglish.get(0).getExhibition_long_description(),
+                        exhibitionListTables.get(0).getExhibition_short_description(),
+                        exhibitionListTables.get(0).getExhibition_long_description(),
                         null, null,
                         null,
-                        exhibitionListTableEnglish.get(0).getExhibition_location(),
+                        exhibitionListTables.get(0).getExhibition_location(),
                         activityReference.get().getResources().getString(R.string.contact_mail),
-                        exhibitionListTableEnglish.get(0).getExhibition_latitude(),
-                        exhibitionListTableEnglish.get(0).getExhibition_longitude(),
-                        exhibitionListTableEnglish.get(0).getExhibition_start_date(),
-                        exhibitionListTableEnglish.get(0).getExhibition_end_date(), null);
+                        exhibitionListTables.get(0).getExhibition_latitude(),
+                        exhibitionListTables.get(0).getExhibition_longitude(),
+                        exhibitionListTables.get(0).getExhibition_start_date(),
+                        exhibitionListTables.get(0).getExhibition_end_date(), null);
             } else {
                 Timber.i("Have no data in database");
                 activityReference.get().progressBar.setVisibility(View.GONE);
@@ -2804,72 +2664,10 @@ public class DetailsActivity extends AppCompatActivity implements IPullZoom, OnM
         }
 
         @Override
-        protected List<ExhibitionListTableEnglish> doInBackground(Void... voids) {
+        protected List<ExhibitionListTable> doInBackground(Void... voids) {
             Timber.i("get%sEnglishData() for id: %s", activityReference.get().comingFrom, exhibitionId);
-            return activityReference.get().qmDatabase.getExhibitionTableDao().getExhibitionDetailsEnglish(Integer.parseInt(exhibitionId));
-
-        }
-    }
-
-    public static class RetrieveArabicExhibitionData extends AsyncTask<Void, Void, List<ExhibitionListTableArabic>> {
-
-        private WeakReference<DetailsActivity> activityReference;
-        int language;
-        String heritageId;
-
-        RetrieveArabicExhibitionData(DetailsActivity context, int appLanguage, String id) {
-            activityReference = new WeakReference<>(context);
-            language = appLanguage;
-            heritageId = id;
-        }
-
-        @Override
-        protected void onPreExecute() {
-            activityReference.get().progressBar.setVisibility(View.VISIBLE);
-        }
-
-        @Override
-        protected void onPostExecute(List<ExhibitionListTableArabic> exhibitionListTableArabics) {
-            if (exhibitionListTableArabics.size() > 0) {
-                Timber.i("Setting %s details from database with id: %s", activityReference.get().comingFrom,
-                        heritageId);
-                activityReference.get().commonContentLayout.setVisibility(View.VISIBLE);
-                Convertor convertor = new Convertor();
-                if (exhibitionListTableArabics.get(0).getExhibition_latest_image().contains("[")) {
-                    ArrayList<String> list = convertor.fromString(exhibitionListTableArabics.get(0).getExhibition_latest_image());
-                    for (int i = 0; i < list.size(); i++) {
-                        activityReference.get().imageList.add(i, list.get(i));
-                    }
-                }
-                if (activityReference.get().imageList.size() > 0) {
-                    activityReference.get().zoomView.setOnClickListener(view -> activityReference.get().showCarouselView());
-                    activityReference.get().showIndicator(language);
-                }
-
-                activityReference.get().loadDataForHeritageOrExhibitionDetails(null,
-                        exhibitionListTableArabics.get(0).getExhibition_short_description(),
-                        exhibitionListTableArabics.get(0).getExhibition_long_description(),
-                        null, null,
-                        null,
-                        exhibitionListTableArabics.get(0).getExhibition_location(),
-                        activityReference.get().getResources().getString(R.string.contact_mail),
-                        exhibitionListTableArabics.get(0).getExhibition_latitude(),
-                        exhibitionListTableArabics.get(0).getExhibition_longitude(),
-                        exhibitionListTableArabics.get(0).getExhibition_start_date(),
-                        exhibitionListTableArabics.get(0).getExhibition_end_date(), null);
-            } else {
-                Timber.i("Have no data in database");
-                activityReference.get().progressBar.setVisibility(View.GONE);
-                activityReference.get().commonContentLayout.setVisibility(View.INVISIBLE);
-                activityReference.get().retryLayout.setVisibility(View.VISIBLE);
-            }
-        }
-
-        @Override
-        protected List<ExhibitionListTableArabic> doInBackground(Void... voids) {
-            Timber.i("get%sArabicData() for id: %s", activityReference.get().comingFrom, heritageId);
             return activityReference.get().qmDatabase.getExhibitionTableDao()
-                    .getExhibitionDetailsArabic(Integer.parseInt(heritageId));
+                    .getExhibitionDetails(Integer.parseInt(exhibitionId), activityReference.get().appLanguage);
         }
     }
 
@@ -2901,11 +2699,8 @@ public class DetailsActivity extends AppCompatActivity implements IPullZoom, OnM
         @Override
         protected Integer doInBackground(Void... voids) {
             Timber.i("getNumberOf%sRows%s()", activityReference.get().comingFrom, language.toUpperCase());
-            if (language.equals(LocaleManager.LANGUAGE_ENGLISH)) {
-                return activityReference.get().qmDatabase.getHeritageListTableDao().getNumberOfRowsEnglish();
-            } else {
-                return activityReference.get().qmDatabase.getHeritageListTableDao().getNumberOfRowsArabic();
-            }
+            return activityReference.get().qmDatabase.getHeritageListTableDao()
+                    .getNumberOfRows(language);
         }
     }
 
@@ -2933,27 +2728,15 @@ public class DetailsActivity extends AppCompatActivity implements IPullZoom, OnM
         @Override
         protected Void doInBackground(Void... voids) {
             if (activityReference.get().heritageOrExhibitionDetailModel.size() > 0) {
-                if (language.equals(LocaleManager.LANGUAGE_ENGLISH)) {
-                    for (int i = 0; i < activityReference.get().heritageOrExhibitionDetailModel.size(); i++) {
-                        int n = activityReference.get().qmDatabase.getHeritageListTableDao().checkEnglishIdExist(
-                                Integer.parseInt(activityReference.get().heritageOrExhibitionDetailModel.get(i).getId()));
-                        if (n > 0) {
-                            Timber.i("Row exist in database(%s) for id: %s", language.toUpperCase(),
-                                    activityReference.get().heritageOrExhibitionDetailModel.get(i).getId());
-                            new UpdateHeritageDetailTable(activityReference.get(), language, i).execute();
+                for (int i = 0; i < activityReference.get().heritageOrExhibitionDetailModel.size(); i++) {
+                    int n = activityReference.get().qmDatabase.getHeritageListTableDao().checkIdExist(
+                            Integer.parseInt(activityReference.get().heritageOrExhibitionDetailModel.get(i).getId()),
+                            language);
+                    if (n > 0) {
+                        Timber.i("Row exist in database(%s) for id: %s", language.toUpperCase(),
+                                activityReference.get().heritageOrExhibitionDetailModel.get(i).getId());
+                        new UpdateHeritageDetailTable(activityReference.get(), language, i).execute();
 
-                        }
-                    }
-                } else {
-                    for (int i = 0; i < activityReference.get().heritageOrExhibitionDetailModel.size(); i++) {
-                        int n = activityReference.get().qmDatabase.getHeritageListTableDao().checkArabicIdExist(
-                                Integer.parseInt(activityReference.get().heritageOrExhibitionDetailModel.get(i).getId()));
-                        if (n > 0) {
-                            Timber.i("Row exist in database(%s) for id: %s", language.toUpperCase(),
-                                    activityReference.get().heritageOrExhibitionDetailModel.get(i).getId());
-                            new UpdateHeritageDetailTable(activityReference.get(), language, i).execute();
-
-                        }
                     }
                 }
             }
@@ -2988,39 +2771,28 @@ public class DetailsActivity extends AppCompatActivity implements IPullZoom, OnM
             Timber.i("Updating %s details table(%s) with id: %s", activityReference.get().comingFrom,
                     language.toUpperCase(), activityReference.get().heritageOrExhibitionDetailModel.get(position).getId());
             Convertor convertor = new Convertor();
-            if (language.equals(LocaleManager.LANGUAGE_ENGLISH)) {
-                // updateEnglishTable table with english name
-                activityReference.get().qmDatabase.getHeritageListTableDao().updateHeritageDetailEnglish(
-                        activityReference.get().latitude, activityReference.get().longitude,
-                        activityReference.get().heritageOrExhibitionDetailModel.get(position).getLongDescription(),
-                        activityReference.get().heritageOrExhibitionDetailModel.get(position).getShortDescription(),
-                        activityReference.get().heritageOrExhibitionDetailModel.get(position).getImage(),
-                        convertor.fromArrayList(activityReference.get().heritageOrExhibitionDetailModel.get(position).getImages()),
-                        activityReference.get().heritageOrExhibitionDetailModel.get(position).getId()
-                );
+            activityReference.get().qmDatabase.getHeritageListTableDao().updateHeritageDetails(
+                    activityReference.get().latitude, activityReference.get().longitude,
+                    activityReference.get().heritageOrExhibitionDetailModel.get(position).getLongDescription(),
+                    activityReference.get().heritageOrExhibitionDetailModel.get(position).getShortDescription(),
+                    activityReference.get().heritageOrExhibitionDetailModel.get(position).getImage(),
+                    convertor.fromArrayList(activityReference.get().heritageOrExhibitionDetailModel.get(position).getImages()),
+                    activityReference.get().heritageOrExhibitionDetailModel.get(position).getId(),
+                    language
+            );
 
-            } else {
-                // updateArabicTable table with arabic name
-                activityReference.get().qmDatabase.getHeritageListTableDao().updateHeritageDetailArabic(
-                        activityReference.get().latitude, activityReference.get().longitude,
-                        activityReference.get().heritageOrExhibitionDetailModel.get(position).getLongDescription(),
-                        activityReference.get().heritageOrExhibitionDetailModel.get(position).getShortDescription(),
-                        activityReference.get().heritageOrExhibitionDetailModel.get(position).getImage(),
-                        convertor.fromArrayList(activityReference.get().heritageOrExhibitionDetailModel.get(position).getImages()),
-                        activityReference.get().heritageOrExhibitionDetailModel.get(position).getId()
-                );
-            }
+
             return null;
         }
     }
 
-    public static class RetrieveEnglishHeritageData extends AsyncTask<Void, Void, List<HeritageListTableEnglish>> {
+    public static class RetrieveHeritageData extends AsyncTask<Void, Void, List<HeritageListTable>> {
 
         private WeakReference<DetailsActivity> activityReference;
         int language;
         String heritageId;
 
-        RetrieveEnglishHeritageData(DetailsActivity context, int appLanguage, String id) {
+        RetrieveHeritageData(DetailsActivity context, int appLanguage, String id) {
             activityReference = new WeakReference<>(context);
             language = appLanguage;
             heritageId = id;
@@ -3032,32 +2804,32 @@ public class DetailsActivity extends AppCompatActivity implements IPullZoom, OnM
         }
 
         @Override
-        protected void onPostExecute(List<HeritageListTableEnglish> heritageListTableEnglish) {
-            if (heritageListTableEnglish.size() > 0) {
+        protected void onPostExecute(List<HeritageListTable> heritageListTables) {
+            if (heritageListTables.size() > 0) {
                 Timber.i("Setting %s details from database with id: %s", activityReference.get().comingFrom,
                         heritageId);
                 activityReference.get().commonContentLayout.setVisibility(View.VISIBLE);
                 Convertor convertor = new Convertor();
-                if (heritageListTableEnglish.get(0).getHeritage_images() != null &&
-                        heritageListTableEnglish.get(0).getHeritage_images().contains("[")) {
-                    ArrayList<String> list = convertor.fromString(heritageListTableEnglish.get(0).getHeritage_images());
+                if (heritageListTables.get(0).getHeritage_images() != null &&
+                        heritageListTables.get(0).getHeritage_images().contains("[")) {
+                    ArrayList<String> list = convertor.fromString(heritageListTables.get(0).getHeritage_images());
                     for (int i = 0; i < list.size(); i++) {
                         activityReference.get().imageList.add(i, list.get(i));
                     }
                 }
                 if (activityReference.get().imageList.size() > 0) {
                     activityReference.get().zoomView.setOnClickListener(view -> activityReference.get().showCarouselView());
-                    activityReference.get().showIndicator(language);
+                    activityReference.get().showIndicator();
                 }
 
                 activityReference.get().loadDataForHeritageOrExhibitionDetails(null,
-                        heritageListTableEnglish.get(0).getHeritage_short_description(),
-                        heritageListTableEnglish.get(0).getHeritage_long_description(),
+                        heritageListTables.get(0).getHeritage_short_description(),
+                        heritageListTables.get(0).getHeritage_long_description(),
                         null, null,
                         null,
-                        heritageListTableEnglish.get(0).getLocation(),
-                        null, heritageListTableEnglish.get(0).getLatitude(),
-                        heritageListTableEnglish.get(0).getLongitude(), null, null, null);
+                        heritageListTables.get(0).getLocation(),
+                        null, heritageListTables.get(0).getLatitude(),
+                        heritageListTables.get(0).getLongitude(), null, null, null);
             } else {
                 Timber.i("Have no data in database");
                 activityReference.get().progressBar.setVisibility(View.GONE);
@@ -3067,68 +2839,10 @@ public class DetailsActivity extends AppCompatActivity implements IPullZoom, OnM
         }
 
         @Override
-        protected List<HeritageListTableEnglish> doInBackground(Void... voids) {
+        protected List<HeritageListTable> doInBackground(Void... voids) {
             Timber.i("get%sEnglishData() for id: %s", activityReference.get().comingFrom, heritageId);
-            return activityReference.get().qmDatabase.getHeritageListTableDao().getHeritageDetailsEnglish(Integer.parseInt(heritageId));
-        }
-    }
-
-    public static class RetrieveArabicHeritageData extends AsyncTask<Void, Void, List<HeritageListTableArabic>> {
-
-        private WeakReference<DetailsActivity> activityReference;
-        int language;
-        String heritageId;
-
-        RetrieveArabicHeritageData(DetailsActivity context, int appLanguage, String id) {
-            activityReference = new WeakReference<>(context);
-            language = appLanguage;
-            heritageId = id;
-        }
-
-        @Override
-        protected void onPreExecute() {
-            activityReference.get().progressBar.setVisibility(View.VISIBLE);
-        }
-
-        @Override
-        protected void onPostExecute(List<HeritageListTableArabic> heritageListTableArabic) {
-
-            if (heritageListTableArabic.size() > 0) {
-                Timber.i("Setting %s details from database with id: %s", activityReference.get().comingFrom,
-                        heritageId);
-                Convertor convertor = new Convertor();
-                if (heritageListTableArabic.get(0).getHeritage_images() != null &&
-                        heritageListTableArabic.get(0).getHeritage_images().contains("[")) {
-                    ArrayList<String> list = convertor.fromString(heritageListTableArabic.get(0).getHeritage_images());
-                    for (int i = 0; i < list.size(); i++) {
-                        activityReference.get().imageList.add(i, list.get(i));
-                    }
-                }
-                if (activityReference.get().imageList.size() > 0) {
-                    activityReference.get().zoomView.setOnClickListener(view -> activityReference.get().showCarouselView());
-                    activityReference.get().showIndicator(language);
-                }
-
-                activityReference.get().loadDataForHeritageOrExhibitionDetails(null, heritageListTableArabic.get(0).getHeritage_short_description(),
-                        heritageListTableArabic.get(0).getHeritage_long_description(),
-                        null, null,
-                        null,
-                        heritageListTableArabic.get(0).getLocation(),
-                        null, heritageListTableArabic.get(0).getLatitude(),
-                        heritageListTableArabic.get(0).getLongitude(), null, null, null);
-            } else {
-                Timber.i("Have no data in database");
-                activityReference.get().progressBar.setVisibility(View.GONE);
-                activityReference.get().commonContentLayout.setVisibility(View.INVISIBLE);
-                activityReference.get().retryLayout.setVisibility(View.VISIBLE);
-            }
-
-        }
-
-        @Override
-        protected List<HeritageListTableArabic> doInBackground(Void... voids) {
-            Timber.i("get%sArabicData() for id: %s", activityReference.get().comingFrom, heritageId);
-            return activityReference.get().qmDatabase.getHeritageListTableDao().getHeritageDetailsArabic(Integer.parseInt(heritageId));
+            return activityReference.get().qmDatabase.getHeritageListTableDao()
+                    .getHeritageDetails(Integer.parseInt(heritageId), activityReference.get().appLanguage);
         }
     }
 
@@ -3161,7 +2875,7 @@ public class DetailsActivity extends AppCompatActivity implements IPullZoom, OnM
                         }
                         if (imageList.size() > 0) {
                             zoomView.setOnClickListener(view -> showCarouselView());
-                            showIndicator(appLanguage);
+                            showIndicator();
                         }
 
                         fromMuseumAbout = false;
@@ -3223,19 +2937,13 @@ public class DetailsActivity extends AppCompatActivity implements IPullZoom, OnM
         @Override
         protected Integer doInBackground(Void... voids) {
             Timber.i("getNumberOf%sRows%s()", activityReference.get().comingFrom, language.toUpperCase());
-            if (language.equals(LocaleManager.LANGUAGE_ENGLISH)) {
-                return activityReference.get().qmDatabase.getPublicArtsTableDao().getNumberOfRowsEnglish();
-            } else {
-                return activityReference.get().qmDatabase.getPublicArtsTableDao().getNumberOfRowsArabic();
-            }
+            return activityReference.get().qmDatabase.getPublicArtsTableDao().getNumberOfRows(language);
         }
     }
 
     public static class CheckPublicArtsDetailDBRowExist extends AsyncTask<Void, Void, Void> {
 
         private WeakReference<DetailsActivity> activityReference;
-        private PublicArtsTableEnglish publicArtsTableEnglish;
-        private PublicArtsTableArabic publicArtsTableArabic;
         String language;
 
         CheckPublicArtsDetailDBRowExist(DetailsActivity context, String apiLanguage) {
@@ -3256,27 +2964,15 @@ public class DetailsActivity extends AppCompatActivity implements IPullZoom, OnM
         @Override
         protected Void doInBackground(Void... voids) {
             if (activityReference.get().publicArtModel.size() > 0) {
-                if (language.equals(LocaleManager.LANGUAGE_ENGLISH)) {
-                    for (int i = 0; i < activityReference.get().publicArtModel.size(); i++) {
-                        int n = activityReference.get().qmDatabase.getPublicArtsTableDao().checkEnglishIdExist(
-                                Integer.parseInt(activityReference.get().publicArtModel.get(i).getId()));
-                        if (n > 0) {
-                            Timber.i("Row exist in database(%s) for id: %s", language.toUpperCase(),
-                                    activityReference.get().publicArtModel.get(i).getId());
-                            new UpdatePublicArtsDetailTable(activityReference.get(), language, i).execute();
+                for (int i = 0; i < activityReference.get().publicArtModel.size(); i++) {
+                    int n = activityReference.get().qmDatabase.getPublicArtsTableDao().checkIdExist(
+                            Integer.parseInt(activityReference.get().publicArtModel.get(i).getId()),
+                            language);
+                    if (n > 0) {
+                        Timber.i("Row exist in database(%s) for id: %s", language.toUpperCase(),
+                                activityReference.get().publicArtModel.get(i).getId());
+                        new UpdatePublicArtsDetailTable(activityReference.get(), language, i).execute();
 
-                        }
-                    }
-                } else {
-                    for (int i = 0; i < activityReference.get().publicArtModel.size(); i++) {
-                        int n = activityReference.get().qmDatabase.getPublicArtsTableDao().checkArabicIdExist(
-                                Integer.parseInt(activityReference.get().publicArtModel.get(i).getId()));
-                        if (n > 0) {
-                            Timber.i("Row exist in database(%s) for id: %s", language.toUpperCase(),
-                                    activityReference.get().publicArtModel.get(i).getId());
-                            new UpdatePublicArtsDetailTable(activityReference.get(), language, i).execute();
-
-                        }
                     }
                 }
             }
@@ -3312,39 +3008,28 @@ public class DetailsActivity extends AppCompatActivity implements IPullZoom, OnM
             Timber.i("Updating %s details table(%s) with id: %s", activityReference.get().comingFrom,
                     language.toUpperCase(), activityReference.get().publicArtModel.get(position).getId());
             Convertor converters = new Convertor();
-            if (language.equals(LocaleManager.LANGUAGE_ENGLISH)) {
-                // updateEnglishTable table with english name
-                activityReference.get().qmDatabase.getPublicArtsTableDao().updatePublicArtsDetailEnglish(
-                        activityReference.get().publicArtModel.get(position).getName(),
-                        activityReference.get().latitude, activityReference.get().longitude,
-                        activityReference.get().publicArtModel.get(position).getShortDescription(),
-                        activityReference.get().publicArtModel.get(position).getLongDescription(),
-                        converters.fromArrayList(activityReference.get().publicArtModel.get(position).getImage()),
-                        activityReference.get().publicArtModel.get(position).getId()
-                );
+            activityReference.get().qmDatabase.getPublicArtsTableDao().updatePublicArtsDetail(
+                    activityReference.get().publicArtModel.get(position).getName(),
+                    activityReference.get().latitude, activityReference.get().longitude,
+                    activityReference.get().publicArtModel.get(position).getShortDescription(),
+                    activityReference.get().publicArtModel.get(position).getLongDescription(),
+                    converters.fromArrayList(activityReference.get().publicArtModel.get(position).getImage()),
+                    activityReference.get().publicArtModel.get(position).getId(),
+                    language
+            );
 
-            } else {
-                // updateArabicTable table with arabic name
-                activityReference.get().qmDatabase.getPublicArtsTableDao().updatePublicArtsDetailArabic(
-                        activityReference.get().publicArtModel.get(position).getName(),
-                        activityReference.get().latitude, activityReference.get().longitude,
-                        activityReference.get().publicArtModel.get(position).getShortDescription(),
-                        activityReference.get().publicArtModel.get(position).getLongDescription(),
-                        converters.fromArrayList(activityReference.get().publicArtModel.get(position).getImage()),
-                        activityReference.get().publicArtModel.get(position).getId()
-                );
-            }
+
             return null;
         }
     }
 
-    public static class RetrieveEnglishPublicArtsData extends AsyncTask<Void, Void, List<PublicArtsTableEnglish>> {
+    public static class RetrievePublicArtsData extends AsyncTask<Void, Void, List<PublicArtsTable>> {
 
         private WeakReference<DetailsActivity> activityReference;
         int language;
         String publicArtsId;
 
-        RetrieveEnglishPublicArtsData(DetailsActivity context, int appLanguage, String id) {
+        RetrievePublicArtsData(DetailsActivity context, int appLanguage, String id) {
             activityReference = new WeakReference<>(context);
             language = appLanguage;
             publicArtsId = id;
@@ -3356,32 +3041,32 @@ public class DetailsActivity extends AppCompatActivity implements IPullZoom, OnM
         }
 
         @Override
-        protected void onPostExecute(List<PublicArtsTableEnglish> publicArtsTableEnglish) {
-            if (publicArtsTableEnglish.size() > 0) {
+        protected void onPostExecute(List<PublicArtsTable> publicArtsTables) {
+            if (publicArtsTables.size() > 0) {
                 Timber.i("Setting %s details from database with id: %s", activityReference.get().comingFrom,
                         publicArtsId);
                 Convertor converters = new Convertor();
-                if (publicArtsTableEnglish.get(0).getPublic_arts_images() != null &&
-                        publicArtsTableEnglish.get(0).getPublic_arts_images().contains("[")) {
-                    ArrayList<String> list = converters.fromString(publicArtsTableEnglish.get(0).getPublic_arts_images());
+                if (publicArtsTables.get(0).getPublic_arts_images() != null &&
+                        publicArtsTables.get(0).getPublic_arts_images().contains("[")) {
+                    ArrayList<String> list = converters.fromString(publicArtsTables.get(0).getPublic_arts_images());
                     for (int l = 0; l < list.size(); l++) {
                         activityReference.get().imageList.add(l, list.get(l));
                     }
                 }
                 if (activityReference.get().imageList.size() > 0) {
                     activityReference.get().zoomView.setOnClickListener(view -> activityReference.get().showCarouselView());
-                    activityReference.get().showIndicator(language);
+                    activityReference.get().showIndicator();
                 }
 
-                for (int i = 0; i < publicArtsTableEnglish.size(); i++) {
+                for (int i = 0; i < publicArtsTables.size(); i++) {
                     activityReference.get().fromMuseumAbout = false;
                     activityReference.get().loadData(null,
-                            publicArtsTableEnglish.get(i).getShort_description(),
-                            publicArtsTableEnglish.get(i).getDescription(),
+                            publicArtsTables.get(i).getShort_description(),
+                            publicArtsTables.get(i).getDescription(),
                             null, null, null,
                             null, null, null, null,
-                            publicArtsTableEnglish.get(i).getLatitude(),
-                            publicArtsTableEnglish.get(i).getLongitude(), activityReference.get().fromMuseumAbout, null);
+                            publicArtsTables.get(i).getLatitude(),
+                            publicArtsTables.get(i).getLongitude(), activityReference.get().fromMuseumAbout, null);
                 }
                 activityReference.get().progressBar.setVisibility(View.GONE);
             } else {
@@ -3393,73 +3078,14 @@ public class DetailsActivity extends AppCompatActivity implements IPullZoom, OnM
         }
 
         @Override
-        protected List<PublicArtsTableEnglish> doInBackground(Void... voids) {
+        protected List<PublicArtsTable> doInBackground(Void... voids) {
             Timber.i("get%sEnglishData() for id: %s", activityReference.get().comingFrom, publicArtsId);
-            return activityReference.get().qmDatabase.getPublicArtsTableDao().getAllDataEnglish(publicArtsId);
+            return activityReference.get().qmDatabase.getPublicArtsTableDao()
+                    .getPublicArtsDetails(publicArtsId, activityReference.get().appLanguage);
 
         }
     }
 
-    public static class RetrieveArabicPublicArtsData extends AsyncTask<Void, Void, List<PublicArtsTableArabic>> {
-
-        private WeakReference<DetailsActivity> activityReference;
-        int language;
-        String publicArtsId;
-
-        RetrieveArabicPublicArtsData(DetailsActivity context, int appLanguage, String id) {
-            activityReference = new WeakReference<>(context);
-            language = appLanguage;
-            publicArtsId = id;
-        }
-
-        @Override
-        protected void onPreExecute() {
-            activityReference.get().progressBar.setVisibility(View.VISIBLE);
-        }
-
-        @Override
-        protected void onPostExecute(List<PublicArtsTableArabic> publicArtsTableArabic) {
-            if (publicArtsTableArabic.size() > 0) {
-                Timber.i("Setting %s details from database with id: %s", activityReference.get().comingFrom,
-                        publicArtsId);
-                Convertor converters = new Convertor();
-                if (publicArtsTableArabic.get(0).getPublic_arts_images() != null &&
-                        publicArtsTableArabic.get(0).getPublic_arts_images().contains("[")) {
-                    ArrayList<String> list = converters.fromString(publicArtsTableArabic.get(0).getPublic_arts_images());
-                    for (int l = 0; l < list.size(); l++) {
-                        activityReference.get().imageList.add(l, list.get(l));
-                    }
-                }
-                if (activityReference.get().imageList.size() > 0) {
-                    activityReference.get().zoomView.setOnClickListener(view -> activityReference.get().showCarouselView());
-                    activityReference.get().showIndicator(language);
-                }
-
-                for (int i = 0; i < publicArtsTableArabic.size(); i++) {
-                    activityReference.get().fromMuseumAbout = false;
-                    activityReference.get().loadData(null,
-                            publicArtsTableArabic.get(i).getShort_description(),
-                            publicArtsTableArabic.get(i).getDescription(),
-                            null, null, null,
-                            null, null, null, null,
-                            publicArtsTableArabic.get(i).getLatitude(),
-                            publicArtsTableArabic.get(i).getLongitude(), activityReference.get().fromMuseumAbout, null);
-                }
-                activityReference.get().progressBar.setVisibility(View.GONE);
-            } else {
-                Timber.i("Have no data in database");
-                activityReference.get().progressBar.setVisibility(View.GONE);
-                activityReference.get().commonContentLayout.setVisibility(View.INVISIBLE);
-                activityReference.get().retryLayout.setVisibility(View.VISIBLE);
-            }
-        }
-
-        @Override
-        protected List<PublicArtsTableArabic> doInBackground(Void... voids) {
-            Timber.i("get%sArabicData() for id: %s", activityReference.get().comingFrom, publicArtsId);
-            return activityReference.get().qmDatabase.getPublicArtsTableDao().getAllDataArabic(publicArtsId);
-        }
-    }
 
     public void getMuseumAboutDetailsFromAPI(String id, int appLanguage, boolean isLaunchEvent) {
         Timber.i("getMuseumAboutDetailsFromAPI(id: %s)", id);
@@ -3503,7 +3129,7 @@ public class DetailsActivity extends AppCompatActivity implements IPullZoom, OnM
                         }
                         if (imageList.size() > 0) {
                             zoomView.setOnClickListener(view -> showCarouselView());
-                            showIndicator(appLanguage);
+                            showIndicator();
                         }
 
                         if (!DetailsActivity.this.isFinishing()) {
@@ -3936,7 +3562,7 @@ public class DetailsActivity extends AppCompatActivity implements IPullZoom, OnM
 
                 if (activityReference.get().imageList.size() > 0) {
                     activityReference.get().zoomView.setOnClickListener(view -> activityReference.get().showCarouselView());
-                    activityReference.get().showIndicator(language);
+                    activityReference.get().showIndicator();
                 }
 
                 String description1 = museumAboutTableEnglish.getShort_description();
@@ -4024,7 +3650,7 @@ public class DetailsActivity extends AppCompatActivity implements IPullZoom, OnM
                 String description2 = museumAboutTableArabic.getLong_description();
                 if (activityReference.get().imageList.size() > 0) {
                     activityReference.get().zoomView.setOnClickListener(view -> activityReference.get().showCarouselView());
-                    activityReference.get().showIndicator(language);
+                    activityReference.get().showIndicator();
                 }
 
                 if (isLaunchEvent) {

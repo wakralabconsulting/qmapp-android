@@ -296,32 +296,12 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
 
         @Override
         protected Void doInBackground(Void... voids) {
-            Timber.i("nukeBannerTableEnglish()");
-            activityReference.get().qmDatabase.getHomePageBannerTableDao().nukeBannerTableEnglish();
+            Timber.i("nukeBannerTable()");
+            activityReference.get().qmDatabase.getHomePageBannerTableDao().nukeBannerTable();
             return null;
-        }
-
-        @Override
-        protected void onPostExecute(Void aVoid) {
-            new DeleteBannerTableArabic(activityReference.get()).execute();
         }
     }
 
-    public static class DeleteBannerTableArabic extends AsyncTask<Void, Void, Void> {
-        private WeakReference<ProfileActivity> activityReference;
-
-        DeleteBannerTableArabic(ProfileActivity context) {
-            activityReference = new WeakReference<>(context);
-        }
-
-        @Override
-        protected Void doInBackground(Void... voids) {
-            Timber.i("nukeBannerTableArabic()");
-            activityReference.get().qmDatabase.getHomePageBannerTableDao().nukeBannerTableArabic();
-            return null;
-        }
-
-    }
 
     @Override
     public void onBackPressed() {

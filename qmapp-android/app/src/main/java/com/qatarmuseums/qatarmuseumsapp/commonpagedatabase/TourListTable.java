@@ -5,11 +5,13 @@ import android.arch.persistence.room.Entity;
 import android.arch.persistence.room.PrimaryKey;
 import android.support.annotation.NonNull;
 
+@Entity(tableName = "tourList")
+public class TourListTable {
 
-@Entity(tableName = "tourlistarabic")
-public class TourListTableArabic {
+    @ColumnInfo()
+    private String language;
     @NonNull
-    @PrimaryKey(autoGenerate = false)
+    @PrimaryKey()
     private String tourNid;
     @ColumnInfo()
     private String tourSubtitle;
@@ -26,18 +28,24 @@ public class TourListTableArabic {
     @ColumnInfo()
     private int isTour;
 
-
-    public TourListTableArabic(@NonNull String tourNid, String tourSubtitle, String tourDay,
-                               String tourEventDate, String tourImages,
-                               String tourSortId, String tourDescription, int isTour) {
+    public TourListTable(@NonNull String tourNid,
+                         String tourDay,
+                         String tourEventDate,
+                         String tourSubtitle,
+                         String tourImages,
+                         String tourSortId,
+                         String tourDescription,
+                         int isTour,
+                         String language) {
         this.tourNid = tourNid;
-        this.tourSubtitle = tourSubtitle;
         this.tourDay = tourDay;
         this.tourEventDate = tourEventDate;
+        this.tourSubtitle = tourSubtitle;
         this.tourImages = tourImages;
         this.tourSortId = tourSortId;
         this.tourDescription = tourDescription;
         this.isTour = isTour;
+        this.language = language;
     }
 
     @NonNull
@@ -45,63 +53,35 @@ public class TourListTableArabic {
         return tourNid;
     }
 
-    public void setTourNid(@NonNull String tourNid) {
-        this.tourNid = tourNid;
-    }
-
     public String getTourSubtitle() {
         return tourSubtitle;
-    }
-
-    public void setTourSubtitle(String tourSubtitle) {
-        this.tourSubtitle = tourSubtitle;
     }
 
     public String getTourDay() {
         return tourDay;
     }
 
-    public void setTourDay(String tourDay) {
-        this.tourDay = tourDay;
-    }
-
     public String getTourEventDate() {
         return tourEventDate;
-    }
-
-    public void setTourEventDate(String tourEventDate) {
-        this.tourEventDate = tourEventDate;
     }
 
     public String getTourImages() {
         return tourImages;
     }
 
-    public void setTourImages(String tourImages) {
-        this.tourImages = tourImages;
-    }
-
-    public String getTourSortId() {
+    String getTourSortId() {
         return tourSortId;
     }
 
-    public void setTourSortId(String tourSortId) {
-        this.tourSortId = tourSortId;
-    }
-
-    public String getTourDescription() {
+    String getTourDescription() {
         return tourDescription;
     }
 
-    public void setTourDescription(String tourDescription) {
-        this.tourDescription = tourDescription;
-    }
-
-    public int getIsTour() {
+    int isTour() {
         return isTour;
     }
 
-    public void setIsTour(int isTour) {
-        this.isTour = isTour;
+    public String getLanguage() {
+        return language;
     }
 }

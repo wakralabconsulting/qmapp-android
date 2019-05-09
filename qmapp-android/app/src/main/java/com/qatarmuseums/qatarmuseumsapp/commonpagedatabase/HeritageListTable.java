@@ -3,12 +3,13 @@ package com.qatarmuseums.qatarmuseumsapp.commonpagedatabase;
 import android.arch.persistence.room.ColumnInfo;
 import android.arch.persistence.room.Entity;
 import android.arch.persistence.room.PrimaryKey;
-import android.support.annotation.NonNull;
 
-@Entity(tableName = "heritagelistarabic")
-public class HeritageListTableArabic {
-    @NonNull
-    @PrimaryKey(autoGenerate = false)
+@Entity(tableName = "heritageList")
+public class HeritageListTable {
+
+    @ColumnInfo()
+    private String language;
+    @PrimaryKey()
     private long heritage_id;
     @ColumnInfo()
     private String heritage_name;
@@ -26,15 +27,13 @@ public class HeritageListTableArabic {
     private String heritage_short_description;
     @ColumnInfo()
     private String heritage_long_description;
-
-
     @ColumnInfo()
-    private String heritage_sortid;
+    private String heritage_sort_id;
 
-    public HeritageListTableArabic(@NonNull long heritage_id, String heritage_name,
-                                   String heritage_image, String location, String latitude, String longitude,
-                                   String heritage_short_description, String heritage_long_description,
-                                   String heritage_sortid) {
+    public HeritageListTable(long heritage_id, String heritage_name, String heritage_image,
+                             String location, String latitude, String longitude,
+                             String heritage_short_description, String heritage_long_description,
+                             String heritage_sort_id, String language) {
         this.heritage_id = heritage_id;
         this.heritage_name = heritage_name;
         this.heritage_image = heritage_image;
@@ -43,48 +42,32 @@ public class HeritageListTableArabic {
         this.longitude = longitude;
         this.heritage_short_description = heritage_short_description;
         this.heritage_long_description = heritage_long_description;
-        this.heritage_sortid = heritage_sortid;
+        this.heritage_sort_id = heritage_sort_id;
+        this.language = language;
     }
 
-    @NonNull
     public long getHeritage_id() {
         return heritage_id;
-    }
-
-    public void setHeritage_id(@NonNull long heritage_id) {
-        this.heritage_id = heritage_id;
     }
 
     public String getHeritage_name() {
         return heritage_name;
     }
 
-    public void setHeritage_name(String heritage_name) {
-        this.heritage_name = heritage_name;
-    }
-
     public String getHeritage_image() {
         return heritage_image;
-    }
-
-    public void setHeritage_image(String heritage_image) {
-        this.heritage_image = heritage_image;
     }
 
     public String getHeritage_images() {
         return heritage_images;
     }
 
-    public void setHeritage_images(String heritage_images) {
+    void setHeritage_images(String heritage_images) {
         this.heritage_images = heritage_images;
     }
 
-    public String getHeritage_sortid() {
-        return heritage_sortid;
-    }
-
-    public void setHeritage_sortid(String heritage_sortid) {
-        this.heritage_sortid = heritage_sortid;
+    String getHeritage_sort_id() {
+        return heritage_sort_id;
     }
 
     public String getLocation() {
@@ -115,15 +98,11 @@ public class HeritageListTableArabic {
         return heritage_short_description;
     }
 
-    public void setHeritage_short_description(String heritage_short_description) {
-        this.heritage_short_description = heritage_short_description;
-    }
-
     public String getHeritage_long_description() {
         return heritage_long_description;
     }
 
-    public void setHeritage_long_description(String heritage_long_description) {
-        this.heritage_long_description = heritage_long_description;
+    public String getLanguage() {
+        return language;
     }
 }
