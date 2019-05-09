@@ -22,6 +22,7 @@ import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.google.firebase.analytics.FirebaseAnalytics;
 import com.qatarmuseums.qatarmuseumsapp.Convertor;
 import com.qatarmuseums.qatarmuseumsapp.LocaleManager;
 import com.qatarmuseums.qatarmuseumsapp.QMDatabase;
@@ -95,6 +96,7 @@ public class CommonListActivity extends AppCompatActivity {
     int diningTableRowCount;
     String appLanguage;
     String pageName = null;
+    String screenName = null;
     String id;
     private APIInterface apiService;
     private Call<ArrayList<CommonListModel>> call;
@@ -104,6 +106,8 @@ public class CommonListActivity extends AppCompatActivity {
     Button retryButton;
     private Integer travelTableRowCount;
     private Convertor convertor;
+    private FirebaseAnalytics mFireBaseAnalytics;
+    private Bundle contentBundleParams;
 
     @Override
     protected void attachBaseContext(Context base) {
@@ -119,6 +123,7 @@ public class CommonListActivity extends AppCompatActivity {
         TextView toolbar_title = findViewById(R.id.toolbar_title);
         backArrow = findViewById(R.id.toolbar_back);
         intent = getIntent();
+        mFireBaseAnalytics = FirebaseAnalytics.getInstance(this);
         util = new Util();
         qmDatabase = QMDatabase.getInstance(this);
         progressBar = findViewById(R.id.progressBarLoading);
@@ -137,6 +142,11 @@ public class CommonListActivity extends AppCompatActivity {
                     models.get(position).getName().toUpperCase(),
                     models.get(position).getId(),
                     toolbarTitle);
+            contentBundleParams = new Bundle();
+            contentBundleParams.putString(FirebaseAnalytics.Param.CONTENT_TYPE, toolbarTitle);
+            contentBundleParams.putString(FirebaseAnalytics.Param.ITEM_ID, models.get(position).getId());
+            contentBundleParams.putString(FirebaseAnalytics.Param.ITEM_NAME, models.get(position).getName());
+            mFireBaseAnalytics.logEvent(FirebaseAnalytics.Event.SELECT_CONTENT, contentBundleParams);
             if (toolbarTitle.equals(getString(R.string.museum_collection_text)))
                 navigationIntent = new Intent(CommonListActivity.this,
                         CollectionDetailsActivity.class);
@@ -208,43 +218,50 @@ public class CommonListActivity extends AppCompatActivity {
     public void getData() {
         Timber.i("getData() for %s", toolbarTitle);
         if (toolbarTitle.equals(getString(R.string.side_menu_exhibition_text))) {
+            screenName = toolbarTitle;
             if (util.isNetworkAvailable(CommonListActivity.this))
                 getCommonListAPIDataFromAPI("Exhibition_List_Page.json");
             else
                 getCommonListDataFromDatabase("Exhibition_List_Page.json");
         } else if (toolbarTitle.equals(getString(R.string.side_menu_heritage_text))) {
+            screenName = toolbarTitle.replaceAll(" ", "");
             if (util.isNetworkAvailable(CommonListActivity.this))
                 getCommonListAPIDataFromAPI("Heritage_List_Page.json");
             else
                 getCommonListDataFromDatabase("Heritage_List_Page.json");
         } else if (toolbarTitle.equals(getString(R.string.side_menu_public_arts_text))) {
-
+            screenName = toolbarTitle.replaceAll(" ", "");
             if (util.isNetworkAvailable(CommonListActivity.this))
                 getCommonListAPIDataFromAPI("Public_Arts_List_Page.json");
             else
                 getCommonListDataFromDatabase("Public_Arts_List_Page.json");
 
         } else if (toolbarTitle.equals(getString(R.string.side_menu_dining_text))) {
+            screenName = toolbarTitle;
             if (util.isNetworkAvailable(CommonListActivity.this))
                 getCommonListAPIDataFromAPI("getDiningList.json");
             else
                 getCommonListDataFromDatabase("getDiningList.json");
         } else if (toolbarTitle.equals(getString(R.string.museum_collection_text))) {
+            screenName = toolbarTitle;
             if (util.isNetworkAvailable(CommonListActivity.this))
                 getMuseumCollectionListFromAPI();
             else
                 getMuseumCollectionListFromDatabase();
         } else if (toolbarTitle.equals(getString(R.string.museum_tours))) {
+            screenName = getString(R.string.nmoq) + toolbarTitle;
             if (util.isNetworkAvailable(CommonListActivity.this))
                 getTourListFromAPI();
             else
                 getTourListFromDatabase();
         } else if (toolbarTitle.equals(getString(R.string.museum_travel))) {
+            screenName = getString(R.string.nmoq) + toolbarTitle;
             if (util.isNetworkAvailable(CommonListActivity.this))
                 getTravelDataFromAPI();
             else
                 getTravelDataFromDataBase();
         } else if (toolbarTitle.equals(getString(R.string.museum_discussion))) {
+            screenName = getString(R.string.nmoq) + toolbarTitle;
             if (util.isNetworkAvailable(CommonListActivity.this))
                 getSpecialEventFromAPI();
             else
@@ -256,6 +273,7 @@ public class CommonListActivity extends AppCompatActivity {
             else
                 getFacilityListFromDataBase();
         }
+
     }
 
     private void getFacilityListFromAPI() {
@@ -3234,4 +3252,11 @@ public class CommonListActivity extends AppCompatActivity {
         }
     }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+        if (screenName != null)
+            mFireBaseAnalytics.setCurrentScreen(this, screenName + getString(R.string.page), null);
+
+    }
 }

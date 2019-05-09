@@ -86,6 +86,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_margin="@dimen/text_margin"
+                    android:autoLink="web"
                     android:fontFamily="@font/din_next_lt_pro_regular"
                     android:textAlignment="center"
                     android:textColor="@color/colorBlack"
