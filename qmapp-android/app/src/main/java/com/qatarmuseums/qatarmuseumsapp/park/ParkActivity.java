@@ -19,6 +19,7 @@ import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 
+import com.google.firebase.analytics.FirebaseAnalytics;
 import com.qatarmuseums.qatarmuseumsapp.LocaleManager;
 import com.qatarmuseums.qatarmuseumsapp.QMDatabase;
 import com.qatarmuseums.qatarmuseumsapp.R;
@@ -58,6 +59,7 @@ public class ParkActivity extends AppCompatActivity implements IPullZoom {
     private int headerOffSetSize;
     Button retryButton;
     private String appLanguage;
+    private FirebaseAnalytics mFireBaseAnalytics;
 
     @Override
     protected void attachBaseContext(Context base) {
@@ -71,6 +73,7 @@ public class ParkActivity extends AppCompatActivity implements IPullZoom {
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         utilObject = new Util();
+        mFireBaseAnalytics = FirebaseAnalytics.getInstance(this);
         qmDatabase = QMDatabase.getInstance(ParkActivity.this);
         progressBar = findViewById(R.id.progressBarLoading);
         noResultFoundLayout = findViewById(R.id.no_result_layout);
@@ -534,4 +537,9 @@ public class ParkActivity extends AppCompatActivity implements IPullZoom {
         }
     }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+        mFireBaseAnalytics.setCurrentScreen(this, getString(R.string.park_page), null);
+    }
 }

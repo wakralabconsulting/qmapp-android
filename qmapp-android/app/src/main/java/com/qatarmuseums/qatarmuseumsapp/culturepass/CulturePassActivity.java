@@ -23,12 +23,14 @@ import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
+import com.google.firebase.analytics.FirebaseAnalytics;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.internal.LinkedTreeMap;
@@ -82,6 +84,10 @@ public class CulturePassActivity extends AppCompatActivity {
     private Retrofit retrofit;
     private String RSVP = null;
     private QMDatabase qmDatabase;
+    private FirebaseAnalytics mFirebaseAnalytics;
+    private Bundle bundleParams;
+    private FirebaseAnalytics mFireBaseAnalytics;
+    private Bundle contentBundleParams;
 
     @Override
     protected void attachBaseContext(Context base) {
@@ -96,7 +102,9 @@ public class CulturePassActivity extends AppCompatActivity {
         becomeMember = findViewById(R.id.become_a_member_btn);
         loginButton = findViewById(R.id.login_btn);
         setSupportActionBar(toolbar);
+        mFireBaseAnalytics = FirebaseAnalytics.getInstance(this);
         qmDatabase = QMDatabase.getInstance(CulturePassActivity.this);
+        mFirebaseAnalytics = FirebaseAnalytics.getInstance(this);
         util = new Util();
         Boolean isLogout = getIntent().getBooleanExtra("IS_LOGOUT", false);
         if (isLogout) {
@@ -123,6 +131,10 @@ public class CulturePassActivity extends AppCompatActivity {
         });
         becomeMember.setOnClickListener(v -> {
             Timber.i("Become Member clicked with URL: %s%s/user/register#user-register-form", apiBaseUrl, language);
+            contentBundleParams = new Bundle();
+            contentBundleParams.putString(FirebaseAnalytics.Param.CONTENT_TYPE, ((Button) v).getText().toString());
+            contentBundleParams.putString(FirebaseAnalytics.Param.ITEM_ID, ((Button) v).getText().toString());
+            mFireBaseAnalytics.logEvent(FirebaseAnalytics.Event.SELECT_CONTENT, contentBundleParams);
             navigationIntent = new Intent(CulturePassActivity.this, WebViewActivity.class);
             navigationIntent.putExtra("url", apiBaseUrl + language +
                     "/user/register#user-register-form");
@@ -131,6 +143,11 @@ public class CulturePassActivity extends AppCompatActivity {
         loginButton.setOnClickListener(v -> {
             Timber.i("Login Button clicked");
             showLoginDialog();
+            contentBundleParams = new Bundle();
+            contentBundleParams.putString(FirebaseAnalytics.Param.CONTENT_TYPE, ((Button) v).getText().toString());
+            contentBundleParams.putString(FirebaseAnalytics.Param.ITEM_ID, ((Button) v).getText().toString());
+            mFireBaseAnalytics.logEvent(FirebaseAnalytics.Event.SELECT_CONTENT, contentBundleParams);
+
         });
         becomeMember.setOnTouchListener((v, event) -> {
             switch (event.getAction()) {
@@ -187,8 +204,11 @@ public class CulturePassActivity extends AppCompatActivity {
             @Override
             public void onFailure(Call<ProfileDetails> call, Throwable t) {
                 Timber.e("fetchToken() - onFailure: %s", t.getMessage());
-                util.showToast(getResources().getString(R.string.check_network),
-                        CulturePassActivity.this);
+                if (t.getMessage().contains("timeout"))
+                    util.showToast(t.getMessage(), CulturePassActivity.this);
+                else
+                    util.showToast(getResources().getString(R.string.check_network),
+                            CulturePassActivity.this);
                 showProgress(false);
             }
 
@@ -310,10 +330,19 @@ public class CulturePassActivity extends AppCompatActivity {
                             editor.putString("RSVP", RSVP);
                             editor.commit();
                             getUserRegistrationDetails(uid);
+                            bundleParams = new Bundle();
+                            bundleParams.putString(FirebaseAnalytics.Param.CONTENT_TYPE, "VIP USER");
+                            mFirebaseAnalytics.logEvent(FirebaseAnalytics.Event.LOGIN, bundleParams);
+                        } else {
+                            bundleParams = new Bundle();
+                            bundleParams.putString(FirebaseAnalytics.Param.CONTENT_TYPE, "NORMAL USER");
+                            mFirebaseAnalytics.logEvent(FirebaseAnalytics.Event.LOGIN, bundleParams);
                         }
+
                     }
                     navigateToProfile(RSVP);
                 }
+
             }
 
             @Override
@@ -650,5 +679,11 @@ public class CulturePassActivity extends AppCompatActivity {
                 util.showNormalDialog(this, R.string.logout_success_message);
             }
         }
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        mFirebaseAnalytics.setCurrentScreen(this, getString(R.string.culture_pass_page), null);
     }
 }

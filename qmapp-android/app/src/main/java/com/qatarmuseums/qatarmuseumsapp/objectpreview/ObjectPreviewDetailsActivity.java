@@ -19,6 +19,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.github.chrisbanes.photoview.PhotoView;
+import com.google.firebase.analytics.FirebaseAnalytics;
 import com.qatarmuseums.qatarmuseumsapp.LocaleManager;
 import com.qatarmuseums.qatarmuseumsapp.R;
 import com.qatarmuseums.qatarmuseumsapp.home.GlideApp;
@@ -48,8 +49,11 @@ public class ObjectPreviewDetailsActivity extends AppCompatActivity implements S
     private int lengthOfAudio;
     private final Handler handler = new Handler();
     private final Runnable r = this::updateSeekProgress;
+    private FirebaseAnalytics mFireBaseAnalytics;
+    private Bundle contentBundleParams;
 
     @Override
+
     protected void attachBaseContext(Context base) {
         super.attachBaseContext(LocaleManager.setLocale(base));
     }
@@ -60,6 +64,7 @@ public class ObjectPreviewDetailsActivity extends AppCompatActivity implements S
         setContentView(R.layout.activity_object_preview_details);
         toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+        mFireBaseAnalytics = FirebaseAnalytics.getInstance(this);
         closeBtn = findViewById(R.id.close_btn);
         closeBtn.setOnClickListener(view -> {
             Timber.i("Close button clicked");
@@ -273,6 +278,10 @@ public class ObjectPreviewDetailsActivity extends AppCompatActivity implements S
 
     private void playAudio() {
         Timber.i("playAudio()");
+        contentBundleParams = new Bundle();
+        contentBundleParams.putString(FirebaseAnalytics.Param.CONTENT_TYPE, "AUDIO PLAYED");
+        contentBundleParams.putString(FirebaseAnalytics.Param.ITEM_ID, getIntent().getStringExtra("Nid"));
+        mFireBaseAnalytics.logEvent(FirebaseAnalytics.Event.SELECT_CONTENT, contentBundleParams);
         if (mediaPlayer != null) {
             mediaPlayer.start();
         }
@@ -341,4 +350,9 @@ public class ObjectPreviewDetailsActivity extends AppCompatActivity implements S
         playPause = false;
     }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+        mFireBaseAnalytics.setCurrentScreen(this, getString(R.string.object_preview_details_page), null);
+    }
 }

@@ -3,6 +3,7 @@ package com.qatarmuseums.qatarmuseumsapp.museum;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -15,6 +16,7 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.google.firebase.analytics.FirebaseAnalytics;
 import com.qatarmuseums.qatarmuseumsapp.R;
 import com.qatarmuseums.qatarmuseumsapp.commonlistpage.CommonListActivity;
 import com.qatarmuseums.qatarmuseumsapp.detailspage.DetailsActivity;
@@ -34,6 +36,7 @@ public class MuseumHorizontalScrollViewAdapter extends RecyclerView.Adapter<Muse
     private String title;
     private Util util;
     private int screenWidth;
+    private Bundle contentBundleParams;
 
     @NonNull
     @Override
@@ -55,6 +58,11 @@ public class MuseumHorizontalScrollViewAdapter extends RecyclerView.Adapter<Muse
         holder.museumHorizontalScrollItemText.setText(museumHScrollModel.getTextName());
         holder.museumHorizontalScrollItemImage.setImageResource(museumHScrollModel.getResId());
         holder.itemLayout.setOnClickListener(v -> {
+            contentBundleParams = new Bundle();
+            contentBundleParams.putString(FirebaseAnalytics.Param.CONTENT_TYPE, "MUSEUM LANDING");
+            contentBundleParams.putString(FirebaseAnalytics.Param.ITEM_ID, museumId + " - " +
+                    museumHScrollModelList.get(position).getTextName());
+            FirebaseAnalytics.getInstance(mContext).logEvent(FirebaseAnalytics.Event.SELECT_CONTENT, contentBundleParams);
             if (museumHScrollModelList.get(position).getTextName().equals(
                     mContext.getResources().getString(R.string.museum_about_text))) {
                 navigationIntent = new Intent(mContext, DetailsActivity.class);
