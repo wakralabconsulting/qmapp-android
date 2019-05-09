@@ -1,10 +1,10 @@
 <configuration>
     <appender name="ROLLING" class="ch.qos.logback.core.rolling.RollingFileAppender">
-        <file>logs/log-latest.html</file>
+        <file>logs/log-latest.txt</file>
 
         <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
             <!-- daily rollover -->
-            <fileNamePattern>logs/log.%d{yyyy-MM-dd}.%i.html</fileNamePattern>
+            <fileNamePattern>logs/log.%d{yyyy-MM-dd}.%i.txt</fileNamePattern>
 
             <timeBasedFileNamingAndTriggeringPolicy
                 class="ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP">
