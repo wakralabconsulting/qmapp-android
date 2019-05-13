@@ -581,7 +581,7 @@ public class FloorMapActivity extends AppCompatActivity implements OnMapReadyCal
     }
 
     public void fetchArtifactsFromAPI() {
-        Timber.i("fetchArtifactsFromAPI()");
+        Timber.i("fetchArtifactsFromAPI(language :%s)", language);
         progressBar.setVisibility(View.VISIBLE);
         APIInterface apiService = APIClient.getClient().create(APIInterface.class);
 
@@ -1532,11 +1532,8 @@ public class FloorMapActivity extends AppCompatActivity implements OnMapReadyCal
 
         @Override
         protected Integer doInBackground(Void... voids) {
-            if (language.equals(LocaleManager.LANGUAGE_ENGLISH))
-                return activityReference.get().qmDatabase.getArtifactTableDao().getNumberOfRowsEnglish();
-            else
-                return activityReference.get().qmDatabase.getArtifactTableDao().getNumberOfRowsArabic();
-
+            return activityReference.get().qmDatabase.getArtifactTableDao()
+                    .getNumberOfRows(language);
         }
 
         @Override
@@ -1549,11 +1546,9 @@ public class FloorMapActivity extends AppCompatActivity implements OnMapReadyCal
 
             } else {
                 Timber.i("Artifact Table have no data");
-                ArtifactTableEnglish artifactTableEnglish = null;
-                ArtifactTableArabic artifactTableArabic = null;
-                new InsertDatabaseTask(activityReference.get(), artifactTableEnglish,
-                        artifactTableArabic, language, artifactList.get()).execute();
-
+                ArtifactTable artifactTable = null;
+                new InsertDatabaseTask(activityReference.get(), artifactTable,
+                        language, artifactList.get()).execute();
             }
 
         }
@@ -1562,8 +1557,7 @@ public class FloorMapActivity extends AppCompatActivity implements OnMapReadyCal
     public static class CheckDBRowExist extends AsyncTask<Void, Void, Void> {
         private WeakReference<FloorMapActivity> activityReference;
         private WeakReference<ArrayList<ArtifactDetails>> artifactList;
-        private ArtifactTableEnglish artifactTableEnglish;
-        private ArtifactTableArabic artifactTableArabic;
+        private ArtifactTable artifactTable;
         String language;
 
         CheckDBRowExist(FloorMapActivity context, String apiLanguage, ArrayList<ArtifactDetails> list) {
@@ -1575,83 +1569,43 @@ public class FloorMapActivity extends AppCompatActivity implements OnMapReadyCal
         @Override
         protected Void doInBackground(Void... voids) {
             if (artifactList.get().size() > 0) {
-                if (language.equals(LocaleManager.LANGUAGE_ENGLISH)) {
-                    for (int i = 0; i < artifactList.get().size(); i++) {
-                        int n = activityReference.get().qmDatabase.getArtifactTableDao().checkNidExistEnglish(
-                                Integer.parseInt(artifactList.get().get(i).getNid()));
-                        if (n > 0) {
-                            Timber.i("Row exist in database(%s) for id: %s", language.toUpperCase(),
-                                    activityReference.get().artifactList.get(i).getNid());
-                            new UpdateArtifactTable(activityReference.get(), language, i, artifactList.get()).execute();
+                for (int i = 0; i < artifactList.get().size(); i++) {
+                    int n = activityReference.get().qmDatabase.getArtifactTableDao().checkNidExist(
+                            Integer.parseInt(artifactList.get().get(i).getNid()), language);
+                    if (n > 0) {
+                        Timber.i("Row exist in database(language :%s) for id: %s", language,
+                                activityReference.get().artifactList.get(i).getNid());
+                        new UpdateArtifactTable(activityReference.get(), language, i, artifactList.get()).execute();
 
-                        } else {
-                            Timber.i("Inserting Artifact Table(%s) with id: %s",
-                                    language.toUpperCase(), activityReference.get().artifactList.get(i).getNid());
-                            artifactTableEnglish = new ArtifactTableEnglish(Long.parseLong(artifactList.get().get(i).getNid()),
-                                    artifactList.get().get(i).getTitle(),
-                                    artifactList.get().get(i).getAccessionNumber(),
-                                    artifactList.get().get(i).getTourGuideId(),
-                                    artifactList.get().get(i).getMainTitle(),
-                                    artifactList.get().get(i).getImage(),
-                                    artifactList.get().get(i).getArtifactPosition(),
-                                    artifactList.get().get(i).getAudioFile(),
-                                    artifactList.get().get(i).getAudioDescriptif(),
-                                    artifactList.get().get(i).getCuratorialDescription(),
-                                    converters.fromArrayList(artifactList.get().get(i).getImages()),
-                                    artifactList.get().get(i).getFloorLevel(),
-                                    artifactList.get().get(i).getGalleryNumber(),
-                                    artifactList.get().get(i).getObjectHistory(),
-                                    artifactList.get().get(i).getProduction(),
-                                    artifactList.get().get(i).getProductionDates(),
-                                    artifactList.get().get(i).getPeriodStyle(),
-                                    artifactList.get().get(i).getArtistCreatorAuthor(),
-                                    artifactList.get().get(i).getTechniqueMaterials(),
-                                    artifactList.get().get(i).getArtifactNumber(),
-                                    artifactList.get().get(i).getDimensions(),
-                                    artifactList.get().get(i).getSortId(),
-                                    artifactList.get().get(i).getThumbImage());
-                            activityReference.get().qmDatabase.getArtifactTableDao().insertEnglishTable(artifactTableEnglish);
+                    } else {
+                        Timber.i("Inserting Artifact Table(language :%s) with id: %s",
+                                language, activityReference.get().artifactList.get(i).getNid());
+                        artifactTable = new ArtifactTable(Long.parseLong(artifactList.get().get(i).getNid()),
+                                artifactList.get().get(i).getTitle(),
+                                artifactList.get().get(i).getAccessionNumber(),
+                                artifactList.get().get(i).getTourGuideId(),
+                                artifactList.get().get(i).getMainTitle(),
+                                artifactList.get().get(i).getImage(),
+                                artifactList.get().get(i).getArtifactPosition(),
+                                artifactList.get().get(i).getAudioFile(),
+                                artifactList.get().get(i).getAudioDescriptif(),
+                                artifactList.get().get(i).getCuratorialDescription(),
+                                converters.fromArrayList(artifactList.get().get(i).getImages()),
+                                artifactList.get().get(i).getFloorLevel(),
+                                artifactList.get().get(i).getGalleryNumber(),
+                                artifactList.get().get(i).getObjectHistory(),
+                                artifactList.get().get(i).getProduction(),
+                                artifactList.get().get(i).getProductionDates(),
+                                artifactList.get().get(i).getPeriodStyle(),
+                                artifactList.get().get(i).getArtistCreatorAuthor(),
+                                artifactList.get().get(i).getTechniqueMaterials(),
+                                artifactList.get().get(i).getArtifactNumber(),
+                                artifactList.get().get(i).getDimensions(),
+                                artifactList.get().get(i).getSortId(),
+                                artifactList.get().get(i).getThumbImage(),
+                                language);
+                        activityReference.get().qmDatabase.getArtifactTableDao().insertData(artifactTable);
 
-                        }
-                    }
-                } else {
-                    for (int i = 0; i < artifactList.get().size(); i++) {
-                        int n = activityReference.get().qmDatabase.getArtifactTableDao().checkNidExistArabic(
-                                Integer.parseInt(artifactList.get().get(i).getNid()));
-                        if (n > 0) {
-                            Timber.i("Row exist in database(%s) for id: %s", language.toUpperCase(),
-                                    activityReference.get().artifactList.get(i).getNid());
-                            new UpdateArtifactTable(activityReference.get(), language, i, artifactList.get()).execute();
-
-                        } else {
-                            Timber.i("Inserting Artifact Table(%s) with id: %s",
-                                    language.toUpperCase(), activityReference.get().artifactList.get(i).getNid());
-                            artifactTableArabic = new ArtifactTableArabic(Long.parseLong(artifactList.get().get(i).getNid()),
-                                    artifactList.get().get(i).getTitle(),
-                                    artifactList.get().get(i).getAccessionNumber(),
-                                    artifactList.get().get(i).getTourGuideId(),
-                                    artifactList.get().get(i).getMainTitle(),
-                                    artifactList.get().get(i).getImage(),
-                                    artifactList.get().get(i).getArtifactPosition(),
-                                    artifactList.get().get(i).getAudioFile(),
-                                    artifactList.get().get(i).getAudioDescriptif(),
-                                    artifactList.get().get(i).getCuratorialDescription(),
-                                    converters.fromArrayList(artifactList.get().get(i).getImages()),
-                                    artifactList.get().get(i).getFloorLevel(),
-                                    artifactList.get().get(i).getGalleryNumber(),
-                                    artifactList.get().get(i).getObjectHistory(),
-                                    artifactList.get().get(i).getProduction(),
-                                    artifactList.get().get(i).getProductionDates(),
-                                    artifactList.get().get(i).getPeriodStyle(),
-                                    artifactList.get().get(i).getArtistCreatorAuthor(),
-                                    artifactList.get().get(i).getTechniqueMaterials(),
-                                    artifactList.get().get(i).getArtifactNumber(),
-                                    artifactList.get().get(i).getDimensions(),
-                                    artifactList.get().get(i).getSortId(),
-                                    artifactList.get().get(i).getThumbImage());
-                            activityReference.get().qmDatabase.getArtifactTableDao().insertArabicTable(artifactTableArabic);
-
-                        }
                     }
                 }
             }
@@ -1664,81 +1618,48 @@ public class FloorMapActivity extends AppCompatActivity implements OnMapReadyCal
     public static class InsertDatabaseTask extends AsyncTask<Void, Void, Boolean> {
         private WeakReference<FloorMapActivity> activityReference;
         private WeakReference<ArrayList<ArtifactDetails>> artifactList;
-        private ArtifactTableEnglish artifactTableEnglish;
-        private ArtifactTableArabic artifactTableArabic;
+        private ArtifactTable artifactTable;
         String language;
 
-        InsertDatabaseTask(FloorMapActivity context, ArtifactTableEnglish artifactTableEnglish,
-                           ArtifactTableArabic artifactTableArabic, String lan, ArrayList<ArtifactDetails> list) {
+        InsertDatabaseTask(FloorMapActivity context, ArtifactTable artifactTable,
+                           String lan, ArrayList<ArtifactDetails> list) {
             activityReference = new WeakReference<>(context);
             artifactList = new WeakReference<>(list);
-            this.artifactTableEnglish = artifactTableEnglish;
-            this.artifactTableArabic = artifactTableArabic;
+            this.artifactTable = artifactTable;
             language = lan;
         }
 
         @Override
         protected Boolean doInBackground(Void... voids) {
             if (artifactList != null) {
-                if (language.equals(LocaleManager.LANGUAGE_ENGLISH)) {
-                    for (int i = 0; i < artifactList.get().size(); i++) {
-                        Timber.i("Inserting Artifact Table(%s) with id: %s",
-                                language.toUpperCase(), activityReference.get().artifactList.get(i).getNid());
-                        artifactTableEnglish = new ArtifactTableEnglish(Long.parseLong(artifactList.get().get(i).getNid()),
-                                artifactList.get().get(i).getTitle(),
-                                artifactList.get().get(i).getAccessionNumber(),
-                                artifactList.get().get(i).getTourGuideId(),
-                                artifactList.get().get(i).getMainTitle(),
-                                artifactList.get().get(i).getImage(),
-                                artifactList.get().get(i).getArtifactPosition(),
-                                artifactList.get().get(i).getAudioFile(),
-                                artifactList.get().get(i).getAudioDescriptif(),
-                                artifactList.get().get(i).getCuratorialDescription(),
-                                converters.fromArrayList(artifactList.get().get(i).getImages()),
-                                artifactList.get().get(i).getFloorLevel(),
-                                artifactList.get().get(i).getGalleryNumber(),
-                                artifactList.get().get(i).getObjectHistory(),
-                                artifactList.get().get(i).getProduction(),
-                                artifactList.get().get(i).getProductionDates(),
-                                artifactList.get().get(i).getPeriodStyle(),
-                                artifactList.get().get(i).getArtistCreatorAuthor(),
-                                artifactList.get().get(i).getTechniqueMaterials(),
-                                artifactList.get().get(i).getArtifactNumber(),
-                                artifactList.get().get(i).getDimensions(),
-                                artifactList.get().get(i).getSortId(),
-                                artifactList.get().get(i).getThumbImage());
-                        activityReference.get().qmDatabase.getArtifactTableDao().insertEnglishTable(artifactTableEnglish);
-                    }
-                } else {
-                    for (int i = 0; i < artifactList.get().size(); i++) {
-                        Timber.i("Inserting Artifact Table(%s) with id: %s",
-                                language.toUpperCase(), activityReference.get().artifactList.get(i).getNid());
-                        artifactTableArabic = new ArtifactTableArabic(Long.parseLong(artifactList.get().get(i).getNid()),
-                                artifactList.get().get(i).getTitle(),
-                                artifactList.get().get(i).getAccessionNumber(),
-                                artifactList.get().get(i).getTourGuideId(),
-                                artifactList.get().get(i).getMainTitle(),
-                                artifactList.get().get(i).getImage(),
-                                artifactList.get().get(i).getArtifactPosition(),
-                                artifactList.get().get(i).getAudioFile(),
-                                artifactList.get().get(i).getAudioDescriptif(),
-                                artifactList.get().get(i).getCuratorialDescription(),
-                                converters.fromArrayList(artifactList.get().get(i).getImages()),
-                                artifactList.get().get(i).getFloorLevel(),
-                                artifactList.get().get(i).getGalleryNumber(),
-                                artifactList.get().get(i).getObjectHistory(),
-                                artifactList.get().get(i).getProduction(),
-                                artifactList.get().get(i).getProductionDates(),
-                                artifactList.get().get(i).getPeriodStyle(),
-                                artifactList.get().get(i).getArtistCreatorAuthor(),
-                                artifactList.get().get(i).getTechniqueMaterials(),
-                                artifactList.get().get(i).getArtifactNumber(),
-                                artifactList.get().get(i).getDimensions(),
-                                artifactList.get().get(i).getSortId(),
-                                artifactList.get().get(i).getThumbImage());
-                        activityReference.get().qmDatabase.getArtifactTableDao().insertArabicTable(artifactTableArabic);
-
-                    }
+                for (int i = 0; i < artifactList.get().size(); i++) {
+                    Timber.i("Inserting Artifact Table(language :%s) with id: %s",
+                            language, activityReference.get().artifactList.get(i).getNid());
+                    artifactTable = new ArtifactTable(Long.parseLong(artifactList.get().get(i).getNid()),
+                            artifactList.get().get(i).getTitle(),
+                            artifactList.get().get(i).getAccessionNumber(),
+                            artifactList.get().get(i).getTourGuideId(),
+                            artifactList.get().get(i).getMainTitle(),
+                            artifactList.get().get(i).getImage(),
+                            artifactList.get().get(i).getArtifactPosition(),
+                            artifactList.get().get(i).getAudioFile(),
+                            artifactList.get().get(i).getAudioDescriptif(),
+                            artifactList.get().get(i).getCuratorialDescription(),
+                            converters.fromArrayList(artifactList.get().get(i).getImages()),
+                            artifactList.get().get(i).getFloorLevel(),
+                            artifactList.get().get(i).getGalleryNumber(),
+                            artifactList.get().get(i).getObjectHistory(),
+                            artifactList.get().get(i).getProduction(),
+                            artifactList.get().get(i).getProductionDates(),
+                            artifactList.get().get(i).getPeriodStyle(),
+                            artifactList.get().get(i).getArtistCreatorAuthor(),
+                            artifactList.get().get(i).getTechniqueMaterials(),
+                            artifactList.get().get(i).getArtifactNumber(),
+                            artifactList.get().get(i).getDimensions(),
+                            artifactList.get().get(i).getSortId(),
+                            artifactList.get().get(i).getThumbImage(),
+                            language);
+                    activityReference.get().qmDatabase.getArtifactTableDao().insertData(artifactTable);
                 }
             }
             return true;
@@ -1766,65 +1687,34 @@ public class FloorMapActivity extends AppCompatActivity implements OnMapReadyCal
 
         @Override
         protected Void doInBackground(Void... voids) {
-            Timber.i("Updating Artifact Table(%s) with id: %s",
-                    language.toUpperCase(), activityReference.get().artifactList.get(position).getNid());
-            if (language.equals(LocaleManager.LANGUAGE_ENGLISH)) {
-                // updateEnglishTable table with english name
-                activityReference.get().qmDatabase.getArtifactTableDao().updateArtifactEnglish(
-                        artifactList.get().get(position).getNid(),
-                        artifactList.get().get(position).getTitle(),
-                        artifactList.get().get(position).getAccessionNumber(),
-                        artifactList.get().get(position).getTourGuideId(),
-                        artifactList.get().get(position).getMainTitle(),
-                        artifactList.get().get(position).getImage(),
-                        artifactList.get().get(position).getArtifactPosition(),
-                        artifactList.get().get(position).getAudioFile(),
-                        artifactList.get().get(position).getAudioDescriptif(),
-                        artifactList.get().get(position).getCuratorialDescription(),
-                        converters.fromArrayList(artifactList.get().get(position).getImages()),
-                        artifactList.get().get(position).getFloorLevel(),
-                        artifactList.get().get(position).getGalleryNumber(),
-                        artifactList.get().get(position).getObjectHistory(),
-                        artifactList.get().get(position).getProduction(),
-                        artifactList.get().get(position).getProductionDates(),
-                        artifactList.get().get(position).getPeriodStyle(),
-                        artifactList.get().get(position).getArtistCreatorAuthor(),
-                        artifactList.get().get(position).getTechniqueMaterials(),
-                        artifactList.get().get(position).getArtifactNumber(),
-                        artifactList.get().get(position).getDimensions(),
-                        artifactList.get().get(position).getSortId(),
-                        artifactList.get().get(position).getThumbImage()
-                );
-
-            } else {
-                // updateArabicTable table with arabic name
-                activityReference.get().qmDatabase.getArtifactTableDao().updateArtifactArabic(
-                        artifactList.get().get(position).getNid(),
-                        artifactList.get().get(position).getTitle(),
-                        artifactList.get().get(position).getAccessionNumber(),
-                        artifactList.get().get(position).getTourGuideId(),
-                        artifactList.get().get(position).getMainTitle(),
-                        artifactList.get().get(position).getImage(),
-                        artifactList.get().get(position).getArtifactPosition(),
-                        artifactList.get().get(position).getAudioFile(),
-                        artifactList.get().get(position).getAudioDescriptif(),
-                        artifactList.get().get(position).getCuratorialDescription(),
-                        converters.fromArrayList(artifactList.get().get(position).getImages()),
-                        artifactList.get().get(position).getFloorLevel(),
-                        artifactList.get().get(position).getGalleryNumber(),
-                        artifactList.get().get(position).getObjectHistory(),
-                        artifactList.get().get(position).getProduction(),
-                        artifactList.get().get(position).getProductionDates(),
-                        artifactList.get().get(position).getPeriodStyle(),
-                        artifactList.get().get(position).getArtistCreatorAuthor(),
-                        artifactList.get().get(position).getTechniqueMaterials(),
-                        artifactList.get().get(position).getArtifactNumber(),
-                        artifactList.get().get(position).getDimensions(),
-                        artifactList.get().get(position).getSortId(),
-                        artifactList.get().get(position).getThumbImage()
-                );
-            }
-
+            Timber.i("Updating Artifact Table(language :%s) with id: %s",
+                    language, activityReference.get().artifactList.get(position).getNid());
+            activityReference.get().qmDatabase.getArtifactTableDao().updateArtifact(
+                    artifactList.get().get(position).getNid(),
+                    artifactList.get().get(position).getTitle(),
+                    artifactList.get().get(position).getAccessionNumber(),
+                    artifactList.get().get(position).getTourGuideId(),
+                    artifactList.get().get(position).getMainTitle(),
+                    artifactList.get().get(position).getImage(),
+                    artifactList.get().get(position).getArtifactPosition(),
+                    artifactList.get().get(position).getAudioFile(),
+                    artifactList.get().get(position).getAudioDescriptif(),
+                    artifactList.get().get(position).getCuratorialDescription(),
+                    converters.fromArrayList(artifactList.get().get(position).getImages()),
+                    artifactList.get().get(position).getFloorLevel(),
+                    artifactList.get().get(position).getGalleryNumber(),
+                    artifactList.get().get(position).getObjectHistory(),
+                    artifactList.get().get(position).getProduction(),
+                    artifactList.get().get(position).getProductionDates(),
+                    artifactList.get().get(position).getPeriodStyle(),
+                    artifactList.get().get(position).getArtistCreatorAuthor(),
+                    artifactList.get().get(position).getTechniqueMaterials(),
+                    artifactList.get().get(position).getArtifactNumber(),
+                    artifactList.get().get(position).getDimensions(),
+                    artifactList.get().get(position).getSortId(),
+                    artifactList.get().get(position).getThumbImage(),
+                    language
+            );
             return null;
         }
 
@@ -1834,22 +1724,22 @@ public class FloorMapActivity extends AppCompatActivity implements OnMapReadyCal
         }
     }
 
-    public static class RetrieveEnglishTableData extends AsyncTask<Void, Void, List<ArtifactTableEnglish>> {
+    public static class RetrieveTableData extends AsyncTask<Void, Void, List<ArtifactTable>> {
         private WeakReference<FloorMapActivity> activityReference;
 
-        RetrieveEnglishTableData(FloorMapActivity context) {
+        RetrieveTableData(FloorMapActivity context) {
             activityReference = new WeakReference<>(context);
         }
 
         @Override
-        protected List<ArtifactTableEnglish> doInBackground(Void... voids) {
-            Timber.i("getAllDataFromArtifactEnglishTable()");
-            return activityReference.get().qmDatabase.getArtifactTableDao().getAllDataFromArtifactEnglishTable();
-
+        protected List<ArtifactTable> doInBackground(Void... voids) {
+            Timber.i("getAllDataFromArtifactTable(language :%s)", activityReference.get().language);
+            return activityReference.get().qmDatabase.getArtifactTableDao()
+                    .getAllDataFromArtifactTable(activityReference.get().language);
         }
 
         @Override
-        protected void onPostExecute(List<ArtifactTableEnglish> artifactDetailsList) {
+        protected void onPostExecute(List<ArtifactTable> artifactDetailsList) {
             if (artifactDetailsList.size() > 0) {
                 Timber.i("Set Artifact list from database with size: %d",
                         artifactDetailsList.size());
@@ -1898,74 +1788,10 @@ public class FloorMapActivity extends AppCompatActivity implements OnMapReadyCal
         }
     }
 
-    public static class RetrieveArabicTableData extends AsyncTask<Void, Void, List<ArtifactTableArabic>> {
-        private WeakReference<FloorMapActivity> activityReference;
-
-        RetrieveArabicTableData(FloorMapActivity context) {
-            activityReference = new WeakReference<>(context);
-        }
-
-        @Override
-        protected List<ArtifactTableArabic> doInBackground(Void... voids) {
-            Timber.i("getAllDataFromArtifactArabicTable()");
-            return activityReference.get().qmDatabase.getArtifactTableDao().getAllDataFromArtifactArabicTable();
-
-        }
-
-        @Override
-        protected void onPostExecute(List<ArtifactTableArabic> artifactDetailsList) {
-            if (artifactDetailsList.size() > 0) {
-                Timber.i("Set Artifact list from database with size: %d",
-                        artifactDetailsList.size());
-                activityReference.get().artifactList.clear();
-                for (int i = 0; i < artifactDetailsList.size(); i++) {
-                    Timber.i("Setting Artifact list from database with id: %s",
-                            artifactDetailsList.get(i).getNid());
-                    ArtifactDetails artifactDetails = new ArtifactDetails(artifactDetailsList.get(i).getNid(),
-                            artifactDetailsList.get(i).getTitle(),
-                            artifactDetailsList.get(i).getAccessionNumber(),
-                            artifactDetailsList.get(i).getTourGuideId(),
-                            artifactDetailsList.get(i).getMainTitle(),
-                            artifactDetailsList.get(i).getImage(),
-                            artifactDetailsList.get(i).getArtifactPosition(),
-                            artifactDetailsList.get(i).getAudioFile(),
-                            artifactDetailsList.get(i).getAudioDescription(),
-                            artifactDetailsList.get(i).getCuratorialDescription(),
-                            converters.fromString(artifactDetailsList.get(i).getImages()),
-                            artifactDetailsList.get(i).getFloorLevel(),
-                            artifactDetailsList.get(i).getGalleryNumber(),
-                            artifactDetailsList.get(i).getObjectHistory(),
-                            artifactDetailsList.get(i).getProduction(),
-                            artifactDetailsList.get(i).getProductionDates(),
-                            artifactDetailsList.get(i).getPeriodStyle(),
-                            artifactDetailsList.get(i).getArtistCreatorAuthor(),
-                            artifactDetailsList.get(i).getTechniqueMaterials(),
-                            artifactDetailsList.get(i).getArtifactNumber(),
-                            artifactDetailsList.get(i).getDimensions(),
-                            artifactDetailsList.get(i).getSortId(),
-                            artifactDetailsList.get(i).getThumbImage());
-                    activityReference.get().artifactList.add(i, artifactDetails);
-                }
-                activityReference.get().addDataToHashMap();
-                activityReference.get().progressBar.setVisibility(View.GONE);
-                activityReference.get().floorMapRootLayout.setVisibility(View.VISIBLE);
-                activityReference.get().retryLayout.setVisibility(View.GONE);
-            } else {
-                activityReference.get().progressBar.setVisibility(View.GONE);
-                activityReference.get().floorMapRootLayout.setVisibility(View.GONE);
-                activityReference.get().retryLayout.setVisibility(View.VISIBLE);
-            }
-        }
-
-    }
-
     public void fetchArtifactsFromDB() {
         Timber.i("fetchArtifactsFromDB()");
         progressBar.setVisibility(View.VISIBLE);
-        if (language.equals(LocaleManager.LANGUAGE_ENGLISH))
-            new RetrieveEnglishTableData(FloorMapActivity.this).execute();
-        else
-            new RetrieveArabicTableData(FloorMapActivity.this).execute();
+        new RetrieveTableData(FloorMapActivity.this).execute();
     }
 
     @Override

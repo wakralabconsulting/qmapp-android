@@ -167,7 +167,7 @@ public class TourGuideActivity extends AppCompatActivity {
     }
 
     public void getTourGuidePageAPIData() {
-        Timber.i("getTourGuidePageAPIData()");
+        Timber.i("getTourGuidePageAPIData(language :%s)", appLanguage);
         progressBar.setVisibility(View.VISIBLE);
         APIInterface apiService =
                 APIClient.getClient().create(APIInterface.class);
@@ -223,7 +223,7 @@ public class TourGuideActivity extends AppCompatActivity {
 
         @Override
         protected Integer doInBackground(Void... voids) {
-            Timber.i("getNumberOfRows%s()", language.toUpperCase());
+            Timber.i("getNumberOfRows(language :%s)", language);
             return activityReference.get().qmDatabase.getHomePageTableDao().getNumberOfRows(language);
 
         }
@@ -263,13 +263,13 @@ public class TourGuideActivity extends AppCompatActivity {
                             Integer.parseInt(activityReference.get().tourGuideList.get(i).getId()),
                             language);
                     if (n > 0) {
-                        Timber.i("Row exist in database(%s) for id: %s", language.toUpperCase(),
+                        Timber.i("Row exist in database(language :%s) for id: %s", language,
                                 activityReference.get().tourGuideList.get(i).getId());
                         new UpdateHomePageTable(activityReference.get(), language, i).execute();
 
                     } else {
-                        Timber.i("Inserting data to table(%s) with id: %s",
-                                language.toUpperCase(), activityReference.get().tourGuideList.get(i).getId());
+                        Timber.i("Inserting data to table(language :%s) with id: %s",
+                                language, activityReference.get().tourGuideList.get(i).getId());
                         homePageTable = new HomePageTable(
                                 Long.parseLong(activityReference.get().tourGuideList.get(i).getId()),
                                 activityReference.get().tourGuideList.get(i).getName(),
@@ -277,7 +277,7 @@ public class TourGuideActivity extends AppCompatActivity {
                                 activityReference.get().tourGuideList.get(i).getImage(),
                                 activityReference.get().tourGuideList.get(i).getSortId(),
                                 language);
-                        activityReference.get().qmDatabase.getHomePageTableDao().insertTable(homePageTable);
+                        activityReference.get().qmDatabase.getHomePageTableDao().insertData(homePageTable);
 
                     }
                 }
@@ -304,8 +304,8 @@ public class TourGuideActivity extends AppCompatActivity {
         protected Boolean doInBackground(Void... voids) {
             if (activityReference.get().tourGuideList != null) {
                 for (int i = 0; i < activityReference.get().tourGuideList.size(); i++) {
-                    Timber.i("Inserting data to table(%s) with id: %s",
-                            language.toUpperCase(), activityReference.get().tourGuideList.get(i).getId());
+                    Timber.i("Inserting data to table(language :%s) with id: %s",
+                            language, activityReference.get().tourGuideList.get(i).getId());
                     homePageTable = new HomePageTable(
                             Long.parseLong(activityReference.get().tourGuideList.get(i).getId()),
                             activityReference.get().tourGuideList.get(i).getName(),
@@ -313,7 +313,7 @@ public class TourGuideActivity extends AppCompatActivity {
                             activityReference.get().tourGuideList.get(i).getImage(),
                             activityReference.get().tourGuideList.get(i).getSortId(),
                             language);
-                    activityReference.get().qmDatabase.getHomePageTableDao().insertTable(homePageTable);
+                    activityReference.get().qmDatabase.getHomePageTableDao().insertData(homePageTable);
                 }
             }
             return true;
@@ -339,8 +339,8 @@ public class TourGuideActivity extends AppCompatActivity {
 
         @Override
         protected Void doInBackground(Void... voids) {
-            Timber.i("Updating data to table(%s) with id: %s",
-                    language.toUpperCase(), activityReference.get().tourGuideList.get(position).getId());
+            Timber.i("Updating data to table(language :%s) with id: %s",
+                    language, activityReference.get().tourGuideList.get(position).getId());
             activityReference.get().qmDatabase.getHomePageTableDao().updateHomePageTable(
                     activityReference.get().tourGuideList.get(position).getName(),
                     activityReference.get().tourGuideList.get(position).getTourGuideAvailable(),
@@ -363,10 +363,9 @@ public class TourGuideActivity extends AppCompatActivity {
 
         @Override
         protected List<HomePageTable> doInBackground(Void... voids) {
-            Timber.i("getAllDataFromHomePageTable()");
+            Timber.i("getAllDataFromHomePageTable(language :%s)", activityReference.get().appLanguage);
             return activityReference.get().qmDatabase.getHomePageTableDao()
                     .getAllDataFromHomePageTable(activityReference.get().appLanguage);
-
         }
 
         @Override
@@ -381,7 +380,7 @@ public class TourGuideActivity extends AppCompatActivity {
                     HomeList exhibitionObject = new HomeList(homePageTables.get(i).getName()
                             , String.valueOf(homePageTables.get(i).getQatarMuseum_id()),
                             homePageTables.get(i).getImage(),
-                            homePageTables.get(i).getTourGuide_available(),
+                            homePageTables.get(i).getTour_guide_available(),
                             homePageTables.get(i).getSortId());
                     activityReference.get().tourGuideList.add(i, exhibitionObject);
                 }

@@ -28,69 +28,61 @@ import com.qatarmuseums.qatarmuseumsapp.culturepass.UserRegistrationDetailsTable
 import com.qatarmuseums.qatarmuseumsapp.culturepass.UserRegistrationDetailsTableDao;
 import com.qatarmuseums.qatarmuseumsapp.education.EducationCalendarTableDao;
 import com.qatarmuseums.qatarmuseumsapp.education.EducationalCalendarEventsTable;
-import com.qatarmuseums.qatarmuseumsapp.facilities.FacilityDetailTableArabic;
+import com.qatarmuseums.qatarmuseumsapp.facilities.FacilityDetailTable;
 import com.qatarmuseums.qatarmuseumsapp.facilities.FacilityDetailTableDao;
-import com.qatarmuseums.qatarmuseumsapp.facilities.FacilityDetailTableEnglish;
-import com.qatarmuseums.qatarmuseumsapp.facilities.FacilityListTableArabic;
+import com.qatarmuseums.qatarmuseumsapp.facilities.FacilityListTable;
 import com.qatarmuseums.qatarmuseumsapp.facilities.FacilityListTableDao;
-import com.qatarmuseums.qatarmuseumsapp.facilities.FacilityListTableEnglish;
-import com.qatarmuseums.qatarmuseumsapp.floormap.ArtifactTableArabic;
+import com.qatarmuseums.qatarmuseumsapp.floormap.ArtifactTable;
 import com.qatarmuseums.qatarmuseumsapp.floormap.ArtifactTableDao;
-import com.qatarmuseums.qatarmuseumsapp.floormap.ArtifactTableEnglish;
 import com.qatarmuseums.qatarmuseumsapp.home.HomePageBannerTable;
 import com.qatarmuseums.qatarmuseumsapp.home.HomePageBannerTableDao;
 import com.qatarmuseums.qatarmuseumsapp.home.HomePageTable;
 import com.qatarmuseums.qatarmuseumsapp.home.HomePageTableDao;
-import com.qatarmuseums.qatarmuseumsapp.museum.MuseumCollectionDetailTableArabic;
+import com.qatarmuseums.qatarmuseumsapp.museum.MuseumCollectionDetailTable;
 import com.qatarmuseums.qatarmuseumsapp.museum.MuseumCollectionDetailTableDao;
-import com.qatarmuseums.qatarmuseumsapp.museum.MuseumCollectionDetailTableEnglish;
-import com.qatarmuseums.qatarmuseumsapp.museum.MuseumCollectionListTableArabic;
+import com.qatarmuseums.qatarmuseumsapp.museum.MuseumCollectionListTable;
 import com.qatarmuseums.qatarmuseumsapp.museum.MuseumCollectionListTableDao;
-import com.qatarmuseums.qatarmuseumsapp.museum.MuseumCollectionListTableEnglish;
-import com.qatarmuseums.qatarmuseumsapp.museumabout.MuseumAboutTableArabic;
+import com.qatarmuseums.qatarmuseumsapp.museumabout.MuseumAboutTable;
 import com.qatarmuseums.qatarmuseumsapp.museumabout.MuseumAboutTableDao;
-import com.qatarmuseums.qatarmuseumsapp.museumabout.MuseumAboutTableEnglish;
 import com.qatarmuseums.qatarmuseumsapp.notification.NotificationTable;
 import com.qatarmuseums.qatarmuseumsapp.notification.NotificationTableDao;
-import com.qatarmuseums.qatarmuseumsapp.park.NMoQParkListDetailsTableArabic;
+import com.qatarmuseums.qatarmuseumsapp.park.NMoQParkListDetailsTable;
 import com.qatarmuseums.qatarmuseumsapp.park.NMoQParkListDetailsTableDao;
-import com.qatarmuseums.qatarmuseumsapp.park.NMoQParkListDetailsTableEnglish;
-import com.qatarmuseums.qatarmuseumsapp.park.NMoQParkListTableArabic;
+import com.qatarmuseums.qatarmuseumsapp.park.NMoQParkListTable;
 import com.qatarmuseums.qatarmuseumsapp.park.NMoQParkListTableDao;
-import com.qatarmuseums.qatarmuseumsapp.park.NMoQParkListTableEnglish;
-import com.qatarmuseums.qatarmuseumsapp.park.NMoQParkTableArabic;
+import com.qatarmuseums.qatarmuseumsapp.park.NMoQParkTable;
 import com.qatarmuseums.qatarmuseumsapp.park.NMoQParkTableDao;
-import com.qatarmuseums.qatarmuseumsapp.park.NMoQParkTableEnglish;
-import com.qatarmuseums.qatarmuseumsapp.park.ParkTableArabic;
+import com.qatarmuseums.qatarmuseumsapp.park.ParkTable;
 import com.qatarmuseums.qatarmuseumsapp.park.ParkTableDao;
-import com.qatarmuseums.qatarmuseumsapp.park.ParkTableEnglish;
-import com.qatarmuseums.qatarmuseumsapp.tourdetails.TourDetailsTableArabic;
+import com.qatarmuseums.qatarmuseumsapp.tourdetails.TourDetailsTable;
 import com.qatarmuseums.qatarmuseumsapp.tourdetails.TourDetailsTableDao;
-import com.qatarmuseums.qatarmuseumsapp.tourdetails.TourDetailsTableEnglish;
-import com.qatarmuseums.qatarmuseumsapp.tourguidestartpage.TourGuideStartPageArabic;
+import com.qatarmuseums.qatarmuseumsapp.tourguidestartpage.TourGuideStartPage;
 import com.qatarmuseums.qatarmuseumsapp.tourguidestartpage.TourGuideStartPageDao;
-import com.qatarmuseums.qatarmuseumsapp.tourguidestartpage.TourGuideStartPageEnglish;
 
 @Database(entities = {HomePageTable.class,
         HeritageListTable.class,
         PublicArtsTable.class,
-        ParkTableEnglish.class, ParkTableArabic.class, DiningTable.class,
-        MuseumCollectionListTableEnglish.class,
-        MuseumCollectionListTableArabic.class, ExhibitionListTable.class,
-        MuseumAboutTableEnglish.class,
-        MuseumAboutTableArabic.class, CalendarEventsTable.class,
+        ParkTable.class,
+        DiningTable.class,
+        MuseumCollectionListTable.class,
+        ExhibitionListTable.class,
+        MuseumAboutTable.class,
+        CalendarEventsTable.class,
         EducationalCalendarEventsTable.class,
-        MuseumCollectionDetailTableEnglish.class, MuseumCollectionDetailTableArabic.class,
-        TourGuideStartPageEnglish.class, TourGuideStartPageArabic.class, ArtifactTableEnglish.class,
-        ArtifactTableArabic.class, NotificationTable.class,
-        HomePageBannerTable.class, TravelDetailsTable.class,
+        MuseumCollectionDetailTable.class,
+        TourGuideStartPage.class,
+        ArtifactTable.class,
+        NotificationTable.class,
+        HomePageBannerTable.class,
+        TravelDetailsTable.class,
         TourListTable.class,
-        TourDetailsTableEnglish.class, TourDetailsTableArabic.class, UserRegistrationDetailsTable.class,
-        FacilityListTableEnglish.class, FacilityListTableArabic.class,
-        FacilityDetailTableEnglish.class, FacilityDetailTableArabic.class,
-        NMoQParkTableEnglish.class, NMoQParkTableArabic.class,
-        NMoQParkListTableEnglish.class, NMoQParkListTableArabic.class,
-        NMoQParkListDetailsTableEnglish.class, NMoQParkListDetailsTableArabic.class},
+        TourDetailsTable.class,
+        UserRegistrationDetailsTable.class,
+        FacilityListTable.class,
+        FacilityDetailTable.class,
+        NMoQParkTable.class,
+        NMoQParkListTable.class,
+        NMoQParkListDetailsTable.class},
         version = 4, exportSchema = false)
 @TypeConverters({Convertor.class})
 

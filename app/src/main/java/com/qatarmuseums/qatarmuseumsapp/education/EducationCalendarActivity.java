@@ -290,7 +290,7 @@ public class EducationCalendarActivity extends AppCompatActivity {
     }
 
     private void getEducationCalendarEventsFromDatabase(long timeStamp) {
-        Timber.i("getEducationCalendarEventsFromDatabase()");
+        Timber.i("getEducationCalendarEventsFromDatabase(language :%s)", appLanguage);
         progress.setVisibility(View.VISIBLE);
         educationAdapter.clear();
         new EducationCalendarActivity.EventsRowCount(EducationCalendarActivity.this, appLanguage, timeStamp / 1000).execute();
@@ -332,7 +332,7 @@ public class EducationCalendarActivity extends AppCompatActivity {
     private void getEducationCalendarDataFromApi(String institute, String ageGroup, String programmeType,
                                                  final String month, final String day,
                                                  final String year, final long timeStamp) {
-        Timber.i("getEducationCalendarDataFromApi()");
+        Timber.i("getEducationCalendarDataFromApi(language :%s)", appLanguage);
         progress.setVisibility(View.VISIBLE);
         APIInterface apiService =
                 APIClient.getClient().create(APIInterface.class);
@@ -419,7 +419,8 @@ public class EducationCalendarActivity extends AppCompatActivity {
 
         @Override
         protected Integer doInBackground(Void... voids) {
-            Timber.i("getNumberOf%sRows%s()", activityReference.get().toolbar_title.getText(), language.toUpperCase());
+            Timber.i("getNumberOf%sRows(language :%s)", activityReference.get().toolbar_title.getText(),
+                    language);
             return activityReference.get().qmDatabase.getEducationCalendarEventsDao()
                     .getNumberOfRows(language);
         }
@@ -450,7 +451,7 @@ public class EducationCalendarActivity extends AppCompatActivity {
         @Override
         protected Void doInBackground(Void... voids) {
             if (activityReference.get().events.size() > 0) {
-                Timber.i("checkTableWithEventDateExist(%s) timestamp: %d", language.toUpperCase(), timestamp);
+                Timber.i("checkTableWithEventDateExist(language :%s) timestamp: %d", language, timestamp);
                 int n = activityReference.get().qmDatabase.getEducationCalendarEventsDao()
                         .checkWithEventDateExist(String.valueOf(timestamp), language);
                 if (n > 0) {
@@ -507,8 +508,8 @@ public class EducationCalendarActivity extends AppCompatActivity {
 
         @Override
         protected Void doInBackground(Void... voids) {
-            Timber.i("Updating %s Table(%s) with id: %s", activityReference.get().toolbar_title.getText(),
-                    language.toUpperCase(), activityReference.get().events.get(position).getEid());
+            Timber.i("Updating %s Table(language :%s) with id: %s", activityReference.get().toolbar_title.getText(),
+                    language, activityReference.get().events.get(position).getEid());
 
             ArrayList<String> startDate;
             startDate = activityReference.get().events.get(position).getStartTime();
@@ -561,7 +562,7 @@ public class EducationCalendarActivity extends AppCompatActivity {
         @Override
         protected Boolean doInBackground(Void... voids) {
             if (activityReference.get().events != null) {
-                Timber.i("insert event on table(%s) with id: %s", language.toUpperCase(),
+                Timber.i("insertData event on table(language :%s) with id: %s", language,
                         activityReference.get().events.get(position).getEid());
                 Convertor converters = new Convertor();
                 ArrayList<String> fieldValue = new ArrayList<String>();
@@ -628,11 +629,11 @@ public class EducationCalendarActivity extends AppCompatActivity {
         @Override
         protected Boolean doInBackground(Void... voids) {
             if (activityReference.get().events != null) {
-                Timber.i("insert event on table(%s) with size: %d", language.toUpperCase(),
+                Timber.i("insertData event on table(language :%s) with size: %d", language,
                         activityReference.get().events.size());
                 Convertor converters = new Convertor();
                 for (int i = 0; i < activityReference.get().events.size(); i++) {
-                    Timber.i("insertTable with id: %s",
+                    Timber.i("insertData with id: %s",
                             activityReference.get().events.get(i).getEid());
                     ArrayList<String> fieldValue;
                     fieldValue = activityReference.get().events.get(i).getField();
@@ -738,30 +739,30 @@ public class EducationCalendarActivity extends AppCompatActivity {
             if (activityReference.get().institutionFilter.equalsIgnoreCase("All") &&
                     activityReference.get().ageGroupFilter.equalsIgnoreCase("All") &&
                     activityReference.get().programmeTypeFilter.equalsIgnoreCase("All")) {
-                Timber.i("getAllEventsWithDate(%d)", eventDate);
+                Timber.i("getAllEventsWithDate(%d, language :%s)", eventDate, language);
                 return activityReference.get().qmDatabase.getEducationCalendarEventsDao()
                         .getAllEvents(String.valueOf(eventDate), activityReference.get().appLanguage);
             } else if (activityReference.get().institutionFilter.equalsIgnoreCase("All") &&
                     activityReference.get().ageGroupFilter.equalsIgnoreCase("All")) {
-                Timber.i("getProgrammeFilterEventsWithDate(%d)", eventDate);
+                Timber.i("getProgrammeFilterEventsWithDate(%d, language :%s)", eventDate, language);
                 return activityReference.get().qmDatabase.getEducationCalendarEventsDao().
                         getProgrammeFilterEvents(String.valueOf(eventDate),
                                 activityReference.get().programmeTypeFilter,
                                 activityReference.get().appLanguage);
             } else if (activityReference.get().institutionFilter.equalsIgnoreCase("All") &&
                     activityReference.get().programmeTypeFilter.equalsIgnoreCase("All")) {
-                Timber.i("getAgeGroupFilterEventsWithDate(%d)", eventDate);
+                Timber.i("getAgeGroupFilterEventsWithDate(%d, language :%s)", eventDate, language);
                 return activityReference.get().qmDatabase.getEducationCalendarEventsDao().
                         getAgeGroupFilterEvents(String.valueOf(eventDate), activityReference.get().appLanguage);
             } else if (activityReference.get().programmeTypeFilter.equalsIgnoreCase("All") &&
                     activityReference.get().ageGroupFilter.equalsIgnoreCase("All")) {
-                Timber.i("getInstitutionFilterEventsWithDate(%d)", eventDate);
+                Timber.i("getInstitutionFilterEventsWithDate(%d, language :%s)", eventDate, language);
                 return activityReference.get().qmDatabase.getEducationCalendarEventsDao().
                         getInstitutionFilterEvents(String.valueOf(eventDate),
                                 activityReference.get().institutionFilter,
                                 activityReference.get().appLanguage);
             } else {
-                Timber.i("getEventsWithDate(%d)", eventDate);
+                Timber.i("getEventsWithDate(%d, language :%s)", eventDate, language);
                 return activityReference.get().qmDatabase.getEducationCalendarEventsDao()
                         .getEventsWithDate(String.valueOf(eventDate), activityReference.get().institutionFilter,
                                 activityReference.get().programmeTypeFilter,

@@ -3,13 +3,13 @@ package com.qatarmuseums.qatarmuseumsapp.floormap;
 import android.arch.persistence.room.ColumnInfo;
 import android.arch.persistence.room.Entity;
 import android.arch.persistence.room.PrimaryKey;
-import android.support.annotation.NonNull;
 
-@Entity(tableName = "artifactTableArabic")
-public class ArtifactTableArabic {
+@Entity(tableName = "artifactTable")
+public class ArtifactTable {
 
-    @NonNull
-    @PrimaryKey(autoGenerate = false)
+    @ColumnInfo()
+    private String language;
+    @PrimaryKey()
     private long nid;
     @ColumnInfo()
     private String title;
@@ -59,13 +59,13 @@ public class ArtifactTableArabic {
     private String thumbImage;
 
 
-    public ArtifactTableArabic(long nid, String title, String accessionNumber, String tourGuideId,
-                               String mainTitle, String image, String artifactPosition, String audioFile,
-                               String audioDescription, String curatorialDescription, String images,
-                               String floorLevel, String galleryNumber, String objectHistory,
-                               String production, String productionDates, String periodStyle,
-                               String artistCreatorAuthor, String techniqueMaterials, String artifactNumber,
-                               String dimensions, String sortId, String thumbImage) {
+    public ArtifactTable(long nid, String title, String accessionNumber, String tourGuideId,
+                         String mainTitle, String image, String artifactPosition, String audioFile,
+                         String audioDescription, String curatorialDescription, String images,
+                         String floorLevel, String galleryNumber, String objectHistory,
+                         String production, String productionDates, String periodStyle,
+                         String artistCreatorAuthor, String techniqueMaterials, String artifactNumber,
+                         String dimensions, String sortId, String thumbImage, String language) {
         this.nid = nid;
         this.title = title;
         this.accessionNumber = accessionNumber;
@@ -89,14 +89,14 @@ public class ArtifactTableArabic {
         this.dimensions = dimensions;
         this.sortId = sortId;
         this.thumbImage = thumbImage;
+        this.language = language;
     }
 
-    @NonNull
     public long getNid() {
         return nid;
     }
 
-    public void setNid(@NonNull long nid) {
+    public void setNid(long nid) {
         this.nid = nid;
     }
 
@@ -112,16 +112,8 @@ public class ArtifactTableArabic {
         return accessionNumber;
     }
 
-    public void setAccessionNumber(String accessionNumber) {
-        this.accessionNumber = accessionNumber;
-    }
-
     public String getTourGuideId() {
         return tourGuideId;
-    }
-
-    public void setTourGuideId(String tourGuideId) {
-        this.tourGuideId = tourGuideId;
     }
 
     public String getMainTitle() {
@@ -144,32 +136,16 @@ public class ArtifactTableArabic {
         return artifactPosition;
     }
 
-    public void setArtifactPosition(String artifactPosition) {
-        this.artifactPosition = artifactPosition;
-    }
-
     public String getAudioFile() {
         return audioFile;
-    }
-
-    public void setAudioFile(String audioFile) {
-        this.audioFile = audioFile;
     }
 
     public String getAudioDescription() {
         return audioDescription;
     }
 
-    public void setAudioDescription(String audioDescription) {
-        this.audioDescription = audioDescription;
-    }
-
     public String getCuratorialDescription() {
         return curatorialDescription;
-    }
-
-    public void setCuratorialDescription(String curatorialDescription) {
-        this.curatorialDescription = curatorialDescription;
     }
 
     public String getImages() {
@@ -184,88 +160,48 @@ public class ArtifactTableArabic {
         return floorLevel;
     }
 
-    public void setFloorLevel(String floorLevel) {
-        this.floorLevel = floorLevel;
-    }
-
     public String getGalleryNumber() {
         return galleryNumber;
-    }
-
-    public void setGalleryNumber(String galleryNumber) {
-        this.galleryNumber = galleryNumber;
     }
 
     public String getObjectHistory() {
         return objectHistory;
     }
 
-    public void setObjectHistory(String objectHistory) {
-        this.objectHistory = objectHistory;
-    }
-
     public String getProduction() {
         return production;
-    }
-
-    public void setProduction(String production) {
-        this.production = production;
     }
 
     public String getProductionDates() {
         return productionDates;
     }
 
-    public void setProductionDates(String productionDates) {
-        this.productionDates = productionDates;
-    }
-
     public String getPeriodStyle() {
         return periodStyle;
-    }
-
-    public void setPeriodStyle(String periodStyle) {
-        this.periodStyle = periodStyle;
     }
 
     public String getArtistCreatorAuthor() {
         return artistCreatorAuthor;
     }
 
-    public void setArtistCreatorAuthor(String artistCreatorAuthor) {
-        this.artistCreatorAuthor = artistCreatorAuthor;
-    }
-
     public String getTechniqueMaterials() {
         return techniqueMaterials;
-    }
-
-    public void setTechniqueMaterials(String techniqueMaterials) {
-        this.techniqueMaterials = techniqueMaterials;
     }
 
     public String getArtifactNumber() {
         return artifactNumber;
     }
 
-    public void setArtifactNumber(String artifactNumber) {
-        this.artifactNumber = artifactNumber;
-    }
-
-    public String getDiam() {
+    String getDiam() {
         return diam;
     }
 
-    public void setDiam(String diam) {
+    void setDiam(String diam) {
         this.diam = diam;
     }
 
     public String getDimensions() {
         return dimensions;
-    }
-
-    public void setDimensions(String dimensions) {
-        this.dimensions = dimensions;
     }
 
     public String getSortId() {
@@ -280,7 +216,7 @@ public class ArtifactTableArabic {
         return thumbImage;
     }
 
-    public void setThumbImage(String thumbImage) {
-        this.thumbImage = thumbImage;
+    public String getLanguage() {
+        return language;
     }
 }

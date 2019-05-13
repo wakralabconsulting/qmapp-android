@@ -5,12 +5,15 @@ import android.arch.persistence.room.Entity;
 import android.arch.persistence.room.PrimaryKey;
 import android.support.annotation.NonNull;
 
-@Entity(tableName = "tourguidestartpageenglish")
-public class TourGuideStartPageEnglish {
+@Entity(tableName = "tourGuideStartPage")
+public class TourGuideStartPage {
+
+    @ColumnInfo()
+    private String language;
     @ColumnInfo()
     private String title;
     @NonNull
-    @PrimaryKey(autoGenerate = false)
+    @PrimaryKey()
     private String nid;
     @ColumnInfo()
     private String museum_entity;
@@ -19,13 +22,14 @@ public class TourGuideStartPageEnglish {
     @ColumnInfo()
     private String images;
 
-    public TourGuideStartPageEnglish(String title, @NonNull String nid, String museum_entity,
-                                     String description, String images) {
+    public TourGuideStartPage(String title, @NonNull String nid, String museum_entity,
+                              String description, String images, String language) {
         this.title = title;
         this.nid = nid;
         this.museum_entity = museum_entity;
         this.description = description;
         this.images = images;
+        this.language = language;
     }
 
     public String getTitle() {
@@ -47,5 +51,9 @@ public class TourGuideStartPageEnglish {
 
     public String getImages() {
         return images;
+    }
+
+    public String getLanguage() {
+        return language;
     }
 }

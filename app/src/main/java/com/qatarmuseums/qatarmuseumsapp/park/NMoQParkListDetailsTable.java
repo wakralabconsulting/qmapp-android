@@ -5,9 +5,11 @@ import android.arch.persistence.room.Entity;
 import android.arch.persistence.room.PrimaryKey;
 import android.support.annotation.NonNull;
 
-@Entity(tableName = "nMoQParkListDetailsTableEnglish")
-public class NMoQParkListDetailsTableEnglish {
+@Entity(tableName = "nMoQParkListDetailsTable")
+public class NMoQParkListDetailsTable {
 
+    @ColumnInfo
+    private String language;
     @PrimaryKey(autoGenerate = true)
     private Integer parkNumber;
     @ColumnInfo
@@ -21,12 +23,14 @@ public class NMoQParkListDetailsTableEnglish {
     @ColumnInfo()
     private String parkDescription;
 
-    public NMoQParkListDetailsTableEnglish(@NonNull String parkNid, String parkTitle, String parkSortId, String parkImages, String parkDescription) {
+    public NMoQParkListDetailsTable(@NonNull String parkNid, String parkTitle, String parkSortId,
+                                    String parkImages, String parkDescription, String language) {
         this.parkNid = parkNid;
         this.parkTitle = parkTitle;
         this.parkSortId = parkSortId;
         this.parkImages = parkImages;
         this.parkDescription = parkDescription;
+        this.language = language;
     }
 
     @NonNull
@@ -50,31 +54,23 @@ public class NMoQParkListDetailsTableEnglish {
         return parkSortId;
     }
 
-    public void setParkSortId(String parkSortId) {
-        this.parkSortId = parkSortId;
-    }
-
     public String getParkImages() {
         return parkImages;
-    }
-
-    public void setParkImages(String parkImages) {
-        this.parkImages = parkImages;
     }
 
     public String getParkDescription() {
         return parkDescription;
     }
 
-    public void setParkDescription(String parkDescription) {
-        this.parkDescription = parkDescription;
-    }
-
-    public Integer getParkNumber() {
+    Integer getParkNumber() {
         return parkNumber;
     }
 
-    public void setParkNumber(Integer parkNumber) {
+    void setParkNumber(Integer parkNumber) {
         this.parkNumber = parkNumber;
+    }
+
+    public String getLanguage() {
+        return language;
     }
 }

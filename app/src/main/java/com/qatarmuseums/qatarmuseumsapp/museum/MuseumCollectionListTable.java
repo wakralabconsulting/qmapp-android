@@ -5,10 +5,13 @@ import android.arch.persistence.room.Entity;
 import android.arch.persistence.room.PrimaryKey;
 import android.support.annotation.NonNull;
 
-@Entity(tableName = "museumcollectionlisttableEnglish")
-public class MuseumCollectionListTableEnglish {
+@Entity(tableName = "museumCollectionListTable")
+public class MuseumCollectionListTable {
+
+    @ColumnInfo()
+    private String language;
     @NonNull
-    @PrimaryKey(autoGenerate = false)
+    @PrimaryKey()
     private String name;
     @ColumnInfo()
     private String image;
@@ -18,15 +21,15 @@ public class MuseumCollectionListTableEnglish {
     private String collection_description;
 
 
-
-    public MuseumCollectionListTableEnglish(@NonNull String name, String image,
-                                            String museum_id,
-                                            String collection_description) {
+    public MuseumCollectionListTable(@NonNull String name, String image,
+                                     String museum_id,
+                                     String collection_description,
+                                     String language) {
         this.name = name;
         this.image = image;
         this.museum_id = museum_id;
         this.collection_description = collection_description;
-
+        this.language = language;
     }
 
     @NonNull
@@ -54,24 +57,11 @@ public class MuseumCollectionListTableEnglish {
         this.museum_id = museum_id;
     }
 
-    public String getCollection_description() {
+    String getCollection_description() {
         return collection_description;
     }
 
-    public void setCollection_description(String collection_description) {
-        this.collection_description = collection_description;
-    }
-
-
-
-
-    @Override
-    public String toString() {
-        return "museumcollectionlisttableEnglish{" +
-                "name ='" + name + '\'' +
-                ", image='" + image + '\'' +
-                ",museum_id='"+museum_id+'\''+
-                ", collection_description='" + collection_description + '\'' +
-                '}';
+    public String getLanguage() {
+        return language;
     }
 }

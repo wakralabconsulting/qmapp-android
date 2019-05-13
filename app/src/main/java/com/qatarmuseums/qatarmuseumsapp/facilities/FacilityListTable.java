@@ -5,11 +5,13 @@ import android.arch.persistence.room.Entity;
 import android.arch.persistence.room.PrimaryKey;
 import android.support.annotation.NonNull;
 
-@Entity(tableName = "facilitylisttableenglish")
-public class FacilityListTableEnglish {
+@Entity(tableName = "facilityListTable")
+public class FacilityListTable {
 
+    @ColumnInfo()
+    private String language;
     @NonNull
-    @PrimaryKey(autoGenerate = false)
+    @PrimaryKey()
     private String facilityNid;
     @ColumnInfo()
     private String sortId;
@@ -18,20 +20,18 @@ public class FacilityListTableEnglish {
     @ColumnInfo()
     private String facilityImage;
 
-    public FacilityListTableEnglish(@NonNull String facilityNid, String sortId, String facilityTitle, String facilityImage) {
+    public FacilityListTable(@NonNull String facilityNid, String sortId, String facilityTitle,
+                             String facilityImage, String language) {
         this.facilityNid = facilityNid;
         this.sortId = sortId;
         this.facilityTitle = facilityTitle;
         this.facilityImage = facilityImage;
+        this.language = language;
     }
 
     @NonNull
     public String getFacilityNid() {
         return facilityNid;
-    }
-
-    public void setFacilityNid(@NonNull String facilityNid) {
-        this.facilityNid = facilityNid;
     }
 
     public String getSortId() {
@@ -46,15 +46,11 @@ public class FacilityListTableEnglish {
         return facilityTitle;
     }
 
-    public void setFacilityTitle(String facilityTitle) {
-        this.facilityTitle = facilityTitle;
-    }
-
     public String getFacilityImage() {
         return facilityImage;
     }
 
-    public void setFacilityImage(String facilityImage) {
-        this.facilityImage = facilityImage;
+    public String getLanguage() {
+        return language;
     }
 }

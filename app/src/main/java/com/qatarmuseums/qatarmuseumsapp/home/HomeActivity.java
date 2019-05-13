@@ -404,7 +404,7 @@ public class HomeActivity extends BaseActivity {
     }
 
     public void getHomePageAPIData(String language) {
-        Timber.i("getHomePageAPIData()");
+        Timber.i("getHomePageAPIData(language :%s)", language);
         APIInterface apiService =
                 APIClient.getClient().create(APIInterface.class);
         Call<ArrayList<HomeList>> call = apiService.getMuseumsList(language);
@@ -455,7 +455,7 @@ public class HomeActivity extends BaseActivity {
         }
         if (!isPanelDiscussionAvailable) {
             HomeList homeList;
-            Timber.i("AddPanelDiscussion() Hardcoded value");
+            Timber.i("AddPanelDiscussion(%s) Hardcoded value", language);
             if (language.equals(LocaleManager.LANGUAGE_ENGLISH)) {
                 homeList = new HomeList(
                         "QATAR CREATES: EVENTS FOR THE OPENING OF NMoQ",
@@ -476,7 +476,7 @@ public class HomeActivity extends BaseActivity {
     }
 
     public void getBannerAPIData() {
-        Timber.i("getBannerAPIData()");
+        Timber.i("getBannerAPIData(language :%s)", language);
         APIInterface apiService =
                 APIClient.getClient().create(APIInterface.class);
         Call<ArrayList<HomeList>> call = apiService.getBannerDetails(language);
@@ -588,7 +588,7 @@ public class HomeActivity extends BaseActivity {
     }
 
     public void fetchToken() {
-        Timber.i("fetchToken()");
+        Timber.i("fetchToken(language :%s)", language);
         HttpLoggingInterceptor interceptor = new HttpLoggingInterceptor();
         interceptor.setLevel(HttpLoggingInterceptor.Level.BODY);
 
@@ -631,7 +631,7 @@ public class HomeActivity extends BaseActivity {
     }
 
     public void performLogin(String token) {
-        Timber.i("performLogin()");
+        Timber.i("performLogin(language :%s)", language);
         HttpLoggingInterceptor interceptor = new HttpLoggingInterceptor();
         interceptor.setLevel(HttpLoggingInterceptor.Level.BODY);
         OkHttpClient client;
@@ -709,7 +709,7 @@ public class HomeActivity extends BaseActivity {
     }
 
     public void checkRSVP(String uid, String token) {
-        Timber.i("checkRSVP()");
+        Timber.i("checkRSVP(language :%s)", language);
         HttpLoggingInterceptor interceptor = new HttpLoggingInterceptor();
         interceptor.setLevel(HttpLoggingInterceptor.Level.BODY);
 
@@ -913,7 +913,7 @@ public class HomeActivity extends BaseActivity {
     }
 
     public void fetchTokenForPassword() {
-        Timber.i("fetchTokenForPassword()");
+        Timber.i("fetchTokenForPassword(language :%s)", language);
         apiService = APIClient.getClient().create(APIInterface.class);
         Call<ProfileDetails> call = apiService.generateToken(language, loginData);
         call.enqueue(new Callback<ProfileDetails>() {
@@ -939,7 +939,7 @@ public class HomeActivity extends BaseActivity {
     }
 
     public void forgotPasswordAction(String token) {
-        Timber.i("forgotPasswordAction()");
+        Timber.i("forgotPasswordAction(language :%s)", language);
         apiService = APIClient.getClient().create(APIInterface.class);
         Call<ArrayList<String>> callLogin = apiService.forgotPassword(language, token, loginData);
         callLogin.enqueue(new Callback<ArrayList<String>>() {
@@ -1048,7 +1048,7 @@ public class HomeActivity extends BaseActivity {
 
         @Override
         protected Integer doInBackground(Void... voids) {
-            Timber.i("getNumberOfBannerRows%s()", language.toUpperCase());
+            Timber.i("getNumberOfBannerRows(language :%s)", language);
             return activityReference.get().qmDatabase.getHomePageBannerTableDao()
                     .getNumberOfBannerRows(language);
 
@@ -1084,8 +1084,8 @@ public class HomeActivity extends BaseActivity {
 
         @Override
         protected Void doInBackground(Void... voids) {
-            // updateTable table with english name
-            Timber.i("updateHomePageBanner() with id: %s", bannerLists.get(0).getId());
+            Timber.i("updateHomePageBanner(language :%s) with id: %s", language,
+                    bannerLists.get(0).getId());
             activityReference.get().qmDatabase.getHomePageBannerTableDao().updateHomePageBanner(
                     bannerLists.get(0).getName(),
                     bannerLists.get(0).getImage(),
@@ -1114,7 +1114,7 @@ public class HomeActivity extends BaseActivity {
         @Override
         protected Boolean doInBackground(Void... voids) {
             if (bannerLists != null && bannerLists.size() > 0) {
-                Timber.i("insertBannerTable%s() with id: %s", language.toUpperCase(),
+                Timber.i("insertBannerTable(language :%s) with id: %s", language,
                         bannerLists.get(0).getId());
                 homePageBannerTable = new HomePageBannerTable(
                         Long.parseLong(bannerLists.get(0).getId()),
@@ -1138,7 +1138,7 @@ public class HomeActivity extends BaseActivity {
 
         @Override
         protected List<HomePageBannerTable> doInBackground(Void... voids) {
-            Timber.i("getAllDataFromHomePageBannerTable()");
+            Timber.i("getAllDataFromHomePageBannerTable(language :%s)", activityReference.get().language);
             return activityReference.get().qmDatabase.getHomePageBannerTableDao()
                     .getAllDataFromHomePageBannerTable(activityReference.get().language);
 
@@ -1172,7 +1172,7 @@ public class HomeActivity extends BaseActivity {
 
 
     public void getBannerDataFromDataBase() {
-        Timber.i("getBannerDataFromDataBase()");
+        Timber.i("getBannerDataFromDataBase(language :%s)", language);
         new RetrieveBannerTableData(HomeActivity.this).execute();
     }
 
@@ -1191,7 +1191,7 @@ public class HomeActivity extends BaseActivity {
 
         @Override
         protected Integer doInBackground(Void... voids) {
-            Timber.i("getNumberOfRows%s()", language.toUpperCase());
+            Timber.i("getNumberOfRows(language :%s)", language);
             return activityReference.get().qmDatabase.getHomePageTableDao().getNumberOfRows(language);
 
         }
@@ -1236,15 +1236,14 @@ public class HomeActivity extends BaseActivity {
                         Timber.i("Row exist in DB for id: %s", homeLists.get().get(i).getId());
                         new UpdateHomePageTable(activityReference.get(), language, i, homeLists.get()).execute();
                     } else {
-                        Timber.i("insertTable with id: %s", homeLists.get().get(i).getId());
+                        Timber.i("insertData with id: %s", homeLists.get().get(i).getId());
                         homePageTable = new HomePageTable(Long.parseLong(homeLists.get().get(i).getId()),
                                 homeLists.get().get(i).getName(),
                                 homeLists.get().get(i).getTourGuideAvailable(),
                                 homeLists.get().get(i).getImage(),
                                 homeLists.get().get(i).getSortId(),
                                 language);
-                        activityReference.get().qmDatabase.getHomePageTableDao().insertTable(homePageTable);
-
+                        activityReference.get().qmDatabase.getHomePageTableDao().insertData(homePageTable);
                     }
                 }
             }
@@ -1271,17 +1270,17 @@ public class HomeActivity extends BaseActivity {
         @Override
         protected Boolean doInBackground(Void... voids) {
             if (homeLists != null && homeLists.get().size() > 0) {
-                Timber.i("insert data to Table(%s) with size: %d", language.toUpperCase(),
+                Timber.i("insertData data to Table(language :%s) with size: %d", language,
                         homeLists.get().size());
                 for (int i = 0; i < homeLists.get().size(); i++) {
-                    Timber.i("insertTable with id: %s", homeLists.get().get(i).getId());
+                    Timber.i("insertData with id: %s", homeLists.get().get(i).getId());
                     homePageTable = new HomePageTable(Long.parseLong(homeLists.get().get(i).getId()),
                             homeLists.get().get(i).getName(),
                             homeLists.get().get(i).getTourGuideAvailable(),
                             homeLists.get().get(i).getImage(),
                             homeLists.get().get(i).getSortId(),
                             language);
-                    activityReference.get().qmDatabase.getHomePageTableDao().insertTable(homePageTable);
+                    activityReference.get().qmDatabase.getHomePageTableDao().insertData(homePageTable);
                 }
             }
             return true;
@@ -1308,7 +1307,7 @@ public class HomeActivity extends BaseActivity {
 
         @Override
         protected Void doInBackground(Void... voids) {
-            Timber.i("updating data to Table(%s) with id: %s", language.toUpperCase(),
+            Timber.i("updating data to Table(language :%s) with id: %s", language,
                     homeLists.get().get(position).getId());
             activityReference.get().qmDatabase.getHomePageTableDao().updateHomePageTable(
                     homeLists.get().get(position).getName(),
@@ -1338,7 +1337,7 @@ public class HomeActivity extends BaseActivity {
 
         @Override
         protected List<HomePageTable> doInBackground(Void... voids) {
-            Timber.i("getAllDataFromHomePageTable()");
+            Timber.i("getAllDataFromHomePageTable(language :%s)", activityReference.get().language);
             return activityReference.get().qmDatabase.getHomePageTableDao()
                     .getAllDataFromHomePageTable(activityReference.get().language);
 
@@ -1347,14 +1346,15 @@ public class HomeActivity extends BaseActivity {
         @Override
         protected void onPostExecute(List<HomePageTable> homePageTables) {
             if (homePageTables.size() > 0) {
-                Timber.i("HomePageEnglishTable with size: %d", homePageTables.size());
+                Timber.i("HomePageTable(language :%s) with size: %d", activityReference.get().language,
+                        homePageTables.size());
                 activityReference.get().homeLists.clear();
                 for (int i = 0; i < homePageTables.size(); i++) {
                     Timber.i("Set home list from DB with id: %d", homePageTables.get(i).getQatarMuseum_id());
                     HomeList exhibitionObject = new HomeList(homePageTables.get(i).getName()
                             , String.valueOf(homePageTables.get(i).getQatarMuseum_id()),
                             homePageTables.get(i).getImage(),
-                            homePageTables.get(i).getTourGuide_available(),
+                            homePageTables.get(i).getTour_guide_available(),
                             homePageTables.get(i).getSortId());
                     activityReference.get().homeLists.add(i, exhibitionObject);
                 }
@@ -1365,7 +1365,7 @@ public class HomeActivity extends BaseActivity {
                 activityReference.get().recyclerView.setVisibility(View.VISIBLE);
                 activityReference.get().retryLayout.setVisibility(View.GONE);
             } else {
-                Timber.i("HomePageEnglishTable have no data");
+                Timber.i("HomePageTable have no data");
                 activityReference.get().progressBar.setVisibility(View.GONE);
                 activityReference.get().recyclerView.setVisibility(View.GONE);
                 activityReference.get().retryLayout.setVisibility(View.VISIBLE);
