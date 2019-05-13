@@ -50,6 +50,7 @@ import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MapStyleOptions;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.firebase.analytics.FirebaseAnalytics;
 import com.qatarmuseums.qatarmuseumsapp.Convertor;
 import com.qatarmuseums.qatarmuseumsapp.LocaleManager;
 import com.qatarmuseums.qatarmuseumsapp.QMDatabase;
@@ -203,6 +204,8 @@ public class DetailsActivity extends AppCompatActivity implements IPullZoom, OnM
     int REQUEST_PERMISSION_SETTING = 110;
     String seatsRemaining = "0";
     private int seatsCount;
+    private FirebaseAnalytics mFirebaseAnalytics;
+    private String pageName = null;
     private ArrayList<FacilitiesDetailModel> facilitiesDetailModels = new ArrayList<>();
     private ArrayList<NMoQParkListDetails> nMoQParkListDetails = new ArrayList<>();
     private ArrayList<DiningDetailModel> diningDetailModels = new ArrayList<>();
@@ -211,8 +214,8 @@ public class DetailsActivity extends AppCompatActivity implements IPullZoom, OnM
     private LinearLayout diningContent;
     private TextView downloadText;
 
-
     @Override
+
     protected void attachBaseContext(Context base) {
         super.attachBaseContext(LocaleManager.setLocale(base));
     }
@@ -424,6 +427,7 @@ public class DetailsActivity extends AppCompatActivity implements IPullZoom, OnM
 
         }
         util = new Util();
+        mFirebaseAnalytics = FirebaseAnalytics.getInstance(this);
         title.setText(mainTitle);
         getData();
 
@@ -786,6 +790,8 @@ public class DetailsActivity extends AppCompatActivity implements IPullZoom, OnM
     protected void onResume() {
         super.onResume();
         mapDetails.onResume();
+        if (pageName != null)
+            mFirebaseAnalytics.setCurrentScreen(this, pageName + getString(R.string.details_page), null);
     }
 
     @Override
@@ -818,18 +824,21 @@ public class DetailsActivity extends AppCompatActivity implements IPullZoom, OnM
     public void getData() {
         Timber.i("getData() for %s Details", comingFrom);
         if (comingFrom.equals(getString(R.string.side_menu_exhibition_text))) {
+            pageName = comingFrom;
             if (util.isNetworkAvailable(DetailsActivity.this)) {
                 getHeritageOrExhibitionDetailsFromAPI(id, "Exhibition_detail_Page.json");
             } else {
                 getExhibitionAPIDataFromDatabase(id);
             }
         } else if (comingFrom.equals(getString(R.string.side_menu_heritage_text))) {
+            pageName = comingFrom.replaceAll(" ", "");
             if (util.isNetworkAvailable(DetailsActivity.this)) {
                 getHeritageOrExhibitionDetailsFromAPI(id, "heritage_detail_Page.json");
             } else {
                 getHeritageAPIDataFromDatabase(id);
             }
         } else if (comingFrom.equals(getString(R.string.side_menu_public_arts_text))) {
+            pageName = comingFrom.replaceAll(" ", "");
             if (util.isNetworkAvailable(DetailsActivity.this))
                 getPublicArtDetailsFromAPI(id);
             else
@@ -849,18 +858,21 @@ public class DetailsActivity extends AppCompatActivity implements IPullZoom, OnM
                     getMuseumAboutDetailsFromDatabase(id, false);
             }
         } else if (comingFrom.equals(getString(R.string.facilities_txt))) {
+            pageName = getString(R.string.nmoq) + comingFrom;
             if (util.isNetworkAvailable(DetailsActivity.this))
                 getFacilityDetailsFromAPI(id);
             else
                 getFacilityDetailsFromDataBase(id);
-
         } else if (comingFrom.equals(getString(R.string.museum_travel))) {
+            pageName = getString(R.string.nmoq) + comingFrom;
             getTravelsDetails();
         } else if (comingFrom.equals(getString(R.string.museum_tours))) {
+            pageName = getString(R.string.nmoq) + comingFrom;
             setTourDetailsData();
         } else if (comingFrom.equals(getString(R.string.facility_sublist))) {
             setFacilitiesDetails();
         } else if (comingFrom.equals(getString(R.string.museum_discussion))) {
+            pageName = getString(R.string.nmoq) + comingFrom;
             setSpecialEventDetailsData();
         } else if (comingFrom.equals(getString(R.string.side_menu_parks_text))) {
             if (util.isNetworkAvailable(DetailsActivity.this))
@@ -1656,6 +1668,7 @@ public class DetailsActivity extends AppCompatActivity implements IPullZoom, OnM
             offerCode.setVisibility(View.VISIBLE);
             offerCode.setText(promotionCode);
         }
+        shortDescription.setTextAlignment(View.TEXT_ALIGNMENT_VIEW_START);
         loadData(null, description, null, null,
                 null, null, null, null,
                 contactNumber, contactMail, null, null,
@@ -2174,7 +2187,6 @@ public class DetailsActivity extends AppCompatActivity implements IPullZoom, OnM
                     else
                         registerUnregisterCount.setText(seatsCount +
                                 getResources().getString(R.string.space_available));
-
 
                 }
                 registrationLoader.setVisibility(View.GONE);
@@ -3175,7 +3187,6 @@ public class DetailsActivity extends AppCompatActivity implements IPullZoom, OnM
                                 activityReference.get().museumAboutModels.get(i).getEventDate(),
                                 language);
                         activityReference.get().qmDatabase.getMuseumAboutDao().insert(museumAboutTable);
-
                     }
                 }
             }

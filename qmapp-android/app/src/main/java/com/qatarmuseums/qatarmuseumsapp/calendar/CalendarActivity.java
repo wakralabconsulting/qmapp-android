@@ -23,6 +23,7 @@ import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.google.firebase.analytics.FirebaseAnalytics;
 import com.qatarmuseums.qatarmuseumsapp.Convertor;
 import com.qatarmuseums.qatarmuseumsapp.LocaleManager;
 import com.qatarmuseums.qatarmuseumsapp.QMDatabase;
@@ -86,6 +87,8 @@ public class CalendarActivity extends AppCompatActivity {
     String monthNumber;
     String year;
     private SimpleDateFormat dayDateFormat, monthDateFormat, yearDateFormat;
+    private FirebaseAnalytics mFireBaseAnalytics;
+    private Bundle contentBundleParams;
 
     public CalendarActivity() {
     }
@@ -103,6 +106,7 @@ public class CalendarActivity extends AppCompatActivity {
         setSupportActionBar(toolbar);
         toolbar_title.setText(getResources().getString(R.string.calendar_activity_tittle));
         qmDatabase = QMDatabase.getInstance(CalendarActivity.this);
+        mFireBaseAnalytics = FirebaseAnalytics.getInstance(this);
         util = new Util();
         collapsibleCalendar = findViewById(R.id.collapsibleCalendarView);
         eventListView = findViewById(R.id.event_list);
@@ -278,6 +282,10 @@ public class CalendarActivity extends AppCompatActivity {
 
     public void onClickCalled(Boolean registrationRequired, final ArrayList<Events> events, final int position) {
         Timber.i("Calendar event clicked with registration required: %b", registrationRequired);
+        contentBundleParams = new Bundle();
+        contentBundleParams.putString(FirebaseAnalytics.Param.CONTENT_TYPE, toolbar_title.getText().toString());
+        contentBundleParams.putString(FirebaseAnalytics.Param.ITEM_ID, events.get(position).getEid());
+        mFireBaseAnalytics.logEvent(FirebaseAnalytics.Event.SELECT_CONTENT, contentBundleParams);
         if (registrationRequired)
             util.showDialog(this, getResources().getString(R.string.register_now), events, position);
         else
@@ -548,5 +556,11 @@ public class CalendarActivity extends AppCompatActivity {
             }
             activityReference.get().progress.setVisibility(View.GONE);
         }
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        mFireBaseAnalytics.setCurrentScreen(this, getString(R.string.calendar_events_page), null);
     }
 }

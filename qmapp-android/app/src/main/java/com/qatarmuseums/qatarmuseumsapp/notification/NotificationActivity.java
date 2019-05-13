@@ -15,6 +15,7 @@ import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.TextView;
 
+import com.google.firebase.analytics.FirebaseAnalytics;
 import com.qatarmuseums.qatarmuseumsapp.LocaleManager;
 import com.qatarmuseums.qatarmuseumsapp.QMDatabase;
 import com.qatarmuseums.qatarmuseumsapp.R;
@@ -36,6 +37,7 @@ public class NotificationActivity extends AppCompatActivity {
     private TextView emptyText;
     private QMDatabase qmDatabase;
     private String appLanguage;
+    private FirebaseAnalytics mFireBaseAnalytics;
 
     @Override
     protected void attachBaseContext(Context base) {
@@ -49,8 +51,10 @@ public class NotificationActivity extends AppCompatActivity {
         Toolbar toolbar = findViewById(R.id.notification_toolbar);
         setSupportActionBar(toolbar);
         backArrow = findViewById(R.id.toolbar_back);
+
         recyclerView = findViewById(R.id.notification_recycler_view);
         emptyText = findViewById(R.id.no_new_notification_txt);
+        mFireBaseAnalytics = FirebaseAnalytics.getInstance(this);
         mAdapter = new NotificationListAdapter(this, models);
         RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(getApplicationContext());
         recyclerView.setLayoutManager(mLayoutManager);
@@ -123,4 +127,9 @@ public class NotificationActivity extends AppCompatActivity {
         }
     }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+        mFireBaseAnalytics.setCurrentScreen(this, getString(R.string.notification_page), null);
+    }
 }
