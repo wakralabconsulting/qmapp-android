@@ -20,6 +20,7 @@ import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.google.firebase.analytics.FirebaseAnalytics;
 import com.qatarmuseums.qatarmuseumsapp.Convertor;
 import com.qatarmuseums.qatarmuseumsapp.LocaleManager;
 import com.qatarmuseums.qatarmuseumsapp.QMDatabase;
@@ -68,6 +69,9 @@ public class SecondaryListActivity extends AppCompatActivity {
     private String startTime, endTime;
     private long startTimeStamp, endTimeStamp;
     private String mainTitle;
+    private Bundle contentBundleParams;
+    private FirebaseAnalytics mFireBaseAnalytics;
+    private String screenName = null;
 
     @Override
     protected void attachBaseContext(Context base) {
@@ -94,12 +98,19 @@ public class SecondaryListActivity extends AppCompatActivity {
         recyclerView = findViewById(R.id.secondary_list_recycler_view);
         qmDatabase = QMDatabase.getInstance(SecondaryListActivity.this);
         util = new Util();
+        mFireBaseAnalytics = FirebaseAnalytics.getInstance(this);
+        screenName = comingFrom + "Secondary";
         if (comingFrom.equals(getString(R.string.facilities_txt))) {
             facilitiesSecondaryAdapter = new FacilitiesSecondaryAdapter(this, facilitiesDetailList, position -> {
                 Timber.i("%s is clicked with ID: %s from %s",
                         facilitiesDetailList.get(position).getFacilitiesTitle().toUpperCase(),
                         facilitiesDetailList.get(position).getFacilitiesId(),
                         mainTitle);
+                contentBundleParams = new Bundle();
+                contentBundleParams.putString(FirebaseAnalytics.Param.CONTENT_TYPE, mainTitle);
+                contentBundleParams.putString(FirebaseAnalytics.Param.ITEM_ID, facilitiesDetailList.get(position).getFacilitiesId());
+                contentBundleParams.putString(FirebaseAnalytics.Param.ITEM_NAME, facilitiesDetailList.get(position).getFacilitiesTitle());
+                mFireBaseAnalytics.logEvent(FirebaseAnalytics.Event.SELECT_CONTENT, contentBundleParams);
                 navigationIntent = new Intent(SecondaryListActivity.this, DetailsActivity.class);
                 if (facilitiesDetailList.get(position).getFacilityImage().size() > 0) {
                     navigationIntent.putExtra("HEADER_IMAGE", facilitiesDetailList.get(position).getFacilityImage().get(0));
@@ -123,6 +134,11 @@ public class SecondaryListActivity extends AppCompatActivity {
                         tourDetailsList.get(position).getTourTitle().toUpperCase(),
                         tourDetailsList.get(position).getNid(),
                         mainTitle);
+                contentBundleParams = new Bundle();
+                contentBundleParams.putString(FirebaseAnalytics.Param.CONTENT_TYPE, mainTitle);
+                contentBundleParams.putString(FirebaseAnalytics.Param.ITEM_ID, tourDetailsList.get(position).getNid());
+                contentBundleParams.putString(FirebaseAnalytics.Param.ITEM_NAME, tourDetailsList.get(position).getTourTitle());
+
                 navigationIntent = new Intent(SecondaryListActivity.this, DetailsActivity.class);
                 if (tourDetailsList.get(position).getTourImage().size() > 0) {
                     navigationIntent.putExtra("HEADER_IMAGE", tourDetailsList.get(position).getTourImage().get(0));
@@ -764,5 +780,13 @@ public class SecondaryListActivity extends AppCompatActivity {
             }
             activityReference.get().progressBar.setVisibility(View.GONE);
         }
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        if (screenName != null)
+            mFireBaseAnalytics.setCurrentScreen(this, screenName + getString(R.string.page), null);
+
     }
 }

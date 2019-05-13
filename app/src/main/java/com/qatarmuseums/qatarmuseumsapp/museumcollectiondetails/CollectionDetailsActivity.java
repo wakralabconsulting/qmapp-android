@@ -20,6 +20,7 @@ import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
+import com.google.firebase.analytics.FirebaseAnalytics;
 import com.qatarmuseums.qatarmuseumsapp.LocaleManager;
 import com.qatarmuseums.qatarmuseumsapp.QMDatabase;
 import com.qatarmuseums.qatarmuseumsapp.R;
@@ -84,6 +85,7 @@ public class CollectionDetailsActivity extends AppCompatActivity {
     QMDatabase qmDatabase;
     MuseumCollectionDetailTable museumCollectionDetailTable;
     private NMoQParkListDetailsTable nMoQParkListDetailsTable;
+    private FirebaseAnalytics mFireBaseAnalytics;
 
     @Override
     protected void attachBaseContext(Context base) {
@@ -99,6 +101,7 @@ public class CollectionDetailsActivity extends AppCompatActivity {
         intent = getIntent();
         qmDatabase = QMDatabase.getInstance(CollectionDetailsActivity.this);
         util = new Util();
+        mFireBaseAnalytics = FirebaseAnalytics.getInstance(this);
         categoryName = intent.getStringExtra("MAIN_TITLE");
         nid = intent.getStringExtra("NID");
         zoomOutAnimation = AnimationUtils.loadAnimation(getApplicationContext(),
@@ -696,4 +699,11 @@ public class CollectionDetailsActivity extends AppCompatActivity {
             }
         }
     }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        mFireBaseAnalytics.setCurrentScreen(this, getString(R.string.collection_details_page), null);
+    }
+
 }

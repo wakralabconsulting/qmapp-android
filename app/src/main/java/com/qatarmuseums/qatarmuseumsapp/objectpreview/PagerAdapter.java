@@ -38,6 +38,7 @@ class PagerAdapter extends FragmentPagerAdapter {
         args.putString("SUMMARY", objectPreviewModels.get(position).getObjectENGSummary());
         args.putStringArrayList("IMAGES", objectPreviewModels.get(position).getImages());
         args.putString("AUDIO", objectPreviewModels.get(position).getAudioFile());
+        args.putString("NID", objectPreviewModels.get(position).getNid());
         if (position == getCount())
             args.putBoolean("isLast", true);
         final PageFragment fragment = new PageFragment();

@@ -23,6 +23,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.github.rubensousa.gravitysnaphelper.GravitySnapHelper;
+import com.google.firebase.analytics.FirebaseAnalytics;
 import com.qatarmuseums.qatarmuseumsapp.Config;
 import com.qatarmuseums.qatarmuseumsapp.Convertor;
 import com.qatarmuseums.qatarmuseumsapp.LocaleManager;
@@ -86,6 +87,7 @@ public class MuseumActivity extends BaseActivity implements
     private boolean isBanner;
     private MuseumAboutTable museumAboutTable;
     private QMDatabase qmDatabase;
+    private FirebaseAnalytics mFirebaseAnalytics;
 
     @Override
     protected void attachBaseContext(Context base) {
@@ -97,6 +99,7 @@ public class MuseumActivity extends BaseActivity implements
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_museum);
         ButterKnife.bind(this);
+        mFirebaseAnalytics = FirebaseAnalytics.getInstance(this);
         util = new Util();
         qmPreferences = PreferenceManager.getDefaultSharedPreferences(this);
         language = LocaleManager.getLanguage(this);
@@ -104,10 +107,11 @@ public class MuseumActivity extends BaseActivity implements
         sliderImageTitle.setText(intent.getStringExtra("MUSEUMTITLE"));
         museumId = intent.getStringExtra("MUSEUM_ID");
         isBanner = intent.getBooleanExtra("IS_BANNER", false);
-        if (isBanner)
+        if (isBanner) {
             setToolbarForMuseumLaunchy();
-        else
+        } else {
             setToolbarForMuseumActivity();
+        }
         animCircleIndicator = findViewById(R.id.main_indicator_default_circle);
         sliderPlaceholderImage = findViewById(R.id.ads_place_holder);
         qmDatabase = QMDatabase.getInstance(MuseumActivity.this);
@@ -480,7 +484,11 @@ public class MuseumActivity extends BaseActivity implements
         updateBadge();
         LocalBroadcastManager.getInstance(this).registerReceiver(mNotificationBroadcastReceiver,
                 new IntentFilter(Config.PUSH_NOTIFICATION));
-
+        if (isBanner) {
+            mFirebaseAnalytics.setCurrentScreen(this, getString(R.string.nmoq_landing_page), null);
+        } else {
+            mFirebaseAnalytics.setCurrentScreen(this, getString(R.string.landing_page), null);
+        }
     }
 
     public void getSliderImagesFromAPI(Boolean noDataInDB) {
