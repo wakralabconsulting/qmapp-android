@@ -19,7 +19,7 @@ public interface HomePageTableDao {
     int checkIdExist(int idFromAPI, String language);
 
     @Query("UPDATE homePageTable SET name = :nameFromApi," +
-            "tourGuide_available = :tourGideFromApi,image = :imageFromApi, sortId = :sortIdFromAPI " +
+            "tour_guide_available = :tourGideFromApi,image = :imageFromApi, sortId = :sortIdFromAPI " +
             "WHERE qatarMuseum_id=:id AND language = :language")
     void updateHomePageTable(String nameFromApi, String tourGideFromApi,
                              String imageFromApi, String sortIdFromAPI, String id, String language);
@@ -29,6 +29,6 @@ public interface HomePageTableDao {
      * @param note, object to be inserted
      */
     @Insert
-    void insertTable(HomePageTable homePageTable);
+    void insertData(HomePageTable homePageTable);
 
 }

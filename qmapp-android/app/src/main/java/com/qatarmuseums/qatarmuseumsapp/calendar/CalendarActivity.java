@@ -228,14 +228,14 @@ public class CalendarActivity extends AppCompatActivity {
     }
 
     public void getCalendarEventsFromDatabase(Long timeStamp) {
-        Timber.i("getCalendarEventsFromDatabase()");
+        Timber.i("getCalendarEventsFromDatabase(language :%s)", language);
         progress.setVisibility(View.VISIBLE);
         calendarAdapter.clear();
         new EventsRowCount(CalendarActivity.this, language, timeStamp / 1000).execute();
     }
 
     public void getCalendarEventsFromAPI(final String month, final String day, final String year, final long timeStamp) {
-        Timber.i("getCalendarEventsFromAPI()");
+        Timber.i("getCalendarEventsFromAPI(language :%s)", language);
         progress.setVisibility(View.VISIBLE);
         calendarAdapter.clear();
         apiService = APIClient.getClient().create(APIInterface.class);
@@ -360,8 +360,8 @@ public class CalendarActivity extends AppCompatActivity {
 
         @Override
         protected Integer doInBackground(Void... voids) {
-            Timber.i("getNumberOf%sRows%s()", activityReference.get().toolbar_title.getText(),
-                    language.toUpperCase());
+            Timber.i("getNumberOf%sRows(language :%s)", activityReference.get().toolbar_title.getText(),
+                    language);
             return activityReference.get().qmDatabase.getCalendarEventsDao().getNumberOfRows(language);
         }
     }
@@ -380,7 +380,7 @@ public class CalendarActivity extends AppCompatActivity {
         @Override
         protected Void doInBackground(Void... voids) {
             if (activityReference.get().calendarEventList.size() > 0) {
-                Timber.i("checkTableWithEventDateExist(%s) timestamp: %d", language.toUpperCase(), timeStamp);
+                Timber.i("checkTableWithEventDateExist(language :%s) timestamp: %d", language, timeStamp);
                 int n = activityReference.get().qmDatabase.getCalendarEventsDao().checkEventDateExist(
                         timeStamp, language);
                 if (n > 0) {
@@ -416,10 +416,10 @@ public class CalendarActivity extends AppCompatActivity {
         @Override
         protected Boolean doInBackground(Void... voids) {
             if (activityReference.get().calendarEventList != null) {
-                Timber.i("insert event on table(%s) with size: %d", language.toUpperCase(),
+                Timber.i("insertData event on table(language :%s) with size: %d", language,
                         activityReference.get().calendarEventList.size());
                 for (int i = 0; i < activityReference.get().calendarEventList.size(); i++) {
-                    Timber.i("insertTable with id: %s",
+                    Timber.i("insertData with id: %s",
                             activityReference.get().calendarEventList.get(i).getEid());
                     ArrayList<String> fieldValue = new ArrayList<String>();
                     fieldValue = activityReference.get().calendarEventList.get(i).getField();
@@ -472,7 +472,7 @@ public class CalendarActivity extends AppCompatActivity {
 
         @Override
         protected Void doInBackground(Void... voids) {
-            Timber.i("DeleteEventsTableRow(%s) with timestamp: %d before insertion", language, timestamp);
+            Timber.i("DeleteEventsTableRow(language :%s) with timestamp: %d before insertion", language, timestamp);
             activityReference.get().qmDatabase.getCalendarEventsDao()
                     .deleteEventsWithDate(timestamp, language);
             return null;
@@ -497,7 +497,7 @@ public class CalendarActivity extends AppCompatActivity {
 
         @Override
         protected List<CalendarEventsTable> doInBackground(Void... voids) {
-            Timber.i("getEventsWithDate(%d)", eventDate);
+            Timber.i("getEventsWithDate(%d, language :%s)", eventDate, activityReference.get().language);
             return activityReference.get().qmDatabase.getCalendarEventsDao()
                     .getEventsWithDate(eventDate, activityReference.get().language);
 

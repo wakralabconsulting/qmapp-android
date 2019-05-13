@@ -80,7 +80,7 @@ public class NotificationActivity extends AppCompatActivity {
     }
 
     public void getDataFromDataBase() {
-        Timber.i("getDataFromDataBase()");
+        Timber.i("getDataFromDataBase(language :%s)", appLanguage);
         new RetrieveTableData(NotificationActivity.this).execute();
     }
 
@@ -93,7 +93,7 @@ public class NotificationActivity extends AppCompatActivity {
 
         @Override
         protected List<NotificationTable> doInBackground(Void... voids) {
-            Timber.i("getAllDataFromTable()");
+            Timber.i("getAllDataFromTable(language :%s)", activityReference.get().appLanguage);
             return activityReference.get().qmDatabase.getNotificationDao()
                     .getAllDataFromTable(activityReference.get().appLanguage);
 

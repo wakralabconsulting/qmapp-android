@@ -3,11 +3,11 @@ package com.qatarmuseums.qatarmuseumsapp.park;
 import android.arch.persistence.room.ColumnInfo;
 import android.arch.persistence.room.Entity;
 import android.arch.persistence.room.PrimaryKey;
-import android.support.annotation.NonNull;
 
-@Entity(tableName = "parktableArabic")
-public class ParkTableArabic {
-    @NonNull
+@Entity(tableName = "parkTable")
+public class ParkTable {
+    @ColumnInfo()
+    private String language;
     @PrimaryKey(autoGenerate = true)
     private long itemId;
     @ColumnInfo()
@@ -25,9 +25,9 @@ public class ParkTableArabic {
     @ColumnInfo()
     private String timingInfo;
 
-    public ParkTableArabic(String mainTitle, String shortDescription,
-                           String image, @NonNull long sortId,
-                           String latitude, String longitude, String timingInfo) {
+    ParkTable(String mainTitle, String shortDescription,
+              String image, long sortId,
+              String latitude, String longitude, String timingInfo, String language) {
         this.mainTitle = mainTitle;
         this.shortDescription = shortDescription;
         this.image = image;
@@ -35,8 +35,8 @@ public class ParkTableArabic {
         this.latitude = latitude;
         this.longitude = longitude;
         this.timingInfo = timingInfo;
+        this.language = language;
     }
-
 
     public String getMainTitle() {
         return mainTitle;
@@ -62,12 +62,11 @@ public class ParkTableArabic {
         this.image = image;
     }
 
-    @NonNull
     public long getSortId() {
         return sortId;
     }
 
-    public void setSortId(@NonNull long sortId) {
+    public void setSortId(long sortId) {
         this.sortId = sortId;
     }
 
@@ -87,45 +86,19 @@ public class ParkTableArabic {
         this.longitude = longitude;
     }
 
-    public String getTimingInfo() {
+    String getTimingInfo() {
         return timingInfo;
     }
 
-    public void setTimingInfo(String timingInfo) {
-        this.timingInfo = timingInfo;
-    }
-
-    @NonNull
-    public long getItemId() {
+    long getItemId() {
         return itemId;
     }
 
-    public void setItemId(@NonNull long itemId) {
+    void setItemId(long itemId) {
         this.itemId = itemId;
     }
 
-    @Override
-    public boolean equals(Object obj) {
-        if (this == obj) return true;
-        if (!(obj instanceof ParkTableArabic)) return false;
-
-        ParkTableArabic parkTableArabic = (ParkTableArabic) obj;
-
-        if (sortId != parkTableArabic.sortId) return false;
-        return mainTitle != null ? parkTableArabic.equals(parkTableArabic.mainTitle) : parkTableArabic.mainTitle == null;
-
-    }
-
-    @Override
-    public String toString() {
-        return "parktableArabic{" +
-                "mainTitle=" + mainTitle +
-                ", shortDescription='" + shortDescription + '\'' +
-                ", image='" + image + '\'' +
-                ",sortId='" + sortId + '\'' +
-                ",latitude='" + latitude + '\'' +
-                ",longitude='" + longitude + '\'' +
-                ",timingInfo='" + timingInfo + '\'' +
-                '}';
+    public String getLanguage() {
+        return language;
     }
 }
