@@ -33,8 +33,7 @@ import com.qatarmuseums.qatarmuseumsapp.commonlistpage.CommonListActivity;
 import com.qatarmuseums.qatarmuseumsapp.culturepass.CulturePassActivity;
 import com.qatarmuseums.qatarmuseumsapp.education.EducationActivity;
 import com.qatarmuseums.qatarmuseumsapp.notification.NotificationActivity;
-import com.qatarmuseums.qatarmuseumsapp.notification.NotificationTableArabic;
-import com.qatarmuseums.qatarmuseumsapp.notification.NotificationTableEnglish;
+import com.qatarmuseums.qatarmuseumsapp.notification.NotificationTable;
 import com.qatarmuseums.qatarmuseumsapp.park.ParkActivity;
 import com.qatarmuseums.qatarmuseumsapp.profile.ProfileActivity;
 import com.qatarmuseums.qatarmuseumsapp.settings.SettingsActivity;
@@ -145,10 +144,10 @@ public class BaseActivity extends AppCompatActivity
     private int badgeCount;
 
     private QMDatabase qmDatabase;
-    NotificationTableEnglish notificationTableEnglish;
-    NotificationTableArabic notificationTableArabic;
+    NotificationTable notificationTable;
     private Bundle contentBundleParams;
     private FirebaseAnalytics mFireBaseAnalytics;
+
 
     @Override
     protected void attachBaseContext(Context base) {
@@ -228,21 +227,17 @@ public class BaseActivity extends AppCompatActivity
 
     public void insertNotificationRelatedDataToDataBase(String msg, String lan) {
         Timber.i("Inserting Notification message to Database");
-        new InsertDatabaseTask(BaseActivity.this, notificationTableEnglish,
-                notificationTableArabic, lan, msg).execute();
+        new InsertDatabaseTask(BaseActivity.this, notificationTable, lan, msg).execute();
     }
 
     public static class InsertDatabaseTask extends AsyncTask<Void, Void, Boolean> {
         private WeakReference<BaseActivity> activityReference;
-        private NotificationTableEnglish notificationTableEnglish;
-        private NotificationTableArabic notificationTableArabic;
+        private NotificationTable notificationTable;
         String language, notificationMessage;
 
-        InsertDatabaseTask(BaseActivity context, NotificationTableEnglish notificationTableEnglish,
-                           NotificationTableArabic notificationTableArabic, String lan, String msg) {
+        InsertDatabaseTask(BaseActivity context, NotificationTable notificationTable, String lan, String msg) {
             activityReference = new WeakReference<>(context);
-            this.notificationTableEnglish = notificationTableEnglish;
-            this.notificationTableArabic = notificationTableArabic;
+            this.notificationTable = notificationTable;
             language = lan;
             this.notificationMessage = msg;
         }
@@ -250,14 +245,8 @@ public class BaseActivity extends AppCompatActivity
         @Override
         protected Boolean doInBackground(Void... voids) {
             if (notificationMessage != null) {
-                if (language.equals("en")) {
-                    notificationTableEnglish = new NotificationTableEnglish(notificationMessage);
-                    activityReference.get().qmDatabase.getNotificationDao().insertEnglishTable(notificationTableEnglish);
-                } else {
-                    notificationTableArabic = new NotificationTableArabic(notificationMessage);
-                    activityReference.get().qmDatabase.getNotificationDao().insertArabicTable(notificationTableArabic);
-
-                }
+                notificationTable = new NotificationTable(notificationMessage, language);
+                activityReference.get().qmDatabase.getNotificationDao().insertTable(notificationTable);
             }
             return true;
         }
