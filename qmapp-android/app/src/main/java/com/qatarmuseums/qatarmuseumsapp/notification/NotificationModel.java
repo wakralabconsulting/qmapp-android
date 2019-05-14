@@ -3,9 +3,10 @@ package com.qatarmuseums.qatarmuseumsapp.notification;
 
 public class NotificationModel {
     private String title;
+    private String language;
     private String number;
 
-    public NotificationModel(String title) {
+    NotificationModel(String title) {
 
         this.title = title;
     }
@@ -24,5 +25,13 @@ public class NotificationModel {
 
     public void setTitle(String title) {
         this.title = title;
+    }
+
+    public String getLanguage() {
+        return language;
+    }
+
+    public void setLanguage(String language) {
+        this.language = language;
     }
 }

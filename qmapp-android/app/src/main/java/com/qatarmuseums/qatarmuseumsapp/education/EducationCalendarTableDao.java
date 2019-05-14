@@ -2,84 +2,53 @@ package com.qatarmuseums.qatarmuseumsapp.education;
 
 
 import android.arch.persistence.room.Dao;
-import android.arch.persistence.room.Delete;
 import android.arch.persistence.room.Insert;
 import android.arch.persistence.room.Query;
-import android.arch.persistence.room.Update;
 
 import java.util.List;
 
 @Dao
 public interface EducationCalendarTableDao {
-    @Query("SELECT COUNT(event_id) FROM educationcalendareventstenglish")
-    int getNumberOfRowsEnglish();
+    @Query("SELECT COUNT(event_id) FROM educationCalendarEvents WHERE language = :language")
+    int getNumberOfRows(String language);
 
-    @Query("SELECT COUNT(event_id) FROM educationcalendareventstarabic")
-    int getNumberOfRowsArabic();
+    @Query("SELECT COUNT(event_id) FROM educationCalendarEvents WHERE event_date = :eventDateFromAPI " +
+            "AND language = :language")
+    int checkWithEventDateExist(String eventDateFromAPI, String language);
 
-    @Query("SELECT COUNT(event_id) FROM educationcalendareventstenglish WHERE event_date = :eventDateFromAPI")
-    int checkEnglishWithEventDateExist(String eventDateFromAPI);
+    @Query("SELECT COUNT(event_id) FROM educationCalendarEvents WHERE event_date = :eventDateFromAPI AND "
+            + " event_id = :eventIdFromApi AND language = :language")
+    int checkWithEventIdExist(String eventDateFromAPI, String eventIdFromApi, String language);
 
-    @Query("SELECT COUNT(event_id) FROM educationcalendareventstarabic WHERE event_date = :eventDateFromAPI")
-    int checkArabicWithEventDateExist(String eventDateFromAPI);
+    @Query("SELECT * FROM educationCalendarEvents WHERE event_date = :eventDateFromAPI AND "
+            + " event_institution = :institutionFilterFromApi AND "
+            + " event_program_type = :programmeFilterApi AND language = :language")
+    List<EducationalCalendarEventsTable> getEventsWithDate(String eventDateFromAPI, String institutionFilterFromApi,
+                                                           String programmeFilterApi, String language);
 
-    @Query("SELECT COUNT(event_id) FROM educationcalendareventstenglish WHERE event_date = :eventDateFromAPI AND "
-            + " event_id = :eventIdFromApi")
-    int checkEnglishWithEventIdExist(String eventDateFromAPI, String eventIdFromApi);
-
-    @Query("SELECT COUNT(event_id) FROM educationcalendareventstarabic WHERE event_date = :eventDateFromAPI AND "
-            + " event_id = :eventIdFromApi")
-    int checkArabicWithEventIdExist(String eventDateFromAPI, String eventIdFromApi);
-
-
-    @Query("SELECT * FROM educationcalendareventstenglish WHERE event_date = :eventDateFromAPI AND "
-            + " event_institution = :instituionFilterFromApi AND "
-            + " event_program_type = :programmeFilterApi")
-    List<EducationalCalendarEventsTableEnglish> getEventsWithDateEnglish(String eventDateFromAPI, String instituionFilterFromApi,
-                                                                         String programmeFilterApi);
-
-    @Query("SELECT * FROM educationcalendareventstarabic WHERE event_date = :eventDateFromAPI AND "
-            + " event_institution = :instituionFilterFromApi AND "
-            + " event_program_type = :programmeFilterApi")
-    List<EducationalCalendarEventsTableArabic> getEventsWithDateArabic(String eventDateFromAPI, String instituionFilterFromApi,
-                                                                       String programmeFilterApi);
-
-    @Query("SELECT * FROM educationcalendareventstenglish WHERE event_date = :eventDateFromAPI AND "
-            + " event_institution = :instituionFilterFromApi")
-    List<EducationalCalendarEventsTableEnglish> getInstitutionFilterEventsEnglish(String eventDateFromAPI,
-                                                                                  String instituionFilterFromApi);
-
-    @Query("SELECT * FROM educationcalendareventstarabic WHERE event_date = :eventDateFromAPI AND "
-            + " event_institution = :instituionFilterFromApi")
-    List<EducationalCalendarEventsTableArabic> getInstitutionFilterEventsArabic(String eventDateFromAPI,
-                                                                                String instituionFilterFromApi);
-
-    @Query("SELECT * FROM educationcalendareventstenglish WHERE event_date = :eventDateFromAPI")
-    List<EducationalCalendarEventsTableEnglish> getAgeGroupFilterEventsEnglish(String eventDateFromAPI);
-
-    @Query("SELECT * FROM educationcalendareventstarabic WHERE event_date = :eventDateFromAPI")
-    List<EducationalCalendarEventsTableArabic> getAgeGroupFilterEventsArabic(String eventDateFromAPI);
-
-    @Query("SELECT * FROM educationcalendareventstenglish WHERE event_date = :eventDateFromAPI AND "
-            + " event_program_type = :programmeFilterFromApi")
-    List<EducationalCalendarEventsTableEnglish> getProgrammeFilterEventsEnglish(String eventDateFromAPI,
-                                                                                String programmeFilterFromApi);
-
-    @Query("SELECT * FROM educationcalendareventstarabic WHERE event_date = :eventDateFromAPI AND "
-            + " event_program_type = :programmeFilterFromApi")
-    List<EducationalCalendarEventsTableArabic> getProgrammeFilterEventsArabic(String eventDateFromAPI,
-                                                                              String programmeFilterFromApi);
+    @Query("SELECT * FROM educationCalendarEvents WHERE event_date = :eventDateFromAPI AND "
+            + " event_institution = :institutionFilterFromApi AND language = :language")
+    List<EducationalCalendarEventsTable> getInstitutionFilterEvents(String eventDateFromAPI,
+                                                                    String institutionFilterFromApi,
+                                                                    String language);
 
 
-    @Query("SELECT * FROM educationcalendareventstenglish WHERE event_date = :eventDateFromAPI")
-    List<EducationalCalendarEventsTableEnglish> getAllEventsEnglish(String eventDateFromAPI);
+    @Query("SELECT * FROM educationCalendarEvents WHERE event_date = :eventDateFromAPI AND language = :language")
+    List<EducationalCalendarEventsTable> getAgeGroupFilterEvents(String eventDateFromAPI,
+                                                                 String language);
+
+    @Query("SELECT * FROM educationCalendarEvents WHERE event_date = :eventDateFromAPI AND "
+            + " event_program_type = :programmeFilterFromApi AND language = :language")
+    List<EducationalCalendarEventsTable> getProgrammeFilterEvents(String eventDateFromAPI,
+                                                                  String programmeFilterFromApi,
+                                                                  String language);
+
+    @Query("SELECT * FROM educationCalendarEvents WHERE event_date = :eventDateFromAPI AND language = :language")
+    List<EducationalCalendarEventsTable> getAllEvents(String eventDateFromAPI,
+                                                      String language);
 
 
-    @Query("SELECT * FROM educationcalendareventstarabic WHERE event_date = :eventDateFromAPI")
-    List<EducationalCalendarEventsTableArabic> getAllEventsArabic(String eventDateFromAPI);
-
-
-    @Query("UPDATE educationcalendareventstenglish SET event_title = :eventTitleFromAPI," +
+    @Query("UPDATE educationCalendarEvents SET event_title = :eventTitleFromAPI," +
             "event_start_time = :eventStartTimeFromApi," +
             "event_end_time = :eventEndTimeFromApi," +
             "event_registration=:registrationApi," +
@@ -87,56 +56,14 @@ public interface EducationCalendarTableDao {
             "event_short_description=:shortDescriptionApi," +
             "event_long_description=:longDescriptionApi," +
             "location =:locationFromApi," +
-            "category=:categoryFromApi WHERE event_id=:id")
-    void updateEventsEnglish(String eventTitleFromAPI, String eventStartTimeFromApi,
-                             String eventEndTimeFromApi, String registrationApi,
-                             String maxGroupSizeApi, String shortDescriptionApi,
-                             String longDescriptionApi, String locationFromApi,
-                             String categoryFromApi, String id);
-
-
-    @Query("UPDATE educationcalendareventstarabic SET event_title = :eventTitleFromAPI," +
-            "event_start_time = :eventStartTimeFromApi," +
-            "event_end_time = :eventEndTimeFromApi," +
-            "event_registration=:registrationApi," +
-            "max_group_size=:maxGroupSizeApi," +
-            "event_short_description=:shortDescriptionApi," +
-            "event_long_description=:longDescriptionApi," +
-            "location =:locationFromApi," +
-            "category=:categoryFromApi WHERE event_id=:id")
-    void updateEventsArabic(String eventTitleFromAPI, String eventStartTimeFromApi,
-                            String eventEndTimeFromApi, String registrationApi,
-                            String maxGroupSizeApi, String shortDescriptionApi,
-                            String longDescriptionApi, String locationFromApi,
-                            String categoryFromApi, String id);
-
+            "category=:categoryFromApi WHERE event_id=:id AND language = :language")
+    void updateEvents(String eventTitleFromAPI, String eventStartTimeFromApi,
+                      String eventEndTimeFromApi, String registrationApi,
+                      String maxGroupSizeApi, String shortDescriptionApi,
+                      String longDescriptionApi, String locationFromApi,
+                      String categoryFromApi, String id, String language);
 
     @Insert
-    void insertEventsTableEnglish(EducationalCalendarEventsTableEnglish educationalCalendarEventsTableEnglish);
-
-    @Insert
-    void insertEventsTableArabic(EducationalCalendarEventsTableArabic educationalCalendarEventsTableArabic);
-
-    /*
-        * updateEnglishTable the object in database
-        * @param note, object to be updated
-        */
-    @Update
-    void update(EducationalCalendarEventsTableEnglish educationalCalendarEventsTableEnglish);
-
-    /*
-     * deleteEnglishTable the object from database
-     * @param note, object to be deleted
-     */
-    @Delete
-    void delete(EducationalCalendarEventsTableEnglish educationalCalendarEventsTableEnglish);
-
-    /*
-     * deleteEnglishTable list of objects from database
-     * @param note, array of objects to be deleted
-     */
-    @Delete
-    void delete(EducationalCalendarEventsTableEnglish... educationalCalendarEventsTableEnglishes);      // Note... is varargs, here note is an array
-
+    void insertEventsTable(EducationalCalendarEventsTable educationalCalendarEventsTable);
 
 }

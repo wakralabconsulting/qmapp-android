@@ -30,23 +30,15 @@ import com.qatarmuseums.qatarmuseumsapp.R;
 import com.qatarmuseums.qatarmuseumsapp.apicall.APIClient;
 import com.qatarmuseums.qatarmuseumsapp.apicall.APIInterface;
 import com.qatarmuseums.qatarmuseumsapp.commonlistsecondary.SecondaryListActivity;
-import com.qatarmuseums.qatarmuseumsapp.commonpagedatabase.DiningTableArabic;
-import com.qatarmuseums.qatarmuseumsapp.commonpagedatabase.DiningTableEnglish;
-import com.qatarmuseums.qatarmuseumsapp.commonpagedatabase.ExhibitionListTableArabic;
-import com.qatarmuseums.qatarmuseumsapp.commonpagedatabase.ExhibitionListTableEnglish;
-import com.qatarmuseums.qatarmuseumsapp.commonpagedatabase.HeritageListTableArabic;
-import com.qatarmuseums.qatarmuseumsapp.commonpagedatabase.HeritageListTableEnglish;
-import com.qatarmuseums.qatarmuseumsapp.commonpagedatabase.PublicArtsTableArabic;
-import com.qatarmuseums.qatarmuseumsapp.commonpagedatabase.PublicArtsTableEnglish;
-import com.qatarmuseums.qatarmuseumsapp.commonpagedatabase.TourListTableArabic;
-import com.qatarmuseums.qatarmuseumsapp.commonpagedatabase.TourListTableEnglish;
-import com.qatarmuseums.qatarmuseumsapp.commonpagedatabase.TravelDetailsTableArabic;
-import com.qatarmuseums.qatarmuseumsapp.commonpagedatabase.TravelDetailsTableEnglish;
+import com.qatarmuseums.qatarmuseumsapp.commonpagedatabase.DiningTable;
+import com.qatarmuseums.qatarmuseumsapp.commonpagedatabase.ExhibitionListTable;
+import com.qatarmuseums.qatarmuseumsapp.commonpagedatabase.HeritageListTable;
+import com.qatarmuseums.qatarmuseumsapp.commonpagedatabase.PublicArtsTable;
+import com.qatarmuseums.qatarmuseumsapp.commonpagedatabase.TourListTable;
+import com.qatarmuseums.qatarmuseumsapp.commonpagedatabase.TravelDetailsTable;
 import com.qatarmuseums.qatarmuseumsapp.detailspage.DetailsActivity;
-import com.qatarmuseums.qatarmuseumsapp.facilities.FacilityListTableArabic;
-import com.qatarmuseums.qatarmuseumsapp.facilities.FacilityListTableEnglish;
-import com.qatarmuseums.qatarmuseumsapp.museum.MuseumCollectionListTableArabic;
-import com.qatarmuseums.qatarmuseumsapp.museum.MuseumCollectionListTableEnglish;
+import com.qatarmuseums.qatarmuseumsapp.facilities.FacilityListTable;
+import com.qatarmuseums.qatarmuseumsapp.museum.MuseumCollectionListTable;
 import com.qatarmuseums.qatarmuseumsapp.museumcollectiondetails.CollectionDetailsActivity;
 import com.qatarmuseums.qatarmuseumsapp.utils.Util;
 
@@ -73,23 +65,15 @@ public class CommonListActivity extends AppCompatActivity {
     SharedPreferences qmPreferences;
     Util util;
     QMDatabase qmDatabase;
-    HeritageListTableEnglish heritageListTableEnglish;
-    HeritageListTableArabic heritageListTableArabic;
-    PublicArtsTableEnglish publicArtsTableEnglish;
-    PublicArtsTableArabic publicArtsTableArabic;
-    ExhibitionListTableEnglish exhibitionListTableEnglish;
-    ExhibitionListTableArabic exhibitionListTableArabic;
-    MuseumCollectionListTableEnglish museumCollectionListTableEnglish;
-    MuseumCollectionListTableArabic museumCollectionListTableArabic;
+    HeritageListTable heritageListTable;
+    PublicArtsTable publicArtsTable;
+    ExhibitionListTable exhibitionListTable;
+    MuseumCollectionListTable museumCollectionListTable;
     int exhibitionTableRowCount;
-    DiningTableEnglish diningTableEnglish;
-    DiningTableArabic diningTableArabic;
-    TravelDetailsTableEnglish travelDetailsTableEnglish;
-    TravelDetailsTableArabic travelDetailsTableArabic;
-    TourListTableEnglish tourListTableEnglish;
-    TourListTableArabic tourListTableArabic;
-    FacilityListTableEnglish facilityListTableEnglish;
-    FacilityListTableArabic facilityListTableArabic;
+    DiningTable diningTable;
+    TravelDetailsTable travelDetailsTable;
+    TourListTable tourListTable;
+    FacilityListTable facilityListTable;
     RelativeLayout noResultFoundLayout;
     int publicArtsTableRowCount;
     int heritageTableRowCount, museumCollectionListRowCount;
@@ -277,7 +261,7 @@ public class CommonListActivity extends AppCompatActivity {
     }
 
     private void getFacilityListFromAPI() {
-        Timber.i("get%sListFromAPI()", toolbarTitle);
+        Timber.i("get%sListFromAPI(language :%s)", toolbarTitle, appLanguage);
         progressBar.setVisibility(View.VISIBLE);
         apiService = APIClient.getClient().create(APIInterface.class);
         Call<ArrayList<CommonListModel>> call = apiService.getFacilityList(appLanguage);
@@ -323,7 +307,7 @@ public class CommonListActivity extends AppCompatActivity {
     }
 
     private void getTourListFromAPI() {
-        Timber.i("get%sListFromAPI()", toolbarTitle);
+        Timber.i("get%sListFromAPI(language :%s)", toolbarTitle, appLanguage);
         progressBar.setVisibility(View.VISIBLE);
         apiService = APIClient.getClient().create(APIInterface.class);
         call = apiService.getTourList(appLanguage);
@@ -370,7 +354,7 @@ public class CommonListActivity extends AppCompatActivity {
     }
 
     private void getSpecialEventFromAPI() {
-        Timber.i("get%sListFromAPI()", toolbarTitle);
+        Timber.i("get%sListFromAPI(language :%s)", toolbarTitle, appLanguage);
         progressBar.setVisibility(View.VISIBLE);
         apiService = APIClient.getClient().create(APIInterface.class);
         call = apiService.getSpecialEvents(appLanguage);
@@ -417,7 +401,7 @@ public class CommonListActivity extends AppCompatActivity {
     }
 
     private void getTravelDataFromAPI() {
-        Timber.i("get%sListFromAPI()", toolbarTitle);
+        Timber.i("get%sListFromAPI(language :%s)", toolbarTitle, appLanguage);
         progressBar.setVisibility(View.VISIBLE);
         apiService = APIClient.getClient().create(APIInterface.class);
         call = apiService.getTravelData(appLanguage);
@@ -466,7 +450,7 @@ public class CommonListActivity extends AppCompatActivity {
     }
 
     private void getMuseumCollectionListFromAPI() {
-        Timber.i("get%sListFromAPI()", toolbarTitle);
+        Timber.i("get%sListFromAPI(language :%s)", toolbarTitle, appLanguage);
         progressBar.setVisibility(View.VISIBLE);
         apiService = APIClient.getClient().create(APIInterface.class);
 
@@ -506,7 +490,7 @@ public class CommonListActivity extends AppCompatActivity {
     }
 
     private void getCommonListAPIDataFromAPI(String name) {
-        Timber.i("get%sListFromAPI()", toolbarTitle);
+        Timber.i("get%sListFromAPI(language :%s)", toolbarTitle, appLanguage);
         progressBar.setVisibility(View.VISIBLE);
         pageName = name;
         apiService = APIClient.getClient().create(APIInterface.class);
@@ -573,27 +557,13 @@ public class CommonListActivity extends AppCompatActivity {
         Timber.i("get%sListFromDatabase()", toolbarTitle);
         switch (apiParts) {
             case "Heritage_List_Page.json":
-                if (appLanguage.equals(LocaleManager.LANGUAGE_ENGLISH)) {
-                    new RetrieveHeritageDataEnglish(CommonListActivity.this).execute();
-                } else {
-                    new RetrieveHeritageDataArabic(CommonListActivity.this).execute();
-                }
-
+                new RetrieveHeritageData(CommonListActivity.this).execute();
                 break;
             case "Public_Arts_List_Page.json":
-                if (appLanguage.equals(LocaleManager.LANGUAGE_ENGLISH)) {
-                    new RetrieveEnglishPublicArtsData(CommonListActivity.this).execute();
-                } else {
-                    new RetrieveArabicPublicArtsData(CommonListActivity.this).execute();
-                }
-
+                new RetrievePublicArtsData(CommonListActivity.this).execute();
                 break;
             case "Exhibition_List_Page.json":
-                if (appLanguage.equals(LocaleManager.LANGUAGE_ENGLISH)) {
-                    new RetrieveExhibitionDataEnglish(CommonListActivity.this).execute();
-                } else {
-                    new RetrieveExhibitionDataArabic(CommonListActivity.this).execute();
-                }
+                new RetrieveExhibitionData(CommonListActivity.this).execute();
                 break;
             case "getDiningList.json":
                 new DiningRowCount(CommonListActivity.this, appLanguage).execute();
@@ -603,39 +573,23 @@ public class CommonListActivity extends AppCompatActivity {
 
     private void getTravelDataFromDataBase() {
         Timber.i("get%sListFromDatabase()", toolbarTitle);
-        if (appLanguage.equals(LocaleManager.LANGUAGE_ENGLISH)) {
-            new RetrieveEnglishTravelData(CommonListActivity.this).execute();
-        } else {
-            new RetrieveArabicTravelData(CommonListActivity.this).execute();
-        }
+        new RetrieveTravelData(CommonListActivity.this).execute();
     }
 
     public void getTourListFromDatabase() {
         Timber.i("get%sListFromDatabase()", toolbarTitle);
-        if (appLanguage.equals(LocaleManager.LANGUAGE_ENGLISH)) {
-            new RetrieveEnglishTourData(CommonListActivity.this, 1).execute();
-        } else {
-            new RetrieveArabicTourData(CommonListActivity.this, 1).execute();
-        }
+        new RetrieveTourData(CommonListActivity.this, 1).execute();
     }
 
     public void getFacilityListFromDataBase() {
         Timber.i("get%sListFromDatabase()", toolbarTitle);
-        if (appLanguage.equals(LocaleManager.LANGUAGE_ENGLISH)) {
-            new RetrieveEnglishFacilityData(CommonListActivity.this).execute();
-        } else {
-            new RetrieveArabicFacilityData(CommonListActivity.this).execute();
-        }
+        new RetrieveFacilityListData(CommonListActivity.this).execute();
     }
 
 
     public void getSpecialEventFromDatabase() {
         Timber.i("get%sListFromDatabase()", toolbarTitle);
-        if (appLanguage.equals(LocaleManager.LANGUAGE_ENGLISH)) {
-            new RetrieveEnglishTourData(CommonListActivity.this, 0).execute();
-        } else {
-            new RetrieveArabicTourData(CommonListActivity.this, 0).execute();
-        }
+        new RetrieveTourData(CommonListActivity.this, 0).execute();
     }
 
 
@@ -643,7 +597,7 @@ public class CommonListActivity extends AppCompatActivity {
         private WeakReference<CommonListActivity> activityReference;
         String language;
 
-        public FacilityRowCount(CommonListActivity context, String language) {
+        FacilityRowCount(CommonListActivity context, String language) {
             this.activityReference = new WeakReference<>(context);
             this.language = language;
         }
@@ -655,12 +609,8 @@ public class CommonListActivity extends AppCompatActivity {
 
         @Override
         protected Integer doInBackground(Void... voids) {
-            Timber.i("getNumberOf%sRows%s()", activityReference.get().toolbarTitle, language.toUpperCase());
-            if (language.equals(LocaleManager.LANGUAGE_ENGLISH)) {
-                return activityReference.get().qmDatabase.getFacilitiesListTableDao().getNumberOfRowsEnglish();
-            } else {
-                return activityReference.get().qmDatabase.getFacilitiesListTableDao().getNumberOfRowsArabic();
-            }
+            Timber.i("getNumberOf%sRows(language :%s)", activityReference.get().toolbarTitle, language);
+            return activityReference.get().qmDatabase.getFacilitiesListTableDao().getNumberOfRows(language);
         }
 
         @Override
@@ -670,8 +620,8 @@ public class CommonListActivity extends AppCompatActivity {
                 new CheckFacilityDBRowExist(activityReference.get(), language).execute();
             } else {
                 Timber.i("%s Table have no data", activityReference.get().toolbarTitle);
-                new InsertFacilityDataToDataBase(activityReference.get(), activityReference.get().facilityListTableEnglish,
-                        activityReference.get().facilityListTableArabic, language).execute();
+                new InsertFacilityDataToDataBase(activityReference.get(), activityReference.get().facilityListTable,
+                        language).execute();
             }
         }
     }
@@ -679,15 +629,13 @@ public class CommonListActivity extends AppCompatActivity {
     public static class InsertFacilityDataToDataBase extends AsyncTask<Void, Void, Boolean> {
 
         private WeakReference<CommonListActivity> activityReference;
-        private FacilityListTableEnglish facilityListTableEnglish;
-        private FacilityListTableArabic facilityListTableArabic;
+        private FacilityListTable facilityListTable;
         String language;
 
-        InsertFacilityDataToDataBase(CommonListActivity context, FacilityListTableEnglish facilityListTableEnglish,
-                                     FacilityListTableArabic facilityListTableArabic, String apiLanguage) {
+        InsertFacilityDataToDataBase(CommonListActivity context, FacilityListTable facilityListTable,
+                                     String apiLanguage) {
             activityReference = new WeakReference<>(context);
-            this.facilityListTableEnglish = facilityListTableEnglish;
-            this.facilityListTableArabic = facilityListTableArabic;
+            this.facilityListTable = facilityListTable;
             this.language = apiLanguage;
         }
 
@@ -698,31 +646,19 @@ public class CommonListActivity extends AppCompatActivity {
 
         @Override
         protected Boolean doInBackground(Void... voids) {
-            Timber.i("Insert %s Table(%s) with size: %d", activityReference.get().toolbarTitle,
-                    language.toUpperCase(), activityReference.get().models.size());
-            if (language.equals(LocaleManager.LANGUAGE_ENGLISH)) {
-                if (activityReference.get().models != null && activityReference.get().models.size() > 0) {
-                    for (int i = 0; i < activityReference.get().models.size(); i++) {
-                        Timber.i("Inserting %s Table(%s) with id: %s", activityReference.get().toolbarTitle,
-                                language.toUpperCase(), activityReference.get().models.get(i).getId());
-                        facilityListTableEnglish = new FacilityListTableEnglish(activityReference.get().models.get(i).getId(),
-                                activityReference.get().models.get(i).getSortId(),
-                                activityReference.get().models.get(i).getName(),
-                                activityReference.get().models.get(i).getImages().get(0));
-                        activityReference.get().qmDatabase.getFacilitiesListTableDao().insertEnglish(facilityListTableEnglish);
-                    }
-                }
-            } else {
+            Timber.i("Insert %s Table(language :%s) with size: %d", activityReference.get().toolbarTitle,
+                    language, activityReference.get().models.size());
+            if (activityReference.get().models != null && activityReference.get().models.size() > 0) {
                 for (int i = 0; i < activityReference.get().models.size(); i++) {
-                    Timber.i("Inserting %s Table(%s) with id: %s", activityReference.get().toolbarTitle,
-                            language.toUpperCase(), activityReference.get().models.get(i).getId());
-                    facilityListTableArabic = new FacilityListTableArabic(activityReference.get().models.get(i).getId(),
+                    Timber.i("Inserting %s Table(language :%s) with id: %s", activityReference.get().toolbarTitle,
+                            language, activityReference.get().models.get(i).getId());
+                    facilityListTable = new FacilityListTable(activityReference.get().models.get(i).getId(),
                             activityReference.get().models.get(i).getSortId(),
                             activityReference.get().models.get(i).getName(),
-                            activityReference.get().models.get(i).getImages().get(0));
-                    activityReference.get().qmDatabase.getFacilitiesListTableDao().insertArabic(facilityListTableArabic);
+                            activityReference.get().models.get(i).getImages().get(0),
+                            language);
+                    activityReference.get().qmDatabase.getFacilitiesListTableDao().insertData(facilityListTable);
                 }
-
             }
             return true;
         }
@@ -735,8 +671,7 @@ public class CommonListActivity extends AppCompatActivity {
 
     public static class CheckFacilityDBRowExist extends AsyncTask<Void, Void, Void> {
         private WeakReference<CommonListActivity> activityReference;
-        private FacilityListTableEnglish facilityListTableEnglish;
-        private FacilityListTableArabic facilityListTableArabic;
+        private FacilityListTable facilityListTable;
         String language;
 
         CheckFacilityDBRowExist(CommonListActivity context, String apiLanguage) {
@@ -747,44 +682,23 @@ public class CommonListActivity extends AppCompatActivity {
         @Override
         protected Void doInBackground(Void... voids) {
             if (activityReference.get().models.size() > 0) {
-                if (language.equals(LocaleManager.LANGUAGE_ENGLISH)) {
-                    for (int i = 0; i < activityReference.get().models.size(); i++) {
-                        int n = activityReference.get().qmDatabase.getFacilitiesListTableDao().checkEnglishIdExist(
-                                Integer.parseInt(activityReference.get().models.get(i).getId()));
-                        if (n > 0) {
-                            Timber.i("Row exist in database(%s) for id: %s", language.toUpperCase(),
-                                    activityReference.get().models.get(i).getId());
-                            new UpdateFacilityTable(activityReference.get(), language).execute();
-                        } else {
-                            Timber.i("Inserting %s Table(%s) with id: %s", activityReference.get().toolbarTitle,
-                                    language.toUpperCase(), activityReference.get().models.get(i).getId());
-                            facilityListTableEnglish = new FacilityListTableEnglish(activityReference.get().models.get(i).getId(),
-                                    activityReference.get().models.get(i).getSortId(),
-                                    activityReference.get().models.get(i).getName(),
-                                    activityReference.get().models.get(i).getImages().get(0));
-                            activityReference.get().qmDatabase.getFacilitiesListTableDao().insertEnglish(facilityListTableEnglish);
-                        }
+                for (int i = 0; i < activityReference.get().models.size(); i++) {
+                    int n = activityReference.get().qmDatabase.getFacilitiesListTableDao().checkIdExist(
+                            Integer.parseInt(activityReference.get().models.get(i).getId()), language);
+                    if (n > 0) {
+                        Timber.i("Row exist in database(language :%s) for id: %s", language,
+                                activityReference.get().models.get(i).getId());
+                        new UpdateFacilityTable(activityReference.get(), language).execute();
+                    } else {
+                        Timber.i("Inserting %s Table(language :%s) with id: %s", activityReference.get().toolbarTitle,
+                                language, activityReference.get().models.get(i).getId());
+                        facilityListTable = new FacilityListTable(activityReference.get().models.get(i).getId(),
+                                activityReference.get().models.get(i).getSortId(),
+                                activityReference.get().models.get(i).getName(),
+                                activityReference.get().models.get(i).getImages().get(0),
+                                language);
+                        activityReference.get().qmDatabase.getFacilitiesListTableDao().insertData(facilityListTable);
                     }
-                } else {
-                    for (int i = 0; i < activityReference.get().models.size(); i++) {
-                        int n = activityReference.get().qmDatabase.getFacilitiesListTableDao().checkArabicIdExist(
-                                Integer.parseInt(activityReference.get().models.get(i).getId()));
-                        if (n > 0) {
-                            Timber.i("Row exist in database(%s) for id: %s", language.toUpperCase(),
-                                    activityReference.get().models.get(i).getId());
-                            new UpdateFacilityTable(activityReference.get(), language).execute();
-                        } else {
-                            Timber.i("Inserting %s Table(%s) with id: %s", activityReference.get().toolbarTitle,
-                                    language.toUpperCase(), activityReference.get().models.get(i).getId());
-                            facilityListTableArabic = new FacilityListTableArabic(activityReference.get().models.get(i).getId(),
-                                    activityReference.get().models.get(i).getSortId(),
-                                    activityReference.get().models.get(i).getName(),
-                                    activityReference.get().models.get(i).getImages().get(0));
-
-                            activityReference.get().qmDatabase.getFacilitiesListTableDao().insertArabic(facilityListTableArabic);
-                        }
-                    }
-
                 }
             }
             return null;
@@ -803,33 +717,23 @@ public class CommonListActivity extends AppCompatActivity {
 
         @Override
         protected Void doInBackground(Void... voids) {
-            Timber.i("Updating %s Table(%s) with id: %s", activityReference.get().toolbarTitle,
-                    language.toUpperCase(), activityReference.get().models.get(0).getId());
-            if (language.equals(LocaleManager.LANGUAGE_ENGLISH)) {
-                activityReference.get().qmDatabase.getFacilitiesListTableDao().updateFacilityListEnglish(
-                        activityReference.get().models.get(0).getSortId(),
-                        activityReference.get().models.get(0).getName(),
-                        activityReference.get().models.get(0).getImages().get(0),
-                        activityReference.get().models.get(0).getId()
-                );
-
-            } else {
-                activityReference.get().qmDatabase.getFacilitiesListTableDao().updateFacilityListArabic(
-                        activityReference.get().models.get(0).getSortId(),
-                        activityReference.get().models.get(0).getName(),
-                        activityReference.get().models.get(0).getImages().get(0),
-                        activityReference.get().models.get(0).getId()
-                );
-
-            }
+            Timber.i("Updating %s Table(language :%s) with id: %s", activityReference.get().toolbarTitle,
+                    language, activityReference.get().models.get(0).getId());
+            activityReference.get().qmDatabase.getFacilitiesListTableDao().updateFacilityList(
+                    activityReference.get().models.get(0).getSortId(),
+                    activityReference.get().models.get(0).getName(),
+                    activityReference.get().models.get(0).getImages().get(0),
+                    activityReference.get().models.get(0).getId(),
+                    language
+            );
             return null;
         }
     }
 
-    public static class RetrieveEnglishFacilityData extends AsyncTask<Void, Void, List<FacilityListTableEnglish>> {
+    public static class RetrieveFacilityListData extends AsyncTask<Void, Void, List<FacilityListTable>> {
         private WeakReference<CommonListActivity> activityReference;
 
-        public RetrieveEnglishFacilityData(CommonListActivity context) {
+        RetrieveFacilityListData(CommonListActivity context) {
             this.activityReference = new WeakReference<>(context);
         }
 
@@ -839,75 +743,28 @@ public class CommonListActivity extends AppCompatActivity {
         }
 
         @Override
-        protected List<FacilityListTableEnglish> doInBackground(Void... voids) {
-            Timber.i("getAll%sEnglishData()", activityReference.get().toolbarTitle);
-            return activityReference.get().qmDatabase.getFacilitiesListTableDao().getAllEnglish();
+        protected List<FacilityListTable> doInBackground(Void... voids) {
+            Timber.i("getAll%sData(language :%s)", activityReference.get().toolbarTitle,
+                    activityReference.get().appLanguage);
+            return activityReference.get().qmDatabase.getFacilitiesListTableDao()
+                    .getAllData(activityReference.get().appLanguage);
         }
 
         @Override
-        protected void onPostExecute(List<FacilityListTableEnglish> facilityListTableEnglishes) {
+        protected void onPostExecute(List<FacilityListTable> facilityListTables) {
             CommonListModel commonListModel;
             activityReference.get().models.clear();
-            if (facilityListTableEnglishes.size() > 0) {
+            if (facilityListTables.size() > 0) {
                 Timber.i("Set %s list from database with size: %d", activityReference.get().toolbarTitle,
-                        facilityListTableEnglishes.size());
-                for (int i = 0; i < facilityListTableEnglishes.size(); i++) {
+                        facilityListTables.size());
+                for (int i = 0; i < facilityListTables.size(); i++) {
                     Timber.i("Setting %s list from database with id: %s", activityReference.get().toolbarTitle,
-                            facilityListTableEnglishes.get(i).getFacilityNid());
+                            facilityListTables.get(i).getFacilityNid());
                     commonListModel = new CommonListModel(
-                            facilityListTableEnglishes.get(i).getFacilityTitle(),
-                            facilityListTableEnglishes.get(i).getSortId(),
-                            facilityListTableEnglishes.get(i).getFacilityNid(),
-                            facilityListTableEnglishes.get(i).getFacilityImage());
-                    activityReference.get().models.add(i, commonListModel);
-                }
-                Collections.sort(activityReference.get().models);
-                activityReference.get().mAdapter.notifyDataSetChanged();
-                activityReference.get().progressBar.setVisibility(View.GONE);
-            } else {
-                Timber.i("Have no data in database");
-                activityReference.get().progressBar.setVisibility(View.GONE);
-                activityReference.get().recyclerView.setVisibility(View.GONE);
-                activityReference.get().retryLayout.setVisibility(View.VISIBLE);
-            }
-        }
-
-
-    }
-
-    public static class RetrieveArabicFacilityData extends AsyncTask<Void, Void, List<FacilityListTableArabic>> {
-        private WeakReference<CommonListActivity> activityReference;
-
-        public RetrieveArabicFacilityData(CommonListActivity context) {
-            this.activityReference = new WeakReference<>(context);
-        }
-
-        @Override
-        protected void onPreExecute() {
-            activityReference.get().progressBar.setVisibility(View.VISIBLE);
-        }
-
-        @Override
-        protected List<FacilityListTableArabic> doInBackground(Void... voids) {
-            Timber.i("getAll%sArabicData()", activityReference.get().toolbarTitle);
-            return activityReference.get().qmDatabase.getFacilitiesListTableDao().getAllArabic();
-        }
-
-        @Override
-        protected void onPostExecute(List<FacilityListTableArabic> facilityListTableArabics) {
-            CommonListModel commonListModel;
-            activityReference.get().models.clear();
-            if (facilityListTableArabics.size() > 0) {
-                Timber.i("Set %s list from database with size: %d", activityReference.get().toolbarTitle,
-                        facilityListTableArabics.size());
-                for (int i = 0; i < facilityListTableArabics.size(); i++) {
-                    Timber.i("Setting %s list from database with id: %s", activityReference.get().toolbarTitle,
-                            facilityListTableArabics.get(i).getFacilityNid());
-                    commonListModel = new CommonListModel(
-                            facilityListTableArabics.get(i).getFacilityTitle(),
-                            facilityListTableArabics.get(i).getSortId(),
-                            facilityListTableArabics.get(i).getFacilityNid(),
-                            facilityListTableArabics.get(i).getFacilityImage());
+                            facilityListTables.get(i).getFacilityTitle(),
+                            facilityListTables.get(i).getSortId(),
+                            facilityListTables.get(i).getFacilityNid(),
+                            facilityListTables.get(i).getFacilityImage());
                     activityReference.get().models.add(i, commonListModel);
                 }
                 Collections.sort(activityReference.get().models);
@@ -948,25 +805,21 @@ public class CommonListActivity extends AppCompatActivity {
                 new CheckTourDBRowExist(activityReference.get(), language, isTour).execute();
             } else {
                 Timber.i("%s Table have no data", activityReference.get().toolbarTitle);
-                new InsertTourDataToDataBase(activityReference.get(), activityReference.get().tourListTableEnglish,
-                        activityReference.get().tourListTableArabic, language, isTour).execute();
+                new InsertTourDataToDataBase(activityReference.get(), activityReference.get().tourListTable,
+                        language, isTour).execute();
             }
         }
 
         @Override
         protected Integer doInBackground(Void... voids) {
-            Timber.i("getNumberOf%sRows%s()", activityReference.get().toolbarTitle, language.toUpperCase());
-            if (language.equals(LocaleManager.LANGUAGE_ENGLISH))
-                return activityReference.get().qmDatabase.getTourListTaleDao().getNumberOfRowsEnglish();
-            else
-                return activityReference.get().qmDatabase.getTourListTaleDao().getNumberOfRowsArabic();
+            Timber.i("getNumberOf%sRows(language :%s)", activityReference.get().toolbarTitle, language);
+            return activityReference.get().qmDatabase.getTourListTaleDao().getNumberOfRows(language);
         }
     }
 
     public static class CheckTourDBRowExist extends AsyncTask<Void, Void, Void> {
         private WeakReference<CommonListActivity> activityReference;
-        private TourListTableEnglish tourListTableEnglish;
-        private TourListTableArabic tourListTableArabic;
+        private TourListTable tourListTable;
         String language;
         int isTour;
 
@@ -989,47 +842,25 @@ public class CommonListActivity extends AppCompatActivity {
         @Override
         protected Void doInBackground(Void... voids) {
             if (activityReference.get().models.size() > 0) {
-                if (language.equals(LocaleManager.LANGUAGE_ENGLISH)) {
-                    for (int i = 0; i < activityReference.get().models.size(); i++) {
-                        int n = activityReference.get().qmDatabase.getTourListTaleDao().checkEnglishIdExist(
-                                Integer.parseInt(activityReference.get().models.get(i).getId()));
-                        if (n > 0) {
-                            Timber.i("Row exist in database(%s) for id: %s", language.toUpperCase(),
-                                    activityReference.get().models.get(i).getId());
-                            new UpdateTourTable(activityReference.get(), language, i).execute();
-                        } else {
-                            Timber.i("Inserting %s Table(%s) with id: %s", activityReference.get().toolbarTitle,
-                                    language.toUpperCase(), activityReference.get().models.get(i).getId());
-                            tourListTableEnglish = new TourListTableEnglish(activityReference.get().models.get(i).getId(),
-                                    activityReference.get().models.get(i).getEventDay(),
-                                    activityReference.get().models.get(i).getEventDate(),
-                                    activityReference.get().models.get(i).getName(),
-                                    activityReference.get().convertor.fromArrayList(activityReference.get().models.get(i).getImages()),
-                                    activityReference.get().models.get(i).getSortId(),
-                                    activityReference.get().models.get(i).getDescription(), isTour);
-                            activityReference.get().qmDatabase.getTourListTaleDao().insertEnglish(tourListTableEnglish);
-                        }
-                    }
-                } else {
-                    for (int i = 0; i < activityReference.get().models.size(); i++) {
-                        int n = activityReference.get().qmDatabase.getTourListTaleDao().checkArabicIdExist(
-                                Integer.parseInt(activityReference.get().models.get(i).getId()));
-                        if (n > 0) {
-                            Timber.i("Row exist in database(%s) for id: %s", language.toUpperCase(),
-                                    activityReference.get().models.get(i).getId());
-                            new UpdateTourTable(activityReference.get(), language, i).execute();
-                        } else {
-                            Timber.i("Inserting %s Table(%s) with id: %s", activityReference.get().toolbarTitle,
-                                    language.toUpperCase(), activityReference.get().models.get(i).getId());
-                            tourListTableArabic = new TourListTableArabic(activityReference.get().models.get(i).getId(),
-                                    activityReference.get().models.get(i).getEventDay(),
-                                    activityReference.get().models.get(i).getEventDate(),
-                                    activityReference.get().models.get(i).getName(),
-                                    activityReference.get().convertor.fromArrayList(activityReference.get().models.get(i).getImages()),
-                                    activityReference.get().models.get(i).getSortId(),
-                                    activityReference.get().models.get(i).getDescription(), isTour);
-                            activityReference.get().qmDatabase.getTourListTaleDao().insertArabic(tourListTableArabic);
-                        }
+                for (int i = 0; i < activityReference.get().models.size(); i++) {
+                    int n = activityReference.get().qmDatabase.getTourListTaleDao().checkIdExist(
+                            Integer.parseInt(activityReference.get().models.get(i).getId()), language);
+                    if (n > 0) {
+                        Timber.i("Row exist in database(language :%s) for id: %s", language,
+                                activityReference.get().models.get(i).getId());
+                        new UpdateTourTable(activityReference.get(), language, i).execute();
+                    } else {
+                        Timber.i("Inserting %s Table(language :%s) with id: %s", activityReference.get().toolbarTitle,
+                                language, activityReference.get().models.get(i).getId());
+                        tourListTable = new TourListTable(activityReference.get().models.get(i).getId(),
+                                activityReference.get().models.get(i).getEventDay(),
+                                activityReference.get().models.get(i).getEventDate(),
+                                activityReference.get().models.get(i).getName(),
+                                activityReference.get().convertor.fromArrayList(activityReference.get().models.get(i).getImages()),
+                                activityReference.get().models.get(i).getSortId(),
+                                activityReference.get().models.get(i).getDescription(),
+                                isTour, language);
+                        activityReference.get().qmDatabase.getTourListTaleDao().insert(tourListTable);
                     }
                 }
             }
@@ -1050,30 +881,18 @@ public class CommonListActivity extends AppCompatActivity {
 
         @Override
         protected Void doInBackground(Void... voids) {
-            Timber.i("Updating %s Table(%s) with id: %s", activityReference.get().toolbarTitle,
-                    language.toUpperCase(), activityReference.get().models.get(0).getId());
-            if (language.equals(LocaleManager.LANGUAGE_ENGLISH)) {
-                activityReference.get().qmDatabase.getTourListTaleDao().updateTourListEnglish(
-                        activityReference.get().models.get(i).getEventDay(),
-                        activityReference.get().models.get(i).getEventDate(),
-                        activityReference.get().models.get(i).getName(),
-                        activityReference.get().convertor.fromArrayList(activityReference.get().models.get(i).getImages()),
-                        activityReference.get().models.get(i).getSortId(),
-                        activityReference.get().models.get(i).getDescription(),
-                        activityReference.get().models.get(i).getId()
-                );
-
-            } else {
-                activityReference.get().qmDatabase.getTourListTaleDao().updateTourListArabic(
-                        activityReference.get().models.get(i).getEventDay(),
-                        activityReference.get().models.get(i).getEventDate(),
-                        activityReference.get().models.get(i).getName(),
-                        activityReference.get().convertor.fromArrayList(activityReference.get().models.get(i).getImages()),
-                        activityReference.get().models.get(i).getSortId(),
-                        activityReference.get().models.get(i).getDescription(),
-                        activityReference.get().models.get(i).getId()
-                );
-            }
+            Timber.i("Updating %s Table(language :%s) with id: %s", activityReference.get().toolbarTitle,
+                    language, activityReference.get().models.get(0).getId());
+            activityReference.get().qmDatabase.getTourListTaleDao().updateTourList(
+                    activityReference.get().models.get(i).getEventDay(),
+                    activityReference.get().models.get(i).getEventDate(),
+                    activityReference.get().models.get(i).getName(),
+                    activityReference.get().convertor.fromArrayList(activityReference.get().models.get(i).getImages()),
+                    activityReference.get().models.get(i).getSortId(),
+                    activityReference.get().models.get(i).getDescription(),
+                    activityReference.get().models.get(i).getId(),
+                    language
+            );
             return null;
         }
 
@@ -1084,17 +903,15 @@ public class CommonListActivity extends AppCompatActivity {
 
     public static class InsertTourDataToDataBase extends AsyncTask<Void, Void, Boolean> {
         private WeakReference<CommonListActivity> activityReference;
-        private TourListTableEnglish tourListTableEnglish;
-        private TourListTableArabic tourListTableArabic;
+        private TourListTable tourListTable;
         String language;
         int isTour;
 
-        InsertTourDataToDataBase(CommonListActivity context, TourListTableEnglish tourListTableEnglish,
-                                 TourListTableArabic tourListTableArabic, String apiLanguage,
+        InsertTourDataToDataBase(CommonListActivity context, TourListTable tourListTable,
+                                 String apiLanguage,
                                  int isTour) {
             activityReference = new WeakReference<>(context);
-            this.tourListTableEnglish = tourListTableEnglish;
-            this.tourListTableArabic = tourListTableArabic;
+            this.tourListTable = tourListTable;
             this.language = apiLanguage;
             this.isTour = isTour;
         }
@@ -1111,48 +928,32 @@ public class CommonListActivity extends AppCompatActivity {
 
         @Override
         protected Boolean doInBackground(Void... voids) {
-            Timber.i("Insert %s Table(%s) with size: %d", activityReference.get().toolbarTitle,
-                    language.toUpperCase(), activityReference.get().models.size());
-            if (language.equals(LocaleManager.LANGUAGE_ENGLISH)) {
-                if (activityReference.get().models != null && activityReference.get().models.size() > 0) {
-                    for (int i = 0; i < activityReference.get().models.size(); i++) {
-                        Timber.i("Inserting %s Table(%s) with id: %s", activityReference.get().toolbarTitle,
-                                language.toUpperCase(), activityReference.get().models.get(i).getId());
-                        tourListTableEnglish = new TourListTableEnglish(activityReference.get().models.get(i).getId(),
-                                activityReference.get().models.get(i).getEventDay(),
-                                activityReference.get().models.get(i).getEventDate(),
-                                activityReference.get().models.get(i).getName(),
-                                activityReference.get().convertor.fromArrayList(activityReference.get().models.get(i).getImages()),
-                                activityReference.get().models.get(i).getSortId(),
-                                activityReference.get().models.get(i).getDescription(), isTour);
-                        activityReference.get().qmDatabase.getTourListTaleDao().insertEnglish(tourListTableEnglish);
-                    }
-                }
-            } else {
-                if (activityReference.get().models != null && activityReference.get().models.size() > 0) {
-                    for (int i = 0; i < activityReference.get().models.size(); i++) {
-                        Timber.i("Inserting %s Table(%s) with id: %s", activityReference.get().toolbarTitle,
-                                language.toUpperCase(), activityReference.get().models.get(i).getId());
-                        tourListTableArabic = new TourListTableArabic(activityReference.get().models.get(i).getId(),
-                                activityReference.get().models.get(i).getEventDay(),
-                                activityReference.get().models.get(i).getEventDate(),
-                                activityReference.get().models.get(i).getName(),
-                                activityReference.get().convertor.fromArrayList(activityReference.get().models.get(i).getImages()),
-                                activityReference.get().models.get(i).getSortId(),
-                                activityReference.get().models.get(i).getDescription(), isTour);
-                        activityReference.get().qmDatabase.getTourListTaleDao().insertArabic(tourListTableArabic);
-                    }
+            Timber.i("Insert %s Table(language :%s) with size: %d", activityReference.get().toolbarTitle,
+                    language, activityReference.get().models.size());
+            if (activityReference.get().models != null && activityReference.get().models.size() > 0) {
+                for (int i = 0; i < activityReference.get().models.size(); i++) {
+                    Timber.i("Inserting %s Table(language :%s) with id: %s", activityReference.get().toolbarTitle,
+                            language, activityReference.get().models.get(i).getId());
+                    tourListTable = new TourListTable(activityReference.get().models.get(i).getId(),
+                            activityReference.get().models.get(i).getEventDay(),
+                            activityReference.get().models.get(i).getEventDate(),
+                            activityReference.get().models.get(i).getName(),
+                            activityReference.get().convertor.fromArrayList(activityReference.get().models.get(i).getImages()),
+                            activityReference.get().models.get(i).getSortId(),
+                            activityReference.get().models.get(i).getDescription(),
+                            isTour, language);
+                    activityReference.get().qmDatabase.getTourListTaleDao().insert(tourListTable);
                 }
             }
             return true;
         }
     }
 
-    public static class RetrieveEnglishTourData extends AsyncTask<Void, Void, List<TourListTableEnglish>> {
+    public static class RetrieveTourData extends AsyncTask<Void, Void, List<TourListTable>> {
         private WeakReference<CommonListActivity> activityReference;
         int isTour;
 
-        RetrieveEnglishTourData(CommonListActivity context, int isTour) {
+        RetrieveTourData(CommonListActivity context, int isTour) {
             activityReference = new WeakReference<>(context);
             this.isTour = isTour;
         }
@@ -1163,30 +964,30 @@ public class CommonListActivity extends AppCompatActivity {
         }
 
         @Override
-        protected void onPostExecute(List<TourListTableEnglish> tourListTableEnglishes) {
+        protected void onPostExecute(List<TourListTable> tourListTables) {
             CommonListModel commonListModel;
             activityReference.get().models.clear();
-            if (tourListTableEnglishes.size() > 0) {
+            if (tourListTables.size() > 0) {
                 Timber.i("Set %s list from database with size: %d", activityReference.get().toolbarTitle,
-                        tourListTableEnglishes.size());
-                for (int i = 0; i < tourListTableEnglishes.size(); i++) {
+                        tourListTables.size());
+                for (int i = 0; i < tourListTables.size(); i++) {
                     Timber.i("Setting %s list from database with id: %s", activityReference.get().toolbarTitle,
-                            tourListTableEnglishes.get(i).getTourNid());
+                            tourListTables.get(i).getTourNid());
                     if (isTour == 1) {
                         commonListModel = new CommonListModel(
-                                tourListTableEnglishes.get(i).getTourNid(),
-                                tourListTableEnglishes.get(i).getTourDay(),
-                                tourListTableEnglishes.get(i).getTourEventDate(),
-                                tourListTableEnglishes.get(i).getTourSubtitle(),
-                                activityReference.get().convertor.fromString(tourListTableEnglishes.get(i).getTourImages()),
+                                tourListTables.get(i).getTourNid(),
+                                tourListTables.get(i).getTourDay(),
+                                tourListTables.get(i).getTourEventDate(),
+                                tourListTables.get(i).getTourSubtitle(),
+                                activityReference.get().convertor.fromString(tourListTables.get(i).getTourImages()),
                                 true);
                     } else {
                         commonListModel = new CommonListModel(
-                                tourListTableEnglishes.get(i).getTourNid(),
-                                tourListTableEnglishes.get(i).getTourDay(),
-                                tourListTableEnglishes.get(i).getTourEventDate(),
-                                tourListTableEnglishes.get(i).getTourSubtitle(),
-                                activityReference.get().convertor.fromString(tourListTableEnglishes.get(i).getTourImages()),
+                                tourListTables.get(i).getTourNid(),
+                                tourListTables.get(i).getTourDay(),
+                                tourListTables.get(i).getTourEventDate(),
+                                tourListTables.get(i).getTourSubtitle(),
+                                activityReference.get().convertor.fromString(tourListTables.get(i).getTourImages()),
                                 false);
                     }
                     activityReference.get().models.add(i, commonListModel);
@@ -1202,75 +1003,15 @@ public class CommonListActivity extends AppCompatActivity {
         }
 
         @Override
-        protected List<TourListTableEnglish> doInBackground(Void... voids) {
-            Timber.i("getAll%sEnglishData()", activityReference.get().toolbarTitle);
+        protected List<TourListTable> doInBackground(Void... voids) {
+            Timber.i("getAll%sData(language :%s)", activityReference.get().toolbarTitle,
+                    activityReference.get().appLanguage);
             if (isTour == 1)
-                return activityReference.get().qmDatabase.getTourListTaleDao().getTourListEnglish(1);
+                return activityReference.get().qmDatabase.getTourListTaleDao()
+                        .getTourList(1, activityReference.get().appLanguage);
             else
-                return activityReference.get().qmDatabase.getTourListTaleDao().getTourListEnglish(0);
-        }
-    }
-
-    public static class RetrieveArabicTourData extends AsyncTask<Void, Void, List<TourListTableArabic>> {
-        private WeakReference<CommonListActivity> activityReference;
-        int isTour;
-
-        RetrieveArabicTourData(CommonListActivity context, int isTour) {
-            activityReference = new WeakReference<>(context);
-            this.isTour = isTour;
-        }
-
-        @Override
-        protected void onPreExecute() {
-            activityReference.get().progressBar.setVisibility(View.VISIBLE);
-        }
-
-        @Override
-        protected void onPostExecute(List<TourListTableArabic> tourListTableArabics) {
-            CommonListModel commonListModel;
-            activityReference.get().models.clear();
-            if (tourListTableArabics.size() > 0) {
-                Timber.i("Set %s list from database with size: %d", activityReference.get().toolbarTitle,
-                        tourListTableArabics.size());
-                for (int i = 0; i < tourListTableArabics.size(); i++) {
-                    Timber.i("Setting %s list from database with id: %s", activityReference.get().toolbarTitle,
-                            tourListTableArabics.get(i).getTourNid());
-                    if (isTour == 1) {
-                        commonListModel = new CommonListModel(
-                                tourListTableArabics.get(i).getTourNid(),
-                                tourListTableArabics.get(i).getTourDay(),
-                                tourListTableArabics.get(i).getTourEventDate(),
-                                tourListTableArabics.get(i).getTourSubtitle(),
-                                activityReference.get().convertor.fromString(tourListTableArabics.get(i).getTourImages()),
-                                true);
-                    } else {
-                        commonListModel = new CommonListModel(
-                                tourListTableArabics.get(i).getTourNid(),
-                                tourListTableArabics.get(i).getTourDay(),
-                                tourListTableArabics.get(i).getTourEventDate(),
-                                tourListTableArabics.get(i).getTourSubtitle(),
-                                activityReference.get().convertor.fromString(tourListTableArabics.get(i).getTourImages()),
-                                false);
-                    }
-                    activityReference.get().models.add(i, commonListModel);
-                }
-                activityReference.get().mAdapter.notifyDataSetChanged();
-                activityReference.get().progressBar.setVisibility(View.GONE);
-            } else {
-                Timber.i("Have no data in database");
-                activityReference.get().progressBar.setVisibility(View.GONE);
-                activityReference.get().recyclerView.setVisibility(View.GONE);
-                activityReference.get().retryLayout.setVisibility(View.VISIBLE);
-            }
-        }
-
-        @Override
-        protected List<TourListTableArabic> doInBackground(Void... voids) {
-            Timber.i("getAll%sArabicData()", activityReference.get().toolbarTitle);
-            if (isTour == 1)
-                return activityReference.get().qmDatabase.getTourListTaleDao().getTourListArabic(1);
-            else
-                return activityReference.get().qmDatabase.getTourListTaleDao().getTourListArabic(0);
+                return activityReference.get().qmDatabase.getTourListTaleDao()
+                        .getTourList(0, activityReference.get().appLanguage);
         }
     }
 
@@ -1297,26 +1038,21 @@ public class CommonListActivity extends AppCompatActivity {
                 new CheckTravelDBRowExist(activityReference.get(), language).execute();
             } else {
                 Timber.i("%s Table have no data", activityReference.get().toolbarTitle);
-                new InsertTravelDataToDataBase(activityReference.get(), activityReference.get().travelDetailsTableEnglish,
-                        activityReference.get().travelDetailsTableArabic, language).execute();
+                new InsertTravelDataToDataBase(activityReference.get(), activityReference.get().travelDetailsTable,
+                        language).execute();
             }
         }
 
         @Override
         protected Integer doInBackground(Void... voids) {
-            Timber.i("getNumberOf%sRows%s()", activityReference.get().toolbarTitle, language.toUpperCase());
-            if (language.equals(LocaleManager.LANGUAGE_ENGLISH))
-                return activityReference.get().qmDatabase.getTravelDetailsTableDao().getNumberOfRowsEnglish();
-            else
-                return activityReference.get().qmDatabase.getTravelDetailsTableDao().getNumberOfRowsArabic();
-
+            Timber.i("getNumberOf%sRows(language :%s)", activityReference.get().toolbarTitle, language);
+            return activityReference.get().qmDatabase.getTravelDetailsTableDao().getNumberOfRows(language);
         }
     }
 
     public static class CheckTravelDBRowExist extends AsyncTask<Void, Void, Void> {
         private WeakReference<CommonListActivity> activityReference;
-        private TravelDetailsTableEnglish travelDetailsTableEnglish;
-        private TravelDetailsTableArabic travelDetailsTableArabic;
+        private TravelDetailsTable travelDetailsTable;
         String language;
 
         CheckTravelDBRowExist(CommonListActivity context, String apiLanguage) {
@@ -1338,55 +1074,29 @@ public class CommonListActivity extends AppCompatActivity {
         protected Void doInBackground(Void... voids) {
 
             if (activityReference.get().models.size() > 0) {
-                if (language.equals(LocaleManager.LANGUAGE_ENGLISH)) {
-                    for (int i = 0; i < activityReference.get().models.size(); i++) {
-                        int n = activityReference.get().qmDatabase.getTravelDetailsTableDao().checkEnglishIdExist(
-                                Integer.parseInt(activityReference.get().models.get(i).getId()));
-                        if (n > 0) {
-                            Timber.i("Row exist in database(%s) for id: %s", language.toUpperCase(),
-                                    activityReference.get().models.get(i).getId());
-                            new UpdateTravelTable(activityReference.get(), language, i).execute();
+                for (int i = 0; i < activityReference.get().models.size(); i++) {
+                    int n = activityReference.get().qmDatabase.getTravelDetailsTableDao().checkIdExist(
+                            Integer.parseInt(activityReference.get().models.get(i).getId()), language);
+                    if (n > 0) {
+                        Timber.i("Row exist in database(language :%s) for id: %s", language,
+                                activityReference.get().models.get(i).getId());
+                        new UpdateTravelTable(activityReference.get(), language, i).execute();
 
-                        } else {
-                            Timber.i("Inserting %s Table(%s) with id: %s", activityReference.get().toolbarTitle,
-                                    language.toUpperCase(), activityReference.get().models.get(i).getId());
-                            travelDetailsTableEnglish = new TravelDetailsTableEnglish(activityReference.get().models.get(i).getId(),
-                                    activityReference.get().models.get(i).getName(),
-                                    activityReference.get().models.get(i).getImage(),
-                                    activityReference.get().models.get(i).getDescription(),
-                                    activityReference.get().models.get(i).getEmail(),
-                                    activityReference.get().models.get(i).getContactNumber(),
-                                    activityReference.get().models.get(i).getPromotionalCode(),
-                                    activityReference.get().models.get(i).getClaimOffer());
-                            activityReference.get().qmDatabase.getTravelDetailsTableDao().insert(travelDetailsTableEnglish);
-                        }
-                    }
-                } else {
-                    for (int i = 0; i < activityReference.get().models.size(); i++) {
-                        int n = activityReference.get().qmDatabase.getTravelDetailsTableDao().checkArabicIdExist(
-                                Integer.parseInt(activityReference.get().models.get(i).getId()));
-                        if (n > 0) {
-                            Timber.i("Row exist in database(%s) for id: %s", language.toUpperCase(),
-                                    activityReference.get().models.get(i).getId());
-                            new UpdateTravelTable(activityReference.get(), language, i).execute();
-
-                        } else {
-                            Timber.i("Inserting %s Table(%s) with id: %s", activityReference.get().toolbarTitle,
-                                    language.toUpperCase(), activityReference.get().models.get(i).getId());
-                            travelDetailsTableArabic = new TravelDetailsTableArabic(activityReference.get().models.get(i).getId(),
-                                    activityReference.get().models.get(i).getName(),
-                                    activityReference.get().models.get(i).getImage(),
-                                    activityReference.get().models.get(i).getDescription(),
-                                    activityReference.get().models.get(i).getEmail(),
-                                    activityReference.get().models.get(i).getContactNumber(),
-                                    activityReference.get().models.get(i).getPromotionalCode(),
-                                    activityReference.get().models.get(i).getClaimOffer());
-                            activityReference.get().qmDatabase.getTravelDetailsTableDao().insert(travelDetailsTableArabic);
-
-                        }
+                    } else {
+                        Timber.i("Inserting %s Table(language :%s) with id: %s", activityReference.get().toolbarTitle,
+                                language, activityReference.get().models.get(i).getId());
+                        travelDetailsTable = new TravelDetailsTable(activityReference.get().models.get(i).getId(),
+                                activityReference.get().models.get(i).getName(),
+                                activityReference.get().models.get(i).getImage(),
+                                activityReference.get().models.get(i).getDescription(),
+                                activityReference.get().models.get(i).getEmail(),
+                                activityReference.get().models.get(i).getContactNumber(),
+                                activityReference.get().models.get(i).getPromotionalCode(),
+                                activityReference.get().models.get(i).getClaimOffer(),
+                                language);
+                        activityReference.get().qmDatabase.getTravelDetailsTableDao().insert(travelDetailsTable);
                     }
                 }
-
             }
             return null;
         }
@@ -1405,32 +1115,18 @@ public class CommonListActivity extends AppCompatActivity {
 
         @Override
         protected Void doInBackground(Void... voids) {
-            Timber.i("Updating %s Table(%s) with id: %s", activityReference.get().toolbarTitle,
-                    language.toUpperCase(), activityReference.get().models.get(0).getId());
-            if (language.equals(LocaleManager.LANGUAGE_ENGLISH)) {
-                // updateEnglishTable table with english name
-                activityReference.get().qmDatabase.getTravelDetailsTableDao().updateTraveldetailsenglish(
-                        activityReference.get().models.get(position).getName(),
-                        activityReference.get().models.get(position).getImage(),
-                        activityReference.get().models.get(position).getDescription(),
-                        activityReference.get().models.get(position).getPromotionalCode(),
-                        activityReference.get().models.get(position).getContactNumber(),
-                        activityReference.get().models.get(position).getEmail(),
-                        activityReference.get().models.get(position).getId()
-                );
-
-            } else {
-                // updateArabicTable table with arabic name
-                activityReference.get().qmDatabase.getTravelDetailsTableDao().updateTraveldetailsarabic(
-                        activityReference.get().models.get(position).getName(),
-                        activityReference.get().models.get(position).getImage(),
-                        activityReference.get().models.get(position).getDescription(),
-                        activityReference.get().models.get(position).getPromotionalCode(),
-                        activityReference.get().models.get(position).getContactNumber(),
-                        activityReference.get().models.get(position).getEmail(),
-                        activityReference.get().models.get(position).getId()
-                );
-            }
+            Timber.i("Updating %s Table(language :%s) with id: %s", activityReference.get().toolbarTitle,
+                    language, activityReference.get().models.get(0).getId());
+            activityReference.get().qmDatabase.getTravelDetailsTableDao().updateTravelDetails(
+                    activityReference.get().models.get(position).getName(),
+                    activityReference.get().models.get(position).getImage(),
+                    activityReference.get().models.get(position).getDescription(),
+                    activityReference.get().models.get(position).getPromotionalCode(),
+                    activityReference.get().models.get(position).getContactNumber(),
+                    activityReference.get().models.get(position).getEmail(),
+                    activityReference.get().models.get(position).getId(),
+                    language
+            );
             return null;
         }
 
@@ -1441,15 +1137,13 @@ public class CommonListActivity extends AppCompatActivity {
 
     public static class InsertTravelDataToDataBase extends AsyncTask<Void, Void, Boolean> {
         private WeakReference<CommonListActivity> activityReference;
-        private TravelDetailsTableEnglish travelDetailsTableEnglish;
-        private TravelDetailsTableArabic travelDetailsTableArabic;
+        private TravelDetailsTable travelDetailsTable;
         String language;
 
-        InsertTravelDataToDataBase(CommonListActivity context, TravelDetailsTableEnglish travelDetailsTableEnglish,
-                                   TravelDetailsTableArabic travelDetailsTableArabic, String apiLanguage) {
+        InsertTravelDataToDataBase(CommonListActivity context, TravelDetailsTable travelDetailsTable,
+                                   String apiLanguage) {
             activityReference = new WeakReference<>(context);
-            this.travelDetailsTableEnglish = travelDetailsTableEnglish;
-            this.travelDetailsTableArabic = travelDetailsTableArabic;
+            this.travelDetailsTable = travelDetailsTable;
             this.language = apiLanguage;
         }
 
@@ -1465,49 +1159,33 @@ public class CommonListActivity extends AppCompatActivity {
 
         @Override
         protected Boolean doInBackground(Void... voids) {
-            Timber.i("Insert %s Table(%s) with size: %d", activityReference.get().toolbarTitle,
-                    language.toUpperCase(), activityReference.get().models.size());
+            Timber.i("Insert %s Table(language :%s) with size: %d", activityReference.get().toolbarTitle,
+                    language, activityReference.get().models.size());
             if (activityReference.get().models != null && activityReference.get().models.size() > 0) {
-                if (language.equals("en")) {
-                    for (int i = 0; i < activityReference.get().models.size(); i++) {
-                        Timber.i("Inserting %s Table(%s) with id: %s", activityReference.get().toolbarTitle,
-                                language.toUpperCase(), activityReference.get().models.get(i).getId());
-                        travelDetailsTableEnglish = new TravelDetailsTableEnglish(
-                                activityReference.get().models.get(i).getId(),
-                                activityReference.get().models.get(i).getName(),
-                                activityReference.get().models.get(i).getImage(),
-                                activityReference.get().models.get(i).getDescription(),
-                                activityReference.get().models.get(i).getEmail(),
-                                activityReference.get().models.get(i).getContactNumber(),
-                                activityReference.get().models.get(i).getPromotionalCode(),
-                                activityReference.get().models.get(i).getClaimOffer());
-                        activityReference.get().qmDatabase.getTravelDetailsTableDao().insert(travelDetailsTableEnglish);
-                    }
-                } else {
-                    for (int i = 0; i < activityReference.get().models.size(); i++) {
-                        Timber.i("Inserting %s Table(%s) with id: %s", activityReference.get().toolbarTitle,
-                                language.toUpperCase(), activityReference.get().models.get(i).getId());
-                        travelDetailsTableArabic = new TravelDetailsTableArabic(activityReference.get().models.get(i).getId(),
-                                activityReference.get().models.get(i).getName(),
-                                activityReference.get().models.get(i).getImage(),
-                                activityReference.get().models.get(i).getDescription(),
-                                activityReference.get().models.get(i).getEmail(),
-                                activityReference.get().models.get(i).getContactNumber(),
-                                activityReference.get().models.get(i).getPromotionalCode(),
-                                activityReference.get().models.get(i).getClaimOffer());
-                        activityReference.get().qmDatabase.getTravelDetailsTableDao().insert(travelDetailsTableArabic);
-                    }
+                for (int i = 0; i < activityReference.get().models.size(); i++) {
+                    Timber.i("Inserting %s Table(language :%s) with id: %s", activityReference.get().toolbarTitle,
+                            language, activityReference.get().models.get(i).getId());
+                    travelDetailsTable = new TravelDetailsTable(
+                            activityReference.get().models.get(i).getId(),
+                            activityReference.get().models.get(i).getName(),
+                            activityReference.get().models.get(i).getImage(),
+                            activityReference.get().models.get(i).getDescription(),
+                            activityReference.get().models.get(i).getEmail(),
+                            activityReference.get().models.get(i).getContactNumber(),
+                            activityReference.get().models.get(i).getPromotionalCode(),
+                            activityReference.get().models.get(i).getClaimOffer(),
+                            language);
+                    activityReference.get().qmDatabase.getTravelDetailsTableDao().insert(travelDetailsTable);
                 }
-
             }
             return true;
         }
     }
 
-    public static class RetrieveEnglishTravelData extends AsyncTask<Void, Void, List<TravelDetailsTableEnglish>> {
+    public static class RetrieveTravelData extends AsyncTask<Void, Void, List<TravelDetailsTable>> {
         private WeakReference<CommonListActivity> activityReference;
 
-        RetrieveEnglishTravelData(CommonListActivity context) {
+        RetrieveTravelData(CommonListActivity context) {
             activityReference = new WeakReference<>(context);
         }
 
@@ -1517,22 +1195,22 @@ public class CommonListActivity extends AppCompatActivity {
         }
 
         @Override
-        protected void onPostExecute(List<TravelDetailsTableEnglish> travelDetailsTableEnglishe) {
+        protected void onPostExecute(List<TravelDetailsTable> travelDetailsTableList) {
             activityReference.get().models.clear();
-            if (travelDetailsTableEnglishe.size() > 0) {
+            if (travelDetailsTableList.size() > 0) {
                 Timber.i("Set %s list from database with size: %d", activityReference.get().toolbarTitle,
-                        travelDetailsTableEnglishe.size());
-                for (int i = 0; i < travelDetailsTableEnglishe.size(); i++) {
+                        travelDetailsTableList.size());
+                for (int i = 0; i < travelDetailsTableList.size(); i++) {
                     Timber.i("Setting %s list from database with id: %s", activityReference.get().toolbarTitle,
-                            travelDetailsTableEnglishe.get(i).getContent_ID());
-                    CommonListModel commonListModel = new CommonListModel(travelDetailsTableEnglishe.get(i).getTravel_name(),
-                            travelDetailsTableEnglishe.get(i).getTravel_image(),
-                            travelDetailsTableEnglishe.get(i).getTravel_description(),
-                            travelDetailsTableEnglishe.get(i).getTravel_email(),
-                            travelDetailsTableEnglishe.get(i).getContact_number(),
-                            travelDetailsTableEnglishe.get(i).getPromotional_code(),
-                            travelDetailsTableEnglishe.get(i).getClaim_offer(),
-                            travelDetailsTableEnglishe.get(i).getContent_ID(),
+                            travelDetailsTableList.get(i).getContent_ID());
+                    CommonListModel commonListModel = new CommonListModel(travelDetailsTableList.get(i).getTravel_name(),
+                            travelDetailsTableList.get(i).getTravel_image(),
+                            travelDetailsTableList.get(i).getTravel_description(),
+                            travelDetailsTableList.get(i).getTravel_email(),
+                            travelDetailsTableList.get(i).getContact_number(),
+                            travelDetailsTableList.get(i).getPromotional_code(),
+                            travelDetailsTableList.get(i).getClaim_offer(),
+                            travelDetailsTableList.get(i).getContent_ID(),
                             true);
                     activityReference.get().models.add(i, commonListModel);
                 }
@@ -1547,59 +1225,11 @@ public class CommonListActivity extends AppCompatActivity {
         }
 
         @Override
-        protected List<TravelDetailsTableEnglish> doInBackground(Void... voids) {
-            Timber.i("getAll%sEnglishData()", activityReference.get().toolbarTitle);
-            return activityReference.get().qmDatabase.getTravelDetailsTableDao().getAllEnglish();
-        }
-    }
-
-    public static class RetrieveArabicTravelData extends AsyncTask<Void, Void, List<TravelDetailsTableArabic>> {
-        private WeakReference<CommonListActivity> activityReference;
-
-        RetrieveArabicTravelData(CommonListActivity context) {
-            activityReference = new WeakReference<>(context);
-        }
-
-        @Override
-        protected void onPreExecute() {
-            activityReference.get().progressBar.setVisibility(View.VISIBLE);
-        }
-
-        @Override
-        protected void onPostExecute(List<TravelDetailsTableArabic> travelDetailsTableArabic) {
-            activityReference.get().models.clear();
-            if (travelDetailsTableArabic.size() > 0) {
-                Timber.i("Set %s list from database with size: %d", activityReference.get().toolbarTitle,
-                        travelDetailsTableArabic.size());
-                for (int i = 0; i < travelDetailsTableArabic.size(); i++) {
-                    Timber.i("Setting %s list from database with id: %s", activityReference.get().toolbarTitle,
-                            travelDetailsTableArabic.get(i).getContent_ID());
-                    CommonListModel commonListModel = new CommonListModel(travelDetailsTableArabic.get(i).getTravel_name(),
-                            travelDetailsTableArabic.get(i).getTravel_image(),
-                            travelDetailsTableArabic.get(i).getTravel_description(),
-                            travelDetailsTableArabic.get(i).getTravel_email(),
-                            travelDetailsTableArabic.get(i).getContact_number(),
-                            travelDetailsTableArabic.get(i).getPromotional_code(),
-                            travelDetailsTableArabic.get(i).getClaim_offer(),
-                            travelDetailsTableArabic.get(i).getContent_ID(),
-                            true);
-                    activityReference.get().models.add(i, commonListModel);
-
-                }
-                activityReference.get().mAdapter.notifyDataSetChanged();
-                activityReference.get().progressBar.setVisibility(View.GONE);
-            } else {
-                Timber.i("Have no data in database");
-                activityReference.get().progressBar.setVisibility(View.GONE);
-                activityReference.get().recyclerView.setVisibility(View.GONE);
-                activityReference.get().retryLayout.setVisibility(View.VISIBLE);
-            }
-        }
-
-        @Override
-        protected List<TravelDetailsTableArabic> doInBackground(Void... voids) {
-            Timber.i("getAll%sArabicData()", activityReference.get().toolbarTitle);
-            return activityReference.get().qmDatabase.getTravelDetailsTableDao().getAllArabic();
+        protected List<TravelDetailsTable> doInBackground(Void... voids) {
+            Timber.i("getAll%sData(language :%s)", activityReference.get().toolbarTitle,
+                    activityReference.get().appLanguage);
+            return activityReference.get().qmDatabase.getTravelDetailsTableDao()
+                    .getAllData(activityReference.get().appLanguage);
         }
     }
 
@@ -1628,24 +1258,15 @@ public class CommonListActivity extends AppCompatActivity {
                     new CheckDiningDBRowExist(activityReference.get(), language).execute();
                 } else {
                     if (museumID == null) {
-                        if (language.equals(LocaleManager.LANGUAGE_ENGLISH)) {
-                            new RetrieveEnglishDiningData(activityReference.get()).execute();
-                        } else {
-                            new RetrieveArabicDiningData(activityReference.get()).execute();
-                        }
+                        new RetrieveDiningData(activityReference.get()).execute();
                     } else {
-                        if (language.equals(LocaleManager.LANGUAGE_ENGLISH)) {
-                            new RetrieveEnglishDiningData(activityReference.get(), museumID).execute();
-                        } else {
-                            new RetrieveArabicDiningData(activityReference.get(), museumID).execute();
-                        }
+                        new RetrieveDiningData(activityReference.get(), museumID).execute();
                     }
                 }
             } else if (activityReference.get().models.size() > 0) {
                 Timber.i("%s Table have no data", activityReference.get().toolbarTitle);
                 new InsertDiningDataToDataBase(activityReference.get(),
-                        activityReference.get().diningTableEnglish,
-                        activityReference.get().diningTableArabic, language).execute();
+                        activityReference.get().diningTable, language).execute();
             } else {
                 activityReference.get().recyclerView.setVisibility(View.GONE);
                 activityReference.get().retryLayout.setVisibility(View.VISIBLE);
@@ -1655,19 +1276,14 @@ public class CommonListActivity extends AppCompatActivity {
 
         @Override
         protected Integer doInBackground(Void... voids) {
-            Timber.i("getNumberOf%sRows%s()", activityReference.get().toolbarTitle, language.toUpperCase());
-            if (language.equals(LocaleManager.LANGUAGE_ENGLISH))
-                return activityReference.get().qmDatabase.getDiningTableDao().getNumberOfRowsEnglish();
-            else
-                return activityReference.get().qmDatabase.getDiningTableDao().getNumberOfRowsArabic();
-
+            Timber.i("getNumberOf%sRows(language :%s)", activityReference.get().toolbarTitle, language);
+            return activityReference.get().qmDatabase.getDiningTableDao().getNumberOfRows(language);
         }
     }
 
     public static class CheckDiningDBRowExist extends AsyncTask<Void, Void, Void> {
         private WeakReference<CommonListActivity> activityReference;
-        private DiningTableEnglish diningTableEnglish;
-        private DiningTableArabic diningTableArabic;
+        private DiningTable diningTable;
         String language;
 
         CheckDiningDBRowExist(CommonListActivity context, String apiLanguage) {
@@ -1689,52 +1305,28 @@ public class CommonListActivity extends AppCompatActivity {
         protected Void doInBackground(Void... voids) {
 
             if (activityReference.get().models.size() > 0) {
-                if (language.equals(LocaleManager.LANGUAGE_ENGLISH)) {
-                    for (int i = 0; i < activityReference.get().models.size(); i++) {
-                        int n = activityReference.get().qmDatabase.getDiningTableDao().checkEnglishIdExist(
-                                Integer.parseInt(activityReference.get().models.get(i).getId()));
-                        if (n > 0) {
-                            Timber.i("Row exist in database(%s) for id: %s", language.toUpperCase(),
-                                    activityReference.get().models.get(i).getId());
-                            new UpdateDiningTable(activityReference.get(), language, i).execute();
+                for (int i = 0; i < activityReference.get().models.size(); i++) {
+                    int n = activityReference.get().qmDatabase.getDiningTableDao()
+                            .checkIdExist(Integer.parseInt(activityReference.get().models.get(i).getId()), language);
+                    if (n > 0) {
+                        Timber.i("Row exist in database(language :%s) for id: %s", language,
+                                activityReference.get().models.get(i).getId());
+                        new UpdateDiningTable(activityReference.get(), language, i).execute();
 
-                        } else {
-                            Timber.i("Inserting %s Table(%s) with id: %s", activityReference.get().toolbarTitle,
-                                    language.toUpperCase(), activityReference.get().models.get(i).getId());
-                            diningTableEnglish = new DiningTableEnglish(Long.parseLong(
-                                    activityReference.get().models.get(i).getId()),
-                                    activityReference.get().models.get(i).getName(),
-                                    activityReference.get().models.get(i).getImage(),
-                                    activityReference.get().models.get(i).getSortId(),
-                                    activityReference.get().models.get(i).getMuseumId());
-                            activityReference.get().qmDatabase.getDiningTableDao().insert(diningTableEnglish);
+                    } else {
+                        Timber.i("Inserting %s Table(language :%s) with id: %s", activityReference.get().toolbarTitle,
+                                language, activityReference.get().models.get(i).getId());
+                        diningTable = new DiningTable(Long.parseLong(
+                                activityReference.get().models.get(i).getId()),
+                                activityReference.get().models.get(i).getName(),
+                                activityReference.get().models.get(i).getImage(),
+                                activityReference.get().models.get(i).getSortId(),
+                                activityReference.get().models.get(i).getMuseumId(),
+                                language);
+                        activityReference.get().qmDatabase.getDiningTableDao().insert(diningTable);
 
-                        }
-                    }
-                } else {
-                    for (int i = 0; i < activityReference.get().models.size(); i++) {
-                        int n = activityReference.get().qmDatabase.getDiningTableDao().checkArabicIdExist(
-                                Integer.parseInt(activityReference.get().models.get(i).getId()));
-                        if (n > 0) {
-                            Timber.i("Row exist in database(%s) for id: %s", language.toUpperCase(),
-                                    activityReference.get().models.get(i).getId());
-                            new UpdateDiningTable(activityReference.get(), language, i).execute();
-
-                        } else {
-                            Timber.i("Inserting %s Table(%s) with id: %s", activityReference.get().toolbarTitle,
-                                    language.toUpperCase(), activityReference.get().models.get(i).getId());
-                            diningTableArabic = new DiningTableArabic(Long.parseLong(
-                                    activityReference.get().models.get(i).getId()),
-                                    activityReference.get().models.get(i).getName(),
-                                    activityReference.get().models.get(i).getImage(),
-                                    activityReference.get().models.get(i).getSortId(),
-                                    activityReference.get().models.get(i).getMuseumId());
-                            activityReference.get().qmDatabase.getDiningTableDao().insert(diningTableArabic);
-
-                        }
                     }
                 }
-
             }
             return null;
         }
@@ -1753,26 +1345,15 @@ public class CommonListActivity extends AppCompatActivity {
 
         @Override
         protected Void doInBackground(Void... voids) {
-            Timber.i("Updating %s Table(%s) with id: %s", activityReference.get().toolbarTitle,
-                    language.toUpperCase(), activityReference.get().models.get(0).getId());
-            if (language.equals(LocaleManager.LANGUAGE_ENGLISH)) {
-                // updateEnglishTable table with english name
-                activityReference.get().qmDatabase.getDiningTableDao().updateDiningEnglish(
-                        activityReference.get().models.get(position).getName(),
-                        activityReference.get().models.get(position).getImage(),
-                        activityReference.get().models.get(position).getId(),
-                        activityReference.get().models.get(position).getSortId()
-                );
-
-            } else {
-                // updateArabicTable table with arabic name
-                activityReference.get().qmDatabase.getDiningTableDao().updateDiningArabic(
-                        activityReference.get().models.get(position).getName(),
-                        activityReference.get().models.get(position).getImage(),
-                        activityReference.get().models.get(position).getId(),
-                        activityReference.get().models.get(position).getSortId()
-                );
-            }
+            Timber.i("Updating %s Table(language :%s) with id: %s", activityReference.get().toolbarTitle,
+                    language, activityReference.get().models.get(0).getId());
+            activityReference.get().qmDatabase.getDiningTableDao().updateDiningTable(
+                    activityReference.get().models.get(position).getName(),
+                    activityReference.get().models.get(position).getImage(),
+                    activityReference.get().models.get(position).getId(),
+                    activityReference.get().models.get(position).getSortId(),
+                    language
+            );
             return null;
         }
 
@@ -1783,15 +1364,13 @@ public class CommonListActivity extends AppCompatActivity {
 
     public static class InsertDiningDataToDataBase extends AsyncTask<Void, Void, Boolean> {
         private WeakReference<CommonListActivity> activityReference;
-        private DiningTableEnglish diningTableEnglish;
-        private DiningTableArabic diningTableArabic;
+        private DiningTable diningTable;
         String language;
 
-        InsertDiningDataToDataBase(CommonListActivity context, DiningTableEnglish diningTableEnglish,
-                                   DiningTableArabic diningTableArabic, String apiLanguage) {
+        InsertDiningDataToDataBase(CommonListActivity context, DiningTable diningTable,
+                                   String apiLanguage) {
             activityReference = new WeakReference<>(context);
-            this.diningTableEnglish = diningTableEnglish;
-            this.diningTableArabic = diningTableArabic;
+            this.diningTable = diningTable;
             this.language = apiLanguage;
         }
 
@@ -1807,49 +1386,37 @@ public class CommonListActivity extends AppCompatActivity {
 
         @Override
         protected Boolean doInBackground(Void... voids) {
-            Timber.i("Insert %s Table(%s) with size: %d", activityReference.get().toolbarTitle,
-                    language.toUpperCase(), activityReference.get().models.size());
+            Timber.i("Insert %s Table(language :%s) with size: %d", activityReference.get().toolbarTitle,
+                    language, activityReference.get().models.size());
             if (activityReference.get().models != null && activityReference.get().models.size() > 0) {
-                if (language.equals(LocaleManager.LANGUAGE_ENGLISH)) {
-                    for (int i = 0; i < activityReference.get().models.size(); i++) {
-                        Timber.i("Inserting %s Table(%s) with id: %s", activityReference.get().toolbarTitle,
-                                language.toUpperCase(), activityReference.get().models.get(i).getId());
-                        diningTableEnglish = new DiningTableEnglish(Long.parseLong(
-                                activityReference.get().models.get(i).getId()),
-                                activityReference.get().models.get(i).getName(),
-                                activityReference.get().models.get(i).getImage(),
-                                activityReference.get().models.get(i).getSortId(),
-                                activityReference.get().models.get(i).getMuseumId());
-                        activityReference.get().qmDatabase.getDiningTableDao().insert(diningTableEnglish);
-                    }
-                } else {
-                    for (int i = 0; i < activityReference.get().models.size(); i++) {
-                        Timber.i("Inserting %s Table(%s) with id: %s", activityReference.get().toolbarTitle,
-                                language.toUpperCase(), activityReference.get().models.get(i).getId());
-                        diningTableArabic = new DiningTableArabic(Long.parseLong(
-                                activityReference.get().models.get(i).getId()),
-                                activityReference.get().models.get(i).getName(),
-                                activityReference.get().models.get(i).getImage(),
-                                activityReference.get().models.get(i).getSortId(),
-                                activityReference.get().models.get(i).getMuseumId());
-                        activityReference.get().qmDatabase.getDiningTableDao().insert(diningTableArabic);
-                    }
+                for (int i = 0; i < activityReference.get().models.size(); i++) {
+                    Timber.i("Inserting %s Table(language :%s) with id: %s", activityReference.get().toolbarTitle,
+                            language, activityReference.get().models.get(i).getId());
+                    diningTable = new DiningTable(Long.parseLong(
+                            activityReference.get().models.get(i).getId()),
+                            activityReference.get().models.get(i).getName(),
+                            activityReference.get().models.get(i).getImage(),
+                            activityReference.get().models.get(i).getSortId(),
+                            activityReference.get().models.get(i).getMuseumId(),
+                            language);
+                    activityReference.get().qmDatabase.getDiningTableDao().insert(diningTable);
                 }
+
 
             }
             return true;
         }
     }
 
-    public static class RetrieveEnglishDiningData extends AsyncTask<Void, Void, List<DiningTableEnglish>> {
+    public static class RetrieveDiningData extends AsyncTask<Void, Void, List<DiningTable>> {
         private WeakReference<CommonListActivity> activityReference;
         String museumID;
 
-        RetrieveEnglishDiningData(CommonListActivity context) {
+        RetrieveDiningData(CommonListActivity context) {
             activityReference = new WeakReference<>(context);
         }
 
-        RetrieveEnglishDiningData(CommonListActivity context, String museumId) {
+        RetrieveDiningData(CommonListActivity context, String museumId) {
             activityReference = new WeakReference<>(context);
             museumID = museumId;
         }
@@ -1860,19 +1427,19 @@ public class CommonListActivity extends AppCompatActivity {
         }
 
         @Override
-        protected void onPostExecute(List<DiningTableEnglish> diningTableEnglishList) {
-            if (diningTableEnglishList.size() > 0) {
+        protected void onPostExecute(List<DiningTable> diningTableList) {
+            if (diningTableList.size() > 0) {
                 Timber.i("Set %s list from database with size: %d", activityReference.get().toolbarTitle,
-                        diningTableEnglishList.size());
+                        diningTableList.size());
                 activityReference.get().models.clear();
-                for (int i = 0; i < diningTableEnglishList.size(); i++) {
+                for (int i = 0; i < diningTableList.size(); i++) {
                     Timber.i("Setting %s list from database with id: %s", activityReference.get().toolbarTitle,
-                            diningTableEnglishList.get(i).getDining_id());
+                            diningTableList.get(i).getDining_id());
                     CommonListModel commonListModel = new CommonListModel(
-                            diningTableEnglishList.get(i).getDining_name(),
-                            diningTableEnglishList.get(i).getDining_sort_id(),
-                            String.valueOf(diningTableEnglishList.get(i).getDining_id()),
-                            diningTableEnglishList.get(i).getDining_image());
+                            diningTableList.get(i).getDining_name(),
+                            diningTableList.get(i).getDining_sort_id(),
+                            String.valueOf(diningTableList.get(i).getDining_id()),
+                            diningTableList.get(i).getDining_image());
                     activityReference.get().models.add(i, commonListModel);
 
                 }
@@ -1887,72 +1454,17 @@ public class CommonListActivity extends AppCompatActivity {
         }
 
         @Override
-        protected List<DiningTableEnglish> doInBackground(Void... voids) {
+        protected List<DiningTable> doInBackground(Void... voids) {
             if (museumID != null) {
-                Timber.i("get%sEnglishData() for id: %s", activityReference.get().toolbarTitle, museumID);
+                Timber.i("get%sData(language :%s) for id: %s", activityReference.get().toolbarTitle,
+                        activityReference.get().appLanguage, museumID);
                 return activityReference.get().qmDatabase.getDiningTableDao()
-                        .getDiningDetailsEnglishWithMuseumId(Integer.parseInt(museumID));
+                        .getDiningDetailsWithMuseumId(Integer.parseInt(museumID), activityReference.get().appLanguage);
             } else {
-                Timber.i("getAll%sEnglishData()", activityReference.get().toolbarTitle);
-                return activityReference.get().qmDatabase.getDiningTableDao().getAllEnglish();
-            }
-        }
-    }
-
-    public static class RetrieveArabicDiningData extends AsyncTask<Void, Void, List<DiningTableArabic>> {
-        private WeakReference<CommonListActivity> activityReference;
-        String museumID;
-
-        RetrieveArabicDiningData(CommonListActivity context) {
-            activityReference = new WeakReference<>(context);
-        }
-
-        RetrieveArabicDiningData(CommonListActivity context, String museumId) {
-            activityReference = new WeakReference<>(context);
-            museumID = museumId;
-        }
-
-        @Override
-        protected void onPreExecute() {
-            activityReference.get().progressBar.setVisibility(View.VISIBLE);
-        }
-
-        @Override
-        protected void onPostExecute(List<DiningTableArabic> diningTableArabicList) {
-            if (diningTableArabicList.size() > 0) {
-                Timber.i("Set %s list from database with size: %d", activityReference.get().toolbarTitle,
-                        diningTableArabicList.size());
-                activityReference.get().models.clear();
-                for (int i = 0; i < diningTableArabicList.size(); i++) {
-                    Timber.i("Setting %s list from database with id: %s", activityReference.get().toolbarTitle,
-                            diningTableArabicList.get(i).getDining_id());
-                    CommonListModel commonListModel = new CommonListModel(
-                            diningTableArabicList.get(i).getDining_name(),
-                            diningTableArabicList.get(i).getDining_sort_id(),
-                            String.valueOf(diningTableArabicList.get(i).getDining_id()),
-                            diningTableArabicList.get(i).getDining_image());
-                    activityReference.get().models.add(i, commonListModel);
-
-                }
-                Collections.sort(activityReference.get().models);
-                activityReference.get().mAdapter.notifyDataSetChanged();
-            } else {
-                Timber.i("Have no data in database");
-                activityReference.get().recyclerView.setVisibility(View.GONE);
-                activityReference.get().retryLayout.setVisibility(View.VISIBLE);
-            }
-            activityReference.get().progressBar.setVisibility(View.GONE);
-        }
-
-        @Override
-        protected List<DiningTableArabic> doInBackground(Void... voids) {
-            if (museumID != null) {
-                Timber.i("get%sArabicData() for id: %s", activityReference.get().toolbarTitle, museumID);
+                Timber.i("getAll%sData(language :%s)", activityReference.get().toolbarTitle,
+                        activityReference.get().appLanguage);
                 return activityReference.get().qmDatabase.getDiningTableDao()
-                        .getDiningDetailsArabicWithMuseumId(Integer.parseInt(museumID));
-            } else {
-                Timber.i("getAll%sArabicData()", activityReference.get().toolbarTitle);
-                return activityReference.get().qmDatabase.getDiningTableDao().getAllArabic();
+                        .getAllData(activityReference.get().appLanguage);
             }
         }
     }
@@ -1981,26 +1493,21 @@ public class CommonListActivity extends AppCompatActivity {
             } else {
                 Timber.i("%s Table have no data", activityReference.get().toolbarTitle);
                 new InsertPublicArtsDataToDataBase(activityReference.get(),
-                        activityReference.get().publicArtsTableEnglish,
-                        activityReference.get().publicArtsTableArabic, language).execute();
+                        activityReference.get().publicArtsTable, language).execute();
             }
         }
 
         @Override
         protected Integer doInBackground(Void... voids) {
-            Timber.i("getNumberOf%sRows%s()", activityReference.get().toolbarTitle, language.toUpperCase());
-            if (language.equals(LocaleManager.LANGUAGE_ENGLISH))
-                return activityReference.get().qmDatabase.getPublicArtsTableDao().getNumberOfRowsEnglish();
-            else
-                return activityReference.get().qmDatabase.getPublicArtsTableDao().getNumberOfRowsArabic();
+            Timber.i("getNumberOf%sRows(language :%s)", activityReference.get().toolbarTitle, language);
+            return activityReference.get().qmDatabase.getPublicArtsTableDao().getNumberOfRows(language);
 
         }
     }
 
     public static class CheckPublicArtsDBRowExist extends AsyncTask<Void, Void, Void> {
         private WeakReference<CommonListActivity> activityReference;
-        private PublicArtsTableEnglish publicArtsTableEnglish;
-        private PublicArtsTableArabic publicArtsTableArabic;
+        private PublicArtsTable publicArtsTable;
         String language;
 
         CheckPublicArtsDBRowExist(CommonListActivity context, String apiLanguage) {
@@ -2022,54 +1529,30 @@ public class CommonListActivity extends AppCompatActivity {
         protected Void doInBackground(Void... voids) {
 
             if (activityReference.get().models.size() > 0) {
-                if (language.equals(LocaleManager.LANGUAGE_ENGLISH)) {
-                    for (int i = 0; i < activityReference.get().models.size(); i++) {
-                        int n = activityReference.get().qmDatabase.getPublicArtsTableDao().checkEnglishIdExist(
-                                Integer.parseInt(activityReference.get().models.get(i).getId()));
-                        if (n > 0) {
-                            Timber.i("Row exist in database(%s) for id: %s", language.toUpperCase(),
-                                    activityReference.get().models.get(i).getId());
-                            new UpdatePublicArtsTable(activityReference.get(), language, i).execute();
+                for (int i = 0; i < activityReference.get().models.size(); i++) {
+                    int n = activityReference.get().qmDatabase.getPublicArtsTableDao().checkIdExist(
+                            Integer.parseInt(activityReference.get().models.get(i).getId()),
+                            language);
+                    if (n > 0) {
+                        Timber.i("Row exist in database(language :%s) for id: %s", language,
+                                activityReference.get().models.get(i).getId());
+                        new UpdatePublicArtsTable(activityReference.get(), language, i).execute();
 
-                        } else {
-                            Timber.i("Inserting %s Table(%s) with id: %s", activityReference.get().toolbarTitle,
-                                    language.toUpperCase(), activityReference.get().models.get(i).getId());
-                            publicArtsTableEnglish = new PublicArtsTableEnglish(
-                                    Long.parseLong(activityReference.get().models.get(i).getId()),
-                                    activityReference.get().models.get(i).getName(),
-                                    activityReference.get().models.get(i).getImage(),
-                                    activityReference.get().models.get(i).getLongitude(),
-                                    activityReference.get().models.get(i).getLatitude(),
-                                    activityReference.get().models.get(i).getSortId());
-                            activityReference.get().qmDatabase.getPublicArtsTableDao().insert(publicArtsTableEnglish);
+                    } else {
+                        Timber.i("Inserting %s Table(language :%s) with id: %s", activityReference.get().toolbarTitle,
+                                language, activityReference.get().models.get(i).getId());
+                        publicArtsTable = new PublicArtsTable(
+                                Long.parseLong(activityReference.get().models.get(i).getId()),
+                                activityReference.get().models.get(i).getName(),
+                                activityReference.get().models.get(i).getImage(),
+                                activityReference.get().models.get(i).getLongitude(),
+                                activityReference.get().models.get(i).getLatitude(),
+                                activityReference.get().models.get(i).getSortId(),
+                                language);
+                        activityReference.get().qmDatabase.getPublicArtsTableDao().insert(publicArtsTable);
 
-                        }
-                    }
-                } else {
-                    for (int i = 0; i < activityReference.get().models.size(); i++) {
-                        int n = activityReference.get().qmDatabase.getPublicArtsTableDao().checkArabicIdExist(
-                                Integer.parseInt(activityReference.get().models.get(i).getId()));
-                        if (n > 0) {
-                            Timber.i("Row exist in database(%s) for id: %s", language.toUpperCase(),
-                                    activityReference.get().models.get(i).getId());
-                            new UpdatePublicArtsTable(activityReference.get(), language, i).execute();
-
-                        } else {
-                            Timber.i("Inserting %s Table(%s) with id: %s", activityReference.get().toolbarTitle,
-                                    language.toUpperCase(), activityReference.get().models.get(i).getId());
-                            publicArtsTableArabic = new PublicArtsTableArabic(Long.parseLong(
-                                    activityReference.get().models.get(i).getId()),
-                                    activityReference.get().models.get(i).getName(),
-                                    activityReference.get().models.get(i).getImage(),
-                                    activityReference.get().models.get(i).getLongitude(),
-                                    activityReference.get().models.get(i).getLatitude(),
-                                    activityReference.get().models.get(i).getSortId());
-                            activityReference.get().qmDatabase.getPublicArtsTableDao().insert(publicArtsTableArabic);
-
-                        }
                     }
                 }
-
             }
             return null;
         }
@@ -2088,26 +1571,16 @@ public class CommonListActivity extends AppCompatActivity {
 
         @Override
         protected Void doInBackground(Void... voids) {
-            Timber.i("Updating %s Table(%s) with id: %s", activityReference.get().toolbarTitle,
-                    language.toUpperCase(), activityReference.get().models.get(0).getId());
-            if (language.equals(LocaleManager.LANGUAGE_ENGLISH)) {
-                // updateEnglishTable table with english name
-                activityReference.get().qmDatabase.getPublicArtsTableDao().updatePublicArtsEnglish(
-                        activityReference.get().models.get(position).getName(),
-                        activityReference.get().models.get(position).getLatitude(),
-                        activityReference.get().models.get(position).getLongitude(),
-                        activityReference.get().models.get(position).getId()
-                );
+            Timber.i("Updating %s Table(language :%s) with id: %s", activityReference.get().toolbarTitle,
+                    language, activityReference.get().models.get(0).getId());
+            activityReference.get().qmDatabase.getPublicArtsTableDao().updatePublicArts(
+                    activityReference.get().models.get(position).getName(),
+                    activityReference.get().models.get(position).getLatitude(),
+                    activityReference.get().models.get(position).getLongitude(),
+                    activityReference.get().models.get(position).getId(),
+                    language
+            );
 
-            } else {
-                // updateArabicTable table with arabic name
-                activityReference.get().qmDatabase.getPublicArtsTableDao().updatePublicArtsArabic(
-                        activityReference.get().models.get(position).getName(),
-                        activityReference.get().models.get(position).getLatitude(),
-                        activityReference.get().models.get(position).getLongitude(),
-                        activityReference.get().models.get(position).getId()
-                );
-            }
             return null;
         }
 
@@ -2118,15 +1591,13 @@ public class CommonListActivity extends AppCompatActivity {
 
     public static class InsertPublicArtsDataToDataBase extends AsyncTask<Void, Void, Boolean> {
         private WeakReference<CommonListActivity> activityReference;
-        private PublicArtsTableEnglish publicArtsTableEnglish;
-        private PublicArtsTableArabic publicArtsTableArabic;
+        private PublicArtsTable publicArtsTable;
         String language;
 
-        InsertPublicArtsDataToDataBase(CommonListActivity context, PublicArtsTableEnglish publicArtsTableEnglish,
-                                       PublicArtsTableArabic publicArtsTableArabic, String apiLanguage) {
+        InsertPublicArtsDataToDataBase(CommonListActivity context, PublicArtsTable publicArtsTable,
+                                       String apiLanguage) {
             activityReference = new WeakReference<>(context);
-            this.publicArtsTableEnglish = publicArtsTableEnglish;
-            this.publicArtsTableArabic = publicArtsTableArabic;
+            this.publicArtsTable = publicArtsTable;
             this.language = apiLanguage;
         }
 
@@ -2142,46 +1613,31 @@ public class CommonListActivity extends AppCompatActivity {
 
         @Override
         protected Boolean doInBackground(Void... voids) {
-            Timber.i("insert %s Table(%s) with size: %d", activityReference.get().toolbarTitle,
-                    language.toUpperCase(), activityReference.get().models.size());
+            Timber.i("insertData %s Table(language :%s) with size: %d", activityReference.get().toolbarTitle,
+                    language, activityReference.get().models.size());
             if (activityReference.get().models != null && activityReference.get().models.size() > 0) {
-                if (language.equals(LocaleManager.LANGUAGE_ENGLISH)) {
-                    for (int i = 0; i < activityReference.get().models.size(); i++) {
-                        Timber.i("insert %s Table(%s) with id: %s", activityReference.get().toolbarTitle,
-                                language.toUpperCase(), activityReference.get().models.get(i).getId());
-                        publicArtsTableEnglish = new PublicArtsTableEnglish(
-                                Long.parseLong(activityReference.get().models.get(i).getId()),
-                                activityReference.get().models.get(i).getName(),
-                                activityReference.get().models.get(i).getImage(),
-                                activityReference.get().models.get(i).getLongitude(),
-                                activityReference.get().models.get(i).getLatitude(),
-                                activityReference.get().models.get(i).getSortId());
-                        activityReference.get().qmDatabase.getPublicArtsTableDao().insert(publicArtsTableEnglish);
-                    }
-                } else {
-                    for (int i = 0; i < activityReference.get().models.size(); i++) {
-                        Timber.i("insert %s Table(%s) with id: %s", activityReference.get().toolbarTitle,
-                                language.toUpperCase(), activityReference.get().models.get(i).getId());
-                        publicArtsTableArabic = new PublicArtsTableArabic(
-                                Long.parseLong(activityReference.get().models.get(i).getId()),
-                                activityReference.get().models.get(i).getName(),
-                                activityReference.get().models.get(i).getImage(),
-                                activityReference.get().models.get(i).getLongitude(),
-                                activityReference.get().models.get(i).getLatitude(),
-                                activityReference.get().models.get(i).getSortId());
-                        activityReference.get().qmDatabase.getPublicArtsTableDao().insert(publicArtsTableArabic);
-                    }
+                for (int i = 0; i < activityReference.get().models.size(); i++) {
+                    Timber.i("insertData %s Table(language :%s) with id: %s", activityReference.get().toolbarTitle,
+                            language, activityReference.get().models.get(i).getId());
+                    publicArtsTable = new PublicArtsTable(
+                            Long.parseLong(activityReference.get().models.get(i).getId()),
+                            activityReference.get().models.get(i).getName(),
+                            activityReference.get().models.get(i).getImage(),
+                            activityReference.get().models.get(i).getLongitude(),
+                            activityReference.get().models.get(i).getLatitude(),
+                            activityReference.get().models.get(i).getSortId(),
+                            language);
+                    activityReference.get().qmDatabase.getPublicArtsTableDao().insert(publicArtsTable);
                 }
-
             }
             return true;
         }
     }
 
-    public static class RetrieveEnglishPublicArtsData extends AsyncTask<Void, Void, List<PublicArtsTableEnglish>> {
+    public static class RetrievePublicArtsData extends AsyncTask<Void, Void, List<PublicArtsTable>> {
         private WeakReference<CommonListActivity> activityReference;
 
-        RetrieveEnglishPublicArtsData(CommonListActivity context) {
+        RetrievePublicArtsData(CommonListActivity context) {
             activityReference = new WeakReference<>(context);
         }
 
@@ -2191,21 +1647,21 @@ public class CommonListActivity extends AppCompatActivity {
         }
 
         @Override
-        protected void onPostExecute(List<PublicArtsTableEnglish> publicArtsTableEnglish) {
+        protected void onPostExecute(List<PublicArtsTable> publicArtsTables) {
             activityReference.get().models.clear();
-            if (publicArtsTableEnglish.size() > 0) {
+            if (publicArtsTables.size() > 0) {
                 Timber.i("Set %s list from database with size: %d", activityReference.get().toolbarTitle,
-                        publicArtsTableEnglish.size());
-                for (int i = 0; i < publicArtsTableEnglish.size(); i++) {
+                        publicArtsTables.size());
+                for (int i = 0; i < publicArtsTables.size(); i++) {
                     Timber.i("Setting %s list from database with id: %s", activityReference.get().toolbarTitle,
-                            publicArtsTableEnglish.get(i).getPublic_arts_id());
+                            publicArtsTables.get(i).getPublic_arts_id());
                     CommonListModel commonListModel = new CommonListModel(
-                            publicArtsTableEnglish.get(i).getPublic_arts_name(),
-                            publicArtsTableEnglish.get(i).getSort_id(),
-                            String.valueOf(publicArtsTableEnglish.get(i).getPublic_arts_id()),
-                            publicArtsTableEnglish.get(i).getPublic_arts_image(),
-                            publicArtsTableEnglish.get(i).getLatitude(),
-                            publicArtsTableEnglish.get(i).getLongitude());
+                            publicArtsTables.get(i).getPublic_arts_name(),
+                            publicArtsTables.get(i).getSort_id(),
+                            String.valueOf(publicArtsTables.get(i).getPublic_arts_id()),
+                            publicArtsTables.get(i).getPublic_arts_image(),
+                            publicArtsTables.get(i).getLatitude(),
+                            publicArtsTables.get(i).getLongitude());
                     activityReference.get().models.add(i, commonListModel);
 
                 }
@@ -2221,58 +1677,11 @@ public class CommonListActivity extends AppCompatActivity {
         }
 
         @Override
-        protected List<PublicArtsTableEnglish> doInBackground(Void... voids) {
-            Timber.i("getAll%sEnglishData()", activityReference.get().toolbarTitle);
-            return activityReference.get().qmDatabase.getPublicArtsTableDao().getAllEnglish();
-        }
-    }
-
-    public static class RetrieveArabicPublicArtsData extends AsyncTask<Void, Void, List<PublicArtsTableArabic>> {
-        private WeakReference<CommonListActivity> activityReference;
-
-        RetrieveArabicPublicArtsData(CommonListActivity context) {
-            activityReference = new WeakReference<>(context);
-        }
-
-        @Override
-        protected void onPreExecute() {
-            activityReference.get().progressBar.setVisibility(View.VISIBLE);
-        }
-
-        @Override
-        protected void onPostExecute(List<PublicArtsTableArabic> publicArtsTableArabic) {
-            activityReference.get().models.clear();
-            if (publicArtsTableArabic.size() > 0) {
-                Timber.i("Set %s list from database with size: %d", activityReference.get().toolbarTitle,
-                        publicArtsTableArabic.size());
-                for (int i = 0; i < publicArtsTableArabic.size(); i++) {
-                    Timber.i("Setting %s list from database with id: %s", activityReference.get().toolbarTitle,
-                            publicArtsTableArabic.get(i).getPublic_arts_id());
-                    CommonListModel commonListModel = new CommonListModel(
-                            publicArtsTableArabic.get(i).getPublic_arts_name(),
-                            publicArtsTableArabic.get(i).getSort_id(),
-                            String.valueOf(publicArtsTableArabic.get(i).getPublic_arts_id()),
-                            publicArtsTableArabic.get(i).getPublic_arts_image(),
-                            publicArtsTableArabic.get(i).getLatitude(),
-                            publicArtsTableArabic.get(i).getLongitude());
-                    activityReference.get().models.add(i, commonListModel);
-
-                }
-                Collections.sort(activityReference.get().models);
-                activityReference.get().mAdapter.notifyDataSetChanged();
-                activityReference.get().progressBar.setVisibility(View.GONE);
-            } else {
-                Timber.i("Have no data in database");
-                activityReference.get().progressBar.setVisibility(View.GONE);
-                activityReference.get().recyclerView.setVisibility(View.GONE);
-                activityReference.get().retryLayout.setVisibility(View.VISIBLE);
-            }
-        }
-
-        @Override
-        protected List<PublicArtsTableArabic> doInBackground(Void... voids) {
-            Timber.i("getAll%sArabicData()", activityReference.get().toolbarTitle);
-            return activityReference.get().qmDatabase.getPublicArtsTableDao().getAllArabic();
+        protected List<PublicArtsTable> doInBackground(Void... voids) {
+            Timber.i("getAll%sData(language :%s)", activityReference.get().toolbarTitle,
+                    activityReference.get().appLanguage);
+            return activityReference.get().qmDatabase.getPublicArtsTableDao()
+                    .getAllData(activityReference.get().appLanguage);
         }
     }
 
@@ -2287,12 +1696,9 @@ public class CommonListActivity extends AppCompatActivity {
 
         @Override
         protected Integer doInBackground(Void... voids) {
-            Timber.i("getNumberOf%sRows%s()", activityReference.get().toolbarTitle, language.toUpperCase());
-            if (language.equals(LocaleManager.LANGUAGE_ENGLISH))
-                return activityReference.get().qmDatabase.getHeritageListTableDao().getNumberOfRowsEnglish();
-            else
-                return activityReference.get().qmDatabase.getHeritageListTableDao().getNumberOfRowsArabic();
-
+            Timber.i("getNumberOf%sRows(language :%s)", activityReference.get().toolbarTitle, language);
+            return activityReference.get().qmDatabase.getHeritageListTableDao()
+                    .getNumberOfRows(language);
         }
 
         @Override
@@ -2305,57 +1711,40 @@ public class CommonListActivity extends AppCompatActivity {
             } else {
                 Timber.i("%s Table have no data", activityReference.get().toolbarTitle);
                 new InsertHeritageDataToDataBase(activityReference.get(),
-                        activityReference.get().heritageListTableEnglish,
-                        activityReference.get().heritageListTableArabic, language).execute();
+                        activityReference.get().heritageListTable, language).execute();
             }
         }
     }
 
     public static class InsertHeritageDataToDataBase extends AsyncTask<Void, Void, Boolean> {
         private WeakReference<CommonListActivity> activityReference;
-        private HeritageListTableEnglish heritageListTableEnglish;
-        private HeritageListTableArabic heritageListTableArabic;
+        private HeritageListTable heritageListTable;
         String language;
 
-        InsertHeritageDataToDataBase(CommonListActivity context, HeritageListTableEnglish heritageListTableEnglish,
-                                     HeritageListTableArabic heritageListTableArabic, String appLanguage) {
+        InsertHeritageDataToDataBase(CommonListActivity context, HeritageListTable heritageListTable,
+                                     String appLanguage) {
             activityReference = new WeakReference<>(context);
-            this.heritageListTableEnglish = heritageListTableEnglish;
-            this.heritageListTableArabic = heritageListTableArabic;
+            this.heritageListTable = heritageListTable;
             this.language = appLanguage;
         }
 
         @Override
         protected Boolean doInBackground(Void... voids) {
-            Timber.i("Insert %s Table(%s) with size: %d", activityReference.get().toolbarTitle,
-                    language.toUpperCase(), activityReference.get().models.size());
+            Timber.i("Insert %s Table(language :%s) with size: %d", activityReference.get().toolbarTitle,
+                    language, activityReference.get().models.size());
             if (activityReference.get().models != null && activityReference.get().models.size() > 0) {
-                if (language.equals(LocaleManager.LANGUAGE_ENGLISH)) {
-                    for (int i = 0; i < activityReference.get().models.size(); i++) {
-                        Timber.i("Inserting %s Table(%s) with id: %s", activityReference.get().toolbarTitle,
-                                language.toUpperCase(), activityReference.get().models.get(i).getId());
-                        heritageListTableEnglish = new HeritageListTableEnglish(
-                                Long.parseLong(activityReference.get().models.get(i).getId()),
-                                activityReference.get().models.get(i).getName(),
-                                activityReference.get().models.get(i).getImage(),
-                                null, null, null, null,
-                                null,
-                                activityReference.get().models.get(i).getSortId());
-                        activityReference.get().qmDatabase.getHeritageListTableDao().insert(heritageListTableEnglish);
-                    }
-                } else {
-                    for (int i = 0; i < activityReference.get().models.size(); i++) {
-                        Timber.i("Inserting %s Table(%s) with id: %s", activityReference.get().toolbarTitle,
-                                language.toUpperCase(), activityReference.get().models.get(i).getId());
-                        heritageListTableArabic = new HeritageListTableArabic(
-                                Long.parseLong(activityReference.get().models.get(i).getId()),
-                                activityReference.get().models.get(i).getName(),
-                                activityReference.get().models.get(i).getImage(),
-                                null, null, null, null,
-                                null,
-                                activityReference.get().models.get(i).getSortId());
-                        activityReference.get().qmDatabase.getHeritageListTableDao().insert(heritageListTableArabic);
-                    }
+                for (int i = 0; i < activityReference.get().models.size(); i++) {
+                    Timber.i("Inserting %s Table(language :%s) with id: %s", activityReference.get().toolbarTitle,
+                            language, activityReference.get().models.get(i).getId());
+                    heritageListTable = new HeritageListTable(
+                            Long.parseLong(activityReference.get().models.get(i).getId()),
+                            activityReference.get().models.get(i).getName(),
+                            activityReference.get().models.get(i).getImage(),
+                            null, null, null, null,
+                            null,
+                            activityReference.get().models.get(i).getSortId(),
+                            language);
+                    activityReference.get().qmDatabase.getHeritageListTableDao().insert(heritageListTable);
                 }
             }
             return true;
@@ -2369,7 +1758,7 @@ public class CommonListActivity extends AppCompatActivity {
 
     public static class CheckHeritageDBRowExist extends AsyncTask<Void, Void, Void> {
         private WeakReference<CommonListActivity> activityReference;
-        private HeritageListTableEnglish heritageListTableEnglish;
+        private HeritageListTable heritageListTable;
         String language;
 
         CheckHeritageDBRowExist(CommonListActivity context, String apiLanguage) {
@@ -2380,49 +1769,26 @@ public class CommonListActivity extends AppCompatActivity {
         @Override
         protected Void doInBackground(Void... voids) {
             if (activityReference.get().models.size() > 0) {
-                if (language.equals(LocaleManager.LANGUAGE_ENGLISH)) {
-                    for (int i = 0; i < activityReference.get().models.size(); i++) {
-                        int n = activityReference.get().qmDatabase.getHeritageListTableDao().checkEnglishIdExist(
-                                Integer.parseInt(activityReference.get().models.get(i).getId()));
-                        if (n > 0) {
-                            Timber.i("Row exist in database(%s) for id: %s", language.toUpperCase(),
-                                    activityReference.get().models.get(i).getId());
-                            new UpdateHeritagePageTable(activityReference.get(), activityReference.get().appLanguage, i).execute();
+                for (int i = 0; i < activityReference.get().models.size(); i++) {
+                    int n = activityReference.get().qmDatabase.getHeritageListTableDao().checkIdExist(
+                            Integer.parseInt(activityReference.get().models.get(i).getId()), language);
+                    if (n > 0) {
+                        Timber.i("Row exist in database(language :%s) for id: %s", language,
+                                activityReference.get().models.get(i).getId());
+                        new UpdateHeritagePageTable(activityReference.get(), activityReference.get().appLanguage, i).execute();
 
-                        } else {
-                            Timber.i("Inserting %s Table(%s) with id: %s", activityReference.get().toolbarTitle,
-                                    language.toUpperCase(), activityReference.get().models.get(i).getId());
-                            heritageListTableEnglish = new HeritageListTableEnglish(
-                                    Long.parseLong(activityReference.get().models.get(i).getId()),
-                                    activityReference.get().models.get(i).getName(),
-                                    activityReference.get().models.get(i).getImage(),
-                                    activityReference.get().models.get(i).getSortId(), null, null,
-                                    null, null, null);
-                            activityReference.get().qmDatabase.getHeritageListTableDao().insert(heritageListTableEnglish);
+                    } else {
+                        Timber.i("Inserting %s Table(language :%s) with id: %s", activityReference.get().toolbarTitle,
+                                language, activityReference.get().models.get(i).getId());
+                        heritageListTable = new HeritageListTable(
+                                Long.parseLong(activityReference.get().models.get(i).getId()),
+                                activityReference.get().models.get(i).getName(),
+                                activityReference.get().models.get(i).getImage(),
+                                activityReference.get().models.get(i).getSortId(),
+                                null, null, null,
+                                null, null, language);
+                        activityReference.get().qmDatabase.getHeritageListTableDao().insert(heritageListTable);
 
-                        }
-                    }
-                } else {
-                    for (int i = 0; i < activityReference.get().models.size(); i++) {
-                        int n = activityReference.get().qmDatabase.getHeritageListTableDao().checkArabicIdExist(
-                                Integer.parseInt(activityReference.get().models.get(i).getId()));
-                        if (n > 0) {
-                            Timber.i("Row exist in database(%s) for id: %s", language.toUpperCase(),
-                                    activityReference.get().models.get(i).getId());
-                            new UpdateHeritagePageTable(activityReference.get(), activityReference.get().appLanguage, i).execute();
-
-                        } else {
-                            Timber.i("Inserting %s Table(%s) with id: %s", activityReference.get().toolbarTitle,
-                                    language.toUpperCase(), activityReference.get().models.get(i).getId());
-                            activityReference.get().heritageListTableArabic = new HeritageListTableArabic(
-                                    Long.parseLong(activityReference.get().models.get(i).getId()),
-                                    activityReference.get().models.get(i).getName(),
-                                    activityReference.get().models.get(i).getImage(),
-                                    activityReference.get().models.get(i).getSortId(),
-                                    null, null, null,
-                                    null, null);
-                            activityReference.get().qmDatabase.getHeritageListTableDao().insert(activityReference.get().heritageListTableArabic);
-                        }
                     }
                 }
             }
@@ -2443,26 +1809,17 @@ public class CommonListActivity extends AppCompatActivity {
 
         @Override
         protected Void doInBackground(Void... voids) {
-            Timber.i("Updating %s Table(%s) with id: %s", activityReference.get().toolbarTitle,
-                    language.toUpperCase(), activityReference.get().models.get(0).getId());
-            if (language.equals(LocaleManager.LANGUAGE_ENGLISH)) {
-                // updateEnglishTable table with english name
-                activityReference.get().qmDatabase.getHeritageListTableDao().updateHeritageListEnglish(
-                        activityReference.get().models.get(position).getName(),
-                        activityReference.get().models.get(position).getSortId(),
-                        activityReference.get().models.get(position).getImage(),
-                        activityReference.get().models.get(position).getId()
-                );
+            Timber.i("Updating %s Table(language :%s) with id: %s", activityReference.get().toolbarTitle,
+                    language, activityReference.get().models.get(0).getId());
+            activityReference.get().qmDatabase.getHeritageListTableDao().updateHeritageList(
+                    activityReference.get().models.get(position).getName(),
+                    activityReference.get().models.get(position).getSortId(),
+                    activityReference.get().models.get(position).getImage(),
+                    activityReference.get().models.get(position).getId(),
+                    language
+            );
 
-            } else {
-                // updateEnglishTable table with arabic name
-                activityReference.get().qmDatabase.getHeritageListTableDao().updateHeritageListArabic(
-                        activityReference.get().models.get(position).getName(),
-                        activityReference.get().models.get(position).getSortId(),
-                        activityReference.get().models.get(position).getImage(),
-                        activityReference.get().models.get(position).getId()
-                );
-            }
+
             return null;
         }
 
@@ -2473,11 +1830,11 @@ public class CommonListActivity extends AppCompatActivity {
 
     }
 
-    public static class RetrieveHeritageDataEnglish extends AsyncTask<Void, Void, List<HeritageListTableEnglish>> {
+    public static class RetrieveHeritageData extends AsyncTask<Void, Void, List<HeritageListTable>> {
         private WeakReference<CommonListActivity> activityReference;
 
 
-        RetrieveHeritageDataEnglish(CommonListActivity context) {
+        RetrieveHeritageData(CommonListActivity context) {
             activityReference = new WeakReference<>(context);
         }
 
@@ -2487,24 +1844,26 @@ public class CommonListActivity extends AppCompatActivity {
         }
 
         @Override
-        protected List<HeritageListTableEnglish> doInBackground(Void... voids) {
-            Timber.i("getAll%sEnglishData()", activityReference.get().toolbarTitle);
-            return activityReference.get().qmDatabase.getHeritageListTableDao().getAllEnglish();
+        protected List<HeritageListTable> doInBackground(Void... voids) {
+            Timber.i("getAll%sData(language :%s)", activityReference.get().toolbarTitle,
+                    activityReference.get().appLanguage);
+            return activityReference.get().qmDatabase.getHeritageListTableDao()
+                    .getAllData(activityReference.get().appLanguage);
         }
 
         @Override
-        protected void onPostExecute(List<HeritageListTableEnglish> heritageListTableEnglishes) {
+        protected void onPostExecute(List<HeritageListTable> heritageListTables) {
             activityReference.get().models.clear();
-            if (heritageListTableEnglishes.size() > 0) {
+            if (heritageListTables.size() > 0) {
                 Timber.i("Set %s list from database with size: %d", activityReference.get().toolbarTitle,
-                        heritageListTableEnglishes.size());
-                for (int i = 0; i < heritageListTableEnglishes.size(); i++) {
+                        heritageListTables.size());
+                for (int i = 0; i < heritageListTables.size(); i++) {
                     Timber.i("Setting %s list from database with id: %s", activityReference.get().toolbarTitle,
-                            heritageListTableEnglishes.get(i).getHeritage_id());
+                            heritageListTables.get(i).getHeritage_id());
                     CommonListModel commonListModel = new CommonListModel(
-                            heritageListTableEnglishes.get(i).getHeritage_name(),
-                            String.valueOf(heritageListTableEnglishes.get(i).getHeritage_id()),
-                            null, heritageListTableEnglishes.get(i).getHeritage_image(),
+                            heritageListTables.get(i).getHeritage_name(),
+                            String.valueOf(heritageListTables.get(i).getHeritage_id()),
+                            null, heritageListTables.get(i).getHeritage_image(),
                             null, null,
                             null, null);
                     activityReference.get().models.add(i, commonListModel);
@@ -2519,55 +1878,6 @@ public class CommonListActivity extends AppCompatActivity {
                 activityReference.get().recyclerView.setVisibility(View.GONE);
                 activityReference.get().retryLayout.setVisibility(View.VISIBLE);
             }
-        }
-    }
-
-    public static class RetrieveHeritageDataArabic extends AsyncTask<Void, Void, List<HeritageListTableArabic>> {
-
-        private WeakReference<CommonListActivity> activityReference;
-
-        RetrieveHeritageDataArabic(CommonListActivity context) {
-            activityReference = new WeakReference<>(context);
-        }
-
-        @Override
-        protected void onPreExecute() {
-            super.onPreExecute();
-        }
-
-        @Override
-        protected void onPostExecute(List<HeritageListTableArabic> heritageListTableArabics) {
-            activityReference.get().models.clear();
-            if (heritageListTableArabics.size() > 0) {
-                Timber.i("Set %s list from database with size: %d", activityReference.get().toolbarTitle,
-                        heritageListTableArabics.size());
-                for (int i = 0; i < heritageListTableArabics.size(); i++) {
-                    Timber.i("Setting %s list from database with id: %s", activityReference.get().toolbarTitle,
-                            heritageListTableArabics.get(i).getHeritage_id());
-                    CommonListModel commonListModel = new CommonListModel(
-                            heritageListTableArabics.get(i).getHeritage_name(),
-                            String.valueOf(heritageListTableArabics.get(i).getHeritage_id()),
-                            null, heritageListTableArabics.get(i).getHeritage_image(),
-                            null, null,
-                            null, null);
-                    activityReference.get().models.add(i, commonListModel);
-
-                }
-                Collections.sort(activityReference.get().models);
-                activityReference.get().mAdapter.notifyDataSetChanged();
-                activityReference.get().progressBar.setVisibility(View.GONE);
-            } else {
-                Timber.i("Have no data in database");
-                activityReference.get().progressBar.setVisibility(View.GONE);
-                activityReference.get().recyclerView.setVisibility(View.GONE);
-                activityReference.get().retryLayout.setVisibility(View.VISIBLE);
-            }
-        }
-
-        @Override
-        protected List<HeritageListTableArabic> doInBackground(Void... voids) {
-            Timber.i("getAll%sArabicData()", activityReference.get().toolbarTitle);
-            return activityReference.get().qmDatabase.getHeritageListTableDao().getAllArabic();
         }
     }
 
@@ -2596,19 +1906,15 @@ public class CommonListActivity extends AppCompatActivity {
             } else {
                 Timber.i("%s Table have no data", activityReference.get().toolbarTitle);
                 new InsertExhibitionDataToDataBase(activityReference.get(),
-                        activityReference.get().exhibitionListTableEnglish,
-                        activityReference.get().exhibitionListTableArabic, language).execute();
+                        activityReference.get().exhibitionListTable, language).execute();
 
             }
         }
 
         @Override
         protected Integer doInBackground(Void... voids) {
-            Timber.i("getNumberOf%sRows%s()", activityReference.get().toolbarTitle, language.toUpperCase());
-            if (language.equals(LocaleManager.LANGUAGE_ENGLISH))
-                return activityReference.get().qmDatabase.getExhibitionTableDao().getNumberOfRowsEnglish();
-            else
-                return activityReference.get().qmDatabase.getExhibitionTableDao().getNumberOfRowsArabic();
+            Timber.i("getNumberOf%sRows(language :%s)", activityReference.get().toolbarTitle, language);
+            return activityReference.get().qmDatabase.getExhibitionTableDao().getNumberOfRows(language);
         }
 
     }
@@ -2616,7 +1922,7 @@ public class CommonListActivity extends AppCompatActivity {
     public static class CheckExhibitionDBRowExist extends AsyncTask<Void, Void, Void> {
 
         private WeakReference<CommonListActivity> activityReference;
-        private ExhibitionListTableEnglish exhibitionListTableEnglish;
+        private ExhibitionListTable exhibitionListTable;
         String language;
 
         CheckExhibitionDBRowExist(CommonListActivity context, String apiLanguage) {
@@ -2637,67 +1943,35 @@ public class CommonListActivity extends AppCompatActivity {
         @Override
         protected Void doInBackground(Void... voids) {
             if (activityReference.get().models.size() > 0) {
-                if (language.equals(LocaleManager.LANGUAGE_ENGLISH)) {
-                    for (int i = 0; i < activityReference.get().models.size(); i++) {
-                        int n = activityReference.get().qmDatabase.getExhibitionTableDao().checkEnglishIdExist(
-                                Integer.parseInt(activityReference.get().models.get(i).getId()));
-                        if (n > 0) {
-                            Timber.i("Row exist in database(%s) for id: %s", language.toUpperCase(),
-                                    activityReference.get().models.get(i).getId());
-                            new UpdateExhibitionTable(activityReference.get(), activityReference.get().appLanguage, i).execute();
+                for (int i = 0; i < activityReference.get().models.size(); i++) {
+                    int n = activityReference.get().qmDatabase.getExhibitionTableDao().checkIdExist(
+                            Integer.parseInt(activityReference.get().models.get(i).getId()), language);
+                    if (n > 0) {
+                        Timber.i("Row exist in database(language :%s) for id: %s", language,
+                                activityReference.get().models.get(i).getId());
+                        new UpdateExhibitionTable(activityReference.get(), activityReference.get().appLanguage, i).execute();
 
-                        } else {
-                            Timber.i("Inserting %s Table(%s) with id: %s", activityReference.get().toolbarTitle,
-                                    language.toUpperCase(), activityReference.get().models.get(i).getId());
-                            exhibitionListTableEnglish = new ExhibitionListTableEnglish(Long.parseLong(
-                                    activityReference.get().models.get(i).getId()),
-                                    activityReference.get().models.get(i).getName(),
-                                    activityReference.get().models.get(i).getImage(),
-                                    activityReference.get().models.get(i).getStartDate(),
-                                    activityReference.get().models.get(i).getEndDate(),
-                                    activityReference.get().models.get(i).getLocation(),
-                                    null,
-                                    null,
-                                    null,
-                                    null,
-                                    activityReference.get().models.get(i).getMuseumId(),
-                                    activityReference.get().models.get(i).getExhibitionStatus(),
-                                    activityReference.get().models.get(i).getDisplayDate(),
-                                    activityReference.get().convertor.fromArrayList(activityReference.get().models.get(i).getImages()));
-                            activityReference.get().qmDatabase.getExhibitionTableDao().insert(exhibitionListTableEnglish);
+                    } else {
+                        Timber.i("Inserting %s Table(language :%s) with id: %s", activityReference.get().toolbarTitle,
+                                language, activityReference.get().models.get(i).getId());
+                        exhibitionListTable = new ExhibitionListTable(Long.parseLong(
+                                activityReference.get().models.get(i).getId()),
+                                activityReference.get().models.get(i).getName(),
+                                activityReference.get().models.get(i).getImage(),
+                                activityReference.get().models.get(i).getStartDate(),
+                                activityReference.get().models.get(i).getEndDate(),
+                                activityReference.get().models.get(i).getLocation(),
+                                null,
+                                null,
+                                null,
+                                null,
+                                activityReference.get().models.get(i).getMuseumId(),
+                                activityReference.get().models.get(i).getExhibitionStatus(),
+                                activityReference.get().models.get(i).getDisplayDate(),
+                                activityReference.get().convertor.fromArrayList(activityReference.get().models.get(i).getImages()),
+                                language);
+                        activityReference.get().qmDatabase.getExhibitionTableDao().insert(exhibitionListTable);
 
-                        }
-                    }
-                } else {
-                    for (int i = 0; i < activityReference.get().models.size(); i++) {
-                        int n = activityReference.get().qmDatabase.getExhibitionTableDao().checkArabicIdExist(
-                                Integer.parseInt(activityReference.get().models.get(i).getId()));
-                        if (n > 0) {
-                            Timber.i("Row exist in database(%s) for id: %s", language.toUpperCase(),
-                                    activityReference.get().models.get(i).getId());
-                            new UpdateExhibitionTable(activityReference.get(), activityReference.get().appLanguage, i).execute();
-
-                        } else {
-                            Timber.i("Inserting %s Table(%s) with id: %s", activityReference.get().toolbarTitle,
-                                    language.toUpperCase(), activityReference.get().models.get(i).getId());
-                            activityReference.get().exhibitionListTableArabic = new ExhibitionListTableArabic(
-                                    Long.parseLong(activityReference.get().models.get(i).getId()),
-                                    activityReference.get().models.get(i).getName(),
-                                    activityReference.get().models.get(i).getImage(),
-                                    activityReference.get().models.get(i).getStartDate(),
-                                    activityReference.get().models.get(i).getEndDate(),
-                                    activityReference.get().models.get(i).getLocation(),
-                                    null,
-                                    null,
-                                    null,
-                                    null,
-                                    activityReference.get().models.get(i).getMuseumId(),
-                                    activityReference.get().models.get(i).getExhibitionStatus(),
-                                    activityReference.get().models.get(i).getDisplayDate(),
-                                    activityReference.get().convertor.fromArrayList(activityReference.get().models.get(i).getImages()));
-                            activityReference.get().qmDatabase.getExhibitionTableDao().insert(activityReference.get().exhibitionListTableArabic);
-
-                        }
                     }
                 }
             }
@@ -2708,15 +1982,13 @@ public class CommonListActivity extends AppCompatActivity {
 
     public static class InsertExhibitionDataToDataBase extends AsyncTask<Void, Void, Boolean> {
         private WeakReference<CommonListActivity> activityReference;
-        private ExhibitionListTableEnglish exhibitionListTableEnglish;
-        private ExhibitionListTableArabic exhibitionListTableArabic;
+        private ExhibitionListTable exhibitionListTable;
         String language;
 
-        InsertExhibitionDataToDataBase(CommonListActivity context, ExhibitionListTableEnglish exhibitionListTableEnglish,
-                                       ExhibitionListTableArabic exhibitionListTableArabic, String appLanguage) {
+        InsertExhibitionDataToDataBase(CommonListActivity context, ExhibitionListTable exhibitionListTable,
+                                       String appLanguage) {
             activityReference = new WeakReference<>(context);
-            this.exhibitionListTableEnglish = exhibitionListTableEnglish;
-            this.exhibitionListTableArabic = exhibitionListTableArabic;
+            this.exhibitionListTable = exhibitionListTable;
             this.language = appLanguage;
         }
 
@@ -2732,51 +2004,29 @@ public class CommonListActivity extends AppCompatActivity {
 
         @Override
         protected Boolean doInBackground(Void... voids) {
-            Timber.i("Insert %s Table(%s) with size: %d", activityReference.get().toolbarTitle,
-                    language.toUpperCase(), activityReference.get().models.size());
+            Timber.i("Insert %s Table(language :%s) with size: %d", activityReference.get().toolbarTitle,
+                    language, activityReference.get().models.size());
             if (activityReference.get().models != null && activityReference.get().models.size() > 0) {
-                if (language.equals(LocaleManager.LANGUAGE_ENGLISH)) {
-                    for (int i = 0; i < activityReference.get().models.size(); i++) {
-                        Timber.i("Inserting %s Table(%s) with id: %s", activityReference.get().toolbarTitle,
-                                language.toUpperCase(), activityReference.get().models.get(i).getId());
-                        exhibitionListTableEnglish = new ExhibitionListTableEnglish(Long.parseLong(
-                                activityReference.get().models.get(i).getId()),
-                                activityReference.get().models.get(i).getName(),
-                                activityReference.get().models.get(i).getImage(),
-                                activityReference.get().models.get(i).getStartDate(),
-                                activityReference.get().models.get(i).getEndDate(),
-                                activityReference.get().models.get(i).getLocation(),
-                                null,
-                                null,
-                                null,
-                                null,
-                                activityReference.get().models.get(i).getMuseumId(),
-                                activityReference.get().models.get(i).getExhibitionStatus(),
-                                activityReference.get().models.get(i).getDisplayDate(),
-                                activityReference.get().convertor.fromArrayList(activityReference.get().models.get(i).getImages()));
-                        activityReference.get().qmDatabase.getExhibitionTableDao().insert(exhibitionListTableEnglish);
-                    }
-                } else {
-                    for (int i = 0; i < activityReference.get().models.size(); i++) {
-                        Timber.i("Inserting %s Table(%s) with id: %s", activityReference.get().toolbarTitle,
-                                language.toUpperCase(), activityReference.get().models.get(i).getId());
-                        exhibitionListTableArabic = new ExhibitionListTableArabic(
-                                Long.parseLong(activityReference.get().models.get(i).getId()),
-                                activityReference.get().models.get(i).getName(),
-                                activityReference.get().models.get(i).getImage(),
-                                activityReference.get().models.get(i).getStartDate(),
-                                activityReference.get().models.get(i).getEndDate(),
-                                activityReference.get().models.get(i).getLocation(),
-                                null,
-                                null,
-                                null,
-                                null,
-                                activityReference.get().models.get(i).getMuseumId(),
-                                activityReference.get().models.get(i).getExhibitionStatus(),
-                                activityReference.get().models.get(i).getDisplayDate(),
-                                activityReference.get().convertor.fromArrayList(activityReference.get().models.get(i).getImages()));
-                        activityReference.get().qmDatabase.getExhibitionTableDao().insert(exhibitionListTableArabic);
-                    }
+                for (int i = 0; i < activityReference.get().models.size(); i++) {
+                    Timber.i("Inserting %s Table(language :%s) with id: %s", activityReference.get().toolbarTitle,
+                            language, activityReference.get().models.get(i).getId());
+                    exhibitionListTable = new ExhibitionListTable(Long.parseLong(
+                            activityReference.get().models.get(i).getId()),
+                            activityReference.get().models.get(i).getName(),
+                            activityReference.get().models.get(i).getImage(),
+                            activityReference.get().models.get(i).getStartDate(),
+                            activityReference.get().models.get(i).getEndDate(),
+                            activityReference.get().models.get(i).getLocation(),
+                            null,
+                            null,
+                            null,
+                            null,
+                            activityReference.get().models.get(i).getMuseumId(),
+                            activityReference.get().models.get(i).getExhibitionStatus(),
+                            activityReference.get().models.get(i).getDisplayDate(),
+                            activityReference.get().convertor.fromArrayList(activityReference.get().models.get(i).getImages()),
+                            language);
+                    activityReference.get().qmDatabase.getExhibitionTableDao().insert(exhibitionListTable);
                 }
             }
             return true;
@@ -2806,42 +2056,30 @@ public class CommonListActivity extends AppCompatActivity {
 
         @Override
         protected Void doInBackground(Void... voids) {
-            Timber.i("Updating %s Table(%s) with id: %s", activityReference.get().toolbarTitle,
-                    language.toUpperCase(), activityReference.get().models.get(0).getId());
-            if (language.equals(LocaleManager.LANGUAGE_ENGLISH)) {
-                // updateEnglishTable table with english name
-                activityReference.get().qmDatabase.getExhibitionTableDao().updateExhibitionListEnglish(
-                        activityReference.get().models.get(position).getStartDate(),
-                        activityReference.get().models.get(position).getEndDate(),
-                        activityReference.get().models.get(position).getLocation(),
-                        activityReference.get().models.get(position).getId(),
-                        activityReference.get().models.get(position).getMuseumId()
-                );
-
-            } else {
-                // updateEnglishTable table with arabic name
-                activityReference.get().qmDatabase.getExhibitionTableDao().updateExhibitionListArabic(
-                        activityReference.get().models.get(position).getStartDate(),
-                        activityReference.get().models.get(position).getEndDate(),
-                        activityReference.get().models.get(position).getLocation(),
-                        activityReference.get().models.get(position).getId(),
-                        activityReference.get().models.get(position).getMuseumId()
-                );
-            }
+            Timber.i("Updating %s Table(language :%s) with id: %s", activityReference.get().toolbarTitle,
+                    language, activityReference.get().models.get(0).getId());
+            activityReference.get().qmDatabase.getExhibitionTableDao().updateExhibitionList(
+                    activityReference.get().models.get(position).getStartDate(),
+                    activityReference.get().models.get(position).getEndDate(),
+                    activityReference.get().models.get(position).getLocation(),
+                    activityReference.get().models.get(position).getId(),
+                    activityReference.get().models.get(position).getMuseumId(),
+                    language
+            );
             return null;
         }
     }
 
-    public static class RetrieveExhibitionDataEnglish extends AsyncTask<Void, Void, List<ExhibitionListTableEnglish>> {
+    public static class RetrieveExhibitionData extends AsyncTask<Void, Void, List<ExhibitionListTable>> {
         private WeakReference<CommonListActivity> activityReference;
 
         String museumID;
 
-        RetrieveExhibitionDataEnglish(CommonListActivity context) {
+        RetrieveExhibitionData(CommonListActivity context) {
             activityReference = new WeakReference<>(context);
         }
 
-        RetrieveExhibitionDataEnglish(CommonListActivity context, String museumId) {
+        RetrieveExhibitionData(CommonListActivity context, String museumId) {
             activityReference = new WeakReference<>(context);
             museumID = museumId;
         }
@@ -2852,24 +2090,24 @@ public class CommonListActivity extends AppCompatActivity {
         }
 
         @Override
-        protected void onPostExecute(List<ExhibitionListTableEnglish> exhibitionListTableEnglish) {
+        protected void onPostExecute(List<ExhibitionListTable> exhibitionListTables) {
             activityReference.get().models.clear();
-            if (exhibitionListTableEnglish.size() > 0) {
+            if (exhibitionListTables.size() > 0) {
                 Timber.i("Set %s list from database with size: %d", activityReference.get().toolbarTitle,
-                        exhibitionListTableEnglish.size());
-                for (int i = 0; i < exhibitionListTableEnglish.size(); i++) {
+                        exhibitionListTables.size());
+                for (int i = 0; i < exhibitionListTables.size(); i++) {
                     Timber.i("Setting %s list from database with id: %s", activityReference.get().toolbarTitle,
-                            exhibitionListTableEnglish.get(i).getExhibition_id());
+                            exhibitionListTables.get(i).getExhibition_id());
                     CommonListModel commonListModel = new CommonListModel(
-                            String.valueOf(exhibitionListTableEnglish.get(i).getExhibition_id()),
-                            exhibitionListTableEnglish.get(i).getExhibition_name(),
-                            exhibitionListTableEnglish.get(i).getExhibition_location(),
-                            exhibitionListTableEnglish.get(i).getExhibition_latest_image(),
-                            exhibitionListTableEnglish.get(i).getExhibition_status(),
-                            exhibitionListTableEnglish.get(i).getExhibition_display_date(),
-                            exhibitionListTableEnglish.get(i).getExhibition_start_date(),
-                            exhibitionListTableEnglish.get(i).getExhibition_end_date(),
-                            exhibitionListTableEnglish.get(i).getMuseum_id());
+                            String.valueOf(exhibitionListTables.get(i).getExhibition_id()),
+                            exhibitionListTables.get(i).getExhibition_name(),
+                            exhibitionListTables.get(i).getExhibition_location(),
+                            exhibitionListTables.get(i).getExhibition_latest_image(),
+                            exhibitionListTables.get(i).getExhibition_status(),
+                            exhibitionListTables.get(i).getExhibition_display_date(),
+                            exhibitionListTables.get(i).getExhibition_start_date(),
+                            exhibitionListTables.get(i).getExhibition_end_date(),
+                            exhibitionListTables.get(i).getMuseum_id());
 
                     activityReference.get().models.add(i, commonListModel);
 
@@ -2885,85 +2123,23 @@ public class CommonListActivity extends AppCompatActivity {
         }
 
         @Override
-        protected List<ExhibitionListTableEnglish> doInBackground(Void... voids) {
+        protected List<ExhibitionListTable> doInBackground(Void... voids) {
             if (museumID != null) {
-                Timber.i("get%sEnglishData() for id: %s", activityReference.get().toolbarTitle, museumID);
-                return activityReference.get().qmDatabase.getExhibitionTableDao().
-                        getExhibitionWithMuseumIdEnglish(Integer.parseInt(museumID));
+                Timber.i("get%sData(language :%s) for id: %s", activityReference.get().toolbarTitle,
+                        activityReference.get().appLanguage, museumID);
+                return activityReference.get().qmDatabase.getExhibitionTableDao()
+                        .getExhibitionWithMuseumId(Integer.parseInt(museumID), activityReference.get().appLanguage);
             } else {
-                Timber.i("getAll%sEnglishData()", activityReference.get().toolbarTitle);
-                return activityReference.get().qmDatabase.getExhibitionTableDao().getAllEnglish();
-            }
-        }
-    }
-
-    public static class RetrieveExhibitionDataArabic extends AsyncTask<Void, Void, List<ExhibitionListTableArabic>> {
-        private WeakReference<CommonListActivity> activityReference;
-        String museumID;
-
-        RetrieveExhibitionDataArabic(CommonListActivity context) {
-            activityReference = new WeakReference<>(context);
-        }
-
-        RetrieveExhibitionDataArabic(CommonListActivity context, String museumId) {
-            activityReference = new WeakReference<>(context);
-            museumID = museumId;
-        }
-
-        @Override
-        protected void onPreExecute() {
-            activityReference.get().progressBar.setVisibility(View.VISIBLE);
-        }
-
-        @Override
-        protected void onPostExecute(List<ExhibitionListTableArabic> exhibitionListTableArabic) {
-            activityReference.get().models.clear();
-            if (exhibitionListTableArabic.size() > 0) {
-                Timber.i("Set %s list from database with size: %d", activityReference.get().toolbarTitle,
-                        exhibitionListTableArabic.size());
-                for (int i = 0; i < exhibitionListTableArabic.size(); i++) {
-                    Timber.i("Setting %s list from database with id: %s", activityReference.get().toolbarTitle,
-                            exhibitionListTableArabic.get(i).getExhibition_id());
-                    CommonListModel commonListModel = new CommonListModel(String.valueOf(exhibitionListTableArabic.get(i).getExhibition_id()),
-                            exhibitionListTableArabic.get(i).getExhibition_name(),
-                            exhibitionListTableArabic.get(i).getExhibition_location(),
-                            exhibitionListTableArabic.get(i).getExhibition_latest_image(),
-                            exhibitionListTableArabic.get(i).getExhibition_status(),
-                            exhibitionListTableArabic.get(i).getExhibition_display_date(),
-                            exhibitionListTableArabic.get(i).getExhibition_start_date(),
-                            exhibitionListTableArabic.get(i).getExhibition_end_date(),
-                            exhibitionListTableArabic.get(i).getMuseum_id());
-                    activityReference.get().models.add(i, commonListModel);
-                }
-                activityReference.get().mAdapter.notifyDataSetChanged();
-                activityReference.get().progressBar.setVisibility(View.GONE);
-            } else {
-                Timber.i("Have no data in database");
-                activityReference.get().progressBar.setVisibility(View.GONE);
-                activityReference.get().recyclerView.setVisibility(View.GONE);
-                activityReference.get().retryLayout.setVisibility(View.VISIBLE);
-            }
-
-        }
-
-        @Override
-        protected List<ExhibitionListTableArabic> doInBackground(Void... voids) {
-            if (museumID != null) {
-                Timber.i("get%sArabicData() for id: %s", activityReference.get().toolbarTitle, museumID);
-                return activityReference.get().qmDatabase.getExhibitionTableDao().getExhibitionWithMuseumIdArabic(Integer.parseInt(museumID));
-            } else {
-                Timber.i("getAll%sArabicData()", activityReference.get().toolbarTitle);
-                return activityReference.get().qmDatabase.getExhibitionTableDao().getAllArabic();
+                Timber.i("getAll%sData(language :%s)", activityReference.get().toolbarTitle,
+                        activityReference.get().appLanguage);
+                return activityReference.get().qmDatabase.getExhibitionTableDao()
+                        .getAllData(activityReference.get().appLanguage);
             }
         }
     }
 
     public void getMuseumCollectionListFromDatabase() {
-        if (appLanguage.equals(LocaleManager.LANGUAGE_ENGLISH)) {
-            new RetrieveMuseumCollectionDataEnglish(CommonListActivity.this, id).execute();
-        } else {
-            new RetrieveMuseumCollectionDataArabic(CommonListActivity.this, id).execute();
-        }
+        new RetrieveMuseumCollectionListData(CommonListActivity.this, id).execute();
     }
 
     public static class MuseumCollectionRowCount extends AsyncTask<Void, Void, Integer> {
@@ -2977,12 +2153,9 @@ public class CommonListActivity extends AppCompatActivity {
 
         @Override
         protected Integer doInBackground(Void... voids) {
-            Timber.i("getNumberOf%sRows%s()", activityReference.get().toolbarTitle, language.toUpperCase());
-            if (language.equals(LocaleManager.LANGUAGE_ENGLISH))
-                return activityReference.get().qmDatabase.getMuseumCollectionListDao().getNumberOfRowsEnglish();
-            else
-                return activityReference.get().qmDatabase.getMuseumCollectionListDao().getNumberOfRowsArabic();
-
+            Timber.i("getNumberOf%sRows(language :%s)", activityReference.get().toolbarTitle, language);
+            return activityReference.get().qmDatabase.getMuseumCollectionListDao()
+                    .getNumberOfRows(language);
         }
 
         @Override
@@ -2994,8 +2167,7 @@ public class CommonListActivity extends AppCompatActivity {
             } else {
                 Timber.i("%s Table have no data", activityReference.get().toolbarTitle);
                 new InsertMuseumCollectionListDataToDataBase(activityReference.get(),
-                        activityReference.get().museumCollectionListTableEnglish,
-                        activityReference.get().museumCollectionListTableArabic, language).execute();
+                        activityReference.get().museumCollectionListTable, language).execute();
 
             }
         }
@@ -3003,8 +2175,7 @@ public class CommonListActivity extends AppCompatActivity {
 
     public static class CheckMuseumCollectionDBRowExist extends AsyncTask<Void, Void, Void> {
         private WeakReference<CommonListActivity> activityReference;
-        private MuseumCollectionListTableEnglish museumCollectionListTableEnglish;
-        private MuseumCollectionListTableArabic museumCollectionListTableArabic;
+        private MuseumCollectionListTable museumCollectionListTable;
         String language;
 
         CheckMuseumCollectionDBRowExist(CommonListActivity context, String apiLanguage) {
@@ -3015,48 +2186,25 @@ public class CommonListActivity extends AppCompatActivity {
         @Override
         protected Void doInBackground(Void... voids) {
             if (activityReference.get().models.size() > 0) {
-                if (language.equals(LocaleManager.LANGUAGE_ENGLISH)) {
-                    for (int i = 0; i < activityReference.get().models.size(); i++) {
-                        int n = activityReference.get().qmDatabase.getMuseumCollectionListDao().checkNameExistEnglish(
-                                activityReference.get().models.get(i).getName());
-                        if (n > 0) {
-                            Timber.i("Row exist in database(%s) for id: %s", language.toUpperCase(),
-                                    activityReference.get().models.get(i).getId());
-                            new UpdateMuseumCollectionListTable(activityReference.get(), activityReference.get().appLanguage, i).execute();
+                for (int i = 0; i < activityReference.get().models.size(); i++) {
+                    int n = activityReference.get().qmDatabase.getMuseumCollectionListDao().checkNameExist(
+                            activityReference.get().models.get(i).getName(), language);
+                    if (n > 0) {
+                        Timber.i("Row exist in database(language :%s) for id: %s", language,
+                                activityReference.get().models.get(i).getId());
+                        new UpdateMuseumCollectionListTable(activityReference.get(), activityReference.get().appLanguage, i).execute();
 
-                        } else {
-                            Timber.i("Inserting %s Table(%s) with id: %s", activityReference.get().toolbarTitle,
-                                    language.toUpperCase(), activityReference.get().models.get(i).getId());
-                            museumCollectionListTableEnglish =
-                                    new MuseumCollectionListTableEnglish(
-                                            activityReference.get().models.get(i).getName(),
-                                            activityReference.get().models.get(i).getImage(),
-                                            activityReference.get().models.get(i).getMuseumReference(),
-                                            activityReference.get().models.get(i).getDescription());
-                            activityReference.get().qmDatabase.getMuseumCollectionListDao().insertEnglishTable(museumCollectionListTableEnglish);
-                        }
-                    }
-                } else {
-                    for (int i = 0; i < activityReference.get().models.size(); i++) {
-                        int n = activityReference.get().qmDatabase.getMuseumCollectionListDao().checkNameExistArabic(
-                                activityReference.get().models.get(i).getName());
-                        if (n > 0) {
-                            Timber.i("Row exist in database(%s) for id: %s", language.toUpperCase(),
-                                    activityReference.get().models.get(i).getId());
-                            new UpdateMuseumCollectionListTable(activityReference.get(), activityReference.get().appLanguage, i).execute();
-
-                        } else {
-                            Timber.i("Inserting %s Table(%s) with id: %s", activityReference.get().toolbarTitle,
-                                    language.toUpperCase(), activityReference.get().models.get(i).getId());
-                            museumCollectionListTableArabic =
-                                    new MuseumCollectionListTableArabic(
-                                            activityReference.get().models.get(i).getName(),
-                                            activityReference.get().models.get(i).getImage(),
-                                            activityReference.get().models.get(i).getMuseumReference(),
-                                            activityReference.get().models.get(i).getDescription());
-                            activityReference.get().qmDatabase.getMuseumCollectionListDao().insertArabicTable(museumCollectionListTableArabic);
-
-                        }
+                    } else {
+                        Timber.i("Inserting %s Table(language :%s) with id: %s", activityReference.get().toolbarTitle,
+                                language, activityReference.get().models.get(i).getId());
+                        museumCollectionListTable =
+                                new MuseumCollectionListTable(
+                                        activityReference.get().models.get(i).getName(),
+                                        activityReference.get().models.get(i).getImage(),
+                                        activityReference.get().models.get(i).getMuseumReference(),
+                                        activityReference.get().models.get(i).getDescription(),
+                                        language);
+                        activityReference.get().qmDatabase.getMuseumCollectionListDao().insertTable(museumCollectionListTable);
                     }
                 }
             }
@@ -3066,46 +2214,32 @@ public class CommonListActivity extends AppCompatActivity {
 
     public static class InsertMuseumCollectionListDataToDataBase extends AsyncTask<Void, Void, Boolean> {
         private WeakReference<CommonListActivity> activityReference;
-        private MuseumCollectionListTableEnglish museumCollectionListTableEnglish;
-        private MuseumCollectionListTableArabic museumCollectionListTableArabic;
+        private MuseumCollectionListTable museumCollectionListTable;
         String language;
 
         InsertMuseumCollectionListDataToDataBase(CommonListActivity context,
-                                                 MuseumCollectionListTableEnglish museumCollectionListTableEnglish,
-                                                 MuseumCollectionListTableArabic museumCollectionListTableArabic, String appLanguage) {
+                                                 MuseumCollectionListTable museumCollectionListTable,
+                                                 String appLanguage) {
             activityReference = new WeakReference<>(context);
-            this.museumCollectionListTableEnglish = museumCollectionListTableEnglish;
-            this.museumCollectionListTableArabic = museumCollectionListTableArabic;
+            this.museumCollectionListTable = museumCollectionListTable;
             this.language = appLanguage;
         }
 
         @Override
         protected Boolean doInBackground(Void... voids) {
-            Timber.i("Insert %s Table(%s) with size: %d", activityReference.get().toolbarTitle,
-                    language.toUpperCase(), activityReference.get().models.size());
+            Timber.i("Insert %s Table(language :%s) with size: %d", activityReference.get().toolbarTitle,
+                    language, activityReference.get().models.size());
             if (activityReference.get().models != null && activityReference.get().models.size() > 0) {
-                if (language.equals(LocaleManager.LANGUAGE_ENGLISH)) {
-                    for (int i = 0; i < activityReference.get().models.size(); i++) {
-                        Timber.i("Inserting %s Table(%s) with id: %s", activityReference.get().toolbarTitle,
-                                language.toUpperCase(), activityReference.get().models.get(i).getId());
-                        museumCollectionListTableEnglish =
-                                new MuseumCollectionListTableEnglish(activityReference.get().models.get(i).getName(),
-                                        activityReference.get().models.get(i).getImage(),
-                                        activityReference.get().models.get(i).getMuseumReference(),
-                                        activityReference.get().models.get(i).getDescription());
-                        activityReference.get().qmDatabase.getMuseumCollectionListDao().insertEnglishTable(museumCollectionListTableEnglish);
-                    }
-                } else {
-                    for (int i = 0; i < activityReference.get().models.size(); i++) {
-                        Timber.i("Inserting %s Table(%s) with id: %s", activityReference.get().toolbarTitle,
-                                language.toUpperCase(), activityReference.get().models.get(i).getId());
-                        museumCollectionListTableArabic = new MuseumCollectionListTableArabic(
-                                activityReference.get().models.get(i).getName(),
-                                activityReference.get().models.get(i).getImage(),
-                                activityReference.get().models.get(i).getMuseumReference(),
-                                activityReference.get().models.get(i).getDescription());
-                        activityReference.get().qmDatabase.getMuseumCollectionListDao().insertArabicTable(museumCollectionListTableArabic);
-                    }
+                for (int i = 0; i < activityReference.get().models.size(); i++) {
+                    Timber.i("Inserting %s Table(language :%s) with id: %s", activityReference.get().toolbarTitle,
+                            language, activityReference.get().models.get(i).getId());
+                    museumCollectionListTable =
+                            new MuseumCollectionListTable(activityReference.get().models.get(i).getName(),
+                                    activityReference.get().models.get(i).getImage(),
+                                    activityReference.get().models.get(i).getMuseumReference(),
+                                    activityReference.get().models.get(i).getDescription(),
+                                    language);
+                    activityReference.get().qmDatabase.getMuseumCollectionListDao().insertTable(museumCollectionListTable);
                 }
             }
             return true;
@@ -3130,24 +2264,14 @@ public class CommonListActivity extends AppCompatActivity {
 
         @Override
         protected Void doInBackground(Void... voids) {
-            Timber.i("Updating %s Table(%s) with id: %s", activityReference.get().toolbarTitle,
-                    language.toUpperCase(), activityReference.get().models.get(0).getId());
-            if (language.equals(LocaleManager.LANGUAGE_ENGLISH)) {
-                // updateEnglishTable table with english name
-                activityReference.get().qmDatabase.getMuseumCollectionListDao().updateMuseumListTableEnglish(
-                        activityReference.get().models.get(position).getImage(),
-                        activityReference.get().models.get(position).getMuseumReference(),
-                        activityReference.get().models.get(position).getDescription(),
-                        activityReference.get().models.get(position).getName());
-
-            } else {
-                // updateEnglishTable table with arabic name
-                activityReference.get().qmDatabase.getMuseumCollectionListDao().updateMuseumListTableArabic(
-                        activityReference.get().models.get(position).getImage(),
-                        activityReference.get().models.get(position).getMuseumReference(),
-                        activityReference.get().models.get(position).getDescription(),
-                        activityReference.get().models.get(position).getName());
-            }
+            Timber.i("Updating %s Table(language :%s) with id: %s", activityReference.get().toolbarTitle,
+                    language, activityReference.get().models.get(0).getId());
+            activityReference.get().qmDatabase.getMuseumCollectionListDao().updateMuseumListTable(
+                    activityReference.get().models.get(position).getImage(),
+                    activityReference.get().models.get(position).getMuseumReference(),
+                    activityReference.get().models.get(position).getDescription(),
+                    activityReference.get().models.get(position).getName(),
+                    language);
             return null;
         }
 
@@ -3158,11 +2282,11 @@ public class CommonListActivity extends AppCompatActivity {
 
     }
 
-    public static class RetrieveMuseumCollectionDataEnglish extends AsyncTask<Void, Void, List<MuseumCollectionListTableEnglish>> {
+    public static class RetrieveMuseumCollectionListData extends AsyncTask<Void, Void, List<MuseumCollectionListTable>> {
         private WeakReference<CommonListActivity> activityReference;
         String museumReference;
 
-        RetrieveMuseumCollectionDataEnglish(CommonListActivity context, String museumId) {
+        RetrieveMuseumCollectionListData(CommonListActivity context, String museumId) {
             activityReference = new WeakReference<>(context);
             museumReference = museumId;
         }
@@ -3173,24 +2297,25 @@ public class CommonListActivity extends AppCompatActivity {
         }
 
         @Override
-        protected List<MuseumCollectionListTableEnglish> doInBackground(Void... voids) {
-            Timber.i("get%sEnglishData() for id: %s", activityReference.get().toolbarTitle, museumReference);
-            return activityReference.get().qmDatabase.getMuseumCollectionListDao().
-                    getDataFromEnglishTableWithReference(museumReference);
+        protected List<MuseumCollectionListTable> doInBackground(Void... voids) {
+            Timber.i("get%sListData(language :%s) for id: %s", activityReference.get().toolbarTitle,
+                    activityReference.get().appLanguage, museumReference);
+            return activityReference.get().qmDatabase.getMuseumCollectionListDao()
+                    .getDataFromTableWithReference(museumReference, activityReference.get().appLanguage);
         }
 
         @Override
-        protected void onPostExecute(List<MuseumCollectionListTableEnglish> museumCollectionListTableEnglishes) {
+        protected void onPostExecute(List<MuseumCollectionListTable> museumCollectionListTables) {
             activityReference.get().models.clear();
-            if (museumCollectionListTableEnglishes.size() > 0) {
+            if (museumCollectionListTables.size() > 0) {
                 Timber.i("Set %s list from database with size: %d", activityReference.get().toolbarTitle,
-                        museumCollectionListTableEnglishes.size());
-                for (int i = 0; i < museumCollectionListTableEnglishes.size(); i++) {
+                        museumCollectionListTables.size());
+                for (int i = 0; i < museumCollectionListTables.size(); i++) {
                     Timber.i("Setting %s list from database with id: %s", activityReference.get().toolbarTitle,
-                            museumCollectionListTableEnglishes.get(i).getMuseum_id());
-                    CommonListModel commonListModel = new CommonListModel(museumCollectionListTableEnglishes.get(i).getName(),
-                            museumCollectionListTableEnglishes.get(i).getImage(),
-                            museumCollectionListTableEnglishes.get(i).getMuseum_id());
+                            museumCollectionListTables.get(i).getMuseum_id());
+                    CommonListModel commonListModel = new CommonListModel(museumCollectionListTables.get(i).getName(),
+                            museumCollectionListTables.get(i).getImage(),
+                            museumCollectionListTables.get(i).getMuseum_id());
                     activityReference.get().models.add(i, commonListModel);
                 }
                 activityReference.get().mAdapter.notifyDataSetChanged();
@@ -3201,54 +2326,6 @@ public class CommonListActivity extends AppCompatActivity {
                 activityReference.get().recyclerView.setVisibility(View.GONE);
                 activityReference.get().retryLayout.setVisibility(View.VISIBLE);
             }
-        }
-    }
-
-    public static class RetrieveMuseumCollectionDataArabic extends AsyncTask<Void, Void,
-            List<MuseumCollectionListTableArabic>> {
-
-        private WeakReference<CommonListActivity> activityReference;
-        String museumReference;
-
-        RetrieveMuseumCollectionDataArabic(CommonListActivity context, String museumId) {
-            activityReference = new WeakReference<>(context);
-            museumReference = museumId;
-        }
-
-        @Override
-        protected void onPreExecute() {
-            super.onPreExecute();
-        }
-
-        @Override
-        protected void onPostExecute(List<MuseumCollectionListTableArabic> museumCollectionListTableArabics) {
-            activityReference.get().models.clear();
-            if (museumCollectionListTableArabics.size() > 0) {
-                Timber.i("Set %s list from database with size: %d", activityReference.get().toolbarTitle,
-                        museumCollectionListTableArabics.size());
-                for (int i = 0; i < museumCollectionListTableArabics.size(); i++) {
-                    Timber.i("Setting %s list from database with id: %s", activityReference.get().toolbarTitle,
-                            museumCollectionListTableArabics.get(i).getMuseum_id());
-                    CommonListModel commonListModel = new CommonListModel(museumCollectionListTableArabics.get(i).getName(),
-                            museumCollectionListTableArabics.get(i).getImage(),
-                            museumCollectionListTableArabics.get(i).getMuseum_id());
-                    activityReference.get().models.add(i, commonListModel);
-                }
-                activityReference.get().mAdapter.notifyDataSetChanged();
-                activityReference.get().progressBar.setVisibility(View.GONE);
-            } else {
-                Timber.i("Have no data in database");
-                activityReference.get().progressBar.setVisibility(View.GONE);
-                activityReference.get().recyclerView.setVisibility(View.GONE);
-                activityReference.get().retryLayout.setVisibility(View.VISIBLE);
-            }
-        }
-
-        @Override
-        protected List<MuseumCollectionListTableArabic> doInBackground(Void... voids) {
-            Timber.i("get%sEnglishData() for id: %s", activityReference.get().toolbarTitle, museumReference);
-            return activityReference.get().qmDatabase.getMuseumCollectionListDao().
-                    getDataFromArabicTableWithReference(museumReference);
         }
     }
 
