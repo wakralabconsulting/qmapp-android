@@ -8,8 +8,11 @@ import android.content.Context;
 import android.content.res.Configuration;
 import android.os.Build;
 
+import com.crashlytics.android.Crashlytics;
+import com.crashlytics.android.core.CrashlyticsCore;
 import com.qatarmuseums.qatarmuseumsapp.timber.FileLoggingTree;
 
+import io.fabric.sdk.android.Fabric;
 import timber.log.Timber;
 
 
@@ -19,6 +22,7 @@ public class MyApp extends Application {
     @Override
     public void onCreate() {
         super.onCreate();
+        configureCrashReporting();
         // For log integration
         Timber.plant(new FileLoggingTree(getApplicationContext()));
         Timber.i("Initializing Logger...");
@@ -30,6 +34,15 @@ public class MyApp extends Application {
 //        LeakCanary.install(this);
 //        LeakCanary.enableDisplayLeakActivity(getApplicationContext());
         createNotificationChannel();
+    }
+
+    private void configureCrashReporting() {
+        Crashlytics crashlyticsKit = new Crashlytics.Builder()
+                .core(new CrashlyticsCore.Builder().disabled(BuildConfig.DEBUG).build())
+                .build();
+
+        // Initialize Fabric with the debug-disabled crashlytics.
+        Fabric.with(this, crashlyticsKit);
     }
 
     @Override
