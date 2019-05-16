@@ -17,12 +17,12 @@ import java.util.ArrayList;
 public class EducationAdapter extends RecyclerView.Adapter<EducationAdapter.EducationAdapterViewHolder> {
 
     Context context;
-    ArrayList<EducationEvents> educationEvents;
+    ArrayList<Events> events;
     ArrayList<String> descriptionVal;
 
-    public EducationAdapter(Context context, ArrayList<EducationEvents> educationEvents) {
+    public EducationAdapter(Context context, ArrayList<Events> events) {
         this.context = context;
-        this.educationEvents = educationEvents;
+        this.events = events;
     }
 
     @NonNull
@@ -36,43 +36,33 @@ public class EducationAdapter extends RecyclerView.Adapter<EducationAdapter.Educ
     @Override
     public void onBindViewHolder(@NonNull final EducationAdapter.EducationAdapterViewHolder holder, final int position) {
 
-        if (educationEvents.size() > 0) {
-            holder.eventTitle.setText(educationEvents.get(position).getInstitution());
-            holder.eventSubTitle.setText(educationEvents.get(position).getTitle());
-            holder.eventTiming.setText(educationEvents.get(position).getShort_desc());
+        if (events.size() > 0) {
+            holder.eventTitle.setText(events.get(position).getInstitution());
+            holder.eventSubTitle.setText(events.get(position).getTitle());
+            holder.eventTiming.setText(events.get(position).getShortDescription());
         }
         if (position % 2 == 1) {
             holder.layoutHolder.setBackgroundColor(Color.parseColor("#FFFFFF"));
         } else {
             holder.layoutHolder.setBackgroundColor(Color.parseColor("#FFf2f2f2"));
         }
-        holder.layoutHolder.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-
-                if (educationEvents.get(position).getRegistration().equals("true")) {
-                    ((EducationCalendarActivity) context)
-                            .showDialog(context.getResources().getString(R.string.register_now), educationEvents, position);
-
-                } else {
-                    ((EducationCalendarActivity) context).
-                            showDialog(context.getResources().getString(R.string.add_to_calendar), educationEvents, position);
-                }
-            }
-        });
+        holder.layoutHolder.setOnClickListener(view -> ((EducationCalendarActivity) context).onClickCalled(
+                Boolean.valueOf(events.get(position).getRegistration()),
+                events,
+                position));
     }
 
     @Override
     public int getItemCount() {
-        return educationEvents.size();
+        return events.size();
     }
 
 
     public void clear() {
-        final int size = educationEvents.size();
+        final int size = events.size();
         if (size > 0) {
             for (int i = 0; i < size; i++) {
-                educationEvents.remove(0);
+                events.remove(0);
             }
 
             notifyItemRangeRemoved(0, size);

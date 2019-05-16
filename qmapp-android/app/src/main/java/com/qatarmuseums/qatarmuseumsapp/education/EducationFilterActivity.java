@@ -19,6 +19,7 @@ import android.widget.ImageView;
 import android.widget.Spinner;
 import android.widget.TextView;
 
+import com.google.firebase.analytics.FirebaseAnalytics;
 import com.qatarmuseums.qatarmuseumsapp.LocaleManager;
 import com.qatarmuseums.qatarmuseumsapp.R;
 
@@ -27,6 +28,7 @@ import java.util.HashMap;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import timber.log.Timber;
 
 import static com.qatarmuseums.qatarmuseumsapp.education.EducationCalendarActivity.AGEGROUPPREFS;
 import static com.qatarmuseums.qatarmuseumsapp.education.EducationCalendarActivity.FILTERPREFS;
@@ -75,6 +77,7 @@ public class EducationFilterActivity extends AppCompatActivity {
     SharedPreferences.Editor editor;
     SharedPreferences sharedFilterPreferences;
     int institutionPosition = 0, ageGroupPosition = 0, programmeTypePosition = 0;
+    private FirebaseAnalytics mFirebaseAnalytics;
 
     @Override
     protected void attachBaseContext(Context base) {
@@ -90,8 +93,8 @@ public class EducationFilterActivity extends AppCompatActivity {
         setSupportActionBar(toolbar);
         toolbar_title.setText(getResources().getString(R.string.filter));
 
+        mFirebaseAnalytics = FirebaseAnalytics.getInstance(this);
         sharedFilterPreferences = getSharedPreferences(FILTERPREFS, Context.MODE_PRIVATE);
-
         sharedFilterPreferences = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
         institutionPosition = sharedFilterPreferences.getInt(INSTITUTEPREFS, 0);
         ageGroupPosition = sharedFilterPreferences.getInt(AGEGROUPPREFS, 0);
@@ -108,7 +111,10 @@ public class EducationFilterActivity extends AppCompatActivity {
             return false;
         });
 
-        toolbarClose.setOnClickListener(v -> onBackPressed());
+        toolbarClose.setOnClickListener(v -> {
+            Timber.i("Close button clicked");
+            onBackPressed();
+        });
         // Spinner Drop down elements
         institutions = new ArrayList<String>();
         institutions.add(getResources().getString(R.string.any));
@@ -212,6 +218,7 @@ public class EducationFilterActivity extends AppCompatActivity {
             public void onItemSelected(AdapterView<?> adapterView, View view, int position, long l) {
                 // On selecting a spinner item
                 String item = adapterView.getItemAtPosition(position).toString();
+                Timber.i("Selected Institution: %s", instituteMap.get(item));
                 institutionItem = instituteMap.get(item);
                 institutionPosition = position;
             }
@@ -240,6 +247,7 @@ public class EducationFilterActivity extends AppCompatActivity {
             public void onItemSelected(AdapterView<?> adapterView, View view, int position, long l) {
                 // On selecting a spinner item
                 String item = adapterView.getItemAtPosition(position).toString();
+                Timber.i("Selected Age group: %s", ageMap.get(item));
                 ageGroupItem = ageMap.get(item);
                 ageGroupPosition = position;
             }
@@ -268,6 +276,7 @@ public class EducationFilterActivity extends AppCompatActivity {
             public void onItemSelected(AdapterView<?> adapterView, View view, int position, long l) {
                 // On selecting a spinner item
                 String item = adapterView.getItemAtPosition(position).toString();
+                Timber.i("Selected Program type: %s", programmeMap.get(item));
                 programmeTypeItem = programmeMap.get(item);
                 programmeTypePosition = position;
             }
@@ -279,7 +288,7 @@ public class EducationFilterActivity extends AppCompatActivity {
         });
 
         clearButton.setOnClickListener(view -> {
-
+            Timber.i("Clear button clicked");
             isFillInstitute = 0;
             isFillAge = 0;
             isFillProgramme = 0;
@@ -296,6 +305,7 @@ public class EducationFilterActivity extends AppCompatActivity {
         });
 
         filterButton.setOnClickListener(view -> {
+            Timber.i("Filter button clicked");
             navigationIntent = new Intent(EducationFilterActivity.this, EducationCalendarActivity.class);
             navigationIntent.putExtra("INSTITUTION", institutionItem);
             navigationIntent.putExtra("AGE_GROUP", ageGroupItem);
@@ -348,5 +358,11 @@ public class EducationFilterActivity extends AppCompatActivity {
         // attaching data adapter to spinner
         programmeTypeText.setAdapter(programmeDataAdapter);
         programmeTypeText.setSelection(programmeTypePosition);
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        mFirebaseAnalytics.setCurrentScreen(this, getString(R.string.education_filter_page), null);
     }
 }

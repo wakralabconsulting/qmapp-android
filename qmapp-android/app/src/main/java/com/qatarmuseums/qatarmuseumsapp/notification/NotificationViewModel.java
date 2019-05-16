@@ -20,15 +20,10 @@ public class NotificationViewModel extends AndroidViewModel {
         super(application);
         notificationDao = QMDatabase.getInstance(application).getNotificationDao();
         executorService = Executors.newSingleThreadExecutor();
-
     }
 
-    LiveData<List<NotificationModel>> getAllPostsEnglish() {
-        return notificationDao.findAllEnglish();
-    }
-
-    LiveData<List<NotificationModel>> getAllPostsArabic() {
-        return notificationDao.findAllArabic();
+    LiveData<List<NotificationModel>> getAllPosts(String appLanguage) {
+        return notificationDao.findAll(appLanguage);
     }
 
 }

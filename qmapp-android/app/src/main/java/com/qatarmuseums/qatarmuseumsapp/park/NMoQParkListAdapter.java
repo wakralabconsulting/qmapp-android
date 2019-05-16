@@ -14,7 +14,7 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.qatarmuseums.qatarmuseumsapp.R;
-import com.qatarmuseums.qatarmuseumsapp.commonpage.RecyclerTouchListener;
+import com.qatarmuseums.qatarmuseumsapp.commonlistpage.RecyclerTouchListener;
 import com.qatarmuseums.qatarmuseumsapp.home.GlideApp;
 
 import java.lang.ref.WeakReference;

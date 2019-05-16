@@ -13,6 +13,7 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.google.firebase.analytics.FirebaseAnalytics;
 import com.qatarmuseums.qatarmuseumsapp.LocaleManager;
 import com.qatarmuseums.qatarmuseumsapp.R;
 import com.qatarmuseums.qatarmuseumsapp.objectpreview.ObjectPreviewActivity;
@@ -24,6 +25,7 @@ import cn.lightsky.infiniteindicator.IndicatorConfiguration;
 import cn.lightsky.infiniteindicator.InfiniteIndicator;
 import cn.lightsky.infiniteindicator.OnPageClickListener;
 import cn.lightsky.infiniteindicator.Page;
+import timber.log.Timber;
 
 import static android.view.Gravity.LEFT;
 import static android.view.Gravity.RIGHT;
@@ -43,6 +45,7 @@ public class SelfGuidedStartPageActivity extends AppCompatActivity implements
     ImageView sliderPlaceholderImage;
     private String tourId;
     private ImageView backArrow;
+    private FirebaseAnalytics mFirebaseAnalytics;
 
     @Override
     protected void attachBaseContext(Context base) {
@@ -60,6 +63,8 @@ public class SelfGuidedStartPageActivity extends AppCompatActivity implements
         appLanguage = LocaleManager.getLanguage(this);
         playButton = findViewById(R.id.playBtn);
         util = new Util();
+
+        mFirebaseAnalytics = FirebaseAnalytics.getInstance(this);
         museumTitle = findViewById(R.id.museum_tittle);
         sliderPlaceholderImage = findViewById(R.id.ads_place_holder);
         museumDesc = findViewById(R.id.museum_desc);
@@ -93,9 +98,13 @@ public class SelfGuidedStartPageActivity extends AppCompatActivity implements
             }
             return false;
         });
-        backArrow.setOnClickListener(v -> onBackPressed());
+        backArrow.setOnClickListener(v -> {
+            Timber.i("Back button clicked");
+            onBackPressed();
+        });
         intent = getIntent();
         startBtn.setOnClickListener(v -> {
+            Timber.i("Start button clicked");
             Intent i = new Intent(SelfGuidedStartPageActivity.this, ObjectPreviewActivity.class);
             i.putExtra("TOUR_ID", tourId);
             i.putExtra("MUSEUM_ID", museumId);
@@ -114,6 +123,7 @@ public class SelfGuidedStartPageActivity extends AppCompatActivity implements
 
 
     public void loadAdsToSlider(ArrayList<Page> adsImages) {
+        Timber.i("loadAdsToSlider()");
         appLanguage = LocaleManager.getLanguage(this);
         GlideLoaderForTourGuide glideLoader;
         if (adsImages.size() > 1) {
@@ -217,7 +227,7 @@ public class SelfGuidedStartPageActivity extends AppCompatActivity implements
         super.onResume();
         if (configuration != null)
             animCircleIndicator.start();
-
+        mFirebaseAnalytics.setCurrentScreen(this, getString(R.string.self_guided_starter_page), null);
 
     }
 

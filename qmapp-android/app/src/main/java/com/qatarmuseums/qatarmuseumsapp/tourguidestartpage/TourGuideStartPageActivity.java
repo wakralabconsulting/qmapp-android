@@ -12,9 +12,12 @@ import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.google.firebase.analytics.FirebaseAnalytics;
 import com.qatarmuseums.qatarmuseumsapp.LocaleManager;
 import com.qatarmuseums.qatarmuseumsapp.R;
 import com.qatarmuseums.qatarmuseumsapp.floormap.FloorMapActivity;
+
+import timber.log.Timber;
 
 public class TourGuideStartPageActivity extends AppCompatActivity {
     FrameLayout mainLayout;
@@ -22,6 +25,7 @@ public class TourGuideStartPageActivity extends AppCompatActivity {
     TextView museumTitle, museumDesc;
     Button startBtn;
     private Animation zoomOutAnimation;
+    private FirebaseAnalytics mFirebaseAnalytics;
 
     @Override
     protected void attachBaseContext(Context base) {
@@ -37,6 +41,7 @@ public class TourGuideStartPageActivity extends AppCompatActivity {
         museumTitle = findViewById(R.id.museum_tittle);
         museumDesc = findViewById(R.id.museum_desc);
         startBtn = findViewById(R.id.start_btn);
+        mFirebaseAnalytics = FirebaseAnalytics.getInstance(this);
         zoomOutAnimation = AnimationUtils.loadAnimation(getApplicationContext(),
                 R.anim.zoom_out);
         zoomOutAnimation.setAnimationListener(new Animation.AnimationListener() {
@@ -61,6 +66,7 @@ public class TourGuideStartPageActivity extends AppCompatActivity {
         museumDesc.setText(getString(R.string.tourguide_title_desc));
 
         startBtn.setOnTouchListener((v, event) -> {
+            Timber.i("Start button clicked");
             switch (event.getAction()) {
                 case MotionEvent.ACTION_DOWN:
                     startBtn.startAnimation(zoomOutAnimation);
@@ -68,5 +74,12 @@ public class TourGuideStartPageActivity extends AppCompatActivity {
             }
             return false;
         });
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        mFirebaseAnalytics.setCurrentScreen(this, getString(R.string.tour_guided_starter_page), null);
+
     }
 }

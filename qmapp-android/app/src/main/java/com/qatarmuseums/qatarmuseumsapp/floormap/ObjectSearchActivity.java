@@ -19,6 +19,7 @@ import android.widget.ProgressBar;
 import android.widget.ScrollView;
 import android.widget.TextView;
 
+import com.google.firebase.analytics.FirebaseAnalytics;
 import com.qatarmuseums.qatarmuseumsapp.LocaleManager;
 import com.qatarmuseums.qatarmuseumsapp.R;
 import com.qatarmuseums.qatarmuseumsapp.apicall.APIClient;
@@ -33,6 +34,7 @@ import butterknife.ButterKnife;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
+import timber.log.Timber;
 
 public class ObjectSearchActivity extends AppCompatActivity implements View.OnClickListener {
 
@@ -64,6 +66,8 @@ public class ObjectSearchActivity extends AppCompatActivity implements View.OnCl
     String language;
     ArrayList<ArtifactDetails> artifactList = new ArrayList<>();
     Util util;
+    private FirebaseAnalytics mFireBaseAnalytics;
+    private Bundle contentBundleParams;
 
     @Override
     protected void attachBaseContext(Context base) {
@@ -89,9 +93,11 @@ public class ObjectSearchActivity extends AppCompatActivity implements View.OnCl
                 displayButtons[i].setOnClickListener(this);
             }
         }
+        mFireBaseAnalytics = FirebaseAnalytics.getInstance(this);
         displayClearButton.setEnabled(false);
         doneButton.setEnabled(false);
         displayClearButton.setOnClickListener(view -> {
+            Timber.i("Clear button clicked");
             display = "";
             numberPadDisplay.setText("");
         });
@@ -122,9 +128,14 @@ public class ObjectSearchActivity extends AppCompatActivity implements View.OnCl
             }
         });
         doneButton.setOnClickListener(view -> {
+            Timber.i("Done button clicked");
             if (numberPadDisplay.getText().toString() == "") {
                 util.showAlertDialog(ObjectSearchActivity.this);
             } else {
+                contentBundleParams = new Bundle();
+                contentBundleParams.putString(FirebaseAnalytics.Param.CONTENT_TYPE, "ARTIFACTS SEARCH");
+                contentBundleParams.putString(FirebaseAnalytics.Param.ITEM_ID, display);
+                mFireBaseAnalytics.logEvent(FirebaseAnalytics.Event.SELECT_CONTENT, contentBundleParams);
                 getDetailsFromApi(display);
             }
         });
@@ -144,6 +155,7 @@ public class ObjectSearchActivity extends AppCompatActivity implements View.OnCl
     }
 
     private void getDetailsFromApi(String id) {
+        Timber.i("getDetailsFromApi(artifact_number: %s)", id);
         progressBar.setVisibility(View.VISIBLE);
         mainContainer.setVisibility(View.GONE);
         APIInterface apiService =
@@ -155,6 +167,7 @@ public class ObjectSearchActivity extends AppCompatActivity implements View.OnCl
                 if (response.isSuccessful()) {
                     if (response.body().size() > 0) {
                         if (response.body() != null && response.body().size() > 0) {
+                            Timber.i("getDetailsFromApi() - isSuccessful for artifact_number: %s", id);
                             artifactList = response.body();
                             Intent intent = new Intent(ObjectSearchActivity.this, ObjectPreviewDetailsActivity.class);
                             intent.putExtra("Title", artifactList.get(0).getTitle());
@@ -163,17 +176,20 @@ public class ObjectSearchActivity extends AppCompatActivity implements View.OnCl
                             intent.putExtra("History", artifactList.get(0).getObjectHistory());
                             intent.putExtra("Summary", artifactList.get(0).getObjectENGSummary());
                             intent.putExtra("Audio", artifactList.get(0).getAudioFile());
+                            intent.putExtra("Nid", artifactList.get(0).getNid());
                             intent.putStringArrayListExtra("Images", artifactList.get(0).getImages());
                             startActivity(intent);
                             display = "";
                             numberPadDisplay.setText("");
                         }
                     } else {
+                        Timber.i("Have no data for artifact_number: %s", id);
                         util.showToast(getResources().getString(R.string.artifact_invalid), ObjectSearchActivity.this);
                         display = "";
                         numberPadDisplay.setText("");
                     }
                 } else {
+                    Timber.w("Response not successful");
                     util.showToast(getResources().getString(R.string.artifact_invalid), ObjectSearchActivity.this);
                     display = "";
                     numberPadDisplay.setText("");
@@ -184,6 +200,7 @@ public class ObjectSearchActivity extends AppCompatActivity implements View.OnCl
 
             @Override
             public void onFailure(Call<ArrayList<ArtifactDetails>> call, Throwable t) {
+                Timber.e("getDetailsFromApi() - onFailure: %s", t.getMessage());
                 progressBar.setVisibility(View.GONE);
                 mainContainer.setVisibility(View.VISIBLE);
             }
@@ -199,7 +216,7 @@ public class ObjectSearchActivity extends AppCompatActivity implements View.OnCl
                 break;
             }
         }
-
+        Timber.i("Number %d clicked", index);
         switch (index) {
             case 0:
                 display = display + "0";
@@ -242,5 +259,11 @@ public class ObjectSearchActivity extends AppCompatActivity implements View.OnCl
                 numberPadDisplay.setText(display);
                 break;
         }
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        mFireBaseAnalytics.setCurrentScreen(this, getString(R.string.object_search_page), null);
     }
 }

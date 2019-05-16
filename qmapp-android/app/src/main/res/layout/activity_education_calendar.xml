@@ -17,7 +17,7 @@
             android:id="@+id/common_toolbar"
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
-            android:background="@color/black"
+            android:background="@color/colorBlack"
             android:theme="@style/AppTheme.PopupOverlay"
             app:contentInsetEnd="0dp"
             app:contentInsetStart="0dp">
@@ -55,6 +55,7 @@
                     android:layout_height="match_parent"
                     android:layout_alignParentEnd="true"
                     android:layout_centerVertical="true"
+                    android:tint="@color/colorDarkGray"
                     android:paddingEnd="@dimen/padding_20"
                     android:paddingStart="@dimen/padding_20"
                     android:src="@drawable/settings" />
@@ -68,7 +69,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_below="@id/app_bar"
-        android:background="@color/white"
+        android:background="@color/colorWhite"
         android:orientation="vertical">
 
         <LinearLayout
@@ -82,7 +83,7 @@
                 android:layout_height="wrap_content"
                 android:paddingEnd="@dimen/padding_35"
                 android:paddingStart="@dimen/padding_35"
-                android:paddingTop="@dimen/pading_10"
+                android:paddingTop="@dimen/padding_10"
                 app:buttonLeft_drawableTintColor="@android:color/black"
                 app:buttonRight_drawableTintColor="@android:color/black"
                 app:eventColor="@android:color/darker_gray"
@@ -103,7 +104,7 @@
             <View
                 android:layout_width="match_parent"
                 android:layout_height="1dp"
-                android:background="@color/darkGray" />
+                android:background="@color/colorDarkGray" />
         </LinearLayout>
 
         <LinearLayout
@@ -118,7 +119,7 @@
                 android:paddingBottom="@dimen/padding_10"
                 android:text="@string/details"
                 android:textAllCaps="true"
-                android:textColor="@color/black"
+                android:textColor="@color/colorBlack"
                 android:textSize="@dimen/events_title_size"
                 android:textStyle="bold" />
         </LinearLayout>
@@ -170,7 +171,7 @@
                 <TextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="@dimen/pading_15"
+                    android:layout_marginTop="@dimen/padding_15"
                     android:fontFamily="@font/din_next_lt_pro_light"
                     android:text="@string/there_is_no_internet"
                     android:textAlignment="center"
@@ -195,12 +196,12 @@
                     android:background="@drawable/round_corner_black"
                     android:fontFamily="@font/din_next_lt_pro_bold"
                     android:gravity="center"
-                    android:paddingEnd="@dimen/pading_30"
-                    android:paddingStart="@dimen/pading_30"
+                    android:paddingEnd="@dimen/padding_30"
+                    android:paddingStart="@dimen/padding_30"
                     android:text="@string/try_again"
                     android:textAllCaps="false"
-                    android:textColor="@color/white"
-                    android:textSize="@dimen/settings_page_list_item_text_size" />
+                    android:textColor="@color/colorWhite"
+                    android:textSize="@dimen/font_size_21" />
 
             </LinearLayout>
 

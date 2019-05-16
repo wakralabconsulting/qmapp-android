@@ -1,12 +1,15 @@
 package com.qatarmuseums.qatarmuseumsapp.tourguide;
 
+import android.app.Activity;
 import android.content.Context;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
+import android.util.DisplayMetrics;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.qatarmuseums.qatarmuseumsapp.R;
@@ -38,6 +41,9 @@ public class TourGuideAdapter extends RecyclerView.Adapter<TourGuideAdapter.MyVi
     @Override
     public void onBindViewHolder(@NonNull MyViewHolder holder, int position) {
         HomeList tgList = tourGuideList.get(position);
+        ViewGroup.LayoutParams params = holder.itemContainer.getLayoutParams();
+        params.height = holder.height;
+        holder.itemContainer.setLayoutParams(params);
         holder.name.setText(tgList.getName());
         if (tgList.getTourGuideAvailable().equalsIgnoreCase("true")) {
             holder.headphoneIcon.setVisibility(View.VISIBLE);
@@ -55,7 +61,7 @@ public class TourGuideAdapter extends RecyclerView.Adapter<TourGuideAdapter.MyVi
             holder.headphoneIcon.setVisibility(View.VISIBLE);
             holder.headphoneIcon.setImageResource(R.drawable.audio_circle);
             if (tgList.getName().equals(mContext.getString(R.string.coming_soon_txt)))
-                holder.headphoneIcon.setColorFilter(mContext.getResources().getColor(R.color.semi_transparent_grey));
+                holder.headphoneIcon.setColorFilter(mContext.getResources().getColor(R.color.colorSemiTransparentGrey));
             GlideApp.with(mContext)
                     .load(tgList.getImage())
                     .placeholder(R.drawable.placeholder)
@@ -69,14 +75,20 @@ public class TourGuideAdapter extends RecyclerView.Adapter<TourGuideAdapter.MyVi
     }
 
     public class MyViewHolder extends RecyclerView.ViewHolder {
+        private final int height;
         public TextView name;
         ImageView imageView, headphoneIcon;
+        private final RelativeLayout itemContainer;
 
         public MyViewHolder(View view) {
             super(view);
+            itemContainer = view.findViewById(R.id.item_container);
             imageView = view.findViewById(R.id.image_view);
             name = view.findViewById(R.id.name_text);
             headphoneIcon = view.findViewById(R.id.headphone_icon);
+            DisplayMetrics displayMetrics = new DisplayMetrics();
+            ((Activity) mContext).getWindowManager().getDefaultDisplay().getMetrics(displayMetrics);
+            height = (int) (displayMetrics.heightPixels * 0.27);
         }
     }
 }

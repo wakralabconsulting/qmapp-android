@@ -24,9 +24,6 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         tools:replace="android:allowBackup">
-        <activity android:name=".facilities.FacilitiesSecondaryActivity"
-            android:screenOrientation="portrait"
-            android:theme="@style/AppTheme.NoActionBar"/>
         <activity
             android:name=".base.BaseActivity"
             android:label="@string/app_name"
@@ -38,7 +35,7 @@
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoTitle" />
         <activity
-            android:name=".commonpage.CommonActivity"
+            android:name=".commonlistpage.CommonListActivity"
             android:launchMode="singleTask"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar" />
@@ -62,11 +59,6 @@
             android:theme="@style/AppTheme.MyActivityTheme" />
         <activity
             android:name=".education.EducationActivity"
-            android:screenOrientation="portrait"
-            android:theme="@style/AppTheme.NoActionBar" />
-        <activity
-            android:name=".detailspage.DiningActivity"
-            android:label=""
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
@@ -154,16 +146,6 @@
             android:name="com.google.android.gms.vision.DEPENDENCIES"
             android:value="barcode" />
 
-        <provider
-            android:name="android.support.v4.content.FileProvider"
-            android:authorities="${applicationId}.provider"
-            android:exported="false"
-            android:grantUriPermissions="true">
-            <meta-data
-                android:name="android.support.FILE_PROVIDER_PATHS"
-                android:resource="@xml/provider_paths" />
-        </provider>
-
         <activity
             android:name=".objectpreview.ObjectPreviewActivity"
             android:screenOrientation="portrait"
@@ -189,7 +171,7 @@
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
-            android:name=".toursecondarylist.TourSecondaryListActivity"
+            android:name=".commonlistsecondary.SecondaryListActivity"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
@@ -197,6 +179,20 @@
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar" />
 
+        <provider
+            android:name="android.support.v4.content.FileProvider"
+            android:authorities="com.qatarmuseums.qatarmuseumsapp.fileprovider"
+            android:exported="false"
+            android:grantUriPermissions="true">
+            <meta-data
+                android:name="android.support.FILE_PROVIDER_PATHS"
+                android:resource="@xml/file_paths" />
+        </provider>
+
+        <!-- To disable automatic initialization of Crashlytics -->
+        <meta-data
+            android:name="firebase_crashlytics_collection_enabled"
+            android:value="false" />
     </application>
 
 </manifest>

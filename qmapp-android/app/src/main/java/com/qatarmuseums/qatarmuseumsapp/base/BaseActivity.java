@@ -25,16 +25,16 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.google.firebase.analytics.FirebaseAnalytics;
 import com.qatarmuseums.qatarmuseumsapp.LocaleManager;
 import com.qatarmuseums.qatarmuseumsapp.QMDatabase;
 import com.qatarmuseums.qatarmuseumsapp.R;
 import com.qatarmuseums.qatarmuseumsapp.calendar.CalendarActivity;
-import com.qatarmuseums.qatarmuseumsapp.commonpage.CommonActivity;
+import com.qatarmuseums.qatarmuseumsapp.commonlistpage.CommonListActivity;
 import com.qatarmuseums.qatarmuseumsapp.culturepass.CulturePassActivity;
 import com.qatarmuseums.qatarmuseumsapp.education.EducationActivity;
 import com.qatarmuseums.qatarmuseumsapp.notification.NotificationActivity;
-import com.qatarmuseums.qatarmuseumsapp.notification.NotificationTableArabic;
-import com.qatarmuseums.qatarmuseumsapp.notification.NotificationTableEnglish;
+import com.qatarmuseums.qatarmuseumsapp.notification.NotificationTable;
 import com.qatarmuseums.qatarmuseumsapp.park.ParkActivity;
 import com.qatarmuseums.qatarmuseumsapp.profile.ProfileActivity;
 import com.qatarmuseums.qatarmuseumsapp.settings.SettingsActivity;
@@ -46,6 +46,7 @@ import java.lang.ref.WeakReference;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import timber.log.Timber;
 
 public class BaseActivity extends AppCompatActivity
         implements View.OnClickListener {
@@ -143,8 +144,10 @@ public class BaseActivity extends AppCompatActivity
     private int badgeCount;
 
     private QMDatabase qmDatabase;
-    NotificationTableEnglish notificationTableEnglish;
-    NotificationTableArabic notificationTableArabic;
+    NotificationTable notificationTable;
+    private Bundle contentBundleParams;
+    private FirebaseAnalytics mFireBaseAnalytics;
+
 
     @Override
     protected void attachBaseContext(Context base) {
@@ -218,24 +221,25 @@ public class BaseActivity extends AppCompatActivity
         badgeCount = qmPreferences.getInt("BADGE_COUNT", 0);
         if (badgeCount > 0)
             setBadge(badgeCount);
+        contentBundleParams = new Bundle();
+        contentBundleParams.putString(FirebaseAnalytics.Param.CONTENT_TYPE, "SIDE MENU");
+        mFireBaseAnalytics = FirebaseAnalytics.getInstance(this);
+
     }
 
     public void insertNotificationRelatedDataToDataBase(String msg, String lan) {
-        new InsertDatabaseTask(BaseActivity.this, notificationTableEnglish,
-                notificationTableArabic, lan, msg).execute();
+        Timber.i("Inserting Notification message to Database");
+        new InsertDatabaseTask(BaseActivity.this, notificationTable, lan, msg).execute();
     }
 
     public static class InsertDatabaseTask extends AsyncTask<Void, Void, Boolean> {
         private WeakReference<BaseActivity> activityReference;
-        private NotificationTableEnglish notificationTableEnglish;
-        private NotificationTableArabic notificationTableArabic;
+        private NotificationTable notificationTable;
         String language, notificationMessage;
 
-        InsertDatabaseTask(BaseActivity context, NotificationTableEnglish notificationTableEnglish,
-                           NotificationTableArabic notificationTableArabic, String lan, String msg) {
+        InsertDatabaseTask(BaseActivity context, NotificationTable notificationTable, String lan, String msg) {
             activityReference = new WeakReference<>(context);
-            this.notificationTableEnglish = notificationTableEnglish;
-            this.notificationTableArabic = notificationTableArabic;
+            this.notificationTable = notificationTable;
             language = lan;
             this.notificationMessage = msg;
         }
@@ -243,14 +247,8 @@ public class BaseActivity extends AppCompatActivity
         @Override
         protected Boolean doInBackground(Void... voids) {
             if (notificationMessage != null) {
-                if (language.equals("en")) {
-                    notificationTableEnglish = new NotificationTableEnglish(notificationMessage);
-                    activityReference.get().qmDatabase.getNotificationDao().insertEnglishTable(notificationTableEnglish);
-                } else {
-                    notificationTableArabic = new NotificationTableArabic(notificationMessage);
-                    activityReference.get().qmDatabase.getNotificationDao().insertArabicTable(notificationTableArabic);
-
-                }
+                notificationTable = new NotificationTable(notificationMessage, language);
+                activityReference.get().qmDatabase.getNotificationDao().insertTable(notificationTable);
             }
             return true;
         }
@@ -264,13 +262,15 @@ public class BaseActivity extends AppCompatActivity
 
     public void updateBadge() {
         badgeCount = qmPreferences.getInt("BADGE_COUNT", 0);
-        if (badgeCount > 0)
+        if (badgeCount > 0) {
+            Timber.i("updateBadge()");
             setBadge(badgeCount);
-        else
+        } else
             badgeCountTextView.setVisibility(View.GONE);
     }
 
     public void setBadge(int badgeCount) {
+        Timber.i("Setting Badge Count: %d", badgeCount);
         if ((topBarNotification != null ? topBarNotification.getVisibility() : 0) == View.VISIBLE)
             badgeCountTextView.setVisibility(View.VISIBLE);
         if (badgeCount < 10)
@@ -309,10 +309,14 @@ public class BaseActivity extends AppCompatActivity
 
             case R.id.topbar_back:
                 // top bar back action
+                Timber.i("Top bar Back clicked");
                 onBackPressed();
                 break;
 
             case R.id.topbar_calendar:
+                Timber.i("Top bar Calendar clicked");
+                contentBundleParams.putString(FirebaseAnalytics.Param.ITEM_ID, "Calendar");
+                mFireBaseAnalytics.logEvent(FirebaseAnalytics.Event.SELECT_CONTENT, contentBundleParams);
                 topBarCalender.startAnimation(zoomOutAnimation);
                 Intent navigation_intent = new Intent(getApplicationContext(), CalendarActivity.class);
                 startActivity(navigation_intent);
@@ -320,6 +324,9 @@ public class BaseActivity extends AppCompatActivity
                 break;
 
             case R.id.topbar_notification:
+                Timber.i("Top bar Notification clicked");
+                contentBundleParams.putString(FirebaseAnalytics.Param.ITEM_ID, "Notification");
+                mFireBaseAnalytics.logEvent(FirebaseAnalytics.Event.SELECT_CONTENT, contentBundleParams);
                 topBarNotification.startAnimation(zoomOutAnimation);
                 navigation_intent = new Intent(this, NotificationActivity.class);
                 startActivity(navigation_intent);
@@ -330,6 +337,9 @@ public class BaseActivity extends AppCompatActivity
                 clearAnimations();
                 break;
             case R.id.topbar_profile:
+                Timber.i("Top bar Profile clicked");
+                contentBundleParams.putString(FirebaseAnalytics.Param.ITEM_ID, "Profile");
+                mFireBaseAnalytics.logEvent(FirebaseAnalytics.Event.SELECT_CONTENT, contentBundleParams);
                 topBarProfile.startAnimation(zoomOutAnimation);
                 name = qmPreferences.getString("NAME", null);
                 if (name == null)
@@ -343,18 +353,25 @@ public class BaseActivity extends AppCompatActivity
             case R.id.topbar_sidemenu:
                 // top bar side menu action
                 handlingDrawer();
+                Timber.i("Hamburger menu clicked");
                 break;
 
 
             case R.id.sidemenu_exibition_layout:
+                Timber.i("Side menu Exhibition clicked");
+                contentBundleParams.putString(FirebaseAnalytics.Param.ITEM_ID, "Exhibition");
+                mFireBaseAnalytics.logEvent(FirebaseAnalytics.Event.SELECT_CONTENT, contentBundleParams);
                 touchListenerForLayout(sideMenuExhibitionLayout);
-                navigation_intent = new Intent(this, CommonActivity.class);
-                navigation_intent.putExtra(getString(R.string.toolbar_title_key), getString(R.string.sidemenu_exhibition_text));
+                navigation_intent = new Intent(this, CommonListActivity.class);
+                navigation_intent.putExtra(getString(R.string.toolbar_title_key), getString(R.string.side_menu_exhibition_text));
                 startActivity(navigation_intent);
                 clearAnimations();
                 break;
 
             case R.id.sidemenu_event_layout:
+                Timber.i("Side menu Event clicked");
+                contentBundleParams.putString(FirebaseAnalytics.Param.ITEM_ID, "Event");
+                mFireBaseAnalytics.logEvent(FirebaseAnalytics.Event.SELECT_CONTENT, contentBundleParams);
                 touchListenerForLayout(sideMenuEventLayout);
                 navigation_intent = new Intent(getApplicationContext(), CalendarActivity.class);
                 startActivity(navigation_intent);
@@ -362,6 +379,9 @@ public class BaseActivity extends AppCompatActivity
                 break;
 
             case R.id.sidemenu_education_layout:
+                Timber.i("Side menu Education clicked");
+                contentBundleParams.putString(FirebaseAnalytics.Param.ITEM_ID, "Education");
+                mFireBaseAnalytics.logEvent(FirebaseAnalytics.Event.SELECT_CONTENT, contentBundleParams);
                 touchListenerForLayout(sideMenuEducationLayout);
                 navigation_intent = new Intent(this, EducationActivity.class);
                 startActivity(navigation_intent);
@@ -370,36 +390,51 @@ public class BaseActivity extends AppCompatActivity
 
             case R.id.sidemenu_tour_guide_layout:
                 // navigation drawer tour guide action
+                Timber.i("Side menu Tour guide clicked");
+                contentBundleParams.putString(FirebaseAnalytics.Param.ITEM_ID, "Tour guide");
+                mFireBaseAnalytics.logEvent(FirebaseAnalytics.Event.SELECT_CONTENT, contentBundleParams);
                 touchListenerForLayout(sideMenuTourGuideLayout);
                 navigation_intent = new Intent(this, TourGuideActivity.class);
                 startActivity(navigation_intent);
                 clearAnimations();
                 break;
             case R.id.sidemenu_heritage_layout:
+                Timber.i("Side menu Heritage clicked");
+                contentBundleParams.putString(FirebaseAnalytics.Param.ITEM_ID, "Heritage");
+                mFireBaseAnalytics.logEvent(FirebaseAnalytics.Event.SELECT_CONTENT, contentBundleParams);
                 touchListenerForLayout(sideMenuHeritageLayout);
-                navigation_intent = new Intent(this, CommonActivity.class);
-                navigation_intent.putExtra(getString(R.string.toolbar_title_key), getString(R.string.sidemenu_heritage_text));
+                navigation_intent = new Intent(this, CommonListActivity.class);
+                navigation_intent.putExtra(getString(R.string.toolbar_title_key), getString(R.string.side_menu_heritage_text));
                 startActivity(navigation_intent);
                 clearAnimations();
                 break;
 
             case R.id.sidemenu_public_arts_layout:
+                Timber.i("Side menu Public arts clicked");
+                contentBundleParams.putString(FirebaseAnalytics.Param.ITEM_ID, "Public arts");
+                mFireBaseAnalytics.logEvent(FirebaseAnalytics.Event.SELECT_CONTENT, contentBundleParams);
                 touchListenerForLayout(sideMenuPublicArtsLayout);
-                navigation_intent = new Intent(this, CommonActivity.class);
-                navigation_intent.putExtra(getString(R.string.toolbar_title_key), getString(R.string.sidemenu_public_arts_text));
+                navigation_intent = new Intent(this, CommonListActivity.class);
+                navigation_intent.putExtra(getString(R.string.toolbar_title_key), getString(R.string.side_menu_public_arts_text));
                 startActivity(navigation_intent);
                 clearAnimations();
                 break;
 
             case R.id.sidemenu_dining_layout:
+                Timber.i("Side menu Dining clicked");
+                contentBundleParams.putString(FirebaseAnalytics.Param.ITEM_ID, "Dining");
+                mFireBaseAnalytics.logEvent(FirebaseAnalytics.Event.SELECT_CONTENT, contentBundleParams);
                 touchListenerForLayout(sideMenuDiningLayout);
-                navigation_intent = new Intent(this, CommonActivity.class);
-                navigation_intent.putExtra(getString(R.string.toolbar_title_key), getString(R.string.sidemenu_dining_text));
+                navigation_intent = new Intent(this, CommonListActivity.class);
+                navigation_intent.putExtra(getString(R.string.toolbar_title_key), getString(R.string.side_menu_dining_text));
                 startActivity(navigation_intent);
                 clearAnimations();
                 break;
 
             case R.id.sidemenu_gift_shop_layout:
+                Timber.i("Side menu Gift shop clicked");
+                contentBundleParams.putString(FirebaseAnalytics.Param.ITEM_ID, "Gift shop");
+                mFireBaseAnalytics.logEvent(FirebaseAnalytics.Event.SELECT_CONTENT, contentBundleParams);
                 touchListenerForLayout(sideMenuGiftShopLayout);
                 sideMenuGiftShopLayout.startAnimation(zoomOutAnimation);
                 navigation_intent = new Intent(BaseActivity.this, WebViewActivity.class);
@@ -408,6 +443,9 @@ public class BaseActivity extends AppCompatActivity
                 clearAnimations();
                 break;
             case R.id.sidemenu_park_layout:
+                Timber.i("Side menu Park clicked");
+                contentBundleParams.putString(FirebaseAnalytics.Param.ITEM_ID, "Park");
+                mFireBaseAnalytics.logEvent(FirebaseAnalytics.Event.SELECT_CONTENT, contentBundleParams);
                 touchListenerForLayout(sideMenuParkLayout);
                 navigation_intent = new Intent(BaseActivity.this, ParkActivity.class);
                 startActivity(navigation_intent);
@@ -419,6 +457,7 @@ public class BaseActivity extends AppCompatActivity
                 Intent settingsIntent = new Intent(this, SettingsActivity.class);
                 startActivity(settingsIntent);
                 clearAnimations();
+                Timber.i("Settings clicked");
                 break;
 
             default:

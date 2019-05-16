@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/background_color"
+    android:background="@color/colorPageBackground"
     app:layout_behavior="@string/appbar_scrolling_view_behavior"
     tools:context="com.qatarmuseums.qatarmuseumsapp.home.HomeActivity"
     tools:showIn="@layout/activity_home">
@@ -37,7 +37,7 @@
                     android:layout_height="wrap_content"
                     android:contentDescription="@string/app_name"
                     android:src="@drawable/placeholder_header"
-                    android:tint="@color/semitransparent"
+                    android:tint="@color/colorSemiTransparent"
                     app:layout_collapseMode="parallax" />
 
                 <TextView
@@ -49,7 +49,7 @@
                     android:gravity="center"
                     android:paddingEnd="@dimen/padding_10"
                     android:paddingStart="@dimen/padding_10"
-                    android:textColor="@color/white"
+                    android:textColor="@color/colorWhite"
                     android:textSize="@dimen/font_size_30" />
             </android.support.design.widget.CollapsingToolbarLayout>
         </android.support.design.widget.AppBarLayout>
@@ -60,7 +60,7 @@
             android:layout_height="match_parent"
             android:layout_below="@id/banner"
             android:layout_marginBottom="?android:attr/actionBarSize"
-            android:background="@color/recycler_background"
+            android:background="@color/colorRecyclerBackground"
             android:nestedScrollingEnabled="false"
             android:scrollbars="vertical"
             android:visibility="visible" />

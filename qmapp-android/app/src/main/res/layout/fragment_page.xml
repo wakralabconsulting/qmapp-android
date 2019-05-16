@@ -23,7 +23,7 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/font_size_16"
             android:fontFamily="@font/din_next_lt_pro_regular"
-            android:textColor="@color/black"
+            android:textColor="@color/colorBlack"
             android:textSize="@dimen/font_size_18" />
 
         <LinearLayout
@@ -31,7 +31,7 @@
             android:layout_height="3dp"
             android:layout_marginBottom="@dimen/padding_10"
             android:layout_marginTop="@dimen/padding_10"
-            android:background="@color/black" />
+            android:background="@color/colorBlack" />
 
         <ScrollView
             android:id="@+id/details_popup_long"
@@ -63,9 +63,9 @@
                     android:layoutDirection="ltr"
                     android:orientation="horizontal"
                     android:paddingBottom="@dimen/padding_5"
-                    android:paddingEnd="@dimen/pading_25"
-                    android:paddingStart="@dimen/pading_25"
-                    android:paddingTop="@dimen/pading_10"
+                    android:paddingEnd="@dimen/padding_25"
+                    android:paddingStart="@dimen/padding_25"
+                    android:paddingTop="@dimen/padding_10"
                     android:visibility="gone">
 
                     <ImageView
@@ -92,7 +92,7 @@
                     android:paddingEnd="@dimen/padding_25"
                     android:paddingStart="@dimen/padding_25"
                     android:textAlignment="textStart"
-                    android:textColor="@color/black"
+                    android:textColor="@color/colorBlack"
                     android:textSize="@dimen/font_size_18"
                     android:textStyle="bold" />
 
@@ -105,7 +105,7 @@
                     android:fontFamily="@font/din_next_lt_pro_regular"
                     android:paddingEnd="@dimen/padding_25"
                     android:paddingStart="@dimen/padding_25"
-                    android:textColor="@color/black"
+                    android:textColor="@color/colorBlack"
                     android:textSize="@dimen/font_size_18" />
 
                 <TextView
@@ -118,7 +118,7 @@
                     android:paddingEnd="@dimen/padding_25"
                     android:paddingStart="@dimen/padding_25"
                     android:textAlignment="textStart"
-                    android:textColor="@color/black"
+                    android:textColor="@color/colorBlack"
                     android:textSize="@dimen/font_size_15" />
 
                 <ImageView
@@ -163,7 +163,7 @@
                     android:paddingStart="@dimen/padding_25"
                     android:text="@string/floormap_imagdesc1"
                     android:textAlignment="textStart"
-                    android:textColor="@color/black"
+                    android:textColor="@color/colorBlack"
                     android:textSize="@dimen/font_size_16"
                     android:visibility="gone" />
 
@@ -177,7 +177,7 @@
                     android:paddingStart="@dimen/padding_25"
                     android:text="@string/object_history"
                     android:textAlignment="textStart"
-                    android:textColor="@color/black"
+                    android:textColor="@color/colorBlack"
                     android:textSize="@dimen/font_size_18"
                     android:textStyle="bold"
                     android:visibility="gone" />
@@ -192,7 +192,7 @@
                     android:paddingStart="@dimen/padding_25"
                     android:text="@string/floormap_detail2"
                     android:textAlignment="textStart"
-                    android:textColor="@color/black"
+                    android:textColor="@color/colorBlack"
                     android:textSize="@dimen/font_size_15"
                     android:visibility="gone" />
 
@@ -203,7 +203,7 @@
                     android:layout_marginBottom="@dimen/padding_3"
                     android:paddingEnd="@dimen/padding_25"
                     android:paddingStart="@dimen/padding_25"
-                    android:paddingTop="@dimen/pading_10"
+                    android:paddingTop="@dimen/padding_10"
                     android:scaleType="fitCenter"
                     android:src="@drawable/science_tour_object2"
                     android:visibility="gone" />
@@ -218,7 +218,7 @@
                     android:paddingStart="@dimen/padding_25"
                     android:text="@string/floormap_imagdesc2"
                     android:textAlignment="textStart"
-                    android:textColor="@color/black"
+                    android:textColor="@color/colorBlack"
                     android:textSize="@dimen/font_size_16"
                     android:visibility="gone" />
 
