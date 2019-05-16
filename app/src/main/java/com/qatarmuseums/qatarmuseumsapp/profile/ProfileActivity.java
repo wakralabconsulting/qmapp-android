@@ -19,6 +19,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.bumptech.glide.request.RequestOptions;
+import com.google.firebase.analytics.FirebaseAnalytics;
 import com.qatarmuseums.qatarmuseumsapp.LocaleManager;
 import com.qatarmuseums.qatarmuseumsapp.QMDatabase;
 import com.qatarmuseums.qatarmuseumsapp.R;
@@ -49,6 +50,7 @@ import retrofit2.Callback;
 import retrofit2.Response;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
+import timber.log.Timber;
 
 public class ProfileActivity extends AppCompatActivity implements View.OnClickListener {
 
@@ -72,6 +74,7 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
     private String uid;
     private List<Und> unds = new ArrayList<>();
     private QMDatabase qmDatabase;
+    private FirebaseAnalytics mFirebaseAnalytics;
 
     @Override
     protected void attachBaseContext(Context base) {
@@ -98,11 +101,13 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
         progressBar = findViewById(R.id.logout_progress);
         acceptDeclineButton = findViewById(R.id.accept_decline_button);
         util = new Util();
+        mFirebaseAnalytics = FirebaseAnalytics.getInstance(this);
         zoomOutAnimation = AnimationUtils.loadAnimation(getApplicationContext(),
                 R.anim.zoom_out);
         iconZoomOutAnimation = AnimationUtils.loadAnimation(getApplicationContext(),
                 R.anim.zoom_out_more);
         backArrow.setOnClickListener(v -> {
+            Timber.i("Back button clicked");
             setResultOkSoIntermediateActivityWontBeShown();
             onBackPressed();
         });
@@ -114,7 +119,10 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
             }
             return false;
         });
-        logOut.setOnClickListener(v -> logOutAction());
+        logOut.setOnClickListener(v -> {
+            Timber.i("Logout button clicked");
+            logOutAction();
+        });
         logOut.setOnTouchListener((v, event) -> {
             switch (event.getAction()) {
                 case MotionEvent.ACTION_DOWN:
@@ -173,6 +181,7 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
         }
         myCardBtn.setOnClickListener(this);
         myCardBtn.setOnTouchListener((v, event) -> {
+            Timber.i("My Card button clicked");
             switch (event.getAction()) {
                 case MotionEvent.ACTION_DOWN:
                     myCardBtn.startAnimation(zoomOutAnimation);
@@ -193,6 +202,7 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
     }
 
     public void logOutAction() {
+        Timber.i("logOutAction()");
         progressBar.setVisibility(View.VISIBLE);
         token = qmPreferences.getString("TOKEN", null);
         HttpLoggingInterceptor interceptor = new HttpLoggingInterceptor();
@@ -218,8 +228,10 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
             @Override
             public void onResponse(Call<UserData> call, Response<UserData> response) {
                 if (response.isSuccessful()) {
+                    Timber.i("logOutAction() - isSuccessful");
                     clearPreference();
                 } else {
+                    Timber.w("Response not successful %s", getResources().getString(R.string.error_logout));
                     util.showToast(getResources().getString(R.string.error_logout),
                             ProfileActivity.this);
                 }
@@ -228,6 +240,7 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
 
             @Override
             public void onFailure(Call<UserData> call, Throwable t) {
+                Timber.e("getParkDetailsFromAPI() - onFailure: %s", t.getMessage());
                 if (t.getMessage().contains("timeout"))
                     util.showToast(t.getMessage(), ProfileActivity.this);
                 else
@@ -238,6 +251,7 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
     }
 
     public void clearPreference() {
+        Timber.e("clearPreference()");
         new DeleteBannerTableEnglish(ProfileActivity.this).execute();
         new DeleteRegistratioTable(ProfileActivity.this).execute();
         qmPreferences = PreferenceManager.getDefaultSharedPreferences(this);
@@ -270,6 +284,7 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
 
         @Override
         protected Void doInBackground(Void... voids) {
+            Timber.i("nukeRegistrationTable()");
             activityReference.get().qmDatabase.getUserRegistrationTaleDao().nukeRegistrationTable();
             return null;
         }
@@ -284,33 +299,16 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
 
         @Override
         protected Void doInBackground(Void... voids) {
-            activityReference.get().qmDatabase.getHomePageBannerTableDao().nukeBannerTableEnglish();
+            Timber.i("nukeBannerTable()");
+            activityReference.get().qmDatabase.getHomePageBannerTableDao().nukeBannerTable();
             return null;
-        }
-
-        @Override
-        protected void onPostExecute(Void aVoid) {
-            new DeleteBannerTableArabic(activityReference.get()).execute();
         }
     }
 
-    public static class DeleteBannerTableArabic extends AsyncTask<Void, Void, Void> {
-        private WeakReference<ProfileActivity> activityReference;
-
-        DeleteBannerTableArabic(ProfileActivity context) {
-            activityReference = new WeakReference<>(context);
-        }
-
-        @Override
-        protected Void doInBackground(Void... voids) {
-            activityReference.get().qmDatabase.getHomePageBannerTableDao().nukeBannerTableArabic();
-            return null;
-        }
-
-    }
 
     @Override
     public void onBackPressed() {
+        Timber.i("onBackPressed()");
         setResultOkSoIntermediateActivityWontBeShown();
         super.onBackPressed();
     }
@@ -328,14 +326,17 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
     public void onClick(View view) {
         switch (view.getId()) {
             case R.id.view_my_card_btn:
+                Timber.i("View my card button clicked");
                 CulturePassCardActivity.Companion.newIntent(this, membershipNumber, username, language);
                 break;
         }
     }
 
     public String loadJSONFromAsset(String language) {
+        Timber.i("loadJSONFromAsset()");
         String json = null;
         try {
+            Timber.i("onBackPressed()");
             InputStream is = this.getAssets().open("countries_" + language + ".json");
             int size = is.available();
             byte[] buffer = new byte[size];
@@ -347,5 +348,11 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
             return null;
         }
         return json;
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        mFirebaseAnalytics.setCurrentScreen(this, getString(R.string.profile_page), null);
     }
 }

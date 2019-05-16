@@ -15,6 +15,7 @@ import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.TextView;
 
+import com.google.firebase.analytics.FirebaseAnalytics;
 import com.qatarmuseums.qatarmuseumsapp.LocaleManager;
 import com.qatarmuseums.qatarmuseumsapp.QMDatabase;
 import com.qatarmuseums.qatarmuseumsapp.R;
@@ -23,6 +24,8 @@ import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+
+import timber.log.Timber;
 
 public class NotificationActivity extends AppCompatActivity {
 
@@ -34,6 +37,7 @@ public class NotificationActivity extends AppCompatActivity {
     private TextView emptyText;
     private QMDatabase qmDatabase;
     private String appLanguage;
+    private FirebaseAnalytics mFireBaseAnalytics;
 
     @Override
     protected void attachBaseContext(Context base) {
@@ -47,14 +51,19 @@ public class NotificationActivity extends AppCompatActivity {
         Toolbar toolbar = findViewById(R.id.notification_toolbar);
         setSupportActionBar(toolbar);
         backArrow = findViewById(R.id.toolbar_back);
+
         recyclerView = findViewById(R.id.notification_recycler_view);
         emptyText = findViewById(R.id.no_new_notification_txt);
+        mFireBaseAnalytics = FirebaseAnalytics.getInstance(this);
         mAdapter = new NotificationListAdapter(this, models);
         RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(getApplicationContext());
         recyclerView.setLayoutManager(mLayoutManager);
         recyclerView.setItemAnimator(new DefaultItemAnimator());
         recyclerView.setAdapter(mAdapter);
-        backArrow.setOnClickListener(v -> onBackPressed());
+        backArrow.setOnClickListener(v -> {
+            Timber.i("Back arrow clicked");
+            onBackPressed();
+        });
         zoomOutAnimation = AnimationUtils.loadAnimation(getApplicationContext(),
                 R.anim.zoom_out_more);
         backArrow.setOnTouchListener((v, event) -> {
@@ -69,40 +78,41 @@ public class NotificationActivity extends AppCompatActivity {
         appLanguage = LocaleManager.getLanguage(this);
 
         NotificationViewModel notificationViewModel = ViewModelProviders.of(this).get(NotificationViewModel.class);
-        if (appLanguage.equals(LocaleManager.LANGUAGE_ENGLISH))
-            notificationViewModel.getAllPostsEnglish().observe(this, models -> mAdapter.setData(models));
-        else
-            notificationViewModel.getAllPostsArabic().observe(this, models -> mAdapter.setData(models));
+        notificationViewModel.getAllPosts(appLanguage).observe(this, models -> mAdapter.setData(models));
         getDataFromDataBase();
 
     }
 
     public void getDataFromDataBase() {
-        if (appLanguage.equals(LocaleManager.LANGUAGE_ENGLISH))
-            new RetrieveEnglishTableData(NotificationActivity.this).execute();
-        else
-            new RetrieveArabicTableData(NotificationActivity.this).execute();
+        Timber.i("getDataFromDataBase(language :%s)", appLanguage);
+        new RetrieveTableData(NotificationActivity.this).execute();
     }
 
-    public static class RetrieveEnglishTableData extends AsyncTask<Void, Void, List<NotificationTableEnglish>> {
+    public static class RetrieveTableData extends AsyncTask<Void, Void, List<NotificationTable>> {
         private WeakReference<NotificationActivity> activityReference;
 
-        RetrieveEnglishTableData(NotificationActivity context) {
+        RetrieveTableData(NotificationActivity context) {
             activityReference = new WeakReference<>(context);
         }
 
         @Override
-        protected List<NotificationTableEnglish> doInBackground(Void... voids) {
-            return activityReference.get().qmDatabase.getNotificationDao().getAllDataFromEnglishTable();
+        protected List<NotificationTable> doInBackground(Void... voids) {
+            Timber.i("getAllDataFromTable(language :%s)", activityReference.get().appLanguage);
+            return activityReference.get().qmDatabase.getNotificationDao()
+                    .getAllDataFromTable(activityReference.get().appLanguage);
 
         }
 
         @Override
-        protected void onPostExecute(List<NotificationTableEnglish> notificationTableEnglishes) {
-            if (notificationTableEnglishes.size() > 0) {
+        protected void onPostExecute(List<NotificationTable> notificationTables) {
+            if (notificationTables.size() > 0) {
+                Timber.i("Set list from database with size: %d",
+                        notificationTables.size());
                 activityReference.get().models.clear();
-                for (int i = 0; i < notificationTableEnglishes.size(); i++) {
-                    NotificationModel notificationModel = new NotificationModel(notificationTableEnglishes.get(i).getTitle());
+                for (int i = 0; i < notificationTables.size(); i++) {
+                    Timber.i("Setting list from database for title: %s",
+                            notificationTables.get(i).getTitle());
+                    NotificationModel notificationModel = new NotificationModel(notificationTables.get(i).getTitle());
                     activityReference.get().models.add(i, notificationModel);
                 }
 
@@ -110,45 +120,16 @@ public class NotificationActivity extends AppCompatActivity {
                 activityReference.get().mAdapter.notifyDataSetChanged();
                 activityReference.get().recyclerView.setVisibility(View.VISIBLE);
             } else {
+                Timber.i("Have no data in database");
                 activityReference.get().emptyText.setVisibility(View.VISIBLE);
                 activityReference.get().recyclerView.setVisibility(View.GONE);
             }
         }
     }
 
-    public static class RetrieveArabicTableData extends AsyncTask<Void, Void,
-            List<NotificationTableArabic>> {
-        private WeakReference<NotificationActivity> activityReference;
-
-        RetrieveArabicTableData(NotificationActivity context) {
-            activityReference = new WeakReference<>(context);
-        }
-
-
-        @Override
-        protected List<NotificationTableArabic> doInBackground(Void... voids) {
-            return activityReference.get().qmDatabase.getNotificationDao().getAllDataFromArabicTable();
-
-        }
-
-        @Override
-        protected void onPostExecute(List<NotificationTableArabic> notificationTableArabics) {
-            if (notificationTableArabics.size() > 0) {
-                activityReference.get().models.clear();
-                for (int i = 0; i < notificationTableArabics.size(); i++) {
-                    NotificationModel notificationModel = new NotificationModel(notificationTableArabics.get(i).getTitle());
-                    activityReference.get().models.add(i, notificationModel);
-                }
-
-                Collections.reverse(activityReference.get().models);
-                activityReference.get().mAdapter.notifyDataSetChanged();
-                activityReference.get().recyclerView.setVisibility(View.VISIBLE);
-            } else {
-                activityReference.get().emptyText.setVisibility(View.VISIBLE);
-                activityReference.get().recyclerView.setVisibility(View.GONE);
-            }
-        }
-
+    @Override
+    protected void onResume() {
+        super.onResume();
+        mFireBaseAnalytics.setCurrentScreen(this, getString(R.string.notification_page), null);
     }
-
 }

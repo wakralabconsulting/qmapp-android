@@ -1,5 +1,5 @@
-<resources>
-    <string name="app_name">Culture Pass</string>
+<resources xmlns:tools="http://schemas.android.com/tools">
+    <string name="app_name" tools:ignore="PrivateResource">Culture Pass</string>
     <string name="web_view_title">Qatar Museums</string>
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>
@@ -15,22 +15,22 @@
     <string name="title_gift_shop">Gift Shop</string>
     <string name="title_culture_pass">Culture Pass</string>
     <string name="title_more">More</string>
-    <string name="sidemenu_exhibition_text">Exhibitions</string>
-    <string name="sidemenu_events_text">Events</string>
-    <string name="sidemenu_education_text">Education</string>
-    <string name="sidemenu_tour_guide_text">Tour Guide</string>
-    <string name="sidemenu_heritage_text">Heritage Sites</string>
-    <string name="sidemenu_public_arts_text">Public Arts</string>
-    <string name="sidemenu_dining_text">Dining</string>
-    <string name="sidemenu_gift_shop_text">Gift Shop</string>
-    <string name="sidemenu_parks_text">Parks</string>
+    <string name="side_menu_exhibition_text">Exhibitions</string>
+    <string name="side_menu_events_text">Events</string>
+    <string name="side_menu_education_text">Education</string>
+    <string name="side_menu_tour_guide_text">Tour Guide</string>
+    <string name="side_menu_heritage_text">Heritage Sites</string>
+    <string name="side_menu_public_arts_text">Public Arts</string>
+    <string name="side_menu_dining_text">Dining</string>
+    <string name="side_menu_gift_shop_text">Gift Shop</string>
+    <string name="side_menu_parks_text">Parks</string>
     <string name="toolbar_title_key">TOOLBAR_TITLE</string>
     <string name="notifications">Notifications</string>
     <string name="location_title">LOCATION</string>
     <string name="contact_title">CONTACT</string>
     <string name="settings_activity_tittle">SETTINGS</string>
     <string name="calendar_activity_tittle">CALENDAR</string>
-    <string name="education_calendar_activity_tittle">EDUCATION CALENDAR</string>التقويم التعليمي
+    <string name="education_calendar_activity_tittle">EDUCATION CALENDAR</string>
     <string name="select_language_text">Select App Language</string>
     <string name="english">English</string>
     <string name="arabic">عربى</string>
@@ -40,7 +40,7 @@
     <string name="add_to_calendar">Add To Calendar</string>
     <string name="register_now">Register Now</string>
     <string name="change_language_dialog_title">Change Language?</string>
-    <string name="change_language_button_text">Continue</string>
+    <string name="continue_button_text">Continue</string>
     <string name="museum_about_text">About</string>
     <string name="museum_collection_text">Collections</string>
     <string name="change_language_content_text">You will be redirected to home page, after changing the language. Do you want to continue?</string>
@@ -76,7 +76,6 @@
     <string name="no_results_text">No results found</string>
     <string name="explore">Explore</string>
     <string name="level">Level</string>
-    <string name="alberallo">Alberallo</string>
 
     <string name="check_network">Check your internet connection</string>
     <string name="culture_pass_description">Qatar Museums Culture Pass gives you discounts, free access and exclusive opportunities across many cultural venues in Qatar and discounts at a wide range of ever expanding list of partners. Best of all, as a member you’re invited to join us in a wide range of exciting creative activities. \n\nGet access by activating your membership today.</string>
@@ -104,6 +103,7 @@
     <string name="tourguide_sidemenu_title_desc">Immerse yourself into the object details curated specially for you by our experts.</string>
     <string name="tourguide_subtitle_desc">You may also try our self guided tours. \n Immerse yourself into the journeys \ncurated specially for you by our \nexperts.</string>
     <string name="mia_tour_guide">MIA TOUR GUIDE</string>
+    <string name="nmoq_tour_guide">NMoQ TOUR GUIDE</string>
     <string name="floormap_detail1">This example is a rare example of the Mamluk production of albarelli in Damascus, primarily produced for the European market. The albarello (pl. albarelli) was used as a medicinal jar for holding apothecary ointments and dried herbal drugs. Its elongated shape helps us to recognize the nature and function of this typical object. The Italain word albarello has a quite controversial etymology: sometimes said to be derivng from the Latin albaris, meaning \"in wood\" or \"white\", sometimes from the Arabic al-barmil, which designates a barrel. Albarelli have been produced in the Middle East and Central Asia since the 11th-century and later on in 15th-century Spain and Italy, although they are believed to have been first produced in Syria before making their way to Europe through Spain and Italy. Indeed, many European paintings and archives in France, Italy and Spain refer to vessels produced or imported from Syria.</string>
     <string name="floormap_imagdesc1">Saint Jerome in His Study \nDomenico Ghirlandaio (1449 en dash1494) \nChurch of Ognissanti, Florence, 1480</string>
     <string name="floormap_detail2">According to the Medici Archival records in Florence, this vas is possibly one of the three \'alberegli domaschini\' owned by Piero di Cosimo de Medici (1416-59), the de-facto ruler of Florence from 1464-69."
@@ -116,17 +116,17 @@
     <string name="mia_education">MIA Education</string>
     <string name="mathaf">Mathaf Education</string>
     <string name="national">National Museum</string>
-    <string name="qosm">3-2-1 QOSM Education</string>
+    <string name="qosm">3–2–1 QOSM Education</string>
     <string name="family">Family &amp; School Programmes Calendar</string>
 
     <string name="all_ages">All Ages</string>
     <string name="teachers">Teachers</string>
-    <string name="nursery">Nursery/Pre-KG(3-5 Years)</string>
-    <string name="early">Early Primary(5-7 Years)</string>
-    <string name="primary">Primary(8-11 Years)</string>
-    <string name="preparatory">Preparatory(12-14 Years)</string>
-    <string name="secondary">Secondary(15-18 Years)</string>
-    <string name="college">College &amp; University(17-24 Years)</string>
+    <string name="nursery">Nursery/Pre–KG(3–5 Years)</string>
+    <string name="early">Early Primary(5–7 Years)</string>
+    <string name="primary">Primary(8–11 Years)</string>
+    <string name="preparatory">Preparatory(12–14 Years)</string>
+    <string name="secondary">Secondary(15–18 Years)</string>
+    <string name="college">College &amp; University(17&#8211;24 Years)</string>
     <string name="youth">Youth</string>
     <string name="adults">Adults</string>
     <string name="seniors">Seniors</string>
@@ -147,7 +147,7 @@
     <string name="object_history">Object History</string>
     <string name="no_location_data">No Location Data</string>
     <string name="increase_volume">Please Increase Volume</string>
-    <string name="loading">Loading...</string>
+    <string name="loading">Loading…</string>
     <string name="oops">Oops!</string>
     <string name="there_is_no_internet">There is no Internet connection</string>
     <string name="please_check_your_internet">Please check your Internet connection</string>
@@ -202,6 +202,7 @@
     <string name="museum_discussion">Activities</string>
     <string name="event_date">Event Date</string>
     <string name="download_brochure_for_more_information"><u>Download Brochure for More Information</u></string>
+    <string name="seporater"> - </string>
     <string name="interested">Book Tour</string>
     <string name="not_interested">Cancel Booking</string>
     <string name="date">Date</string>
@@ -212,6 +213,40 @@ Any questions, please contact booking@qm.org.qa or +974 4452 5555"</string>
     <string name="mia_floors">MIA Floors</string>
     <string name="warning_no_end_time">NO END TIME AVAILABLE</string>
     <string name="warning_no_seat_available">Fully booked</string>
+    <string name="seat_available">&#160;space available</string>
+    <string name="seats_available">&#160;spaces available</string>
+    <string name="culture_pass_card_page">CulturePassCardActivity</string>
+    <string name="page">Page</string>
+    <string name="details_page">DetailsPage</string>
+    <string name="nmoq">NMoQ</string>
+    <string name="calendar_events_page">EventPage</string>
+    <string name="create_account_page">CreateAccountPage</string>
+    <string name="culture_pass_page">CulturePassPage</string>
+    <string name="dining_details_page">DiningDetailsPage</string>
+    <string name="education_page">EducationPage</string>
+    <string name="education_calander_page">EducationCalendarPage</string>
+    <string name="education_filter_page">EducationFilterPage</string>
+    <string name="barcode_page">BarcodeScannerPage</string>
+    <string name="floor_map_page">FloorMapPage</string>
+    <string name="object_search_page">ObjectSearchPage</string>
+    <string name="home_page">HomePage</string>
+    <string name="nmoq_landing_page">NMoQLandingPage</string>
+    <string name="landing_page">LandingPage</string>
+    <string name="notification_page">NotificationPage</string>
+    <string name="object_preview_page">ObjectPreviewPage</string>
+    <string name="object_preview_details_page">ObjectPreviewDetailsPage</string>
+    <string name="park_page">ParkPage</string>
+    <string name="profile_page">ProfilePage</string>
+    <string name="settings_page">SettingsPage</string>
+    <string name="welcome_page">WelcomePage</string>
+    <string name="tour_guide_page">TourGuidePage</string>
+    <string name="tour_guide_details_page">TourGuideDetailsPage</string>
+    <string name="self_guided_starter_page">SelfGuidedStarterPage</string>
+    <string name="tour_guided_starter_page">TourGuidedStarterPage</string>
+    <string name="tour_secondary_page">TourSecondaryPage</string>
+    <string name="activities_secondary_page">ActivitiesSecondaryPage</string>
+    <string name="webview_page">WebViewPage</string>
+    <string name="collection_details_page">CollectionDetailsPage</string>
     <string name="warning_selection_not_available">Sorry, no seats available for the specific tour.</string>
     <string name="you_have_registered">You have booked&#160;</string>
     <string name="seat_for_this_tour">&#160;space</string>
@@ -224,7 +259,11 @@ Any questions, please contact booking@qm.org.qa or +974 4452 5555"</string>
     <string name="facilities_txt">Facilities</string>
     <string name="experience_txt">Experience</string>
     <string name="facility_sublist">Facility Sublist</string>
-    <string name="playground">playground</string>
+    <!-- Strings related to Send logs Landing -->
+    <string name="send_logs">Send Logs</string>
+    <string name="send_email_dialog_title">Send Email Confirmation</string>
+    <string name="send_email_dialog_message">Would you like send email</string>
+    <string name="send_email_success">Email Sent</string>
+    <string name="send_email_cancelled">Email Cancelled</string>
 
-    facility_sublist
 </resources>

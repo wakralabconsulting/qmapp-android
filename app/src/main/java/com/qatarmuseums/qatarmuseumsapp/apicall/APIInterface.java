@@ -1,13 +1,12 @@
 package com.qatarmuseums.qatarmuseumsapp.apicall;
 
 
-import com.qatarmuseums.qatarmuseumsapp.calendar.CalendarEvents;
-import com.qatarmuseums.qatarmuseumsapp.commonpage.CommonModel;
+import com.qatarmuseums.qatarmuseumsapp.commonlistpage.CommonListModel;
 import com.qatarmuseums.qatarmuseumsapp.culturepass.LoginData;
 import com.qatarmuseums.qatarmuseumsapp.culturepass.TokenForPushNotification;
 import com.qatarmuseums.qatarmuseumsapp.detailspage.RegistrationDetailsModel;
 import com.qatarmuseums.qatarmuseumsapp.dining.DiningDetailModel;
-import com.qatarmuseums.qatarmuseumsapp.education.EducationEvents;
+import com.qatarmuseums.qatarmuseumsapp.education.Events;
 import com.qatarmuseums.qatarmuseumsapp.facilities.FacilitiesDetailModel;
 import com.qatarmuseums.qatarmuseumsapp.floormap.ArtifactDetails;
 import com.qatarmuseums.qatarmuseumsapp.heritage.HeritageOrExhibitionDetailModel;
@@ -39,16 +38,16 @@ import retrofit2.http.Query;
 
 public interface APIInterface {
     @GET("{language}/mobile_api/gethomeList.json")
-    Call<ArrayList<HomeList>> getHomepageDetails(@Path("language") String language);
+    Call<ArrayList<HomeList>> getMuseumsList(@Path("language") String language);
 
     @GET("{language}/mobile_api/{pageName}")
-    Call<ArrayList<CommonModel>> getCommonPageList(@Path("language") String language,
-                                                   @Path("pageName") String pageName);
+    Call<ArrayList<CommonListModel>> getCommonPageList(@Path("language") String language,
+                                                       @Path("pageName") String pageName);
 
     @GET("{language}/mobile_api/{pageName}")
-    Call<ArrayList<CommonModel>> getCommonPageListWithID(@Path("language") String language,
-                                                         @Path("pageName") String pageName,
-                                                         @Query("museum_id") String museumId);
+    Call<ArrayList<CommonListModel>> getCommonPageListWithID(@Path("language") String language,
+                                                             @Path("pageName") String pageName,
+                                                             @Query("museum_id") String museumId);
 
     @GET("{language}/mobile_api/getpublicartdetail.json")
     Call<ArrayList<PublicArtModel>> getPublicArtsDetails(@Path("language") String language,
@@ -67,18 +66,8 @@ public interface APIInterface {
     Call<ArrayList<ParkList>> getParkDetails(@Path("language") String language);
 
     @GET("{language}/mobile_api/museum_collection_category.json")
-    Call<ArrayList<CommonModel>> getCollectionList(@Path("language") String language,
-                                                   @Query("museum_id") String museumId);
-
-    @GET("{language}/mobile_api/new_ws_educations.json")
-    Call<ArrayList<CalendarEvents>> getCalendarDetails(@Path("language") String language,
-                                                       @Query("institution") String institution,
-                                                       @Query("age") String ageGroup,
-                                                       @Query("programe") String programType,
-                                                       @Query("field_eduprog_repeat_field_date_value[value][month]") String month,
-                                                       @Query("field_eduprog_repeat_field_date_value[value][day]") String day,
-                                                       @Query("field_eduprog_repeat_field_date_value[value][year]") String year,
-                                                       @Query("cck_multiple_field_remove_fields") String cckValue);
+    Call<ArrayList<CommonListModel>> getCollectionList(@Path("language") String language,
+                                                       @Query("museum_id") String museumId);
 
 
     @GET("{language}/mobile_api/museum-detail.json")
@@ -86,14 +75,14 @@ public interface APIInterface {
                                                             @Query("nid") String nid);
 
     @GET("{language}/mobile_api/new_ws_educations.json")
-    Call<ArrayList<EducationEvents>> getEducationCalendarDetails(@Path("language") String language,
-                                                                 @Query("institution") String institution,
-                                                                 @Query("age") String ageGroup,
-                                                                 @Query("programe") String programType,
-                                                                 @Query("field_eduprog_repeat_field_date_value[value][month]") String month,
-                                                                 @Query("field_eduprog_repeat_field_date_value[value][day]") String day,
-                                                                 @Query("field_eduprog_repeat_field_date_value[value][year]") String year,
-                                                                 @Query("cck_multiple_field_remove_fields") String cckValue);
+    Call<ArrayList<Events>> getCalendarData(@Path("language") String language,
+                                            @Query("institution") String institution,
+                                            @Query("age") String ageGroup,
+                                            @Query("programe") String programType,
+                                            @Query("field_eduprog_repeat_field_date_value[value][month]") String month,
+                                            @Query("field_eduprog_repeat_field_date_value[value][day]") String day,
+                                            @Query("field_eduprog_repeat_field_date_value[value][year]") String year,
+                                            @Query("cck_multiple_field_remove_fields") String cckValue);
 
 
     @GET("{language}/mobile_api/collection_ws.json")
@@ -146,16 +135,16 @@ public interface APIInterface {
                                                                   @Query("nid") String nid);
 
     @GET("{language}/mobile_api/nmoq_list_day.json")
-    Call<ArrayList<CommonModel>> getTourList(@Path("language") String language);
+    Call<ArrayList<CommonListModel>> getTourList(@Path("language") String language);
 
     @GET("{language}/mobile_api/list_facility_category.json")
-    Call<ArrayList<CommonModel>> getFacilityList(@Path("language") String language);
+    Call<ArrayList<CommonListModel>> getFacilityList(@Path("language") String language);
 
     @GET("{language}/mobile_api/nmoq_list_partner.json")
-    Call<ArrayList<CommonModel>> getTravelData(@Path("language") String language);
+    Call<ArrayList<CommonListModel>> getTravelData(@Path("language") String language);
 
     @GET("{language}/mobile_api/nmoq_special_event.json")
-    Call<ArrayList<CommonModel>> getSpecialEvents(@Path("language") String language);
+    Call<ArrayList<CommonListModel>> getSpecialEvents(@Path("language") String language);
 
     @GET("{language}/mobile_api/list_tour_per_day.json")
     Call<ArrayList<TourDetailsModel>> getTourDetails(@Path("language") String language,

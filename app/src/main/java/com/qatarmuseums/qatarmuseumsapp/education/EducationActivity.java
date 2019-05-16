@@ -13,10 +13,13 @@ import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.google.firebase.analytics.FirebaseAnalytics;
 import com.pierfrancescosoffritti.androidyoutubeplayer.player.YouTubePlayerView;
 import com.pierfrancescosoffritti.androidyoutubeplayer.player.listeners.AbstractYouTubePlayerListener;
 import com.qatarmuseums.qatarmuseumsapp.LocaleManager;
 import com.qatarmuseums.qatarmuseumsapp.R;
+
+import timber.log.Timber;
 
 public class EducationActivity extends AppCompatActivity {
     YouTubePlayerView youTubePlayerView;
@@ -26,6 +29,7 @@ public class EducationActivity extends AppCompatActivity {
     Button discoverButton;
     private Animation zoomOutAnimation;
     private LinearLayout youTubePlayerLayout;
+    private FirebaseAnalytics mFirebaseAnalytics;
 
     @Override
     protected void attachBaseContext(Context base) {
@@ -40,10 +44,14 @@ public class EducationActivity extends AppCompatActivity {
         backButton = findViewById(R.id.toolbar_back);
         TextView longDescription = findViewById(R.id.long_description);
         discoverButton = findViewById(R.id.discover_btn);
+        mFirebaseAnalytics = FirebaseAnalytics.getInstance(this);
         longDescription.setText(getString(R.string.education_long_description));
-        backButton.setOnClickListener(v -> onBackPressed());
+        backButton.setOnClickListener(v -> {
+            Timber.i("onBackPressed()");
+            onBackPressed();
+        });
         discoverButton.setOnClickListener(v -> {
-            //Discover button action
+            Timber.i("Discover Button clicked");
             Intent intent = new Intent(EducationActivity.this, EducationCalendarActivity.class);
             startActivity(intent);
         });
@@ -64,6 +72,7 @@ public class EducationActivity extends AppCompatActivity {
     }
 
     public void initYouTubePlayerView() {
+        Timber.i("initYouTubePlayerView()");
         youTubePlayerView = new YouTubePlayerView(this);
         youTubePlayerLayout.addView(youTubePlayerView);
         getLifecycle().addObserver(youTubePlayerView);
@@ -72,6 +81,7 @@ public class EducationActivity extends AppCompatActivity {
                     initializedYouTubePlayer.addListener(new AbstractYouTubePlayerListener() {
                         @Override
                         public void onReady() {
+                            Timber.i("Play video: %s", videoId);
                             initializedYouTubePlayer.cueVideo(videoId, 0);
                         }
                     });
@@ -86,6 +96,7 @@ public class EducationActivity extends AppCompatActivity {
 
     @Override
     public void onBackPressed() {
+        Timber.i("onBackPressed()");
         if (youTubePlayerView.isFullScreen())
             youTubePlayerView.exitFullScreen();
         else
@@ -96,5 +107,11 @@ public class EducationActivity extends AppCompatActivity {
     protected void onDestroy() {
         super.onDestroy();
         youTubePlayerView.release();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        mFirebaseAnalytics.setCurrentScreen(this, getString(R.string.education_page), null);
     }
 }

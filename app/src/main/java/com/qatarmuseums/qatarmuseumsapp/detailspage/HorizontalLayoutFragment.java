@@ -46,10 +46,7 @@ public class HorizontalLayoutFragment extends Fragment {
 
     public void getItemPosition(int value) {
         int pos = value;
-        if (getActivity() instanceof DetailsActivity)
-            ((DetailsActivity) getActivity()).imageValue(pos);
-        else
-            ((DiningActivity) getActivity()).imageValue(pos);
+        ((DetailsActivity) getActivity()).imageValue(pos);
     }
 
     @Override

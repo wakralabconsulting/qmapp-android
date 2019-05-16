@@ -101,7 +101,7 @@ public class NotificationUtils {
                     .setSound(alarmSound)
                     .setStyle(inboxStyle)
                     .setSmallIcon(R.mipmap.ic_notification)
-                    .setColor(mContext.getResources().getColor(R.color.black))
+                    .setColor(mContext.getResources().getColor(R.color.colorBlack))
                     .setLargeIcon(BitmapFactory.decodeResource(mContext.getResources(), icon))
                     .setContentText(message)
                     .build();

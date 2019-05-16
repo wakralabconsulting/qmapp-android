@@ -3,15 +3,15 @@
     android:id="@+id/recycler_view_main_layout"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
-    android:layout_marginBottom="@dimen/pading_10"
-    android:paddingTop="@dimen/pading_10">
+    android:layout_marginBottom="@dimen/padding_10"
+    android:paddingTop="@dimen/padding_10">
 
     <LinearLayout
         android:id="@+id/item_layout"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginEnd="@dimen/pading_5"
-        android:layout_marginStart="@dimen/pading_5"
+        android:layout_marginEnd="@dimen/padding_5"
+        android:layout_marginStart="@dimen/padding_5"
         android:gravity="center"
         android:orientation="vertical">
 
@@ -20,7 +20,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:background="@drawable/circle_layout"
-            android:padding="@dimen/pading_10">
+            android:padding="@dimen/padding_10">
 
             <ImageView
                 android:id="@+id/horizontal_scrol_image_icon"
@@ -34,12 +34,12 @@
             android:id="@+id/horizontal_scrol_text"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/pading_1"
+            android:layout_marginTop="@dimen/padding_1"
             android:fontFamily="@font/din_next_lt_pro_regular"
             android:gravity="center"
-            android:text="@string/sidemenu_parks_text"
+            android:text="@string/side_menu_parks_text"
             android:textAlignment="center"
-            android:textColor="@color/black"
+            android:textColor="@color/colorBlack"
             android:textSize="@dimen/font_size_11" />
     </LinearLayout>
 

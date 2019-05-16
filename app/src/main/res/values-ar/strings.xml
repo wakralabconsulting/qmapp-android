@@ -1,5 +1,5 @@
-<resources>
-    <string name="app_name">بطاقتك إلى الثقافة</string>
+<resources xmlns:tools="http://schemas.android.com/tools">
+    <string name="app_name" tools:ignore="PrivateResource">بطاقتك إلى الثقافة</string>
     <string name="web_view_title">متاحف قطر</string>
     <string name="view_details"><u>عرض التفاصيل</u></string>
     <string name="events">الفعاليات</string>
@@ -12,15 +12,15 @@
     <string name="title_culture_pass">بطاقتك إلى الثقافة</string>
     <string name="education_calendar_activity_tittle">التقويم التعليمي</string>
     <string name="title_more">المزيد</string>
-    <string name="sidemenu_exhibition_text">المعارض</string>
-    <string name="sidemenu_events_text">الفعاليات</string>
-    <string name="sidemenu_education_text">التعليم</string>
-    <string name="sidemenu_tour_guide_text">الدليل السياحي</string>
-    <string name="sidemenu_heritage_text">المواقع التراثية</string>
-    <string name="sidemenu_public_arts_text">الفنون العامة</string>
-    <string name="sidemenu_dining_text">الطعام</string>
-    <string name="sidemenu_gift_shop_text">محل الهدايا</string>
-    <string name="sidemenu_parks_text">الحدائق</string>
+    <string name="side_menu_exhibition_text">المعارض</string>
+    <string name="side_menu_events_text">الفعاليات</string>
+    <string name="side_menu_education_text">التعليم</string>
+    <string name="side_menu_tour_guide_text">الدليل السياحي</string>
+    <string name="side_menu_heritage_text">المواقع التراثية</string>
+    <string name="side_menu_public_arts_text">الفنون العامة</string>
+    <string name="side_menu_dining_text">الطعام</string>
+    <string name="side_menu_gift_shop_text">محل الهدايا</string>
+    <string name="side_menu_parks_text">الحدائق</string>
     <string name="toolbar_title_key">TOOLBAR_TITLE</string>
     <string name="notifications">الإشعارات</string>
     <string name="location_title">الموقع</string>
@@ -49,7 +49,7 @@
     <string name="institution">المعهد -</string>
     <string name="age_group">الفئة العمرية -</string>
     <string name="programme_type">نوع البرنامج -</string>
-    <string name="clear">أغلق</string>
+    <string name="clear">مسح</string>
     <string name="filter">بحث</string>
     <string name="gift_shop_url">https://inq-online.com/</string>
     <string name="touch_again">اضغط مرة أخرى للخروج</string>
@@ -100,12 +100,12 @@
 
     <string name="all_ages">جميع الفئات العمرية</string>
     <string name="teachers">المعلمين</string>
-    <string name="nursery">الحضانة/قبل الروضة (3-5 سنوات)</string>
-    <string name="early">الابتدائية المبكرة (5-7 سنوات)</string>
-    <string name="primary">الإبتدائية (8-11 سنوات)</string>
-    <string name="preparatory">الإعدادية (12-14 سنة)</string>
-    <string name="secondary">الثانوية (15-18 سنة)</string>
-    <string name="college">الكلية والجامعة (17-24 سنة)</string>
+    <string name="nursery">الحضانة/قبل الروضة (3–5 سنوات)</string>
+    <string name="early">الابتدائية المبكرة (5–7 سنوات)</string>
+    <string name="primary">الإبتدائية (8–11 سنوات)</string>
+    <string name="preparatory">الإعدادية (12–14 سنة)</string>
+    <string name="secondary">الثانوية (15–18 سنة)</string>
+    <string name="college">الكلية والجامعة (17–24 سنة)</string>
     <string name="youth">الشباب</string>
     <string name="adults">البالغون</string>
     <string name="seniors">كبار السن</string>
@@ -129,12 +129,13 @@
     <string name="tourguide_title_desc">Welcome to Qatar Museum Premises. \n Explore the architrcture and the \nobjects on display. \n Scan the QR codes available on the \ngalleries for more information.</string>
     <!--////////////////////// check-->
     <string name="change_language_dialog_title">تغيير اللغة</string>
-    <string name="change_language_button_text">المتابعة</string>
+    <string name="continue_button_text">المتابعة</string>
     <string name="contact_mail">info@mia.org.qa</string>
     <string name="alberallo">Alberallo</string>
     <string name="tourguide_title">تجول كما يحلو لك</string>
     <string name="tourguide_subtitle_desc">ربما تريد أن تجرب جولاتنا كما يحلو لك \n اغمر نفسك في تفاصيل القطعة التي اختيرت خصيصا لك من قبل خبرائنا..</string>
     <string name="mia_tour_guide">دليل متحف الفن الإسلامي</string>
+    <string name="nmoq_tour_guide">الدليل السياحي متحف قطر الوطني</string>
     <string name="floormap_detail1">This example is a rare example of the Mamluk production of albarelli in Damascus, primarily produced for the European market. The albarello (pl. albarelli) was used as a medicinal jar for holding apothecary ointments and dried herbal drugs. Its elongated shape helps us to recognize the nature and function of this typical object. The Italain word albarello has a quite controversial etymology: sometimes said to be derivng from the Latin albaris, meaning \"in wood\" or \"white\", sometimes from the Arabic al-barmil, which designates a barrel. Albarelli have been produced in the Middle East and Central Asia since the 11th-century and later on in 15th-century Spain and Italy, although they are believed to have been first produced in Syria before making their way to Europe through Spain and Italy. Indeed, many European paintings and archives in France, Italy and Spain refer to vessels produced or imported from Syria.</string>
     <string name="floormap_imagdesc1">Saint Jerome in His Study \nDomenico Ghirlandaio (1449 en dash1494) \nChurch of Ognissanti, Florence, 1480</string>
     <string name="floormap_detail2">According to the Medici Archival records in Florence, this vas is possibly one of the three \'alberegli domaschini\' owned by Piero di Cosimo de Medici (1416-59), the de-facto ruler of Florence from 1464-69."
@@ -148,7 +149,7 @@
     <string name="object_history">تاريخ القطعة</string>
     <string name="no_location_data">لا توجد بيانات للموقع</string>
     <string name="increase_volume">يرجى رفع الصوت</string>
-    <string name="loading">جاري التحميل...</string>
+    <string name="loading">جاري التحميل…</string>
     <string name="oops">خطأ!</string>
     <string name="there_is_no_internet">لا يوجد اتصال بالانترنت</string>
     <string name="please_check_your_internet">الرجاء التحقق من اتصال الانترنت الخاص بك</string>
@@ -220,5 +221,11 @@
     <string name="facilities_txt">المرافق</string>
     <string name="experience_txt">المحتويات</string>
     <string name="facility_sublist">Facility Sublist</string>
+    <!-- Strings related to Send logs Landing -->
+    <string name="send_logs">إرسال التقرير</string>
+    <string name="send_email_dialog_title">أرسل التقرير</string>
+    <string name="send_email_dialog_message">هل ترغب بإرسال التقرير</string>
+    <string name="send_email_success">تم الإرسال</string>
+    <string name="send_email_cancelled">تم الإلغاء</string>
 
 </resources>

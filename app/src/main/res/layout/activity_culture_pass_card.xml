@@ -50,7 +50,7 @@
                     android:layout_marginTop="@dimen/pass_card_number_margin"
                     android:fontFamily="@font/din_next_lt_pro_bold"
                     android:gravity="bottom"
-                    android:textColor="@color/black"
+                    android:textColor="@color/colorBlack"
                     android:textSize="@dimen/font_size_18"
                     android:textStyle="bold"
                     app:layout_constraintBottom_toBottomOf="parent"
@@ -65,7 +65,7 @@
                     android:layout_marginTop="@dimen/pass_card_number_margin"
                     android:gravity="bottom"
                     android:textAllCaps="true"
-                    android:textColor="@color/black"
+                    android:textColor="@color/colorBlack"
                     android:textSize="@dimen/font_size_18"
                     android:textStyle="bold"
                     app:layout_constraintBottom_toBottomOf="parent"
@@ -85,7 +85,7 @@
                 android:background="@drawable/round_corner_black"
                 android:fontFamily="@font/din_next_lt_pro_bold"
                 android:text="@string/flip_button_txt"
-                android:textColor="@color/white"
+                android:textColor="@color/colorWhite"
                 android:textSize="17sp" />
         </FrameLayout>
 
@@ -124,7 +124,7 @@
                     android:fontFamily="@font/din_next_lt_pro_bold"
                     android:gravity="bottom"
                     android:padding="@dimen/margin_10"
-                    android:textColor="@color/white"
+                    android:textColor="@color/colorWhite"
                     android:textSize="18sp"
                     android:textStyle="bold"
                     android:visibility="invisible"
@@ -156,7 +156,7 @@
                 android:background="@drawable/round_corner_black"
                 android:fontFamily="@font/din_next_lt_pro_bold"
                 android:text="@string/flip_button_txt"
-                android:textColor="@color/white"
+                android:textColor="@color/colorWhite"
                 android:textSize="17sp" />
         </FrameLayout>
 

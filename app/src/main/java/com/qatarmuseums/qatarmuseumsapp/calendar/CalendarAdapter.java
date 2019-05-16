@@ -12,15 +12,18 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.qatarmuseums.qatarmuseumsapp.R;
+import com.qatarmuseums.qatarmuseumsapp.education.Events;
 
 import java.util.ArrayList;
+
+import timber.log.Timber;
 
 
 public class CalendarAdapter extends RecyclerView.Adapter<CalendarAdapter.CalendarAdapterViewHolder> {
     private Context context;
-    private ArrayList<CalendarEvents> calendarEventsList;
+    private ArrayList<Events> calendarEventsList;
 
-    CalendarAdapter(Context context, ArrayList<CalendarEvents> calendarEventsList) {
+    CalendarAdapter(Context context, ArrayList<Events> calendarEventsList) {
         this.context = context;
         this.calendarEventsList = calendarEventsList;
     }
@@ -38,14 +41,15 @@ public class CalendarAdapter extends RecyclerView.Adapter<CalendarAdapter.Calend
     @Override
     public void onBindViewHolder(@NonNull final CalendarAdapter.CalendarAdapterViewHolder holder, final int position) {
         if (calendarEventsList.size() > 0) {
+            Timber.i("Setting calendar event list with Id: %s", calendarEventsList.get(position).getEid());
             if (calendarEventsList.get(position).getInstitution() != null &&
                     !calendarEventsList.get(position).getInstitution().equals("")) {
                 holder.eventTitle.setVisibility(View.VISIBLE);
                 holder.titleHyphen.setVisibility(View.VISIBLE);
                 holder.eventTitle.setText(calendarEventsList.get(position).getInstitution());
             }
-            holder.eventSubTitle.setText(calendarEventsList.get(position).getEventTitle());
-            holder.eventTiming.setText(calendarEventsList.get(position).getEventTimings());
+            holder.eventSubTitle.setText(calendarEventsList.get(position).getTitle());
+            holder.eventTiming.setText(calendarEventsList.get(position).getShortDescription());
         }
 
         if (position % 2 == 1) {
@@ -53,10 +57,11 @@ public class CalendarAdapter extends RecyclerView.Adapter<CalendarAdapter.Calend
         } else {
             holder.layoutHolder.setBackgroundColor(Color.parseColor("#FFf2f2f2"));
         }
-        holder.layoutHolder.setOnClickListener(view -> ((CalendarActivity) context).onClickCalled(calendarEventsList.get(position).getRegistration(),
-                holder.eventSubTitle.getText().toString(),
-                calendarEventsList.get(position).getEventDetails(), calendarEventsList.get(position).getStartTime().get(0),
-                calendarEventsList.get(position).getEndTime().get(0)));
+
+        holder.layoutHolder.setOnClickListener(view -> ((CalendarActivity) context).onClickCalled(
+                Boolean.valueOf(calendarEventsList.get(position).getRegistration()),
+                calendarEventsList,
+                position));
     }
 
     @Override

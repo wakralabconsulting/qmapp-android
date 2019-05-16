@@ -22,10 +22,12 @@ import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
+import com.google.firebase.analytics.FirebaseAnalytics;
 import com.qatarmuseums.qatarmuseumsapp.R;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import timber.log.Timber;
 
 public class WebViewActivity extends AppCompatActivity {
 
@@ -46,6 +48,7 @@ public class WebViewActivity extends AppCompatActivity {
 
     private String url;
     private Animation zoomOutAnimation;
+    private FirebaseAnalytics mFirebaseAnalytics;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -53,6 +56,7 @@ public class WebViewActivity extends AppCompatActivity {
         setContentView(R.layout.activity_webview);
         ButterKnife.bind(this);
         setSupportActionBar(toolbar);
+        mFirebaseAnalytics = FirebaseAnalytics.getInstance(this);
         url = getIntent().getStringExtra("url");
         if (TextUtils.isEmpty(url)) {
             finish();
@@ -92,6 +96,7 @@ public class WebViewActivity extends AppCompatActivity {
                 webViewProgressBar.setVisibility(View.GONE);
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
                     if (error.getDescription().toString().contains("net::ERR_INTERNET_DISCONNECTED")) {
+                        Timber.i("On Error: %s", error.getDescription().toString());
                         webView.setVisibility(View.GONE);
                         retryLayout.setVisibility(View.VISIBLE);
                     }
@@ -116,10 +121,14 @@ public class WebViewActivity extends AppCompatActivity {
     }
 
     public void setUpCloseButtonClickListener() {
-        webViewCloseBtn.setOnClickListener(view -> finish());
+        webViewCloseBtn.setOnClickListener(view -> {
+            Timber.i("Close button clicked");
+            finish();
+        });
         zoomOutAnimation = AnimationUtils.loadAnimation(getApplicationContext(),
                 R.anim.zoom_out_more);
         retryButton.setOnClickListener(v -> {
+            Timber.i("Retry button clicked");
             webView.loadUrl(url);
             webViewProgressBar.setVisibility(View.VISIBLE);
             retryLayout.setVisibility(View.GONE);
@@ -140,5 +149,11 @@ public class WebViewActivity extends AppCompatActivity {
             }
             return false;
         });
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        mFirebaseAnalytics.setCurrentScreen(this, getString(R.string.webview_page), null);
     }
 }

@@ -31,13 +31,13 @@ import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MapStyleOptions;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.firebase.analytics.FirebaseAnalytics;
 import com.qatarmuseums.qatarmuseumsapp.LocaleManager;
 import com.qatarmuseums.qatarmuseumsapp.QMDatabase;
 import com.qatarmuseums.qatarmuseumsapp.R;
 import com.qatarmuseums.qatarmuseumsapp.apicall.APIClient;
 import com.qatarmuseums.qatarmuseumsapp.apicall.APIInterface;
 import com.qatarmuseums.qatarmuseumsapp.detailspage.DetailsActivity;
-import com.qatarmuseums.qatarmuseumsapp.facilities.FacilityDetailTableEnglish;
 import com.qatarmuseums.qatarmuseumsapp.museumcollectiondetails.CollectionDetailsActivity;
 import com.qatarmuseums.qatarmuseumsapp.utils.Util;
 
@@ -51,6 +51,7 @@ import butterknife.ButterKnife;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
+import timber.log.Timber;
 
 public class NMoQParkActivity extends AppCompatActivity implements OnMapReadyCallback {
     @BindView(R.id.toolbar)
@@ -104,10 +105,11 @@ public class NMoQParkActivity extends AppCompatActivity implements OnMapReadyCal
     private String language;
     private NMoQParkListAdapter mAdapter;
     private QMDatabase qmDatabase;
-    private NMoQParkTableArabic nMoQParkTableArabic;
-    private NMoQParkTableEnglish nMoQParkTableEnglish;
-    private NMoQParkListTableArabic nMoQParkListTableArabic;
-    private NMoQParkListTableEnglish nMoQParkListTableEnglish;
+    private NMoQParkTable nMoQParkTable;
+    private NMoQParkListTable nMoQParkListTable;
+
+    private Bundle contentBundleParams;
+    private FirebaseAnalytics mFireBaseAnalytics;
 
     @SuppressLint("ClickableViewAccessibility")
     @Override
@@ -121,6 +123,7 @@ public class NMoQParkActivity extends AppCompatActivity implements OnMapReadyCal
         Animation zoomOutAnimation = AnimationUtils.loadAnimation(getApplicationContext(),
                 R.anim.zoom_out_more);
         qmDatabase = QMDatabase.getInstance(NMoQParkActivity.this);
+        mFireBaseAnalytics = FirebaseAnalytics.getInstance(this);
 
         toolbarBack.setOnTouchListener((v, event) -> {
             switch (event.getAction()) {
@@ -130,7 +133,10 @@ public class NMoQParkActivity extends AppCompatActivity implements OnMapReadyCal
             }
             return false;
         });
-        toolbarBack.setOnClickListener(view -> finish());
+        toolbarBack.setOnClickListener(view -> {
+            Timber.i("Back button clicked");
+            finish();
+        });
         if (util.isNetworkAvailable(this)) {
             getNMoQParkFromAPI();
             getNMoQParkListFromAPI();
@@ -139,6 +145,14 @@ public class NMoQParkActivity extends AppCompatActivity implements OnMapReadyCal
             getNMoQParkListFromDataBase();
         }
         mAdapter = new NMoQParkListAdapter(this, parkLists, position -> {
+            Timber.i("%s is clicked with ID: %s from %s",
+                    parkLists.get(position).getMainTitle().toUpperCase(),
+                    parkLists.get(position).getNid(),
+                    toolbarTitle.getText().toString());
+            contentBundleParams = new Bundle();
+            contentBundleParams.putString(FirebaseAnalytics.Param.CONTENT_TYPE, toolbarTitle.getText().toString());
+            contentBundleParams.putString(FirebaseAnalytics.Param.ITEM_ID, parkLists.get(position).getNid());
+            mFireBaseAnalytics.logEvent(FirebaseAnalytics.Event.SELECT_CONTENT, contentBundleParams);
             if (parkLists.get(position).getNid().equals("15616") ||
                     parkLists.get(position).getNid().equals("15851")) {
                 navigationIntent = new Intent(NMoQParkActivity.this, CollectionDetailsActivity.class);
@@ -162,10 +176,12 @@ public class NMoQParkActivity extends AppCompatActivity implements OnMapReadyCal
         parkMapInfo.onCreate(mapViewBundle);
         parkMapInfo.getMapAsync(this);
         mapViewToggle.setOnClickListener(view -> {
+            Timber.i("Change MAP TYPE button clicked");
             if (iconView == 0) {
                 if (latitude == null || latitude.equals("")) {
                     util.showLocationAlertDialog(NMoQParkActivity.this);
                 } else {
+                    Timber.i("MAP TYPE changed to HYBRID");
                     iconView = 1;
                     mapViewToggle.setImageResource(R.drawable.ic_map);
                     gMap.setMapType(GoogleMap.MAP_TYPE_HYBRID);
@@ -180,6 +196,7 @@ public class NMoQParkActivity extends AppCompatActivity implements OnMapReadyCal
                 if (latitude == null || latitude.equals("")) {
                     util.showLocationAlertDialog(NMoQParkActivity.this);
                 } else {
+                    Timber.i("MAP TYPE changed to NORMAL");
                     iconView = 0;
                     mapViewToggle.setImageResource(R.drawable.ic_satellite);
                     gMap.setMapType(GoogleMap.MAP_TYPE_NORMAL);
@@ -194,6 +211,7 @@ public class NMoQParkActivity extends AppCompatActivity implements OnMapReadyCal
         });
 
         mapDirection.setOnClickListener(view -> {
+            Timber.i("Direction button clicked");
             if (latitude == null || latitude.equals("")) {
                 util.showLocationAlertDialog(NMoQParkActivity.this);
             } else {
@@ -214,6 +232,7 @@ public class NMoQParkActivity extends AppCompatActivity implements OnMapReadyCal
         });
 
         retryButton.setOnClickListener(v -> {
+            Timber.i("Retry button clicked");
             getNMoQParkFromAPI();
             getNMoQParkListFromAPI();
             retryLayoutPark.setVisibility(View.GONE);
@@ -223,6 +242,7 @@ public class NMoQParkActivity extends AppCompatActivity implements OnMapReadyCal
     }
 
     private void setData(NMoQPark nmoqPark) {
+        Timber.i("Setting data");
         toolbarTitle.setText(nmoqPark.getMainTitle());
         if (nmoqPark.getMainDescription().trim().equals(""))
             mainDescription.setVisibility(View.GONE);
@@ -258,6 +278,7 @@ public class NMoQParkActivity extends AppCompatActivity implements OnMapReadyCal
     }
 
     public void getNMoQParkFromAPI() {
+        Timber.i("getNMoQParkFromAPI(language: %s)", language);
         progressLoading.setVisibility(View.VISIBLE);
         APIInterface apiService =
                 APIClient.getClient().create(APIInterface.class);
@@ -268,17 +289,20 @@ public class NMoQParkActivity extends AppCompatActivity implements OnMapReadyCal
                                    @NonNull Response<ArrayList<NMoQPark>> response) {
                 if (response.isSuccessful()) {
                     if (response.body() != null && response.body().size() > 0) {
+                        Timber.i("getNMoQParkFromAPI() - isSuccessful");
                         detailsLayout.setVisibility(View.VISIBLE);
                         nMoQPark.addAll(response.body());
                         removeHtmlTags(nMoQPark);
                         setData(nMoQPark.get(0));
                         new NMoQParkRowCount(NMoQParkActivity.this, language).execute();
                     } else {
+                        Timber.i("Response have no data");
                         detailsLayout.setVisibility(View.GONE);
                         noResultFoundTxt.setVisibility(View.VISIBLE);
                     }
 
                 } else {
+                    Timber.w("Response not successful");
                     detailsLayout.setVisibility(View.GONE);
                     retryLayoutPark.setVisibility(View.VISIBLE);
                 }
@@ -287,6 +311,7 @@ public class NMoQParkActivity extends AppCompatActivity implements OnMapReadyCal
 
             @Override
             public void onFailure(@NonNull Call<ArrayList<NMoQPark>> call, @NonNull Throwable t) {
+                Timber.e("getNMoQParkFromAPI() - onFailure: %s", t.getMessage());
                 detailsLayout.setVisibility(View.GONE);
                 retryLayoutPark.setVisibility(View.VISIBLE);
                 progressLoading.setVisibility(View.GONE);
@@ -296,6 +321,7 @@ public class NMoQParkActivity extends AppCompatActivity implements OnMapReadyCal
     }
 
     public void getNMoQParkListFromAPI() {
+        Timber.i("getNMoQParkListFromAPI(language: %s)", language);
         APIInterface apiService =
                 APIClient.getClient().create(APIInterface.class);
         Call<ArrayList<NMoQParkList>> call = apiService.getNMoQParkList(language);
@@ -305,6 +331,7 @@ public class NMoQParkActivity extends AppCompatActivity implements OnMapReadyCal
                                    @NonNull Response<ArrayList<NMoQParkList>> response) {
                 if (response.isSuccessful()) {
                     if (response.body() != null && response.body().size() > 0) {
+                        Timber.i("getNMoQParkListFromAPI() - isSuccessful with size: %s", response.body().size());
                         detailsLayout.setVisibility(View.VISIBLE);
                         parksRecyclerView.setVisibility(View.VISIBLE);
                         parkLists.addAll(response.body());
@@ -318,6 +345,7 @@ public class NMoQParkActivity extends AppCompatActivity implements OnMapReadyCal
 
             @Override
             public void onFailure(@NonNull Call<ArrayList<NMoQParkList>> call, @NonNull Throwable t) {
+                Timber.e("getNMoQParkListFromAPI() - onFailure: %s", t.getMessage());
             }
         });
 
@@ -341,11 +369,8 @@ public class NMoQParkActivity extends AppCompatActivity implements OnMapReadyCal
     }
 
     public void getNMoQParkFromDataBase() {
-        if (language.equals(LocaleManager.LANGUAGE_ENGLISH)) {
-            new RetrieveEnglishNMoQParkData(NMoQParkActivity.this).execute();
-        } else {
-            new RetrieveArabicNMoQParkData(NMoQParkActivity.this).execute();
-        }
+        Timber.i("getNMoQParkFromDataBase(language: %s)", language);
+        new RetrieveNMoQParkData(NMoQParkActivity.this).execute();
     }
 
     public static class NMoQParkRowCount extends AsyncTask<Void, Void, Integer> {
@@ -364,29 +389,28 @@ public class NMoQParkActivity extends AppCompatActivity implements OnMapReadyCal
 
         @Override
         protected Integer doInBackground(Void... voids) {
-            if (language.equals(LocaleManager.LANGUAGE_ENGLISH))
-                return activityReference.get().qmDatabase.getNMoQParkTableDao().getNumberOfRowsEnglish();
-            else
-                return activityReference.get().qmDatabase.getNMoQParkTableDao().getNumberOfRowsArabic();
-
+            Timber.i("getNumberOfRows(language: %s)", language);
+            return activityReference.get().qmDatabase.getNMoQParkTableDao()
+                    .getNumberOfRows(language);
         }
 
         @Override
         protected void onPostExecute(Integer integer) {
             if (integer > 0) {
+                Timber.i("Count: %d", integer);
                 new CheckNMoQParkDBRowExist(activityReference.get(), language).execute();
             } else {
-                new InsertNMoQParkDataToDataBase(activityReference.get(), activityReference.get().nMoQParkTableEnglish,
-                        activityReference.get().nMoQParkTableArabic, language).execute();
+                Timber.i("Database table have no data");
+                new InsertNMoQParkDataToDataBase(activityReference.get(),
+                        activityReference.get().nMoQParkTable, language).execute();
             }
         }
     }
 
     public static class CheckNMoQParkDBRowExist extends AsyncTask<Void, Void, Void> {
         private WeakReference<NMoQParkActivity> activityReference;
-        private NMoQParkTableArabic nMoQParkTableArabic;
         String language;
-        private NMoQParkTableEnglish nMoQParkTableEnglish;
+        private NMoQParkTable nMoQParkTable;
 
         CheckNMoQParkDBRowExist(NMoQParkActivity context, String apiLanguage) {
             activityReference = new WeakReference<>(context);
@@ -396,52 +420,30 @@ public class NMoQParkActivity extends AppCompatActivity implements OnMapReadyCal
         @Override
         protected Void doInBackground(Void... voids) {
             if (activityReference.get().nMoQPark.size() > 0) {
-                if (language.equals(LocaleManager.LANGUAGE_ENGLISH)) {
-                    for (int i = 0; i < activityReference.get().nMoQPark.size(); i++) {
-                        int n = activityReference.get().qmDatabase.getNMoQParkTableDao().checkIdExistEnglish(
-                                Integer.parseInt(activityReference.get().nMoQPark.get(i).getNid()));
-                        if (n > 0) {
-                            new UpdateNMoQParkTable(activityReference.get(), language).execute();
-                        } else {
-                            nMoQParkTableEnglish = new NMoQParkTableEnglish(
-                                    activityReference.get().nMoQPark.get(i).getNid(),
-                                    activityReference.get().nMoQPark.get(i).getMainTitle(),
-                                    activityReference.get().nMoQPark.get(i).getMainDescription(),
-                                    activityReference.get().nMoQPark.get(i).getParkTitle(),
-                                    activityReference.get().nMoQPark.get(i).getParkDescription(),
-                                    activityReference.get().nMoQPark.get(i).getParkHoursTitle(),
-                                    activityReference.get().nMoQPark.get(i).getParksHoursDescription(),
-                                    activityReference.get().nMoQPark.get(i).getLocationTitle(),
-                                    activityReference.get().nMoQPark.get(i).getLatitudeNMoQ(),
-                                    activityReference.get().nMoQPark.get(i).getLongitudeNMoQ());
-
-                            activityReference.get().qmDatabase.getNMoQParkTableDao().insertEnglishTable(nMoQParkTableEnglish);
-                        }
+                for (int i = 0; i < activityReference.get().nMoQPark.size(); i++) {
+                    int n = activityReference.get().qmDatabase.getNMoQParkTableDao().checkIdExist(
+                            Integer.parseInt(activityReference.get().nMoQPark.get(i).getNid()), language);
+                    if (n > 0) {
+                        Timber.i("Row exist in database(language :%s) for id: %s", language,
+                                activityReference.get().nMoQPark.get(i).getNid());
+                        new UpdateNMoQParkTable(activityReference.get(), language).execute();
+                    } else {
+                        Timber.i("Inserting data to Table(language :%s) with id: %s",
+                                language, activityReference.get().nMoQPark.get(i).getNid());
+                        nMoQParkTable = new NMoQParkTable(
+                                activityReference.get().nMoQPark.get(i).getNid(),
+                                activityReference.get().nMoQPark.get(i).getMainTitle(),
+                                activityReference.get().nMoQPark.get(i).getMainDescription(),
+                                activityReference.get().nMoQPark.get(i).getParkTitle(),
+                                activityReference.get().nMoQPark.get(i).getParkDescription(),
+                                activityReference.get().nMoQPark.get(i).getParkHoursTitle(),
+                                activityReference.get().nMoQPark.get(i).getParksHoursDescription(),
+                                activityReference.get().nMoQPark.get(i).getLocationTitle(),
+                                activityReference.get().nMoQPark.get(i).getLatitudeNMoQ(),
+                                activityReference.get().nMoQPark.get(i).getLongitudeNMoQ(),
+                                language);
+                        activityReference.get().qmDatabase.getNMoQParkTableDao().insertData(nMoQParkTable);
                     }
-                } else {
-                    for (int i = 0; i < activityReference.get().nMoQPark.size(); i++) {
-                        int n = activityReference.get().qmDatabase.getNMoQParkTableDao().checkIdExistArabic(
-                                Integer.parseInt(activityReference.get().nMoQPark.get(i).getNid()));
-                        if (n > 0) {
-                            new UpdateNMoQParkTable(activityReference.get(), language).execute();
-                        } else {
-
-                            nMoQParkTableArabic = new NMoQParkTableArabic(
-                                    activityReference.get().nMoQPark.get(i).getNid(),
-                                    activityReference.get().nMoQPark.get(i).getMainTitle(),
-                                    activityReference.get().nMoQPark.get(i).getMainDescription(),
-                                    activityReference.get().nMoQPark.get(i).getParkTitle(),
-                                    activityReference.get().nMoQPark.get(i).getParkDescription(),
-                                    activityReference.get().nMoQPark.get(i).getParkHoursTitle(),
-                                    activityReference.get().nMoQPark.get(i).getParksHoursDescription(),
-                                    activityReference.get().nMoQPark.get(i).getLocationTitle(),
-                                    activityReference.get().nMoQPark.get(i).getLatitudeNMoQ(),
-                                    activityReference.get().nMoQPark.get(i).getLongitudeNMoQ());
-
-                            activityReference.get().qmDatabase.getNMoQParkTableDao().insertArabicTable(nMoQParkTableArabic);
-                        }
-                    }
-
                 }
             }
             return null;
@@ -460,35 +462,22 @@ public class NMoQParkActivity extends AppCompatActivity implements OnMapReadyCal
 
         @Override
         protected Void doInBackground(Void... voids) {
-            if (language.equals(LocaleManager.LANGUAGE_ENGLISH)) {
-                activityReference.get().qmDatabase.getNMoQParkTableDao().updateNMoQParkEnglish(
-                        activityReference.get().nMoQPark.get(0).getMainTitle(),
-                        activityReference.get().nMoQPark.get(0).getMainDescription(),
-                        activityReference.get().nMoQPark.get(0).getParkTitle(),
-                        activityReference.get().nMoQPark.get(0).getParkDescription(),
-                        activityReference.get().nMoQPark.get(0).getParkHoursTitle(),
-                        activityReference.get().nMoQPark.get(0).getParksHoursDescription(),
-                        activityReference.get().nMoQPark.get(0).getLocationTitle(),
-                        activityReference.get().nMoQPark.get(0).getLatitudeNMoQ(),
-                        activityReference.get().nMoQPark.get(0).getLongitudeNMoQ(),
-                        Long.parseLong(activityReference.get().nMoQPark.get(0).getNid())
-                );
+            Timber.i("Updating data on Table(language :%s) for id: %s",
+                    language, activityReference.get().nMoQPark.get(0).getNid());
+            activityReference.get().qmDatabase.getNMoQParkTableDao().updateNMoQPark(
+                    activityReference.get().nMoQPark.get(0).getMainTitle(),
+                    activityReference.get().nMoQPark.get(0).getMainDescription(),
+                    activityReference.get().nMoQPark.get(0).getParkTitle(),
+                    activityReference.get().nMoQPark.get(0).getParkDescription(),
+                    activityReference.get().nMoQPark.get(0).getParkHoursTitle(),
+                    activityReference.get().nMoQPark.get(0).getParksHoursDescription(),
+                    activityReference.get().nMoQPark.get(0).getLocationTitle(),
+                    activityReference.get().nMoQPark.get(0).getLatitudeNMoQ(),
+                    activityReference.get().nMoQPark.get(0).getLongitudeNMoQ(),
+                    Long.parseLong(activityReference.get().nMoQPark.get(0).getNid()),
+                    language
+            );
 
-            } else {
-                activityReference.get().qmDatabase.getNMoQParkTableDao().updateNMoQParkArabic(
-                        activityReference.get().nMoQPark.get(0).getMainTitle(),
-                        activityReference.get().nMoQPark.get(0).getMainDescription(),
-                        activityReference.get().nMoQPark.get(0).getParkTitle(),
-                        activityReference.get().nMoQPark.get(0).getParkDescription(),
-                        activityReference.get().nMoQPark.get(0).getParkHoursTitle(),
-                        activityReference.get().nMoQPark.get(0).getParksHoursDescription(),
-                        activityReference.get().nMoQPark.get(0).getLocationTitle(),
-                        activityReference.get().nMoQPark.get(0).getLatitudeNMoQ(),
-                        activityReference.get().nMoQPark.get(0).getLongitudeNMoQ(),
-                        Long.parseLong(activityReference.get().nMoQPark.get(0).getNid())
-                );
-
-            }
             return null;
         }
     }
@@ -496,15 +485,13 @@ public class NMoQParkActivity extends AppCompatActivity implements OnMapReadyCal
     public static class InsertNMoQParkDataToDataBase extends AsyncTask<Void, Void, Boolean> {
 
         private WeakReference<NMoQParkActivity> activityReference;
-        private NMoQParkTableEnglish nMoQParkTableEnglish;
-        private NMoQParkTableArabic nMoQParkTableArabic;
+        private NMoQParkTable nMoQParkTable;
         String language;
 
-        InsertNMoQParkDataToDataBase(NMoQParkActivity context, NMoQParkTableEnglish nMoQParkTableEnglish,
-                                     NMoQParkTableArabic nMoQParkTableArabic, String apiLanguage) {
+        InsertNMoQParkDataToDataBase(NMoQParkActivity context, NMoQParkTable nMoQParkTable,
+                                     String apiLanguage) {
             activityReference = new WeakReference<>(context);
-            this.nMoQParkTableEnglish = nMoQParkTableEnglish;
-            this.nMoQParkTableArabic = nMoQParkTableArabic;
+            this.nMoQParkTable = nMoQParkTable;
             this.language = apiLanguage;
         }
 
@@ -515,36 +502,22 @@ public class NMoQParkActivity extends AppCompatActivity implements OnMapReadyCal
 
         @Override
         protected Boolean doInBackground(Void... voids) {
-            if (language.equals(LocaleManager.LANGUAGE_ENGLISH)) {
-                if (activityReference.get().nMoQPark != null && activityReference.get().nMoQPark.size() > 0) {
-                    nMoQParkTableEnglish = new NMoQParkTableEnglish(
-                            activityReference.get().nMoQPark.get(0).getNid(),
-                            activityReference.get().nMoQPark.get(0).getMainTitle(),
-                            activityReference.get().nMoQPark.get(0).getMainDescription(),
-                            activityReference.get().nMoQPark.get(0).getParkTitle(),
-                            activityReference.get().nMoQPark.get(0).getParkDescription(),
-                            activityReference.get().nMoQPark.get(0).getParkHoursTitle(),
-                            activityReference.get().nMoQPark.get(0).getParksHoursDescription(),
-                            activityReference.get().nMoQPark.get(0).getLocationTitle(),
-                            activityReference.get().nMoQPark.get(0).getLatitudeNMoQ(),
-                            activityReference.get().nMoQPark.get(0).getLongitudeNMoQ());
-                    activityReference.get().qmDatabase.getNMoQParkTableDao().insertEnglishTable(nMoQParkTableEnglish);
-                }
-            } else {
-                if (activityReference.get().nMoQPark != null && activityReference.get().nMoQPark.size() > 0) {
-                    nMoQParkTableArabic = new NMoQParkTableArabic(
-                            activityReference.get().nMoQPark.get(0).getNid(),
-                            activityReference.get().nMoQPark.get(0).getMainTitle(),
-                            activityReference.get().nMoQPark.get(0).getMainDescription(),
-                            activityReference.get().nMoQPark.get(0).getParkTitle(),
-                            activityReference.get().nMoQPark.get(0).getParkDescription(),
-                            activityReference.get().nMoQPark.get(0).getParkHoursTitle(),
-                            activityReference.get().nMoQPark.get(0).getParksHoursDescription(),
-                            activityReference.get().nMoQPark.get(0).getLocationTitle(),
-                            activityReference.get().nMoQPark.get(0).getLatitudeNMoQ(),
-                            activityReference.get().nMoQPark.get(0).getLongitudeNMoQ());
-                    activityReference.get().qmDatabase.getNMoQParkTableDao().insertArabicTable(nMoQParkTableArabic);
-                }
+            if (activityReference.get().nMoQPark != null && activityReference.get().nMoQPark.size() > 0) {
+                Timber.i("Inserting data to Table(language :%s) with id: %s",
+                        language, activityReference.get().nMoQPark.get(0).getNid());
+                nMoQParkTable = new NMoQParkTable(
+                        activityReference.get().nMoQPark.get(0).getNid(),
+                        activityReference.get().nMoQPark.get(0).getMainTitle(),
+                        activityReference.get().nMoQPark.get(0).getMainDescription(),
+                        activityReference.get().nMoQPark.get(0).getParkTitle(),
+                        activityReference.get().nMoQPark.get(0).getParkDescription(),
+                        activityReference.get().nMoQPark.get(0).getParkHoursTitle(),
+                        activityReference.get().nMoQPark.get(0).getParksHoursDescription(),
+                        activityReference.get().nMoQPark.get(0).getLocationTitle(),
+                        activityReference.get().nMoQPark.get(0).getLatitudeNMoQ(),
+                        activityReference.get().nMoQPark.get(0).getLongitudeNMoQ(),
+                        language);
+                activityReference.get().qmDatabase.getNMoQParkTableDao().insertData(nMoQParkTable);
             }
             return true;
         }
@@ -555,10 +528,10 @@ public class NMoQParkActivity extends AppCompatActivity implements OnMapReadyCal
         }
     }
 
-    public static class RetrieveEnglishNMoQParkData extends AsyncTask<Void, Void, List<NMoQParkTableEnglish>> {
+    public static class RetrieveNMoQParkData extends AsyncTask<Void, Void, List<NMoQParkTable>> {
         private WeakReference<NMoQParkActivity> activityReference;
 
-        RetrieveEnglishNMoQParkData(NMoQParkActivity context) {
+        RetrieveNMoQParkData(NMoQParkActivity context) {
             this.activityReference = new WeakReference<>(context);
         }
 
@@ -568,74 +541,34 @@ public class NMoQParkActivity extends AppCompatActivity implements OnMapReadyCal
         }
 
         @Override
-        protected List<NMoQParkTableEnglish> doInBackground(Void... voids) {
-            return activityReference.get().qmDatabase.getNMoQParkTableDao().getAllDataFromNMoQParkEnglishTable();
+        protected List<NMoQParkTable> doInBackground(Void... voids) {
+            Timber.i("getAllDataFromNMoQParkTable(language :%s)", activityReference.get().language);
+            return activityReference.get().qmDatabase.getNMoQParkTableDao()
+                    .getAllDataFromNMoQParkTable(activityReference.get().language);
         }
 
         @Override
-        protected void onPostExecute(List<NMoQParkTableEnglish> nMoQParkTableEnglishes) {
+        protected void onPostExecute(List<NMoQParkTable> nMoQParkTables) {
             NMoQPark nMoQPark;
-            if (nMoQParkTableEnglishes.size() > 0) {
+            if (nMoQParkTables.size() > 0) {
+                Timber.i("Setting data from database with id: %s",
+                        nMoQParkTables.get(0).getParkNid());
                 nMoQPark = new NMoQPark(
-                        nMoQParkTableEnglishes.get(0).getParkNid(),
-                        nMoQParkTableEnglishes.get(0).getParkToolbarTitle(),
-                        nMoQParkTableEnglishes.get(0).getMainDescription(),
-                        nMoQParkTableEnglishes.get(0).getParkTitle(),
-                        nMoQParkTableEnglishes.get(0).getParkTitleDescription(),
-                        nMoQParkTableEnglishes.get(0).getParkHoursTitle(),
-                        nMoQParkTableEnglishes.get(0).getParksHoursDescription(),
-                        nMoQParkTableEnglishes.get(0).getParkLocationTitle(),
-                        nMoQParkTableEnglishes.get(0).getParkLatitude(),
-                        nMoQParkTableEnglishes.get(0).getParkLongitude());
+                        nMoQParkTables.get(0).getParkNid(),
+                        nMoQParkTables.get(0).getParkToolbarTitle(),
+                        nMoQParkTables.get(0).getMainDescription(),
+                        nMoQParkTables.get(0).getParkTitle(),
+                        nMoQParkTables.get(0).getParkTitleDescription(),
+                        nMoQParkTables.get(0).getParkHoursTitle(),
+                        nMoQParkTables.get(0).getParksHoursDescription(),
+                        nMoQParkTables.get(0).getParkLocationTitle(),
+                        nMoQParkTables.get(0).getParkLatitude(),
+                        nMoQParkTables.get(0).getParkLongitude());
                 activityReference.get().detailsLayout.setVisibility(View.VISIBLE);
                 activityReference.get().setData(nMoQPark);
                 activityReference.get().progressLoading.setVisibility(View.GONE);
             } else {
-                activityReference.get().progressLoading.setVisibility(View.GONE);
-                activityReference.get().retryLayoutPark.setVisibility(View.VISIBLE);
-            }
-        }
-
-
-    }
-
-    public static class RetrieveArabicNMoQParkData extends AsyncTask<Void, Void, List<NMoQParkTableArabic>> {
-        private WeakReference<NMoQParkActivity> activityReference;
-
-        RetrieveArabicNMoQParkData(NMoQParkActivity context) {
-            this.activityReference = new WeakReference<>(context);
-        }
-
-        @Override
-        protected void onPreExecute() {
-            activityReference.get().progressLoading.setVisibility(View.VISIBLE);
-        }
-
-        @Override
-        protected List<NMoQParkTableArabic> doInBackground(Void... voids) {
-            return activityReference.get().qmDatabase.getNMoQParkTableDao().getAllDataFromNMoQParkArabicTable();
-        }
-
-        @Override
-        protected void onPostExecute(List<NMoQParkTableArabic> nMoQParkTableArabics) {
-            NMoQPark nMoQPark;
-            if (nMoQParkTableArabics.size() > 0) {
-                nMoQPark = new NMoQPark(
-                        nMoQParkTableArabics.get(0).getParkNid(),
-                        nMoQParkTableArabics.get(0).getParkToolbarTitle(),
-                        nMoQParkTableArabics.get(0).getMainDescription(),
-                        nMoQParkTableArabics.get(0).getParkTitle(),
-                        nMoQParkTableArabics.get(0).getParkTitleDescription(),
-                        nMoQParkTableArabics.get(0).getParkHoursTitle(),
-                        nMoQParkTableArabics.get(0).getParksHoursDescription(),
-                        nMoQParkTableArabics.get(0).getParkLocationTitle(),
-                        nMoQParkTableArabics.get(0).getParkLatitude(),
-                        nMoQParkTableArabics.get(0).getParkLongitude());
-
-                activityReference.get().detailsLayout.setVisibility(View.VISIBLE);
-                activityReference.get().setData(nMoQPark);
-                activityReference.get().progressLoading.setVisibility(View.GONE);
-            } else {
+                Timber.i("Have no data in database");
                 activityReference.get().progressLoading.setVisibility(View.GONE);
                 activityReference.get().retryLayoutPark.setVisibility(View.VISIBLE);
             }
@@ -645,11 +578,8 @@ public class NMoQParkActivity extends AppCompatActivity implements OnMapReadyCal
     }
 
     public void getNMoQParkListFromDataBase() {
-        if (language.equals(LocaleManager.LANGUAGE_ENGLISH)) {
-            new RetrieveEnglishNMoQParkListData(NMoQParkActivity.this).execute();
-        } else {
-            new RetrieveArabicNMoQParkListData(NMoQParkActivity.this).execute();
-        }
+        Timber.i("getNMoQParkListFromDataBase(language :%s)", language);
+        new RetrieveNMoQParkListData(NMoQParkActivity.this).execute();
     }
 
     public static class NMoQParkListRowCount extends AsyncTask<Void, Void, Integer> {
@@ -668,29 +598,28 @@ public class NMoQParkActivity extends AppCompatActivity implements OnMapReadyCal
 
         @Override
         protected Integer doInBackground(Void... voids) {
-            if (language.equals(LocaleManager.LANGUAGE_ENGLISH))
-                return activityReference.get().qmDatabase.getNMoQParkListTableDao().getNumberOfRowsEnglish();
-            else
-                return activityReference.get().qmDatabase.getNMoQParkListTableDao().getNumberOfRowsArabic();
-
+            Timber.i("getNumberOfRows(language :%s)", language);
+            return activityReference.get().qmDatabase.getNMoQParkListTableDao()
+                    .getNumberOfRows(language);
         }
 
         @Override
         protected void onPostExecute(Integer integer) {
             if (integer > 0) {
+                Timber.i("Count: %d", integer);
                 new CheckNMoQParkListDBRowExist(activityReference.get(), language).execute();
             } else {
-                new InsertNMoQParkListDataToDataBase(activityReference.get(), activityReference.get().nMoQParkListTableEnglish,
-                        activityReference.get().nMoQParkListTableArabic, language).execute();
+                Timber.i("Database table have no data");
+                new InsertNMoQParkListDataToDataBase(activityReference.get(),
+                        activityReference.get().nMoQParkListTable, language).execute();
             }
         }
     }
 
     public static class CheckNMoQParkListDBRowExist extends AsyncTask<Void, Void, Void> {
         private WeakReference<NMoQParkActivity> activityReference;
-        private NMoQParkListTableArabic nMoQParkListTableArabic;
         String language;
-        private NMoQParkListTableEnglish nMoQParkListTableEnglish;
+        private NMoQParkListTable nMoQParkListTable;
 
         CheckNMoQParkListDBRowExist(NMoQParkActivity context, String apiLanguage) {
             activityReference = new WeakReference<>(context);
@@ -700,40 +629,25 @@ public class NMoQParkActivity extends AppCompatActivity implements OnMapReadyCal
         @Override
         protected Void doInBackground(Void... voids) {
             if (activityReference.get().parkLists.size() > 0) {
-                if (language.equals(LocaleManager.LANGUAGE_ENGLISH)) {
-                    for (int i = 0; i < activityReference.get().parkLists.size(); i++) {
-                        int n = activityReference.get().qmDatabase.getNMoQParkListTableDao().checkIdExistEnglish(
-                                Integer.parseInt(activityReference.get().parkLists.get(i).getNid()));
-                        if (n > 0) {
-                            new UpdateNMoQParkListTable(activityReference.get(), language).execute();
-                        } else {
-                            nMoQParkListTableEnglish = new NMoQParkListTableEnglish(
-                                    activityReference.get().parkLists.get(i).getNid(),
-                                    activityReference.get().parkLists.get(i).getMainTitle(),
-                                    activityReference.get().parkLists.get(i).getSortId(),
-                                    activityReference.get().parkLists.get(i).getImage().get(0));
+                for (int i = 0; i < activityReference.get().parkLists.size(); i++) {
+                    int n = activityReference.get().qmDatabase.getNMoQParkListTableDao().checkIdExist(
+                            Integer.parseInt(activityReference.get().parkLists.get(i).getNid()), language);
+                    if (n > 0) {
+                        Timber.i("Row exist in database(language :%s) for id: %s", language,
+                                activityReference.get().parkLists.get(i).getNid());
+                        new UpdateNMoQParkListTable(activityReference.get(), language).execute();
+                    } else {
+                        Timber.i("Inserting data to Table(language :%s) with id: %s",
+                                language, activityReference.get().parkLists.get(i).getNid());
+                        nMoQParkListTable = new NMoQParkListTable(
+                                activityReference.get().parkLists.get(i).getNid(),
+                                activityReference.get().parkLists.get(i).getMainTitle(),
+                                activityReference.get().parkLists.get(i).getSortId(),
+                                activityReference.get().parkLists.get(i).getImage().get(0),
+                                language);
 
-                            activityReference.get().qmDatabase.getNMoQParkListTableDao().insertEnglishTable(nMoQParkListTableEnglish);
-                        }
+                        activityReference.get().qmDatabase.getNMoQParkListTableDao().insertData(nMoQParkListTable);
                     }
-                } else {
-                    for (int i = 0; i < activityReference.get().parkLists.size(); i++) {
-                        int n = activityReference.get().qmDatabase.getNMoQParkListTableDao().checkIdExistArabic(
-                                Integer.parseInt(activityReference.get().parkLists.get(i).getNid()));
-                        if (n > 0) {
-                            new UpdateNMoQParkListTable(activityReference.get(), language).execute();
-                        } else {
-
-                            nMoQParkListTableArabic = new NMoQParkListTableArabic(
-                                    activityReference.get().parkLists.get(i).getNid(),
-                                    activityReference.get().parkLists.get(i).getMainTitle(),
-                                    activityReference.get().parkLists.get(i).getSortId(),
-                                    activityReference.get().parkLists.get(i).getImage().get(0));
-
-                            activityReference.get().qmDatabase.getNMoQParkListTableDao().insertArabicTable(nMoQParkListTableArabic);
-                        }
-                    }
-
                 }
             }
             return null;
@@ -752,23 +666,15 @@ public class NMoQParkActivity extends AppCompatActivity implements OnMapReadyCal
 
         @Override
         protected Void doInBackground(Void... voids) {
-            if (language.equals(LocaleManager.LANGUAGE_ENGLISH)) {
-                activityReference.get().qmDatabase.getNMoQParkListTableDao().updateNMoQParkListEnglish(
-                        activityReference.get().parkLists.get(0).getMainTitle(),
-                        activityReference.get().parkLists.get(0).getImage(),
-                        activityReference.get().parkLists.get(0).getSortId(),
-                        activityReference.get().parkLists.get(0).getNid()
-                );
-
-            } else {
-                activityReference.get().qmDatabase.getNMoQParkListTableDao().updateNMoQParkListArabic(
-                        activityReference.get().parkLists.get(0).getMainTitle(),
-                        activityReference.get().parkLists.get(0).getImage(),
-                        activityReference.get().parkLists.get(0).getSortId(),
-                        activityReference.get().parkLists.get(0).getNid()
-                );
-
-            }
+            Timber.i("Updating data on Table(language :%s) for id: %s",
+                    language, activityReference.get().parkLists.get(0).getNid());
+            activityReference.get().qmDatabase.getNMoQParkListTableDao().updateNMoQParkList(
+                    activityReference.get().parkLists.get(0).getMainTitle(),
+                    activityReference.get().parkLists.get(0).getImage(),
+                    activityReference.get().parkLists.get(0).getSortId(),
+                    activityReference.get().parkLists.get(0).getNid(),
+                    language
+            );
             return null;
         }
     }
@@ -776,15 +682,13 @@ public class NMoQParkActivity extends AppCompatActivity implements OnMapReadyCal
     public static class InsertNMoQParkListDataToDataBase extends AsyncTask<Void, Void, Boolean> {
 
         private WeakReference<NMoQParkActivity> activityReference;
-        private NMoQParkListTableEnglish nMoQParkListTableEnglish;
-        private NMoQParkListTableArabic nMoQParkListTableArabic;
+        private NMoQParkListTable nMoQParkListTable;
         String language;
 
-        InsertNMoQParkListDataToDataBase(NMoQParkActivity context, NMoQParkListTableEnglish nMoQParkListTableEnglish,
-                                         NMoQParkListTableArabic nMoQParkListTableArabic, String apiLanguage) {
+        InsertNMoQParkListDataToDataBase(NMoQParkActivity context, NMoQParkListTable nMoQParkListTable,
+                                         String apiLanguage) {
             activityReference = new WeakReference<>(context);
-            this.nMoQParkListTableEnglish = nMoQParkListTableEnglish;
-            this.nMoQParkListTableArabic = nMoQParkListTableArabic;
+            this.nMoQParkListTable = nMoQParkListTable;
             this.language = apiLanguage;
         }
 
@@ -795,27 +699,17 @@ public class NMoQParkActivity extends AppCompatActivity implements OnMapReadyCal
 
         @Override
         protected Boolean doInBackground(Void... voids) {
-            if (language.equals(LocaleManager.LANGUAGE_ENGLISH)) {
-                if (activityReference.get().parkLists != null && activityReference.get().parkLists.size() > 0) {
-                    for (int i = 0; i < activityReference.get().parkLists.size(); i++) {
-                        nMoQParkListTableEnglish = new NMoQParkListTableEnglish(
-                                activityReference.get().parkLists.get(i).getNid(),
-                                activityReference.get().parkLists.get(i).getMainTitle(),
-                                activityReference.get().parkLists.get(i).getSortId(),
-                                activityReference.get().parkLists.get(i).getImage().get(0));
-                        activityReference.get().qmDatabase.getNMoQParkListTableDao().insertEnglishTable(nMoQParkListTableEnglish);
-                    }
-                }
-            } else {
-                if (activityReference.get().parkLists != null && activityReference.get().parkLists.size() > 0) {
-                    for (int i = 0; i < activityReference.get().parkLists.size(); i++) {
-                        nMoQParkListTableArabic = new NMoQParkListTableArabic(
-                                activityReference.get().parkLists.get(i).getNid(),
-                                activityReference.get().parkLists.get(i).getMainTitle(),
-                                activityReference.get().parkLists.get(i).getSortId(),
-                                activityReference.get().parkLists.get(i).getImage().get(0));
-                        activityReference.get().qmDatabase.getNMoQParkListTableDao().insertArabicTable(nMoQParkListTableArabic);
-                    }
+            if (activityReference.get().parkLists != null && activityReference.get().parkLists.size() > 0) {
+                for (int i = 0; i < activityReference.get().parkLists.size(); i++) {
+                    Timber.i("Inserting data to Table(language :%s) with id: %s",
+                            language, activityReference.get().parkLists.get(i).getNid());
+                    nMoQParkListTable = new NMoQParkListTable(
+                            activityReference.get().parkLists.get(i).getNid(),
+                            activityReference.get().parkLists.get(i).getMainTitle(),
+                            activityReference.get().parkLists.get(i).getSortId(),
+                            activityReference.get().parkLists.get(i).getImage().get(0),
+                            language);
+                    activityReference.get().qmDatabase.getNMoQParkListTableDao().insertData(nMoQParkListTable);
                 }
             }
             return true;
@@ -827,10 +721,10 @@ public class NMoQParkActivity extends AppCompatActivity implements OnMapReadyCal
         }
     }
 
-    public static class RetrieveEnglishNMoQParkListData extends AsyncTask<Void, Void, List<NMoQParkListTableEnglish>> {
+    public static class RetrieveNMoQParkListData extends AsyncTask<Void, Void, List<NMoQParkListTable>> {
         private WeakReference<NMoQParkActivity> activityReference;
 
-        RetrieveEnglishNMoQParkListData(NMoQParkActivity context) {
+        RetrieveNMoQParkListData(NMoQParkActivity context) {
             this.activityReference = new WeakReference<>(context);
         }
 
@@ -840,22 +734,26 @@ public class NMoQParkActivity extends AppCompatActivity implements OnMapReadyCal
         }
 
         @Override
-        protected List<NMoQParkListTableEnglish> doInBackground(Void... voids) {
-            return activityReference.get().qmDatabase.getNMoQParkListTableDao().getAllDataFromNMoQParkListEnglishTable();
+        protected List<NMoQParkListTable> doInBackground(Void... voids) {
+            Timber.i("getAllDataFromNMoQParkListTable(language: %s)", activityReference.get().language);
+            return activityReference.get().qmDatabase.getNMoQParkListTableDao()
+                    .getAllDataFromNMoQParkListTable(activityReference.get().language);
         }
 
         @Override
-        protected void onPostExecute(List<NMoQParkListTableEnglish> nMoQParkListTableEnglishes) {
+        protected void onPostExecute(List<NMoQParkListTable> nMoQParkListTables) {
             NMoQParkList nMoQParkList;
-            if (nMoQParkListTableEnglishes.size() > 0) {
-                for (int i = 0; i < nMoQParkListTableEnglishes.size(); i++) {
+            if (nMoQParkListTables.size() > 0) {
+                for (int i = 0; i < nMoQParkListTables.size(); i++) {
+                    Timber.i("Setting data from database with id: %s",
+                            nMoQParkListTables.get(i).getParkNid());
                     ArrayList<String> image = new ArrayList<>();
-                    image.add(nMoQParkListTableEnglishes.get(i).getParkImages());
+                    image.add(nMoQParkListTables.get(i).getParkImages());
 
                     nMoQParkList = new NMoQParkList(
-                            nMoQParkListTableEnglishes.get(i).getParkNid(),
-                            nMoQParkListTableEnglishes.get(i).getParkTitle(),
-                            nMoQParkListTableEnglishes.get(i).getParkSortId(),
+                            nMoQParkListTables.get(i).getParkNid(),
+                            nMoQParkListTables.get(i).getParkTitle(),
+                            nMoQParkListTables.get(i).getParkSortId(),
                             image);
                     activityReference.get().parkLists.add(i, nMoQParkList);
                 }
@@ -864,50 +762,7 @@ public class NMoQParkActivity extends AppCompatActivity implements OnMapReadyCal
                 Collections.sort(activityReference.get().parkLists);
                 activityReference.get().mAdapter.notifyDataSetChanged();
             } else {
-                activityReference.get().progressLoading.setVisibility(View.GONE);
-                activityReference.get().retryLayoutPark.setVisibility(View.VISIBLE);
-            }
-        }
-
-
-    }
-
-    public static class RetrieveArabicNMoQParkListData extends AsyncTask<Void, Void, List<NMoQParkListTableArabic>> {
-        private WeakReference<NMoQParkActivity> activityReference;
-
-        RetrieveArabicNMoQParkListData(NMoQParkActivity context) {
-            this.activityReference = new WeakReference<>(context);
-        }
-
-        @Override
-        protected void onPreExecute() {
-            activityReference.get().progressLoading.setVisibility(View.VISIBLE);
-        }
-
-        @Override
-        protected List<NMoQParkListTableArabic> doInBackground(Void... voids) {
-            return activityReference.get().qmDatabase.getNMoQParkListTableDao().getAllDataFromNMoQParkListArabicTable();
-        }
-
-        @Override
-        protected void onPostExecute(List<NMoQParkListTableArabic> nMoQParkListTableArabics) {
-            NMoQParkList nMoQParkList;
-            if (nMoQParkListTableArabics.size() > 0) {
-                for (int i = 0; i < nMoQParkListTableArabics.size(); i++) {
-                    ArrayList<String> image = new ArrayList<>();
-                    image.add(nMoQParkListTableArabics.get(i).getParkImages());
-                    nMoQParkList = new NMoQParkList(
-                            nMoQParkListTableArabics.get(i).getParkNid(),
-                            nMoQParkListTableArabics.get(i).getParkTitle(),
-                            nMoQParkListTableArabics.get(i).getParkSortId(),
-                            image);
-                    activityReference.get().parkLists.add(i, nMoQParkList);
-                }
-                activityReference.get().parksRecyclerView.setVisibility(View.VISIBLE);
-                Collections.sort(activityReference.get().parkLists);
-                activityReference.get().mAdapter.notifyDataSetChanged();
-                activityReference.get().progressLoading.setVisibility(View.GONE);
-            } else {
+                Timber.i("Have no data in database");
                 activityReference.get().progressLoading.setVisibility(View.GONE);
                 activityReference.get().retryLayoutPark.setVisibility(View.VISIBLE);
             }
@@ -918,6 +773,7 @@ public class NMoQParkActivity extends AppCompatActivity implements OnMapReadyCal
 
     @Override
     public void onMapReady(GoogleMap googleMap) {
+        Timber.i("onMapReady()");
         gValue = googleMap;
         googleMap.getUiSettings().setMapToolbarEnabled(false);
         if (latitude != null && !latitude.equals("") && gValue != null) {
@@ -949,6 +805,9 @@ public class NMoQParkActivity extends AppCompatActivity implements OnMapReadyCal
     protected void onResume() {
         super.onResume();
         parkMapInfo.onResume();
+        if (toolbarTitle.getText() != null)
+            mFireBaseAnalytics.setCurrentScreen(this, toolbarTitle.getText() + getString(R.string.page), null);
+
     }
 
     @Override
@@ -971,6 +830,7 @@ public class NMoQParkActivity extends AppCompatActivity implements OnMapReadyCal
 
     @Override
     protected void onDestroy() {
+        Timber.i("onDestroy()");
         parkMapInfo.onDestroy();
         gMap = null;
         gValue = null;

@@ -213,11 +213,11 @@ public class TourDetailsModel implements Parcelable, Comparable<TourDetailsModel
         this.tourSpeakerInfo = tourSpeakerInfo;
     }
 
-    public String getnId() {
+    public String getNid() {
         return nId;
     }
 
-    public void setnId(String nId) {
+    public void setNid(String nId) {
         this.nId = nId;
     }
 

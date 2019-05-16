@@ -9,7 +9,7 @@
     <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="@color/semitransparent" />
+        android:background="@color/colorSemiTransparent" />
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -48,7 +48,7 @@
                 android:layout_marginTop="@dimen/padding_10"
                 android:fontFamily="@font/din_next_lt_pro_bold"
                 android:textAlignment="center"
-                android:textColor="@color/white"
+                android:textColor="@color/colorWhite"
                 android:textSize="@dimen/font_size_40"
                 android:visibility="visible" />
 
@@ -60,7 +60,7 @@
                 android:paddingEnd="@dimen/padding_15"
                 android:paddingStart="@dimen/padding_15"
                 android:textAlignment="center"
-                android:textColor="@color/white"
+                android:textColor="@color/colorWhite"
                 android:textSize="@dimen/font_size_16" />
 
 
@@ -68,13 +68,13 @@
                 android:id="@+id/start_btn"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_margin="@dimen/pading_25"
+                android:layout_margin="@dimen/padding_25"
                 android:background="@drawable/round_corner_black"
                 android:fontFamily="@font/din_next_lt_pro_bold"
                 android:text="@string/start_tour"
                 android:textAllCaps="false"
-                android:textColor="@color/white"
-                android:textSize="@dimen/settings_page_list_item_text_size"
+                android:textColor="@color/colorWhite"
+                android:textSize="@dimen/font_size_21"
                 android:visibility="visible" />
 
 

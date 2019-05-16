@@ -3,76 +3,38 @@ package com.qatarmuseums.qatarmuseumsapp.museumabout;
 import android.arch.persistence.room.Dao;
 import android.arch.persistence.room.Insert;
 import android.arch.persistence.room.Query;
-import android.arch.persistence.room.Update;
-import android.support.annotation.NonNull;
-
-import java.util.ArrayList;
-import java.util.List;
 
 @Dao
 public interface MuseumAboutTableDao {
-    @Query("SELECT * FROM museumabouttableenglish")
-    MuseumAboutTableEnglish getAllMuseumAboutDataEnglish();
 
-    @Query("SELECT * FROM museumabouttablearabic")
-    MuseumAboutTableArabic getAllMuseumAboutDataArabic();
+    @Query("SELECT COUNT(museum_id) FROM museumAboutTable WHERE language = :language")
+    int getNumberOfRows(String language);
 
-    @Query("SELECT COUNT(museum_id) FROM museumabouttableenglish")
-    int getNumberOfRowsEnglish();
+    @Query("SELECT COUNT(museum_id) FROM museumAboutTable WHERE museum_id = :idFromAPI AND language = :language")
+    int checkIdExist(int idFromAPI, String language);
 
-    @Query("SELECT COUNT(museum_id) FROM museumabouttablearabic")
-    int getNumberOfRowsArabic();
+    @Query("SELECT * FROM museumAboutTable WHERE museum_id = :idFromAPI AND language = :language")
+    MuseumAboutTable getMuseumAboutData(int idFromAPI, String language);
 
-    @Query("SELECT COUNT(museum_id) FROM museumabouttableenglish WHERE museum_id = :idFromAPI")
-    int checkEnglishIdExist(int idFromAPI);
-
-    @Query("SELECT COUNT(museum_id) FROM museumabouttablearabic WHERE museum_id = :idFromAPI")
-    int checkArabicIdExist(int idFromAPI);
-
-    @Query("SELECT * FROM museumabouttableenglish WHERE museum_id = :idFromAPI")
-    MuseumAboutTableEnglish getMuseumAboutDataEnglish(int idFromAPI);
-
-    @Query("SELECT * FROM museumabouttablearabic WHERE museum_id = :idFromAPI")
-    MuseumAboutTableArabic getMuseumAboutDataArabic(int idFromAPI);
-
-    @Query("UPDATE museumabouttableenglish SET museum_name = :museumnameFromApi," +
-            "tourguide_available = :tourguideAvailableFromApi, short_description = :museumshortDescriptionFromApi," +
+    @Query("UPDATE museumAboutTable SET museum_name = :museumNameFromApi," +
+            "tour_guide_available = :tourGuideAvailableFromApi, short_description = :museumShortDescriptionFromApi," +
             "long_description = :museumLongDescriptionFromApi, " +
             "museum_image = :museumImageFromApi, museum_contact_number = :museumContactNumberFromApi, " +
-            "museum_contact_email = :museumContactEmailFromApi, museum_lattitude = :museumLattitude," +
+            "museum_contact_email = :museumContactEmailFromApi, museum_latitude = :museumLatitude," +
             "museum_longitude = :museumLongitude," +
-            "tourguide_availability = :museumtourguideAvailabilityFromApi," +
+            "tour_guide_availability = :museumTourGuideAvailabilityFromApi," +
             "museum_subtitle = :museumSubtitleFromApi," +
-            "museum_opening_time = :museumOpeningTimeFromApi WHERE museum_id = :idFromApi")
-    void updateMuseumAboutDataEnglish(String museumnameFromApi,
-                                      String tourguideAvailableFromApi, String museumshortDescriptionFromApi,
-                                      String museumLongDescriptionFromApi,
-                                      String museumImageFromApi, String museumContactNumberFromApi,
-                                      String museumContactEmailFromApi, String museumLattitude,
-                                      String museumLongitude, String museumtourguideAvailabilityFromApi,
-                                      String museumSubtitleFromApi, String museumOpeningTimeFromApi, long idFromApi);
-
-    @Query("UPDATE museumabouttablearabic SET museum_name = :museumnameFromApi," +
-            "tourguide_available = :tourguideAvailableFromApi,short_description = :museumShortDescriptionFromApi,long_description = :museumLongDescriptionFromApi, " +
-            "museum_image = :museumImageFromApi,museum_contact_number = :museumContactNumberFromApi, " +
-            "museum_contact_email = :museumContactEmailFromApi,museum_lattitude = :museumLattitude," +
-            "museum_longitude = :museumLongitude," +
-            "tourguide_availability = :museumtourguideAvailabilityFromApi," +
-            "museum_subtitle = :museumSubtitleFromApi," +
-            "museum_opening_time = :museumOpeningTimeFromApi WHERE museum_id = :idFromApi")
-    void updateMuseumAboutDataArabic(String museumnameFromApi,
-                                     String tourguideAvailableFromApi, String museumShortDescriptionFromApi,
-                                     String museumLongDescriptionFromApi,
-                                     String museumImageFromApi, String museumContactNumberFromApi,
-                                     String museumContactEmailFromApi, String museumLattitude,
-                                     String museumLongitude, String museumtourguideAvailabilityFromApi,
-                                     String museumSubtitleFromApi, String museumOpeningTimeFromApi, long idFromApi);
+            "museum_opening_time = :museumOpeningTimeFromApi WHERE museum_id = :idFromApi AND language = :language")
+    void updateMuseumAboutData(String museumNameFromApi,
+                               String tourGuideAvailableFromApi, String museumShortDescriptionFromApi,
+                               String museumLongDescriptionFromApi,
+                               String museumImageFromApi, String museumContactNumberFromApi,
+                               String museumContactEmailFromApi, String museumLatitude,
+                               String museumLongitude, String museumTourGuideAvailabilityFromApi,
+                               String museumSubtitleFromApi, String museumOpeningTimeFromApi,
+                               long idFromApi, String language);
 
     @Insert
-    void insert(MuseumAboutTableEnglish museumAboutTableEnglish);
-
-    @Insert
-    void insert(MuseumAboutTableArabic museumAboutTableArabic);
-
+    void insert(MuseumAboutTable museumAboutTable);
 
 }
