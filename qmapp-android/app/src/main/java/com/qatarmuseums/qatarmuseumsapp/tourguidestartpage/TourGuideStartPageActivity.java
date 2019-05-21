@@ -1,13 +1,14 @@
 package com.qatarmuseums.qatarmuseumsapp.tourguidestartpage;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.MotionEvent;
+import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
-import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -23,7 +24,7 @@ public class TourGuideStartPageActivity extends AppCompatActivity {
     FrameLayout mainLayout;
     ImageView playButton;
     TextView museumTitle, museumDesc;
-    Button startBtn;
+    View startBtn;
     private Animation zoomOutAnimation;
     private FirebaseAnalytics mFirebaseAnalytics;
 
@@ -32,6 +33,7 @@ public class TourGuideStartPageActivity extends AppCompatActivity {
         super.attachBaseContext(LocaleManager.setLocale(base));
     }
 
+    @SuppressLint("ClickableViewAccessibility")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);

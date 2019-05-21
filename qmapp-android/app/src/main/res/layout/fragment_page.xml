@@ -1,234 +1,230 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:gravity="center"
     android:orientation="vertical"
     android:paddingEnd="@dimen/padding_10"
     android:paddingStart="@dimen/padding_10"
     android:weightSum="6">
 
+    <TextView
+        android:id="@+id/floor_gallery"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/font_size_16"
+        android:fontFamily="@font/din_next_lt_pro_regular"
+        android:textColor="@color/colorBlack"
+        android:textSize="@dimen/font_size_18" />
+
     <LinearLayout
-        android:id="@+id/header_layout"
+        android:layout_width="25dp"
+        android:layout_height="3dp"
+        android:layout_marginBottom="@dimen/padding_10"
+        android:layout_marginTop="@dimen/padding_10"
+        android:background="@color/colorBlack" />
+
+    <ScrollView
+        android:id="@+id/details_popup_long"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_gravity="center"
+        android:background="@drawable/round_corner_white_small"
         android:gravity="center"
-        android:orientation="vertical">
-
-
-        <TextView
-            android:id="@+id/floor_gallery"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/font_size_16"
-            android:fontFamily="@font/din_next_lt_pro_regular"
-            android:textColor="@color/colorBlack"
-            android:textSize="@dimen/font_size_18" />
+        android:orientation="vertical"
+        app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
         <LinearLayout
-            android:layout_width="25dp"
-            android:layout_height="3dp"
-            android:layout_marginBottom="@dimen/padding_10"
-            android:layout_marginTop="@dimen/padding_10"
-            android:background="@color/colorBlack" />
-
-        <ScrollView
-            android:id="@+id/details_popup_long"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:background="@drawable/round_corner_white_small"
+            android:layout_height="wrap_content"
             android:gravity="center"
-            android:orientation="vertical"
-            app:layout_behavior="@string/appbar_scrolling_view_behavior">
+            android:orientation="vertical">
+
+
+            <ImageView
+                android:id="@+id/image_to_zoom"
+                android:layout_width="match_parent"
+                android:layout_height="300dp"
+                android:visibility="visible"
+                tools:ignore="ContentDescription" />
 
             <LinearLayout
+                android:id="@+id/audio_control"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:gravity="center"
-                android:orientation="vertical">
-
+                android:layoutDirection="ltr"
+                android:orientation="horizontal"
+                android:paddingBottom="@dimen/padding_5"
+                android:paddingEnd="@dimen/padding_25"
+                android:paddingStart="@dimen/padding_25"
+                android:paddingTop="@dimen/padding_10"
+                android:visibility="gone">
 
                 <ImageView
-                    android:id="@+id/image_to_zoom"
-                    android:layout_width="match_parent"
-                    android:layout_height="300dp"
-                    android:visibility="visible" />
-
-                <LinearLayout
-                    android:id="@+id/audio_control"
-                    android:layout_width="match_parent"
+                    android:id="@+id/play_button"
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:gravity="center"
-                    android:layoutDirection="ltr"
-                    android:orientation="horizontal"
-                    android:paddingBottom="@dimen/padding_5"
-                    android:paddingEnd="@dimen/padding_25"
-                    android:paddingStart="@dimen/padding_25"
-                    android:paddingTop="@dimen/padding_10"
-                    android:visibility="gone">
+                    android:src="@drawable/play_black"
+                    tools:ignore="ContentDescription" />
 
-                    <ImageView
-                        android:id="@+id/play_button"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:gravity="center"
-                        android:src="@drawable/play_black" />
-
-                    <SeekBar
-                        android:id="@+id/seek_bar"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:gravity="center" />
-
-                </LinearLayout>
-
-                <TextView
-                    android:id="@+id/title"
+                <SeekBar
+                    android:id="@+id/seek_bar"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="@dimen/padding_10"
-                    android:fontFamily="@font/din_next_lt_pro_bold"
-                    android:paddingEnd="@dimen/padding_25"
-                    android:paddingStart="@dimen/padding_25"
-                    android:textAlignment="textStart"
-                    android:textColor="@color/colorBlack"
-                    android:textSize="@dimen/font_size_18"
-                    android:textStyle="bold" />
-
-                <TextView
-                    android:id="@+id/acession_number"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="start"
-                    android:layout_marginTop="@dimen/padding_3"
-                    android:fontFamily="@font/din_next_lt_pro_regular"
-                    android:paddingEnd="@dimen/padding_25"
-                    android:paddingStart="@dimen/padding_25"
-                    android:textColor="@color/colorBlack"
-                    android:textSize="@dimen/font_size_18" />
-
-                <TextView
-                    android:id="@+id/short_description"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginBottom="@dimen/padding_10"
-                    android:layout_marginTop="@dimen/padding_10"
-                    android:fontFamily="@font/din_next_lt_pro_regular"
-                    android:paddingEnd="@dimen/padding_25"
-                    android:paddingStart="@dimen/padding_25"
-                    android:textAlignment="textStart"
-                    android:textColor="@color/colorBlack"
-                    android:textSize="@dimen/font_size_15" />
-
-                <ImageView
-                    android:id="@+id/image_1"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginBottom="@dimen/padding_10"
-                    android:paddingEnd="@dimen/padding_25"
-                    android:paddingStart="@dimen/padding_25"
-                    android:scaleType="fitCenter"
-                    android:src="@drawable/science_tour_object2"
-                    android:visibility="gone" />
-
-                <ImageView
-                    android:id="@+id/image_2"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginBottom="@dimen/padding_10"
-                    android:paddingEnd="@dimen/padding_25"
-                    android:paddingStart="@dimen/padding_25"
-                    android:scaleType="fitCenter"
-                    android:src="@drawable/science_tour_object2"
-                    android:visibility="gone" />
-
-                <ImageView
-                    android:id="@+id/image_3"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginBottom="@dimen/padding_10"
-                    android:paddingEnd="@dimen/padding_25"
-                    android:paddingStart="@dimen/padding_25"
-                    android:scaleType="fitCenter"
-                    android:src="@drawable/science_tour_object2"
-                    android:visibility="gone" />
-
-                <TextView
-                    android:id="@+id/image_desc1"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:fontFamily="@font/din_regular"
-                    android:paddingEnd="@dimen/padding_25"
-                    android:paddingStart="@dimen/padding_25"
-                    android:text="@string/floormap_imagdesc1"
-                    android:textAlignment="textStart"
-                    android:textColor="@color/colorBlack"
-                    android:textSize="@dimen/font_size_16"
-                    android:visibility="gone" />
-
-                <TextView
-                    android:id="@+id/history_title"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="@dimen/padding_10"
-                    android:fontFamily="@font/din_regular"
-                    android:paddingEnd="@dimen/padding_25"
-                    android:paddingStart="@dimen/padding_25"
-                    android:text="@string/object_history"
-                    android:textAlignment="textStart"
-                    android:textColor="@color/colorBlack"
-                    android:textSize="@dimen/font_size_18"
-                    android:textStyle="bold"
-                    android:visibility="gone" />
-
-                <TextView
-                    android:id="@+id/history_description"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="@dimen/padding_10"
-                    android:fontFamily="@font/din_next_lt_pro_regular"
-                    android:paddingEnd="@dimen/padding_25"
-                    android:paddingStart="@dimen/padding_25"
-                    android:text="@string/floormap_detail2"
-                    android:textAlignment="textStart"
-                    android:textColor="@color/colorBlack"
-                    android:textSize="@dimen/font_size_15"
-                    android:visibility="gone" />
-
-                <ImageView
-                    android:id="@+id/image_4"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginBottom="@dimen/padding_3"
-                    android:paddingEnd="@dimen/padding_25"
-                    android:paddingStart="@dimen/padding_25"
-                    android:paddingTop="@dimen/padding_10"
-                    android:scaleType="fitCenter"
-                    android:src="@drawable/science_tour_object2"
-                    android:visibility="gone" />
-
-                <TextView
-                    android:id="@+id/image_desc2"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginBottom="@dimen/padding_20"
-                    android:fontFamily="@font/din_regular"
-                    android:paddingEnd="@dimen/padding_25"
-                    android:paddingStart="@dimen/padding_25"
-                    android:text="@string/floormap_imagdesc2"
-                    android:textAlignment="textStart"
-                    android:textColor="@color/colorBlack"
-                    android:textSize="@dimen/font_size_16"
-                    android:visibility="gone" />
-
+                    android:gravity="center" />
 
             </LinearLayout>
 
+            <TextView
+                android:id="@+id/title"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/padding_10"
+                android:fontFamily="@font/din_next_lt_pro_bold"
+                android:paddingEnd="@dimen/padding_25"
+                android:paddingStart="@dimen/padding_25"
+                android:textAlignment="textStart"
+                android:textColor="@color/colorBlack"
+                android:textSize="@dimen/font_size_18"
+                android:textStyle="bold" />
 
-        </ScrollView>
+            <TextView
+                android:id="@+id/acession_number"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="start"
+                android:layout_marginTop="@dimen/padding_3"
+                android:fontFamily="@font/din_next_lt_pro_regular"
+                android:paddingEnd="@dimen/padding_25"
+                android:paddingStart="@dimen/padding_25"
+                android:textColor="@color/colorBlack"
+                android:textSize="@dimen/font_size_18" />
 
-    </LinearLayout>
+            <TextView
+                android:id="@+id/short_description"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="@dimen/padding_10"
+                android:layout_marginTop="@dimen/padding_10"
+                android:fontFamily="@font/din_next_lt_pro_regular"
+                android:paddingEnd="@dimen/padding_25"
+                android:paddingStart="@dimen/padding_25"
+                android:textAlignment="textStart"
+                android:textColor="@color/colorBlack"
+                android:textSize="@dimen/font_size_15" />
 
+            <ImageView
+                android:id="@+id/image_1"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="@dimen/padding_10"
+                android:paddingEnd="@dimen/padding_25"
+                android:paddingStart="@dimen/padding_25"
+                android:scaleType="fitCenter"
+                android:src="@drawable/science_tour_object2"
+                android:visibility="gone"
+                tools:ignore="ContentDescription" />
+
+            <ImageView
+                android:id="@+id/image_2"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="@dimen/padding_10"
+                android:paddingEnd="@dimen/padding_25"
+                android:paddingStart="@dimen/padding_25"
+                android:scaleType="fitCenter"
+                android:src="@drawable/science_tour_object2"
+                android:visibility="gone"
+                tools:ignore="ContentDescription" />
+
+            <ImageView
+                android:id="@+id/image_3"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="@dimen/padding_10"
+                android:paddingEnd="@dimen/padding_25"
+                android:paddingStart="@dimen/padding_25"
+                android:scaleType="fitCenter"
+                android:src="@drawable/science_tour_object2"
+                android:visibility="gone"
+                tools:ignore="ContentDescription" />
+
+            <TextView
+                android:id="@+id/image_desc1"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:fontFamily="@font/din_regular"
+                android:paddingEnd="@dimen/padding_25"
+                android:paddingStart="@dimen/padding_25"
+                android:text="@string/floormap_imagdesc1"
+                android:textAlignment="textStart"
+                android:textColor="@color/colorBlack"
+                android:textSize="@dimen/font_size_16"
+                android:visibility="gone" />
+
+            <TextView
+                android:id="@+id/history_title"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/padding_10"
+                android:fontFamily="@font/din_regular"
+                android:paddingEnd="@dimen/padding_25"
+                android:paddingStart="@dimen/padding_25"
+                android:text="@string/object_history"
+                android:textAlignment="textStart"
+                android:textColor="@color/colorBlack"
+                android:textSize="@dimen/font_size_18"
+                android:textStyle="bold"
+                android:visibility="gone" />
+
+            <TextView
+                android:id="@+id/history_description"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/padding_10"
+                android:fontFamily="@font/din_next_lt_pro_regular"
+                android:paddingEnd="@dimen/padding_25"
+                android:paddingStart="@dimen/padding_25"
+                android:text="@string/floormap_detail2"
+                android:textAlignment="textStart"
+                android:textColor="@color/colorBlack"
+                android:textSize="@dimen/font_size_15"
+                android:visibility="gone" />
+
+            <ImageView
+                android:id="@+id/image_4"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="@dimen/padding_3"
+                android:paddingEnd="@dimen/padding_25"
+                android:paddingStart="@dimen/padding_25"
+                android:paddingTop="@dimen/padding_10"
+                android:scaleType="fitCenter"
+                android:src="@drawable/science_tour_object2"
+                android:visibility="gone"
+                tools:ignore="ContentDescription" />
+
+            <TextView
+                android:id="@+id/image_desc2"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="@dimen/padding_20"
+                android:fontFamily="@font/din_regular"
+                android:paddingEnd="@dimen/padding_25"
+                android:paddingStart="@dimen/padding_25"
+                android:text="@string/floormap_imagdesc2"
+                android:textAlignment="textStart"
+                android:textColor="@color/colorBlack"
+                android:textSize="@dimen/font_size_16"
+                android:visibility="gone" />
+
+
+        </LinearLayout>
+
+
+    </ScrollView>
 
 </LinearLayout>

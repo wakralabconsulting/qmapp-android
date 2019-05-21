@@ -1,5 +1,6 @@
 package com.qatarmuseums.qatarmuseumsapp.floormap;
 
+import android.annotation.SuppressLint;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
@@ -26,7 +27,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
-import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
@@ -74,7 +74,8 @@ import retrofit2.Response;
 import timber.log.Timber;
 
 public class FloorMapActivity extends AppCompatActivity implements OnMapReadyCallback,
-        GoogleMap.OnGroundOverlayClickListener, MediaPlayer.OnBufferingUpdateListener, MediaPlayer.OnCompletionListener, SeekBar.OnSeekBarChangeListener {
+        GoogleMap.OnGroundOverlayClickListener, MediaPlayer.OnBufferingUpdateListener,
+        MediaPlayer.OnCompletionListener, SeekBar.OnSeekBarChangeListener {
 
     private int normalMapIconWidth = 53;
     private int normalMapIconHeight = 67;
@@ -146,7 +147,7 @@ public class FloorMapActivity extends AppCompatActivity implements OnMapReadyCal
 
     String markerTitle = "";
 
-    private final List<BitmapDescriptor> mImages = new ArrayList<BitmapDescriptor>();
+    private final List<BitmapDescriptor> mImages = new ArrayList<>();
 
     private GroundOverlay mGroundOverlay;
 
@@ -199,7 +200,7 @@ public class FloorMapActivity extends AppCompatActivity implements OnMapReadyCal
     String audioURL;
     private ImageView btn_play;
     private final Handler handler = new Handler();
-    private final Runnable r = () -> updateSeekProgress();
+    private final Runnable r = this::updateSeekProgress;
     private LinearLayout audioLayout, audioLayoutDetails;
     private Iterator<String> myVeryOwnIterator;
     private boolean playPause;
@@ -209,10 +210,10 @@ public class FloorMapActivity extends AppCompatActivity implements OnMapReadyCal
     private QMDatabase qmDatabase;
 
     private static Converter converters;
-    Button retryButton;
+    View retryButton;
     private Animation zoomOutAnimation, zoomOutAnimationMore;
     private Bitmap resizedBitmap;
-    private ImageView backArrow;
+    private View backArrow;
     private FirebaseAnalytics mFireBaseAnalytics;
     private Bundle contentBundleParams;
     private TextView toolbarTitle;
@@ -222,6 +223,7 @@ public class FloorMapActivity extends AppCompatActivity implements OnMapReadyCal
         super.attachBaseContext(LocaleManager.setLocale(base));
     }
 
+    @SuppressLint("ClickableViewAccessibility")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -265,10 +267,10 @@ public class FloorMapActivity extends AppCompatActivity implements OnMapReadyCal
         qmDatabase = QMDatabase.getInstance(FloorMapActivity.this);
 
         mFireBaseAnalytics = FirebaseAnalytics.getInstance(this);
-        artifactDetailsMap = new HashMap<String, ArtifactDetails>();
-        markerHashMap = new HashMap<String, Marker>();
+        artifactDetailsMap = new HashMap<>();
+        markerHashMap = new HashMap<>();
         language = LocaleManager.getLanguage(this);
-        artifactList = new ArrayList<ArtifactDetails>();
+        artifactList = new ArrayList<>();
         tourId = getIntent().getStringExtra("TourId");
         if (getIntent().getParcelableArrayListExtra("RESPONSE") != null) {
             if (utils.isNetworkAvailable(this)) {
@@ -298,7 +300,6 @@ public class FloorMapActivity extends AppCompatActivity implements OnMapReadyCal
         mBottomSheetBehavior.setBottomSheetCallback(new BottomSheetBehavior.BottomSheetCallback() {
             @Override
             public void onStateChanged(@NonNull View bottomSheet, int newState) {
-                int n = newState;
                 switch (newState) {
                     case BottomSheetBehavior.STATE_COLLAPSED:
                         Timber.i("BottomSheet STATE_COLLAPSED");
@@ -492,7 +493,7 @@ public class FloorMapActivity extends AppCompatActivity implements OnMapReadyCal
     class Player extends AsyncTask<String, Void, Boolean> {
         @Override
         protected Boolean doInBackground(String... strings) {
-            Boolean prepared = false;
+            Boolean prepared;
             try {
                 Timber.i("Preparing audio");
                 mediaPlayer.setDataSource(strings[0]);
@@ -619,7 +620,8 @@ public class FloorMapActivity extends AppCompatActivity implements OnMapReadyCal
         call.enqueue(new Callback<ArrayList<ArtifactDetails>>() {
 
             @Override
-            public void onResponse(Call<ArrayList<ArtifactDetails>> call, Response<ArrayList<ArtifactDetails>> response) {
+            public void onResponse(@NonNull Call<ArrayList<ArtifactDetails>> call,
+                                   @NonNull Response<ArrayList<ArtifactDetails>> response) {
                 if (response.isSuccessful()) {
                     if (response.body().size() > 0) {
                         Timber.i("fetchArtifactsFromAPI() - isSuccessful with artifact count: %s",
@@ -639,7 +641,7 @@ public class FloorMapActivity extends AppCompatActivity implements OnMapReadyCal
             }
 
             @Override
-            public void onFailure(Call<ArrayList<ArtifactDetails>> call, Throwable t) {
+            public void onFailure(@NonNull Call<ArrayList<ArtifactDetails>> call, @NonNull Throwable t) {
                 Timber.e("fetchArtifactsFromAPI() - onFailure: %s", t.getMessage());
                 progressBar.setVisibility(View.GONE);
                 floorMapRootLayout.setVisibility(View.GONE);
@@ -1511,27 +1513,22 @@ public class FloorMapActivity extends AppCompatActivity implements OnMapReadyCal
     public void checkMarkerStatus() {
         popupShortLayout.setVisibility(View.VISIBLE);
         Handler mHandler = new Handler();
-        Runnable mRunnable = new Runnable() {
-
-            @Override
-            public void run() {
-                if (selectedMarker != null) {
-                    if (mBottomSheetBehavior.getState() == BottomSheetBehavior.STATE_HIDDEN) {
-                        selectedMarker.hideInfoWindow();
-                        selectedMarker = null;
-                    }
+        Runnable mRunnable = () -> {
+            if (selectedMarker != null) {
+                if (mBottomSheetBehavior.getState() == BottomSheetBehavior.STATE_HIDDEN) {
+                    selectedMarker.hideInfoWindow();
+                    selectedMarker = null;
                 }
             }
         };
         mHandler.postDelayed(mRunnable, 200);
 
-
     }
-
 
     public void openDialogForZoomingImage() {
         Timber.i("openDialogForZoomingImage()");
         AlertDialog.Builder mBuilder = new AlertDialog.Builder(FloorMapActivity.this/*,android.R.style.Theme_DeviceDefault_Light_NoActionBar_Fullscreen*/);
+        @SuppressLint("InflateParams")
         View mView = getLayoutInflater().inflate(R.layout.zooming_layout, null);
         PhotoView photoView = mView.findViewById(R.id.imageView);
         photoView.setImageURI(Uri.parse(artifactDetails.getImage()));

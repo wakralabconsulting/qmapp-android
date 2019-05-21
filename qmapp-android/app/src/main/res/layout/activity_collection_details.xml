@@ -34,7 +34,8 @@
                     android:layout_centerVertical="true"
                     android:paddingEnd="20dp"
                     android:paddingStart="20dp"
-                    android:src="@drawable/toolbar_close" />
+                    android:src="@drawable/toolbar_close"
+                    tools:ignore="ContentDescription" />
 
             </RelativeLayout>
 
@@ -122,7 +123,8 @@
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="2"
-                        android:src="@drawable/heart_fill" />
+                        android:src="@drawable/heart_fill"
+                        tools:ignore="ContentDescription" />
 
                     <View
                         android:layout_width="0dp"
@@ -134,7 +136,8 @@
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="2"
-                        android:src="@drawable/share" />
+                        android:src="@drawable/share"
+                        tools:ignore="ContentDescription" />
 
                     <View
                         android:layout_width="0dp"

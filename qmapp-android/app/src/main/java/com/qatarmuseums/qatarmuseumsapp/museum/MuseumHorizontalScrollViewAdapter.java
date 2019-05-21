@@ -1,5 +1,6 @@
 package com.qatarmuseums.qatarmuseumsapp.museum;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
@@ -146,9 +147,10 @@ public class MuseumHorizontalScrollViewAdapter extends RecyclerView.Adapter<Muse
 
     public class MyViewHolder extends RecyclerView.ViewHolder {
         TextView museumHorizontalScrollItemText;
-        LinearLayout itemLayout;
+        View itemLayout;
         ImageView museumHorizontalScrollItemImage;
 
+        @SuppressLint("ClickableViewAccessibility")
         public MyViewHolder(View view) {
             super(view);
             museumHorizontalScrollItemText = view.findViewById(R.id.horizontal_scrol_text);

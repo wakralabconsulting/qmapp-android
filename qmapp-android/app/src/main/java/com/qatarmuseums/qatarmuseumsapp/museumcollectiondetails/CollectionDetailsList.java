@@ -12,8 +12,8 @@ public class CollectionDetailsList {
     @SerializedName("Category_collection")
     private String categoryName;
 
-    public CollectionDetailsList(String mainTitle, String image1, String about,
-                                 String categoryName) {
+    CollectionDetailsList(String mainTitle, String image1, String about,
+                          String categoryName) {
         this.mainTitle = mainTitle;
         this.image1 = image1;
         this.about = about;
@@ -30,11 +30,11 @@ public class CollectionDetailsList {
         return mainTitle;
     }
 
-    public String getAbout() {
+    String getAbout() {
         return about;
     }
 
-    public String getImage1() {
+    String getImage1() {
         return image1;
     }
 
@@ -43,11 +43,11 @@ public class CollectionDetailsList {
         this.mainTitle = mainTitle;
     }
 
-    public void setAbout(String about) {
+    void setAbout(String about) {
         this.about = about;
     }
 
-    public String getCategoryName() {
+    String getCategoryName() {
         return categoryName;
     }
 }

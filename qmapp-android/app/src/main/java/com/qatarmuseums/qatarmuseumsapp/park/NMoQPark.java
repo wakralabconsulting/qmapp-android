@@ -26,7 +26,7 @@ public class NMoQPark {
     @SerializedName("longtitude_nmoq")
     private String longitudeNMoQ;
 
-    public NMoQPark(String nid, String mainTitle, String mainDescription, String parkTitle, String parkDescription, String parkHoursTitle, String parksHoursDescription, String locationTitle, String latitudeNMoQ, String longitudeNMoQ) {
+    NMoQPark(String nid, String mainTitle, String mainDescription, String parkTitle, String parkDescription, String parkHoursTitle, String parksHoursDescription, String locationTitle, String latitudeNMoQ, String longitudeNMoQ) {
         this.nid = nid;
         this.mainTitle = mainTitle;
         this.mainDescription = mainDescription;

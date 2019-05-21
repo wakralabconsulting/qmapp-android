@@ -2,7 +2,6 @@ package com.qatarmuseums.qatarmuseumsapp.detailspage;
 
 import com.google.gson.annotations.SerializedName;
 import com.qatarmuseums.qatarmuseumsapp.profile.Model;
-import com.qatarmuseums.qatarmuseumsapp.profile.UserData;
 
 public class RegistrationDetailsModel {
     @SerializedName("registration_id")
@@ -10,9 +9,9 @@ public class RegistrationDetailsModel {
     @SerializedName("type")
     private String registrationType;
     @SerializedName("entity_id")
-    private String registrationentityId;
+    private String registrationEntityId;
     @SerializedName("entity_type")
-    private String registrationentityType;
+    private String registrationEntityType;
     @SerializedName("user_uid")
     private String registrationUserUid;
     @SerializedName("count")
@@ -38,16 +37,16 @@ public class RegistrationDetailsModel {
     @SerializedName("field_qma_edu_reg_date")
     private Model registrationRegDate;
 
-    public RegistrationDetailsModel(String registrationID, String registrationType, String registrationentityId,
-                                    String registrationentityType, String registrationUserUid,
+    public RegistrationDetailsModel(String registrationID, String registrationType, String registrationEntityId,
+                                    String registrationEntityType, String registrationUserUid,
                                     String registrationCount, String registrationAuthorUid, String registrationState, String registrationCreated,
                                     String registrationUpdated, Model registrationConfirmAttendance, Model registrationNumberOfAttendees,
                                     Model registrationFirstName, Model registrationLastName,
                                     Model registrationMembershipNumber, Model registrationRegDate) {
         this.registrationID = registrationID;
         this.registrationType = registrationType;
-        this.registrationentityId = registrationentityId;
-        this.registrationentityType = registrationentityType;
+        this.registrationEntityId = registrationEntityId;
+        this.registrationEntityType = registrationEntityType;
         this.registrationUserUid = registrationUserUid;
         this.registrationCount = registrationCount;
         this.registrationAuthorUid = registrationAuthorUid;
@@ -62,14 +61,14 @@ public class RegistrationDetailsModel {
         this.registrationRegDate = registrationRegDate;
     }
 
-    public RegistrationDetailsModel(String registrationType, String registrationentityId, String registrationentityType,
-                                     String registrationUserUid, String registrationCount,
-                                    String registrationAuthorUid, String registrationState, String registrationCreated,
-                                    String registrationUpdated, Model registrationConfirmAttendance, Model registrationNumberOfAttendees,
-                                    Model registrationFirstName, Model registrationLastName, Model registrationMembershipNumber, Model registrationRegDate) {
+    RegistrationDetailsModel(String registrationType, String registrationEntityId, String registrationEntityType,
+                             String registrationUserUid, String registrationCount,
+                             String registrationAuthorUid, String registrationState, String registrationCreated,
+                             String registrationUpdated, Model registrationConfirmAttendance, Model registrationNumberOfAttendees,
+                             Model registrationFirstName, Model registrationLastName, Model registrationMembershipNumber, Model registrationRegDate) {
         this.registrationType = registrationType;
-        this.registrationentityId = registrationentityId;
-        this.registrationentityType = registrationentityType;
+        this.registrationEntityId = registrationEntityId;
+        this.registrationEntityType = registrationEntityType;
         this.registrationUserUid = registrationUserUid;
         this.registrationCount = registrationCount;
         this.registrationAuthorUid = registrationAuthorUid;
@@ -84,7 +83,7 @@ public class RegistrationDetailsModel {
         this.registrationRegDate = registrationRegDate;
     }
 
-    public String getRegistrationID() {
+    String getRegistrationID() {
         return registrationID;
     }
 
@@ -100,20 +99,20 @@ public class RegistrationDetailsModel {
         this.registrationType = registrationType;
     }
 
-    public String getRegistrationentityId() {
-        return registrationentityId;
+    public String getRegistrationEntityId() {
+        return registrationEntityId;
     }
 
-    public void setRegistrationentityId(String registrationentityId) {
-        this.registrationentityId = registrationentityId;
+    public void setRegistrationEntityId(String registrationEntityId) {
+        this.registrationEntityId = registrationEntityId;
     }
 
-    public String getRegistrationentityType() {
-        return registrationentityType;
+    public String getRegistrationEntityType() {
+        return registrationEntityType;
     }
 
-    public void setRegistrationentityType(String registrationentityType) {
-        this.registrationentityType = registrationentityType;
+    public void setRegistrationEntityType(String registrationEntityType) {
+        this.registrationEntityType = registrationEntityType;
     }
 
     public String getRegistrationUserUid() {
@@ -124,7 +123,7 @@ public class RegistrationDetailsModel {
         this.registrationUserUid = registrationUserUid;
     }
 
-    public String getRegistrationCount() {
+    String getRegistrationCount() {
         return registrationCount;
     }
 
@@ -144,7 +143,7 @@ public class RegistrationDetailsModel {
         return registrationState;
     }
 
-    public void setRegistrationState(String registrationState) {
+    void setRegistrationState(String registrationState) {
         this.registrationState = registrationState;
     }
 

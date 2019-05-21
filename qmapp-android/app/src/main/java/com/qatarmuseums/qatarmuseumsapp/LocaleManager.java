@@ -22,14 +22,14 @@ public class LocaleManager {
         return updateResources(c, getLanguage(c));
     }
 
-    public static Context setNewLocale(Context c, String mLanguage) {
+    public static void setNewLocale(Context c, String mLanguage) {
         String language = mLanguage;
         if (language.equals("ur") || language.equals("ar"))
             language = LANGUAGE_ARABIC;
         else
             language = LANGUAGE_ENGLISH;
         persistLanguage(language, c);
-        return updateResources(c, language);
+        updateResources(c, language);
     }
 
     public static String getLanguage(Context context) {

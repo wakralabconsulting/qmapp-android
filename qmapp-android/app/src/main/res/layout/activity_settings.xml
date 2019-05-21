@@ -33,7 +33,8 @@
                     android:layout_centerVertical="true"
                     android:paddingEnd="20dp"
                     android:paddingStart="20dp"
-                    android:src="@drawable/back_button" />
+                    android:src="@drawable/back_button"
+                    tools:ignore="ContentDescription" />
 
                 <TextView
                     android:id="@+id/toolbar_title"
@@ -146,7 +147,6 @@
                 android:id="@+id/settings_page_recycler_view"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:layout_above="@id/bottom_toolbar"
                 android:layout_marginEnd="@dimen/padding_10"
                 android:layout_marginStart="@dimen/padding_10"
                 android:scrollbars="vertical" />
@@ -157,92 +157,60 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="0dp"
+            android:layout_gravity="center"
             android:layout_weight="1"
+            android:baselineAligned="false"
             android:gravity="center"
-            android:orientation="vertical">
+            android:orientation="horizontal"
+            android:paddingEnd="@dimen/padding_25"
+            android:paddingStart="@dimen/padding_25"
+            android:weightSum="6">
 
             <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="0dp"
-                android:layout_weight="1"
-                android:orientation="horizontal">
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="3"
+                android:gravity="center"
+                tools:ignore="NestedWeights">
 
-            </LinearLayout>
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="0dp"
-                android:layout_weight="1.5"
-                android:gravity="top"
-                android:orientation="horizontal">
-
-                <LinearLayout
-                    android:layout_width="0dp"
-                    android:layout_height="match_parent"
-                    android:layout_weight="0.7">
-
-                </LinearLayout>
-
-                <LinearLayout
-                    android:layout_width="0dp"
-                    android:layout_height="match_parent"
-                    android:layout_weight="3">
-
-                    <Button
-                        android:id="@+id/setting_page_reset_to_default_btn"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_marginEnd="@dimen/padding_10"
-                        android:layout_marginStart="@dimen/padding_5"
-                        android:background="@drawable/round_corner_black"
-                        android:backgroundTint="@color/colorSemiTransparentGrey"
-                        android:enabled="false"
-                        android:fontFamily="@font/din_next_lt_pro_bold"
-                        android:paddingEnd="@dimen/padding_10"
-                        android:paddingStart="@dimen/padding_10"
-                        android:text="@string/reset_to_default"
-                        android:textAllCaps="false"
-                        android:textColor="@color/colorWhite" />
-
-
-                </LinearLayout>
-
-                <LinearLayout
-                    android:layout_width="0dp"
-                    android:layout_height="match_parent"
-                    android:layout_weight="3">
-
-                    <Button
-                        android:id="@+id/setting_page_apply_btn"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_marginEnd="@dimen/padding_5"
-                        android:layout_marginStart="@dimen/padding_10"
-                        android:background="@drawable/round_corner_black"
-                        android:backgroundTint="@color/colorSemiTransparentGrey"
-                        android:enabled="false"
-                        android:fontFamily="@font/din_next_lt_pro_bold"
-                        android:text="@string/apply"
-                        android:textAllCaps="false"
-                        android:textColor="@color/colorWhite" />
-                </LinearLayout>
-
-                <LinearLayout
-                    android:layout_width="0dp"
-                    android:layout_height="match_parent"
-                    android:layout_weight="0.7">
-
-                </LinearLayout>
+                <Button
+                    android:id="@+id/setting_page_reset_to_default_btn"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="@dimen/padding_10"
+                    android:layout_marginStart="@dimen/padding_5"
+                    android:background="@drawable/round_corner_black"
+                    android:backgroundTint="@color/colorSemiTransparentGrey"
+                    android:enabled="false"
+                    android:fontFamily="@font/din_next_lt_pro_bold"
+                    android:paddingEnd="@dimen/padding_10"
+                    android:paddingStart="@dimen/padding_10"
+                    android:text="@string/reset_to_default"
+                    android:textAllCaps="false"
+                    android:textColor="@color/colorWhite" />
 
 
             </LinearLayout>
 
             <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="0dp"
-                android:layout_weight="0.5"
-                android:orientation="horizontal">
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="3"
+                android:gravity="center">
 
+                <Button
+                    android:id="@+id/setting_page_apply_btn"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="@dimen/padding_5"
+                    android:layout_marginStart="@dimen/padding_10"
+                    android:background="@drawable/round_corner_black"
+                    android:backgroundTint="@color/colorSemiTransparentGrey"
+                    android:enabled="false"
+                    android:fontFamily="@font/din_next_lt_pro_bold"
+                    android:text="@string/apply"
+                    android:textAllCaps="false"
+                    android:textColor="@color/colorWhite" />
             </LinearLayout>
 
 
@@ -257,11 +225,11 @@
             <Button
                 android:id="@+id/send_logs_btn"
                 android:layout_width="wrap_content"
-                android:paddingStart="@dimen/padding_50"
-                android:paddingEnd="@dimen/padding_50"
                 android:layout_height="wrap_content"
                 android:background="@drawable/round_corner_black"
                 android:fontFamily="@font/din_next_lt_pro_bold"
+                android:paddingEnd="@dimen/padding_50"
+                android:paddingStart="@dimen/padding_50"
                 android:text="@string/send_logs"
                 android:textAllCaps="false"
                 android:textColor="@color/colorWhite"

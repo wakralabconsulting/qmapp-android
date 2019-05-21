@@ -1,9 +1,11 @@
 package com.qatarmuseums.qatarmuseumsapp.tourguidedetails;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.v4.widget.NestedScrollView;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.DefaultItemAnimator;
@@ -14,8 +16,6 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
-import android.widget.Button;
-import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
@@ -46,17 +46,18 @@ import timber.log.Timber;
 
 public class TourGuideDetailsActivity extends AppCompatActivity {
     TextView tourGuideMainTitle, tourGuideSubTitle, tourGuideMainDesc, tourGuideSubDesc;
-    LinearLayout exploreLayout, tourGuideSubtitleLayout, retryLayout;
+    View exploreLayout;
+    LinearLayout tourGuideSubtitleLayout, retryLayout;
     Toolbar toolbar;
     RecyclerView recyclerView;
     Intent intent;
-    ImageView backButton;
+    View backButton;
     private Animation zoomOutAnimation, exploreZoomOutAnimation;
     private TourGuideDetailsAdapter mAdapter;
     private ArrayList<SelfGuideStarterModel> tourGuideList = new ArrayList<>();
     private Intent navigationIntent;
     private String museumId;
-    Button retryButton;
+    View retryButton;
     private ProgressBar progressBar;
     private NestedScrollView scrollviewContainer;
     private RelativeLayout noResultFoundLayout;
@@ -73,6 +74,7 @@ public class TourGuideDetailsActivity extends AppCompatActivity {
         super.attachBaseContext(LocaleManager.setLocale(base));
     }
 
+    @SuppressLint("ClickableViewAccessibility")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -227,7 +229,8 @@ public class TourGuideDetailsActivity extends AppCompatActivity {
         Call<ArrayList<SelfGuideStarterModel>> call = apiService.getSelfGuideStarterPageDetails(appLanguage, museumId);
         call.enqueue(new Callback<ArrayList<SelfGuideStarterModel>>() {
             @Override
-            public void onResponse(Call<ArrayList<SelfGuideStarterModel>> call, Response<ArrayList<SelfGuideStarterModel>> response) {
+            public void onResponse(@NonNull Call<ArrayList<SelfGuideStarterModel>> call,
+                                   @NonNull Response<ArrayList<SelfGuideStarterModel>> response) {
                 if (response.isSuccessful()) {
                     if (response.body() != null && response.body().size() > 0) {
                         Timber.i("getTourGuideDetailsPageAPIData() - isSuccessful with size: %d", tourGuideList.size());
@@ -249,7 +252,7 @@ public class TourGuideDetailsActivity extends AppCompatActivity {
             }
 
             @Override
-            public void onFailure(Call<ArrayList<SelfGuideStarterModel>> call, Throwable t) {
+            public void onFailure(@NonNull Call<ArrayList<SelfGuideStarterModel>> call, @NonNull Throwable t) {
                 Timber.e("getTourGuideDetailsPageAPIData() - onFailure: %s", t.getMessage());
                 scrollviewContainer.setVisibility(View.GONE);
                 progressBar.setVisibility(View.GONE);

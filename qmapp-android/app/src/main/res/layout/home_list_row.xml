@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/item_container"
     android:layout_width="match_parent"
     android:layout_height="wrap_content">
@@ -7,7 +8,8 @@
     <ImageView
         android:id="@+id/image_view"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content" />
+        android:layout_height="wrap_content"
+        tools:ignore="ContentDescription" />
 
     <RelativeLayout
         android:layout_width="match_parent"
@@ -36,6 +38,7 @@
             android:layout_centerVertical="true"
             android:layout_marginEnd="@dimen/padding_5"
             android:src="@drawable/audio_circle"
-            android:visibility="gone" />
+            android:visibility="gone"
+            tools:ignore="ContentDescription" />
     </RelativeLayout>
 </RelativeLayout>

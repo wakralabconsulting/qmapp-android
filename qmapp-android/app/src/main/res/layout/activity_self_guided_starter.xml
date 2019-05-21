@@ -35,7 +35,8 @@
                     android:layout_centerVertical="true"
                     android:paddingEnd="20dp"
                     android:paddingStart="20dp"
-                    android:src="@drawable/back_button" />
+                    android:src="@drawable/back_button"
+                    tools:ignore="ContentDescription" />
 
                 <TextView
                     android:id="@+id/toolbar_title"
@@ -67,7 +68,8 @@
             android:layout_height="match_parent"
             android:scaleType="centerCrop"
             android:src="@drawable/placeholder_portrait"
-            android:visibility="gone" />
+            android:visibility="gone"
+            tools:ignore="ContentDescription" />
 
         <cn.lightsky.infiniteindicator.InfiniteIndicator
             android:id="@+id/main_indicator_default_circle"
@@ -90,7 +92,8 @@
             android:layout_centerInParent="true"
             android:src="@drawable/play_white"
             android:tint="@color/colorBlack"
-            android:visibility="gone" />
+            android:visibility="gone"
+            tools:ignore="ContentDescription" />
 
         <TextView
             android:id="@+id/museum_tittle"
