@@ -57,7 +57,7 @@ public class ArtifactDetails implements Parcelable {
     @SerializedName("thumb_Image")
     private String thumbImage;
 
-    protected ArtifactDetails(Parcel in) {
+    private ArtifactDetails(Parcel in) {
         title = in.readString();
         accessionNumber = in.readString();
         nid = in.readString();

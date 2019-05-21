@@ -1,6 +1,7 @@
 package com.qatarmuseums.qatarmuseumsapp.museum;
 
 
+import android.annotation.SuppressLint;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -9,6 +10,7 @@ import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
+import android.support.annotation.NonNull;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v4.view.ViewPager;
 import android.support.v7.widget.DefaultItemAnimator;
@@ -158,8 +160,8 @@ public class MuseumActivity extends BaseActivity implements
                 @Override
                 public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
                     super.onScrolled(recyclerView, dx, dy);
-                    int lastCompleteVisibleItemPosition = 0;
-                    int firstVisibleItemPosition = 0;
+                    int lastCompleteVisibleItemPosition;
+                    int firstVisibleItemPosition;
                     lastCompleteVisibleItemPosition = ((LinearLayoutManager) recyclerView
                             .getLayoutManager()).findLastCompletelyVisibleItemPosition();
                     firstVisibleItemPosition = ((LinearLayoutManager) recyclerView
@@ -389,6 +391,7 @@ public class MuseumActivity extends BaseActivity implements
     }
 
 
+    @SuppressLint("RtlHardcoded")
     public void loadAdsToSlider(ArrayList<Page> adsImages) {
         Timber.i("loadAdsToSlider()");
         language = LocaleManager.getLanguage(this);
@@ -501,7 +504,8 @@ public class MuseumActivity extends BaseActivity implements
             call = apiService.getMuseumAboutDetails(language, museumId);
         call.enqueue(new Callback<ArrayList<MuseumAboutModel>>() {
             @Override
-            public void onResponse(Call<ArrayList<MuseumAboutModel>> call, Response<ArrayList<MuseumAboutModel>> response) {
+            public void onResponse(@NonNull Call<ArrayList<MuseumAboutModel>> call,
+                                   @NonNull Response<ArrayList<MuseumAboutModel>> response) {
                 if (response.isSuccessful()) {
                     if (response.body() != null) {
                         Timber.i("getSliderImagesFromAPI() - isSuccessful for museum id: %s", museumId);
@@ -547,7 +551,7 @@ public class MuseumActivity extends BaseActivity implements
             }
 
             @Override
-            public void onFailure(Call<ArrayList<MuseumAboutModel>> call, Throwable t) {
+            public void onFailure(@NonNull Call<ArrayList<MuseumAboutModel>> call, @NonNull Throwable t) {
                 Timber.e("getSliderImagesFromAPI() - onFailure: %s", t.getMessage());
                 if (t instanceof IOException && noDataInDB) {
                     util.showToast(getResources().getString(R.string.check_network), getApplicationContext());
@@ -585,8 +589,7 @@ public class MuseumActivity extends BaseActivity implements
 
         @Override
         protected void onPostExecute(Integer integer) {
-            Integer museumAboutRowCount = integer;
-            if (museumAboutRowCount > 0) {
+            if (integer > 0) {
                 Timber.i("Count: %d", integer);
                 new CheckMuseumAboutDBRowExist(activityReference.get(), language).execute();
             } else {

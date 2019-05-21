@@ -1,8 +1,10 @@
 package com.qatarmuseums.qatarmuseumsapp.objectpreview;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.design.widget.Snackbar;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
@@ -14,8 +16,6 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
-import android.widget.Button;
-import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
@@ -46,7 +46,7 @@ import timber.log.Timber;
 
 public class ObjectPreviewActivity extends AppCompatActivity {
     Toolbar toolbar;
-    ImageView backBtn, shareBtn, locationBtn;
+    View backBtn, shareBtn, locationBtn;
     RecyclerView stepIndicatorRecyclerView;
     private StepIndicatorAdapter stepIndicatorAdapter;
     private List<CurrentIndicatorPosition> currentIndicatorPositionList = new ArrayList<>();
@@ -70,7 +70,7 @@ public class ObjectPreviewActivity extends AppCompatActivity {
 
     private static Converter converters;
     LinearLayout retryLayout;
-    Button retryButton;
+    View retryButton;
     private FirebaseAnalytics mFireBaseAnalytics;
     private Bundle contentBundleParams;
 
@@ -79,6 +79,7 @@ public class ObjectPreviewActivity extends AppCompatActivity {
         super.attachBaseContext(LocaleManager.setLocale(base));
     }
 
+    @SuppressLint("ClickableViewAccessibility")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -246,7 +247,8 @@ public class ObjectPreviewActivity extends AppCompatActivity {
         Call<ArrayList<ArtifactDetails>> call = apiService.getObjectPreviewDetails(language, id);
         call.enqueue(new Callback<ArrayList<ArtifactDetails>>() {
             @Override
-            public void onResponse(Call<ArrayList<ArtifactDetails>> call, Response<ArrayList<ArtifactDetails>> response) {
+            public void onResponse(@NonNull Call<ArrayList<ArtifactDetails>> call,
+                                   @NonNull Response<ArrayList<ArtifactDetails>> response) {
                 if (response.isSuccessful()) {
                     if (response.body() != null && response.body().size() > 0) {
                         Timber.i("getObjectPreviewDetailsFromAPI() - isSuccessful with size: %s", response.body().size());
@@ -268,7 +270,7 @@ public class ObjectPreviewActivity extends AppCompatActivity {
             }
 
             @Override
-            public void onFailure(Call<ArrayList<ArtifactDetails>> call, Throwable t) {
+            public void onFailure(@NonNull Call<ArrayList<ArtifactDetails>> call, @NonNull Throwable t) {
                 Timber.e("getObjectPreviewDetailsFromAPI() - onFailure: %s", t.getMessage());
                 commonContentLayout.setVisibility(View.GONE);
                 retryLayout.setVisibility(View.VISIBLE);

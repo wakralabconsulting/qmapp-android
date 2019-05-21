@@ -1,6 +1,7 @@
 package com.qatarmuseums.qatarmuseumsapp.commonlistpage;
 
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Context;
 import android.support.annotation.NonNull;
@@ -24,8 +25,6 @@ import java.lang.ref.WeakReference;
 import java.text.ParseException;
 import java.util.List;
 
-import timber.log.Timber;
-
 public class CommonListAdapter extends RecyclerView.Adapter<CommonListAdapter.MyViewHolder> {
 
     private final Context mContext;
@@ -38,11 +37,13 @@ public class CommonListAdapter extends RecyclerView.Adapter<CommonListAdapter.My
         private final int height;
         TextView name, statusTag, tourDayTxt, tourDateTxt,
                 tourTitleTxt, dateAndTime;
-        ImageView imageView, favIcon;
+        ImageView imageView;
+        View favIcon;
         RelativeLayout commonTitleLayout, tourTitleLayout, recyclerRowItem;
 
         private WeakReference<RecyclerTouchListener.ItemClickListener> listenerRef;
 
+        @SuppressLint("ClickableViewAccessibility")
         public MyViewHolder(View view, RecyclerTouchListener.ItemClickListener listener) {
             super(view);
             listenerRef = new WeakReference<>(listener);
@@ -76,11 +77,11 @@ public class CommonListAdapter extends RecyclerView.Adapter<CommonListAdapter.My
         public void onClick(View v) {
             CommonListModel model = commonListModelList.get(getAdapterPosition());
             if (v.getId() == favIcon.getId()) {
-                if (util.checkImageResource(mContext, favIcon, R.drawable.heart_fill)) {
-                    favIcon.setImageResource(R.drawable.heart_empty);
+                if (util.checkImageResource(mContext, (ImageView) favIcon, R.drawable.heart_fill)) {
+                    ((ImageView) favIcon).setImageResource(R.drawable.heart_empty);
                     model.setIsFavourite(false);
                 } else {
-                    favIcon.setImageResource(R.drawable.heart_fill);
+                    ((ImageView) favIcon).setImageResource(R.drawable.heart_fill);
                     model.setIsFavourite(true);
                 }
             } else {
@@ -136,9 +137,9 @@ public class CommonListAdapter extends RecyclerView.Adapter<CommonListAdapter.My
         if (model.getIsFavourite() != null) {
             holder.favIcon.setVisibility(View.VISIBLE);
             if (model.getIsFavourite())
-                holder.favIcon.setImageResource(R.drawable.heart_fill);
+                ((ImageView) holder.favIcon).setImageResource(R.drawable.heart_fill);
             else
-                holder.favIcon.setImageResource(R.drawable.heart_empty);
+                ((ImageView) holder.favIcon).setImageResource(R.drawable.heart_empty);
         }
         if (model.getExhibitionStatus() != null) {
             holder.statusTag.setVisibility(View.VISIBLE);

@@ -26,7 +26,8 @@
                 android:layout_height="match_parent"
                 android:gravity="center"
                 android:rotation="180"
-                android:src="@drawable/culturepass_back" />
+                android:src="@drawable/culturepass_back"
+                tools:ignore="ContentDescription" />
 
             <ImageView
                 android:id="@+id/closeBtnSecond"
@@ -34,7 +35,8 @@
                 android:layout_height="25dp"
                 android:layout_marginStart="@dimen/padding_10"
                 android:layout_marginTop="@dimen/padding_10"
-                android:src="@drawable/toolbar_close" />
+                android:src="@drawable/toolbar_close"
+                tools:ignore="ContentDescription" />
 
             <android.support.constraint.ConstraintLayout
                 android:layout_width="wrap_content"
@@ -56,7 +58,8 @@
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintLeft_toRightOf="@id/nameTxt"
                     app:layout_constraintRight_toRightOf="parent"
-                    app:layout_constraintTop_toTopOf="parent" />
+                    app:layout_constraintTop_toTopOf="parent"
+                    tools:ignore="RtlHardcoded" />
 
                 <com.qatarmuseums.qatarmuseumsapp.customview.VerticleTextView
                     android:id="@+id/nameTxt"
@@ -101,7 +104,8 @@
                 android:layout_height="match_parent"
                 android:gravity="center"
                 android:rotation="180"
-                android:src="@drawable/culturepass_front" />
+                android:src="@drawable/culturepass_front"
+                tools:ignore="ContentDescription" />
 
             <ImageView
                 android:id="@+id/closeBtnFirst"
@@ -109,7 +113,8 @@
                 android:layout_height="25dp"
                 android:layout_marginStart="@dimen/padding_10"
                 android:layout_marginTop="@dimen/padding_10"
-                android:src="@drawable/toolbar_close" />
+                android:src="@drawable/toolbar_close"
+                tools:ignore="ContentDescription" />
 
             <android.support.constraint.ConstraintLayout
                 android:layout_width="wrap_content"
@@ -141,7 +146,8 @@
                     android:visibility="invisible"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintRight_toRightOf="parent"
-                    app:layout_constraintTop_toTopOf="parent" />
+                    app:layout_constraintTop_toTopOf="parent"
+                    tools:ignore="ContentDescription" />
 
             </android.support.constraint.ConstraintLayout>
 

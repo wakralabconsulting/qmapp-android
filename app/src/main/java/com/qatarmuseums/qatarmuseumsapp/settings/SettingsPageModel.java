@@ -1,7 +1,7 @@
 package com.qatarmuseums.qatarmuseumsapp.settings;
 
 
-public class SettingsPageModel {
+class SettingsPageModel {
 
     private String notificationItemName;
 

@@ -8,19 +8,19 @@ public class LoginData {
         this.pass = password;
     }
 
-    public String getUsername() {
+    public String getName() {
         return name;
     }
 
-    public void setUsername(String username) {
-        this.name = username;
+    public void setName(String name) {
+        this.name = name;
     }
 
-    public String getPassword() {
+    public String getPass() {
         return pass;
     }
 
-    public void setPassword(String password) {
-        this.pass = password;
+    public void setPass(String pass) {
+        this.pass = pass;
     }
 }

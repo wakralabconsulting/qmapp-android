@@ -3,7 +3,6 @@ package com.qatarmuseums.qatarmuseumsapp.detailspage;
 import android.content.Context;
 import android.support.annotation.NonNull;
 import android.support.v4.view.PagerAdapter;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -60,7 +59,7 @@ public class HorizontalPagerAdapter extends PagerAdapter {
             if (fragment != null) {
                 fragment.getItemPosition(position);
             } else {
-                activity.getItemPosition(position);
+                activity.getItemPosition();
             }
         });
         container.addView(view);

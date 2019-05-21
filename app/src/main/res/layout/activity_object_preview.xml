@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/layout_root"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -29,7 +30,8 @@
                     android:layout_height="wrap_content"
                     android:layout_alignParentStart="true"
                     android:layout_centerVertical="true"
-                    android:src="@drawable/back_button" />
+                    android:src="@drawable/back_button"
+                    tools:ignore="ContentDescription" />
 
                 <LinearLayout
                     android:layout_width="wrap_content"
@@ -45,7 +47,8 @@
                         android:layout_height="27dp"
                         android:layout_marginEnd="@dimen/padding_30"
                         android:src="@drawable/share_white"
-                        android:visibility="gone" />
+                        android:visibility="gone"
+                        tools:ignore="ContentDescription" />
 
                     <ImageView
                         android:id="@+id/location_btn"
@@ -53,7 +56,8 @@
                         android:layout_height="27dp"
                         android:layout_marginEnd="@dimen/padding_5"
                         android:src="@drawable/location_icon"
-                        android:visibility="gone" />
+                        android:visibility="gone"
+                        tools:ignore="ContentDescription" />
 
                 </LinearLayout>
 

@@ -1,5 +1,6 @@
 package com.qatarmuseums.qatarmuseumsapp.utils;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.os.SystemClock;
 import android.support.design.widget.CoordinatorLayout;
@@ -111,6 +112,7 @@ public class PullToZoomCoordinatorLayout extends CoordinatorLayout {
         return mIsBeingDragged || super.onInterceptTouchEvent(event);
     }
 
+    @SuppressLint("ClickableViewAccessibility")
     @Override
     public boolean onTouchEvent(MotionEvent event) {
         if (!isPullToZoomEnabled()) {
@@ -229,10 +231,10 @@ public class PullToZoomCoordinatorLayout extends CoordinatorLayout {
     }
 
     class ScalingRunnable implements Runnable {
-        protected long mDuration;
-        protected boolean mIsFinished = true;
-        protected float mScale;
-        protected long mStartTime;
+        long mDuration;
+        boolean mIsFinished = true;
+        float mScale;
+        long mStartTime;
 
         ScalingRunnable() {
         }

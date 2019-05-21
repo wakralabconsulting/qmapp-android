@@ -35,7 +35,8 @@
                     android:layout_centerVertical="true"
                     android:paddingEnd="20dp"
                     android:paddingStart="20dp"
-                    android:src="@drawable/back_button" />
+                    android:src="@drawable/back_button"
+                    tools:ignore="ContentDescription" />
 
                 <TextView
                     android:id="@+id/toolbar_title"
@@ -182,7 +183,6 @@
                     android:layout_height="wrap_content"
                     android:layout_margin="@dimen/text_margin"
                     android:fontFamily="@font/din_next_lt_pro_regular"
-                    android:text="This tour has been designed for introducing you to the exquisite art &amp; culture of Qatar.\n\nThe tour for the day has been divided into two parts, one for the morning and  other for the evening. Please find the information below and register so that we can make required arrangements for you."
                     android:textAlignment="center"
                     android:textColor="@color/colorBlack"
                     android:textSize="@dimen/font_size_15" />

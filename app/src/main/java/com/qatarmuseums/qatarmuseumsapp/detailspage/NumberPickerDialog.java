@@ -1,7 +1,6 @@
 package com.qatarmuseums.qatarmuseumsapp.detailspage;
 
 import android.app.Dialog;
-import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.DialogFragment;
@@ -25,13 +24,8 @@ public class NumberPickerDialog extends DialogFragment {
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
         builder.setTitle(R.string.number_of_visitors);
 
-        builder.setPositiveButton(R.string.done, new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                valueChangeListener.onValueChange(numberPicker,
-                        numberPicker.getValue(), numberPicker.getValue());
-            }
-        });
+        builder.setPositiveButton(R.string.done, (dialog, which) -> valueChangeListener.onValueChange(numberPicker,
+                numberPicker.getValue(), numberPicker.getValue()));
 
 
         builder.setView(numberPicker);

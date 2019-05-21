@@ -1,6 +1,7 @@
 package com.qatarmuseums.qatarmuseumsapp.notification;
 
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.graphics.Color;
@@ -13,7 +14,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
-import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
@@ -29,10 +29,11 @@ public class NotificationListAdapter extends RecyclerView.Adapter<NotificationLi
     private SharedPreferences qmPreferences;
 
     public class MyViewHolder extends RecyclerView.ViewHolder {
-        public TextView information;
-        public ImageView bellIcon, nextIcon;
-        public RelativeLayout notificationHolder;
+        TextView information;
+        View bellIcon, nextIcon;
+        RelativeLayout notificationHolder;
 
+        @SuppressLint("ClickableViewAccessibility")
         public MyViewHolder(View view) {
             super(view);
             notificationHolder = view.findViewById(R.id.notification_holder);
@@ -58,7 +59,7 @@ public class NotificationListAdapter extends RecyclerView.Adapter<NotificationLi
         int badgeCount = 0;
         SharedPreferences.Editor editor = qmPreferences.edit();
         editor.putInt("BADGE_COUNT", badgeCount);
-        editor.commit();
+        editor.apply();
 
         this.notificationModelList = newData;
         Collections.reverse(notificationModelList);

@@ -1,9 +1,11 @@
 package com.qatarmuseums.qatarmuseumsapp.commonlistsecondary;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
@@ -13,8 +15,6 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
-import android.widget.Button;
-import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
@@ -48,9 +48,9 @@ import timber.log.Timber;
 public class SecondaryListActivity extends AppCompatActivity {
 
     private ProgressBar progressBar;
-    private ImageView toolbarBack;
+    private View toolbarBack;
     private Animation zoomOutAnimation;
-    private Button retryButton;
+    private View retryButton;
     private LinearLayout retryLayout;
     private RecyclerView recyclerView;
     private SecondaryListAdapter secondaryListAdapter;
@@ -78,6 +78,7 @@ public class SecondaryListActivity extends AppCompatActivity {
         super.attachBaseContext(LocaleManager.setLocale(base));
     }
 
+    @SuppressLint("ClickableViewAccessibility")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -123,7 +124,7 @@ public class SecondaryListActivity extends AppCompatActivity {
                 navigationIntent.putExtra("ID", facilitiesDetailList.get(position).getFacilitiesId());
                 navigationIntent.putExtra("COMING_FROM", getString(R.string.facility_sublist));
                 navigationIntent.putExtra("LONGITUDE", facilitiesDetailList.get(position).getLongitude());
-                navigationIntent.putExtra("LATITUDE", facilitiesDetailList.get(position).getLattitude());
+                navigationIntent.putExtra("LATITUDE", facilitiesDetailList.get(position).getLatitude());
                 navigationIntent.putExtra("CATEGORY_ID", facilitiesDetailList.get(position).getFacilitiesCategoryId());
                 navigationIntent.putExtra("LOCATION_TITLE", facilitiesDetailList.get(position).getLocationTitle());
                 startActivity(navigationIntent);
@@ -220,7 +221,8 @@ public class SecondaryListActivity extends AppCompatActivity {
         Call<ArrayList<FacilitiesDetailModel>> call = apiService.getFacilityDetails(language, id);
         call.enqueue(new Callback<ArrayList<FacilitiesDetailModel>>() {
             @Override
-            public void onResponse(Call<ArrayList<FacilitiesDetailModel>> call, Response<ArrayList<FacilitiesDetailModel>> response) {
+            public void onResponse(@NonNull Call<ArrayList<FacilitiesDetailModel>> call,
+                                   @NonNull Response<ArrayList<FacilitiesDetailModel>> response) {
                 if (response.isSuccessful()) {
                     if (response.body() != null && response.body().size() > 0) {
                         recyclerView.setVisibility(View.VISIBLE);
@@ -246,7 +248,8 @@ public class SecondaryListActivity extends AppCompatActivity {
             }
 
             @Override
-            public void onFailure(Call<ArrayList<FacilitiesDetailModel>> call, Throwable t) {
+            public void onFailure(@NonNull Call<ArrayList<FacilitiesDetailModel>> call,
+                                  @NonNull Throwable t) {
                 Timber.e("get%sListFromAPI() - onFailure: %s", mainTitle, t.getMessage());
                 recyclerView.setVisibility(View.GONE);
                 retryLayout.setVisibility(View.VISIBLE);
@@ -341,7 +344,7 @@ public class SecondaryListActivity extends AppCompatActivity {
                                 activityReference.get().facilitiesDetailList.get(i).getFacilityTitleTiming(),
                                 activityReference.get().facilitiesDetailList.get(i).getLongitude(),
                                 activityReference.get().facilitiesDetailList.get(i).getFacilitiesCategoryId(),
-                                activityReference.get().facilitiesDetailList.get(i).getLattitude(),
+                                activityReference.get().facilitiesDetailList.get(i).getLatitude(),
                                 activityReference.get().facilitiesDetailList.get(i).getLocationTitle(),
                                 language);
 
@@ -376,7 +379,7 @@ public class SecondaryListActivity extends AppCompatActivity {
                     activityReference.get().facilitiesDetailList.get(0).getFacilitiesTiming(),
                     activityReference.get().facilitiesDetailList.get(0).getLongitude(),
                     activityReference.get().facilitiesDetailList.get(0).getFacilitiesCategoryId(),
-                    activityReference.get().facilitiesDetailList.get(0).getLattitude(),
+                    activityReference.get().facilitiesDetailList.get(0).getLatitude(),
                     activityReference.get().facilitiesDetailList.get(0).getLocationTitle(),
                     activityReference.get().facilitiesDetailList.get(0).getFacilityTitleTiming(),
                     activityReference.get().facilitiesDetailList.get(0).getFacilitiesId(),
@@ -422,7 +425,7 @@ public class SecondaryListActivity extends AppCompatActivity {
                             activityReference.get().facilitiesDetailList.get(i).getFacilityTitleTiming(),
                             activityReference.get().facilitiesDetailList.get(i).getLongitude(),
                             activityReference.get().facilitiesDetailList.get(i).getFacilitiesCategoryId(),
-                            activityReference.get().facilitiesDetailList.get(i).getLattitude(),
+                            activityReference.get().facilitiesDetailList.get(i).getLatitude(),
                             activityReference.get().facilitiesDetailList.get(i).getLocationTitle(),
                             language);
                     activityReference.get().qmDatabase.getFacilitiesDetailTableDao().insertData(facilityDetailTable);
@@ -510,7 +513,8 @@ public class SecondaryListActivity extends AppCompatActivity {
         Call<ArrayList<TourDetailsModel>> call = apiService.getTourDetails(language, id);
         call.enqueue(new Callback<ArrayList<TourDetailsModel>>() {
             @Override
-            public void onResponse(Call<ArrayList<TourDetailsModel>> call, Response<ArrayList<TourDetailsModel>> response) {
+            public void onResponse(@NonNull Call<ArrayList<TourDetailsModel>> call,
+                                   @NonNull Response<ArrayList<TourDetailsModel>> response) {
                 if (response.isSuccessful()) {
                     if (response.body() != null && response.body().size() > 0) {
                         recyclerView.setVisibility(View.VISIBLE);
@@ -549,7 +553,7 @@ public class SecondaryListActivity extends AppCompatActivity {
             }
 
             @Override
-            public void onFailure(Call<ArrayList<TourDetailsModel>> call, Throwable t) {
+            public void onFailure(@NonNull Call<ArrayList<TourDetailsModel>> call, @NonNull Throwable t) {
                 Timber.e("get%sListFromAPI() - onFailure: %s", mainTitle, t.getMessage());
                 recyclerView.setVisibility(View.GONE);
                 retryLayout.setVisibility(View.VISIBLE);

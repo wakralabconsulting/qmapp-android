@@ -52,13 +52,13 @@ public class SettingsActivity extends AppCompatActivity implements View.OnClickL
     @BindView(R.id.common_toolbar)
     Toolbar toolbar;
     @BindView(R.id.toolbar_back)
-    ImageView backArrow;
+    View backArrow;
     @BindView(R.id.toolbar_title)
     TextView toolbar_title;
     @BindView(R.id.settings_page_recycler_view)
     RecyclerView recyclerView;
     @BindView(R.id.language_change_button)
-    SwitchCompat languageChangeButton;
+    View languageChangeButton;
     @BindView(R.id.setting_page_reset_to_default_btn)
     Button settingPageResetToDefaultBtn;
     @BindView(R.id.setting_page_apply_btn)
@@ -264,9 +264,9 @@ public class SettingsActivity extends AppCompatActivity implements View.OnClickL
 
     public void setLocale(String lang) {
         if (lang.equalsIgnoreCase(LocaleManager.LANGUAGE_ENGLISH)) {
-            languageChangeButton.setChecked(true);
+            ((SwitchCompat) languageChangeButton).setChecked(true);
         } else if (lang.equalsIgnoreCase(LocaleManager.LANGUAGE_ARABIC)) {
-            languageChangeButton.setChecked(false);
+            ((SwitchCompat) languageChangeButton).setChecked(false);
         }
         LocaleManager.setNewLocale(this, lang);
         refreshActivity();
@@ -294,7 +294,8 @@ public class SettingsActivity extends AppCompatActivity implements View.OnClickL
         dialog.setCancelable(true);
         dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
 
-        View view = getLayoutInflater().inflate(R.layout.settings_pop_up, null);
+        @SuppressLint("InflateParams")
+        View view = getLayoutInflater().inflate(R.layout.common_popup, null);
         dialog.setContentView(view);
 
         ImageView closeBtn = view.findViewById(R.id.close_dialog);
@@ -325,7 +326,7 @@ public class SettingsActivity extends AppCompatActivity implements View.OnClickL
         dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
 
         @SuppressLint("InflateParams")
-        View view = getLayoutInflater().inflate(R.layout.settings_pop_up, null);
+        View view = getLayoutInflater().inflate(R.layout.common_popup, null);
         dialog.setContentView(view);
 
         ImageView closeBtn = view.findViewById(R.id.close_dialog);
@@ -356,9 +357,9 @@ public class SettingsActivity extends AppCompatActivity implements View.OnClickL
         super.onResume();
         language = LocaleManager.getLanguage(this);
         if (language.equals(LocaleManager.LANGUAGE_ENGLISH)) {
-            languageChangeButton.setChecked(false);
+            ((SwitchCompat) languageChangeButton).setChecked(false);
         } else {
-            languageChangeButton.setChecked(true);
+            ((SwitchCompat) languageChangeButton).setChecked(true);
         }
         mFirebaseAnalytics.setCurrentScreen(this, getString(R.string.settings_page), null);
     }

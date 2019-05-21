@@ -27,7 +27,7 @@ public class CommonListModel implements Comparable<CommonListModel> {
     private String latitude;
     @SerializedName(value = "SORT_ID", alternate = {"sort_id", "Sort_Id", "sort_coefficient"})
     private String sortId;
-    private Boolean isOpen, isFavourite;
+    private Boolean isFavourite;
     @SerializedName("opening_time")
     private String openingTime;
     @SerializedName("close_time")
@@ -66,13 +66,8 @@ public class CommonListModel implements Comparable<CommonListModel> {
 
     private Boolean isTour;
     private Boolean isTravel;
-    private int rowHeight;
 
-    boolean imageTypeIsArray = false;
-
-    public CommonListModel() {
-
-    }
+    private boolean imageTypeIsArray = false;
 
     CommonListModel(String name, String image, String museumReference) {
         this.name = name;
@@ -165,7 +160,7 @@ public class CommonListModel implements Comparable<CommonListModel> {
         this.id = id;
     }
 
-    public String getEndDate() {
+    String getEndDate() {
         return endDate;
     }
 
@@ -177,15 +172,11 @@ public class CommonListModel implements Comparable<CommonListModel> {
         this.sortId = sortId;
     }
 
-    public void setStartDate() {
-        this.endDate = endDate;
-    }
-
-    public String getStartDate() {
+    String getStartDate() {
         return startDate;
     }
 
-    public void setStartDate(String date) {
+    void setStartDate(String date) {
         this.startDate = date;
     }
 
@@ -205,23 +196,15 @@ public class CommonListModel implements Comparable<CommonListModel> {
         this.image = image;
     }
 
-    public Boolean getStatusTag() {
-        return isOpen;
-    }
-
-    public void setStatusTag(Boolean open) {
-        isOpen = open;
-    }
-
-    public Boolean getIsFavourite() {
+    Boolean getIsFavourite() {
         return isFavourite;
     }
 
-    public void setIsFavourite(Boolean isFavourite) {
+    void setIsFavourite(Boolean isFavourite) {
         this.isFavourite = isFavourite;
     }
 
-    public void setEndDate(String endDate) {
+    void setEndDate(String endDate) {
         this.endDate = endDate;
     }
 
@@ -241,30 +224,6 @@ public class CommonListModel implements Comparable<CommonListModel> {
         this.latitude = latitude;
     }
 
-    public Boolean getOpen() {
-        return isOpen;
-    }
-
-    public void setOpen(Boolean open) {
-        isOpen = open;
-    }
-
-    public String getOpeningTime() {
-        return openingTime;
-    }
-
-    public void setOpeningTime(String openingTime) {
-        this.openingTime = openingTime;
-    }
-
-    public String getClosingTime() {
-        return closingTime;
-    }
-
-    public void setClosingTime(String closingTime) {
-        this.closingTime = closingTime;
-    }
-
     public String getDescription() {
         return description;
     }
@@ -273,7 +232,7 @@ public class CommonListModel implements Comparable<CommonListModel> {
         this.description = description;
     }
 
-    public String getMuseumReference() {
+    String getMuseumReference() {
         return museumReference;
     }
 
@@ -290,71 +249,51 @@ public class CommonListModel implements Comparable<CommonListModel> {
         return category;
     }
 
-    public void setEventDate(String eventDate) {
+    void setEventDate(String eventDate) {
         this.eventDate = eventDate;
     }
 
-    public String getEventDate() {
+    String getEventDate() {
         return eventDate;
     }
 
-    public String getEventDay() {
+    String getEventDay() {
         return eventDay;
     }
 
-    public Boolean getIsTour() {
+    Boolean getIsTour() {
         return isTour;
     }
 
-    public Boolean getIsTravel() {
+    Boolean getIsTravel() {
         return isTravel;
-    }
-
-    public int getRowHeight() {
-        return rowHeight;
     }
 
     public ArrayList<String> getImages() {
         return images;
     }
 
-    public String getEmail() {
+    String getEmail() {
         return email;
     }
 
-    public String getContactNumber() {
+    String getContactNumber() {
         return contactNumber;
     }
 
-    public String getPromotionalCode() {
+    String getPromotionalCode() {
         return promotionalCode;
     }
 
-    public String getClaimOffer() {
+    String getClaimOffer() {
         return claimOffer;
     }
 
-    public String getModeratorName() {
-        return moderatorName;
-    }
-
-    public String getDescriptionForModerator() {
-        return descriptionForModerator;
-    }
-
-    public void setModeratorName(String moderatorName) {
-        this.moderatorName = moderatorName;
-    }
-
-    public void setDescriptionForModerator(String descriptionForModerator) {
-        this.descriptionForModerator = descriptionForModerator;
-    }
-
-    public String getExhibitionStatus() {
+    String getExhibitionStatus() {
         return exhibitionStatus;
     }
 
-    public String getDisplayDate() {
+    String getDisplayDate() {
         return exhibitionDisplayDate;
     }
 
@@ -366,12 +305,28 @@ public class CommonListModel implements Comparable<CommonListModel> {
             return 0;
     }
 
-    public boolean isImageTypeIsArray() {
+    boolean isImageTypeIsArray() {
         return imageTypeIsArray;
     }
 
-    public void setImageTypeIsArray(boolean imageTypeIsArray) {
+    void setImageTypeIsArray(boolean imageTypeIsArray) {
         this.imageTypeIsArray = imageTypeIsArray;
+    }
+
+    public String getOpeningTime() {
+        return openingTime;
+    }
+
+    public String getClosingTime() {
+        return closingTime;
+    }
+
+    public String getModeratorName() {
+        return moderatorName;
+    }
+
+    public String getDescriptionForModerator() {
+        return descriptionForModerator;
     }
 }
 
