@@ -10,7 +10,8 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:fitsSystemWindows="true"
-        android:orientation="vertical">
+        android:orientation="vertical"
+        tools:ignore="UselessParent">
 
         <android.support.design.widget.AppBarLayout
             android:layout_width="match_parent"
@@ -39,7 +40,8 @@
                         android:layout_weight=".2"
                         android:padding="@dimen/toolbar_image_view_padding"
                         android:src="@drawable/back_button"
-                        android:visibility="invisible" />
+                        android:visibility="invisible"
+                        tools:ignore="ContentDescription" />
 
                     <ImageView
                         android:id="@+id/topbar_calendar"
@@ -47,7 +49,8 @@
                         android:layout_height="wrap_content"
                         android:layout_weight=".2"
                         android:padding="@dimen/toolbar_image_view_padding"
-                        android:src="@drawable/calendar" />
+                        android:src="@drawable/calendar"
+                        tools:ignore="ContentDescription" />
 
                     <android.support.constraint.ConstraintLayout
                         android:layout_width="0dp"
@@ -62,14 +65,15 @@
                             app:layout_constraintBottom_toBottomOf="parent"
                             app:layout_constraintEnd_toEndOf="parent"
                             app:layout_constraintStart_toStartOf="parent"
-                            app:layout_constraintTop_toTopOf="parent" />
+                            app:layout_constraintTop_toTopOf="parent"
+                            tools:ignore="ContentDescription" />
 
                         <TextView
                             android:id="@+id/badge_notification"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:layout_marginTop="@dimen/padding_5"
                             android:layout_marginEnd="@dimen/padding_20"
+                            android:layout_marginTop="@dimen/padding_5"
                             android:background="@drawable/item_count"
                             android:textColor="@color/colorWhite"
                             android:textSize="16sp"
@@ -87,7 +91,8 @@
                         android:layout_height="wrap_content"
                         android:layout_weight=".2"
                         android:padding="@dimen/toolbar_image_view_padding"
-                        android:src="@drawable/profile" />
+                        android:src="@drawable/profile"
+                        tools:ignore="ContentDescription" />
 
                     <ImageView
                         android:id="@+id/topbar_sidemenu"
@@ -95,7 +100,8 @@
                         android:layout_height="wrap_content"
                         android:layout_weight=".2"
                         android:padding="@dimen/toolbar_image_view_padding"
-                        android:src="@drawable/side_menu_icon" />
+                        android:src="@drawable/side_menu_icon"
+                        tools:ignore="ContentDescription" />
 
                 </LinearLayout>
 

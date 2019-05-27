@@ -34,7 +34,8 @@
                     android:layout_centerVertical="true"
                     android:paddingEnd="20dp"
                     android:paddingStart="20dp"
-                    android:src="@drawable/back_button" />
+                    android:src="@drawable/back_button"
+                    tools:ignore="ContentDescription" />
 
                 <TextView
                     android:id="@+id/toolbar_title"
@@ -58,7 +59,8 @@
                     android:layout_centerVertical="true"
                     android:paddingEnd="20dp"
                     android:paddingStart="20dp"
-                    android:src="@drawable/logout" />
+                    android:src="@drawable/logout"
+                    tools:ignore="ContentDescription" />
 
             </RelativeLayout>
 
@@ -100,7 +102,8 @@
                             android:layout_height="100dp"
                             android:gravity="center"
                             android:padding="1dp"
-                            android:src="@drawable/default_profile" />
+                            android:src="@drawable/default_profile"
+                            tools:ignore="ContentDescription" />
                     </LinearLayout>
 
                     <ImageView
@@ -109,7 +112,8 @@
                         android:layout_height="wrap_content"
                         android:layout_gravity="end|bottom"
                         android:src="@drawable/profile_edit"
-                        android:visibility="gone" />
+                        android:visibility="gone"
+                        tools:ignore="ContentDescription" />
                 </FrameLayout>
 
                 <TextView
@@ -119,7 +123,6 @@
                     android:layout_marginTop="@dimen/padding_10"
                     android:fontFamily="@font/din_next_lt_pro_light"
                     android:gravity="center"
-                    android:text="User Name"
                     android:textAllCaps="true"
                     android:textColor="@color/colorBlack"
                     android:textSize="@dimen/font_size_17" />
@@ -159,9 +162,9 @@
                         android:layout_height="wrap_content"
                         android:layout_alignParentEnd="true"
                         android:fontFamily="@font/din_next_lt_pro_light"
-                        android:text="00515"
                         android:textColor="@color/colorBlack"
-                        android:textSize="@dimen/font_size_14" />
+                        android:textSize="@dimen/font_size_14"
+                        tools:ignore="RelativeOverlap" />
                 </RelativeLayout>
 
                 <View
@@ -189,9 +192,9 @@
                         android:layout_height="wrap_content"
                         android:layout_alignParentEnd="true"
                         android:fontFamily="@font/din_next_lt_pro_light"
-                        android:text="info@qm.com"
                         android:textColor="@color/colorBlack"
-                        android:textSize="@dimen/font_size_14" />
+                        android:textSize="@dimen/font_size_14"
+                        tools:ignore="RelativeOverlap" />
                 </RelativeLayout>
 
                 <View
@@ -219,9 +222,9 @@
                         android:layout_height="wrap_content"
                         android:layout_alignParentEnd="true"
                         android:fontFamily="@font/din_next_lt_pro_light"
-                        android:text="28 - 12 - 1986"
                         android:textColor="@color/colorBlack"
-                        android:textSize="@dimen/font_size_14" />
+                        android:textSize="@dimen/font_size_14"
+                        tools:ignore="RelativeOverlap" />
                 </RelativeLayout>
 
                 <View
@@ -249,9 +252,9 @@
                         android:layout_height="wrap_content"
                         android:layout_alignParentEnd="true"
                         android:fontFamily="@font/din_next_lt_pro_light"
-                        android:text="Qatar"
                         android:textColor="@color/colorBlack"
-                        android:textSize="@dimen/font_size_14" />
+                        android:textSize="@dimen/font_size_14"
+                        tools:ignore="RelativeOverlap" />
                 </RelativeLayout>
 
                 <View
@@ -279,9 +282,9 @@
                         android:layout_height="wrap_content"
                         android:layout_alignParentEnd="true"
                         android:fontFamily="@font/din_next_lt_pro_light"
-                        android:text="Palestine"
                         android:textColor="@color/colorBlack"
-                        android:textSize="@dimen/font_size_14" />
+                        android:textSize="@dimen/font_size_14"
+                        tools:ignore="RelativeOverlap" />
                 </RelativeLayout>
 
 
@@ -405,7 +408,6 @@
         <ProgressBar
             style="?android:attr/progressBarStyleLarge"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_centerInParent="true" />
+            android:layout_height="wrap_content" />
     </LinearLayout>
 </RelativeLayout>

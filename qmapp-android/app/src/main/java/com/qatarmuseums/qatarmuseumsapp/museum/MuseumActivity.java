@@ -1,6 +1,7 @@
 package com.qatarmuseums.qatarmuseumsapp.museum;
 
 
+import android.annotation.SuppressLint;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -9,6 +10,7 @@ import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
+import android.support.annotation.NonNull;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v4.view.ViewPager;
 import android.support.v7.widget.DefaultItemAnimator;
@@ -25,7 +27,7 @@ import android.widget.TextView;
 import com.github.rubensousa.gravitysnaphelper.GravitySnapHelper;
 import com.google.firebase.analytics.FirebaseAnalytics;
 import com.qatarmuseums.qatarmuseumsapp.Config;
-import com.qatarmuseums.qatarmuseumsapp.Convertor;
+import com.qatarmuseums.qatarmuseumsapp.Converter;
 import com.qatarmuseums.qatarmuseumsapp.LocaleManager;
 import com.qatarmuseums.qatarmuseumsapp.QMDatabase;
 import com.qatarmuseums.qatarmuseumsapp.R;
@@ -107,11 +109,10 @@ public class MuseumActivity extends BaseActivity implements
         sliderImageTitle.setText(intent.getStringExtra("MUSEUMTITLE"));
         museumId = intent.getStringExtra("MUSEUM_ID");
         isBanner = intent.getBooleanExtra("IS_BANNER", false);
-        if (isBanner) {
-            setToolbarForMuseumLaunchy();
-        } else {
+        if (isBanner)
+            setToolbarForMuseumLaunch();
+        else
             setToolbarForMuseumActivity();
-        }
         animCircleIndicator = findViewById(R.id.main_indicator_default_circle);
         sliderPlaceholderImage = findViewById(R.id.ads_place_holder);
         qmDatabase = QMDatabase.getInstance(MuseumActivity.this);
@@ -159,8 +160,8 @@ public class MuseumActivity extends BaseActivity implements
                 @Override
                 public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
                     super.onScrolled(recyclerView, dx, dy);
-                    int lastCompleteVisibleItemPosition = 0;
-                    int firstVisibleItemPosition = 0;
+                    int lastCompleteVisibleItemPosition;
+                    int firstVisibleItemPosition;
                     lastCompleteVisibleItemPosition = ((LinearLayoutManager) recyclerView
                             .getLayoutManager()).findLastCompletelyVisibleItemPosition();
                     firstVisibleItemPosition = ((LinearLayoutManager) recyclerView
@@ -390,6 +391,7 @@ public class MuseumActivity extends BaseActivity implements
     }
 
 
+    @SuppressLint("RtlHardcoded")
     public void loadAdsToSlider(ArrayList<Page> adsImages) {
         Timber.i("loadAdsToSlider()");
         language = LocaleManager.getLanguage(this);
@@ -502,7 +504,8 @@ public class MuseumActivity extends BaseActivity implements
             call = apiService.getMuseumAboutDetails(language, museumId);
         call.enqueue(new Callback<ArrayList<MuseumAboutModel>>() {
             @Override
-            public void onResponse(Call<ArrayList<MuseumAboutModel>> call, Response<ArrayList<MuseumAboutModel>> response) {
+            public void onResponse(@NonNull Call<ArrayList<MuseumAboutModel>> call,
+                                   @NonNull Response<ArrayList<MuseumAboutModel>> response) {
                 if (response.isSuccessful()) {
                     if (response.body() != null) {
                         Timber.i("getSliderImagesFromAPI() - isSuccessful for museum id: %s", museumId);
@@ -548,7 +551,7 @@ public class MuseumActivity extends BaseActivity implements
             }
 
             @Override
-            public void onFailure(Call<ArrayList<MuseumAboutModel>> call, Throwable t) {
+            public void onFailure(@NonNull Call<ArrayList<MuseumAboutModel>> call, @NonNull Throwable t) {
                 Timber.e("getSliderImagesFromAPI() - onFailure: %s", t.getMessage());
                 if (t instanceof IOException && noDataInDB) {
                     util.showToast(getResources().getString(R.string.check_network), getApplicationContext());
@@ -586,8 +589,7 @@ public class MuseumActivity extends BaseActivity implements
 
         @Override
         protected void onPostExecute(Integer integer) {
-            Integer museumAboutRowCount = integer;
-            if (museumAboutRowCount > 0) {
+            if (integer > 0) {
                 Timber.i("Count: %d", integer);
                 new CheckMuseumAboutDBRowExist(activityReference.get(), language).execute();
             } else {
@@ -629,7 +631,7 @@ public class MuseumActivity extends BaseActivity implements
 
         @Override
         protected Void doInBackground(Void... voids) {
-            Convertor converters = new Convertor();
+            Converter converters = new Converter();
             if (activityReference.get().museumAboutModels.size() > 0) {
                 Timber.i("checkTableWithIdExist(language :%s)", language);
                 for (int i = 0; i < activityReference.get().museumAboutModels.size(); i++) {
@@ -687,7 +689,7 @@ public class MuseumActivity extends BaseActivity implements
         @Override
         protected Boolean doInBackground(Void... voids) {
             if (activityReference.get().museumAboutModels != null) {
-                Convertor converters = new Convertor();
+                Converter converters = new Converter();
                 for (int i = 0; i < activityReference.get().museumAboutModels.size(); i++) {
                     Timber.i("Inserting data to Table(language :%s) with id: %s",
                             language, activityReference.get().museumAboutModels.get(i).getMuseumId());
@@ -708,7 +710,6 @@ public class MuseumActivity extends BaseActivity implements
                             activityReference.get().museumAboutModels.get(i).getEventDate(),
                             language);
                     activityReference.get().qmDatabase.getMuseumAboutDao().insert(museumAboutTable);
-
                 }
             }
             return true;
@@ -744,7 +745,7 @@ public class MuseumActivity extends BaseActivity implements
 
         @Override
         protected Void doInBackground(Void... voids) {
-            Convertor converters = new Convertor();
+            Converter converters = new Converter();
             Timber.i("Updating data to Table(language :%s) with id: %s",
                     language, activityReference.get().museumAboutModels.get(position).getMuseumId());
             activityReference.get().qmDatabase.getMuseumAboutDao().updateMuseumAboutData(
@@ -784,7 +785,7 @@ public class MuseumActivity extends BaseActivity implements
 
         @Override
         protected void onPostExecute(MuseumAboutTable museumAboutTable) {
-            Convertor converters = new Convertor();
+            Converter converters = new Converter();
             if (museumAboutTable != null) {
                 if (converters.fromString(museumAboutTable.getMuseum_image()) != null &&
                         converters.fromString(museumAboutTable.getMuseum_image()).size() > 0) {

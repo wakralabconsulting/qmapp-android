@@ -60,7 +60,7 @@ public class NMoQParkListDetailsAdapter extends RecyclerView.Adapter<NMoQParkLis
         }
     }
 
-    public NMoQParkListDetailsAdapter(Context context, List<NMoQParkListDetails> nMoQParkListDetails) {
+    NMoQParkListDetailsAdapter(Context context, List<NMoQParkListDetails> nMoQParkListDetails) {
         this.nMoQParkListDetails = nMoQParkListDetails;
         this.mContext = context;
     }

@@ -33,7 +33,8 @@
                     android:layout_centerVertical="true"
                     android:paddingEnd="20dp"
                     android:paddingStart="20dp"
-                    android:src="@drawable/toolbar_close" />
+                    android:src="@drawable/toolbar_close"
+                    tools:ignore="ContentDescription" />
 
                 <TextView
                     android:id="@+id/toolbar_title"
@@ -94,14 +95,13 @@
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
                 android:layout_gravity="end"
-                android:layout_weight=".1"
-                android:src="@drawable/down_arrow_icon" />
+                android:src="@drawable/down_arrow_icon"
+                tools:ignore="ContentDescription" />
 
             <Spinner
                 android:id="@+id/institution_text"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:layout_weight=".9"
                 android:background="@drawable/spinner_fill_rectangle"
                 android:dropDownVerticalOffset="30dp" />
 
@@ -140,14 +140,13 @@
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
                 android:layout_gravity="end"
-                android:layout_weight=".1"
-                android:src="@drawable/down_arrow_icon" />
+                android:src="@drawable/down_arrow_icon"
+                tools:ignore="ContentDescription" />
 
             <Spinner
                 android:id="@+id/age_group_text"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:layout_weight=".9"
                 android:background="@drawable/spinner_fill_rectangle"
                 android:dropDownVerticalOffset="30dp" />
 
@@ -186,14 +185,13 @@
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
                 android:layout_gravity="end"
-                android:layout_weight=".1"
-                android:src="@drawable/down_arrow_icon" />
+                android:src="@drawable/down_arrow_icon"
+                tools:ignore="ContentDescription" />
 
             <Spinner
                 android:id="@+id/programme_type_text"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:layout_weight=".9"
                 android:background="@drawable/spinner_fill_rectangle"
                 android:dropDownVerticalOffset="30dp" />
 
@@ -214,7 +212,8 @@
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
                 android:layout_weight=".45"
-                android:gravity="center|end">
+                android:gravity="center|end"
+                tools:ignore="NestedWeights">
 
                 <Button
                     android:id="@+id/clear_button"

@@ -1,9 +1,11 @@
 package com.qatarmuseums.qatarmuseumsapp.tourguide;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.v4.widget.NestedScrollView;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.DefaultItemAnimator;
@@ -14,8 +16,6 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
-import android.widget.Button;
-import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
@@ -49,12 +49,12 @@ public class TourGuideActivity extends AppCompatActivity {
     Toolbar toolbar;
     RecyclerView recyclerView;
     Intent intent;
-    ImageView backButton;
+    View backButton;
     private Animation zoomOutAnimation;
     private TourGuideAdapter mAdapter;
     private ArrayList<HomeList> tourGuideList = new ArrayList<>();
     private Intent navigationIntent;
-    Button retryButton;
+    View retryButton;
     private ProgressBar progressBar;
     private RelativeLayout noResultFoundLayout;
     private NestedScrollView scrollviewContainer;
@@ -70,6 +70,7 @@ public class TourGuideActivity extends AppCompatActivity {
         super.attachBaseContext(LocaleManager.setLocale(base));
     }
 
+    @SuppressLint("ClickableViewAccessibility")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -115,7 +116,7 @@ public class TourGuideActivity extends AppCompatActivity {
                                 tourGuideList.get(position).getId());
                         contentBundleParams = new Bundle();
                         contentBundleParams.putString(FirebaseAnalytics.Param.CONTENT_TYPE, tourGuideMainTitle.getText().toString());
-                        contentBundleParams.putString(FirebaseAnalytics.Param.ITEM_ID,  tourGuideList.get(position).getId());
+                        contentBundleParams.putString(FirebaseAnalytics.Param.ITEM_ID, tourGuideList.get(position).getId());
                         mFireBaseAnalytics.logEvent(FirebaseAnalytics.Event.SELECT_CONTENT, contentBundleParams);
                         if (tourGuideList.get(position).getId().equals("63") ||
                                 tourGuideList.get(position).getId().equals("96") ||
@@ -182,7 +183,8 @@ public class TourGuideActivity extends AppCompatActivity {
         Call<ArrayList<HomeList>> call = apiService.getMuseumsList(appLanguage);
         call.enqueue(new Callback<ArrayList<HomeList>>() {
             @Override
-            public void onResponse(Call<ArrayList<HomeList>> call, Response<ArrayList<HomeList>> response) {
+            public void onResponse(@NonNull Call<ArrayList<HomeList>> call,
+                                   @NonNull Response<ArrayList<HomeList>> response) {
                 if (response.isSuccessful()) {
                     if (response.body() != null) {
                         Timber.i("getTourGuidePageAPIData() - isSuccessful with size: %d", tourGuideList.size());
@@ -211,7 +213,7 @@ public class TourGuideActivity extends AppCompatActivity {
             }
 
             @Override
-            public void onFailure(Call<ArrayList<HomeList>> call, Throwable t) {
+            public void onFailure(@NonNull Call<ArrayList<HomeList>> call, @NonNull Throwable t) {
                 Timber.e("getTourGuidePageAPIData() - onFailure: %s", t.getMessage());
                 scrollviewContainer.setVisibility(View.GONE);
                 progressBar.setVisibility(View.GONE);

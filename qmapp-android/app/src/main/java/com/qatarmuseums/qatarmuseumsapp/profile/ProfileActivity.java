@@ -8,6 +8,7 @@ import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
+import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.SwitchCompat;
 import android.view.MotionEvent;
@@ -226,7 +227,7 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
         Call<UserData> call = apiService.logout(language, token);
         call.enqueue(new Callback<UserData>() {
             @Override
-            public void onResponse(Call<UserData> call, Response<UserData> response) {
+            public void onResponse(@NonNull Call<UserData> call, @NonNull Response<UserData> response) {
                 if (response.isSuccessful()) {
                     Timber.i("logOutAction() - isSuccessful");
                     clearPreference();
@@ -239,7 +240,7 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
             }
 
             @Override
-            public void onFailure(Call<UserData> call, Throwable t) {
+            public void onFailure(@NonNull Call<UserData> call, @NonNull Throwable t) {
                 Timber.e("getParkDetailsFromAPI() - onFailure: %s", t.getMessage());
                 if (t.getMessage().contains("timeout"))
                     util.showToast(t.getMessage(), ProfileActivity.this);
@@ -267,7 +268,7 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
         editor.putString("NAME", null);
         editor.putString("RSVP", null);
         editor.putString("ACCEPTED", "0");
-        editor.commit();
+        editor.apply();
         Intent navigationIntent = new Intent(this, CulturePassActivity.class);
         navigationIntent.putExtra("IS_LOGOUT", true);
         startActivity(navigationIntent);
@@ -334,7 +335,7 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
 
     public String loadJSONFromAsset(String language) {
         Timber.i("loadJSONFromAsset()");
-        String json = null;
+        String json;
         try {
             Timber.i("onBackPressed()");
             InputStream is = this.getAssets().open("countries_" + language + ".json");

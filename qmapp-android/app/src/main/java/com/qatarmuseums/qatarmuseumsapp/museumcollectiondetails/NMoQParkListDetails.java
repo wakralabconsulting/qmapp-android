@@ -18,7 +18,7 @@ public class NMoQParkListDetails implements Comparable<NMoQParkListDetails> {
     @SerializedName("sort_id")
     private String sortId;
 
-    public NMoQParkListDetails(String nid, String mainTitle, ArrayList<String> images, String description, String sortId) {
+    NMoQParkListDetails(String nid, String mainTitle, ArrayList<String> images, String description, String sortId) {
         this.nid = nid;
         this.mainTitle = mainTitle;
         this.images = images;

@@ -12,15 +12,15 @@ public class MuseumHScrollModel {
         return context;
     }
 
-    public String getTextName() {
+    String getTextName() {
         return textName;
     }
 
-    public int getResId() {
+    int getResId() {
         return resId;
     }
 
-    public MuseumHScrollModel(Context context, String textName, int resId) {
+    MuseumHScrollModel(Context context, String textName, int resId) {
         this.context = context;
         this.textName = textName;
         this.resId = resId;

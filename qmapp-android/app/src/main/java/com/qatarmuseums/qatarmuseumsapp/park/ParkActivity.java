@@ -1,8 +1,10 @@
 package com.qatarmuseums.qatarmuseumsapp.park;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.design.widget.AppBarLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.DefaultItemAnimator;
@@ -13,7 +15,6 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
-import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
@@ -46,7 +47,8 @@ public class ParkActivity extends AppCompatActivity implements IPullZoom {
     private List<ParkList> parkLists = new ArrayList<>();
     private ParkListAdapter mAdapter;
     private RecyclerView recyclerView;
-    private ImageView headerImageView, favIcon, shareIcon, toolbarClose;
+    private ImageView headerImageView;
+    View favIcon, shareIcon, toolbarClose;
     private Animation zoomOutAnimation;
     ProgressBar progressBar;
     RelativeLayout noResultFoundLayout;
@@ -56,7 +58,7 @@ public class ParkActivity extends AppCompatActivity implements IPullZoom {
     int parkTableRowCount;
     Util utilObject;
     private int headerOffSetSize;
-    Button retryButton;
+    View retryButton;
     private String appLanguage;
     private FirebaseAnalytics mFireBaseAnalytics;
 
@@ -65,6 +67,7 @@ public class ParkActivity extends AppCompatActivity implements IPullZoom {
         super.attachBaseContext(LocaleManager.setLocale(base));
     }
 
+    @SuppressLint("ClickableViewAccessibility")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -105,10 +108,10 @@ public class ParkActivity extends AppCompatActivity implements IPullZoom {
         });
 
         favIcon.setOnClickListener(v -> {
-            if (utilObject.checkImageResource(ParkActivity.this, favIcon, R.drawable.heart_fill)) {
-                favIcon.setImageResource(R.drawable.heart_empty);
+            if (utilObject.checkImageResource(ParkActivity.this, (ImageView) favIcon, R.drawable.heart_fill)) {
+                ((ImageView) favIcon).setImageResource(R.drawable.heart_empty);
             } else
-                favIcon.setImageResource(R.drawable.heart_fill);
+                ((ImageView) favIcon).setImageResource(R.drawable.heart_fill);
         });
         zoomOutAnimation = AnimationUtils.loadAnimation(getApplicationContext(),
                 R.anim.zoom_out_more);
@@ -172,7 +175,8 @@ public class ParkActivity extends AppCompatActivity implements IPullZoom {
         Call<ArrayList<ParkList>> call = apiService.getParkDetails(appLanguage);
         call.enqueue(new Callback<ArrayList<ParkList>>() {
             @Override
-            public void onResponse(Call<ArrayList<ParkList>> call, Response<ArrayList<ParkList>> response) {
+            public void onResponse(@NonNull Call<ArrayList<ParkList>> call,
+                                   @NonNull Response<ArrayList<ParkList>> response) {
                 if (response.isSuccessful()) {
                     if (response.body() != null) {
                         Timber.i("getNMoQParkListFromAPI() - isSuccessful with size: %s", response.body().size());
@@ -204,7 +208,7 @@ public class ParkActivity extends AppCompatActivity implements IPullZoom {
             }
 
             @Override
-            public void onFailure(Call<ArrayList<ParkList>> call, Throwable t) {
+            public void onFailure(@NonNull Call<ArrayList<ParkList>> call, @NonNull Throwable t) {
                 Timber.e("getParkDetailsFromAPI() - onFailure: %s", t.getMessage());
                 mainLayout.setVisibility(View.GONE);
                 progressBar.setVisibility(View.GONE);

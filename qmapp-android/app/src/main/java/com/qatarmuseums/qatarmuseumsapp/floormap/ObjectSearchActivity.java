@@ -1,10 +1,12 @@
 package com.qatarmuseums.qatarmuseumsapp.floormap;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
+import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.text.Editable;
@@ -42,7 +44,7 @@ public class ObjectSearchActivity extends AppCompatActivity implements View.OnCl
     @BindView(R.id.common_toolbar)
     Toolbar toolbar;
     @BindView(R.id.toolbar_close)
-    ImageView toolbarClose;
+    View toolbarClose;
     @BindView(R.id.toolbar_title)
     TextView toolbar_title;
     @BindView(R.id.number_pad_text)
@@ -74,6 +76,7 @@ public class ObjectSearchActivity extends AppCompatActivity implements View.OnCl
         super.attachBaseContext(LocaleManager.setLocale(base));
     }
 
+    @SuppressLint("ClickableViewAccessibility")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -129,7 +132,7 @@ public class ObjectSearchActivity extends AppCompatActivity implements View.OnCl
         });
         doneButton.setOnClickListener(view -> {
             Timber.i("Done button clicked");
-            if (numberPadDisplay.getText().toString() == "") {
+            if (numberPadDisplay.getText().toString().equals("")) {
                 util.showAlertDialog(ObjectSearchActivity.this);
             } else {
                 contentBundleParams = new Bundle();
@@ -163,7 +166,8 @@ public class ObjectSearchActivity extends AppCompatActivity implements View.OnCl
         Call<ArrayList<ArtifactDetails>> call = apiService.getObjectSearchDetails(language, id);
         call.enqueue(new Callback<ArrayList<ArtifactDetails>>() {
             @Override
-            public void onResponse(Call<ArrayList<ArtifactDetails>> call, Response<ArrayList<ArtifactDetails>> response) {
+            public void onResponse(@NonNull Call<ArrayList<ArtifactDetails>> call,
+                                   @NonNull Response<ArrayList<ArtifactDetails>> response) {
                 if (response.isSuccessful()) {
                     if (response.body().size() > 0) {
                         if (response.body() != null && response.body().size() > 0) {
@@ -199,7 +203,7 @@ public class ObjectSearchActivity extends AppCompatActivity implements View.OnCl
             }
 
             @Override
-            public void onFailure(Call<ArrayList<ArtifactDetails>> call, Throwable t) {
+            public void onFailure(@NonNull Call<ArrayList<ArtifactDetails>> call, @NonNull Throwable t) {
                 Timber.e("getDetailsFromApi() - onFailure: %s", t.getMessage());
                 progressBar.setVisibility(View.GONE);
                 mainContainer.setVisibility(View.VISIBLE);

@@ -34,7 +34,8 @@
                     android:paddingEnd="20dp"
                     android:paddingStart="20dp"
                     android:src="@drawable/back_button"
-                    app:layout_constraintStart_toStartOf="parent" />
+                    app:layout_constraintStart_toStartOf="parent"
+                    tools:ignore="ContentDescription" />
 
                 <TextView
                     android:id="@+id/toolbar_title"
@@ -253,7 +254,8 @@
                             android:paddingBottom="@dimen/padding_20"
                             android:paddingEnd="@dimen/padding_10"
                             android:paddingStart="0dp"
-                            android:src="@drawable/ic_satellite" />
+                            android:src="@drawable/ic_satellite"
+                            tools:ignore="ContentDescription" />
 
                         <ImageView
                             android:id="@+id/direction"
@@ -262,7 +264,8 @@
                             android:paddingBottom="@dimen/padding_20"
                             android:paddingEnd="@dimen/padding_10"
                             android:paddingStart="0dp"
-                            android:src="@drawable/ic_directions" />
+                            android:src="@drawable/ic_directions"
+                            tools:ignore="ContentDescription" />
                     </LinearLayout>
                 </FrameLayout>
 

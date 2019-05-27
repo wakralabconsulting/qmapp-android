@@ -23,7 +23,7 @@ public class UserRegistrationModel {
         this.regID = regId;
     }
 
-    public String getEventTitle() {
+    String getEventTitle() {
         return eventTitle;
     }
 
@@ -31,7 +31,7 @@ public class UserRegistrationModel {
         this.eventTitle = eventTitle;
     }
 
-    public String getEventID() {
+    String getEventID() {
         return eventID;
     }
 
@@ -39,7 +39,7 @@ public class UserRegistrationModel {
         this.eventID = eventID;
     }
 
-    public String getRegID() {
+    String getRegID() {
         return regID;
     }
 
@@ -47,7 +47,7 @@ public class UserRegistrationModel {
         this.regID = regID;
     }
 
-    public String getNumberOfReservations() {
+    String getNumberOfReservations() {
         return numberOfReservations;
     }
 }

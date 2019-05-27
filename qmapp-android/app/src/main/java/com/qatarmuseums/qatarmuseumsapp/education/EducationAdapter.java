@@ -1,5 +1,6 @@
 package com.qatarmuseums.qatarmuseumsapp.education;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.graphics.Color;
 import android.support.annotation.NonNull;
@@ -16,11 +17,11 @@ import java.util.ArrayList;
 
 public class EducationAdapter extends RecyclerView.Adapter<EducationAdapter.EducationAdapterViewHolder> {
 
-    Context context;
-    ArrayList<Events> events;
+    private Context context;
+    private ArrayList<Events> events;
     ArrayList<String> descriptionVal;
 
-    public EducationAdapter(Context context, ArrayList<Events> events) {
+    EducationAdapter(Context context, ArrayList<Events> events) {
         this.context = context;
         this.events = events;
     }
@@ -28,6 +29,7 @@ public class EducationAdapter extends RecyclerView.Adapter<EducationAdapter.Educ
     @NonNull
     @Override
     public EducationAdapter.EducationAdapterViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+        @SuppressLint("InflateParams")
         View itemView = LayoutInflater.from(context).inflate(R.layout.education_event_row_layout, null);
         final EducationAdapter.EducationAdapterViewHolder educationAdapterViewHolder = new EducationAdapter.EducationAdapterViewHolder(itemView);
         return new EducationAdapter.EducationAdapterViewHolder(itemView);
@@ -70,18 +72,18 @@ public class EducationAdapter extends RecyclerView.Adapter<EducationAdapter.Educ
     }
 
 
-    public class EducationAdapterViewHolder extends RecyclerView.ViewHolder {
+    class EducationAdapterViewHolder extends RecyclerView.ViewHolder {
 
-        public TextView eventTitle, eventSubTitle, eventTiming, viewDetails;
-        public LinearLayout layoutHolder;
+        TextView eventTitle, eventSubTitle, eventTiming, viewDetails;
+        LinearLayout layoutHolder;
 
-        public EducationAdapterViewHolder(View itemView) {
+        EducationAdapterViewHolder(View itemView) {
             super(itemView);
-            eventTitle = (TextView) itemView.findViewById(R.id.event_title);
-            eventSubTitle = (TextView) itemView.findViewById(R.id.event_subtitle);
-            eventTiming = (TextView) itemView.findViewById(R.id.event_timing);
-            viewDetails = (TextView) itemView.findViewById(R.id.event_view_details);
-            layoutHolder = (LinearLayout) itemView.findViewById(R.id.layout_holder);
+            eventTitle = itemView.findViewById(R.id.event_title);
+            eventSubTitle = itemView.findViewById(R.id.event_subtitle);
+            eventTiming = itemView.findViewById(R.id.event_timing);
+            viewDetails = itemView.findViewById(R.id.event_view_details);
+            layoutHolder = itemView.findViewById(R.id.layout_holder);
         }
     }
 
