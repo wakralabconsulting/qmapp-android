@@ -51,7 +51,7 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MapStyleOptions;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.firebase.analytics.FirebaseAnalytics;
-import com.qatarmuseums.qatarmuseumsapp.Convertor;
+import com.qatarmuseums.qatarmuseumsapp.Converter;
 import com.qatarmuseums.qatarmuseumsapp.LocaleManager;
 import com.qatarmuseums.qatarmuseumsapp.QMDatabase;
 import com.qatarmuseums.qatarmuseumsapp.R;
@@ -95,7 +95,6 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Objects;
 import java.util.concurrent.TimeUnit;
@@ -121,7 +120,8 @@ import static com.qatarmuseums.qatarmuseumsapp.Config.QM_ALIAS;
 public class DetailsActivity extends AppCompatActivity implements IPullZoom, OnMapReadyCallback,
         NumberPicker.OnValueChangeListener {
 
-    ImageView headerImageView, toolbarClose, favIcon, shareIcon;
+    ImageView headerImageView;
+    View toolbarClose, favIcon, shareIcon;
     String headerImage;
     String mainTitle, comingFrom;
     boolean isFavourite;
@@ -131,11 +131,10 @@ public class DetailsActivity extends AppCompatActivity implements IPullZoom, OnM
     private Util util;
     private Animation zoomOutAnimation;
     private View zoomView;
-    ArrayList<String> imageList = new ArrayList<String>();
+    ArrayList<String> imageList = new ArrayList<>();
     private int headerOffSetSize;
     String appLanguage;
-    private LinearLayout secondTitleLayout, timingLayout, contactLayout, retryLayout, videoLayout,
-            downloadLayout;
+    private LinearLayout secondTitleLayout, timingLayout, contactLayout, retryLayout, videoLayout;
     private String latitude, longitude, id;
     Intent intent;
     String token, startTime, endTime;
@@ -158,20 +157,19 @@ public class DetailsActivity extends AppCompatActivity implements IPullZoom, OnM
     MapView mapDetails;
     private static final String MAP_VIEW_BUNDLE_KEY = "MapViewBundleKey";
     private GoogleMap gMap, gValue;
-    LinearLayout mapView;
+    FrameLayout mapView;
     ImageView mapImageView, direction;
     int iconView = 0;
     ProgressBar progressBar;
     ImageView imagePlaceHolder;
     JzvdStd jzvdStd;
     FrameLayout frameLayout;
-    Button retryButton;
+    View retryButton;
     private InfiniteIndicator circleIndicator;
     private ArrayList ads;
     private LinearLayout eventDateLayout;
     private TextView eventDateTxt;
     private TextView registerUnregisterCount;
-    private View downloadButton;
     private ConstraintLayout interestLayout;
     private LinearLayout locationLayout;
     private LinearLayout offerLayout;
@@ -183,7 +181,6 @@ public class DetailsActivity extends AppCompatActivity implements IPullZoom, OnM
     private String claimOfferURL;
     private Intent navigation_intent;
     private ArrayList<TourDetailsModel> tourDetailsList = new ArrayList<>();
-    private String register, registered;
     private String eventDate, nid;
     String registrationId;
     RegistrationDetailsModel registrationDetailsModel;
@@ -191,11 +188,9 @@ public class DetailsActivity extends AppCompatActivity implements IPullZoom, OnM
     private HashMap<String, UserRegistrationDetailsTable> registrationDetailsMap;
     private HashMap<String, TourDetailsModel> tourDetailsMap;
     private TourDetailsModel tourDetailsModel;
-    private Iterator<String> myVeryOwnIterator;
     private String currentEventTimeStampDiff;
     private Long currentEventStartTimeStamp;
     private Long currentEventEndTimeStamp;
-    private boolean isTimeSlotAvailable;
     private UserRegistrationDetailsTable userRegistrationDetailsTable;
     private RelativeLayout registrationLoader;
     private Button registerButton;
@@ -207,10 +202,9 @@ public class DetailsActivity extends AppCompatActivity implements IPullZoom, OnM
     private Button dialogActionButton;
     private TextView dialogContent;
     int MY_PERMISSIONS_REQUEST_CALENDAR = 100;
-    int REQUEST_PERMISSION_SETTING = 110;
     String seatsRemaining = "0";
     private int seatsCount;
-    private FirebaseAnalytics mFirebaseAnalytics;
+    private FirebaseAnalytics mFireBaseAnalytics;
     private String pageName = null;
     private ArrayList<FacilitiesDetailModel> facilitiesDetailModels = new ArrayList<>();
     private ArrayList<NMoQParkListDetails> nMoQParkListDetails = new ArrayList<>();
@@ -218,7 +212,10 @@ public class DetailsActivity extends AppCompatActivity implements IPullZoom, OnM
     FacilityDetailTable facilityDetailTable;
     private NMoQParkListDetailsTable nMoQParkListDetailsTable;
     private LinearLayout diningContent;
-    private TextView downloadText;
+    private View downloadText;
+
+    public DetailsActivity() {
+    }
 
     @Override
 
@@ -261,8 +258,8 @@ public class DetailsActivity extends AppCompatActivity implements IPullZoom, OnM
         id = intent.getStringExtra("ID");
         isFavourite = intent.getBooleanExtra("IS_FAVOURITE", false);
 
-        registrationDetailsMap = new HashMap<String, UserRegistrationDetailsTable>();
-        tourDetailsMap = new HashMap<String, TourDetailsModel>();
+        registrationDetailsMap = new HashMap<>();
+        tourDetailsMap = new HashMap<>();
 
         if (comingFrom.equals(getString(R.string.museum_tours)) ||
                 comingFrom.equals(getString(R.string.museum_discussion))) {
@@ -270,8 +267,6 @@ public class DetailsActivity extends AppCompatActivity implements IPullZoom, OnM
             eventDate = intent.getStringExtra("DATE");
             contactNumber = intent.getStringExtra("CONTACT_PHONE");
             contactMail = intent.getStringExtra("CONTACT_MAIL");
-            register = intent.getStringExtra("REGISTER");
-            registered = intent.getStringExtra("REGISTERED");
             latitude = intent.getStringExtra("LATITUDE");
             longitude = intent.getStringExtra("LONGITUDE");
             nid = intent.getStringExtra("NID");
@@ -347,9 +342,7 @@ public class DetailsActivity extends AppCompatActivity implements IPullZoom, OnM
             eventDateLayout = findViewById(R.id.event_date_layout);
             eventDateTxt = findViewById(R.id.event_date);
             videoLayout = findViewById(R.id.video_layout);
-            downloadLayout = findViewById(R.id.download_layout);
             downloadText = findViewById(R.id.download_text);
-            downloadButton = findViewById(R.id.download_button);
             interestLayout = findViewById(R.id.interest_layout);
             registerUnregisterCount = findViewById(R.id.register_unregister_label);
             registerButton = findViewById(R.id.register_button);
@@ -360,7 +353,7 @@ public class DetailsActivity extends AppCompatActivity implements IPullZoom, OnM
             downloadText.setOnTouchListener((v, event) -> {
                 switch (event.getAction()) {
                     case MotionEvent.ACTION_DOWN:
-                        downloadButton.startAnimation(zoomOutAnimation);
+                        downloadText.startAnimation(zoomOutAnimation);
                         break;
                 }
                 return false;
@@ -371,14 +364,6 @@ public class DetailsActivity extends AppCompatActivity implements IPullZoom, OnM
                 switch (event.getAction()) {
                     case MotionEvent.ACTION_DOWN:
                         claimButton.startAnimation(zoomOutAnimation);
-                        break;
-                }
-                return false;
-            });
-            downloadButton.setOnTouchListener((v, event) -> {
-                switch (event.getAction()) {
-                    case MotionEvent.ACTION_DOWN:
-                        downloadButton.startAnimation(zoomOutAnimation);
                         break;
                 }
                 return false;
@@ -399,8 +384,6 @@ public class DetailsActivity extends AppCompatActivity implements IPullZoom, OnM
                     util.showToast(getResources().getString(R.string.check_network), getApplicationContext());
             });
 
-            downloadButton.setOnClickListener(v ->
-                    downloadAction());
             downloadText.setOnClickListener(v ->
                     downloadAction());
             registerButton.setOnClickListener(v -> {
@@ -437,7 +420,7 @@ public class DetailsActivity extends AppCompatActivity implements IPullZoom, OnM
 
         }
         util = new Util();
-        mFirebaseAnalytics = FirebaseAnalytics.getInstance(this);
+        mFireBaseAnalytics = FirebaseAnalytics.getInstance(this);
         title.setText(mainTitle);
         getData();
 
@@ -448,9 +431,9 @@ public class DetailsActivity extends AppCompatActivity implements IPullZoom, OnM
                 .into(headerImageView);
 
         if (isFavourite)
-            favIcon.setImageResource(R.drawable.heart_fill);
+            ((ImageView) favIcon).setImageResource(R.drawable.heart_fill);
         else
-            favIcon.setImageResource(R.drawable.heart_empty);
+            ((ImageView) favIcon).setImageResource(R.drawable.heart_empty);
 
         toolbarClose.setOnClickListener(v -> {
                     Timber.i("Toolbar close clicked");
@@ -458,10 +441,10 @@ public class DetailsActivity extends AppCompatActivity implements IPullZoom, OnM
                 }
         );
         favIcon.setOnClickListener(v -> {
-            if (util.checkImageResource(DetailsActivity.this, favIcon, R.drawable.heart_fill)) {
-                favIcon.setImageResource(R.drawable.heart_empty);
+            if (util.checkImageResource(DetailsActivity.this, (ImageView) favIcon, R.drawable.heart_fill)) {
+                ((ImageView) favIcon).setImageResource(R.drawable.heart_empty);
             } else
-                favIcon.setImageResource(R.drawable.heart_fill);
+                ((ImageView) favIcon).setImageResource(R.drawable.heart_fill);
         });
 
         initViews();
@@ -571,12 +554,13 @@ public class DetailsActivity extends AppCompatActivity implements IPullZoom, OnM
         Call<ArrayList<FacilitiesDetailModel>> call = apiService.getFacilityDetails(appLanguage, id);
         call.enqueue(new Callback<ArrayList<FacilitiesDetailModel>>() {
             @Override
-            public void onResponse(Call<ArrayList<FacilitiesDetailModel>> call, Response<ArrayList<FacilitiesDetailModel>> response) {
+            public void onResponse(@NonNull Call<ArrayList<FacilitiesDetailModel>> call,
+                                   @NonNull Response<ArrayList<FacilitiesDetailModel>> response) {
                 if (response.isSuccessful()) {
                     if (response.body() != null && response.body().size() > 0) {
                         Timber.i("Setting Facility details with for id: %s", id);
                         facilitiesDetailModels.addAll(response.body());
-                        removeHtmlTagsforFacilities(facilitiesDetailModels);
+                        removeHtmlTagsForFacilities(facilitiesDetailModels);
                         if (!DetailsActivity.this.isFinishing())
                             GlideApp.with(DetailsActivity.this)
                                     .load(facilitiesDetailModels.get(0).getFacilityImage().get(0))
@@ -587,8 +571,8 @@ public class DetailsActivity extends AppCompatActivity implements IPullZoom, OnM
                         timingTitle.setText(facilitiesDetailModels.get(0).getFacilityTitleTiming());
                         loadData(null, facilitiesDetailModels.get(0).getFacilityDescription(),
                                 null, null, null,
-                                facilitiesDetailModels.get(0).getFacilitiesTiming(), null, null, null, null,
-                                facilitiesDetailModels.get(0).getLattitude(), facilitiesDetailModels.get(0).getLongitude(),
+                                facilitiesDetailModels.get(0).getFacilitiesTiming(), null, null, null,
+                                facilitiesDetailModels.get(0).getLatitude(), facilitiesDetailModels.get(0).getLongitude(),
                                 true, null);
                         new FacilityRowCount(DetailsActivity.this, appLanguage).execute();
 
@@ -607,7 +591,7 @@ public class DetailsActivity extends AppCompatActivity implements IPullZoom, OnM
             }
 
             @Override
-            public void onFailure(Call<ArrayList<FacilitiesDetailModel>> call, Throwable t) {
+            public void onFailure(@NonNull Call<ArrayList<FacilitiesDetailModel>> call, @NonNull Throwable t) {
                 Timber.e("getFacilityDetailsFromAPI() - onFailure: %s", t.getMessage());
                 commonContentLayout.setVisibility(View.GONE);
                 retryLayout.setVisibility(View.VISIBLE);
@@ -625,7 +609,7 @@ public class DetailsActivity extends AppCompatActivity implements IPullZoom, OnM
     public void registerButtonAction(String registrationCount) {
         Timber.i("registerButtonAction() with count: %s", registrationCount);
         if (util.isNetworkAvailable(DetailsActivity.this)) {
-            entryJsonarray(registrationCount);
+            entryJsonArray(registrationCount);
             if (registrationDetailsModel != null) {
                 entityRegistration(token, registrationDetailsModel);
             }
@@ -658,28 +642,28 @@ public class DetailsActivity extends AppCompatActivity implements IPullZoom, OnM
         }
     }
 
-    public void entryJsonarray(String registrationCount) {
+    public void entryJsonArray(String registrationCount) {
         ArrayList<Und> values = new ArrayList<>();
         Und attendanceValue = new Und("1");
         values.clear();
         values.add(attendanceValue);
-        Model attendancemodel = new Model(values);
-        ArrayList<Und> nvalues = new ArrayList<>();
-        Und numberofattendanceValue = new Und("2");
-        nvalues.add(numberofattendanceValue);
-        Model numberofattendancemodel = new Model(nvalues);
-        ArrayList<Und> fvalues = new ArrayList<>();
-        Und firstnameValue = new Und(field_first_name_, null, field_first_name_);
-        fvalues.add(firstnameValue);
-        Model firstnamemodel = new Model(fvalues);
+        Model attendanceModel = new Model(values);
+        ArrayList<Und> nValues = new ArrayList<>();
+        Und numberOfAttendanceValue = new Und("2");
+        nValues.add(numberOfAttendanceValue);
+        Model numberOfAttendanceModel = new Model(nValues);
+        ArrayList<Und> firstNameValues = new ArrayList<>();
+        Und firstNameValue = new Und(field_first_name_, null, field_first_name_);
+        firstNameValues.add(firstNameValue);
+        Model firstNameModel = new Model(firstNameValues);
         ArrayList<Und> lvalues = new ArrayList<>();
-        Und lastnameValue = new Und(field_nmoq_last_name, null, field_nmoq_last_name);
-        lvalues.add(lastnameValue);
-        Model lastnamemodel = new Model(lvalues);
-        ArrayList<Und> mvalues = new ArrayList<>();
+        Und lastNameValue = new Und(field_nmoq_last_name, null, field_nmoq_last_name);
+        lvalues.add(lastNameValue);
+        Model lastNameModel = new Model(lvalues);
+        ArrayList<Und> membershipValues = new ArrayList<>();
         Und membershipValue = new Und(String.valueOf(field_membership_number));
-        mvalues.add(membershipValue);
-        Model membershipmodel = new Model(mvalues);
+        membershipValues.add(membershipValue);
+        Model membershipModel = new Model(membershipValues);
         if (comingFrom.equals(getString(R.string.museum_discussion))) {
             eventDate = tourDetailsList.get(0).getTourDate();
         }
@@ -689,17 +673,17 @@ public class DetailsActivity extends AppCompatActivity implements IPullZoom, OnM
         if (splitArray.length > 2) {
             endTime = splitArray[0].concat(splitArray[2]);
             end = util.getTimeStamp(endTime);
-            ArrayList<Und> rvalues = new ArrayList<>();
-            Und membershipregValue = new Und(String.valueOf(start / 1000), String.valueOf(end / 1000), time_zone, "10800", "10800", time_zone, "datestamp");
-            rvalues.add(membershipregValue);
-            Model membershipregmodel = new Model(rvalues);
+            ArrayList<Und> registrationValues = new ArrayList<>();
+            Und membershipRegistrationValue = new Und(String.valueOf(start / 1000), String.valueOf(end / 1000), time_zone, "10800", "10800", time_zone, "datestamp");
+            registrationValues.add(membershipRegistrationValue);
+            Model membershipRegistrationModel = new Model(registrationValues);
             registrationDetailsModel =
                     new RegistrationDetailsModel("nmoq_event_registration", nid, "node",
                             user_uid, registrationCount, user_uid, "pending",
                             String.valueOf(TimeUnit.MILLISECONDS.toSeconds(System.currentTimeMillis())),
                             String.valueOf(TimeUnit.MILLISECONDS.toSeconds(System.currentTimeMillis())),
-                            attendancemodel, numberofattendancemodel, firstnamemodel,
-                            lastnamemodel, membershipmodel, membershipregmodel);
+                            attendanceModel, numberOfAttendanceModel, firstNameModel,
+                            lastNameModel, membershipModel, membershipRegistrationModel);
         } else {
             showRegistrationWarningDialog(R.string.warning_no_end_time);
         }
@@ -712,6 +696,7 @@ public class DetailsActivity extends AppCompatActivity implements IPullZoom, OnM
         dialog.setCancelable(true);
         dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
 
+        @SuppressLint("InflateParams")
         View view = getLayoutInflater().inflate(R.layout.vip_pop_up, null);
         dialog.setContentView(view);
 
@@ -738,6 +723,7 @@ public class DetailsActivity extends AppCompatActivity implements IPullZoom, OnM
         dialog.setCancelable(true);
         dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
 
+        @SuppressLint("InflateParams")
         View view = getLayoutInflater().inflate(R.layout.vip_pop_up, null);
         dialog.setContentView(view);
 
@@ -801,7 +787,7 @@ public class DetailsActivity extends AppCompatActivity implements IPullZoom, OnM
         super.onResume();
         mapDetails.onResume();
         if (pageName != null)
-            mFirebaseAnalytics.setCurrentScreen(this, pageName + getString(R.string.details_page), null);
+            mFireBaseAnalytics.setCurrentScreen(this, pageName + getString(R.string.details_page), null);
     }
 
     @Override
@@ -905,7 +891,8 @@ public class DetailsActivity extends AppCompatActivity implements IPullZoom, OnM
         Call<ArrayList<DiningDetailModel>> call = apiService.getDiningDetails(appLanguage, id);
         call.enqueue(new Callback<ArrayList<DiningDetailModel>>() {
             @Override
-            public void onResponse(Call<ArrayList<DiningDetailModel>> call, Response<ArrayList<DiningDetailModel>> response) {
+            public void onResponse(@NonNull Call<ArrayList<DiningDetailModel>> call,
+                                   @NonNull Response<ArrayList<DiningDetailModel>> response) {
                 if (response.isSuccessful()) {
                     if (response.body() != null && response.body().size() > 0) {
                         Timber.i("Setting %s Details", comingFrom);
@@ -941,7 +928,7 @@ public class DetailsActivity extends AppCompatActivity implements IPullZoom, OnM
             }
 
             @Override
-            public void onFailure(Call<ArrayList<DiningDetailModel>> call, Throwable t) {
+            public void onFailure(@NonNull Call<ArrayList<DiningDetailModel>> call, @NonNull Throwable t) {
                 Timber.e("get%sDetailsFromAPI() - onFailure: %s", comingFrom, t.getMessage());
                 diningContent.setVisibility(View.INVISIBLE);
                 retryLayout.setVisibility(View.VISIBLE);
@@ -1178,7 +1165,7 @@ public class DetailsActivity extends AppCompatActivity implements IPullZoom, OnM
                         shortDescription.setTextAlignment(View.TEXT_ALIGNMENT_VIEW_START);
                         loadData(null, nMoQParkListDetails.get(0).getDescription(),
                                 null, null, null,
-                                null, null, null, null,
+                                null, null, null,
                                 null, null, null,
                                 true, null);
 
@@ -1200,7 +1187,7 @@ public class DetailsActivity extends AppCompatActivity implements IPullZoom, OnM
             }
 
             @Override
-            public void onFailure(Call<ArrayList<NMoQParkListDetails>> call, Throwable t) {
+            public void onFailure(@NonNull Call<ArrayList<NMoQParkListDetails>> call, @NonNull Throwable t) {
                 Timber.e("get%sDetailsFromAPI() - onFailure: %s", comingFrom, t.getMessage());
                 commonContentLayout.setVisibility(View.GONE);
                 retryLayout.setVisibility(View.VISIBLE);
@@ -1210,63 +1197,134 @@ public class DetailsActivity extends AppCompatActivity implements IPullZoom, OnM
 
     }
 
-    public static class NMoQParkListDetailsRowCount extends AsyncTask<Void, Void, Integer> {
-        private WeakReference<DetailsActivity> activityReference;
-        String language;
+    /*
+        public static class NMoQParkListDetailsRowCount extends AsyncTask<Void, Void, Integer> {
+            private WeakReference<DetailsActivity> activityReference;
+            String language;
 
-        NMoQParkListDetailsRowCount(DetailsActivity context, String language) {
-            this.activityReference = new WeakReference<>(context);
-            this.language = language;
-        }
+            NMoQParkListDetailsRowCount(DetailsActivity context, String language) {
+                this.activityReference = new WeakReference<>(context);
+                this.language = language;
+            }
 
-        @Override
-        protected void onPreExecute() {
-            super.onPreExecute();
-        }
+            @Override
+            protected void onPreExecute() {
+                super.onPreExecute();
+            }
 
-        @Override
-        protected Integer doInBackground(Void... voids) {
-            Timber.i("getNumberOf%sRows(language: %s)", activityReference.get().comingFrom, language);
-            return activityReference.get().qmDatabase.getNMoQParkListDetailsTableDao()
-                    .getNumberOfRows(language);
-        }
+            @Override
+            protected Integer doInBackground(Void... voids) {
+                Timber.i("getNumberOf%sRows(language: %s)", activityReference.get().comingFrom, language);
+                return activityReference.get().qmDatabase.getNMoQParkListDetailsTableDao()
+                        .getNumberOfRows(language);
+            }
 
-        @Override
-        protected void onPostExecute(Integer integer) {
-            if (integer > 0) {
-                Timber.i("Count: %d", integer);
-                new CheckNMoQParkListDetailsDBRowExist(activityReference.get(), language).execute();
-            } else {
-                Timber.i("%s Table have no data", activityReference.get().comingFrom);
-                new InsertNMoQParkListDetailsDataToDataBase(
-                        activityReference.get(),
-                        activityReference.get().nMoQParkListDetailsTable, language).execute();
+            @Override
+            protected void onPostExecute(Integer integer) {
+                if (integer > 0) {
+                    Timber.i("Count: %d", integer);
+                    new CheckNMoQParkListDetailsDBRowExist(activityReference.get(), language).execute();
+                } else {
+                    Timber.i("%s Table have no data", activityReference.get().comingFrom);
+                    new InsertNMoQParkListDetailsDataToDataBase(
+                            activityReference.get(),
+                            activityReference.get().nMoQParkListDetailsTable, language).execute();
+                }
             }
         }
-    }
 
-    public static class CheckNMoQParkListDetailsDBRowExist extends AsyncTask<Void, Void, Void> {
-        private WeakReference<DetailsActivity> activityReference;
-        String language;
-        private NMoQParkListDetailsTable nMoQParkListDetailsTable;
+        public static class CheckNMoQParkListDetailsDBRowExist extends AsyncTask<Void, Void, Void> {
+            private WeakReference<DetailsActivity> activityReference;
+            String language;
+            private NMoQParkListDetailsTable nMoQParkListDetailsTable;
 
-        CheckNMoQParkListDetailsDBRowExist(DetailsActivity context, String apiLanguage) {
-            activityReference = new WeakReference<>(context);
-            language = apiLanguage;
+            CheckNMoQParkListDetailsDBRowExist(DetailsActivity context, String apiLanguage) {
+                activityReference = new WeakReference<>(context);
+                language = apiLanguage;
+            }
+
+            @Override
+            protected Void doInBackground(Void... voids) {
+                if (activityReference.get().nMoQParkListDetails.size() > 0) {
+                    for (int i = 0; i < activityReference.get().nMoQParkListDetails.size(); i++) {
+                        int n = activityReference.get().qmDatabase.getNMoQParkListDetailsTableDao().checkIdExist(
+                                Integer.parseInt(activityReference.get().nMoQParkListDetails.get(i).getNid()),
+                                language);
+                        if (n > 0) {
+                            Timber.i("Row exist in database(language: %s) for id: %s", language,
+                                    activityReference.get().diningDetailModels.get(i).getId());
+                            new UpdateNMoQParkListDetailsTable(activityReference.get(), language).execute();
+                        } else {
+                            Timber.i("Inserting %s details table(language: %s) with id: %s", activityReference.get().comingFrom,
+                                    language, activityReference.get().nMoQParkListDetails.get(i).getNid());
+                            nMoQParkListDetailsTable = new NMoQParkListDetailsTable(
+                                    activityReference.get().nMoQParkListDetails.get(i).getNid(),
+                                    activityReference.get().nMoQParkListDetails.get(i).getMainTitle(),
+                                    activityReference.get().nMoQParkListDetails.get(i).getSortId(),
+                                    activityReference.get().nMoQParkListDetails.get(i).getImages().get(0),
+                                    activityReference.get().nMoQParkListDetails.get(i).getDescription(),
+                                    language);
+
+                            activityReference.get().qmDatabase.getNMoQParkListDetailsTableDao().
+                                    insertTable(nMoQParkListDetailsTable);
+                        }
+                    }
+                }
+                return null;
+            }
         }
 
-        @Override
-        protected Void doInBackground(Void... voids) {
-            if (activityReference.get().nMoQParkListDetails.size() > 0) {
-                for (int i = 0; i < activityReference.get().nMoQParkListDetails.size(); i++) {
-                    int n = activityReference.get().qmDatabase.getNMoQParkListDetailsTableDao().checkIdExist(
-                            Integer.parseInt(activityReference.get().nMoQParkListDetails.get(i).getNid()),
-                            language);
-                    if (n > 0) {
-                        Timber.i("Row exist in database(language: %s) for id: %s", language,
-                                activityReference.get().diningDetailModels.get(i).getId());
-                        new UpdateNMoQParkListDetailsTable(activityReference.get(), language).execute();
-                    } else {
+        public static class UpdateNMoQParkListDetailsTable extends AsyncTask<Void, Void, Void> {
+            private WeakReference<DetailsActivity> activityReference;
+            String language;
+
+            UpdateNMoQParkListDetailsTable(DetailsActivity context, String apiLanguage) {
+                activityReference = new WeakReference<>(context);
+                language = apiLanguage;
+
+            }
+
+            @Override
+            protected Void doInBackground(Void... voids) {
+                Timber.i("Updating %s Table(language: %s) with id: %s", activityReference.get().comingFrom,
+                        language, activityReference.get().nMoQParkListDetails.get(0).getNid());
+                activityReference.get().qmDatabase.getNMoQParkListDetailsTableDao().updateNMoQParkListDetails(
+                        activityReference.get().nMoQParkListDetails.get(0).getMainTitle(),
+                        activityReference.get().nMoQParkListDetails.get(0).getImages(),
+                        activityReference.get().nMoQParkListDetails.get(0).getSortId(),
+                        activityReference.get().nMoQParkListDetails.get(0).getNid(),
+                        activityReference.get().nMoQParkListDetails.get(0).getDescription(),
+                        language
+                );
+
+                return null;
+            }
+        }
+
+        public static class InsertNMoQParkListDetailsDataToDataBase extends AsyncTask<Void, Void, Boolean> {
+
+            private WeakReference<DetailsActivity> activityReference;
+            private NMoQParkListDetailsTable nMoQParkListDetailsTable;
+            String language;
+
+            InsertNMoQParkListDetailsDataToDataBase(DetailsActivity context,
+                                                    NMoQParkListDetailsTable nMoQParkListDetailsTable,
+                                                    String apiLanguage) {
+                activityReference = new WeakReference<>(context);
+                this.nMoQParkListDetailsTable = nMoQParkListDetailsTable;
+                this.language = apiLanguage;
+            }
+
+            @Override
+            protected void onPreExecute() {
+                super.onPreExecute();
+            }
+
+            @Override
+            protected Boolean doInBackground(Void... voids) {
+                if (activityReference.get().nMoQParkListDetails != null &&
+                        activityReference.get().nMoQParkListDetails.size() > 0) {
+                    for (int i = 0; i < activityReference.get().nMoQParkListDetails.size(); i++) {
                         Timber.i("Inserting %s details table(language: %s) with id: %s", activityReference.get().comingFrom,
                                 language, activityReference.get().nMoQParkListDetails.get(i).getNid());
                         nMoQParkListDetailsTable = new NMoQParkListDetailsTable(
@@ -1276,89 +1334,19 @@ public class DetailsActivity extends AppCompatActivity implements IPullZoom, OnM
                                 activityReference.get().nMoQParkListDetails.get(i).getImages().get(0),
                                 activityReference.get().nMoQParkListDetails.get(i).getDescription(),
                                 language);
-
                         activityReference.get().qmDatabase.getNMoQParkListDetailsTableDao().
                                 insertTable(nMoQParkListDetailsTable);
                     }
                 }
+                return true;
             }
-            return null;
-        }
-    }
 
-    public static class UpdateNMoQParkListDetailsTable extends AsyncTask<Void, Void, Void> {
-        private WeakReference<DetailsActivity> activityReference;
-        String language;
-
-        UpdateNMoQParkListDetailsTable(DetailsActivity context, String apiLanguage) {
-            activityReference = new WeakReference<>(context);
-            language = apiLanguage;
-
-        }
-
-        @Override
-        protected Void doInBackground(Void... voids) {
-            Timber.i("Updating %s Table(language: %s) with id: %s", activityReference.get().comingFrom,
-                    language, activityReference.get().nMoQParkListDetails.get(0).getNid());
-            activityReference.get().qmDatabase.getNMoQParkListDetailsTableDao().updateNMoQParkListDetails(
-                    activityReference.get().nMoQParkListDetails.get(0).getMainTitle(),
-                    activityReference.get().nMoQParkListDetails.get(0).getImages(),
-                    activityReference.get().nMoQParkListDetails.get(0).getSortId(),
-                    activityReference.get().nMoQParkListDetails.get(0).getNid(),
-                    activityReference.get().nMoQParkListDetails.get(0).getDescription(),
-                    language
-            );
-
-            return null;
-        }
-    }
-
-    public static class InsertNMoQParkListDetailsDataToDataBase extends AsyncTask<Void, Void, Boolean> {
-
-        private WeakReference<DetailsActivity> activityReference;
-        private NMoQParkListDetailsTable nMoQParkListDetailsTable;
-        String language;
-
-        InsertNMoQParkListDetailsDataToDataBase(DetailsActivity context,
-                                                NMoQParkListDetailsTable nMoQParkListDetailsTable,
-                                                String apiLanguage) {
-            activityReference = new WeakReference<>(context);
-            this.nMoQParkListDetailsTable = nMoQParkListDetailsTable;
-            this.language = apiLanguage;
-        }
-
-        @Override
-        protected void onPreExecute() {
-            super.onPreExecute();
-        }
-
-        @Override
-        protected Boolean doInBackground(Void... voids) {
-            if (activityReference.get().nMoQParkListDetails != null &&
-                    activityReference.get().nMoQParkListDetails.size() > 0) {
-                for (int i = 0; i < activityReference.get().nMoQParkListDetails.size(); i++) {
-                    Timber.i("Inserting %s details table(language: %s) with id: %s", activityReference.get().comingFrom,
-                            language, activityReference.get().nMoQParkListDetails.get(i).getNid());
-                    nMoQParkListDetailsTable = new NMoQParkListDetailsTable(
-                            activityReference.get().nMoQParkListDetails.get(i).getNid(),
-                            activityReference.get().nMoQParkListDetails.get(i).getMainTitle(),
-                            activityReference.get().nMoQParkListDetails.get(i).getSortId(),
-                            activityReference.get().nMoQParkListDetails.get(i).getImages().get(0),
-                            activityReference.get().nMoQParkListDetails.get(i).getDescription(),
-                            language);
-                    activityReference.get().qmDatabase.getNMoQParkListDetailsTableDao().
-                            insertTable(nMoQParkListDetailsTable);
-                }
+            @Override
+            protected void onPostExecute(Boolean aBoolean) {
+                super.onPostExecute(aBoolean);
             }
-            return true;
         }
-
-        @Override
-        protected void onPostExecute(Boolean aBoolean) {
-            super.onPostExecute(aBoolean);
-        }
-    }
-
+    */
     public void getNMoQParkListDetailsFromDataBase(String nid) {
         Timber.i("get%sListDetailsFromDatabase()", comingFrom);
         new RetrieveNMoQParkListDetailsData(DetailsActivity.this, nid).execute();
@@ -1404,7 +1392,7 @@ public class DetailsActivity extends AppCompatActivity implements IPullZoom, OnM
                 activityReference.get().shortDescription.setTextAlignment(View.TEXT_ALIGNMENT_VIEW_START);
                 activityReference.get().loadData(null, nMoQParkListDetailsTables.get(0).getParkDescription(),
                         null, null, null,
-                        null, null, null, null,
+                        null, null, null,
                         null, null, null,
                         true, null);
                 activityReference.get().progressBar.setVisibility(View.GONE);
@@ -1428,7 +1416,7 @@ public class DetailsActivity extends AppCompatActivity implements IPullZoom, OnM
         shortDescription.setTextAlignment(View.TEXT_ALIGNMENT_VIEW_START);
         loadData(null, description,
                 null, null, null,
-                eventDate, null, null, contactNumber, contactMail, latitude, longitude,
+                eventDate, null, contactNumber, contactMail, latitude, longitude,
                 true, null);
     }
 
@@ -1440,7 +1428,7 @@ public class DetailsActivity extends AppCompatActivity implements IPullZoom, OnM
         timingTitle.setText(intent.getStringExtra("TITLE_TIMING"));
         loadData(null, description,
                 null, null, null,
-                intent.getStringExtra("TIMING"), null, null, null, null, latitude, longitude,
+                intent.getStringExtra("TIMING"), null, null, null, latitude, longitude,
                 true, null);
     }
 
@@ -1452,7 +1440,7 @@ public class DetailsActivity extends AppCompatActivity implements IPullZoom, OnM
         shortDescription.setTextAlignment(View.TEXT_ALIGNMENT_VIEW_START);
         loadData(null, description,
                 null, null, null,
-                eventDate, null, null, contactNumber, contactMail, latitude, longitude,
+                eventDate, null, contactNumber, contactMail, latitude, longitude,
                 true, null);
     }
 
@@ -1680,7 +1668,7 @@ public class DetailsActivity extends AppCompatActivity implements IPullZoom, OnM
         }
         shortDescription.setTextAlignment(View.TEXT_ALIGNMENT_VIEW_START);
         loadData(null, description, null, null,
-                null, null, null, null,
+                null, null, null,
                 contactNumber, contactMail, null, null,
                 false, null);
     }
@@ -1759,7 +1747,7 @@ public class DetailsActivity extends AppCompatActivity implements IPullZoom, OnM
 
     public void loadData(String subTitle, String shortDescription, String longDescription,
                          String secondTitle, String secondTitleDescription, String openingTime,
-                         String closingTime, String locationInfo, String contactNumber, String contactMail,
+                         String locationInfo, String contactNumber, String contactMail,
                          String latitudeFromApi, String longitudeFromApi, boolean museumAboutStatus, String videoFile) {
         Timber.i("load data for %s Details", comingFrom);
         if (shortDescription != null) {
@@ -1776,8 +1764,6 @@ public class DetailsActivity extends AppCompatActivity implements IPullZoom, OnM
             }
             if (videoFile != null) {
 
-                String videoPath = videoFile;
-                Uri uri = Uri.parse(videoPath);
                 jzvdStd.setUp(videoFile, "", Jzvd.SCREEN_WINDOW_NORMAL);
                 jzvdStd.setVisibility(View.VISIBLE);
                 imagePlaceHolder.setVisibility(View.GONE);
@@ -1815,10 +1801,7 @@ public class DetailsActivity extends AppCompatActivity implements IPullZoom, OnM
 
             if (openingTime != null) {
                 this.timingLayout.setVisibility(View.VISIBLE);
-                String time = /* getResources().getString(R.string.everyday_from) +" " + */
-                        openingTime /*+ " " + getResources().getString(R.string.to) + " " +
-                    closingTime*/;
-                this.timingDetails.setText(time);
+                this.timingDetails.setText(openingTime);
             }
             if (locationInfo != null) {
                 this.locationDetails.setVisibility(View.VISIBLE);
@@ -1911,8 +1894,6 @@ public class DetailsActivity extends AppCompatActivity implements IPullZoom, OnM
 
             if (videoFile != null) {
 
-                String videoPath = videoFile;
-                Uri uri = Uri.parse(videoPath);
                 jzvdStd.setUp(videoFile, "", Jzvd.SCREEN_WINDOW_NORMAL);
                 jzvdStd.setVisibility(View.VISIBLE);
                 imagePlaceHolder.setVisibility(View.GONE);
@@ -1976,7 +1957,8 @@ public class DetailsActivity extends AppCompatActivity implements IPullZoom, OnM
         Call<RegistrationDetailsModel> call = apiService.eventRegistration("application/json", token, myRegistration);
         call.enqueue(new Callback<RegistrationDetailsModel>() {
             @Override
-            public void onResponse(Call<RegistrationDetailsModel> call, Response<RegistrationDetailsModel> response) {
+            public void onResponse(@NonNull Call<RegistrationDetailsModel> call,
+                                   @NonNull Response<RegistrationDetailsModel> response) {
                 if (response.isSuccessful()) {
                     if (response.body() != null) {
                         Timber.i("entityRegistration() - isSuccessful");
@@ -1989,7 +1971,7 @@ public class DetailsActivity extends AppCompatActivity implements IPullZoom, OnM
             }
 
             @Override
-            public void onFailure(Call<RegistrationDetailsModel> call, Throwable t) {
+            public void onFailure(@NonNull Call<RegistrationDetailsModel> call, @NonNull Throwable t) {
                 Timber.e("entityRegistration() - onFailure: %s", t.getMessage());
                 util.showToast(getResources().getString(R.string.check_network), DetailsActivity.this);
                 registrationLoader.setVisibility(View.GONE);
@@ -2019,7 +2001,8 @@ public class DetailsActivity extends AppCompatActivity implements IPullZoom, OnM
         call.enqueue(new Callback<RegistrationDetailsModel>() {
             @SuppressLint("SetTextI18n")
             @Override
-            public void onResponse(Call<RegistrationDetailsModel> call, Response<RegistrationDetailsModel> response) {
+            public void onResponse(@NonNull Call<RegistrationDetailsModel> call,
+                                   @NonNull Response<RegistrationDetailsModel> response) {
                 if (response.isSuccessful()) {
                     if (response.body() != null) {
                         Timber.i("entityRegistrationCompletion() - isSuccessful");
@@ -2045,7 +2028,7 @@ public class DetailsActivity extends AppCompatActivity implements IPullZoom, OnM
             }
 
             @Override
-            public void onFailure(Call<RegistrationDetailsModel> call, Throwable t) {
+            public void onFailure(@NonNull Call<RegistrationDetailsModel> call, @NonNull Throwable t) {
                 Timber.e("entityRegistrationCompletion() - onFailure: %s", t.getMessage());
                 util.showToast(getResources().getString(R.string.check_network), DetailsActivity.this);
                 registrationLoader.setVisibility(View.GONE);
@@ -2061,6 +2044,7 @@ public class DetailsActivity extends AppCompatActivity implements IPullZoom, OnM
         dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
 
         layoutInflater = (LayoutInflater) getSystemService(LAYOUT_INFLATER_SERVICE);
+        @SuppressLint("InflateParams")
         View view = layoutInflater.inflate(R.layout.registration_success_popup, null);
         dialog.setContentView(view);
         closeBtn = view.findViewById(R.id.close_dialog);
@@ -2087,6 +2071,7 @@ public class DetailsActivity extends AppCompatActivity implements IPullZoom, OnM
     private void addToCalendar(String title, String details, String eventDate) {
         Timber.i("addToCalendar() - Setting calendar data for %s", title);
         String[] dateTimeArray = eventDate.trim().split("-");
+        @SuppressLint("SimpleDateFormat")
         SimpleDateFormat formatter = new SimpleDateFormat("MM/dd/yyyy HH:mm");
         Date startDate = null, endDate = null;
         try {
@@ -2124,7 +2109,7 @@ public class DetailsActivity extends AppCompatActivity implements IPullZoom, OnM
 
     @Override
     public void onRequestPermissionsResult(int requestCode,
-                                           String permissions[], int[] grantResults) {
+                                           @NonNull String permissions[], @NonNull int[] grantResults) {
         switch (requestCode) {
             case 100: {
                 // If request is cancelled, the result arrays are empty.
@@ -2179,7 +2164,7 @@ public class DetailsActivity extends AppCompatActivity implements IPullZoom, OnM
         call.enqueue(new Callback<String>() {
             @SuppressLint("SetTextI18n")
             @Override
-            public void onResponse(Call<String> call, Response<String> response) {
+            public void onResponse(@NonNull Call<String> call, @NonNull Response<String> response) {
                 if (response.isSuccessful()) {
                     Timber.i("Deleting EventRegistration for id: %s", id);
                     new deleteEventFromDataBase(DetailsActivity.this, myNid).execute();
@@ -2203,7 +2188,7 @@ public class DetailsActivity extends AppCompatActivity implements IPullZoom, OnM
             }
 
             @Override
-            public void onFailure(Call<String> call, Throwable t) {
+            public void onFailure(@NonNull Call<String> call, @NonNull Throwable t) {
                 Timber.e("deleteEventRegistration() - onFailure: %s", t.getMessage());
                 util.showToast(getResources().getString(R.string.check_network), DetailsActivity.this);
                 registrationLoader.setVisibility(View.GONE);
@@ -2223,7 +2208,8 @@ public class DetailsActivity extends AppCompatActivity implements IPullZoom, OnM
                 pageName, id);
         call.enqueue(new Callback<ArrayList<HeritageOrExhibitionDetailModel>>() {
             @Override
-            public void onResponse(Call<ArrayList<HeritageOrExhibitionDetailModel>> call, Response<ArrayList<HeritageOrExhibitionDetailModel>> response) {
+            public void onResponse(@NonNull Call<ArrayList<HeritageOrExhibitionDetailModel>> call,
+                                   @NonNull Response<ArrayList<HeritageOrExhibitionDetailModel>> response) {
                 if (response.isSuccessful()) {
                     if (response.body() != null) {
                         Timber.i("get%sDetailsFromAPI() - isSuccessful", comingFrom);
@@ -2282,7 +2268,7 @@ public class DetailsActivity extends AppCompatActivity implements IPullZoom, OnM
             }
 
             @Override
-            public void onFailure(Call<ArrayList<HeritageOrExhibitionDetailModel>> call, Throwable t) {
+            public void onFailure(@NonNull Call<ArrayList<HeritageOrExhibitionDetailModel>> call, @NonNull Throwable t) {
                 Timber.e("get%sDetailsFromAPI() - onFailure: %s", comingFrom, t.getMessage());
                 commonContentLayout.setVisibility(View.INVISIBLE);
                 retryLayout.setVisibility(View.VISIBLE);
@@ -2326,7 +2312,7 @@ public class DetailsActivity extends AppCompatActivity implements IPullZoom, OnM
         }
     }
 
-    public void removeHtmlTagsforFacilities(ArrayList<FacilitiesDetailModel> models) {
+    public void removeHtmlTagsForFacilities(ArrayList<FacilitiesDetailModel> models) {
         for (int i = 0; i < models.size(); i++) {
             models.get(i).setFacilitiesSubtitle(util.html2string(models.get(i).getFacilitiesSubtitle()));
             models.get(i).setFacilitiesTitle(util.html2string(models.get(i).getFacilitiesTitle()));
@@ -2350,8 +2336,7 @@ public class DetailsActivity extends AppCompatActivity implements IPullZoom, OnM
         }
     }
 
-    public void getItemPosition(int value) {
-        int pos = value;
+    public void getItemPosition() {
     }
 
     @Override
@@ -2470,7 +2455,7 @@ public class DetailsActivity extends AppCompatActivity implements IPullZoom, OnM
         protected Void doInBackground(Void... voids) {
             Timber.i("Updating %s details table(language: %s) with id: %s", activityReference.get().comingFrom,
                     language, activityReference.get().heritageOrExhibitionDetailModel.get(position).getId());
-            Convertor converters = new Convertor();
+            Converter converters = new Converter();
             activityReference.get().qmDatabase.getExhibitionTableDao().updateExhibitionDetail(
                     activityReference.get().heritageOrExhibitionDetailModel.get(position).getStartDate(),
                     activityReference.get().heritageOrExhibitionDetailModel.get(position).getEndDate(),
@@ -2503,12 +2488,13 @@ public class DetailsActivity extends AppCompatActivity implements IPullZoom, OnM
         }
 
         @Override
+
         protected void onPostExecute(List<ExhibitionListTable> exhibitionListTables) {
             if (exhibitionListTables.size() > 0) {
                 Timber.i("Setting %s details from database with id: %s", activityReference.get().comingFrom,
                         exhibitionId);
                 activityReference.get().commonContentLayout.setVisibility(View.VISIBLE);
-                Convertor convertor = new Convertor();
+                Converter convertor = new Converter();
                 if (exhibitionListTables.get(0).getExhibition_latest_image().contains("[")) {
                     ArrayList<String> list = convertor.fromString(exhibitionListTables.get(0).getExhibition_latest_image());
                     for (int i = 0; i < list.size(); i++) {
@@ -2647,18 +2633,16 @@ public class DetailsActivity extends AppCompatActivity implements IPullZoom, OnM
         protected Void doInBackground(Void... voids) {
             Timber.i("Updating %s details table(language: %s) with id: %s", activityReference.get().comingFrom,
                     language, activityReference.get().heritageOrExhibitionDetailModel.get(position).getId());
-            Convertor convertor = new Convertor();
+            Converter converter = new Converter();
             activityReference.get().qmDatabase.getHeritageListTableDao().updateHeritageDetails(
                     activityReference.get().latitude, activityReference.get().longitude,
                     activityReference.get().heritageOrExhibitionDetailModel.get(position).getLongDescription(),
                     activityReference.get().heritageOrExhibitionDetailModel.get(position).getShortDescription(),
                     activityReference.get().heritageOrExhibitionDetailModel.get(position).getImage(),
-                    convertor.fromArrayList(activityReference.get().heritageOrExhibitionDetailModel.get(position).getImages()),
+                    converter.fromArrayList(activityReference.get().heritageOrExhibitionDetailModel.get(position).getImages()),
                     activityReference.get().heritageOrExhibitionDetailModel.get(position).getId(),
                     language
             );
-
-
             return null;
         }
     }
@@ -2684,7 +2668,7 @@ public class DetailsActivity extends AppCompatActivity implements IPullZoom, OnM
                 Timber.i("Setting %s details from database with id: %s", activityReference.get().comingFrom,
                         heritageId);
                 activityReference.get().commonContentLayout.setVisibility(View.VISIBLE);
-                Convertor convertor = new Convertor();
+                Converter convertor = new Converter();
                 if (heritageListTables.get(0).getHeritage_images() != null &&
                         heritageListTables.get(0).getHeritage_images().contains("[")) {
                     ArrayList<String> list = convertor.fromString(heritageListTables.get(0).getHeritage_images());
@@ -2734,7 +2718,8 @@ public class DetailsActivity extends AppCompatActivity implements IPullZoom, OnM
         call.enqueue(new Callback<ArrayList<PublicArtModel>>() {
 
             @Override
-            public void onResponse(Call<ArrayList<PublicArtModel>> call, Response<ArrayList<PublicArtModel>> response) {
+            public void onResponse(@NonNull Call<ArrayList<PublicArtModel>> call,
+                                   @NonNull Response<ArrayList<PublicArtModel>> response) {
                 if (response.isSuccessful()) {
                     if (response.body() != null) {
                         Timber.i("getPublicArtDetailsFromAPI() - isSuccessful");
@@ -2753,7 +2738,7 @@ public class DetailsActivity extends AppCompatActivity implements IPullZoom, OnM
                         loadData(null,
                                 publicArtModel.get(0).getShortDescription(),
                                 publicArtModel.get(0).getLongDescription(),
-                                null, null, null, null,
+                                null, null, null,
                                 null, null, null, publicArtModel.get(0).getLatitude(),
                                 publicArtModel.get(0).getLatitude(), fromMuseumAbout, null);
                         new PublicArtsRowCount(DetailsActivity.this, appLanguage).execute();
@@ -2771,7 +2756,7 @@ public class DetailsActivity extends AppCompatActivity implements IPullZoom, OnM
             }
 
             @Override
-            public void onFailure(Call<ArrayList<PublicArtModel>> call, Throwable t) {
+            public void onFailure(@NonNull Call<ArrayList<PublicArtModel>> call, @NonNull Throwable t) {
                 Timber.e("get%sDetailsFromAPI() - onFailure: %s", comingFrom, t.getMessage());
                 commonContentLayout.setVisibility(View.INVISIBLE);
                 retryLayout.setVisibility(View.VISIBLE);
@@ -2876,9 +2861,9 @@ public class DetailsActivity extends AppCompatActivity implements IPullZoom, OnM
 
         @Override
         protected Void doInBackground(Void... voids) {
+            Converter converters = new Converter();
             Timber.i("Updating %s details table(language: %s) with id: %s", activityReference.get().comingFrom,
                     language, activityReference.get().publicArtModel.get(position).getId());
-            Convertor converters = new Convertor();
             activityReference.get().qmDatabase.getPublicArtsTableDao().updatePublicArtsDetail(
                     activityReference.get().publicArtModel.get(position).getName(),
                     activityReference.get().latitude, activityReference.get().longitude,
@@ -2888,8 +2873,6 @@ public class DetailsActivity extends AppCompatActivity implements IPullZoom, OnM
                     activityReference.get().publicArtModel.get(position).getId(),
                     language
             );
-
-
             return null;
         }
     }
@@ -2914,7 +2897,7 @@ public class DetailsActivity extends AppCompatActivity implements IPullZoom, OnM
             if (publicArtsTables.size() > 0) {
                 Timber.i("Setting %s details from database with id: %s", activityReference.get().comingFrom,
                         publicArtsId);
-                Convertor converters = new Convertor();
+                Converter converters = new Converter();
                 if (publicArtsTables.get(0).getPublic_arts_images() != null &&
                         publicArtsTables.get(0).getPublic_arts_images().contains("[")) {
                     ArrayList<String> list = converters.fromString(publicArtsTables.get(0).getPublic_arts_images());
@@ -2933,7 +2916,7 @@ public class DetailsActivity extends AppCompatActivity implements IPullZoom, OnM
                             publicArtsTables.get(i).getShort_description(),
                             publicArtsTables.get(i).getDescription(),
                             null, null, null,
-                            null, null, null, null,
+                            null, null, null,
                             publicArtsTables.get(i).getLatitude(),
                             publicArtsTables.get(i).getLongitude(), activityReference.get().fromMuseumAbout, null);
                 }
@@ -2956,7 +2939,6 @@ public class DetailsActivity extends AppCompatActivity implements IPullZoom, OnM
         }
     }
 
-
     public void getMuseumAboutDetailsFromAPI(String id, boolean isLaunchEvent) {
         Timber.i("getMuseumAboutDetailsFromAPI(id: %s, language: %s)", id, appLanguage);
         commonContentLayout.setVisibility(View.INVISIBLE);
@@ -2972,7 +2954,8 @@ public class DetailsActivity extends AppCompatActivity implements IPullZoom, OnM
             call = apiService.getMuseumAboutDetails(appLanguage, id);
         call.enqueue(new Callback<ArrayList<MuseumAboutModel>>() {
             @Override
-            public void onResponse(Call<ArrayList<MuseumAboutModel>> call, Response<ArrayList<MuseumAboutModel>> response) {
+            public void onResponse(@NonNull Call<ArrayList<MuseumAboutModel>> call,
+                                   @NonNull Response<ArrayList<MuseumAboutModel>> response) {
                 if (response.isSuccessful()) {
                     if (response.body() != null && response.body().size() > 0) {
                         Timber.i("getMuseumAboutDetailsFromAPI() - isSuccessful");
@@ -2982,7 +2965,7 @@ public class DetailsActivity extends AppCompatActivity implements IPullZoom, OnM
                             eventDateLayout.setVisibility(View.VISIBLE);
                             eventDateTxt.setText(museumAboutModels.get(0).getEventDate());
                             videoLayout.setVisibility(View.GONE);
-                            downloadLayout.setVisibility(View.VISIBLE);
+                            downloadText.setVisibility(View.VISIBLE);
                             mainTitle = museumAboutModels.get(0).getName();
                         } else {
                             timingTitle.setText(R.string.museum_timings);
@@ -3028,7 +3011,7 @@ public class DetailsActivity extends AppCompatActivity implements IPullZoom, OnM
                                         }
                                     }
                                 } else {
-                                    long_description = long_description + museumAboutModels.get(0).getDescriptionList().get(i);
+                                    long_description = String.format("%s%s", long_description, museumAboutModels.get(0).getDescriptionList().get(i));
                                     long_description = long_description + "<br/><br/><br/>";
                                 }
                             } else {
@@ -3050,7 +3033,6 @@ public class DetailsActivity extends AppCompatActivity implements IPullZoom, OnM
                                     museumAboutModels.get(0).getSubTitle(),
                                     long_description,
                                     museumAboutModels.get(0).getTimingInfo(),
-                                    "",
                                     null,
                                     museumAboutModels.get(0).getContactNumber(),
                                     museumAboutModels.get(0).getContactEmail(),
@@ -3065,7 +3047,6 @@ public class DetailsActivity extends AppCompatActivity implements IPullZoom, OnM
                                     museumAboutModels.get(0).getSubTitle(),
                                     null,
                                     museumAboutModels.get(0).getTimingInfo(),
-                                    "",
                                     null,
                                     museumAboutModels.get(0).getContactNumber(),
                                     museumAboutModels.get(0).getContactEmail(),
@@ -3089,7 +3070,7 @@ public class DetailsActivity extends AppCompatActivity implements IPullZoom, OnM
             }
 
             @Override
-            public void onFailure(Call<ArrayList<MuseumAboutModel>> call, Throwable t) {
+            public void onFailure(@NonNull Call<ArrayList<MuseumAboutModel>> call, @NonNull Throwable t) {
                 Timber.e("get%sDetailsFromAPI() - onFailure: %s", comingFrom, t.getMessage());
                 commonContentLayout.setVisibility(View.INVISIBLE);
                 retryLayout.setVisibility(View.VISIBLE);
@@ -3174,7 +3155,7 @@ public class DetailsActivity extends AppCompatActivity implements IPullZoom, OnM
                             language);
                     if (n > 0) {
                         Timber.i("Row exist in database(language: %s) for id: %s", language,
-                                activityReference.get().publicArtModel.get(i).getId());
+                                activityReference.get().museumAboutModels.get(i).getMuseumId());
                         new UpdateMuseumAboutDetailTable(activityReference.get(), language, i).execute();
 
                     } else {
@@ -3220,7 +3201,7 @@ public class DetailsActivity extends AppCompatActivity implements IPullZoom, OnM
         @Override
         protected Boolean doInBackground(Void... voids) {
             if (activityReference.get().museumAboutModels != null) {
-                Convertor converters = new Convertor();
+                Converter converters = new Converter();
                 for (int i = 0; i < activityReference.get().museumAboutModels.size(); i++) {
                     Timber.i("Inserting %s Table(language: %s) with id: %s", activityReference.get().comingFrom,
                             language, activityReference.get().museumAboutModels.get(i).getMuseumId());
@@ -3241,7 +3222,6 @@ public class DetailsActivity extends AppCompatActivity implements IPullZoom, OnM
                             activityReference.get().museumAboutModels.get(i).getEventDate(),
                             language);
                     activityReference.get().qmDatabase.getMuseumAboutDao().insert(museumAboutTable);
-
                 }
             }
             return true;
@@ -3278,8 +3258,8 @@ public class DetailsActivity extends AppCompatActivity implements IPullZoom, OnM
         @Override
         protected Void doInBackground(Void... voids) {
             Timber.i("Updating %s details table(language: %s) with id: %s", activityReference.get().comingFrom,
-                    language, activityReference.get().publicArtModel.get(position).getId());
-            Convertor converters = new Convertor();
+                    language, activityReference.get().museumAboutModels.get(position).getMuseumId());
+            Converter converters = new Converter();
             activityReference.get().qmDatabase.getMuseumAboutDao().updateMuseumAboutData(
                     activityReference.get().museumAboutModels.get(position).getName(),
                     activityReference.get().museumAboutModels.get(position).getTourGuideAvailable(),
@@ -3325,7 +3305,7 @@ public class DetailsActivity extends AppCompatActivity implements IPullZoom, OnM
                     !museumAboutTable.getShort_description().equals("")) {
                 Timber.i("Setting %s details from database with id: %s", activityReference.get().comingFrom,
                         museumId);
-                Convertor converters = new Convertor();
+                Converter converters = new Converter();
                 activityReference.get().commonContentLayout.setVisibility(View.VISIBLE);
                 activityReference.get().retryLayout.setVisibility(View.GONE);
                 if (museumAboutTable.getMuseum_image().contains("[")) {
@@ -3353,7 +3333,7 @@ public class DetailsActivity extends AppCompatActivity implements IPullZoom, OnM
                     activityReference.get().eventDateLayout.setVisibility(View.VISIBLE);
                     activityReference.get().eventDateTxt.setText(museumAboutTable.getEvent_date());
                     activityReference.get().videoLayout.setVisibility(View.GONE);
-                    activityReference.get().downloadLayout.setVisibility(View.VISIBLE);
+                    activityReference.get().downloadText.setVisibility(View.VISIBLE);
                 } else {
                     activityReference.get().timingTitle.setText(R.string.museum_timings);
                 }
@@ -3361,7 +3341,7 @@ public class DetailsActivity extends AppCompatActivity implements IPullZoom, OnM
                     activityReference.get().loadData(null, description1,
                             null,
                             museumAboutTable.getMuseum_subtitle(), description2,
-                            museumAboutTable.getMuseum_opening_time(), "",
+                            museumAboutTable.getMuseum_opening_time(),
                             null, museumAboutTable.getMuseum_contact_number(),
                             museumAboutTable.getMuseum_contact_email(),
                             museumAboutTable.getMuseum_latitude(),
@@ -3371,7 +3351,7 @@ public class DetailsActivity extends AppCompatActivity implements IPullZoom, OnM
                     activityReference.get().loadData(null, description1,
                             description2,
                             museumAboutTable.getMuseum_subtitle(), null,
-                            museumAboutTable.getMuseum_opening_time(), "",
+                            museumAboutTable.getMuseum_opening_time(),
                             null, museumAboutTable.getMuseum_contact_number(),
                             museumAboutTable.getMuseum_contact_email(),
                             museumAboutTable.getMuseum_latitude(),
@@ -3473,7 +3453,7 @@ public class DetailsActivity extends AppCompatActivity implements IPullZoom, OnM
                                 activityReference.get().facilitiesDetailModels.get(i).getFacilityTitleTiming(),
                                 activityReference.get().facilitiesDetailModels.get(i).getLongitude(),
                                 activityReference.get().facilitiesDetailModels.get(i).getFacilitiesCategoryId(),
-                                activityReference.get().facilitiesDetailModels.get(i).getLattitude(),
+                                activityReference.get().facilitiesDetailModels.get(i).getLatitude(),
                                 activityReference.get().facilitiesDetailModels.get(i).getLocationTitle(),
                                 language);
 
@@ -3509,7 +3489,7 @@ public class DetailsActivity extends AppCompatActivity implements IPullZoom, OnM
                     activityReference.get().facilitiesDetailModels.get(0).getFacilitiesTiming(),
                     activityReference.get().facilitiesDetailModels.get(0).getLongitude(),
                     activityReference.get().facilitiesDetailModels.get(0).getFacilitiesCategoryId(),
-                    activityReference.get().facilitiesDetailModels.get(0).getLattitude(),
+                    activityReference.get().facilitiesDetailModels.get(0).getLatitude(),
                     activityReference.get().facilitiesDetailModels.get(0).getLocationTitle(),
                     activityReference.get().facilitiesDetailModels.get(0).getFacilityTitleTiming(),
                     activityReference.get().facilitiesDetailModels.get(0).getFacilitiesId(),
@@ -3556,7 +3536,7 @@ public class DetailsActivity extends AppCompatActivity implements IPullZoom, OnM
                             activityReference.get().facilitiesDetailModels.get(i).getFacilityTitleTiming(),
                             activityReference.get().facilitiesDetailModels.get(i).getLongitude(),
                             activityReference.get().facilitiesDetailModels.get(i).getFacilitiesCategoryId(),
-                            activityReference.get().facilitiesDetailModels.get(i).getLattitude(),
+                            activityReference.get().facilitiesDetailModels.get(i).getLatitude(),
                             activityReference.get().facilitiesDetailModels.get(i).getLocationTitle(),
                             language);
                     activityReference.get().qmDatabase.getFacilitiesDetailTableDao().insertData(facilityDetailTable);
@@ -3601,14 +3581,12 @@ public class DetailsActivity extends AppCompatActivity implements IPullZoom, OnM
                 Timber.i("Setting %s details from database with id: %s", activityReference.get().comingFrom,
                         id);
                 for (int i = 0; i < facilityDetailTables.size(); i++) {
-                    ArrayList<String> image = new ArrayList<>();
-                    image.add(facilityDetailTables.get(i).getFacilityImage());
 
                     activityReference.get().loadData(facilityDetailTables.get(i).getFacilitySubtitle(),
                             facilityDetailTables.get(i).getFacilityDescription(),
                             null, null, null,
                             facilityDetailTables.get(i).getFacilityTiming(),
-                            null, null, null, null,
+                            null, null, null,
                             facilityDetailTables.get(i).getFacilityLatitude(),
                             facilityDetailTables.get(i).getFacilityLongitude(),
                             true, null);

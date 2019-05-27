@@ -1,10 +1,10 @@
 package com.qatarmuseums.qatarmuseumsapp.culturepasscard
 
+import android.annotation.SuppressLint
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
-import android.widget.Button
 import com.google.firebase.analytics.FirebaseAnalytics
 import com.google.zxing.BarcodeFormat
 import com.google.zxing.MultiFormatWriter
@@ -21,6 +21,7 @@ class CulturePassCardActivity : AppCompatActivity() {
         super.attachBaseContext(LocaleManager.setLocale(base))
     }
 
+    @SuppressLint("SetTextI18n")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
@@ -63,18 +64,18 @@ class CulturePassCardActivity : AppCompatActivity() {
 
     }
 
-    fun prepareBarcode() {
-        var multiFormatWriter = MultiFormatWriter();
-        if (!membershipNumber.equals("")) {
+    private fun prepareBarcode() {
+        val multiFormatWriter = MultiFormatWriter()
+        if (membershipNumber != "") {
             try {
                 Timber.i("Preparing Barcode")
-                var bitMatrix = multiFormatWriter.encode(membershipNumber, BarcodeFormat.CODABAR, 500, 250);
-                var barcodeEncoder = BarcodeEncoder();
-                var bitmap = barcodeEncoder.createBitmap(bitMatrix);
-                barcodeImg.setImageBitmap(bitmap);
+                val bitMatrix = multiFormatWriter.encode(membershipNumber, BarcodeFormat.CODABAR, 500, 250)
+                val barcodeEncoder = BarcodeEncoder()
+                val bitmap = barcodeEncoder.createBitmap(bitMatrix)
+                barcodeImg.setImageBitmap(bitmap)
             } catch (e: WriterException) {
                 Timber.e("Preparing Barcode error: %s", e.message)
-                e.printStackTrace();
+                e.printStackTrace()
             }
         }
     }

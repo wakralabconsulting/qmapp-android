@@ -1,7 +1,5 @@
 package com.qatarmuseums.qatarmuseumsapp.apicall;
 
-import android.util.Log;
-
 import java.security.KeyManagementException;
 import java.security.NoSuchAlgorithmException;
 import java.util.Collections;
@@ -16,7 +14,6 @@ import retrofit2.converter.gson.GsonConverterFactory;
 import timber.log.Timber;
 
 public class APIClient {
-    private static final String TAG = "APIClient";
     public static String apiBaseUrl = "https://www.qm.org.qa/";
     private static final String HOST = "qm.org.qa";
     private static final String PUBLIC_KEY_HASH = "sha256/wiI3qA5+usYoQ7MpluMNIqvfN+EdSv7GxO5ZnQTOflQ=";

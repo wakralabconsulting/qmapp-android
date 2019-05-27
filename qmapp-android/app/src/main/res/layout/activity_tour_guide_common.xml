@@ -24,7 +24,8 @@
                 android:id="@+id/toolbar_close"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:src="@drawable/back_button" />
+                android:src="@drawable/back_button"
+                tools:ignore="ContentDescription" />
         </android.support.v7.widget.Toolbar>
     </android.support.design.widget.AppBarLayout>
 
@@ -97,7 +98,8 @@
                         android:layout_height="@dimen/padding_30"
                         android:layout_gravity="center"
                         android:layout_marginEnd="@dimen/padding_5"
-                        android:src="@drawable/explore_icon" />
+                        android:src="@drawable/explore_icon"
+                        tools:ignore="ContentDescription" />
 
                     <TextView
                         android:layout_width="wrap_content"

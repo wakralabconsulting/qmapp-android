@@ -2,6 +2,7 @@ package com.qatarmuseums.qatarmuseumsapp.culturepass;
 
 import android.content.Context;
 import android.preference.PreferenceManager;
+import android.support.annotation.NonNull;
 
 import java.io.IOException;
 import java.util.HashSet;
@@ -21,10 +22,11 @@ public class AddCookiesInterceptor implements Interceptor {
     }
 
     @Override
-    public Response intercept(Chain chain) throws IOException {
+    public Response intercept(@NonNull Chain chain) throws IOException {
         Request.Builder builder = chain.request().newBuilder();
 
-        HashSet<String> preferences = (HashSet<String>) PreferenceManager.getDefaultSharedPreferences(context).getStringSet(PREF_COOKIES, new HashSet<String>());
+        HashSet<String> preferences = (HashSet<String>) PreferenceManager
+                .getDefaultSharedPreferences(context).getStringSet(PREF_COOKIES, new HashSet<>());
         for (String cookie : preferences) {
             builder.addHeader("Cookie", cookie);
         }

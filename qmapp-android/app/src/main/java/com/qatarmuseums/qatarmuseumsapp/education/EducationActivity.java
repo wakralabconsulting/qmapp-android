@@ -1,5 +1,6 @@
 package com.qatarmuseums.qatarmuseumsapp.education;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
 import android.content.res.Configuration;
@@ -29,13 +30,14 @@ public class EducationActivity extends AppCompatActivity {
     Button discoverButton;
     private Animation zoomOutAnimation;
     private LinearLayout youTubePlayerLayout;
-    private FirebaseAnalytics mFirebaseAnalytics;
+    private FirebaseAnalytics mFireBaseAnalytics;
 
     @Override
     protected void attachBaseContext(Context base) {
         super.attachBaseContext(LocaleManager.setLocale(base));
     }
 
+    @SuppressLint("ClickableViewAccessibility")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -44,7 +46,7 @@ public class EducationActivity extends AppCompatActivity {
         backButton = findViewById(R.id.toolbar_back);
         TextView longDescription = findViewById(R.id.long_description);
         discoverButton = findViewById(R.id.discover_btn);
-        mFirebaseAnalytics = FirebaseAnalytics.getInstance(this);
+        mFireBaseAnalytics = FirebaseAnalytics.getInstance(this);
         longDescription.setText(getString(R.string.education_long_description));
         backButton.setOnClickListener(v -> {
             Timber.i("onBackPressed()");
@@ -77,15 +79,13 @@ public class EducationActivity extends AppCompatActivity {
         youTubePlayerLayout.addView(youTubePlayerView);
         getLifecycle().addObserver(youTubePlayerView);
         youTubePlayerView.initialize(
-                initializedYouTubePlayer -> {
-                    initializedYouTubePlayer.addListener(new AbstractYouTubePlayerListener() {
-                        @Override
-                        public void onReady() {
-                            Timber.i("Play video: %s", videoId);
-                            initializedYouTubePlayer.cueVideo(videoId, 0);
-                        }
-                    });
-                }, true);
+                initializedYouTubePlayer -> initializedYouTubePlayer.addListener(new AbstractYouTubePlayerListener() {
+                    @Override
+                    public void onReady() {
+                        Timber.i("Play video: %s", videoId);
+                        initializedYouTubePlayer.cueVideo(videoId, 0);
+                    }
+                }), true);
     }
 
     @Override
@@ -112,6 +112,6 @@ public class EducationActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        mFirebaseAnalytics.setCurrentScreen(this, getString(R.string.education_page), null);
+        mFireBaseAnalytics.setCurrentScreen(this, getString(R.string.education_page), null);
     }
 }

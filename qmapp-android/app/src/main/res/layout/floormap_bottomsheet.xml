@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <android.support.v4.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/bottomSheetLayout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -57,132 +58,126 @@
                 android:orientation="horizontal"
                 android:weightSum="4">
 
-                <LinearLayout
+                <ImageView
+                    android:id="@+id/popup_image"
                     android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center"
+                    android:layout_height="match_parent"
                     android:layout_weight="1"
-                    android:gravity="center">
+                    android:paddingEnd="@dimen/padding_5"
+                    android:paddingStart="@dimen/padding_5"
+                    android:src="@drawable/placeholder_portrait"
+                    tools:ignore="ContentDescription" />
 
-                    <ImageView
-                        android:id="@+id/popup_image"
-                        android:layout_width="wrap_content"
-                        android:layout_height="match_parent"
-                        android:paddingEnd="@dimen/padding_5"
-                        android:paddingStart="@dimen/padding_5"
-                        android:src="@drawable/placeholder_portrait" />
-                </LinearLayout>
-
-                <LinearLayout
+                <RelativeLayout
                     android:layout_width="0dp"
                     android:layout_height="match_parent"
                     android:layout_gravity="center"
                     android:layout_weight="3"
                     android:gravity="center"
                     android:orientation="vertical"
-                    android:padding="@dimen/padding_5">
+                    android:padding="@dimen/padding_5"
+                    android:paddingTop="@dimen/padding_10">
 
-                    <RelativeLayout
+                    <LinearLayout
+                        android:id="@+id/layout1"
                         android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:layout_marginTop="@dimen/padding_10">
-
-                        <LinearLayout
-                            android:id="@+id/layout1"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:orientation="horizontal">
-
-                            <TextView
-                                android:layout_width="0dp"
-                                android:layout_height="wrap_content"
-                                android:layout_weight="1"
-                                android:text="@string/production_text"
-                                android:textColor="@color/colorBlack"
-                                android:textSize="@dimen/font_size_14"
-                                android:textStyle="bold" />
-
-                            <TextView
-                                android:id="@+id/production_txt"
-                                android:layout_width="0dp"
-                                android:layout_height="wrap_content"
-                                android:layout_weight="1"
-                                android:textColor="@color/colorBlack"
-                                android:textSize="@dimen/font_size_14"
-                                android:textStyle="normal" />
-
-                        </LinearLayout>
-
-                        <LinearLayout
-                            android:id="@+id/layout2"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:layout_below="@+id/layout1"
-                            android:layout_marginTop="@dimen/padding_5"
-                            android:orientation="horizontal">
-
-                            <TextView
-                                android:layout_width="0dp"
-                                android:layout_height="wrap_content"
-                                android:layout_weight="1"
-                                android:text="@string/production_dates"
-                                android:textColor="@color/colorBlack"
-                                android:textSize="@dimen/font_size_14"
-                                android:textStyle="bold" />
-
-                            <TextView
-                                android:id="@+id/production_date"
-                                android:layout_width="0dp"
-                                android:layout_height="wrap_content"
-                                android:layout_weight="1"
-                                android:textColor="@color/colorBlack"
-                                android:textSize="@dimen/font_size_14"
-                                android:textStyle="normal" />
-
-                        </LinearLayout>
-
-                        <LinearLayout
-                            android:id="@+id/layout3"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:layout_below="@+id/layout2"
-                            android:layout_marginTop="@dimen/padding_5"
-                            android:orientation="horizontal">
-
-                            <TextView
-                                android:layout_width="0dp"
-                                android:layout_height="wrap_content"
-                                android:layout_weight="1"
-                                android:text="@string/period_style"
-                                android:textColor="@color/colorBlack"
-                                android:textSize="@dimen/font_size_14"
-                                android:textStyle="bold" />
-
-                            <TextView
-                                android:id="@+id/period_style"
-                                android:layout_width="0dp"
-                                android:layout_height="wrap_content"
-                                android:layout_weight="1"
-                                android:textColor="@color/colorBlack"
-                                android:textSize="@dimen/font_size_14"
-                                android:textStyle="normal" />
-
-                        </LinearLayout>
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal">
 
                         <TextView
-                            android:id="@+id/view_details_text"
-                            android:layout_width="wrap_content"
+                            android:layout_width="0dp"
                             android:layout_height="wrap_content"
-                            android:layout_alignParentBottom="true"
-                            android:layout_alignParentEnd="true"
-                            android:text="@string/view_details"
+                            android:layout_weight="1"
+                            android:text="@string/production_text"
                             android:textColor="@color/colorBlack"
-                            android:textSize="@dimen/font_size_14" />
+                            android:textSize="@dimen/font_size_14"
+                            android:textStyle="bold" />
 
-                    </RelativeLayout>
+                        <TextView
+                            android:id="@+id/production_txt"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:ellipsize="end"
+                            android:lines="1"
+                            android:textColor="@color/colorBlack"
+                            android:textSize="@dimen/font_size_14"
+                            android:textStyle="normal" />
+
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:id="@+id/layout2"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_below="@+id/layout1"
+                        android:layout_marginTop="@dimen/padding_5"
+                        android:orientation="horizontal">
+
+                        <TextView
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:text="@string/production_dates"
+                            android:textColor="@color/colorBlack"
+                            android:textSize="@dimen/font_size_14"
+                            android:textStyle="bold" />
+
+                        <TextView
+                            android:id="@+id/production_date"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:ellipsize="end"
+                            android:lines="1"
+                            android:textColor="@color/colorBlack"
+                            android:textSize="@dimen/font_size_14"
+                            android:textStyle="normal" />
+
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:id="@+id/layout3"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_below="@+id/layout2"
+                        android:layout_marginTop="@dimen/padding_5"
+                        android:orientation="horizontal">
+
+                        <TextView
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:text="@string/period_style"
+                            android:textColor="@color/colorBlack"
+                            android:textSize="@dimen/font_size_14"
+                            android:textStyle="bold" />
+
+                        <TextView
+                            android:id="@+id/period_style"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:ellipsize="end"
+                            android:lines="1"
+                            android:textColor="@color/colorBlack"
+                            android:textSize="@dimen/font_size_14"
+                            android:textStyle="normal" />
+
+                    </LinearLayout>
+
+                    <TextView
+                        android:id="@+id/view_details_text"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentBottom="true"
+                        android:layout_alignParentEnd="true"
+                        android:text="@string/view_details"
+                        android:textColor="@color/colorBlack"
+                        android:textSize="@dimen/font_size_14" />
 
 
-                </LinearLayout>
+                </RelativeLayout>
 
 
             </LinearLayout>
@@ -205,7 +200,8 @@
                 android:layout_width="match_parent"
                 android:layout_height="300dp"
                 android:src="@drawable/placeholder"
-                android:visibility="visible" />
+                android:visibility="visible"
+                tools:ignore="ContentDescription" />
 
             <LinearLayout
                 android:id="@+id/audio_control_details_page"
@@ -254,7 +250,8 @@
                 android:paddingStart="@dimen/padding_25"
                 android:scaleType="fitCenter"
                 android:src="@drawable/science_tour_object2"
-                android:visibility="gone" />
+                android:visibility="gone"
+                tools:ignore="ContentDescription" />
 
             <ImageView
                 android:id="@+id/image_2"
@@ -265,7 +262,8 @@
                 android:paddingStart="@dimen/padding_25"
                 android:scaleType="fitCenter"
                 android:src="@drawable/science_tour_object2"
-                android:visibility="gone" />
+                android:visibility="gone"
+                tools:ignore="ContentDescription" />
 
             <ImageView
                 android:id="@+id/image_3"
@@ -276,7 +274,8 @@
                 android:paddingStart="@dimen/padding_25"
                 android:scaleType="fitCenter"
                 android:src="@drawable/science_tour_object2"
-                android:visibility="gone" />
+                android:visibility="gone"
+                tools:ignore="ContentDescription" />
 
             <TextView
                 android:id="@+id/image_desc1"
@@ -330,7 +329,8 @@
                 android:paddingTop="@dimen/padding_10"
                 android:scaleType="fitCenter"
                 android:src="@drawable/science_tour_object2"
-                android:visibility="gone" />
+                android:visibility="gone"
+                tools:ignore="ContentDescription" />
 
             <TextView
                 android:id="@+id/image_desc2"

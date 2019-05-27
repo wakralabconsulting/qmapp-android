@@ -2,6 +2,7 @@ package com.qatarmuseums.qatarmuseumsapp.services;
 
 import android.content.Context;
 import android.content.Intent;
+import android.support.annotation.NonNull;
 import android.support.v4.content.LocalBroadcastManager;
 
 import com.google.firebase.messaging.FirebaseMessagingService;
@@ -66,9 +67,8 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
             // play notification sound
             NotificationUtils notificationUtils = new NotificationUtils(getApplicationContext());
             notificationUtils.playNotificationSound();
-        } else {
-            // If the app is in background, firebase itself handles the notification
         }
+        // If the app is in background, firebase itself handles the notification
     }
 
     private void handleDataMessage(JSONObject json) {
@@ -121,7 +121,8 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
         Call<ProfileDetails> call = apiService.generateToken(lan, loginData);
         call.enqueue(new Callback<ProfileDetails>() {
             @Override
-            public void onResponse(Call<ProfileDetails> call, Response<ProfileDetails> response) {
+            public void onResponse(@NonNull Call<ProfileDetails> call,
+                                   @NonNull Response<ProfileDetails> response) {
                 String loginToken;
                 if (response.isSuccessful()) {
                     if (response.body() != null) {
@@ -132,7 +133,7 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
             }
 
             @Override
-            public void onFailure(Call<ProfileDetails> call, Throwable t) {
+            public void onFailure(@NonNull Call<ProfileDetails> call, @NonNull Throwable t) {
 
             }
         });
@@ -146,13 +147,13 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
         Call<Void> call = apiService.sendTokenToServer(lan, loginToken, tokenForPushNotification);
         call.enqueue(new Callback<Void>() {
             @Override
-            public void onResponse(Call<Void> call, Response<Void> response) {
+            public void onResponse(@NonNull Call<Void> call, @NonNull Response<Void> response) {
                 Timber.i("sendFireBaseToken() - isSuccessful");
 
             }
 
             @Override
-            public void onFailure(Call<Void> call, Throwable t) {
+            public void onFailure(@NonNull Call<Void> call, @NonNull Throwable t) {
                 Timber.e("sendFireBaseToken() - onFailure: %s", t.getMessage());
             }
         });

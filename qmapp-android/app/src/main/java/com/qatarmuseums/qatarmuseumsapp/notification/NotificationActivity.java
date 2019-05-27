@@ -1,5 +1,6 @@
 package com.qatarmuseums.qatarmuseumsapp.notification;
 
+import android.annotation.SuppressLint;
 import android.arch.lifecycle.ViewModelProviders;
 import android.content.Context;
 import android.os.AsyncTask;
@@ -44,6 +45,7 @@ public class NotificationActivity extends AppCompatActivity {
         super.attachBaseContext(LocaleManager.setLocale(base));
     }
 
+    @SuppressLint("ClickableViewAccessibility")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -80,7 +82,6 @@ public class NotificationActivity extends AppCompatActivity {
         NotificationViewModel notificationViewModel = ViewModelProviders.of(this).get(NotificationViewModel.class);
         notificationViewModel.getAllPosts(appLanguage).observe(this, models -> mAdapter.setData(models));
         getDataFromDataBase();
-
     }
 
     public void getDataFromDataBase() {

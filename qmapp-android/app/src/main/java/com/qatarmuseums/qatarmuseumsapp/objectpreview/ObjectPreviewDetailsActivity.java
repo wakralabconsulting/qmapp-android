@@ -1,5 +1,6 @@
 package com.qatarmuseums.qatarmuseumsapp.objectpreview;
 
+import android.annotation.SuppressLint;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
@@ -183,7 +184,7 @@ public class ObjectPreviewDetailsActivity extends AppCompatActivity implements S
     class Player extends AsyncTask<String, Void, Boolean> {
         @Override
         protected Boolean doInBackground(String... strings) {
-            Boolean prepared = false;
+            Boolean prepared;
             try {
                 Timber.i("Preparing audio");
                 mediaPlayer.setDataSource(strings[0]);
@@ -323,6 +324,7 @@ public class ObjectPreviewDetailsActivity extends AppCompatActivity implements S
 
     public void openDialogForZoomingImage() {
         AlertDialog.Builder mBuilder = new AlertDialog.Builder(this);
+        @SuppressLint("InflateParams")
         View mView = getLayoutInflater().inflate(R.layout.zooming_layout, null);
         PhotoView photoView = mView.findViewById(R.id.imageView);
         photoView.setImageURI(Uri.parse(mainImage));

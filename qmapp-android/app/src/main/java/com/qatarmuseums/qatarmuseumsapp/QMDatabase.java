@@ -84,8 +84,7 @@ import com.qatarmuseums.qatarmuseumsapp.tourguidestartpage.TourGuideStartPageDao
         NMoQParkListTable.class,
         NMoQParkListDetailsTable.class},
         version = 4, exportSchema = false)
-@TypeConverters({Convertor.class})
-
+@TypeConverters({Converter.class})
 
 public abstract class QMDatabase extends RoomDatabase {
 

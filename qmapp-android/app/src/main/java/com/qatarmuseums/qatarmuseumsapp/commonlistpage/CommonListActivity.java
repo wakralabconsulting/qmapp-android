@@ -1,11 +1,13 @@
 package com.qatarmuseums.qatarmuseumsapp.commonlistpage;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
+import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
@@ -15,15 +17,13 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
-import android.widget.Button;
-import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.google.firebase.analytics.FirebaseAnalytics;
-import com.qatarmuseums.qatarmuseumsapp.Convertor;
+import com.qatarmuseums.qatarmuseumsapp.Converter;
 import com.qatarmuseums.qatarmuseumsapp.LocaleManager;
 import com.qatarmuseums.qatarmuseumsapp.QMDatabase;
 import com.qatarmuseums.qatarmuseumsapp.R;
@@ -57,7 +57,7 @@ public class CommonListActivity extends AppCompatActivity {
     private RecyclerView recyclerView;
     private ArrayList<CommonListModel> models = new ArrayList<>();
     private CommonListAdapter mAdapter;
-    private ImageView backArrow;
+    private View backArrow;
     private Animation zoomOutAnimation;
     String toolbarTitle;
     Intent intent, navigationIntent;
@@ -87,9 +87,9 @@ public class CommonListActivity extends AppCompatActivity {
 
 
     LinearLayout retryLayout;
-    Button retryButton;
+    View retryButton;
     private Integer travelTableRowCount;
-    private Convertor convertor;
+    private Converter converter;
     private FirebaseAnalytics mFireBaseAnalytics;
     private Bundle contentBundleParams;
 
@@ -98,6 +98,7 @@ public class CommonListActivity extends AppCompatActivity {
         super.attachBaseContext(LocaleManager.setLocale(base));
     }
 
+    @SuppressLint("ClickableViewAccessibility")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -195,7 +196,7 @@ public class CommonListActivity extends AppCompatActivity {
             return false;
         });
         getData();
-        convertor = new Convertor();
+        converter = new Converter();
     }
 
 
@@ -267,7 +268,8 @@ public class CommonListActivity extends AppCompatActivity {
         Call<ArrayList<CommonListModel>> call = apiService.getFacilityList(appLanguage);
         call.enqueue(new Callback<ArrayList<CommonListModel>>() {
             @Override
-            public void onResponse(Call<ArrayList<CommonListModel>> call, Response<ArrayList<CommonListModel>> response) {
+            public void onResponse(@NonNull Call<ArrayList<CommonListModel>> call,
+                                   @NonNull Response<ArrayList<CommonListModel>> response) {
                 if (response.isSuccessful()) {
                     if (response.body() != null && response.body().size() > 0) {
                         recyclerView.setVisibility(View.VISIBLE);
@@ -296,7 +298,7 @@ public class CommonListActivity extends AppCompatActivity {
             }
 
             @Override
-            public void onFailure(Call<ArrayList<CommonListModel>> call, Throwable t) {
+            public void onFailure(@NonNull Call<ArrayList<CommonListModel>> call, @NonNull Throwable t) {
                 Timber.e("get%sListFromAPI() - onFailure: %s", toolbarTitle, t.getMessage());
                 recyclerView.setVisibility(View.GONE);
                 retryLayout.setVisibility(View.VISIBLE);
@@ -313,7 +315,8 @@ public class CommonListActivity extends AppCompatActivity {
         call = apiService.getTourList(appLanguage);
         call.enqueue(new Callback<ArrayList<CommonListModel>>() {
             @Override
-            public void onResponse(Call<ArrayList<CommonListModel>> call, Response<ArrayList<CommonListModel>> response) {
+            public void onResponse(@NonNull Call<ArrayList<CommonListModel>> call,
+                                   @NonNull Response<ArrayList<CommonListModel>> response) {
                 if (response.isSuccessful()) {
                     if (response.body() != null && response.body().size() > 0) {
                         recyclerView.setVisibility(View.VISIBLE);
@@ -344,7 +347,7 @@ public class CommonListActivity extends AppCompatActivity {
             }
 
             @Override
-            public void onFailure(Call<ArrayList<CommonListModel>> call, Throwable t) {
+            public void onFailure(@NonNull Call<ArrayList<CommonListModel>> call, @NonNull Throwable t) {
                 Timber.e("get%sListFromAPI() - onFailure: %s", toolbarTitle, t.getMessage());
                 recyclerView.setVisibility(View.GONE);
                 retryLayout.setVisibility(View.VISIBLE);
@@ -360,7 +363,8 @@ public class CommonListActivity extends AppCompatActivity {
         call = apiService.getSpecialEvents(appLanguage);
         call.enqueue(new Callback<ArrayList<CommonListModel>>() {
             @Override
-            public void onResponse(Call<ArrayList<CommonListModel>> call, Response<ArrayList<CommonListModel>> response) {
+            public void onResponse(@NonNull Call<ArrayList<CommonListModel>> call,
+                                   @NonNull Response<ArrayList<CommonListModel>> response) {
                 if (response.isSuccessful()) {
                     if (response.body() != null && response.body().size() > 0) {
                         recyclerView.setVisibility(View.VISIBLE);
@@ -391,7 +395,7 @@ public class CommonListActivity extends AppCompatActivity {
             }
 
             @Override
-            public void onFailure(Call<ArrayList<CommonListModel>> call, Throwable t) {
+            public void onFailure(@NonNull Call<ArrayList<CommonListModel>> call, @NonNull Throwable t) {
                 Timber.e("get%sListFromAPI() - onFailure: %s", toolbarTitle, t.getMessage());
                 recyclerView.setVisibility(View.GONE);
                 retryLayout.setVisibility(View.VISIBLE);
@@ -407,7 +411,8 @@ public class CommonListActivity extends AppCompatActivity {
         call = apiService.getTravelData(appLanguage);
         call.enqueue(new Callback<ArrayList<CommonListModel>>() {
             @Override
-            public void onResponse(Call<ArrayList<CommonListModel>> call, Response<ArrayList<CommonListModel>> response) {
+            public void onResponse(@NonNull Call<ArrayList<CommonListModel>> call,
+                                   @NonNull Response<ArrayList<CommonListModel>> response) {
                 if (response.isSuccessful()) {
                     if (response.body() != null && response.body().size() > 0) {
                         recyclerView.setVisibility(View.VISIBLE);
@@ -440,7 +445,7 @@ public class CommonListActivity extends AppCompatActivity {
             }
 
             @Override
-            public void onFailure(Call<ArrayList<CommonListModel>> call, Throwable t) {
+            public void onFailure(@NonNull Call<ArrayList<CommonListModel>> call, @NonNull Throwable t) {
                 Timber.e("get%sListFromAPI() - onFailure: %s", toolbarTitle, t.getMessage());
                 recyclerView.setVisibility(View.GONE);
                 retryLayout.setVisibility(View.VISIBLE);
@@ -457,7 +462,8 @@ public class CommonListActivity extends AppCompatActivity {
         call = apiService.getCollectionList(appLanguage, id);
         call.enqueue(new Callback<ArrayList<CommonListModel>>() {
             @Override
-            public void onResponse(Call<ArrayList<CommonListModel>> call, Response<ArrayList<CommonListModel>> response) {
+            public void onResponse(@NonNull Call<ArrayList<CommonListModel>> call,
+                                   @NonNull Response<ArrayList<CommonListModel>> response) {
                 if (response.isSuccessful()) {
                     if (response.body() != null && response.body().size() > 0) {
                         Timber.i("Setting %s list with size: %d", toolbarTitle, response.body().size());
@@ -480,7 +486,7 @@ public class CommonListActivity extends AppCompatActivity {
             }
 
             @Override
-            public void onFailure(Call<ArrayList<CommonListModel>> call, Throwable t) {
+            public void onFailure(@NonNull Call<ArrayList<CommonListModel>> call, @NonNull Throwable t) {
                 Timber.e("get%sListFromAPI() - onFailure: %s", toolbarTitle, t.getMessage());
                 recyclerView.setVisibility(View.GONE);
                 retryLayout.setVisibility(View.VISIBLE);
@@ -500,7 +506,8 @@ public class CommonListActivity extends AppCompatActivity {
             call = apiService.getCommonPageList(appLanguage, pageName);
         call.enqueue(new Callback<ArrayList<CommonListModel>>() {
             @Override
-            public void onResponse(Call<ArrayList<CommonListModel>> call, Response<ArrayList<CommonListModel>> response) {
+            public void onResponse(@NonNull Call<ArrayList<CommonListModel>> call,
+                                   @NonNull Response<ArrayList<CommonListModel>> response) {
                 if (response.isSuccessful()) {
                     if (response.body() != null && response.body().size() > 0) {
                         Timber.i("Setting %s list with size: %d", toolbarTitle, response.body().size());
@@ -509,14 +516,19 @@ public class CommonListActivity extends AppCompatActivity {
                         removeHtmlTags(models);
                         Collections.sort(models);
                         mAdapter.notifyDataSetChanged();
-                        if (pageName.equals("Heritage_List_Page.json")) {
-                            new HeritageRowCount(CommonListActivity.this, appLanguage).execute();
-                        } else if (pageName.equals("Public_Arts_List_Page.json")) {
-                            new PublicArtsRowCount(CommonListActivity.this, appLanguage).execute();
-                        } else if (pageName.equals("Exhibition_List_Page.json")) {
-                            new ExhibitionRowCount(CommonListActivity.this, appLanguage).execute();
-                        } else if (pageName.equals("getDiningList.json")) {
-                            new DiningRowCount(CommonListActivity.this, appLanguage).execute();
+                        switch (pageName) {
+                            case "Heritage_List_Page.json":
+                                new HeritageRowCount(CommonListActivity.this, appLanguage).execute();
+                                break;
+                            case "Public_Arts_List_Page.json":
+                                new PublicArtsRowCount(CommonListActivity.this, appLanguage).execute();
+                                break;
+                            case "Exhibition_List_Page.json":
+                                new ExhibitionRowCount(CommonListActivity.this, appLanguage).execute();
+                                break;
+                            case "getDiningList.json":
+                                new DiningRowCount(CommonListActivity.this, appLanguage).execute();
+                                break;
                         }
                     } else {
                         Timber.i("%s list have no data", toolbarTitle);
@@ -532,7 +544,7 @@ public class CommonListActivity extends AppCompatActivity {
             }
 
             @Override
-            public void onFailure(Call<ArrayList<CommonListModel>> call, Throwable t) {
+            public void onFailure(@NonNull Call<ArrayList<CommonListModel>> call, @NonNull Throwable t) {
                 Timber.e("get%sListFromAPI() - onFailure: %s", toolbarTitle, t.getMessage());
                 recyclerView.setVisibility(View.GONE);
                 retryLayout.setVisibility(View.VISIBLE);
@@ -856,7 +868,7 @@ public class CommonListActivity extends AppCompatActivity {
                                 activityReference.get().models.get(i).getEventDay(),
                                 activityReference.get().models.get(i).getEventDate(),
                                 activityReference.get().models.get(i).getName(),
-                                activityReference.get().convertor.fromArrayList(activityReference.get().models.get(i).getImages()),
+                                activityReference.get().converter.fromArrayList(activityReference.get().models.get(i).getImages()),
                                 activityReference.get().models.get(i).getSortId(),
                                 activityReference.get().models.get(i).getDescription(),
                                 isTour, language);
@@ -887,7 +899,7 @@ public class CommonListActivity extends AppCompatActivity {
                     activityReference.get().models.get(i).getEventDay(),
                     activityReference.get().models.get(i).getEventDate(),
                     activityReference.get().models.get(i).getName(),
-                    activityReference.get().convertor.fromArrayList(activityReference.get().models.get(i).getImages()),
+                    activityReference.get().converter.fromArrayList(activityReference.get().models.get(i).getImages()),
                     activityReference.get().models.get(i).getSortId(),
                     activityReference.get().models.get(i).getDescription(),
                     activityReference.get().models.get(i).getId(),
@@ -938,7 +950,7 @@ public class CommonListActivity extends AppCompatActivity {
                             activityReference.get().models.get(i).getEventDay(),
                             activityReference.get().models.get(i).getEventDate(),
                             activityReference.get().models.get(i).getName(),
-                            activityReference.get().convertor.fromArrayList(activityReference.get().models.get(i).getImages()),
+                            activityReference.get().converter.fromArrayList(activityReference.get().models.get(i).getImages()),
                             activityReference.get().models.get(i).getSortId(),
                             activityReference.get().models.get(i).getDescription(),
                             isTour, language);
@@ -979,7 +991,7 @@ public class CommonListActivity extends AppCompatActivity {
                                 tourListTables.get(i).getTourDay(),
                                 tourListTables.get(i).getTourEventDate(),
                                 tourListTables.get(i).getTourSubtitle(),
-                                activityReference.get().convertor.fromString(tourListTables.get(i).getTourImages()),
+                                activityReference.get().converter.fromString(tourListTables.get(i).getTourImages()),
                                 true);
                     } else {
                         commonListModel = new CommonListModel(
@@ -987,7 +999,7 @@ public class CommonListActivity extends AppCompatActivity {
                                 tourListTables.get(i).getTourDay(),
                                 tourListTables.get(i).getTourEventDate(),
                                 tourListTables.get(i).getTourSubtitle(),
-                                activityReference.get().convertor.fromString(tourListTables.get(i).getTourImages()),
+                                activityReference.get().converter.fromString(tourListTables.get(i).getTourImages()),
                                 false);
                     }
                     activityReference.get().models.add(i, commonListModel);
@@ -1968,7 +1980,7 @@ public class CommonListActivity extends AppCompatActivity {
                                 activityReference.get().models.get(i).getMuseumId(),
                                 activityReference.get().models.get(i).getExhibitionStatus(),
                                 activityReference.get().models.get(i).getDisplayDate(),
-                                activityReference.get().convertor.fromArrayList(activityReference.get().models.get(i).getImages()),
+                                activityReference.get().converter.fromArrayList(activityReference.get().models.get(i).getImages()),
                                 language);
                         activityReference.get().qmDatabase.getExhibitionTableDao().insert(exhibitionListTable);
 
@@ -2024,7 +2036,7 @@ public class CommonListActivity extends AppCompatActivity {
                             activityReference.get().models.get(i).getMuseumId(),
                             activityReference.get().models.get(i).getExhibitionStatus(),
                             activityReference.get().models.get(i).getDisplayDate(),
-                            activityReference.get().convertor.fromArrayList(activityReference.get().models.get(i).getImages()),
+                            activityReference.get().converter.fromArrayList(activityReference.get().models.get(i).getImages()),
                             language);
                     activityReference.get().qmDatabase.getExhibitionTableDao().insert(exhibitionListTable);
                 }
@@ -2077,11 +2089,6 @@ public class CommonListActivity extends AppCompatActivity {
 
         RetrieveExhibitionData(CommonListActivity context) {
             activityReference = new WeakReference<>(context);
-        }
-
-        RetrieveExhibitionData(CommonListActivity context, String museumId) {
-            activityReference = new WeakReference<>(context);
-            museumID = museumId;
         }
 
         @Override
