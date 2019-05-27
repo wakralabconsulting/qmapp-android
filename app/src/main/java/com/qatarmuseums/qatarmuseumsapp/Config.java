@@ -22,4 +22,11 @@ public class Config {
             "\n1.\n2.\n3.\n\n\n" +
             "Version information:\nCulture Pass v" + BuildConfig.VERSION_NAME + " (build " +
             BuildConfig.VERSION_CODE + ")";
+    public static final String QM_ALIAS = "CULTUREPASS";
+    public static final String QM_ALIAS_ENCRYPTION_SUFFIX = "_encryption";
+    public static final String QM_ALIAS_KEY_SUFFIX = "_publicKey";
+    public static final String QM_ALIAS_VECTOR_SUFFIX = "_initVector";
+    public static final String TRANSFORMATION = "AES/GCM/NoPadding";
+    public static final String ANDROID_KEY_STORE = "AndroidKeyStore";
+    public static final String ANDROID_KEY_STORE_BELOW_M = "AndroidOpenSSL";
 }
