@@ -16,6 +16,7 @@ import android.support.v7.widget.Toolbar;
 import android.text.Editable;
 import android.text.TextUtils;
 import android.text.TextWatcher;
+import android.util.Base64;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
@@ -41,9 +42,15 @@ import com.qatarmuseums.qatarmuseumsapp.apicall.APIClient;
 import com.qatarmuseums.qatarmuseumsapp.apicall.APIInterface;
 import com.qatarmuseums.qatarmuseumsapp.profile.ProfileActivity;
 import com.qatarmuseums.qatarmuseumsapp.profile.ProfileDetails;
+import com.qatarmuseums.qatarmuseumsapp.utils.DeCryptor;
+import com.qatarmuseums.qatarmuseumsapp.utils.EnCryptor;
 import com.qatarmuseums.qatarmuseumsapp.utils.Util;
 import com.qatarmuseums.qatarmuseumsapp.webview.WebViewActivity;
 
+import java.io.IOException;
+import java.security.KeyStoreException;
+import java.security.NoSuchAlgorithmException;
+import java.security.cert.CertificateException;
 import java.util.ArrayList;
 
 import okhttp3.OkHttpClient;
@@ -55,6 +62,7 @@ import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 import timber.log.Timber;
 
+import static com.qatarmuseums.qatarmuseumsapp.Config.QM_ALIAS;
 import static com.qatarmuseums.qatarmuseumsapp.apicall.APIClient.apiBaseUrl;
 
 public class CulturePassActivity extends AppCompatActivity {
@@ -82,6 +90,9 @@ public class CulturePassActivity extends AppCompatActivity {
     private String RSVP = null;
     private FirebaseAnalytics mFireBaseAnalytics;
     private Bundle contentBundleParams;
+    private EnCryptor encryptor;
+    private DeCryptor decryptor;
+
 
     @Override
     protected void attachBaseContext(Context base) {
@@ -106,8 +117,15 @@ public class CulturePassActivity extends AppCompatActivity {
         profileDetails = new ProfileDetails();
         backArrow = findViewById(R.id.toolbar_back);
         qmPreferences = PreferenceManager.getDefaultSharedPreferences(this);
-        token = qmPreferences.getString("TOKEN", null);
+        encryptor = new EnCryptor();
 
+        try {
+            decryptor = new DeCryptor();
+        } catch (CertificateException | NoSuchAlgorithmException | KeyStoreException |
+                IOException e) {
+            e.printStackTrace();
+        }
+        token = decryptor.decryptData(QM_ALIAS, this);
         language = LocaleManager.getLanguage(this);
         backArrow.setOnClickListener(v -> onBackPressed());
         zoomOutAnimation = AnimationUtils.loadAnimation(getApplicationContext(),
@@ -162,7 +180,7 @@ public class CulturePassActivity extends AppCompatActivity {
     }
 
 
-    public void fetchToken() {
+    public void fetchToken(Context context) {
         Timber.i("fetchToken()");
         HttpLoggingInterceptor interceptor = new HttpLoggingInterceptor();
         interceptor.setLevel(HttpLoggingInterceptor.Level.BODY);
@@ -189,7 +207,7 @@ public class CulturePassActivity extends AppCompatActivity {
                 if (response.isSuccessful()) {
                     if (response.body() != null) {
                         Timber.i("fetchToken() - isSuccessful");
-                        performLogin(response.body().getToken());
+                        performLogin(response.body().getToken(), context);
                     }
                 }
             }
@@ -208,7 +226,7 @@ public class CulturePassActivity extends AppCompatActivity {
         });
     }
 
-    public void performLogin(String token) {
+    public void performLogin(String token, Context context) {
         Timber.i("performLogin()");
         HttpLoggingInterceptor interceptor = new HttpLoggingInterceptor();
         interceptor.setLevel(HttpLoggingInterceptor.Level.BODY);
@@ -241,8 +259,10 @@ public class CulturePassActivity extends AppCompatActivity {
 
                         Timber.i("performLogin() - success with id: %s", profileDetails.getUser().getuId());
 
+                        Base64.encodeToString(
+                                encryptor.encryptText(QM_ALIAS, profileDetails.getToken(), context),
+                                Base64.DEFAULT);
                         editor = qmPreferences.edit();
-                        editor.putString("TOKEN", profileDetails.getToken());
                         editor.putString("UID", profileDetails.getUser().getuId());
                         editor.putString("MEMBERSHIP_NUMBER", "00" + (Integer.parseInt(profileDetails.getUser().getuId()) + 6000));
                         editor.putString("EMAIL", profileDetails.getUser().getMail());
@@ -544,12 +564,16 @@ public class CulturePassActivity extends AppCompatActivity {
             // Show a progress spinner, and kick off a background task to
             // perform the user login attempt.
             showProgress(true);
-            token = qmPreferences.getString("TOKEN", null);
+            try {
+                token = new DeCryptor().decryptData(QM_ALIAS, this);
+            } catch (CertificateException | NoSuchAlgorithmException | IOException | KeyStoreException e) {
+                e.printStackTrace();
+            }
             loginData = new LoginData(qatar, museum);
             if (token != null) {
-                performLogin(token);
+                performLogin(token, this);
             } else
-                fetchToken();
+                fetchToken(this);
         }
     }
 
