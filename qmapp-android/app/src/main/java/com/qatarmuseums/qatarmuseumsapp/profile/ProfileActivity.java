@@ -30,6 +30,7 @@ import com.qatarmuseums.qatarmuseumsapp.culturepass.CulturePassActivity;
 import com.qatarmuseums.qatarmuseumsapp.culturepass.ReceivedCookiesInterceptor;
 import com.qatarmuseums.qatarmuseumsapp.culturepasscard.CulturePassCardActivity;
 import com.qatarmuseums.qatarmuseumsapp.home.GlideApp;
+import com.qatarmuseums.qatarmuseumsapp.utils.DeCryptor;
 import com.qatarmuseums.qatarmuseumsapp.utils.Util;
 
 import org.json.JSONArray;
@@ -39,6 +40,9 @@ import org.json.JSONObject;
 import java.io.IOException;
 import java.io.InputStream;
 import java.lang.ref.WeakReference;
+import java.security.KeyStoreException;
+import java.security.NoSuchAlgorithmException;
+import java.security.cert.CertificateException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -51,6 +55,11 @@ import retrofit2.Response;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 import timber.log.Timber;
+
+import static com.qatarmuseums.qatarmuseumsapp.Config.QM_ALIAS;
+import static com.qatarmuseums.qatarmuseumsapp.Config.QM_ALIAS_ENCRYPTION_SUFFIX;
+import static com.qatarmuseums.qatarmuseumsapp.Config.QM_ALIAS_KEY_SUFFIX;
+import static com.qatarmuseums.qatarmuseumsapp.Config.QM_ALIAS_VECTOR_SUFFIX;
 
 public class ProfileActivity extends AppCompatActivity implements View.OnClickListener {
 
@@ -133,7 +142,11 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
         });
         qmPreferences = PreferenceManager.getDefaultSharedPreferences(this);
         language = LocaleManager.getLanguage(this);
-        token = qmPreferences.getString("TOKEN", null);
+        try {
+            token = new DeCryptor().decryptData(QM_ALIAS, this);
+        } catch (CertificateException | NoSuchAlgorithmException | IOException | KeyStoreException e) {
+            e.printStackTrace();
+        }
         username = qmPreferences.getString("NAME", null);
         membershipNumber = qmPreferences.getString("MEMBERSHIP_NUMBER", null);
         String email = qmPreferences.getString("EMAIL", null);
@@ -204,7 +217,11 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
     public void logOutAction() {
         Timber.i("logOutAction()");
         progressBar.setVisibility(View.VISIBLE);
-        token = qmPreferences.getString("TOKEN", null);
+        try {
+            token = new DeCryptor().decryptData(QM_ALIAS, this);
+        } catch (CertificateException | NoSuchAlgorithmException | IOException | KeyStoreException e) {
+            e.printStackTrace();
+        }
         HttpLoggingInterceptor interceptor = new HttpLoggingInterceptor();
         interceptor.setLevel(HttpLoggingInterceptor.Level.BODY);
 
@@ -256,7 +273,6 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
         new DeleteRegistratioTable(ProfileActivity.this).execute();
         qmPreferences = PreferenceManager.getDefaultSharedPreferences(this);
         editor = qmPreferences.edit();
-        editor.putString("TOKEN", null);
         editor.putString("UID", null);
         editor.putString("MEMBERSHIP_NUMBER", null);
         editor.putString("EMAIL", null);
@@ -267,6 +283,9 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
         editor.putString("NAME", null);
         editor.putString("RSVP", null);
         editor.putString("ACCEPTED", "0");
+        editor.putString(QM_ALIAS + QM_ALIAS_KEY_SUFFIX, null);
+        editor.putString(QM_ALIAS + QM_ALIAS_ENCRYPTION_SUFFIX, null);
+        editor.putString(QM_ALIAS + QM_ALIAS_VECTOR_SUFFIX, null);
         editor.commit();
         Intent navigationIntent = new Intent(this, CulturePassActivity.class);
         navigationIntent.putExtra("IS_LOGOUT", true);

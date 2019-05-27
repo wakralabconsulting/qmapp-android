@@ -77,13 +77,18 @@ import com.qatarmuseums.qatarmuseumsapp.profile.Model;
 import com.qatarmuseums.qatarmuseumsapp.profile.Und;
 import com.qatarmuseums.qatarmuseumsapp.publicart.PublicArtModel;
 import com.qatarmuseums.qatarmuseumsapp.tourdetails.TourDetailsModel;
+import com.qatarmuseums.qatarmuseumsapp.utils.DeCryptor;
 import com.qatarmuseums.qatarmuseumsapp.utils.IPullZoom;
 import com.qatarmuseums.qatarmuseumsapp.utils.PixelUtil;
 import com.qatarmuseums.qatarmuseumsapp.utils.PullToZoomCoordinatorLayout;
 import com.qatarmuseums.qatarmuseumsapp.utils.Util;
 import com.qatarmuseums.qatarmuseumsapp.webview.WebViewActivity;
 
+import java.io.IOException;
 import java.lang.ref.WeakReference;
+import java.security.KeyStoreException;
+import java.security.NoSuchAlgorithmException;
+import java.security.cert.CertificateException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -111,6 +116,7 @@ import timber.log.Timber;
 
 import static cn.lightsky.infiniteindicator.IndicatorConfiguration.LEFT;
 import static cn.lightsky.infiniteindicator.IndicatorConfiguration.RIGHT;
+import static com.qatarmuseums.qatarmuseumsapp.Config.QM_ALIAS;
 
 public class DetailsActivity extends AppCompatActivity implements IPullZoom, OnMapReadyCallback,
         NumberPicker.OnValueChangeListener {
@@ -234,7 +240,11 @@ public class DetailsActivity extends AppCompatActivity implements IPullZoom, OnM
         qmPreferences = PreferenceManager.getDefaultSharedPreferences(this);
         appLanguage = LocaleManager.getLanguage(this);
 
-        token = qmPreferences.getString("TOKEN", null);
+        try {
+            token = new DeCryptor().decryptData(QM_ALIAS, this);
+        } catch (CertificateException | NoSuchAlgorithmException | IOException | KeyStoreException e) {
+            e.printStackTrace();
+        }
         user_uid = qmPreferences.getString("UID", null);
         field_nmoq_last_name = qmPreferences.getString("LAST_NAME", null);
         field_first_name_ = qmPreferences.getString("FIRST_NAME", null);

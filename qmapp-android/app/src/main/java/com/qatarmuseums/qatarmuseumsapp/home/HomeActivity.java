@@ -25,6 +25,7 @@ import android.support.v7.widget.RecyclerView;
 import android.text.Editable;
 import android.text.TextUtils;
 import android.text.TextWatcher;
+import android.util.Base64;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
@@ -67,10 +68,16 @@ import com.qatarmuseums.qatarmuseumsapp.notification.NotificationActivity;
 import com.qatarmuseums.qatarmuseumsapp.profile.ProfileActivity;
 import com.qatarmuseums.qatarmuseumsapp.profile.ProfileDetails;
 import com.qatarmuseums.qatarmuseumsapp.profile.UserData;
+import com.qatarmuseums.qatarmuseumsapp.utils.DeCryptor;
+import com.qatarmuseums.qatarmuseumsapp.utils.EnCryptor;
 import com.qatarmuseums.qatarmuseumsapp.utils.Util;
 import com.qatarmuseums.qatarmuseumsapp.webview.WebViewActivity;
 
+import java.io.IOException;
 import java.lang.ref.WeakReference;
+import java.security.KeyStoreException;
+import java.security.NoSuchAlgorithmException;
+import java.security.cert.CertificateException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -84,6 +91,8 @@ import retrofit2.Response;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 import timber.log.Timber;
+
+import static com.qatarmuseums.qatarmuseumsapp.Config.QM_ALIAS;
 
 public class HomeActivity extends BaseActivity {
     View diningNavigation, giftShopNavigation, culturePassNavigation, moreNavigation;
@@ -609,7 +618,7 @@ public class HomeActivity extends BaseActivity {
         }
     }
 
-    public void fetchToken() {
+    public void fetchToken(Context context) {
         Timber.i("fetchToken(language :%s)", language);
         HttpLoggingInterceptor interceptor = new HttpLoggingInterceptor();
         interceptor.setLevel(HttpLoggingInterceptor.Level.BODY);
@@ -636,7 +645,7 @@ public class HomeActivity extends BaseActivity {
                 if (response.isSuccessful()) {
                     if (response.body() != null) {
                         Timber.i("fetchToken() - isSuccessful");
-                        performLogin(response.body().getToken());
+                        performLogin(response.body().getToken(), context);
                     }
                 }
             }
@@ -652,7 +661,7 @@ public class HomeActivity extends BaseActivity {
         });
     }
 
-    public void performLogin(String token) {
+    public void performLogin(String token, Context context) {
         Timber.i("performLogin(language :%s)", language);
         HttpLoggingInterceptor interceptor = new HttpLoggingInterceptor();
         interceptor.setLevel(HttpLoggingInterceptor.Level.BODY);
@@ -683,9 +692,10 @@ public class HomeActivity extends BaseActivity {
 //                        checkRSVP(profileDetails.getUser().getuId(), profileDetails.getToken());
 
                         Timber.i("performLogin() - success with id: %s", profileDetails.getUser().getuId());
-
+                        Base64.encodeToString(
+                                new EnCryptor().encryptText(QM_ALIAS, profileDetails.getToken(), context),
+                                Base64.DEFAULT);
                         editor = qmPreferences.edit();
-                        editor.putString("TOKEN", profileDetails.getToken());
                         editor.putString("UID", profileDetails.getUser().getuId());
                         editor.putString("MEMBERSHIP_NUMBER", "00" + (Integer.parseInt(profileDetails.getUser().getuId()) + 6000));
                         editor.putString("EMAIL", profileDetails.getUser().getMail());
@@ -910,12 +920,17 @@ public class HomeActivity extends BaseActivity {
             // Show a progress spinner, and kick off a background task to
             // perform the user login attempt.
             showProgress(true);
-            String token = qmPreferences.getString("TOKEN", null);
+            String token = null;
+            try {
+                token = new DeCryptor().decryptData(QM_ALIAS, this);
+            } catch (CertificateException | NoSuchAlgorithmException | IOException | KeyStoreException e) {
+                e.printStackTrace();
+            }
             loginData = new LoginData(qatar, museum);
             if (token != null) {
-                performLogin(token);
+                performLogin(token, this);
             } else
-                fetchToken();
+                fetchToken(this);
         }
     }
 
