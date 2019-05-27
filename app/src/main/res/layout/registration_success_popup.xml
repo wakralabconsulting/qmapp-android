@@ -1,84 +1,70 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="#99000000"
-    android:gravity="center">
+    android:gravity="center"
+    android:paddingEnd="@dimen/padding_25"
+    android:paddingStart="@dimen/padding_40">
 
-    <FrameLayout
+    <RelativeLayout
+        android:id="@+id/dialog_layout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginBottom="@dimen/padding_10"
         android:layout_marginEnd="@dimen/padding_25"
-        android:layout_marginStart="@dimen/padding_40"
+        android:layout_marginStart="@dimen/padding_10"
+        android:layout_marginTop="@dimen/padding_20"
+        android:background="@drawable/round_corner_white"
         android:gravity="center"
-        android:orientation="vertical">
+        android:paddingBottom="@dimen/padding_10"
+        android:paddingEnd="@dimen/padding_10"
+        android:paddingStart="@dimen/padding_10"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
 
-        <FrameLayout
-            android:id="@+id/content_frame_layout"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content">
-
-            <RelativeLayout
-                android:id="@+id/dialog_layout"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:layout_marginBottom="@dimen/padding_10"
-                android:layout_marginEnd="@dimen/padding_20"
-                android:layout_marginStart="@dimen/padding_10"
-                android:layout_marginTop="@dimen/padding_20"
-                android:background="@drawable/round_corner_white"
-                android:paddingBottom="@dimen/padding_10"
-                android:paddingEnd="@dimen/padding_10"
-                android:paddingStart="@dimen/padding_10">
-
-                <TextView
-                    android:id="@+id/dialog_content"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginEnd="@dimen/padding_25"
-                    android:layout_marginStart="@dimen/padding_25"
-                    android:layout_marginTop="@dimen/padding_25"
-                    android:textAlignment="center"
-                    android:textColor="@color/colorBlack"
-                    android:textSize="@dimen/font_size_18" />
-
-                <Button
-                    android:id="@+id/doneBtn"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_below="@id/dialog_content"
-                    android:layout_gravity="center"
-                    android:layout_margin="@dimen/padding_15"
-                    android:background="@drawable/round_corner_black"
-                    android:fontFamily="@font/din_next_lt_pro_bold"
-                    android:gravity="center"
-                    android:textAllCaps="false"
-                    android:textColor="@color/colorWhite"
-                    android:textSize="@dimen/font_size_21" />
-
-
-            </RelativeLayout>
-        </FrameLayout>
-
-        <LinearLayout
+        <TextView
+            android:id="@+id/dialog_content"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_gravity="end|top"
-            android:background="@android:color/transparent"
-            android:orientation="vertical">
+            android:layout_marginEnd="@dimen/padding_25"
+            android:layout_marginStart="@dimen/padding_25"
+            android:layout_marginTop="@dimen/padding_25"
+            android:textAlignment="center"
+            android:textColor="@color/colorBlack"
+            android:textSize="@dimen/font_size_18" />
 
-            <ImageView
-                android:id="@+id/close_dialog"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:adjustViewBounds="true"
-                android:background="@drawable/popup_close"
-                android:description="@null"
-                android:scaleType="fitStart" />
-        </LinearLayout>
+        <Button
+            android:id="@+id/doneBtn"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/dialog_content"
+            android:layout_gravity="center"
+            android:layout_margin="@dimen/padding_15"
+            android:background="@drawable/round_corner_black"
+            android:fontFamily="@font/din_next_lt_pro_bold"
+            android:gravity="center"
+            android:textAllCaps="false"
+            android:textColor="@color/colorWhite"
+            android:textSize="@dimen/font_size_21" />
 
-    </FrameLayout>
 
+    </RelativeLayout>
 
-</LinearLayout>
+    <ImageView
+        android:id="@+id/close_dialog"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:adjustViewBounds="true"
+        android:background="@drawable/popup_close"
+        android:description="@null"
+        android:scaleType="fitStart"
+        app:layout_constraintBottom_toTopOf="@id/dialog_layout"
+        app:layout_constraintEnd_toEndOf="@id/dialog_layout"
+        app:layout_constraintStart_toEndOf="@id/dialog_layout"
+        app:layout_constraintTop_toTopOf="@id/dialog_layout"
+        tools:ignore="ContentDescription" />
+
+</android.support.constraint.ConstraintLayout>

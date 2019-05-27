@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/notification_holder"
     android:layout_width="match_parent"
     android:layout_height="wrap_content">
@@ -10,7 +11,8 @@
         android:layout_height="wrap_content"
         android:layout_centerVertical="true"
         android:padding="@dimen/padding_25"
-        android:src="@drawable/notification_icon" />
+        android:src="@drawable/notification_icon"
+        tools:ignore="ContentDescription" />
 
     <RelativeLayout
         android:layout_width="match_parent"
@@ -36,6 +38,7 @@
             android:rotation="180"
             android:src="@drawable/back_button"
             android:tint="@color/colorBlack"
-            android:visibility="invisible" />
+            android:visibility="invisible"
+            tools:ignore="ContentDescription" />
     </RelativeLayout>
 </RelativeLayout>

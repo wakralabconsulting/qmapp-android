@@ -67,7 +67,7 @@ public class TourDetailsModel implements Parcelable, Comparable<TourDetailsModel
         this.seatsRemaining = seatsRemaining;
     }
 
-    protected TourDetailsModel(Parcel in) {
+    private TourDetailsModel(Parcel in) {
         tourTitle = in.readString();
         tourBody = in.readString();
         tourImage = in.createStringArrayList();

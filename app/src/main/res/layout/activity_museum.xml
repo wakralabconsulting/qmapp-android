@@ -7,60 +7,57 @@
     android:orientation="vertical"
     tools:context="com.qatarmuseums.qatarmuseumsapp.museum.MuseumActivity">
 
-    <LinearLayout
+    <RelativeLayout
+        android:id="@+id/slider_layout"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_weight=".825">
+        android:layout_weight=".825"
+        android:background="@color/colorWhite">
 
-        <RelativeLayout
-            android:id="@+id/slider_layout"
+        <ImageView
+            android:id="@+id/ads_place_holder"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:background="@color/colorWhite">
+            android:scaleType="centerCrop"
+            android:src="@drawable/placeholder_portrait"
+            tools:ignore="ContentDescription" />
 
-            <ImageView
-                android:id="@+id/ads_place_holder"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:scaleType="centerCrop"
-                android:src="@drawable/placeholder_portrait" />
+        <cn.lightsky.infiniteindicator.InfiniteIndicator
+            android:id="@+id/main_indicator_default_circle"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            app:indicator_type="indicator_anim_circle" />
 
-            <cn.lightsky.infiniteindicator.InfiniteIndicator
-                android:id="@+id/main_indicator_default_circle"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                app:indicator_type="indicator_anim_circle" />
+        <ImageView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:foreground="@drawable/image_overlay"
+            tools:ignore="ContentDescription" />
 
-            <ImageView
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:foreground="@drawable/image_overlay" />
-
-            <TextView
-                android:id="@+id/slider_image_title"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_centerHorizontal="true"
-                android:layout_centerInParent="true"
-                android:layout_marginBottom="@dimen/museum_page_text_margin"
-                android:fontFamily="@font/din_next_lt_pro_bold"
-                android:padding="@dimen/padding_20"
-                android:textAlignment="center"
-                android:textColor="@color/colorWhite"
-                android:textSize="@dimen/font_size_35"
-                android:textStyle="bold" />
+        <TextView
+            android:id="@+id/slider_image_title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:layout_centerInParent="true"
+            android:layout_marginBottom="@dimen/museum_page_text_margin"
+            android:fontFamily="@font/din_next_lt_pro_bold"
+            android:padding="@dimen/padding_20"
+            android:textAlignment="center"
+            android:textColor="@color/colorWhite"
+            android:textSize="@dimen/font_size_35"
+            android:textStyle="bold" />
 
 
-        </RelativeLayout>
+    </RelativeLayout>
 
-
-    </LinearLayout>
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight=".175"
         android:background="@color/colorWhite"
+        android:baselineAligned="false"
         android:gravity="center"
         android:orientation="horizontal">
 
@@ -72,7 +69,8 @@
             android:layout_weight=".07"
             android:gravity="start|center_vertical"
             android:orientation="vertical"
-            android:weightSum="10">
+            android:weightSum="10"
+            tools:ignore="NestedWeights">
 
             <ImageView
                 android:id="@+id/horizontal_scrol_previous_icon"
@@ -80,7 +78,8 @@
                 android:layout_height="@dimen/horizontal_scrollview_back_size"
                 android:layout_weight="9"
                 android:src="@drawable/previous_icon_black"
-                android:visibility="gone" />
+                android:visibility="gone"
+                tools:ignore="ContentDescription,NestedWeights" />
 
             <View
                 android:layout_width="wrap_content"
@@ -123,7 +122,8 @@
                 android:layout_height="@dimen/horizontal_scrollview_back_size"
                 android:layout_weight="9"
                 android:src="@drawable/next_icon_black"
-                android:visibility="gone" />
+                android:visibility="gone"
+                tools:ignore="ContentDescription" />
 
             <View
                 android:layout_width="wrap_content"

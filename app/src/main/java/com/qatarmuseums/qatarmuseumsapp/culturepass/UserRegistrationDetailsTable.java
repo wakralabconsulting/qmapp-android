@@ -8,7 +8,7 @@ import android.support.annotation.NonNull;
 @Entity(tableName = "userRegistrationTable")
 public class UserRegistrationDetailsTable {
     @NonNull
-    @PrimaryKey(autoGenerate = false)
+    @PrimaryKey()
     private String registrationID;
     @ColumnInfo()
     private String eventId;
@@ -27,32 +27,16 @@ public class UserRegistrationDetailsTable {
     }
 
     @NonNull
-    public String getRegistrationID() {
+    String getRegistrationID() {
         return registrationID;
-    }
-
-    public void setRegistrationID(@NonNull String registrationID) {
-        this.registrationID = registrationID;
     }
 
     public String getEventId() {
         return eventId;
     }
 
-    public void setEventId(String eventId) {
-        this.eventId = eventId;
-    }
-
-    public String getEventTitle() {
+    String getEventTitle() {
         return eventTitle;
-    }
-
-    public void setEventTitle(String eventTitle) {
-        this.eventTitle = eventTitle;
-    }
-
-    public void setNumberOfReservations(String numberOfReservations) {
-        this.numberOfReservations = numberOfReservations;
     }
 
     public String getNumberOfReservations() {

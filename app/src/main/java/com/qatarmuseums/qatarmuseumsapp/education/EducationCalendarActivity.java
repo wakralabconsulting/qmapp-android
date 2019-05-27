@@ -1,6 +1,7 @@
 package com.qatarmuseums.qatarmuseumsapp.education;
 
 import android.Manifest;
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -17,7 +18,6 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
-import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
@@ -25,7 +25,7 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.google.firebase.analytics.FirebaseAnalytics;
-import com.qatarmuseums.qatarmuseumsapp.Convertor;
+import com.qatarmuseums.qatarmuseumsapp.Converter;
 import com.qatarmuseums.qatarmuseumsapp.LocaleManager;
 import com.qatarmuseums.qatarmuseumsapp.QMDatabase;
 import com.qatarmuseums.qatarmuseumsapp.R;
@@ -59,7 +59,7 @@ public class EducationCalendarActivity extends AppCompatActivity {
     @BindView(R.id.common_toolbar)
     Toolbar toolbar;
     @BindView(R.id.toolbar_back)
-    ImageView backArrow;
+    View backArrow;
     @BindView(R.id.toolbar_title)
     TextView toolbar_title;
     @BindView(R.id.toolbar_filter)
@@ -75,7 +75,7 @@ public class EducationCalendarActivity extends AppCompatActivity {
     @BindView(R.id.retry_layout)
     LinearLayout retryLayout;
     @BindView(R.id.retry_btn)
-    Button retryButton;
+    View retryButton;
     RecyclerView.LayoutManager layoutManager;
     ArrayList<Events> events = new ArrayList<>();
     String institutionFilter, ageGroupFilter, programmeTypeFilter;
@@ -86,10 +86,10 @@ public class EducationCalendarActivity extends AppCompatActivity {
     private QMDatabase qmDatabase;
     private Integer eventsTableRowCount;
     EducationalCalendarEventsTable educationalCalendarEventsTable;
-    public static final String FILTERPREFS = "FilterPref";
-    public static final String INSTITUTEPREFS = "InstitutionPref";
-    public static final String AGEGROUPPREFS = "AgeGroupPref";
-    public static final String PROGRAMMEPREFS = "ProgrammePref";
+    public static final String FILTER_PREFS = "FilterPref";
+    public static final String INSTITUTE_PREFS = "InstitutionPref";
+    public static final String AGE_GROUP_PREFS = "AgeGroupPref";
+    public static final String PROGRAMME_PREFS = "ProgrammePref";
     private String appLanguage;
     private Calendar today;
     String day;
@@ -104,6 +104,7 @@ public class EducationCalendarActivity extends AppCompatActivity {
         super.attachBaseContext(LocaleManager.setLocale(base));
     }
 
+    @SuppressLint("ClickableViewAccessibility")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -301,7 +302,8 @@ public class EducationCalendarActivity extends AppCompatActivity {
         Timber.i("getEducationCalendarEventsFromDatabase(language :%s)", appLanguage);
         progress.setVisibility(View.VISIBLE);
         educationAdapter.clear();
-        new EducationCalendarActivity.EventsRowCount(EducationCalendarActivity.this, appLanguage, timeStamp / 1000).execute();
+        new EducationCalendarActivity.EventsRowCount(EducationCalendarActivity.this,
+                appLanguage, timeStamp / 1000).execute();
     }
 
     @Override
@@ -348,10 +350,12 @@ public class EducationCalendarActivity extends AppCompatActivity {
                 getCalendarData(appLanguage, institute, ageGroup, programmeType, month, day, year, "field_eduprog_date");
         call.enqueue(new Callback<ArrayList<Events>>() {
             @Override
-            public void onResponse(Call<ArrayList<Events>> call, Response<ArrayList<Events>> response) {
+            public void onResponse(@NonNull Call<ArrayList<Events>> call,
+                                   @NonNull Response<ArrayList<Events>> response) {
                 if (response.isSuccessful()) {
                     if (response.body() != null && response.body().size() > 0) {
-                        Timber.i("getEducationCalendarDataFromApi() - isSuccessful with size: %s", response.body().size());
+                        Timber.i("getEducationCalendarDataFromApi() - isSuccessful with size: %s",
+                                response.body().size());
                         events.clear();
                         progress.setVisibility(View.GONE);
                         noResultFoundTxt.setVisibility(View.GONE);
@@ -374,7 +378,7 @@ public class EducationCalendarActivity extends AppCompatActivity {
             }
 
             @Override
-            public void onFailure(Call<ArrayList<Events>> call, Throwable t) {
+            public void onFailure(@NonNull Call<ArrayList<Events>> call, @NonNull Throwable t) {
                 Timber.e("getEducationCalendarDataFromApi() - onFailure: %s", t.getMessage());
                 eventListView.setVisibility(View.GONE);
                 retryLayout.setVisibility(View.VISIBLE);
@@ -547,9 +551,9 @@ public class EducationCalendarActivity extends AppCompatActivity {
         int position;
         long timestamp;
 
-        public InsertSingleElementDatabaseTask(EducationCalendarActivity context,
-                                               EducationalCalendarEventsTable educationalCalendarEventsTable,
-                                               String language, int pos, long timestamp) {
+        InsertSingleElementDatabaseTask(EducationCalendarActivity context,
+                                        EducationalCalendarEventsTable educationalCalendarEventsTable,
+                                        String language, int pos, long timestamp) {
             this.activityReference = new WeakReference<>(context);
             this.educationalCalendarEventsTable = educationalCalendarEventsTable;
             this.language = language;
@@ -572,12 +576,12 @@ public class EducationCalendarActivity extends AppCompatActivity {
             if (activityReference.get().events != null) {
                 Timber.i("insertData event on table(language :%s) with id: %s", language,
                         activityReference.get().events.get(position).getEid());
-                Convertor converters = new Convertor();
-                ArrayList<String> fieldValue = new ArrayList<String>();
+                Converter converters = new Converter();
+                ArrayList<String> fieldValue;
                 fieldValue = activityReference.get().events.get(position).getField();
-                ArrayList<String> startDate = new ArrayList<String>();
+                ArrayList<String> startDate;
                 startDate = activityReference.get().events.get(position).getStartTime();
-                ArrayList<String> endDate = new ArrayList<String>();
+                ArrayList<String> endDate;
                 endDate = activityReference.get().events.get(position).getEndTime();
                 educationalCalendarEventsTable = new EducationalCalendarEventsTable(
                         activityReference.get().events.get(position).getEid(),
@@ -602,7 +606,6 @@ public class EducationCalendarActivity extends AppCompatActivity {
                 );
                 activityReference.get().qmDatabase.getEducationCalendarEventsDao().
                         insertEventsTable(educationalCalendarEventsTable);
-
             }
             return true;
         }
@@ -615,9 +618,9 @@ public class EducationCalendarActivity extends AppCompatActivity {
         String language;
         long timestamp;
 
-        public InsertDatabaseTask(EducationCalendarActivity context,
-                                  EducationalCalendarEventsTable educationalCalendarEventsTable,
-                                  String language, long timestamp) {
+        InsertDatabaseTask(EducationCalendarActivity context,
+                           EducationalCalendarEventsTable educationalCalendarEventsTable,
+                           String language, long timestamp) {
             this.activityReference = new WeakReference<>(context);
             this.educationalCalendarEventsTable = educationalCalendarEventsTable;
             this.language = language;
@@ -639,7 +642,7 @@ public class EducationCalendarActivity extends AppCompatActivity {
             if (activityReference.get().events != null) {
                 Timber.i("insertData event on table(language :%s) with size: %d", language,
                         activityReference.get().events.size());
-                Convertor converters = new Convertor();
+                Converter converters = new Converter();
                 for (int i = 0; i < activityReference.get().events.size(); i++) {
                     Timber.i("insertData with id: %s",
                             activityReference.get().events.get(i).getEid());
@@ -671,7 +674,6 @@ public class EducationCalendarActivity extends AppCompatActivity {
                     );
                     activityReference.get().qmDatabase.getEducationCalendarEventsDao().
                             insertEventsTable(educationalCalendarEventsTable);
-
                 }
             }
             return true;
@@ -698,10 +700,10 @@ public class EducationCalendarActivity extends AppCompatActivity {
         @Override
         protected void onPostExecute(List<EducationalCalendarEventsTable> educationalCalendarEventsTables) {
             activityReference.get().events.clear();
-            ArrayList<String> fieldValue = new ArrayList<String>();
-            ArrayList<String> startDate = new ArrayList<String>();
-            ArrayList<String> endDate = new ArrayList<String>();
-            Convertor converters = new Convertor();
+            ArrayList<String> fieldValue = new ArrayList<>();
+            ArrayList<String> startDate = new ArrayList<>();
+            ArrayList<String> endDate = new ArrayList<>();
+            Converter converters = new Converter();
             if (educationalCalendarEventsTables.size() > 0) {
                 Timber.i("EducationCalendarEventsTable with size: %d", educationalCalendarEventsTables.size());
                 for (int i = 0; i < educationalCalendarEventsTables.size(); i++) {

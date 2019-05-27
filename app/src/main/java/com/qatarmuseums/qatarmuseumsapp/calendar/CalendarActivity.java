@@ -1,11 +1,13 @@
 package com.qatarmuseums.qatarmuseumsapp.calendar;
 
 import android.Manifest;
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.DefaultItemAnimator;
@@ -16,15 +18,13 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
-import android.widget.Button;
-import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.google.firebase.analytics.FirebaseAnalytics;
-import com.qatarmuseums.qatarmuseumsapp.Convertor;
+import com.qatarmuseums.qatarmuseumsapp.Converter;
 import com.qatarmuseums.qatarmuseumsapp.LocaleManager;
 import com.qatarmuseums.qatarmuseumsapp.QMDatabase;
 import com.qatarmuseums.qatarmuseumsapp.R;
@@ -59,7 +59,7 @@ public class CalendarActivity extends AppCompatActivity {
     @BindView(R.id.common_toolbar)
     Toolbar toolbar;
     @BindView(R.id.toolbar_back)
-    ImageView backArrow;
+    View backArrow;
     @BindView(R.id.toolbar_title)
     TextView toolbar_title;
     @BindView(R.id.no_events_txt)
@@ -67,7 +67,7 @@ public class CalendarActivity extends AppCompatActivity {
     @BindView(R.id.retry_layout)
     LinearLayout retryLayout;
     @BindView(R.id.retry_btn)
-    Button retryButton;
+    View retryButton;
     @BindView(R.id.progressBarLoading)
     ProgressBar progressBar;
     @BindView(R.id.progress)
@@ -98,6 +98,7 @@ public class CalendarActivity extends AppCompatActivity {
         super.attachBaseContext(LocaleManager.setLocale(base));
     }
 
+    @SuppressLint("ClickableViewAccessibility")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -247,7 +248,7 @@ public class CalendarActivity extends AppCompatActivity {
                 "All", "All", "All", month, day, year, "field_eduprog_date");
         call.enqueue(new Callback<ArrayList<Events>>() {
             @Override
-            public void onResponse(Call<ArrayList<Events>> call, Response<ArrayList<Events>> response) {
+            public void onResponse(@NonNull Call<ArrayList<Events>> call, @NonNull Response<ArrayList<Events>> response) {
                 if (response.isSuccessful()) {
                     if (response.body().size() > 0) {
                         Timber.i("getCalendarEventsFromAPI() - isSuccessful with size: %s", response.body().size());
@@ -271,7 +272,7 @@ public class CalendarActivity extends AppCompatActivity {
             }
 
             @Override
-            public void onFailure(Call<ArrayList<Events>> call, Throwable t) {
+            public void onFailure(@NonNull Call<ArrayList<Events>> call, @NonNull Throwable t) {
                 Timber.e("getCalendarEventsFromAPI() - onFailure: %s", t.getMessage());
                 retryLayout.setVisibility(View.VISIBLE);
                 progress.setVisibility(View.GONE);
@@ -294,7 +295,7 @@ public class CalendarActivity extends AppCompatActivity {
 
     @Override
     public void onRequestPermissionsResult(int requestCode,
-                                           String permissions[], int[] grantResults) {
+                                           @NonNull String permissions[], @NonNull int[] grantResults) {
         switch (requestCode) {
             case 100: {
                 // If request is cancelled, the result arrays are empty.
@@ -429,13 +430,13 @@ public class CalendarActivity extends AppCompatActivity {
                 for (int i = 0; i < activityReference.get().calendarEventList.size(); i++) {
                     Timber.i("insertData with id: %s",
                             activityReference.get().calendarEventList.get(i).getEid());
-                    ArrayList<String> fieldValue = new ArrayList<String>();
+                    ArrayList<String> fieldValue;
                     fieldValue = activityReference.get().calendarEventList.get(i).getField();
-                    ArrayList<String> startDate = new ArrayList<String>();
+                    ArrayList<String> startDate;
                     startDate = activityReference.get().calendarEventList.get(i).getStartTime();
-                    ArrayList<String> endDate = new ArrayList<String>();
+                    ArrayList<String> endDate;
                     endDate = activityReference.get().calendarEventList.get(i).getEndTime();
-                    Convertor converters = new Convertor();
+                    Converter converters = new Converter();
                     calendarEventsTable = new CalendarEventsTable(
                             activityReference.get().calendarEventList.get(i).getEid(),
                             activityReference.get().calendarEventList.get(i).getTitle(),
@@ -514,10 +515,11 @@ public class CalendarActivity extends AppCompatActivity {
         @Override
         protected void onPostExecute(List<CalendarEventsTable> eventsTableList) {
             activityReference.get().calendarEventList.clear();
-            ArrayList<String> fieldValue = new ArrayList<String>();
-            ArrayList<String> startDate = new ArrayList<String>();
-            ArrayList<String> endDate = new ArrayList<String>();
-            Convertor converters = new Convertor();
+
+            ArrayList<String> fieldValue = new ArrayList<>();
+            ArrayList<String> startDate = new ArrayList<>();
+            ArrayList<String> endDate = new ArrayList<>();
+            Converter converters = new Converter();
             if (eventsTableList.size() > 0) {
                 Timber.i("CalendarEventsTable with size: %d", eventsTableList.size());
                 for (int i = 0; i < eventsTableList.size(); i++) {

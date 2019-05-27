@@ -34,7 +34,8 @@
                     android:layout_centerVertical="true"
                     android:paddingEnd="20dp"
                     android:paddingStart="20dp"
-                    android:src="@drawable/back_button" />
+                    android:src="@drawable/back_button"
+                    tools:ignore="ContentDescription" />
 
                 <TextView
                     android:id="@+id/toolbar_title"
@@ -55,10 +56,11 @@
                     android:layout_height="match_parent"
                     android:layout_alignParentEnd="true"
                     android:layout_centerVertical="true"
-                    android:tint="@color/colorDarkGray"
                     android:paddingEnd="@dimen/padding_20"
                     android:paddingStart="@dimen/padding_20"
-                    android:src="@drawable/settings" />
+                    android:src="@drawable/settings"
+                    android:tint="@color/colorDarkGray"
+                    tools:ignore="ContentDescription" />
             </RelativeLayout>
 
         </android.support.v7.widget.Toolbar>

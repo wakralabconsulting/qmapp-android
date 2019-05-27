@@ -1,5 +1,6 @@
 package com.qatarmuseums.qatarmuseumsapp.education;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -30,10 +31,10 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import timber.log.Timber;
 
-import static com.qatarmuseums.qatarmuseumsapp.education.EducationCalendarActivity.AGEGROUPPREFS;
-import static com.qatarmuseums.qatarmuseumsapp.education.EducationCalendarActivity.FILTERPREFS;
-import static com.qatarmuseums.qatarmuseumsapp.education.EducationCalendarActivity.INSTITUTEPREFS;
-import static com.qatarmuseums.qatarmuseumsapp.education.EducationCalendarActivity.PROGRAMMEPREFS;
+import static com.qatarmuseums.qatarmuseumsapp.education.EducationCalendarActivity.AGE_GROUP_PREFS;
+import static com.qatarmuseums.qatarmuseumsapp.education.EducationCalendarActivity.FILTER_PREFS;
+import static com.qatarmuseums.qatarmuseumsapp.education.EducationCalendarActivity.INSTITUTE_PREFS;
+import static com.qatarmuseums.qatarmuseumsapp.education.EducationCalendarActivity.PROGRAMME_PREFS;
 
 public class EducationFilterActivity extends AppCompatActivity {
 
@@ -41,7 +42,7 @@ public class EducationFilterActivity extends AppCompatActivity {
     @BindView(R.id.common_toolbar)
     Toolbar toolbar;
     @BindView(R.id.toolbar_close)
-    ImageView toolbarClose;
+    View toolbarClose;
     @BindView(R.id.toolbar_title)
     TextView toolbar_title;
     @BindView(R.id.institution_text)
@@ -84,6 +85,7 @@ public class EducationFilterActivity extends AppCompatActivity {
         super.attachBaseContext(LocaleManager.setLocale(base));
     }
 
+    @SuppressLint("ClickableViewAccessibility")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -94,11 +96,11 @@ public class EducationFilterActivity extends AppCompatActivity {
         toolbar_title.setText(getResources().getString(R.string.filter));
 
         mFirebaseAnalytics = FirebaseAnalytics.getInstance(this);
-        sharedFilterPreferences = getSharedPreferences(FILTERPREFS, Context.MODE_PRIVATE);
+        sharedFilterPreferences = getSharedPreferences(FILTER_PREFS, Context.MODE_PRIVATE);
         sharedFilterPreferences = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
-        institutionPosition = sharedFilterPreferences.getInt(INSTITUTEPREFS, 0);
-        ageGroupPosition = sharedFilterPreferences.getInt(AGEGROUPPREFS, 0);
-        programmeTypePosition = sharedFilterPreferences.getInt(PROGRAMMEPREFS, 0);
+        institutionPosition = sharedFilterPreferences.getInt(INSTITUTE_PREFS, 0);
+        ageGroupPosition = sharedFilterPreferences.getInt(AGE_GROUP_PREFS, 0);
+        programmeTypePosition = sharedFilterPreferences.getInt(PROGRAMME_PREFS, 0);
 
         zoomOutAnimation = AnimationUtils.loadAnimation(getApplicationContext(),
                 R.anim.zoom_out_more);
@@ -116,7 +118,7 @@ public class EducationFilterActivity extends AppCompatActivity {
             onBackPressed();
         });
         // Spinner Drop down elements
-        institutions = new ArrayList<String>();
+        institutions = new ArrayList<>();
         institutions.add(getResources().getString(R.string.any));
         institutions.add(getResources().getString(R.string.years));
         institutions.add(getResources().getString(R.string.public_art));
@@ -127,7 +129,7 @@ public class EducationFilterActivity extends AppCompatActivity {
         institutions.add(getResources().getString(R.string.qosm));
         institutions.add(getResources().getString(R.string.family));
 
-        final HashMap<String, String> instituteMap = new HashMap<String, String>();
+        final HashMap<String, String> instituteMap = new HashMap<>();
         instituteMap.put(getResources().getString(R.string.any), "All");
         instituteMap.put(getResources().getString(R.string.years), "Years");
         instituteMap.put(getResources().getString(R.string.public_art), "Public");
@@ -138,7 +140,7 @@ public class EducationFilterActivity extends AppCompatActivity {
         instituteMap.put(getResources().getString(R.string.qosm), "321");
         instituteMap.put(getResources().getString(R.string.family), "Family");
 
-        age = new ArrayList<String>();
+        age = new ArrayList<>();
         age.add(getResources().getString(R.string.any));
         age.add(getResources().getString(R.string.all_ages));
         age.add(getResources().getString(R.string.teachers));
@@ -154,7 +156,7 @@ public class EducationFilterActivity extends AppCompatActivity {
         age.add(getResources().getString(R.string.families));
         age.add(getResources().getString(R.string.special_needs));
 
-        final HashMap<String, String> ageMap = new HashMap<String, String>();
+        final HashMap<String, String> ageMap = new HashMap<>();
         ageMap.put(getResources().getString(R.string.any), "All");
         ageMap.put(getResources().getString(R.string.all_ages), "Allages");
         ageMap.put(getResources().getString(R.string.teachers), "Nursery");
@@ -170,7 +172,7 @@ public class EducationFilterActivity extends AppCompatActivity {
         ageMap.put(getResources().getString(R.string.families), "Families");
         ageMap.put(getResources().getString(R.string.special_needs), "Special");
 
-        programmes = new ArrayList<String>();
+        programmes = new ArrayList<>();
         programmes.add(getResources().getString(R.string.any));
         programmes.add(getResources().getString(R.string.art));
         programmes.add(getResources().getString(R.string.field));
@@ -181,7 +183,7 @@ public class EducationFilterActivity extends AppCompatActivity {
         programmes.add(getResources().getString(R.string.research));
         programmes.add(getResources().getString(R.string.workshop));
 
-        final HashMap<String, String> programmeMap = new HashMap<String, String>();
+        final HashMap<String, String> programmeMap = new HashMap<>();
         programmeMap.put(getResources().getString(R.string.any), "All");
         programmeMap.put(getResources().getString(R.string.art), "Art");
         programmeMap.put(getResources().getString(R.string.field), "Field");
@@ -319,15 +321,15 @@ public class EducationFilterActivity extends AppCompatActivity {
 
     private void setPreferences() {
         editor = sharedFilterPreferences.edit();
-        editor.putInt(INSTITUTEPREFS, institutionPosition);
-        editor.putInt(AGEGROUPPREFS, ageGroupPosition);
-        editor.putInt(PROGRAMMEPREFS, programmeTypePosition);
-        editor.commit();
+        editor.putInt(INSTITUTE_PREFS, institutionPosition);
+        editor.putInt(AGE_GROUP_PREFS, ageGroupPosition);
+        editor.putInt(PROGRAMME_PREFS, programmeTypePosition);
+        editor.apply();
     }
 
     private void setUpInstituteSpinner() {
 
-        final ArrayAdapter<String> institutionDataAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, institutions);
+        final ArrayAdapter<String> institutionDataAdapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, institutions);
 
         // Drop down layout style - list view with radio button
         institutionDataAdapter.setDropDownViewResource(android.R.layout.simple_list_item_1);
@@ -339,7 +341,7 @@ public class EducationFilterActivity extends AppCompatActivity {
     }
 
     private void setUpAgeSpinner() {
-        ArrayAdapter<String> ageDataAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, age);
+        ArrayAdapter<String> ageDataAdapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, age);
 
         // Drop down layout style - list view with radio button
         ageDataAdapter.setDropDownViewResource(android.R.layout.simple_list_item_1);
@@ -350,7 +352,7 @@ public class EducationFilterActivity extends AppCompatActivity {
     }
 
     private void setUpProgrammeSpinner() {
-        ArrayAdapter<String> programmeDataAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, programmes);
+        ArrayAdapter<String> programmeDataAdapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, programmes);
 
         // Drop down layout style - list view with radio button
         programmeDataAdapter.setDropDownViewResource(android.R.layout.simple_list_item_1);

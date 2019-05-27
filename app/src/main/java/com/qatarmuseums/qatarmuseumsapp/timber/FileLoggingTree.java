@@ -2,6 +2,7 @@ package com.qatarmuseums.qatarmuseumsapp.timber;
 
 
 import android.content.Context;
+import android.support.annotation.NonNull;
 import android.util.Log;
 
 import org.slf4j.Logger;
@@ -73,7 +74,7 @@ public class FileLoggingTree extends Timber.DebugTree {
     }
 
     @Override
-    protected void log(int priority, String tag, String message, Throwable t) {
+    protected void log(int priority, String tag, @NonNull String message, Throwable t) {
         if (priority == Log.VERBOSE) {
             return;
         }
