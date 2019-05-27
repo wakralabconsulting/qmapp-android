@@ -28,13 +28,10 @@ import android.support.v4.content.ContextCompat;
 import android.text.Spannable;
 import android.text.style.URLSpan;
 import android.util.DisplayMetrics;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.Window;
-import android.view.WindowManager;
 import android.widget.Button;
-import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -73,7 +70,7 @@ public class Util {
     }
 
     public long getTimeStamp(String dateVal) {
-        SimpleDateFormat format = new SimpleDateFormat("dd/MM/yyyy HH:mm");
+        @SuppressLint("SimpleDateFormat") SimpleDateFormat format = new SimpleDateFormat("dd/MM/yyyy HH:mm");
         long dateValue = 0;
         try {
             Date date = format.parse(dateVal);
@@ -302,17 +299,7 @@ public class Util {
     }
 
 
-    public int getScreenHeight(Context context) {
-        DisplayMetrics displayMetrics = new DisplayMetrics();
-        WindowManager windowManager = (WindowManager) context
-                .getSystemService(Context.WINDOW_SERVICE);
-        windowManager.getDefaultDisplay().getMetrics(displayMetrics);
-        double height = displayMetrics.heightPixels;
-        height = (height) * (0.75);
-        return (int) height;
-    }
-
-    public long convertDate(String dateValue) {
+    private long convertDate(String dateValue) {
         @SuppressLint("SimpleDateFormat")
         SimpleDateFormat formatter = new SimpleDateFormat("dd-MM-yyyy HH:mm");
         Date date = null;
@@ -326,7 +313,7 @@ public class Util {
     }
 
     @SuppressLint("MissingPermission")
-    public int getCalendarId(Context context) {
+    private int getCalendarId(Context context) {
         Timber.i("getCalendarId()");
         Cursor cursor;
         ContentResolver contentResolver = context.getContentResolver();
@@ -348,7 +335,7 @@ public class Util {
 
         if (cursor != null && cursor.moveToFirst()) {
             String calName;
-            long calId = 0;
+            long calId;
             String visible;
 
             do {
@@ -376,13 +363,10 @@ public class Util {
         @SuppressLint("InflateParams")
         View view = layoutInflater.inflate(R.layout.calendar_popup, null);
         dialog.setContentView(view);
-        FrameLayout contentLayout = view.findViewById(R.id.content_frame_layout);
         ImageView closeBtn = view.findViewById(R.id.close_dialog);
         final Button registerNowBtn = view.findViewById(R.id.doneBtn);
         TextView dialogTitle = view.findViewById(R.id.dialog_tittle);
         TextView dialogContent = view.findViewById(R.id.dialog_content);
-        int heightValue = getScreenHeight(context);
-        contentLayout.setLayoutParams(new FrameLayout.LayoutParams(FrameLayout.LayoutParams.MATCH_PARENT, heightValue));
         dialogTitle.setText(events.get(position).getTitle());
         registerNowBtn.setText(buttonText);
         if (buttonText.equalsIgnoreCase(context.getResources().getString(R.string.register_now))) {
@@ -469,6 +453,7 @@ public class Util {
         dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
 
         LayoutInflater layoutInflater = (LayoutInflater) context.getSystemService(LAYOUT_INFLATER_SERVICE);
+        @SuppressLint("InflateParams")
         View view = layoutInflater.inflate(R.layout.common_popup, null);
 
         dialog.setContentView(view);

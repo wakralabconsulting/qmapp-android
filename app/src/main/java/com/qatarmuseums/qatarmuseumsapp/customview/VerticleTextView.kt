@@ -10,39 +10,39 @@ import android.widget.TextView
 @Suppress("DEPRECATED_IDENTITY_EQUALS")
 class VerticleTextView(context: Context, attrs: AttributeSet) : TextView(context, attrs) {
 
-    internal val topDown: Boolean
+    private val topDown: Boolean
 
     init {
-        val gravity = getGravity()
-        if (Gravity.isVertical(gravity) && gravity and Gravity.VERTICAL_GRAVITY_MASK === Gravity.BOTTOM) {
+        val gravity = gravity
+        topDown = if (Gravity.isVertical(gravity) && gravity and Gravity.VERTICAL_GRAVITY_MASK === Gravity.BOTTOM) {
             setGravity(gravity and Gravity.HORIZONTAL_GRAVITY_MASK or Gravity.TOP)
-            topDown = false
+            false
         } else
-            topDown = true
+            true
     }
 
-    protected override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
+    override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
         super.onMeasure(heightMeasureSpec, widthMeasureSpec)
-        setMeasuredDimension(getMeasuredHeight(), getMeasuredWidth())
+        setMeasuredDimension(measuredHeight, measuredWidth)
     }
 
-    protected override fun onDraw(canvas: Canvas) {
-        val textPaint = getPaint()
-        textPaint.setColor(getCurrentTextColor())
-        textPaint.drawableState = getDrawableState()
+    override fun onDraw(canvas: Canvas) {
+        val textPaint = paint
+        textPaint.color = currentTextColor
+        textPaint.drawableState = drawableState
 
         canvas.save()
         if (topDown) {
-            canvas.translate(getWidth().toFloat(), 0F)
+            canvas.translate(width.toFloat(), 0F)
             canvas.rotate((90).toFloat())
         } else {
-            canvas.translate(0F, getHeight().toFloat())
+            canvas.translate(0F, height.toFloat())
             canvas.rotate((-90).toFloat())
         }
 
-        canvas.translate(getCompoundPaddingLeft().toFloat(), getExtendedPaddingTop().toFloat())
+        canvas.translate(compoundPaddingLeft.toFloat(), extendedPaddingTop.toFloat())
 
-        getLayout().draw(canvas)
+        layout.draw(canvas)
         canvas.restore()
     }
 }

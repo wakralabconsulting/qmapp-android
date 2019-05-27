@@ -3,6 +3,7 @@ package com.qatarmuseums.qatarmuseumsapp.culturepass;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
+import android.support.annotation.NonNull;
 
 import java.io.IOException;
 import java.util.HashSet;
@@ -18,11 +19,12 @@ public class ReceivedCookiesInterceptor implements Interceptor {
     }
 
     @Override
-    public Response intercept(Chain chain) throws IOException {
+    public Response intercept(@NonNull Chain chain) throws IOException {
         Response originalResponse = chain.proceed(chain.request());
 
         if (!originalResponse.headers("Set-Cookie").isEmpty()) {
-            HashSet<String> cookies = (HashSet<String>) PreferenceManager.getDefaultSharedPreferences(context).getStringSet("PREF_COOKIES", new HashSet<String>());
+            HashSet<String> cookies = (HashSet<String>) PreferenceManager
+                    .getDefaultSharedPreferences(context).getStringSet("PREF_COOKIES", new HashSet<>());
             cookies.clear();
             for (String header : originalResponse.headers("Set-Cookie")) {
                 if (!header.contains("deleted")) {

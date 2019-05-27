@@ -1,5 +1,6 @@
 package com.qatarmuseums.qatarmuseumsapp.museumcollectiondetails;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
 import android.os.AsyncTask;
@@ -14,8 +15,6 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
-import android.widget.Button;
-import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
@@ -47,7 +46,7 @@ public class CollectionDetailsActivity extends AppCompatActivity {
     @BindView(R.id.toolbar)
     Toolbar toolbar;
     @BindView(R.id.toolbar_close)
-    ImageView toolbarClose;
+    View toolbarClose;
     @BindView(R.id.collection_title)
     TextView collectionTitle;
     @BindView(R.id.collection_title_divider)
@@ -57,10 +56,10 @@ public class CollectionDetailsActivity extends AppCompatActivity {
     @BindView(R.id.details_recycler_view)
     RecyclerView recyclerView;
     @BindView(R.id.collection_share)
-    ImageView shareIcon;
+    View shareIcon;
     Intent intent;
     @BindView(R.id.collection_favourite)
-    ImageView favIcon;
+    View favIcon;
     @BindView(R.id.progressBarLoading)
     ProgressBar progressBar;
     @BindView(R.id.no_result_layout)
@@ -68,7 +67,7 @@ public class CollectionDetailsActivity extends AppCompatActivity {
     @BindView(R.id.retry_layout)
     LinearLayout retryLayout;
     @BindView(R.id.retry_btn)
-    Button retryButton;
+    View retryButton;
 
     @BindView(R.id.details_layout)
     NestedScrollView detailLayout;
@@ -92,6 +91,7 @@ public class CollectionDetailsActivity extends AppCompatActivity {
         super.attachBaseContext(LocaleManager.setLocale(base));
     }
 
+    @SuppressLint("ClickableViewAccessibility")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);

@@ -3,7 +3,6 @@ package com.qatarmuseums.qatarmuseumsapp.apicall;
 import java.io.IOException;
 import java.net.InetAddress;
 import java.net.Socket;
-import java.net.UnknownHostException;
 import java.security.GeneralSecurityException;
 import java.security.KeyManagementException;
 import java.security.KeyStore;
@@ -21,7 +20,7 @@ public class TLSSocketFactory extends SSLSocketFactory {
 
     private SSLSocketFactory internalSSLSocketFactory;
 
-    public TLSSocketFactory() throws KeyManagementException, NoSuchAlgorithmException {
+    TLSSocketFactory() throws KeyManagementException, NoSuchAlgorithmException {
 
         SSLContext sslContext = SSLContext.getInstance("TLS");
         sslContext.init(null, new TrustManager[]{systemDefaultTrustManager()}, null);
@@ -44,12 +43,12 @@ public class TLSSocketFactory extends SSLSocketFactory {
     }
 
     @Override
-    public Socket createSocket(String host, int port) throws IOException, UnknownHostException {
+    public Socket createSocket(String host, int port) throws IOException {
         return enableTLSOnSocket(internalSSLSocketFactory.createSocket(host, port));
     }
 
     @Override
-    public Socket createSocket(String host, int port, InetAddress localHost, int localPort) throws IOException, UnknownHostException {
+    public Socket createSocket(String host, int port, InetAddress localHost, int localPort) throws IOException {
         return enableTLSOnSocket(internalSSLSocketFactory.createSocket(host, port, localHost, localPort));
     }
 
@@ -70,7 +69,7 @@ public class TLSSocketFactory extends SSLSocketFactory {
         return socket;
     }
 
-    public X509TrustManager systemDefaultTrustManager() {
+    X509TrustManager systemDefaultTrustManager() {
         try {
             TrustManagerFactory trustManagerFactory = TrustManagerFactory.getInstance(
                     TrustManagerFactory.getDefaultAlgorithm());

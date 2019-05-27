@@ -158,48 +158,45 @@
                         android:textColor="@color/colorBlack"
                         android:textSize="@dimen/font_size_15" />
 
-                    <LinearLayout
+                    <FrameLayout
                         android:id="@+id/map_layout"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content">
 
-                        <FrameLayout
+                        <com.google.android.gms.maps.MapView
+                            android:id="@+id/map_info"
                             android:layout_width="match_parent"
-                            android:layout_height="wrap_content">
+                            android:layout_height="200dp"
+                            android:layout_marginBottom="@dimen/padding_10" />
 
-                            <com.google.android.gms.maps.MapView
-                                android:id="@+id/map_info"
-                                android:layout_width="match_parent"
-                                android:layout_height="200dp"
-                                android:layout_marginBottom="@dimen/padding_10" />
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="bottom"
+                            android:gravity="bottom|end"
+                            android:orientation="horizontal">
 
-                            <LinearLayout
-                                android:layout_width="match_parent"
+                            <ImageView
+                                android:id="@+id/map_view"
+                                android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:layout_gravity="bottom"
-                                android:gravity="bottom|end"
-                                android:orientation="horizontal">
+                                android:paddingBottom="@dimen/padding_20"
+                                android:paddingEnd="@dimen/padding_10"
+                                android:paddingStart="0dp"
+                                android:src="@drawable/ic_satellite"
+                                tools:ignore="ContentDescription" />
 
-                                <ImageView
-                                    android:id="@+id/map_view"
-                                    android:layout_width="wrap_content"
-                                    android:layout_height="wrap_content"
-                                    android:paddingBottom="@dimen/padding_20"
-                                    android:paddingEnd="@dimen/padding_10"
-                                    android:paddingStart="0dp"
-                                    android:src="@drawable/ic_satellite" />
-
-                                <ImageView
-                                    android:id="@+id/direction"
-                                    android:layout_width="wrap_content"
-                                    android:layout_height="wrap_content"
-                                    android:paddingBottom="@dimen/padding_20"
-                                    android:paddingEnd="@dimen/padding_10"
-                                    android:paddingStart="0dp"
-                                    android:src="@drawable/ic_directions" />
-                            </LinearLayout>
-                        </FrameLayout>
-                    </LinearLayout>
+                            <ImageView
+                                android:id="@+id/direction"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:paddingBottom="@dimen/padding_20"
+                                android:paddingEnd="@dimen/padding_10"
+                                android:paddingStart="0dp"
+                                android:src="@drawable/ic_directions"
+                                tools:ignore="ContentDescription" />
+                        </LinearLayout>
+                    </FrameLayout>
 
                 </LinearLayout>
 
@@ -221,7 +218,8 @@
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="2"
-                        android:src="@drawable/heart_fill" />
+                        android:src="@drawable/heart_fill"
+                        tools:ignore="ContentDescription" />
 
                     <View
                         android:layout_width="0dp"
@@ -233,7 +231,8 @@
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="2"
-                        android:src="@drawable/share" />
+                        android:src="@drawable/share"
+                        tools:ignore="ContentDescription" />
 
                     <View
                         android:layout_width="0dp"

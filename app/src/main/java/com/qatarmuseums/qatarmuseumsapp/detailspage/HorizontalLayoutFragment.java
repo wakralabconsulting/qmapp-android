@@ -26,7 +26,7 @@ public class HorizontalLayoutFragment extends Fragment {
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
 
         images = getArguments().getStringArrayList("imageList");
@@ -45,8 +45,7 @@ public class HorizontalLayoutFragment extends Fragment {
     }
 
     public void getItemPosition(int value) {
-        int pos = value;
-        ((DetailsActivity) getActivity()).imageValue(pos);
+        ((DetailsActivity) getActivity()).imageValue(value);
     }
 
     @Override

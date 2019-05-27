@@ -1,5 +1,6 @@
 package com.qatarmuseums.qatarmuseumsapp.tourguidestartpage;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
@@ -7,9 +8,9 @@ import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.MotionEvent;
+import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
-import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -34,7 +35,7 @@ public class SelfGuidedStartPageActivity extends AppCompatActivity implements
         ViewPager.OnPageChangeListener, OnPageClickListener {
     ImageView playButton;
     TextView museumTitle, museumDesc;
-    Button startBtn;
+    View startBtn;
     private Animation zoomOutAnimation;
     Util util;
     String museumId, tourName, description, toolarTitle;
@@ -44,7 +45,7 @@ public class SelfGuidedStartPageActivity extends AppCompatActivity implements
     ArrayList<Page> ads;
     ImageView sliderPlaceholderImage;
     private String tourId;
-    private ImageView backArrow;
+    private View backArrow;
     private FirebaseAnalytics mFirebaseAnalytics;
 
     @Override
@@ -52,6 +53,7 @@ public class SelfGuidedStartPageActivity extends AppCompatActivity implements
         super.attachBaseContext(LocaleManager.setLocale(base));
     }
 
+    @SuppressLint("ClickableViewAccessibility")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -102,7 +104,6 @@ public class SelfGuidedStartPageActivity extends AppCompatActivity implements
             Timber.i("Back button clicked");
             onBackPressed();
         });
-        intent = getIntent();
         startBtn.setOnClickListener(v -> {
             Timber.i("Start button clicked");
             Intent i = new Intent(SelfGuidedStartPageActivity.this, ObjectPreviewActivity.class);
@@ -122,6 +123,7 @@ public class SelfGuidedStartPageActivity extends AppCompatActivity implements
     }
 
 
+    @SuppressLint("RtlHardcoded")
     public void loadAdsToSlider(ArrayList<Page> adsImages) {
         Timber.i("loadAdsToSlider()");
         appLanguage = LocaleManager.getLanguage(this);

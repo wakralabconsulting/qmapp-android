@@ -1,5 +1,6 @@
 package com.qatarmuseums.qatarmuseumsapp.objectpreview;
 
+import android.annotation.SuppressLint;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.media.AudioManager;
@@ -9,6 +10,7 @@ import android.net.NetworkInfo;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.ViewPager;
@@ -90,7 +92,8 @@ public class PageFragment extends Fragment implements SeekBar.OnSeekBarChangeLis
 
     @Nullable
     @Override
-    public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
+                             @Nullable Bundle savedInstanceState) {
         final View view = inflater.inflate(R.layout.fragment_page, container, false);
         positionInfo = view.findViewById(R.id.floor_gallery);
 
@@ -116,6 +119,7 @@ public class PageFragment extends Fragment implements SeekBar.OnSeekBarChangeLis
         return view;
     }
 
+    @SuppressLint("SetTextI18n")
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
@@ -181,11 +185,7 @@ public class PageFragment extends Fragment implements SeekBar.OnSeekBarChangeLis
         ConnectivityManager connectivityManager
                 = (ConnectivityManager) getContext().getSystemService(Context.CONNECTIVITY_SERVICE);
         NetworkInfo activeNetworkInfo = connectivityManager.getActiveNetworkInfo();
-        if (activeNetworkInfo != null && activeNetworkInfo.isConnected())
-            return true;
-        else {
-            return false;
-        }
+        return activeNetworkInfo != null && activeNetworkInfo.isConnected();
     }
 
     private void initialize_Controls() {
@@ -241,7 +241,7 @@ public class PageFragment extends Fragment implements SeekBar.OnSeekBarChangeLis
     class Player extends AsyncTask<String, Void, Boolean> {
         @Override
         protected Boolean doInBackground(String... strings) {
-            Boolean prepared = false;
+            Boolean prepared;
             try {
                 mediaPlayer.setDataSource(strings[0]);
                 mediaPlayer.prepare();
@@ -378,6 +378,7 @@ public class PageFragment extends Fragment implements SeekBar.OnSeekBarChangeLis
 
     public void openDialogForZoomingImage() {
         AlertDialog.Builder mBuilder = new AlertDialog.Builder(getActivity());
+        @SuppressLint("InflateParams")
         View mView = getLayoutInflater().inflate(R.layout.zooming_layout, null);
         PhotoView photoView = mView.findViewById(R.id.imageView);
         photoView.setImageURI(Uri.parse(mainImage));

@@ -5,85 +5,78 @@
     android:background="#99000000"
     android:gravity="center">
 
-    <FrameLayout
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginEnd="@dimen/padding_25"
-        android:layout_marginStart="@dimen/padding_40"
+        android:layout_gravity="center"
+        android:layout_marginBottom="@dimen/padding_10"
+        android:layout_marginEnd="@dimen/padding_50"
+        android:layout_marginStart="@dimen/padding_50"
+        android:layout_marginTop="@dimen/padding_20"
+        android:background="@drawable/round_corner_white"
         android:gravity="center"
-        android:orientation="vertical">
+        android:orientation="vertical"
+        android:paddingEnd="@dimen/padding_10"
+        android:paddingStart="@dimen/padding_10">
 
-        <LinearLayout
+
+        <TextView
+            android:id="@+id/dialog_tittle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/padding_25"
+            android:fontFamily="@font/din_next_lt_pro_bold"
+            android:textAlignment="center"
+            android:textAllCaps="true"
+            android:textColor="@color/colorBlack"
+            android:textSize="@dimen/font_size_21" />
+
+        <View
+            android:id="@+id/view"
+            android:layout_width="30dp"
+            android:layout_height="@dimen/padding_5"
+            android:layout_marginTop="@dimen/padding_20"
+            android:background="@color/colorBlack" />
+
+        <TextView
+            android:id="@+id/dialog_content"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="@dimen/margin_50"
+            android:layout_marginTop="@dimen/padding_25"
+            android:paddingEnd="@dimen/padding_5"
+            android:paddingStart="@dimen/padding_5"
+            android:textAlignment="center"
+            android:textSize="@dimen/font_size_18" />
+
+
+        <Button
+            android:id="@+id/acceptbtn"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:layout_marginBottom="@dimen/padding_10"
-            android:layout_marginEnd="@dimen/padding_20"
+            android:layout_marginEnd="@dimen/padding_10"
+            android:layout_marginStart="@dimen/padding_10"
+            android:background="@drawable/round_corner_black"
+            android:fontFamily="@font/din_next_lt_pro_bold"
+            android:textAllCaps="false"
+            android:textColor="@color/colorWhite"
+            android:textSize="@dimen/font_size_21" />
+
+        <Button
+            android:id="@+id/accept_later_btn"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="@dimen/padding_20"
+            android:layout_marginEnd="@dimen/padding_10"
             android:layout_marginStart="@dimen/padding_10"
             android:layout_marginTop="@dimen/padding_20"
-            android:background="@drawable/round_corner_white"
-            android:gravity="center"
-            android:orientation="vertical"
-            android:paddingEnd="@dimen/padding_10"
-            android:paddingStart="@dimen/padding_10">
+            android:background="@drawable/round_corner_black"
+            android:fontFamily="@font/din_next_lt_pro_bold"
+            android:textAllCaps="false"
+            android:textColor="@color/colorWhite"
+            android:textSize="@dimen/font_size_21" />
 
-
-            <TextView
-                android:id="@+id/dialog_tittle"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/padding_25"
-                android:fontFamily="@font/din_next_lt_pro_bold"
-                android:textAlignment="center"
-                android:textAllCaps="true"
-                android:textColor="@color/colorBlack"
-                android:textSize="@dimen/font_size_21" />
-
-            <View
-                android:id="@+id/view"
-                android:layout_width="30dp"
-                android:layout_height="@dimen/padding_5"
-                android:layout_marginTop="@dimen/padding_20"
-                android:background="@color/colorBlack" />
-
-            <TextView
-                android:id="@+id/dialog_content"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="@dimen/margin_50"
-                android:layout_marginTop="@dimen/padding_25"
-                android:paddingEnd="@dimen/padding_5"
-                android:paddingStart="@dimen/padding_5"
-                android:textAlignment="center"
-                android:textSize="@dimen/font_size_18" />
-
-
-            <Button
-                android:id="@+id/acceptbtn"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="@dimen/padding_15"
-                android:background="@drawable/round_corner_black"
-                android:fontFamily="@font/din_next_lt_pro_bold"
-                android:textAllCaps="false"
-                android:textColor="@color/colorWhite"
-                android:textSize="@dimen/font_size_21" />
-
-            <Button
-                android:id="@+id/accept_later_btn"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="@dimen/padding_15"
-                android:background="@drawable/round_corner_black"
-                android:fontFamily="@font/din_next_lt_pro_bold"
-                android:textAllCaps="false"
-                android:textColor="@color/colorWhite"
-                android:textSize="@dimen/font_size_21" />
-
-        </LinearLayout>
-
-
-    </FrameLayout>
+    </LinearLayout>
 
 
 </LinearLayout>

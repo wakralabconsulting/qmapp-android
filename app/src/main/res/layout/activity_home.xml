@@ -104,6 +104,7 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_marginEnd="15dp"
+            android:baselineAligned="false"
             android:paddingBottom="8dp"
             android:paddingTop="8dp">
 
@@ -122,7 +123,8 @@
                     android:layout_height="wrap_content"
                     android:layout_centerHorizontal="true"
                     android:tint="@android:color/white"
-                    app:srcCompat="@drawable/dining" />
+                    app:srcCompat="@drawable/dining"
+                    tools:ignore="ContentDescription" />
 
                 <TextView
                     android:layout_width="wrap_content"
@@ -149,8 +151,9 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_centerHorizontal="true"
-                    android:src="@drawable/gift_shop"
-                    android:tint="@android:color/white" />
+                    android:src="@drawable/gift_shop_bottom_bar"
+                    android:tint="@android:color/white"
+                    tools:ignore="ContentDescription" />
 
                 <TextView
                     android:layout_width="wrap_content"
@@ -179,7 +182,8 @@
                     android:layout_height="wrap_content"
                     android:layout_centerHorizontal="true"
                     android:src="@drawable/culture_pass"
-                    android:tint="@android:color/white" />
+                    android:tint="@android:color/white"
+                    tools:ignore="ContentDescription" />
 
                 <TextView
                     android:layout_width="wrap_content"
@@ -207,7 +211,8 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:src="@drawable/more"
-                    android:tint="@android:color/white" />
+                    android:tint="@android:color/white"
+                    tools:ignore="ContentDescription" />
 
                 <TextView
                     android:layout_width="wrap_content"

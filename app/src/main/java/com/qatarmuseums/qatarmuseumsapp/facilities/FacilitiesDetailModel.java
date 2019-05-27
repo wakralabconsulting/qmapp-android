@@ -20,20 +20,20 @@ public class FacilitiesDetailModel {
     private String facilityTitleTiming;
     @SerializedName("nid")
     private String facilitiesId;
-    @SerializedName(value = "Longitude",alternate = {"longtitude"})
+    @SerializedName(value = "Longitude", alternate = {"longtitude"})
     private String longitude;
 
     @SerializedName("category")
     private String facilitiesCategoryId;
-    @SerializedName(value = "Latitude",alternate = {"latitude "})
-    private String lattitude;
+    @SerializedName(value = "Latitude", alternate = {"latitude "})
+    private String latitude;
     @SerializedName("location title")
     private String locationTitle;
 
 
     public FacilitiesDetailModel(String facilitiesTitle, ArrayList<String> facilityImage, String facilitiesSubtitle,
                                  String facilityDescription, String facilitiesTiming, String facilityTitleTiming, String facilitiesId,
-                                 String longitude, String facilitiesCategoryId, String lattitude, String locationTitle) {
+                                 String longitude, String facilitiesCategoryId, String latitude, String locationTitle) {
         this.facilitiesTitle = facilitiesTitle;
         this.facilityImage = facilityImage;
         this.facilitiesSubtitle = facilitiesSubtitle;
@@ -43,7 +43,7 @@ public class FacilitiesDetailModel {
         this.facilitiesId = facilitiesId;
         this.longitude = longitude;
         this.facilitiesCategoryId = facilitiesCategoryId;
-        this.lattitude = lattitude;
+        this.latitude = latitude;
         this.locationTitle = locationTitle;
     }
 
@@ -84,8 +84,8 @@ public class FacilitiesDetailModel {
         return facilitiesCategoryId;
     }
 
-    public String getLattitude() {
-        return lattitude;
+    public String getLatitude() {
+        return latitude;
     }
 
     public String getLocationTitle() {
@@ -124,8 +124,8 @@ public class FacilitiesDetailModel {
         this.facilitiesCategoryId = facilitiesCategoryId;
     }
 
-    public void setLattitude(String lattitude) {
-        this.lattitude = lattitude;
+    public void setLatitude(String latitude) {
+        this.latitude = latitude;
     }
 
     public void setLocationTitle(String locationTitle) {

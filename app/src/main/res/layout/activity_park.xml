@@ -30,9 +30,9 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:background="@drawable/placeholder"
-                android:contentDescription="@string/app_name"
                 android:scaleType="centerCrop"
-                app:layout_collapseMode="parallax" />
+                app:layout_collapseMode="parallax"
+                tools:ignore="ContentDescription" />
 
             <android.support.v7.widget.Toolbar
                 android:id="@+id/toolbar"
@@ -45,7 +45,8 @@
                     android:id="@+id/toolbar_close"
                     android:layout_width="wrap_content"
                     android:layout_height="match_parent"
-                    android:src="@drawable/toolbar_close" />
+                    android:src="@drawable/toolbar_close"
+                    tools:ignore="ContentDescription" />
             </android.support.v7.widget.Toolbar>
 
         </android.support.design.widget.CollapsingToolbarLayout>
